@@ -151,6 +151,9 @@ class AppsRepositoryImpl(
     override suspend fun linkAppToRepo(
         deviceApp: DeviceApp,
         repoInfo: GithubRepoInfo,
+        selectedAssetName: String?,
+        selectedAssetUrl: String?,
+        selectedAssetSize: Long?,
     ) {
         val now = Clock.System.now().toEpochMilliseconds()
         val globalPreRelease = tweaksRepository.getIncludePreReleases().first()
@@ -166,12 +169,12 @@ class AppsRepositoryImpl(
                 primaryLanguage = repoInfo.language,
                 repoUrl = repoInfo.htmlUrl,
                 installedVersion = deviceApp.versionName ?: "unknown",
-                installedAssetName = null,
-                installedAssetUrl = null,
+                installedAssetName = selectedAssetName,
+                installedAssetUrl = selectedAssetUrl,
                 latestVersion = repoInfo.latestReleaseTag,
-                latestAssetName = null,
-                latestAssetUrl = null,
-                latestAssetSize = null,
+                latestAssetName = selectedAssetName,
+                latestAssetUrl = selectedAssetUrl,
+                latestAssetSize = selectedAssetSize,
                 appName = deviceApp.appName,
                 installSource = InstallSource.MANUAL,
                 installedAt = now,

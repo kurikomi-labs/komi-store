@@ -28,6 +28,7 @@ import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.model.AssetPreferenceMatcher
 import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.network.Downloader
@@ -475,7 +476,10 @@ class AppsViewModel(
                     }
 
                     val primaryAsset =
-                        installer.choosePrimaryAsset(installableAssets)
+                        AssetPreferenceMatcher.choosePreferredAsset(
+                            assets = installableAssets,
+                            preferredAssetNames = listOf(app.latestAssetName, app.installedAssetName),
+                        ) ?: installer.choosePrimaryAsset(installableAssets)
                             ?: throw IllegalStateException("Could not determine primary asset")
 
                     logger.debug(
@@ -1018,7 +1022,13 @@ class AppsViewModel(
                 val apkInfo = installer.getApkInfoExtractor().extractPackageInfo(filePath)
                 if (apkInfo == null) {
                     logger.debug("Could not extract APK info for validation, linking anyway")
-                    appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo.toDomain())
+                    appsRepository.linkAppToRepo(
+                        deviceApp = selectedApp.toDomain(),
+                        repoInfo = repoInfo.toDomain(),
+                        selectedAssetName = asset.name,
+                        selectedAssetUrl = asset.downloadUrl,
+                        selectedAssetSize = asset.size,
+                    )
                     _state.update {
                         it.copy(
                             linkDownloadProgress = null,
@@ -1070,7 +1080,13 @@ class AppsViewModel(
                     return@launch
                 }
 
-                appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo.toDomain())
+                appsRepository.linkAppToRepo(
+                    deviceApp = selectedApp.toDomain(),
+                    repoInfo = repoInfo.toDomain(),
+                    selectedAssetName = asset.name,
+                    selectedAssetUrl = asset.downloadUrl,
+                    selectedAssetSize = asset.size,
+                )
                 _state.update {
                     it.copy(
                         linkDownloadProgress = null,

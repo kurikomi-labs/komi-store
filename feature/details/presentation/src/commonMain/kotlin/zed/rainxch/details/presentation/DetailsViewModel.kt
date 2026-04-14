@@ -688,9 +688,13 @@ class DetailsViewModel(
 
         if (installedApp != null && selectedRelease != null && installedApp.isUpdateAvailable) {
             val latestAsset =
-                _state.value.installableAssets.firstOrNull {
-                    it.name == installedApp.latestAssetName
-                } ?: _state.value.primaryAsset
+                _state.value.primaryAsset
+                    ?: _state.value.installableAssets.firstOrNull {
+                        it.name == installedApp.latestAssetName
+                    }
+                    ?: _state.value.installableAssets.firstOrNull {
+                        it.name == installedApp.installedAssetName
+                    }
 
             if (latestAsset != null) {
                 installAsset(

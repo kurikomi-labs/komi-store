@@ -27,7 +27,13 @@ interface AppsRepository {
 
     suspend fun fetchRepoInfo(owner: String, repo: String): GithubRepoInfo?
 
-    suspend fun linkAppToRepo(deviceApp: DeviceApp, repoInfo: GithubRepoInfo)
+    suspend fun linkAppToRepo(
+        deviceApp: DeviceApp,
+        repoInfo: GithubRepoInfo,
+        selectedAssetName: String? = null,
+        selectedAssetUrl: String? = null,
+        selectedAssetSize: Long? = null,
+    )
 
     suspend fun exportApps(): String
 

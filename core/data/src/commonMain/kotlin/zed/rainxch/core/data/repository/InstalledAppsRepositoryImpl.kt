@@ -19,6 +19,7 @@ import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.mappers.toEntity
 import zed.rainxch.core.data.network.executeRequest
+import zed.rainxch.core.domain.model.AssetPreferenceMatcher
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.InstalledApp
@@ -120,7 +121,11 @@ class InstalledAppsRepositoryImpl(
                     latestRelease.assets.filter { asset ->
                         installer.isAssetInstallable(asset.name)
                     }
-                val primaryAsset = installer.choosePrimaryAsset(installableAssets)
+                val preferredAsset =
+                    AssetPreferenceMatcher.choosePreferredAsset(
+                        assets = installableAssets,
+                        preferredAssetNames = listOf(app.latestAssetName, app.installedAssetName),
+                    ) ?: installer.choosePrimaryAsset(installableAssets)
 
                 // Only flag as update if the latest version is actually newer
                 // (not just different — avoids false "downgrade" notifications)
@@ -142,9 +147,9 @@ class InstalledAppsRepositoryImpl(
                     packageName = packageName,
                     available = isUpdateAvailable,
                     version = latestRelease.tagName,
-                    assetName = primaryAsset?.name,
-                    assetUrl = primaryAsset?.downloadUrl,
-                    assetSize = primaryAsset?.size,
+                    assetName = preferredAsset?.name,
+                    assetUrl = preferredAsset?.downloadUrl,
+                    assetSize = preferredAsset?.size,
                     releaseNotes = latestRelease.description ?: "",
                     timestamp = System.currentTimeMillis(),
                     latestVersionName = latestRelease.tagName,
