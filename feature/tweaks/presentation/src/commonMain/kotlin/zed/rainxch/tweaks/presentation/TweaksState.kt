@@ -28,6 +28,10 @@ data class TweaksState(
     val isHideSeenEnabled: Boolean = false,
     val isScrollbarEnabled: Boolean = false,
     val isTelemetryEnabled: Boolean = false,
+    // E6 product-metric telemetry consent. Three-state so the UI can show
+    // a first-launch prompt when NotYetAsked vs a normal toggle when set.
+    val productTelemetryConsent: zed.rainxch.core.domain.telemetry.ProductTelemetryConsent =
+        zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.NotYetAsked,
     val translationProvider: TranslationProvider = TranslationProvider.Default,
     /**
      * Transient UI-only selection used when the user picks a provider

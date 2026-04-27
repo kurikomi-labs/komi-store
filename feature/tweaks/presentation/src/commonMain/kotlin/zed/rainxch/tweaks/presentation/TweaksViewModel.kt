@@ -73,6 +73,7 @@ class TweaksViewModel(
                     loadHideSeenEnabled()
                     loadScrollbarEnabled()
                     loadTelemetryEnabled()
+                    loadProductTelemetryConsent()
                     loadTranslationSettings()
                     loadAppLanguage()
 
@@ -343,6 +344,16 @@ class TweaksViewModel(
             tweaksRepository.getTelemetryEnabled().collect { enabled ->
                 _state.update {
                     it.copy(isTelemetryEnabled = enabled)
+                }
+            }
+        }
+    }
+
+    private fun loadProductTelemetryConsent() {
+        viewModelScope.launch {
+            tweaksRepository.getProductTelemetryConsent().collect { consent ->
+                _state.update {
+                    it.copy(productTelemetryConsent = consent)
                 }
             }
         }
@@ -654,6 +665,15 @@ class TweaksViewModel(
             is TweaksAction.OnTelemetryToggled -> {
                 viewModelScope.launch {
                     tweaksRepository.setTelemetryEnabled(action.enabled)
+                }
+            }
+
+            is TweaksAction.OnProductTelemetryToggled -> {
+                viewModelScope.launch {
+                    tweaksRepository.setProductTelemetryConsent(
+                        if (action.enabled) zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.Granted
+                        else zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.Denied,
+                    )
                 }
             }
 

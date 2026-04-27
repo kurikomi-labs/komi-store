@@ -113,6 +113,13 @@ sealed interface TweaksAction {
         val enabled: Boolean,
     ) : TweaksAction
 
+    // E6 product-metric telemetry consent toggle. Maps directly to
+    // ProductTelemetryConsent.Granted / Denied — kept separate from
+    // OnTelemetryToggled so accepting one doesn't auto-grant the other.
+    data class OnProductTelemetryToggled(
+        val enabled: Boolean,
+    ) : TweaksAction
+
     data object OnResetAnalyticsId : TweaksAction
 
     data class OnTranslationProviderSelected(
