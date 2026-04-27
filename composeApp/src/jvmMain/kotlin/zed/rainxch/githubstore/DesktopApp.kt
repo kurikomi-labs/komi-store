@@ -20,6 +20,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.core.context.GlobalContext
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
 import zed.rainxch.githubstore.app.di.initKoin
@@ -70,6 +73,16 @@ fun main(args: Array<String>) {
         localization.setActiveLanguageTag(tag)
     }
 
+    // Fire app_launched once per process. No-op when consent is not Granted.
+    // The impl reads BuildKonfig.VERSION_NAME internally for the appVersion
+    // field on every fire(); we just supply the platform-specific version
+    // bucket via the props map. (BuildKonfig is internal to core/data so we
+    // can't read it from composeApp directly.)
+    GlobalContext.get().get<ProductTelemetry>().fire(
+        name = ProductTelemetryEvents.APP_LAUNCHED,
+        props = mapOf(ProductTelemetryProps.PLATFORM to desktopPlatformSlug()),
+    )
+
     val deepLinkArg = args.firstOrNull()
 
     if (deepLinkArg != null && DesktopDeepLink.tryForwardToRunningInstance(deepLinkArg)) {
@@ -116,5 +129,15 @@ fun main(args: Array<String>) {
         ) {
             App(deepLinkUri = deepLinkUri)
         }
+    }
+}
+
+private fun desktopPlatformSlug(): String {
+    val os = System.getProperty("os.name").orEmpty().lowercase()
+    return when {
+        os.contains("mac") -> "macos"
+        os.contains("win") -> "windows"
+        os.contains("nix") || os.contains("nux") -> "linux"
+        else -> "desktop"
     }
 }

@@ -20,6 +20,9 @@ import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.PackageMonitor
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.githubstore.app.di.initKoin
 
 class GithubStoreApp : Application() {
@@ -38,6 +41,23 @@ class GithubStoreApp : Application() {
         startDownloadNotificationObserver()
         scheduleBackgroundUpdateChecks()
         registerSelfAsInstalledApp()
+        fireAppLaunched()
+    }
+
+    private fun fireAppLaunched() {
+        // No-op when consent is not Granted (the impl gates internally).
+        get<ProductTelemetry>().fire(
+            name = ProductTelemetryEvents.APP_LAUNCHED,
+            props =
+                mapOf(
+                    ProductTelemetryProps.PLATFORM to "android",
+                    ProductTelemetryProps.VERSION to
+                        packageManager
+                            .getPackageInfo(packageName, 0)
+                            .versionName
+                            .orEmpty(),
+                ),
+        )
     }
 
     private fun startDownloadNotificationObserver() {
