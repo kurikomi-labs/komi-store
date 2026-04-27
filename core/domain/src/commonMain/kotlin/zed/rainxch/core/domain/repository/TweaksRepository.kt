@@ -64,6 +64,14 @@ interface TweaksRepository {
 
     suspend fun setTelemetryEnabled(enabled: Boolean)
 
+    // E6 product-metric telemetry consent. Three-state because the first-launch
+    // sheet needs to distinguish "user actively said no" from "we haven't asked
+    // yet." Independent of getTelemetryEnabled — that's the legacy ranking-
+    // signals pipeline (different data, different backend table).
+    fun getProductTelemetryConsent(): Flow<zed.rainxch.core.domain.telemetry.ProductTelemetryConsent>
+
+    suspend fun setProductTelemetryConsent(consent: zed.rainxch.core.domain.telemetry.ProductTelemetryConsent)
+
     fun getTranslationProvider(): Flow<TranslationProvider>
 
     suspend fun setTranslationProvider(provider: TranslationProvider)

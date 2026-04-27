@@ -181,6 +181,21 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getProductTelemetryConsent(): Flow<zed.rainxch.core.domain.telemetry.ProductTelemetryConsent> =
+        preferences.data.map { prefs ->
+            when (prefs[PRODUCT_TELEMETRY_CONSENT_KEY]) {
+                "Granted" -> zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.Granted
+                "Denied" -> zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.Denied
+                else -> zed.rainxch.core.domain.telemetry.ProductTelemetryConsent.NotYetAsked
+            }
+        }
+
+    override suspend fun setProductTelemetryConsent(consent: zed.rainxch.core.domain.telemetry.ProductTelemetryConsent) {
+        preferences.edit { prefs ->
+            prefs[PRODUCT_TELEMETRY_CONSENT_KEY] = consent.name
+        }
+    }
+
     override fun getTranslationProvider(): Flow<TranslationProvider> =
         preferences.data.map { prefs ->
             TranslationProvider.fromName(prefs[TRANSLATION_PROVIDER_KEY])
@@ -247,6 +262,7 @@ class TweaksRepositoryImpl(
         private val HIDE_SEEN_ENABLED_KEY = booleanPreferencesKey("hide_seen_enabled")
         private val SCROLLBAR_ENABLED_KEY = booleanPreferencesKey("scrollbar_enabled")
         private val TELEMETRY_ENABLED_KEY = booleanPreferencesKey("telemetry_enabled")
+        private val PRODUCT_TELEMETRY_CONSENT_KEY = stringPreferencesKey("product_telemetry_consent")
         private val TRANSLATION_PROVIDER_KEY = stringPreferencesKey("translation_provider")
         private val YOUDAO_APP_KEY = stringPreferencesKey("youdao_app_key")
         private val YOUDAO_APP_SECRET = stringPreferencesKey("youdao_app_secret")
