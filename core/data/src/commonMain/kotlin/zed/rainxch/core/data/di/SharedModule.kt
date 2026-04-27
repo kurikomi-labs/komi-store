@@ -37,6 +37,7 @@ import zed.rainxch.core.data.repository.DeviceIdentityRepositoryImpl
 import zed.rainxch.core.data.repository.RateLimitRepositoryImpl
 import zed.rainxch.core.data.repository.SearchHistoryRepositoryImpl
 import zed.rainxch.core.data.repository.TelemetryRepositoryImpl
+import zed.rainxch.core.data.telemetry.ProductTelemetryImpl
 import zed.rainxch.core.data.repository.SeenReposRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
 import zed.rainxch.core.data.repository.TweaksRepositoryImpl
@@ -57,6 +58,7 @@ import zed.rainxch.core.domain.repository.SearchHistoryRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 
@@ -179,6 +181,16 @@ val coreModule =
             TelemetryRepositoryImpl(
                 backendApiClient = get(),
                 deviceIdentity = get(),
+                tweaksRepository = get(),
+                platform = get(),
+                appScope = get(),
+                logger = get(),
+            )
+        }
+
+        single<ProductTelemetry> {
+            ProductTelemetryImpl(
+                backendApiClient = get(),
                 tweaksRepository = get(),
                 platform = get(),
                 appScope = get(),

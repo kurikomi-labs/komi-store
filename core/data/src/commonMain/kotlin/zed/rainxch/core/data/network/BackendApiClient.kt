@@ -33,6 +33,8 @@ import zed.rainxch.core.data.dto.BackendExploreResponse
 import zed.rainxch.core.data.dto.BackendRepoResponse
 import zed.rainxch.core.data.dto.BackendSearchResponse
 import zed.rainxch.core.data.dto.EventRequest
+import zed.rainxch.core.data.dto.ProductTelemetryBatch
+import zed.rainxch.core.data.dto.ProductTelemetryEventBody
 import zed.rainxch.core.data.dto.GithubReadmeResponseDto
 import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.dto.UserProfileNetwork
@@ -246,6 +248,22 @@ class BackendApiClient(
             val response = httpClient.post("events") {
                 contentType(ContentType.Application.Json)
                 setBody(events)
+            }
+            when {
+                response.status == HttpStatusCode.NoContent || response.status.isSuccess() ->
+                    Result.success(Unit)
+                response.status == HttpStatusCode.TooManyRequests ->
+                    Result.failure(RateLimitedException())
+                else ->
+                    Result.failure(BackendException(response.status.value))
+            }
+        }
+
+    suspend fun postProductTelemetryEvents(events: List<ProductTelemetryEventBody>): Result<Unit> =
+        safeCall {
+            val response = httpClient.post("telemetry/events") {
+                contentType(ContentType.Application.Json)
+                setBody(ProductTelemetryBatch(events))
             }
             when {
                 response.status == HttpStatusCode.NoContent || response.status.isSuccess() ->
