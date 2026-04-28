@@ -118,10 +118,19 @@ class DetailsViewModel(
     private val downloadOrchestrator: DownloadOrchestrator,
     private val telemetryRepository: TelemetryRepository,
     private val externalImportRepository: ExternalImportRepository,
+    // String slug rather than the enum: the closed `DetailsFrom` lives in
+    // composeApp's nav module, which feature/details/presentation
+    // intentionally doesn't depend on. The enum's `slug` is mapped at the
+    // navigation boundary so this module never sees a free-form String
+    // directly from a UI caller.
     private val from: String,
     private val productTelemetry: zed.rainxch.core.domain.telemetry.ProductTelemetry,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
+    // Distinct from hasLoadedInitialData: Retry resets that flag so the
+    // payload reloads, but DETAILS_VIEWED is a per-instance signal — we
+    // only care it fired once per visit, not per data refresh.
+    private var detailsViewedFired = false
     private var currentDownloadJob: Job? = null
     private var currentAssetName: String? = null
     private var aboutTranslationJob: Job? = null
@@ -2396,13 +2405,16 @@ class DetailsViewModel(
                     )
 
                 telemetryRepository.recordRepoViewed(repo.id)
-                productTelemetry.fire(
-                    name = zed.rainxch.core.domain.telemetry.ProductTelemetryEvents.DETAILS_VIEWED,
-                    props =
-                        mapOf(
-                            zed.rainxch.core.domain.telemetry.ProductTelemetryProps.FROM to from,
-                        ),
-                )
+                if (!detailsViewedFired) {
+                    detailsViewedFired = true
+                    productTelemetry.fire(
+                        name = zed.rainxch.core.domain.telemetry.ProductTelemetryEvents.DETAILS_VIEWED,
+                        props =
+                            mapOf(
+                                zed.rainxch.core.domain.telemetry.ProductTelemetryProps.FROM to from,
+                            ),
+                    )
+                }
 
                 observeInstalledApp(repo.id)
             } catch (e: RateLimitException) {
