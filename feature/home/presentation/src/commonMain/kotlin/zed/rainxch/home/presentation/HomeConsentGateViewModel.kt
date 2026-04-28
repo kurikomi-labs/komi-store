@@ -13,11 +13,14 @@ class HomeConsentGateViewModel(
     private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
 
-    val consent: StateFlow<ProductTelemetryConsent> =
+    // Nullable so a fresh subscription doesn't briefly look like
+    // "user hasn't answered" while the persisted value is still being
+    // hydrated. HomeRoot only shows the sheet on an explicit NotYetAsked.
+    val consent: StateFlow<ProductTelemetryConsent?> =
         tweaksRepository.getProductTelemetryConsent().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = ProductTelemetryConsent.NotYetAsked,
+            initialValue = null,
         )
 
     fun grant() {
