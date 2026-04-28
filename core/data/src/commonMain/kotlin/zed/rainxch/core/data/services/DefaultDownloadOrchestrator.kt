@@ -572,9 +572,40 @@ class DefaultDownloadOrchestrator(
             props =
                 mapOf(
                     ProductTelemetryProps.OP to op,
-                    ProductTelemetryProps.ERROR_CODE to (throwable?.let { it::class.simpleName } ?: "unknown"),
+                    ProductTelemetryProps.ERROR_CODE to mapExceptionToBucket(throwable),
                 ),
         )
+    }
+
+    // Categorical buckets — the schema requires stable, low-cardinality
+    // values so dashboards can aggregate. Using throwable simple class
+    // names directly would explode the dimension when callers are
+    // platform-specific (e.g. SocketTimeoutException vs HttpRequestTimeoutException).
+    private fun mapExceptionToBucket(throwable: Throwable?): String {
+        if (throwable == null) return "unknown"
+        val name = throwable::class.simpleName.orEmpty()
+        val message = throwable.message.orEmpty()
+        return when {
+            name.contains("Cancellation", ignoreCase = true) -> "cancelled"
+            name.contains("Timeout", ignoreCase = true) ||
+                message.contains("timeout", ignoreCase = true) -> "timeout"
+            name.contains("UnknownHost", ignoreCase = true) ||
+                name.contains("DnsResolveException", ignoreCase = true) -> "dns"
+            name.contains("Ssl", ignoreCase = true) ||
+                name.contains("Certificate", ignoreCase = true) -> "tls"
+            name.contains("HttpRetry", ignoreCase = true) ||
+                name.contains("ConnectException", ignoreCase = true) ||
+                name.contains("Socket", ignoreCase = true) -> "network"
+            name.contains("Serialization", ignoreCase = true) ||
+                name.contains("Json", ignoreCase = true) ||
+                name.contains("Parse", ignoreCase = true) -> "parse"
+            name.contains("FileNotFound", ignoreCase = true) ||
+                name.contains("Io", ignoreCase = true) -> "io"
+            name.contains("SecurityException", ignoreCase = true) ||
+                name.contains("Auth", ignoreCase = true) ||
+                name.contains("Permission", ignoreCase = true) -> "auth"
+            else -> "unknown"
+        }
     }
 
     private fun generateId(): String =
