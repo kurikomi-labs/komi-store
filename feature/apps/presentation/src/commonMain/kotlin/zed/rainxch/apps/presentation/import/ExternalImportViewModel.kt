@@ -110,13 +110,11 @@ class ExternalImportViewModel(
 
             is ExternalImportAction.OnPermissionGranted -> {
                 _state.update { it.copy(isPermissionDenied = false) }
-                emitPermissionOutcome(granted = true, sdkInt = action.sdkInt)
                 startScanIfIdle(force = true)
             }
 
             is ExternalImportAction.OnPermissionDenied -> {
                 _state.update { it.copy(isPermissionDenied = true) }
-                emitPermissionOutcome(granted = false, sdkInt = action.sdkInt)
                 startScanIfIdle(force = true)
             }
 
@@ -222,6 +220,13 @@ class ExternalImportViewModel(
                 lastResolvedMatches = matches
                 val autoLinked = autoMaterialize(matches)
                 val autoLinkedPackages = autoLinked.toSet()
+
+                if (autoLinked.isNotEmpty()) {
+                    productTelemetry.fire(
+                        name = ProductTelemetryEvents.IMPORT_AUTO_LINKED,
+                        props = mapOf(ProductTelemetryProps.COUNT to bucketCount(autoLinked.size)),
+                    )
+                }
 
                 val reviewCandidates =
                     candidates.filter { it.packageName !in autoLinkedPackages }
@@ -685,11 +690,6 @@ class ExternalImportViewModel(
                 _events.send(ExternalImportEvent.PlayConfetti)
             }
         }
-    }
-
-    private fun emitPermissionOutcome(granted: Boolean, sdkInt: Int?) {
-        // Permission-outcome telemetry intentionally dropped at the E6
-        // boundary — the new schema doesn't track it.
     }
 
     private fun bucketCount(count: Int): String =

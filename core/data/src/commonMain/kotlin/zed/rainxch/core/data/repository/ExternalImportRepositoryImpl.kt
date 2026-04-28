@@ -28,6 +28,7 @@ import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
 import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.core.domain.telemetry.TelemetryBuckets
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
@@ -258,7 +259,8 @@ class ExternalImportRepositoryImpl(
                     props =
                         mapOf(
                             ProductTelemetryProps.STRATEGY to source.telemetryStrategy(),
-                            ProductTelemetryProps.CONFIDENCE_BUCKET to bucketConfidence(top.confidence),
+                            ProductTelemetryProps.CONFIDENCE_BUCKET to
+                                TelemetryBuckets.confidence(top.confidence.toFloat()),
                         ),
                 )
             }
@@ -551,13 +553,6 @@ class ExternalImportRepositoryImpl(
             ms < 2_000L -> "500-2000"
             ms < 5_000L -> "2000-5000"
             else -> ">5000"
-        }
-
-    private fun bucketConfidence(c: Double): String =
-        when {
-            c < 0.5 -> "<0.5"
-            c < 0.85 -> "0.5-0.85"
-            else -> ">=0.85"
         }
 
     private fun bucketSeedRowsAdded(n: Int): String =
