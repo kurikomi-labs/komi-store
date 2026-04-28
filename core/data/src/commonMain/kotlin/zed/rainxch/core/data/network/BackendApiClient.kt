@@ -307,8 +307,11 @@ class BackendApiClient(
             }
         }
 
+    // Bypasses [safeCall]'s [firePerProxyOutcome] hook — otherwise every
+    // telemetry POST would emit another PROXY_USED event, which would
+    // re-enter the buffer, schedule another flush, and recurse.
     suspend fun postProductTelemetryEvents(events: List<ProductTelemetryEventBody>): Result<Unit> =
-        safeCall {
+        try {
             val response = httpClient.post("telemetry/events") {
                 contentType(ContentType.Application.Json)
                 setBody(ProductTelemetryBatch(events))
@@ -321,6 +324,10 @@ class BackendApiClient(
                 else ->
                     Result.failure(BackendException(response.status.value))
             }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
         }
 
     private inline fun <T> safeCall(block: () -> Result<T>): Result<T> {
