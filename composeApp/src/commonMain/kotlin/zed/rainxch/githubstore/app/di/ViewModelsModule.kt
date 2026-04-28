@@ -9,6 +9,7 @@ import zed.rainxch.auth.presentation.AuthenticationViewModel
 import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
+import zed.rainxch.home.presentation.HomeConsentGateViewModel
 import zed.rainxch.home.presentation.HomeViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
@@ -56,6 +57,7 @@ val viewModelsModule =
         viewModelOf(::DeveloperProfileViewModel)
         viewModelOf(::FavouritesViewModel)
         viewModelOf(::HomeViewModel)
+        viewModelOf(::HomeConsentGateViewModel)
         viewModelOf(::RecentlyViewedViewModel)
         viewModelOf(::SearchViewModel)
         viewModelOf(::ProfileViewModel)

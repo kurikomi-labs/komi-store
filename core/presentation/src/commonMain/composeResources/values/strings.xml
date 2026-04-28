@@ -691,6 +691,11 @@
     <string name="analytics_id_reset">Analytics ID reset</string>
     <string name="settings_product_telemetry_title">Anonymous usage data</string>
     <string name="settings_product_telemetry_description">Help improve GitHub Store with anonymous, aggregate metrics. We never collect search queries, repo names, or any identifying information. Schema is open source.</string>
+    <string name="product_telemetry_sheet_title">Help improve GitHub Store</string>
+    <string name="product_telemetry_sheet_body">We collect anonymous, aggregate usage data to find bugs and improve performance. We never collect your repos, search queries, or any identifying information. The full schema and collection code are open source.</string>
+    <string name="product_telemetry_sheet_grant">Got it</string>
+    <string name="product_telemetry_sheet_deny">No thanks</string>
+    <string name="product_telemetry_sheet_view_schema">View what we collect</string>
 
     <!-- Search history -->
     <string name="recent_searches">Recent searches</string>

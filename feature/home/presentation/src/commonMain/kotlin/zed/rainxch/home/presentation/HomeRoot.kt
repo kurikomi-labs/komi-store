@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,6 +81,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.telemetry.ProductTelemetryConsent
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
@@ -95,9 +97,13 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.domain.model.TopicCategory
 import zed.rainxch.home.presentation.components.LiquidGlassCategoryChips
+import zed.rainxch.home.presentation.components.ProductTelemetryConsentSheet
 import zed.rainxch.home.presentation.locals.LocalHomeTopBarLiquid
 import zed.rainxch.home.presentation.utils.displayText
 import zed.rainxch.home.presentation.utils.icon
+
+private const val TELEMETRY_SCHEMA_URL =
+    "https://github.com/OpenHub-Store/backend/blob/main/src/main/kotlin/zed/rainxch/githubstore/telemetry/TelemetryEvent.kt"
 
 @Composable
 fun HomeRoot(
@@ -107,11 +113,30 @@ fun HomeRoot(
     onNavigateToDetails: (repoId: Long) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
+    consentGate: HomeConsentGateViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val consent by consentGate.consent.collectAsStateWithLifecycle()
     val listState = rememberLazyStaggeredGridState()
     val scope = rememberCoroutineScope()
     val snackbarHost = remember { SnackbarHostState() }
+    val uriHandler = LocalUriHandler.current
+
+    if (consent == ProductTelemetryConsent.NotYetAsked) {
+        ProductTelemetryConsentSheet(
+            onGrant = consentGate::grant,
+            onDeny = consentGate::deny,
+            onViewSchema = {
+                runCatching {
+                    uriHandler.openUri(TELEMETRY_SCHEMA_URL)
+                }
+            },
+            // Intentional: dismissing without picking keeps state at
+            // NotYetAsked so the sheet reappears next launch. No answer
+            // is not silent opt-in.
+            onDismiss = {},
+        )
+    }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
