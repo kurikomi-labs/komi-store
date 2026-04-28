@@ -4,6 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,9 +50,25 @@ class GithubStoreApp : Application() {
         scheduleBackgroundUpdateChecks()
         registerSelfAsInstalledApp()
         installCrashTelemetryHandler()
+        installSessionDurationObserver()
         fireAppLaunched()
         scheduleInitialExternalScan()
         scheduleSigningSeedSync()
+    }
+
+    private fun installSessionDurationObserver() {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) {
+                    val telemetry = get<ProductTelemetry>()
+                    val seconds = ColdStart.elapsedSeconds() ?: return@LifecycleEventObserver
+                    telemetry.fire(
+                        name = ProductTelemetryEvents.SESSION_DURATION,
+                        props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
+                    )
+                }
+            },
+        )
     }
 
     private fun installCrashTelemetryHandler() {

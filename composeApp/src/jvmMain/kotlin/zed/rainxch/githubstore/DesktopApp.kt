@@ -117,7 +117,16 @@ fun main(args: Array<String>) {
         }
 
         Window(
-            onCloseRequest = ::exitApplication,
+            onCloseRequest = {
+                val telemetry = GlobalContext.get().get<ProductTelemetry>()
+                ColdStart.elapsedSeconds()?.let { seconds ->
+                    telemetry.fire(
+                        name = ProductTelemetryEvents.SESSION_DURATION,
+                        props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
+                    )
+                }
+                exitApplication()
+            },
             title = stringResource(Res.string.app_name),
             icon = painterResource(Res.drawable.app_icon),
             onKeyEvent = { keyEvent ->

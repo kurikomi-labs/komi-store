@@ -18,6 +18,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.lifecycle.process)
 
             implementation(libs.core.splashscreen)
 

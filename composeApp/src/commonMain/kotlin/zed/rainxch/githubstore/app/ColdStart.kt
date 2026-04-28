@@ -17,4 +17,6 @@ object ColdStart {
         consumed = true
         return mark?.elapsedNow()?.inWholeMilliseconds
     }
+
+    fun elapsedSeconds(): Long? = mark?.elapsedNow()?.inWholeSeconds
 }
