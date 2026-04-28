@@ -90,7 +90,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "category",
+                                    from = DetailsFrom.Category,
                                 ),
                             )
                         },
@@ -113,7 +113,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "search",
+                                    from = DetailsFrom.Search,
                                 ),
                             )
                         },
@@ -122,7 +122,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     owner = owner,
                                     repo = repo,
-                                    from = "link",
+                                    from = DetailsFrom.Link,
                                 ),
                             )
                         },
@@ -146,7 +146,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "link",
+                                    from = DetailsFrom.Link,
                                 ),
                             )
                         },
@@ -164,7 +164,7 @@ fun AppNavigation(
                                     args.owner,
                                     args.repo,
                                     args.isComingFromUpdate,
-                                    args.from,
+                                    args.from.slug,
                                 )
                             },
                     )
@@ -180,7 +180,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "link",
+                                    from = DetailsFrom.Link,
                                 ),
                             )
                         },
@@ -212,7 +212,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = it,
-                                    from = "library",
+                                    from = DetailsFrom.Library,
                                 ),
                             )
                         },
@@ -235,7 +235,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "library",
+                                    from = DetailsFrom.Library,
                                 ),
                             )
                         },
@@ -289,7 +289,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
-                                    from = "library",
+                                    from = DetailsFrom.Library,
                                 ),
                             )
                         },
@@ -336,7 +336,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
-                                    from = "library",
+                                    from = DetailsFrom.Library,
                                 ),
                             )
                         },
@@ -358,7 +358,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
-                                    from = "library",
+                                    from = DetailsFrom.Library,
                                 ),
                             )
                         },

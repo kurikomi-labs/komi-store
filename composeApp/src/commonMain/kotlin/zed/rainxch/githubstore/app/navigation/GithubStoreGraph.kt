@@ -2,6 +2,18 @@ package zed.rainxch.githubstore.app.navigation
 
 import kotlinx.serialization.Serializable
 
+// E6 telemetry: where a Details nav originated. Closed set so the
+// FROM prop on DETAILS_VIEWED can never carry an arbitrary string.
+@Serializable
+enum class DetailsFrom(
+    val slug: String,
+) {
+    Search("search"),
+    Category("category"),
+    Library("library"),
+    Link("link"),
+}
+
 @Serializable
 sealed interface GithubStoreGraph {
     @Serializable
@@ -19,10 +31,9 @@ sealed interface GithubStoreGraph {
         val owner: String = "",
         val repo: String = "",
         val isComingFromUpdate: Boolean = false,
-        // E6 telemetry: where this nav originated. Categorical only —
-        // "search" / "category" / "library" / "link". Drives the FROM
-        // prop on DETAILS_VIEWED.
-        val from: String = "link",
+        // Drives the FROM prop on DETAILS_VIEWED. Typed so callers
+        // can't accidentally introduce off-allowlist values.
+        val from: DetailsFrom = DetailsFrom.Link,
     ) : GithubStoreGraph
 
     @Serializable
