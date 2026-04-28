@@ -242,6 +242,7 @@ val coreModule =
                 installedAppsRepository = get(),
                 pendingInstallNotifier = get(),
                 appScope = get(),
+                productTelemetry = get(),
             )
         }
     }

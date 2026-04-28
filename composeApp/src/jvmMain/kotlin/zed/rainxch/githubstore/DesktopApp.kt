@@ -23,6 +23,7 @@ import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
 import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.githubstore.app.categorizeCrash
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
 import zed.rainxch.githubstore.app.di.initKoin
@@ -51,6 +52,8 @@ fun main(args: Array<String>) {
     java.security.Security.setProperty("networkaddress.cache.negative.ttl", "5")
 
     initKoin()
+
+    installCrashTelemetryHandler()
 
     // Apply persisted UI language before any Compose code runs — same
     // reasoning as on Android (see `MainActivity.onCreate`). Desktop
@@ -129,6 +132,25 @@ fun main(args: Array<String>) {
         ) {
             App(deepLinkUri = deepLinkUri)
         }
+    }
+}
+
+private fun installCrashTelemetryHandler() {
+    val previous = Thread.getDefaultUncaughtExceptionHandler()
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+        runCatching {
+            val telemetry = GlobalContext.get().get<ProductTelemetry>()
+            telemetry.fire(
+                name = ProductTelemetryEvents.CRASH,
+                props =
+                    mapOf(
+                        ProductTelemetryProps.CATEGORY to categorizeCrash(throwable),
+                        ProductTelemetryProps.PLATFORM to desktopPlatformSlug(),
+                    ),
+            )
+            runBlocking { withTimeoutOrNull(500) { telemetry.flush() } }
+        }
+        previous?.uncaughtException(thread, throwable)
     }
 }
 

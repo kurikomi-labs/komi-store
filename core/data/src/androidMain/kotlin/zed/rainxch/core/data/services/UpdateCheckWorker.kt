@@ -24,6 +24,9 @@ import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.PackageMonitor
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 
 /**
@@ -46,6 +49,7 @@ class UpdateCheckWorker(
     private val externalImportRepository: ExternalImportRepository by inject()
     private val externalLinkDao: ExternalLinkDao by inject()
     private val packageMonitor: PackageMonitor by inject()
+    private val productTelemetry: ProductTelemetry by inject()
 
     override suspend fun doWork(): Result =
         try {
@@ -92,6 +96,14 @@ class UpdateCheckWorker(
             if (runAttemptCount < 3) {
                 Result.retry()
             } else {
+                productTelemetry.fire(
+                    name = ProductTelemetryEvents.OPERATION_FAILED,
+                    props =
+                        mapOf(
+                            ProductTelemetryProps.OP to "update",
+                            ProductTelemetryProps.ERROR_CODE to (e::class.simpleName ?: "unknown"),
+                        ),
+                )
                 Result.failure()
             }
         }

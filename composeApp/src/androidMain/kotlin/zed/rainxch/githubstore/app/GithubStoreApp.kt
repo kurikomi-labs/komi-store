@@ -10,6 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
@@ -43,9 +45,29 @@ class GithubStoreApp : Application() {
         startDownloadNotificationObserver()
         scheduleBackgroundUpdateChecks()
         registerSelfAsInstalledApp()
+        installCrashTelemetryHandler()
         fireAppLaunched()
         scheduleInitialExternalScan()
         scheduleSigningSeedSync()
+    }
+
+    private fun installCrashTelemetryHandler() {
+        val previous = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            runCatching {
+                val telemetry = get<ProductTelemetry>()
+                telemetry.fire(
+                    name = ProductTelemetryEvents.CRASH,
+                    props =
+                        mapOf(
+                            ProductTelemetryProps.CATEGORY to categorizeCrash(throwable),
+                            ProductTelemetryProps.PLATFORM to "android",
+                        ),
+                )
+                runBlocking { withTimeoutOrNull(500) { telemetry.flush() } }
+            }
+            previous?.uncaughtException(thread, throwable)
+        }
     }
 
     private fun fireAppLaunched() {

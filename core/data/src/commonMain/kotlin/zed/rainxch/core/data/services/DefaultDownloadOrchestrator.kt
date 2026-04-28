@@ -17,6 +17,9 @@ import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.DownloadOrchestrator
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.core.domain.system.DownloadSpec
 import zed.rainxch.core.domain.system.DownloadStage
 import zed.rainxch.core.domain.system.InstallOutcome
@@ -75,6 +78,7 @@ class DefaultDownloadOrchestrator(
     private val installedAppsRepository: InstalledAppsRepository,
     private val pendingInstallNotifier: PendingInstallNotifier,
     private val appScope: CoroutineScope,
+    private val productTelemetry: ProductTelemetry,
 ) : DownloadOrchestrator {
     private companion object {
         private const val DEFAULT_MAX_CONCURRENT = 3
@@ -160,7 +164,7 @@ class DefaultDownloadOrchestrator(
                     throw e
                 } catch (t: Throwable) {
                     Logger.e(t) { "Orchestrator: download/install failed for ${spec.packageName}" }
-                    markFailed(spec.packageName, t.message)
+                    markFailed(spec.packageName, t.message, op = "download", throwable = t)
                 } finally {
                     stateMutex.withLock {
                         if (activeJobs[spec.packageName]?.isCompleted == true ||
@@ -300,7 +304,7 @@ class DefaultDownloadOrchestrator(
             throw e
         } catch (t: Throwable) {
             Logger.e(t) { "Orchestrator: install failed for ${spec.packageName}" }
-            markFailed(spec.packageName, t.message)
+            markFailed(spec.packageName, t.message, op = "install", throwable = t)
         }
     }
 
@@ -527,7 +531,7 @@ class DefaultDownloadOrchestrator(
             throw e
         } catch (t: Throwable) {
             Logger.e(t) { "Orchestrator: standalone install failed for $packageName" }
-            markFailed(packageName, t.message)
+            markFailed(packageName, t.message, op = "install", throwable = t)
             null
         }
     }
@@ -551,13 +555,26 @@ class DefaultDownloadOrchestrator(
         }
     }
 
-    private suspend fun markFailed(packageName: String, message: String?) {
+    private suspend fun markFailed(
+        packageName: String,
+        message: String?,
+        op: String,
+        throwable: Throwable? = null,
+    ) {
         stateMutex.withLock {
             _downloads.update { state ->
                 val current = state[packageName] ?: return@update state
                 state + (packageName to current.copy(stage = DownloadStage.Failed, errorMessage = message))
             }
         }
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.OPERATION_FAILED,
+            props =
+                mapOf(
+                    ProductTelemetryProps.OP to op,
+                    ProductTelemetryProps.ERROR_CODE to (throwable?.let { it::class.simpleName } ?: "unknown"),
+                ),
+        )
     }
 
     private fun generateId(): String =
