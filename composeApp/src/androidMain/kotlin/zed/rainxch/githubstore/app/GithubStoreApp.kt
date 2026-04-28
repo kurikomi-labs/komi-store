@@ -31,6 +31,7 @@ import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
 import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.githubstore.app.di.initKoin
+import kotlin.time.TimeSource
 
 class GithubStoreApp : Application() {
     private var packageEventReceiver: PackageEventReceiver? = null
@@ -57,19 +58,37 @@ class GithubStoreApp : Application() {
     }
 
     private fun installSessionDurationObserver() {
+        // Per-foreground session — set on ON_START, consumed on ON_STOP.
+        // Distinct from ColdStart so each backgrounding reports its own
+        // duration rather than monotonically-growing process uptime.
+        var foregroundStart: TimeSource.Monotonic.ValueTimeMark? = null
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_STOP) {
-                    val telemetry = get<ProductTelemetry>()
-                    ColdStart.elapsedSeconds()?.let { seconds ->
-                        telemetry.fire(
-                            name = ProductTelemetryEvents.SESSION_DURATION,
-                            props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
-                        )
+                when (event) {
+                    Lifecycle.Event.ON_START -> {
+                        foregroundStart = TimeSource.Monotonic.markNow()
                     }
-                    // Best-effort flush — bounded so we never block the
-                    // process indefinitely if the network is hostile.
-                    runBlocking { withTimeoutOrNull(2_000) { telemetry.flush() } }
+
+                    Lifecycle.Event.ON_STOP -> {
+                        val seconds = foregroundStart?.elapsedNow()?.inWholeSeconds
+                        foregroundStart = null
+                        val telemetry = get<ProductTelemetry>()
+                        if (seconds != null) {
+                            telemetry.fire(
+                                name = ProductTelemetryEvents.SESSION_DURATION,
+                                props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
+                            )
+                        }
+                        // Off-main bounded flush — ON_STOP runs on the main
+                        // thread, never block it on the network.
+                        appScope.launch {
+                            withTimeoutOrNull(2_000) { telemetry.flush() }
+                        }
+                    }
+
+                    else -> {
+                        Unit
+                    }
                 }
             },
         )
@@ -90,7 +109,14 @@ class GithubStoreApp : Application() {
                 )
                 runBlocking { withTimeoutOrNull(500) { telemetry.flush() } }
             }
-            previous?.uncaughtException(thread, throwable)
+            // When `previous` is null we still need to surface the crash —
+            // delegate to the thread's group so the JVM's default printout
+            // and exit behaviour kicks in instead of swallowing silently.
+            if (previous != null) {
+                previous.uncaughtException(thread, throwable)
+            } else {
+                thread.threadGroup?.uncaughtException(thread, throwable)
+            }
         }
     }
 
