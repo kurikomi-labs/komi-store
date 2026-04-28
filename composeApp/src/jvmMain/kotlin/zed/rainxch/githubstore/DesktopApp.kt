@@ -37,12 +37,12 @@ import kotlin.system.exitProcess
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
 fun main(args: Array<String>) {
-    ColdStart.markStart()
-
-    // Install first so anything that blows up during Koin init or
-    // resource loading leaves a diagnosable trail on disk (see
-    // `CrashReporter.resolveLogDir` for the per-OS path).
+    // Install first so anything that blows up during ColdStart, Koin
+    // init, or resource loading leaves a diagnosable trail on disk
+    // (see `CrashReporter.resolveLogDir` for the per-OS path).
     CrashReporter.install()
+
+    ColdStart.markStart()
 
     // Guard the AWT EventDispatchThread against a known Compose MP 1.10.x NPE
     // raised by the macOS accessibility bridge (see `A11yCrashGuard`).
@@ -80,21 +80,24 @@ fun main(args: Array<String>) {
         localization.setActiveLanguageTag(tag)
     }
 
-    // Fire app_launched once per process. No-op when consent is not Granted.
-    // The impl reads BuildKonfig.VERSION_NAME internally for the appVersion
-    // field on every fire(); we just supply the platform-specific version
-    // bucket via the props map. (BuildKonfig is internal to core/data so we
-    // can't read it from composeApp directly.)
+    val deepLinkArg = args.firstOrNull()
+
+    if (deepLinkArg != null && DesktopDeepLink.tryForwardToRunningInstance(deepLinkArg)) {
+        // Transient handoff process — exit before firing APP_LAUNCHED so
+        // forwarder invocations don't get counted as user-visible launches.
+        exitProcess(0)
+    }
+
+    // Fire app_launched once per *real* process (after the deep-link
+    // forwarder has had a chance to exit transient processes). No-op when
+    // consent is not Granted. The impl reads BuildKonfig.VERSION_NAME
+    // internally for the appVersion field on every fire(); we just supply
+    // the platform-specific version bucket via the props map. (BuildKonfig
+    // is internal to core/data so we can't read it from composeApp directly.)
     GlobalContext.get().get<ProductTelemetry>().fire(
         name = ProductTelemetryEvents.APP_LAUNCHED,
         props = mapOf(ProductTelemetryProps.PLATFORM to desktopPlatformSlug()),
     )
-
-    val deepLinkArg = args.firstOrNull()
-
-    if (deepLinkArg != null && DesktopDeepLink.tryForwardToRunningInstance(deepLinkArg)) {
-        exitProcess(0)
-    }
 
     DesktopDeepLink.registerUriSchemeIfNeeded()
 
@@ -177,7 +180,14 @@ private fun installCrashTelemetryHandler() {
             )
             runBlocking { withTimeoutOrNull(500) { telemetry.flush() } }
         }
-        previous?.uncaughtException(thread, throwable)
+        // Delegate to whatever the JVM had set up before us, falling back
+        // to the thread's group so the default print-and-exit behaviour
+        // still runs when no explicit handler is installed.
+        if (previous != null) {
+            previous.uncaughtException(thread, throwable)
+        } else {
+            thread.threadGroup?.uncaughtException(thread, throwable)
+        }
     }
 }
 
