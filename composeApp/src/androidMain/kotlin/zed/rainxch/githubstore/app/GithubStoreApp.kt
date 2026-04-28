@@ -61,11 +61,15 @@ class GithubStoreApp : Application() {
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_STOP) {
                     val telemetry = get<ProductTelemetry>()
-                    val seconds = ColdStart.elapsedSeconds() ?: return@LifecycleEventObserver
-                    telemetry.fire(
-                        name = ProductTelemetryEvents.SESSION_DURATION,
-                        props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
-                    )
+                    ColdStart.elapsedSeconds()?.let { seconds ->
+                        telemetry.fire(
+                            name = ProductTelemetryEvents.SESSION_DURATION,
+                            props = mapOf(ProductTelemetryProps.SECONDS to seconds.toString()),
+                        )
+                    }
+                    // Best-effort flush — bounded so we never block the
+                    // process indefinitely if the network is hostile.
+                    runBlocking { withTimeoutOrNull(2_000) { telemetry.flush() } }
                 }
             },
         )

@@ -57,6 +57,7 @@ fun main(args: Array<String>) {
     initKoin()
 
     installCrashTelemetryHandler()
+    installTelemetryShutdownHook()
 
     // Apply persisted UI language before any Compose code runs — same
     // reasoning as on Android (see `MainActivity.onCreate`). Desktop
@@ -145,6 +146,20 @@ fun main(args: Array<String>) {
             App(deepLinkUri = deepLinkUri)
         }
     }
+}
+
+private fun installTelemetryShutdownHook() {
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            runCatching {
+                runBlocking {
+                    withTimeoutOrNull(2_000) {
+                        GlobalContext.get().get<ProductTelemetry>().flush()
+                    }
+                }
+            }
+        },
+    )
 }
 
 private fun installCrashTelemetryHandler() {
