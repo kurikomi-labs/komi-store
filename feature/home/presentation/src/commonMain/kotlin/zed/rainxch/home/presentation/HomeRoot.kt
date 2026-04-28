@@ -108,8 +108,14 @@ import zed.rainxch.home.presentation.locals.LocalHomeTopBarLiquid
 import zed.rainxch.home.presentation.utils.displayText
 import zed.rainxch.home.presentation.utils.icon
 
+// Pinned to the client commit that ships this release so "View what we
+// collect" always reflects the schema actually used by the running app.
+// Bump this hash whenever ProductTelemetryEvents.kt changes — and only
+// when shipping a release that includes the new entry.
 private const val TELEMETRY_SCHEMA_URL =
-    "https://github.com/OpenHub-Store/backend/blob/main/src/main/kotlin/zed/rainxch/githubstore/telemetry/TelemetryEvent.kt"
+    "https://github.com/OpenHub-Store/GitHub-Store/blob/" +
+        "42d0319235f8c973a732bd299965208d7fe95ec4" +
+        "/core/domain/src/commonMain/kotlin/zed/rainxch/core/domain/telemetry/ProductTelemetryEvents.kt"
 
 @Composable
 fun HomeRoot(
