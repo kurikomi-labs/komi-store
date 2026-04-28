@@ -690,9 +690,9 @@
     <string name="reset_analytics_id_description">Generate a new anonymous ID, severing the link to past telemetry.</string>
     <string name="analytics_id_reset">Analytics ID reset</string>
     <string name="settings_product_telemetry_title">Anonymous usage data</string>
-    <string name="settings_product_telemetry_description">Help improve GitHub Store with anonymous, aggregate metrics. We never collect search queries, repo names, or personal or account identifiers. Schema is open source.</string>
+    <string name="settings_product_telemetry_description">Help improve GitHub Store with anonymous, aggregate metrics tied only to a session ID that resets every launch. The full list of events is open source — see "View what we collect" on the consent screen.</string>
     <string name="product_telemetry_sheet_title">Help improve GitHub Store</string>
-    <string name="product_telemetry_sheet_body">We collect anonymous, aggregate usage data to find bugs and improve performance. We never collect your repos, search queries, or personal or account identifiers. The full schema and collection code are open source.</string>
+    <string name="product_telemetry_sheet_body">We collect anonymous, bucketed usage data to find bugs and improve performance. Every event is tied only to a session ID that resets each time you open the app. Tap "View what we collect" below for the precise list.</string>
     <string name="product_telemetry_sheet_grant">Got it</string>
     <string name="product_telemetry_sheet_deny">No thanks</string>
     <string name="privacy_collected_title">What we collect</string>
@@ -725,12 +725,18 @@
     <string name="privacy_collected_proxy_used_desc">That an outbound request used your configured proxy, plus whether it succeeded (true / false).</string>
     <string name="privacy_collected_section_updates">Updates</string>
     <string name="privacy_collected_update_installed_desc">That an existing app was successfully updated to a new version.</string>
+    <string name="privacy_collected_section_server_side">Server-side processing</string>
+    <string name="privacy_collected_server_side_intro">A few signals are derived by our backend from normal API requests, independent of your telemetry choices:</string>
+    <string name="privacy_collected_server_side_search_misses">Searches that return fewer than 5 results have a one-way 64-bit hash of the query recorded for ranking quality. Raw query text is never stored.</string>
+    <string name="privacy_collected_server_side_logs">HTTP request logs are size-bounded. They never contain your IP (we sit behind a CDN), query strings, request bodies, or auth headers.</string>
     <string name="privacy_collected_never_title">We never collect</string>
-    <string name="privacy_collected_never_search_queries">Search queries</string>
-    <string name="privacy_collected_never_repo_identifiers">Repo names, owner names, or package names</string>
+    <string name="privacy_collected_never_raw_queries">Raw search query text</string>
+    <string name="privacy_collected_never_repo_identifiers">Repo names, owner names, or package names in analytics events</string>
     <string name="privacy_collected_never_paths">File paths, stack traces, or exception messages</string>
     <string name="privacy_collected_never_account">GitHub usernames, emails, or any account-identifying information</string>
     <string name="privacy_collected_never_personal">Anything that could personally identify you</string>
+    <string name="privacy_collected_never_tokens">Your GitHub OAuth or PAT tokens (forwarded once for the request, never persisted or logged)</string>
+    <string name="privacy_collected_never_ip">Your IP address (CDN terminates the connection; the backend never sees it)</string>
     <string name="product_telemetry_sheet_view_schema">View what we collect</string>
 
     <!-- Search history -->

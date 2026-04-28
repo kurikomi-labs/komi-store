@@ -42,11 +42,13 @@ import zed.rainxch.githubstore.core.presentation.res.privacy_collected_import_sc
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_import_skipped_desc
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_intro
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_account
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_ip
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_paths
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_personal
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_raw_queries
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_repo_identifiers
-import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_search_queries
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_title
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_never_tokens
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_operation_failed_desc
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_proxy_configured_desc
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_proxy_used_desc
@@ -56,8 +58,12 @@ import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_l
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_network
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_performance
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_reliability
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_server_side
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_session
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_section_updates
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_server_side_intro
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_server_side_logs
+import zed.rainxch.githubstore.core.presentation.res.privacy_collected_server_side_search_misses
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_session_duration_desc
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_title
 import zed.rainxch.githubstore.core.presentation.res.privacy_collected_update_installed_desc
@@ -140,11 +146,19 @@ private val sections =
 
 private val neverCollected =
     listOf(
-        Res.string.privacy_collected_never_search_queries,
+        Res.string.privacy_collected_never_raw_queries,
         Res.string.privacy_collected_never_repo_identifiers,
         Res.string.privacy_collected_never_paths,
         Res.string.privacy_collected_never_account,
+        Res.string.privacy_collected_never_tokens,
+        Res.string.privacy_collected_never_ip,
         Res.string.privacy_collected_never_personal,
+    )
+
+private val serverSideItems =
+    listOf(
+        Res.string.privacy_collected_server_side_search_misses,
+        Res.string.privacy_collected_server_side_logs,
     )
 
 @Composable
@@ -192,6 +206,19 @@ fun PrivacyCollectedView(
                 items(section.events) { event ->
                     EventRow(event.name, stringResource(event.description))
                 }
+            }
+            item {
+                Spacer(Modifier.height(8.dp))
+                SectionHeader(stringResource(Res.string.privacy_collected_section_server_side))
+                Text(
+                    text = stringResource(Res.string.privacy_collected_server_side_intro),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+            items(serverSideItems) { res ->
+                BulletRow(stringResource(res))
             }
             item {
                 Spacer(Modifier.height(8.dp))
