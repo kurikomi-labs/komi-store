@@ -1,7 +1,7 @@
 package zed.rainxch.core.domain.repository
 
 interface TelemetryRepository {
-    fun recordSearchPerformed(query: String, resultCount: Int)
+    fun recordSearchPerformed(resultCount: Int)
 
     fun recordSearchResultClicked(repoId: Long)
 

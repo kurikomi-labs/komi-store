@@ -9,7 +9,6 @@ data class EventRequest(
     val appVersion: String? = null,
     val eventType: String,
     val repoId: Long? = null,
-    val queryHash: String? = null,
     val resultCount: Int? = null,
     val success: Boolean? = null,
     val errorCode: String? = null,

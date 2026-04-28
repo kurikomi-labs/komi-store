@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.BuildKonfig
 import zed.rainxch.core.data.dto.EventRequest
 import zed.rainxch.core.data.network.BackendApiClient
-import zed.rainxch.core.data.utils.hashQuery
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.DeviceIdentityRepository
@@ -42,10 +41,12 @@ class TelemetryRepositoryImpl(
 
     // ── recording (fire-and-forget, guarded by opt-in) ──────────────
 
-    override fun recordSearchPerformed(query: String, resultCount: Int) {
+    override fun recordSearchPerformed(resultCount: Int) {
+        // Query intentionally dropped: a 16-hex SHA-256 prefix of a
+        // lowercased repo-name search is rainbow-table-trivial. The
+        // count-only signal here is what survives.
         enqueue(
             eventType = "search_performed",
-            queryHash = hashQuery(query),
             resultCount = resultCount,
         )
     }
@@ -240,7 +241,6 @@ class TelemetryRepositoryImpl(
     private fun enqueue(
         eventType: String,
         repoId: Long? = null,
-        queryHash: String? = null,
         resultCount: Int? = null,
         success: Boolean? = null,
         errorCode: String? = null,
@@ -256,7 +256,6 @@ class TelemetryRepositoryImpl(
                 appVersion = BuildKonfig.VERSION_NAME,
                 eventType = eventType,
                 repoId = repoId,
-                queryHash = queryHash,
                 resultCount = resultCount,
                 success = success,
                 errorCode = errorCode,

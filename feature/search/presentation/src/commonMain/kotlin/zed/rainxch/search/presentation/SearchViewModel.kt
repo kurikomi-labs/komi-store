@@ -418,7 +418,6 @@ class SearchViewModel(
                     if (isInitial) {
                         val resultCount = _state.value.repositories.size
                         telemetryRepository.recordSearchPerformed(
-                            query = query,
                             resultCount = resultCount,
                         )
                         productTelemetry.fire(
