@@ -150,7 +150,7 @@ fun HomeRoot(
         ProductTelemetryConsentSheet(
             onGrant = consentGate::grant,
             onDeny = consentGate::deny,
-            onViewSchema = {
+            onViewSchemaSource = {
                 runCatching {
                     uriHandler.openUri(TELEMETRY_SCHEMA_URL)
                 }
