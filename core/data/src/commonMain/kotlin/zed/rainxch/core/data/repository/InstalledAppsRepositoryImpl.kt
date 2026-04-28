@@ -455,7 +455,9 @@ class InstalledAppsRepositoryImpl(
             ),
         )
 
-        productTelemetry.fire(name = ProductTelemetryEvents.UPDATE_INSTALLED)
+        // Best-effort: telemetry must never fail an update persistence.
+        runCatching { productTelemetry.fire(name = ProductTelemetryEvents.UPDATE_INSTALLED) }
+            .onFailure { Logger.d(it) { "UPDATE_INSTALLED telemetry failed" } }
     }
 
     override suspend fun updateApp(app: InstalledApp) {

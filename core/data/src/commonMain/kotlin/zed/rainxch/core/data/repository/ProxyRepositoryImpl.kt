@@ -186,18 +186,21 @@ class ProxyRepositoryImpl(
         }
         ProxyManager.setConfig(scope, config)
 
-        productTelemetry.fire(
-            name = ProductTelemetryEvents.PROXY_CONFIGURED,
-            props =
-                mapOf(
-                    ProductTelemetryProps.TYPE to
-                        when (config) {
-                            is ProxyConfig.Http -> "http"
-                            is ProxyConfig.Socks -> "socks5"
-                            ProxyConfig.None, ProxyConfig.System -> "none"
-                        },
-                ),
-        )
+        // Best-effort: a save shouldn't fail because telemetry hiccupped.
+        runCatching {
+            productTelemetry.fire(
+                name = ProductTelemetryEvents.PROXY_CONFIGURED,
+                props =
+                    mapOf(
+                        ProductTelemetryProps.TYPE to
+                            when (config) {
+                                is ProxyConfig.Http -> "http"
+                                is ProxyConfig.Socks -> "socks5"
+                                ProxyConfig.None, ProxyConfig.System -> "none"
+                            },
+                    ),
+            )
+        }.onFailure { logger.debug("PROXY_CONFIGURED telemetry failed: ${it.message}") }
     }
 
     private fun writeOrRemove(
