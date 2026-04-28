@@ -8,7 +8,7 @@ This document is the punch list to take the client to GA. Read top to bottom.
 
 ## 0. What already exists on this branch (do NOT redo)
 
-```
+```text
 core/domain/src/commonMain/kotlin/zed/rainxch/core/domain/telemetry/
   ProductTelemetry.kt              // interface: fire(name, props) + flush()
   ProductTelemetryConsent.kt       // enum: NotYetAsked / Granted / Denied
@@ -49,7 +49,7 @@ composeApp/src/jvmMain/kotlin/zed/rainxch/githubstore/DesktopApp.kt
 **Goal:** user can manually toggle product telemetry from the existing tweaks/privacy screen.
 
 **Find the existing legacy-telemetry Switch:**
-```
+```bash
 grep -rn 'OnTelemetryToggled\|isTelemetryEnabled' feature/tweaks/presentation/src/commonMain/kotlin/zed/rainxch/tweaks/presentation/components/
 ```
 
@@ -416,7 +416,7 @@ After all merge: open PR `feature/e6-telemetry → main`, ship a new app release
 
 ## 9. Backend contract recap
 
-```
+```text
 POST https://api.github-store.org/v1/telemetry/events
 Body:
 {
