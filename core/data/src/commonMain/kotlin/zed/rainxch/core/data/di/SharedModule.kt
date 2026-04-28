@@ -205,7 +205,7 @@ val coreModule =
 
         single<ProductTelemetry> {
             ProductTelemetryImpl(
-                backendApiClient = get(),
+                backendApiClientProvider = { get() },
                 tweaksRepository = get(),
                 platform = get(),
                 appScope = get(),

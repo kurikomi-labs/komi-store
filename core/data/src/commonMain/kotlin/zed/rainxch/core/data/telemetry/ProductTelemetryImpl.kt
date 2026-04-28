@@ -1,5 +1,6 @@
 package zed.rainxch.core.data.telemetry
 
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,12 +27,19 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalEncodingApi::class)
 class ProductTelemetryImpl(
-    private val backendApiClient: BackendApiClient,
+    // Lazy-resolved to break the BackendApiClient ↔ ProductTelemetry cycle
+    // in Koin: BackendApiClient injects ProductTelemetry for PROXY_USED
+    // emission, and we need BackendApiClient to ship batches. Both are
+    // singletons, so deferring resolution to first use lets Koin construct
+    // either one first.
+    private val backendApiClientProvider: () -> BackendApiClient,
     private val tweaksRepository: TweaksRepository,
     private val platform: Platform,
     private val appScope: CoroutineScope,
     private val logger: GitHubStoreLogger,
 ) : ProductTelemetry {
+
+    private val backendApiClient: BackendApiClient by lazy(backendApiClientProvider)
 
     // Fresh per process. The contract from E6 is "ephemeral, reset per app
     // launch" — the JVM/Android process lifecycle scopes that for us.
@@ -50,7 +58,10 @@ class ProductTelemetryImpl(
             while (true) {
                 delay(FLUSH_INTERVAL_MS)
                 runCatching { flushInternal() }
-                    .onFailure { logger.debug("Product telemetry flush error: ${it.message}") }
+                    .onFailure {
+                        if (it is CancellationException) throw it
+                        logger.debug("Product telemetry flush error: ${it.message}")
+                    }
             }
         }
     }
@@ -70,12 +81,13 @@ class ProductTelemetryImpl(
                 appVersion = BuildKonfig.VERSION_NAME,
                 props = props.toJsonObject(),
             )
-            bufferMutex.withLock {
+            val shouldFlush = bufferMutex.withLock {
                 if (buffer.size >= MAX_BUFFER_SIZE) buffer.removeFirst()
                 buffer.add(body)
-                if (buffer.size >= FLUSH_BATCH_THRESHOLD) {
-                    appScope.launch { flushInternal() }
-                }
+                buffer.size >= FLUSH_BATCH_THRESHOLD
+            }
+            if (shouldFlush) {
+                appScope.launch { flushInternal() }
             }
         }
     }
