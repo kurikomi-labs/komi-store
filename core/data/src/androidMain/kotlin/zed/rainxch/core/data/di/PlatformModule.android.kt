@@ -20,6 +20,9 @@ import zed.rainxch.core.data.services.AndroidUpdateScheduleManager
 import zed.rainxch.core.data.services.DownloadNotificationObserver
 import zed.rainxch.core.data.services.FileLocationsProvider
 import zed.rainxch.core.data.services.LocalizationManager
+import zed.rainxch.core.data.services.external.AndroidExternalAppScanner
+import zed.rainxch.core.data.services.external.InstallerSourceClassifier
+import zed.rainxch.core.data.services.external.ManifestHintExtractor
 import zed.rainxch.core.data.services.shizuku.AndroidInstallerStatusProvider
 import zed.rainxch.core.data.services.shizuku.ShizukuInstallerWrapper
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
@@ -30,6 +33,7 @@ import zed.rainxch.core.data.utils.AndroidShareManager
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.system.DownloadOrchestrator
 import zed.rainxch.core.domain.system.DownloadProgressNotifier
+import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.PackageMonitor
@@ -106,6 +110,23 @@ actual val corePlatformModule =
 
         single<PackageMonitor> {
             AndroidPackageMonitor(androidContext())
+        }
+
+        single { ManifestHintExtractor() }
+
+        single {
+            InstallerSourceClassifier(
+                packageManager = androidContext().packageManager,
+                selfPackageName = androidContext().packageName,
+            )
+        }
+
+        single<ExternalAppScanner> {
+            AndroidExternalAppScanner(
+                context = androidContext(),
+                manifestHintExtractor = get(),
+                installerSourceClassifier = get(),
+            )
         }
 
         single<LocalizationManager> {

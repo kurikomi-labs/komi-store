@@ -95,6 +95,97 @@ class TelemetryRepositoryImpl(
         enqueue(eventType = "unfavorited", repoId = repoId)
     }
 
+    // ── E1 external-import events ───────────────────────────────────
+    // Privacy invariant: never pass package names, repo names, app
+    // labels, or signing fingerprints — only bucketed strings, enums,
+    // and counts. Enforced in CI by `PrivacyAuditTest` (E6).
+
+    override suspend fun importScanStarted(trigger: String) {
+        enqueueExt(eventType = "import_scan_started", trigger = trigger)
+    }
+
+    override suspend fun importScanCompleted(
+        candidateCountBucket: String,
+        durationMsBucket: String,
+    ) {
+        enqueueExt(
+            eventType = "import_scan_completed",
+            candidateCountBucket = candidateCountBucket,
+            durationMsBucket = durationMsBucket,
+        )
+    }
+
+    override suspend fun importMatchAttempted(strategy: String, confidenceBucket: String) {
+        enqueueExt(
+            eventType = "import_match_attempted",
+            strategy = strategy,
+            confidenceBucket = confidenceBucket,
+        )
+    }
+
+    override suspend fun importAutoLinked(countBucket: String) {
+        enqueueExt(eventType = "import_auto_linked", countBucket = countBucket)
+    }
+
+    override suspend fun importManuallyLinked(countBucket: String, source: String) {
+        enqueueExt(
+            eventType = "import_manually_linked",
+            countBucket = countBucket,
+            source = source,
+        )
+    }
+
+    override suspend fun importSkipped(countBucket: String, persisted: String) {
+        enqueueExt(
+            eventType = "import_skipped",
+            countBucket = countBucket,
+            persisted = persisted,
+        )
+    }
+
+    override suspend fun importUnlinkedFromDetails() {
+        enqueueExt(eventType = "import_unlinked_from_details")
+    }
+
+    override suspend fun importPermissionRequested() {
+        enqueueExt(eventType = "import_permission_requested")
+    }
+
+    override suspend fun importPermissionOutcome(granted: Boolean, sdkIntBucket: String) {
+        enqueueExt(
+            eventType = "import_permission_outcome",
+            granted = granted,
+            sdkIntBucket = sdkIntBucket,
+        )
+    }
+
+    override suspend fun importSearchOverrideUsed() {
+        enqueueExt(eventType = "import_search_override_used")
+    }
+
+    override suspend fun importSearchOverrideNoResults() {
+        enqueueExt(eventType = "import_search_override_no_results")
+    }
+
+    override suspend fun signingSeedSyncCompleted(
+        rowsAddedBucket: String,
+        durationMsBucket: String,
+    ) {
+        enqueueExt(
+            eventType = "signing_seed_sync_completed",
+            rowsAddedBucket = rowsAddedBucket,
+            durationMsBucket = durationMsBucket,
+        )
+    }
+
+    override suspend fun externalMatchApiFailure(statusCodeBucket: String, retried: Boolean) {
+        enqueueExt(
+            eventType = "external_match_api_failure",
+            statusCodeBucket = statusCodeBucket,
+            retried = retried,
+        )
+    }
+
     // ── batching ────────────────────────────────────────────────────
 
     override suspend fun flushPending() {
@@ -169,6 +260,56 @@ class TelemetryRepositoryImpl(
                 resultCount = resultCount,
                 success = success,
                 errorCode = errorCode,
+            )
+
+            bufferMutex.withLock {
+                if (buffer.size >= MAX_BUFFER_SIZE) {
+                    buffer.removeFirst()
+                }
+                buffer.add(event)
+            }
+        }
+    }
+
+    private fun enqueueExt(
+        eventType: String,
+        trigger: String? = null,
+        strategy: String? = null,
+        confidenceBucket: String? = null,
+        countBucket: String? = null,
+        candidateCountBucket: String? = null,
+        durationMsBucket: String? = null,
+        rowsAddedBucket: String? = null,
+        statusCodeBucket: String? = null,
+        sdkIntBucket: String? = null,
+        source: String? = null,
+        persisted: String? = null,
+        granted: Boolean? = null,
+        retried: Boolean? = null,
+    ) {
+        appScope.launch {
+            if (!telemetryEnabled()) return@launch
+
+            val deviceId = runCatching { deviceIdentity.getDeviceId() }.getOrNull() ?: return@launch
+
+            val event = EventRequest(
+                deviceId = deviceId,
+                platform = platformSlug(),
+                appVersion = BuildKonfig.VERSION_NAME,
+                eventType = eventType,
+                trigger = trigger,
+                strategy = strategy,
+                confidenceBucket = confidenceBucket,
+                countBucket = countBucket,
+                candidateCountBucket = candidateCountBucket,
+                durationMsBucket = durationMsBucket,
+                rowsAddedBucket = rowsAddedBucket,
+                statusCodeBucket = statusCodeBucket,
+                sdkIntBucket = sdkIntBucket,
+                source = source,
+                persisted = persisted,
+                granted = granted,
+                retried = retried,
             )
 
             bufferMutex.withLock {

@@ -69,6 +69,7 @@ data class DetailsState(
     val showExternalInstallerPrompt: Boolean = false,
     val pendingInstallFilePath: String? = null,
     val showUninstallConfirmation: Boolean = false,
+    val showUnlinkConfirmation: Boolean = false,
     val attestationStatus: AttestationStatus = AttestationStatus.UNCHECKED,
     /**
      * Days since the most recent stable release when the project is

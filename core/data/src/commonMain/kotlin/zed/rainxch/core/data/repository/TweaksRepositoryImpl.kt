@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
@@ -245,6 +246,39 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getExternalImportEnabled(): Flow<Boolean> =
+        preferences.data.map { prefs ->
+            prefs[EXTERNAL_IMPORT_ENABLED_KEY] ?: true
+        }
+
+    override suspend fun setExternalImportEnabled(enabled: Boolean) {
+        preferences.edit { prefs ->
+            prefs[EXTERNAL_IMPORT_ENABLED_KEY] = enabled
+        }
+    }
+
+    override fun getExternalMatchSearchEnabled(): Flow<Boolean> =
+        preferences.data.map { prefs ->
+            prefs[EXTERNAL_MATCH_SEARCH_ENABLED_KEY] ?: false
+        }
+
+    override suspend fun setExternalMatchSearchEnabled(enabled: Boolean) {
+        preferences.edit { prefs ->
+            prefs[EXTERNAL_MATCH_SEARCH_ENABLED_KEY] = enabled
+        }
+    }
+
+    override fun getExternalImportBannerDismissedAtCount(): Flow<Int> =
+        preferences.data.map { prefs ->
+            prefs[EXTERNAL_IMPORT_BANNER_DISMISSED_AT_KEY] ?: 0
+        }
+
+    override suspend fun setExternalImportBannerDismissedAtCount(count: Int) {
+        preferences.edit { prefs ->
+            prefs[EXTERNAL_IMPORT_BANNER_DISMISSED_AT_KEY] = count
+        }
+    }
+
     companion object {
         private const val DEFAULT_UPDATE_CHECK_INTERVAL_HOURS = 6L
 
@@ -267,5 +301,8 @@ class TweaksRepositoryImpl(
         private val YOUDAO_APP_KEY = stringPreferencesKey("youdao_app_key")
         private val YOUDAO_APP_SECRET = stringPreferencesKey("youdao_app_secret")
         private val APP_LANGUAGE_KEY = stringPreferencesKey("app_language")
+        private val EXTERNAL_IMPORT_ENABLED_KEY = booleanPreferencesKey("external_import_enabled")
+        private val EXTERNAL_MATCH_SEARCH_ENABLED_KEY = booleanPreferencesKey("external_match_search_enabled")
+        private val EXTERNAL_IMPORT_BANNER_DISMISSED_AT_KEY = intPreferencesKey("external_import_banner_dismissed_at")
     }
 }

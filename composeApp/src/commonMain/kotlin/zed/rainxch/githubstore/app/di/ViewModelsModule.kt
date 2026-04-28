@@ -4,6 +4,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import zed.rainxch.apps.presentation.AppsViewModel
+import zed.rainxch.apps.presentation.import.ExternalImportViewModel
 import zed.rainxch.auth.presentation.AuthenticationViewModel
 import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
@@ -18,6 +19,7 @@ import zed.rainxch.tweaks.presentation.TweaksViewModel
 val viewModelsModule =
     module {
         viewModelOf(::AppsViewModel)
+        viewModelOf(::ExternalImportViewModel)
         viewModelOf(::AuthenticationViewModel)
         viewModel { params ->
             // Indexed access because `ownerParam` and `repoParam` are both
@@ -48,6 +50,7 @@ val viewModelsModule =
                 attestationVerifier = get(),
                 downloadOrchestrator = get(),
                 telemetryRepository = get(),
+                externalImportRepository = get(),
             )
         }
         viewModelOf(::DeveloperProfileViewModel)

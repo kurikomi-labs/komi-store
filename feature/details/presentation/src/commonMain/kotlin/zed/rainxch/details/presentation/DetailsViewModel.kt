@@ -31,6 +31,7 @@ import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.model.isEffectivelyPreRelease
 import zed.rainxch.core.domain.network.Downloader
+import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
@@ -72,6 +73,8 @@ import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.added_to_favourites
+import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_failure
+import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_success
 import zed.rainxch.githubstore.core.presentation.res.failed_to_open_app
 import zed.rainxch.githubstore.core.presentation.res.failed_to_share_link
 import zed.rainxch.githubstore.core.presentation.res.failed_to_uninstall
@@ -114,6 +117,7 @@ class DetailsViewModel(
     private val attestationVerifier: AttestationVerifier,
     private val downloadOrchestrator: DownloadOrchestrator,
     private val telemetryRepository: TelemetryRepository,
+    private val externalImportRepository: ExternalImportRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentDownloadJob: Job? = null
@@ -155,6 +159,39 @@ class DetailsViewModel(
                 _events.send(
                     DetailsEvent.OnMessage(
                         getString(Res.string.failed_to_uninstall, installedApp.packageName),
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun confirmUnlinkExternalApp() {
+        _state.update { it.copy(showUnlinkConfirmation = false) }
+        val installedApp = _state.value.installedApp ?: return
+        val packageName = installedApp.packageName
+        logger.debug("Unlinking externally-imported app: $packageName")
+        viewModelScope.launch {
+            try {
+                // installed_apps + external_links must move together so the
+                // next scan re-proposes a match instead of treating the row
+                // as a healthy tracked app on a stale link.
+                installedAppsRepository.executeInTransaction {
+                    externalImportRepository.unlink(packageName)
+                    installedAppsRepository.deleteInstalledApp(packageName)
+                }
+                runCatching { telemetryRepository.importUnlinkedFromDetails() }
+                _events.send(
+                    DetailsEvent.OnMessage(
+                        getString(Res.string.details_unlink_external_app_success),
+                    ),
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.error("Failed to unlink $packageName: ${e.message}")
+                _events.send(
+                    DetailsEvent.OnMessage(
+                        getString(Res.string.details_unlink_external_app_failure),
                     ),
                 )
             }
@@ -207,6 +244,18 @@ class DetailsViewModel(
 
             DetailsAction.UninstallApp -> {
                 uninstallApp()
+            }
+
+            DetailsAction.OnUnlinkExternalApp -> {
+                _state.update { it.copy(showUnlinkConfirmation = true) }
+            }
+
+            DetailsAction.OnDismissUnlinkConfirmation -> {
+                _state.update { it.copy(showUnlinkConfirmation = false) }
+            }
+
+            DetailsAction.OnConfirmUnlinkExternalApp -> {
+                confirmUnlinkExternalApp()
             }
 
             is DetailsAction.DownloadAsset -> {

@@ -76,6 +76,10 @@ data class AppsState(
     val isImporting: Boolean = false,
     // Uninstall confirmation
     val appPendingUninstall: InstalledAppUi? = null,
+    // External import banner (E1)
+    val pendingExternalImportCount: Int = 0,
+    val showImportProposalBanner: Boolean = false,
+    val isExternalImportInFlight: Boolean = false,
 ) {
     val filteredDeviceApps: ImmutableList<DeviceAppUi>
         get() =

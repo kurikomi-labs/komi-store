@@ -100,4 +100,14 @@ sealed interface AppsAction {
     data class OnInstallPendingApp(
         val app: InstalledAppUi,
     ) : AppsAction
+
+    // External import banner (E1)
+    data object OnImportProposalReview : AppsAction
+
+    data object OnImportProposalDismiss : AppsAction
+
+    // Manual rescan trigger from the apps screen overflow. Resets the banner
+    // dismiss watermark and routes the user into the import wizard, which
+    // runs a fresh scan + match resolution on entry.
+    data object OnRescanForGithubApps : AppsAction
 }

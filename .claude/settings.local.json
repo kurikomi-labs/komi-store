@@ -10,7 +10,9 @@
       "WebFetch(domain:youtrack.jetbrains.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:blog.jetbrains.com)",
-      "Bash(rtk grep *)"
+      "Bash(rtk grep *)",
+      "Bash(git checkout *)",
+      "Bash(rtk proxy *)"
     ]
   }
 }

@@ -24,6 +24,10 @@ sealed interface DetailsAction {
     data object OnDismissUninstallConfirmation : DetailsAction
     data object OnConfirmUninstall : DetailsAction
 
+    data object OnUnlinkExternalApp : DetailsAction
+    data object OnDismissUnlinkConfirmation : DetailsAction
+    data object OnConfirmUnlinkExternalApp : DetailsAction
+
     data class DownloadAsset(
         val downloadUrl: String,
         val assetName: String,

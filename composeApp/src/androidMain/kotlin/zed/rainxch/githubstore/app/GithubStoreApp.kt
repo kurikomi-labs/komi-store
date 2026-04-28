@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
+import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
 import zed.rainxch.core.data.services.DownloadNotificationObserver
 import zed.rainxch.core.data.services.PackageEventReceiver
 import zed.rainxch.core.data.services.UpdateScheduler
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.PackageMonitor
@@ -42,10 +44,11 @@ class GithubStoreApp : Application() {
         scheduleBackgroundUpdateChecks()
         registerSelfAsInstalledApp()
         fireAppLaunched()
+        scheduleInitialExternalScan()
+        scheduleSigningSeedSync()
     }
 
     private fun fireAppLaunched() {
-        // No-op when consent is not Granted (the impl gates internally).
         get<ProductTelemetry>().fire(
             name = ProductTelemetryEvents.APP_LAUNCHED,
             props =
@@ -58,6 +61,26 @@ class GithubStoreApp : Application() {
                             .orEmpty(),
                 ),
         )
+    }
+
+    private fun scheduleInitialExternalScan() {
+        appScope.launch {
+            runCatching {
+                get<ExternalImportRepository>().scheduleInitialScanIfNeeded()
+            }.onFailure {
+                Logger.w(it) { "Initial external scan scheduling failed" }
+            }
+        }
+    }
+
+    private fun scheduleSigningSeedSync() {
+        appScope.launch {
+            runCatching {
+                get<ExternalImportRepository>().syncSigningFingerprintSeed()
+            }.onFailure {
+                Logger.w(it) { "Signing seed sync failed" }
+            }
+        }
     }
 
     private fun startDownloadNotificationObserver() {
@@ -105,6 +128,9 @@ class GithubStoreApp : Application() {
             PackageEventReceiver(
                 installedAppsRepository = get<InstalledAppsRepository>(),
                 packageMonitor = get<PackageMonitor>(),
+                externalImportRepository = get<ExternalImportRepository>(),
+                externalLinkDao = get<ExternalLinkDao>(),
+                appScope = get<CoroutineScope>(),
             )
         val filter = PackageEventReceiver.createIntentFilter()
 

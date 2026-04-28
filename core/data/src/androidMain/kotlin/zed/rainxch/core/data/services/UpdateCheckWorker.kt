@@ -18,9 +18,12 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
 import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 
 /**
@@ -40,6 +43,9 @@ class UpdateCheckWorker(
     private val installedAppsRepository: InstalledAppsRepository by inject()
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase by inject()
     private val tweaksRepository: TweaksRepository by inject()
+    private val externalImportRepository: ExternalImportRepository by inject()
+    private val externalLinkDao: ExternalLinkDao by inject()
+    private val packageMonitor: PackageMonitor by inject()
 
     override suspend fun doWork(): Result =
         try {
@@ -77,6 +83,8 @@ class UpdateCheckWorker(
                 Logger.d { "UpdateCheckWorker: No updates available" }
             }
 
+            runPeriodicExternalDeltaScan()
+
             Logger.i { "UpdateCheckWorker: Periodic update check completed successfully" }
             Result.success()
         } catch (e: Exception) {
@@ -87,6 +95,37 @@ class UpdateCheckWorker(
                 Result.failure()
             }
         }
+
+    // Periodic best-effort: catch packages whose ACTION_PACKAGE_ADDED
+    // broadcast we missed (process killed, OEM app-standby, etc.).
+    // Cap at 50 so a 200-package device doesn't drag the worker.
+    private suspend fun runPeriodicExternalDeltaScan() {
+        try {
+            val installed = packageMonitor.getAllInstalledPackageNames()
+            if (installed.isEmpty()) {
+                return
+            }
+
+            val trackedFlow = installedAppsRepository.getAllInstalledApps().first()
+            val tracked = trackedFlow.map { it.packageName }.toSet()
+
+            val permanent = (
+                externalLinkDao.getDoNotRescanPackageNames() +
+                    externalLinkDao.getActiveSkippedPackageNames(System.currentTimeMillis())
+                ).toSet()
+
+            val delta = (installed - tracked - permanent).take(MAX_DELTA_PACKAGES).toSet()
+            if (delta.isEmpty()) {
+                Logger.d { "UpdateCheckWorker: external delta scan empty" }
+                return
+            }
+
+            Logger.d { "UpdateCheckWorker: external delta scan ${delta.size} package(s)" }
+            externalImportRepository.runDeltaScan(delta)
+        } catch (e: Exception) {
+            Logger.w { "UpdateCheckWorker: external delta scan failed: ${e.message}" }
+        }
+    }
 
     private fun createForegroundInfo(message: String): ForegroundInfo {
         val notification =
@@ -179,5 +218,6 @@ class UpdateCheckWorker(
         private const val UPDATE_SERVICE_CHANNEL_ID = "update_service"
         private const val NOTIFICATION_ID = 1001
         private const val FOREGROUND_NOTIFICATION_ID = 1003
+        private const val MAX_DELTA_PACKAGES = 50
     }
 }

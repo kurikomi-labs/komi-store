@@ -768,4 +768,97 @@
     <string name="translation_youdao_app_secret">App Secret</string>
     <string name="translation_youdao_save">Save credentials</string>
     <string name="translation_youdao_saved">Youdao credentials saved</string>
+
+    <!-- E1: External import wizard -->
+    <string name="external_import_top_bar_title">Import installed apps</string>
+    <string name="external_import_top_bar_back">Back</string>
+    <string name="external_import_overflow_more">More options</string>
+    <string name="external_import_overflow_skip_remaining">Skip remaining</string>
+    <string name="external_import_progress_scanning">Scanning your apps…</string>
+    <string name="external_import_progress_auto_importing">Importing matches…</string>
+    <string name="external_import_progress_working">Working…</string>
+    <plurals name="external_import_progress_subtitle_count">
+        <item quantity="one">Looked at %1$d app</item>
+        <item quantity="other">Looked at %1$d apps</item>
+    </plurals>
+    <string name="external_import_card_action_skip">Skip</string>
+    <string name="external_import_card_action_link">Link</string>
+    <string name="external_import_card_installer_chip">Installed via %1$s</string>
+    <string name="external_import_card_preselect_known">We think this is %1$s · %2$d%%</string>
+    <string name="external_import_card_preselect_unknown">Tap to find a repo</string>
+    <string name="external_import_card_expand_label">Expand to see other matches</string>
+    <string name="external_import_card_collapse_label">Collapse card</string>
+    <string name="external_import_search_icon_label">Search GitHub</string>
+    <string name="external_import_search_empty">No matches</string>
+    <string name="external_import_search_error_default">Search failed</string>
+    <plurals name="external_import_completion_headline">
+        <item quantity="one">Now tracking %1$d app.</item>
+        <item quantity="other">Now tracking %1$d apps.</item>
+    </plurals>
+    <string name="external_import_completion_skipped_subline">Skipped %1$d — you can re-run a scan from Settings.</string>
+    <string name="external_import_completion_action_view_all">View all</string>
+    <string name="external_import_empty_all_matched">All matched.\nNothing to link.</string>
+    <string name="external_import_empty_done">Done</string>
+    <string name="external_import_empty_no_apps_title">Couldn\'t find any GitHub apps on this device.</string>
+    <string name="external_import_empty_no_apps_body">This means either everything was installed via a different store, or we don\'t have visibility into what\'s installed.</string>
+    <string name="external_import_empty_grant_permission">Grant permission</string>
+    <string name="external_import_empty_ok">OK</string>
+    <string name="external_import_permission_title">Find your GitHub apps</string>
+    <!-- Three paragraphs joined with \n\n so a single string carries the full body -->
+    <string name="external_import_permission_body">We can scan your installed apps and match them to GitHub releases — so updates and detection just work.\n\nTo do that, we need to see which apps you have. Without permission we can only see about 5 apps; with it, we can see all of them.\n\nWe never send the list of your apps anywhere without your permission. The match runs on your device. The optional backend lookup sends only the package name and app label, and when available the signing fingerprint, install source, and any GitHub-repo hint declared in the app\'s manifest — never a full list of what\'s installed.</string>
+    <string name="external_import_permission_continue">Continue</string>
+    <string name="external_import_permission_not_now">Not now</string>
+    <plurals name="external_import_proposal_banner_headline">
+        <item quantity="one">Found %1$d app from GitHub</item>
+        <item quantity="other">Found %1$d apps from GitHub</item>
+    </plurals>
+    <string name="external_import_proposal_banner_body">Review them to track updates here.</string>
+    <string name="external_import_proposal_banner_review">Review</string>
+    <string name="external_import_proposal_banner_dismiss">Dismiss</string>
+    <string name="external_import_match_confidence_a11y">Match confidence: %1$d percent</string>
+    <string name="external_import_match_confidence_chip">%1$d%%</string>
+    <string name="external_import_error_link_failed">Couldn\'t link this app — try again.</string>
+    <string name="external_import_error_link_network">Couldn\'t reach GitHub. Try again later.</string>
+    <string name="external_import_error_scan_failed_default">Scan failed</string>
+    <string name="external_import_installer_obtainium">Obtainium</string>
+    <string name="external_import_installer_fdroid">F-Droid</string>
+    <string name="external_import_installer_browser">Browser</string>
+    <string name="external_import_installer_sideload">Sideload</string>
+    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_unknown">Unknown source</string>
+    <string name="external_import_search_placeholder_url">Paste a github.com URL or search…</string>
+    <string name="external_import_undo_linked">Linked %1$s.</string>
+    <string name="external_import_undo_skipped">Skipped %1$s.</string>
+    <string name="external_import_undo_action">Undo</string>
+    <string name="external_import_undo_failed">Couldn\'t undo — try again.</string>
+    <string name="external_import_card_action_more">More matches</string>
+    <string name="external_import_card_action_less">Hide matches</string>
+    <plurals name="external_import_list_remaining">
+        <item quantity="one">%1$d app to review</item>
+        <item quantity="other">%1$d apps to review</item>
+    </plurals>
+    <plurals name="external_import_auto_summary_headline">
+        <item quantity="one">Linked %1$d app automatically</item>
+        <item quantity="other">Linked %1$d apps automatically</item>
+    </plurals>
+    <string name="external_import_auto_summary_body">We recognized them with high confidence. You can undo individual matches from each app\'s details, or undo all now.</string>
+    <plurals name="external_import_auto_summary_review_hint">
+        <item quantity="one">%1$d more needs your input.</item>
+        <item quantity="other">%1$d more need your input.</item>
+    </plurals>
+    <string name="external_import_auto_summary_continue">Continue</string>
+    <string name="external_import_auto_summary_undo_all">Undo all</string>
+    <string name="external_import_auto_summary_more_count">+%1$d more</string>
+    <string name="external_import_list_add_manually">Don\'t see your app? Add manually</string>
+    <string name="external_import_empty_add_manually">Add an app from another store</string>
+    <string name="external_import_rescan_menu">Scan for GitHub apps</string>
+
+    <!-- E1: Details unlink dialog -->
+    <string name="details_unlink_external_app_menu">Unlink from this repo</string>
+    <string name="details_unlink_external_app_more_options">More options</string>
+    <string name="details_unlink_external_app_dialog_title">Unlink this app?</string>
+    <string name="details_unlink_external_app_dialog_body">We\'ll stop tracking %1$s as installed from this repo. The app stays on your device — only the link is removed.</string>
+    <string name="details_unlink_external_app_dialog_confirm">Unlink</string>
+    <string name="details_unlink_external_app_success">Unlinked. We\'ll re-suggest a match next scan.</string>
+    <string name="details_unlink_external_app_failure">Couldn\'t unlink — try again.</string>
 </resources>

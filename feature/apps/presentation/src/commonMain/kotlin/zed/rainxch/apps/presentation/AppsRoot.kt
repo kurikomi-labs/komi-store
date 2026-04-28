@@ -37,6 +37,7 @@ import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,7 +49,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -91,6 +92,7 @@ import zed.rainxch.apps.presentation.components.AdvancedAppSettingsBottomSheet
 import zed.rainxch.apps.presentation.components.InstalledAppIcon
 import zed.rainxch.apps.presentation.components.LinkAppBottomSheet
 import zed.rainxch.apps.presentation.components.VariantPickerDialog
+import zed.rainxch.apps.presentation.import.components.ImportProposalBanner
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
@@ -121,6 +123,7 @@ import zed.rainxch.githubstore.core.presentation.res.currently_updating
 import zed.rainxch.githubstore.core.presentation.res.downloading
 import zed.rainxch.githubstore.core.presentation.res.error_with_message
 import zed.rainxch.githubstore.core.presentation.res.export_apps
+import zed.rainxch.githubstore.core.presentation.res.external_import_rescan_menu
 import zed.rainxch.githubstore.core.presentation.res.import_apps
 import zed.rainxch.githubstore.core.presentation.res.installed_apps
 import zed.rainxch.githubstore.core.presentation.res.installing
@@ -147,6 +150,7 @@ import zed.rainxch.githubstore.core.presentation.res.updating_x_of_y
 fun AppsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToRepo: (repoId: Long) -> Unit,
+    onNavigateToExternalImport: () -> Unit,
     viewModel: AppsViewModel = koinViewModel(),
     state: AppsState,
 ) {
@@ -175,6 +179,10 @@ fun AppsRoot(
             }
 
             is AppsEvent.ImportComplete -> { // handled by ShowSuccess
+            }
+
+            AppsEvent.NavigateToExternalImport -> {
+                onNavigateToExternalImport()
             }
         }
     }
@@ -294,24 +302,36 @@ fun AppsScreen(
                                     Icon(Icons.Outlined.FileDownload, contentDescription = null)
                                 },
                             )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(Res.string.external_import_rescan_menu)) },
+                                onClick = {
+                                    showOverflowMenu = false
+                                    onAction(AppsAction.OnRescanForGithubApps)
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Search, contentDescription = null)
+                                },
+                            )
                         }
                     }
                 },
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
+            ExtendedFloatingActionButton(
                 onClick = { onAction(AppsAction.OnAddByLinkClick) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                    )
+                },
+                text = { Text(stringResource(Res.string.add_by_link)) },
                 modifier =
                     Modifier
                         .navigationBarsPadding()
                         .padding(bottom = bottomNavHeight),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.add_by_link),
-                )
-            }
+            )
         },
         snackbarHost = {
             SnackbarHost(
@@ -520,6 +540,15 @@ fun AppsScreen(
                                 contentPadding = PaddingValues(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
                             ) {
+                                if (state.showImportProposalBanner) {
+                                    item(key = "external-import-banner") {
+                                        ImportProposalBanner(
+                                            pendingCount = state.pendingExternalImportCount,
+                                            onReview = { onAction(AppsAction.OnImportProposalReview) },
+                                            onDismiss = { onAction(AppsAction.OnImportProposalDismiss) },
+                                        )
+                                    }
+                                }
                                 items(
                                     items = state.filteredApps,
                                     key = { it.installedApp.packageName },

@@ -22,4 +22,6 @@ sealed interface AppsEvent {
     data class ImportComplete(
         val result: ImportResult,
     ) : AppsEvent
+
+    data object NavigateToExternalImport : AppsEvent
 }

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.network.Downloader
+import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.DownloadOrchestrator
@@ -58,8 +60,10 @@ class AppsViewModel(
     private val shareManager: ShareManager,
     private val tweaksRepository: TweaksRepository,
     private val downloadOrchestrator: DownloadOrchestrator,
+    private val externalImportRepository: ExternalImportRepository,
 ) : ViewModel() {
     companion object {
+        private const val BANNER_THRESHOLD = 1
         private const val UPDATE_CHECK_COOLDOWN_MS = 30 * 60 * 1000L
     }
 
@@ -67,6 +71,14 @@ class AppsViewModel(
     private val activeUpdates = mutableMapOf<String, Job>()
     private var updateAllJob: Job? = null
     private var lastAutoCheckTimestamp: Long = 0L
+
+    // Synchronous mirror of the persisted dismiss watermark. The persisted
+    // write goes through DataStore async, so the import-banner flow could
+    // re-emit with the OLD watermark and re-flash the banner before the
+    // write completes. This in-memory shadow is set BEFORE the launch and
+    // OR'd into shouldShow so the suppression is immediate.
+    @Volatile
+    private var localBannerDismissedAtCount: Int = 0
 
     /** Debounced re-runs of the live preview in the advanced settings sheet. */
     private var advancedPreviewJob: Job? = null
@@ -78,6 +90,7 @@ class AppsViewModel(
                 if (!hasLoadedInitialData) {
                     loadApps()
                     observeLiquidGlassEnabled()
+                    observePendingExternalImports()
                     hasLoadedInitialData = true
                 }
             }.stateIn(
@@ -95,6 +108,29 @@ class AppsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun observePendingExternalImports() {
+        viewModelScope.launch {
+            externalImportRepository.pendingCandidateCountFlow()
+                .combine(tweaksRepository.getExternalImportBannerDismissedAtCount()) { count, dismissedAt ->
+                    count to dismissedAt
+                }
+                .collect { (count, dismissedAt) ->
+                    // The effective watermark is the max of the persisted value and the
+                    // synchronous local one. The local shadow is set immediately by the
+                    // Review/Dismiss handlers so a flow emission that beats the DataStore
+                    // write still sees a watermark that suppresses the banner.
+                    val effectiveDismissedAt = maxOf(dismissedAt, localBannerDismissedAtCount)
+                    val shouldShow = count >= BANNER_THRESHOLD && count > effectiveDismissedAt
+                    _state.update {
+                        it.copy(
+                            pendingExternalImportCount = count,
+                            showImportProposalBanner = shouldShow && !it.isExternalImportInFlight,
+                        )
+                    }
+                }
         }
     }
 
@@ -440,6 +476,41 @@ class AppsViewModel(
 
             AppsAction.OnDismissUninstallDialog -> {
                 _state.update { it.copy(appPendingUninstall = null) }
+            }
+
+            AppsAction.OnImportProposalReview -> {
+                val current = _state.value.pendingExternalImportCount
+                // Set the local watermark BEFORE the launch so a racing flow
+                // emission can't recompute shouldShow=true on the stale persisted
+                // watermark. observePendingExternalImports OR's this with the
+                // persisted value via maxOf().
+                localBannerDismissedAtCount = maxOf(localBannerDismissedAtCount, current)
+                _state.update { it.copy(showImportProposalBanner = false) }
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setExternalImportBannerDismissedAtCount(current) }
+                    _events.send(AppsEvent.NavigateToExternalImport)
+                }
+            }
+
+            AppsAction.OnImportProposalDismiss -> {
+                val current = _state.value.pendingExternalImportCount
+                localBannerDismissedAtCount = maxOf(localBannerDismissedAtCount, current)
+                _state.update { it.copy(showImportProposalBanner = false) }
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setExternalImportBannerDismissedAtCount(current) }
+                }
+            }
+
+            AppsAction.OnRescanForGithubApps -> {
+                // Manual rescan resets the banner watermark so the user sees
+                // everything fresh; the wizard's startScanIfIdle then runs
+                // a full scan + match cycle on entry.
+                localBannerDismissedAtCount = 0
+                _state.update { it.copy(showImportProposalBanner = false) }
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setExternalImportBannerDismissedAtCount(0) }
+                    _events.send(AppsEvent.NavigateToExternalImport)
+                }
             }
         }
     }

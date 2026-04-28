@@ -16,20 +16,27 @@ import zed.rainxch.core.data.services.DefaultDownloadOrchestrator
 import zed.rainxch.core.data.data_source.impl.DefaultTokenStore
 import zed.rainxch.core.data.local.db.AppDatabase
 import zed.rainxch.core.data.local.db.dao.CacheDao
+import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
 import zed.rainxch.core.data.local.db.dao.FavoriteRepoDao
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.SearchHistoryDao
 import zed.rainxch.core.data.local.db.dao.SeenRepoDao
+import zed.rainxch.core.data.local.db.dao.SigningFingerprintDao
 import zed.rainxch.core.data.local.db.dao.StarredRepoDao
 import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
 import zed.rainxch.core.data.logging.KermitLogger
 import zed.rainxch.core.data.network.BackendApiClient
+import zed.rainxch.core.data.network.BackendExternalMatchApi
+import zed.rainxch.core.data.network.ExternalMatchApi
+import zed.rainxch.core.data.network.ExternalMatchApiSelector
 import zed.rainxch.core.data.network.GitHubClientProvider
+import zed.rainxch.core.data.network.MockExternalMatchApi
 import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.data.network.ProxyManagerSeeding
 import zed.rainxch.core.data.network.ProxyTesterImpl
 import zed.rainxch.core.data.network.TranslationClientProvider
 import zed.rainxch.core.data.repository.AuthenticationStateImpl
+import zed.rainxch.core.data.repository.ExternalImportRepositoryImpl
 import zed.rainxch.core.data.repository.FavouritesRepositoryImpl
 import zed.rainxch.core.data.repository.InstalledAppsRepositoryImpl
 import zed.rainxch.core.data.repository.ProxyRepositoryImpl
@@ -48,8 +55,10 @@ import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.ProxyScope
 import zed.rainxch.core.domain.network.ProxyTester
 import zed.rainxch.core.domain.system.DownloadOrchestrator
+import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.DeviceIdentityRepository
+import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
@@ -198,6 +207,31 @@ val coreModule =
             )
         }
 
+        single { BackendExternalMatchApi(get()) }
+
+        single { MockExternalMatchApi() }
+
+        single<ExternalMatchApi> {
+            ExternalMatchApiSelector(
+                real = get(),
+                mock = get(),
+                tweaks = get(),
+                scope = get(),
+            )
+        }
+
+        single<ExternalImportRepository> {
+            ExternalImportRepositoryImpl(
+                scanner = get<ExternalAppScanner>(),
+                externalLinkDao = get(),
+                signingFingerprintDao = get(),
+                preferences = get(),
+                externalMatchApi = get(),
+                backendClient = get(),
+                telemetry = get(),
+            )
+        }
+
         // Application-scoped download / install orchestrator. Lives
         // for the process lifetime so downloads survive screen
         // navigation. ViewModels are observers, never owners.
@@ -303,5 +337,13 @@ val databaseModule =
 
         single<SearchHistoryDao> {
             get<AppDatabase>().searchHistoryDao
+        }
+
+        single<ExternalLinkDao> {
+            get<AppDatabase>().externalLinkDao
+        }
+
+        single<SigningFingerprintDao> {
+            get<AppDatabase>().signingFingerprintDao
         }
     }

@@ -94,4 +94,16 @@ interface TweaksRepository {
     fun getAppLanguage(): Flow<String?>
 
     suspend fun setAppLanguage(tag: String?)
+
+    fun getExternalImportEnabled(): Flow<Boolean>
+
+    suspend fun setExternalImportEnabled(enabled: Boolean)
+
+    fun getExternalMatchSearchEnabled(): Flow<Boolean>
+
+    suspend fun setExternalMatchSearchEnabled(enabled: Boolean)
+
+    fun getExternalImportBannerDismissedAtCount(): Flow<Int>
+
+    suspend fun setExternalImportBannerDismissedAtCount(count: Int)
 }

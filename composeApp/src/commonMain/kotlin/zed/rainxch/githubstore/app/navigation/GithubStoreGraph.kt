@@ -46,4 +46,7 @@ sealed interface GithubStoreGraph {
 
     @Serializable
     data object SponsorScreen : GithubStoreGraph
+
+    @Serializable
+    data object ExternalImportScreen : GithubStoreGraph
 }

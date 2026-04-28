@@ -19,7 +19,9 @@ import zed.rainxch.core.data.services.DesktopPackageMonitor
 import zed.rainxch.core.data.services.DesktopPendingInstallNotifier
 import zed.rainxch.core.data.services.DesktopUpdateScheduleManager
 import zed.rainxch.core.data.services.FileLocationsProvider
+import zed.rainxch.core.data.services.external.DesktopExternalAppScanner
 import zed.rainxch.core.domain.system.DownloadProgressNotifier
+import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.PendingInstallNotifier
@@ -57,6 +59,10 @@ actual val corePlatformModule = module {
 
     single<PackageMonitor> {
         DesktopPackageMonitor()
+    }
+
+    single<ExternalAppScanner> {
+        DesktopExternalAppScanner()
     }
 
     single<LocalizationManager> {
