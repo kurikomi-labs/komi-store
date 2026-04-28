@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.domain.telemetry.ProductTelemetryConsent
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -156,6 +157,17 @@ fun LazyListScope.othersSection(
             checked = state.isTelemetryEnabled,
             onCheckedChange = { enabled ->
                 onAction(TweaksAction.OnTelemetryToggled(enabled))
+            },
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        ToggleSettingCard(
+            title = stringResource(Res.string.settings_product_telemetry_title),
+            description = stringResource(Res.string.settings_product_telemetry_description),
+            checked = state.productTelemetryConsent == ProductTelemetryConsent.Granted,
+            onCheckedChange = { enabled ->
+                onAction(TweaksAction.OnProductTelemetryToggled(enabled))
             },
         )
 
