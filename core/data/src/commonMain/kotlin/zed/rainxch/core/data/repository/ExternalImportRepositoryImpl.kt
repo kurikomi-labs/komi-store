@@ -25,6 +25,9 @@ import zed.rainxch.core.data.network.ExternalMatchApi
 import zed.rainxch.core.data.network.RateLimitedException
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
@@ -42,6 +45,7 @@ class ExternalImportRepositoryImpl(
     private val externalMatchApi: ExternalMatchApi,
     private val backendClient: BackendApiClient,
     private val telemetry: TelemetryRepository,
+    private val productTelemetry: ProductTelemetry,
 ) : ExternalImportRepository {
     // Snapshot cache survives only for the lifetime of the process. Decisions
     // (linked / skipped / never-ask) are persisted in `external_links`; the
@@ -65,8 +69,10 @@ class ExternalImportRepositoryImpl(
         val firstLaunch = preferences.data.first()[INITIAL_SCAN_COMPLETED_AT_KEY] == null
         runCatching {
             if (firstLaunch) {
-                runCatching { telemetry.importScanStarted(trigger = "first_launch") }
-                    .onFailure { Logger.d { "telemetry importScanStarted failed: ${it.message}" } }
+                productTelemetry.fire(
+                    name = ProductTelemetryEvents.IMPORT_SCAN_STARTED,
+                    props = mapOf(ProductTelemetryProps.PLATFORM to "android"),
+                )
             }
             runFullScan()
         }.onSuccess {
@@ -102,12 +108,14 @@ class ExternalImportRepositoryImpl(
             .onFailure { Logger.d { "prune pending failed: ${it.message}" } }
 
         val durationMs = nowMillis() - started
-        runCatching {
-            telemetry.importScanCompleted(
-                candidateCountBucket = bucketCandidateCount(candidates.size),
-                durationMsBucket = bucketDurationMs(durationMs),
-            )
-        }.onFailure { Logger.d { "telemetry importScanCompleted failed: ${it.message}" } }
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.IMPORT_SCAN_COMPLETED,
+            props =
+                mapOf(
+                    ProductTelemetryProps.CANDIDATE_COUNT to bucketCandidateCount(candidates.size),
+                    ProductTelemetryProps.DURATION_MS to bucketDurationMs(durationMs),
+                ),
+        )
 
         return ScanResult(
             totalCandidates = candidates.size,
@@ -245,12 +253,14 @@ class ExternalImportRepositoryImpl(
             // only — never owner/repo/package name.
             deduped.groupBy { it.source }.forEach { (source, hits) ->
                 val top = hits.maxByOrNull { it.confidence } ?: return@forEach
-                runCatching {
-                    telemetry.importMatchAttempted(
-                        strategy = source.telemetryStrategy(),
-                        confidenceBucket = bucketConfidence(top.confidence),
-                    )
-                }.onFailure { Logger.d { "telemetry importMatchAttempted failed: ${it.message}" } }
+                productTelemetry.fire(
+                    name = ProductTelemetryEvents.IMPORT_MATCH_ATTEMPTED,
+                    props =
+                        mapOf(
+                            ProductTelemetryProps.STRATEGY to source.telemetryStrategy(),
+                            ProductTelemetryProps.CONFIDENCE_BUCKET to bucketConfidence(top.confidence),
+                        ),
+                )
             }
 
             RepoMatchResult(packageName = candidate.packageName, suggestions = deduped)

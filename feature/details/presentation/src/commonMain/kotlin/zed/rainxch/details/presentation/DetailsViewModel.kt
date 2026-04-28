@@ -181,7 +181,6 @@ class DetailsViewModel(
                     externalImportRepository.unlink(packageName)
                     installedAppsRepository.deleteInstalledApp(packageName)
                 }
-                runCatching { telemetryRepository.importUnlinkedFromDetails() }
                 _events.send(
                     DetailsEvent.OnMessage(
                         getString(Res.string.details_unlink_external_app_success),

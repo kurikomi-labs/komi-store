@@ -233,6 +233,7 @@ val coreModule =
                 externalMatchApi = get(),
                 backendClient = get(),
                 telemetry = get(),
+                productTelemetry = get(),
             )
         }
 

@@ -29,6 +29,9 @@ import zed.rainxch.core.domain.model.DeviceApp
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
 import zed.rainxch.core.domain.system.InstallerKind
@@ -55,6 +58,7 @@ class ExternalImportViewModel(
     private val appsRepository: AppsRepository,
     private val installedAppsRepository: InstalledAppsRepository,
     private val telemetry: TelemetryRepository,
+    private val productTelemetry: ProductTelemetry,
     private val logger: GitHubStoreLogger,
 ) : ViewModel() {
     private var candidatesByPackage: Map<String, ExternalAppCandidate> = emptyMap()
@@ -102,7 +106,6 @@ class ExternalImportViewModel(
 
             ExternalImportAction.OnRequestPermission -> {
                 _state.update { it.copy(phase = ImportPhase.RequestingPermission) }
-                viewModelScope.launch { runCatching { telemetry.importPermissionRequested() } }
             }
 
             is ExternalImportAction.OnPermissionGranted -> {
@@ -348,13 +351,11 @@ class ExternalImportViewModel(
                     ),
                 )
             }
-            viewModelScope.launch { runCatching { telemetry.importSearchOverrideUsed() } }
             return
         }
 
         searchJob?.cancel()
         _state.update { it.copy(isSearching = true, searchError = null) }
-        viewModelScope.launch { runCatching { telemetry.importSearchOverrideUsed() } }
         searchJob = viewModelScope.launch {
             val result = runCatching { externalImportRepository.searchRepos(query) }
                 .getOrElse { e ->
@@ -364,9 +365,6 @@ class ExternalImportViewModel(
 
             result.fold(
                 onSuccess = { suggestions ->
-                    if (suggestions.isEmpty()) {
-                        runCatching { telemetry.importSearchOverrideNoResults() }
-                    }
                     _state.update {
                         // Stale-completion guard: if the user collapsed or switched cards
                         // while the request was in flight, drop the response on the floor
@@ -439,12 +437,10 @@ class ExternalImportViewModel(
                 return@launch
             }
 
-            runCatching {
-                telemetry.importSkipped(
-                    countBucket = "1-2",
-                    persisted = if (neverAsk) "forever" else "7day",
-                )
-            }
+            productTelemetry.fire(
+                name = ProductTelemetryEvents.IMPORT_SKIPPED,
+                props = mapOf(ProductTelemetryProps.COUNT to "1-2"),
+            )
             removeCardFromState(packageName) { it.copy(skipped = it.skipped + 1) }
 
             pendingUndo = PendingUndo(
@@ -502,9 +498,10 @@ class ExternalImportViewModel(
                 )
                 return@launch
             }
-            runCatching {
-                telemetry.importManuallyLinked(countBucket = "1-2", source = source)
-            }
+            productTelemetry.fire(
+                name = ProductTelemetryEvents.IMPORT_MANUALLY_LINKED,
+                props = mapOf(ProductTelemetryProps.COUNT to "1-2"),
+            )
             removeCardFromState(packageName) { it.copy(manuallyLinked = it.manuallyLinked + 1) }
 
             pendingUndo = PendingUndo(
@@ -691,24 +688,9 @@ class ExternalImportViewModel(
     }
 
     private fun emitPermissionOutcome(granted: Boolean, sdkInt: Int?) {
-        viewModelScope.launch {
-            runCatching {
-                telemetry.importPermissionOutcome(
-                    granted = granted,
-                    sdkIntBucket = bucketSdkInt(sdkInt),
-                )
-            }
-        }
+        // Permission-outcome telemetry intentionally dropped at the E6
+        // boundary — the new schema doesn't track it.
     }
-
-    private fun bucketSdkInt(sdkInt: Int?): String =
-        when {
-            sdkInt == null -> "unknown"
-            sdkInt in 26..29 -> "26-29"
-            sdkInt in 30..32 -> "30-32"
-            sdkInt >= 33 -> "33+"
-            else -> "unknown"
-        }
 
     private fun bucketCount(count: Int): String =
         when {
@@ -744,12 +726,10 @@ class ExternalImportViewModel(
             }
 
             if (successes.isNotEmpty()) {
-                runCatching {
-                    telemetry.importSkipped(
-                        countBucket = bucketCount(successes.size),
-                        persisted = "7day",
-                    )
-                }
+                productTelemetry.fire(
+                    name = ProductTelemetryEvents.IMPORT_SKIPPED,
+                    props = mapOf(ProductTelemetryProps.COUNT to bucketCount(successes.size)),
+                )
             }
 
             // Skip-remaining is intentionally not undoable — bulk skip clears
