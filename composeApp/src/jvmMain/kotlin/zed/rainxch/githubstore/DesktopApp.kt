@@ -90,14 +90,11 @@ fun main(args: Array<String>) {
 
     // Fire app_launched once per *real* process (after the deep-link
     // forwarder has had a chance to exit transient processes). No-op when
-    // consent is not Granted. The impl reads BuildKonfig.VERSION_NAME
-    // internally for the appVersion field on every fire(); we just supply
-    // the platform-specific version bucket via the props map. (BuildKonfig
-    // is internal to core/data so we can't read it from composeApp directly.)
-    GlobalContext.get().get<ProductTelemetry>().fire(
-        name = ProductTelemetryEvents.APP_LAUNCHED,
-        props = mapOf(ProductTelemetryProps.PLATFORM to desktopPlatformSlug()),
-    )
+    // consent is not Granted. platform + appVersion are populated by
+    // ProductTelemetryImpl as top-level event columns; the backend's
+    // PropsSchema allows zero props on app_launched and silently strips
+    // anything we put in the props bag, so we don't.
+    GlobalContext.get().get<ProductTelemetry>().fire(name = ProductTelemetryEvents.APP_LAUNCHED)
 
     DesktopDeepLink.registerUriSchemeIfNeeded()
 

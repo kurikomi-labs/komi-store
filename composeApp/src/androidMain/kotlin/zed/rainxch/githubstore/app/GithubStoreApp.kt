@@ -121,18 +121,11 @@ class GithubStoreApp : Application() {
     }
 
     private fun fireAppLaunched() {
-        get<ProductTelemetry>().fire(
-            name = ProductTelemetryEvents.APP_LAUNCHED,
-            props =
-                mapOf(
-                    ProductTelemetryProps.PLATFORM to "android",
-                    ProductTelemetryProps.VERSION to
-                        packageManager
-                            .getPackageInfo(packageName, 0)
-                            .versionName
-                            .orEmpty(),
-                ),
-        )
+        // platform + appVersion ride along on the event's top-level
+        // columns (set by ProductTelemetryImpl). The backend's PropsSchema
+        // allows no props on app_launched and silently strips anything
+        // we put here, so we don't.
+        get<ProductTelemetry>().fire(name = ProductTelemetryEvents.APP_LAUNCHED)
     }
 
     private fun scheduleInitialExternalScan() {
