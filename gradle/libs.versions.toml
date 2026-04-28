@@ -62,6 +62,7 @@ projectVersionCode = "14"
 # Kotlin
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 # AndroidX Core
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
