@@ -4,11 +4,15 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import zed.rainxch.core.data.local.db.dao.CacheDao
 import zed.rainxch.core.data.local.db.entities.CacheEntryEntity
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
 class CacheManager(
     val cacheDao: CacheDao,
+    @PublishedApi internal val productTelemetry: ProductTelemetry,
 ) {
     val json =
         Json {
@@ -27,7 +31,9 @@ class CacheManager(
         memoryCache[key]?.let { (expiresAt, jsonData) ->
             if (expiresAt > currentTime) {
                 return try {
-                    json.decodeFromString(serializer<T>(), jsonData)
+                    val value = json.decodeFromString(serializer<T>(), jsonData)
+                    fireCacheLookup(key, hit = true)
+                    value
                 } catch (_: Exception) {
                     memoryCache.remove(key)
                     null
@@ -37,17 +43,46 @@ class CacheManager(
             }
         }
 
-        val entry = cacheDao.getValid(key, currentTime) ?: return null
+        val entry =
+            cacheDao.getValid(key, currentTime) ?: run {
+                fireCacheLookup(key, hit = false)
+                return null
+            }
         memoryCache[key] = entry.expiresAt to entry.jsonData
 
         return try {
-            json.decodeFromString(serializer<T>(), entry.jsonData)
+            val value = json.decodeFromString(serializer<T>(), entry.jsonData)
+            fireCacheLookup(key, hit = true)
+            value
         } catch (_: Exception) {
             cacheDao.delete(key)
             memoryCache.remove(key)
             null
         }
     }
+
+    @PublishedApi
+    internal fun fireCacheLookup(key: String, hit: Boolean) {
+        val cacheName = deriveCacheName(key) ?: return
+        productTelemetry.fire(
+            name = if (hit) ProductTelemetryEvents.CACHE_HIT else ProductTelemetryEvents.CACHE_MISS,
+            props = mapOf(ProductTelemetryProps.CACHE_NAME to cacheName),
+        )
+    }
+
+    @PublishedApi
+    internal fun deriveCacheName(key: String): String? =
+        when {
+            key.startsWith("readme:") -> "readmes"
+            key.startsWith("search:") -> "search_results"
+            key.startsWith("repo:") ||
+                key.startsWith("repo_id:") ||
+                key.startsWith("releases:") ||
+                key.startsWith("latest_release:") ||
+                key.startsWith("repo_stats:") ||
+                key.startsWith("user_profile:") -> "details"
+            else -> null
+        }
 
     suspend inline fun <reified T> getStale(key: String): T? {
         val entry = cacheDao.getAny(key) ?: return null

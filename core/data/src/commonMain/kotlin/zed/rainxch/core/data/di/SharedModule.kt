@@ -156,7 +156,10 @@ val coreModule =
         }
 
         single<CacheManager> {
-            CacheManager(cacheDao = get())
+            CacheManager(
+                cacheDao = get(),
+                productTelemetry = get(),
+            )
         }
 
         single<BackendApiClient> {
