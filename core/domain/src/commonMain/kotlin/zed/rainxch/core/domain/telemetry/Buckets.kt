@@ -9,6 +9,7 @@ object TelemetryBuckets {
     }
 
     fun resultCount(n: Int): String = when {
+        n < 0 -> "invalid"
         n == 0 -> "0"
         n <= 5 -> "1-5"
         n <= 20 -> "6-20"
