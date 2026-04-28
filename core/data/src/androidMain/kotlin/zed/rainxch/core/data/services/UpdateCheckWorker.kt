@@ -91,6 +91,11 @@ class UpdateCheckWorker(
 
             Logger.i { "UpdateCheckWorker: Periodic update check completed successfully" }
             Result.success()
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            // Worker cancellation isn't a user-facing failure — propagate so
+            // structured concurrency does its job and we don't pollute the
+            // OPERATION_FAILED stream with cancel events.
+            throw e
         } catch (e: Exception) {
             Logger.e { "UpdateCheckWorker: Update check failed: ${e.message}" }
             if (runAttemptCount < 3) {
