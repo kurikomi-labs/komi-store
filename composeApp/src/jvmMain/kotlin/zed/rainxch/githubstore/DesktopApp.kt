@@ -23,6 +23,7 @@ import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
 import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.githubstore.app.ColdStart
 import zed.rainxch.githubstore.app.categorizeCrash
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
@@ -36,6 +37,8 @@ import kotlin.system.exitProcess
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
 fun main(args: Array<String>) {
+    ColdStart.markStart()
+
     // Install first so anything that blows up during Koin init or
     // resource loading leaves a diagnosable trail on disk (see
     // `CrashReporter.resolveLogDir` for the per-OS path).

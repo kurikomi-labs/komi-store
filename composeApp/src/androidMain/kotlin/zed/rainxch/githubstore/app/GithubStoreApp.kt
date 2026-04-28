@@ -34,6 +34,7 @@ class GithubStoreApp : Application() {
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
+        ColdStart.markStart()
         super.onCreate()
 
         initKoin {

@@ -156,6 +156,19 @@ fun AppsRoot(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val productTelemetry: zed.rainxch.core.domain.telemetry.ProductTelemetry = org.koin.compose.koinInject()
+
+    zed.rainxch.core.presentation.telemetry.TrackFirstPaint(isReady = !state.isLoading) { ms ->
+        productTelemetry.fire(
+            name = zed.rainxch.core.domain.telemetry.ProductTelemetryEvents.FIRST_PAINT_MS,
+            props =
+                mapOf(
+                    zed.rainxch.core.domain.telemetry.ProductTelemetryProps.SCREEN to "library",
+                    zed.rainxch.core.domain.telemetry.ProductTelemetryProps.BUCKET to
+                        zed.rainxch.core.domain.telemetry.TelemetryBuckets.durationMs(ms),
+                ),
+        )
+    }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {

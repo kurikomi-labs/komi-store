@@ -47,6 +47,21 @@ fun TweaksRoot(viewModel: TweaksViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val productTelemetry: zed.rainxch.core.domain.telemetry.ProductTelemetry = org.koin.compose.koinInject()
+
+    // versionName is hydrated asynchronously in TweaksViewModel.onStart;
+    // its presence is the cheapest "first non-skeleton render" signal here.
+    zed.rainxch.core.presentation.telemetry.TrackFirstPaint(isReady = state.versionName.isNotEmpty()) { ms ->
+        productTelemetry.fire(
+            name = zed.rainxch.core.domain.telemetry.ProductTelemetryEvents.FIRST_PAINT_MS,
+            props =
+                mapOf(
+                    zed.rainxch.core.domain.telemetry.ProductTelemetryProps.SCREEN to "settings",
+                    zed.rainxch.core.domain.telemetry.ProductTelemetryProps.BUCKET to
+                        zed.rainxch.core.domain.telemetry.TelemetryBuckets.durationMs(ms),
+                ),
+        )
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {

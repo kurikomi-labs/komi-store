@@ -79,15 +79,21 @@ import io.github.fletchmckee.liquid.rememberLiquidState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
 import zed.rainxch.core.domain.telemetry.ProductTelemetryConsent
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.core.domain.telemetry.TelemetryBuckets
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
+import zed.rainxch.core.presentation.telemetry.TrackFirstPaint
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -121,6 +127,18 @@ fun HomeRoot(
     val scope = rememberCoroutineScope()
     val snackbarHost = remember { SnackbarHostState() }
     val uriHandler = LocalUriHandler.current
+    val productTelemetry: ProductTelemetry = koinInject()
+
+    TrackFirstPaint(isReady = !state.isLoading) { ms ->
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.FIRST_PAINT_MS,
+            props =
+                mapOf(
+                    ProductTelemetryProps.SCREEN to "home",
+                    ProductTelemetryProps.BUCKET to TelemetryBuckets.durationMs(ms),
+                ),
+        )
+    }
 
     if (consent == ProductTelemetryConsent.NotYetAsked) {
         ProductTelemetryConsentSheet(

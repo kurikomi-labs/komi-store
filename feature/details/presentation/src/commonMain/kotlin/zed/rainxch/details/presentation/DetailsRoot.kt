@@ -64,10 +64,16 @@ import io.github.fletchmckee.liquid.rememberLiquidState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.core.domain.telemetry.TelemetryBuckets
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
+import zed.rainxch.core.presentation.telemetry.TrackFirstPaint
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -124,6 +130,18 @@ fun DetailsRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val productTelemetry: ProductTelemetry = koinInject()
+
+    TrackFirstPaint(isReady = !state.isLoading) { ms ->
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.FIRST_PAINT_MS,
+            props =
+                mapOf(
+                    ProductTelemetryProps.SCREEN to "details",
+                    ProductTelemetryProps.BUCKET to TelemetryBuckets.durationMs(ms),
+                ),
+        )
+    }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
