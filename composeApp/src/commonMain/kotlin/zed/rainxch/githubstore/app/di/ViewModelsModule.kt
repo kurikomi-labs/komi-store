@@ -32,6 +32,7 @@ val viewModelsModule =
                 ownerParam = params.get(1),
                 repoParam = params.get(2),
                 isComingFromUpdate = params.get(3),
+                from = params.get(4),
                 detailsRepository = get(),
                 downloader = get(),
                 installer = get(),
@@ -52,6 +53,7 @@ val viewModelsModule =
                 downloadOrchestrator = get(),
                 telemetryRepository = get(),
                 externalImportRepository = get(),
+                productTelemetry = get(),
             )
         }
         viewModelOf(::DeveloperProfileViewModel)

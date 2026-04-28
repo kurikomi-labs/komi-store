@@ -28,6 +28,8 @@ import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.MatchingPreview
 import zed.rainxch.core.domain.system.Installer
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
 import zed.rainxch.core.domain.model.isEffectivelyPreRelease
 import zed.rainxch.core.domain.util.AssetFilter
 import zed.rainxch.core.domain.util.AssetVariant
@@ -39,6 +41,7 @@ class InstalledAppsRepositoryImpl(
     private val historyDao: UpdateHistoryDao,
     private val installer: Installer,
     private val clientProvider: GitHubClientProvider,
+    private val productTelemetry: ProductTelemetry,
 ) : InstalledAppsRepository {
     // Reads the current Ktor client at every call site so any proxy
     // change (ProxyManager rebuilds the client via [clientProvider])
@@ -451,6 +454,8 @@ class InstalledAppsRepositoryImpl(
                 signingFingerprint = signingFingerprint,
             ),
         )
+
+        productTelemetry.fire(name = ProductTelemetryEvents.UPDATE_INSTALLED)
     }
 
     override suspend fun updateApp(app: InstalledApp) {

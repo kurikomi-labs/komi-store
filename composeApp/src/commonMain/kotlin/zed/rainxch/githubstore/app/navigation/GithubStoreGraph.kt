@@ -19,6 +19,10 @@ sealed interface GithubStoreGraph {
         val owner: String = "",
         val repo: String = "",
         val isComingFromUpdate: Boolean = false,
+        // E6 telemetry: where this nav originated. Categorical only —
+        // "search" / "category" / "library" / "link". Drives the FROM
+        // prop on DETAILS_VIEWED.
+        val from: String = "link",
     ) : GithubStoreGraph
 
     @Serializable

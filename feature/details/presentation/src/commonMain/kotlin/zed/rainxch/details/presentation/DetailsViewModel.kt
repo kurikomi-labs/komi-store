@@ -118,6 +118,8 @@ class DetailsViewModel(
     private val downloadOrchestrator: DownloadOrchestrator,
     private val telemetryRepository: TelemetryRepository,
     private val externalImportRepository: ExternalImportRepository,
+    private val from: String,
+    private val productTelemetry: zed.rainxch.core.domain.telemetry.ProductTelemetry,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentDownloadJob: Job? = null
@@ -2395,6 +2397,13 @@ class DetailsViewModel(
                     )
 
                 telemetryRepository.recordRepoViewed(repo.id)
+                productTelemetry.fire(
+                    name = zed.rainxch.core.domain.telemetry.ProductTelemetryEvents.DETAILS_VIEWED,
+                    props =
+                        mapOf(
+                            zed.rainxch.core.domain.telemetry.ProductTelemetryProps.FROM to from,
+                        ),
+                )
 
                 observeInstalledApp(repo.id)
             } catch (e: RateLimitException) {

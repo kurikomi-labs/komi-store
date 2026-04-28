@@ -105,6 +105,7 @@ val coreModule =
                 historyDao = get(),
                 installer = get(),
                 clientProvider = get(),
+                productTelemetry = get(),
             )
         }
 

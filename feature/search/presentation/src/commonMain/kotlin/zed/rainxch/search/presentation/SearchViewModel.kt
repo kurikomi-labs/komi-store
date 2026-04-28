@@ -30,6 +30,10 @@ import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
+import zed.rainxch.core.domain.telemetry.TelemetryBuckets
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ClipboardHelper
 import zed.rainxch.core.domain.utils.ShareManager
@@ -60,6 +64,7 @@ class SearchViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
     private val telemetryRepository: TelemetryRepository,
+    private val productTelemetry: ProductTelemetry,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
@@ -411,9 +416,18 @@ class SearchViewModel(
                     }
 
                     if (isInitial) {
+                        val resultCount = _state.value.repositories.size
                         telemetryRepository.recordSearchPerformed(
                             query = query,
-                            resultCount = _state.value.repositories.size,
+                            resultCount = resultCount,
+                        )
+                        productTelemetry.fire(
+                            name = ProductTelemetryEvents.SEARCH_EXECUTED,
+                            props =
+                                mapOf(
+                                    ProductTelemetryProps.RESULT_COUNT_BUCKET to
+                                        TelemetryBuckets.resultCount(resultCount),
+                                ),
                         )
                     }
                 } catch (e: RateLimitException) {

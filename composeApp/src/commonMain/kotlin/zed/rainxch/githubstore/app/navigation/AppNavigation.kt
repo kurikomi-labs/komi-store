@@ -90,6 +90,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "category",
                                 ),
                             )
                         },
@@ -112,6 +113,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "search",
                                 ),
                             )
                         },
@@ -120,6 +122,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     owner = owner,
                                     repo = repo,
+                                    from = "link",
                                 ),
                             )
                         },
@@ -143,6 +146,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "link",
                                 ),
                             )
                         },
@@ -160,6 +164,7 @@ fun AppNavigation(
                                     args.owner,
                                     args.repo,
                                     args.isComingFromUpdate,
+                                    args.from,
                                 )
                             },
                     )
@@ -175,6 +180,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "link",
                                 ),
                             )
                         },
@@ -203,7 +209,12 @@ fun AppNavigation(
                             navController.navigateUp()
                         },
                         onNavigateToDetails = {
-                            navController.navigate(GithubStoreGraph.DetailsScreen(it))
+                            navController.navigate(
+                                GithubStoreGraph.DetailsScreen(
+                                    repositoryId = it,
+                                    from = "library",
+                                ),
+                            )
                         },
                         onNavigateToDeveloperProfile = { username ->
                             navController.navigate(
@@ -224,6 +235,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "library",
                                 ),
                             )
                         },
@@ -277,6 +289,7 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    from = "library",
                                 ),
                             )
                         },
@@ -323,6 +336,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
+                                    from = "library",
                                 ),
                             )
                         },
@@ -344,6 +358,7 @@ fun AppNavigation(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
+                                    from = "library",
                                 ),
                             )
                         },
