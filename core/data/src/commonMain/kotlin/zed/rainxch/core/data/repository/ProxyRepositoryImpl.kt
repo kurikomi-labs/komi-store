@@ -13,6 +13,9 @@ import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.ProxyScope
 import zed.rainxch.core.domain.repository.ProxyRepository
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 
 /**
  * Persists one [ProxyConfig] per [ProxyScope] in DataStore, writes
@@ -30,6 +33,7 @@ import zed.rainxch.core.domain.repository.ProxyRepository
 class ProxyRepositoryImpl(
     private val preferences: DataStore<Preferences>,
     private val logger: GitHubStoreLogger,
+    private val productTelemetry: ProductTelemetry,
 ) : ProxyRepository {
     // Legacy (pre-scope) keys — read-only, used as a fallback seed.
     private val legacyType = stringPreferencesKey("proxy_type")
@@ -181,6 +185,19 @@ class ProxyRepositoryImpl(
             }
         }
         ProxyManager.setConfig(scope, config)
+
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.PROXY_CONFIGURED,
+            props =
+                mapOf(
+                    ProductTelemetryProps.TYPE to
+                        when (config) {
+                            is ProxyConfig.Http -> "http"
+                            is ProxyConfig.Socks -> "socks5"
+                            ProxyConfig.None, ProxyConfig.System -> "none"
+                        },
+                ),
+        )
     }
 
     private fun writeOrRemove(

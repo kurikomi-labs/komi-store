@@ -42,6 +42,9 @@ import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.dto.SigningFingerprintSeedResponse
 import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.domain.model.ProxyConfig
+import zed.rainxch.core.domain.telemetry.ProductTelemetry
+import zed.rainxch.core.domain.telemetry.ProductTelemetryEvents
+import zed.rainxch.core.domain.telemetry.ProductTelemetryProps
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -53,12 +56,16 @@ import kotlin.coroutines.cancellation.CancellationException
 class BackendApiClient(
     proxyConfigFlow: StateFlow<ProxyConfig>,
     private val tokenStore: TokenStore,
+    private val productTelemetry: ProductTelemetry,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val mutex = Mutex()
 
     @Volatile
     private var httpClient: HttpClient = buildClient(proxyConfigFlow.value)
+
+    @Volatile
+    private var currentProxyConfig: ProxyConfig = proxyConfigFlow.value
 
     init {
         proxyConfigFlow
@@ -68,6 +75,7 @@ class BackendApiClient(
                 mutex.withLock {
                     httpClient.close()
                     httpClient = buildClient(config)
+                    currentProxyConfig = config
                 }
             }.launchIn(scope)
     }
@@ -315,14 +323,27 @@ class BackendApiClient(
             }
         }
 
-    private inline fun <T> safeCall(block: () -> Result<T>): Result<T> =
-        try {
-            block()
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    private inline fun <T> safeCall(block: () -> Result<T>): Result<T> {
+        val result =
+            try {
+                block()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        firePerProxyOutcome(result.isSuccess)
+        return result
+    }
+
+    private fun firePerProxyOutcome(success: Boolean) {
+        val proxy = currentProxyConfig
+        if (proxy is ProxyConfig.None || proxy is ProxyConfig.System) return
+        productTelemetry.fire(
+            name = ProductTelemetryEvents.PROXY_USED,
+            props = mapOf(ProductTelemetryProps.SUCCESS to success.toString()),
+        )
+    }
 
     companion object {
         private const val BASE_URL = BACKEND_BASE_URL

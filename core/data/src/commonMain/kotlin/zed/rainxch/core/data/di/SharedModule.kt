@@ -140,6 +140,7 @@ val coreModule =
             ProxyRepositoryImpl(
                 preferences = get(),
                 logger = get(),
+                productTelemetry = get(),
             )
         }
 
@@ -171,6 +172,7 @@ val coreModule =
             BackendApiClient(
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
                 tokenStore = get(),
+                productTelemetry = get(),
             )
         }
         // NOTE: the reviewer asked for a Koin onClose hook to call
