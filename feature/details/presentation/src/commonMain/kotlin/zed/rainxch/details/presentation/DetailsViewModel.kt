@@ -1756,19 +1756,39 @@ class DetailsViewModel(
                 }
 
                 OrchestratorStage.Completed -> {
-                    // Shizuku/AlwaysInstall path: orchestrator
-                    // installed silently. Persist the DB row here —
-                    // PackageEventReceiver only patches existing rows
-                    // and would skip a fresh Shizuku install.
+                    // AlwaysInstall path: orchestrator finished its
+                    // own install attempt. The actual outcome may be
+                    // COMPLETED (genuine silent install — Shizuku/Sui)
+                    // or DELEGATED_TO_SYSTEM (Shizuku fell back to the
+                    // system installer because the binder went away).
+                    //
+                    // Persist the DB row here — PackageEventReceiver
+                    // only patches existing rows and would skip a
+                    // fresh row entirely. The row's `isPendingInstall`
+                    // flag is driven by the actual outcome so a
+                    // delegated-but-unconfirmed install never gets
+                    // marked installed (cancelled prompts no longer
+                    // leave the row falsely flipped to installed).
+                    val resolvedOutcome = entry.installOutcome ?: InstallOutcome.COMPLETED
+                    val isCompleted = resolvedOutcome == InstallOutcome.COMPLETED
+
                     _state.value = _state.value.copy(downloadStage = DownloadStage.IDLE)
                     currentAssetName = null
                     appendLog(
                         assetName = assetName,
                         size = sizeBytes,
                         tag = releaseTag,
-                        result = if (isUpdate) LogResult.Updated else LogResult.Installed,
+                        result = when {
+                            !isCompleted -> LogResult.Downloaded
+                            isUpdate -> LogResult.Updated
+                            else -> LogResult.Installed
+                        },
                     )
-                    _state.value.repository?.id?.let { telemetryRepository.recordInstallSucceeded(it) }
+                    if (isCompleted) {
+                        _state.value.repository?.id?.let {
+                            telemetryRepository.recordInstallSucceeded(it)
+                        }
+                    }
 
                     if (platform == Platform.ANDROID) {
                         val filePath = entry.filePath
@@ -1787,22 +1807,35 @@ class DetailsViewModel(
                                         assetSize = sizeBytes,
                                         releaseTag = releaseTag,
                                         isUpdate = isUpdate,
-                                        installOutcome = InstallOutcome.COMPLETED,
+                                        installOutcome = resolvedOutcome,
                                     )
                                 } else {
                                     logger.warn(
-                                        "Shizuku install completed but APK validation failed: $validation",
+                                        "Orchestrator install settled (outcome=$resolvedOutcome) " +
+                                            "but APK validation failed: $validation",
                                     )
                                 }
                             }.onFailure { t ->
-                                logger.error("Failed to persist Shizuku install: ${t.message}")
+                                logger.error("Failed to persist orchestrator install: ${t.message}")
                             }
                         } else {
-                            logger.warn("Shizuku install completed but filePath is null; DB not updated")
+                            logger.warn(
+                                "Orchestrator install settled (outcome=$resolvedOutcome) " +
+                                    "but filePath is null; DB not updated",
+                            )
                         }
                     }
 
-                    downloadOrchestrator.dismiss(packageKey)
+                    // Only dismiss when the install was actually
+                    // confirmed. For DELEGATED outcomes we keep the
+                    // entry in the orchestrator so the apps row can
+                    // still surface the parked file (one-tap retry on
+                    // user-cancelled prompts) until PackageEventReceiver
+                    // confirms the install or the stale-pending sweep
+                    // cleans it up.
+                    if (isCompleted) {
+                        downloadOrchestrator.dismiss(packageKey)
+                    }
                     return@collect
                 }
 

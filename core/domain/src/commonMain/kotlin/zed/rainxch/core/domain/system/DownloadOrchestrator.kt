@@ -212,6 +212,24 @@ data class OrchestratedDownload(
     val totalBytes: Long? = null,
     /** Error message if [stage] is [DownloadStage.Failed]. */
     val errorMessage: String? = null,
+    /**
+     * Outcome reported by the platform installer when the orchestrator
+     * itself ran the install (the [InstallPolicy.AlwaysInstall] path).
+     *
+     * `null` for everything before the orchestrator finishes calling
+     * `installer.install()` and for entries that never went through the
+     * orchestrator's own install (i.e. [InstallPolicy.InstallWhileForeground]
+     * and [InstallPolicy.DeferUntilUserAction] — those hand the file off
+     * to the foreground ViewModel which captures the outcome itself).
+     *
+     * Consumers observing [DownloadStage.Completed] must use this to
+     * decide whether to persist the row as actually-installed
+     * (`COMPLETED`) or as pending-confirmation (`DELEGATED_TO_SYSTEM` —
+     * e.g. Shizuku falling back to the system installer because the
+     * binder went away). Treating every `Completed` as a real install
+     * silently marks rows installed on cancelled prompts.
+     */
+    val installOutcome: InstallOutcome? = null,
 )
 
 /**

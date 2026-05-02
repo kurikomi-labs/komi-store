@@ -310,19 +310,45 @@ class DefaultDownloadOrchestrator(
         val ext = spec.asset.name.substringAfterLast('.', "").lowercase()
         try {
             installer.ensurePermissionsOrThrow(ext)
-            installer.install(filePath, ext)
-            // Successful install — clear any pending file path on
-            // the row (if it was set from a prior aborted attempt)
-            // and move the orchestrator entry to Completed.
-            try {
-                installedAppsRepository.setPendingInstallFilePath(spec.packageName, null)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Logger.w(e) { "Orchestrator: failed to clear pending install path" }
+            val outcome = installer.install(filePath, ext)
+            when (outcome) {
+                InstallOutcome.COMPLETED -> {
+                    // Genuine silent install (Shizuku/Sui). Clear any
+                    // pending file path on the row (if set by a prior
+                    // aborted attempt) and move the entry to Completed.
+                    try {
+                        installedAppsRepository.setPendingInstallFilePath(spec.packageName, null)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        Logger.w(e) { "Orchestrator: failed to clear pending install path" }
+                    }
+                    pendingInstallNotifier.clearPending(spec.packageName)
+                    updateEntry(spec.packageName) {
+                        it.copy(stage = DownloadStage.Completed, installOutcome = outcome)
+                    }
+                }
+
+                InstallOutcome.DELEGATED_TO_SYSTEM -> {
+                    // The install was *handed off* to the system
+                    // installer (e.g. Shizuku binder went away and the
+                    // wrapper fell back to the standard installer). The
+                    // user has not confirmed yet — they may cancel the
+                    // system prompt. Do NOT mark this as a real install.
+                    // Keep the file parked so the foreground VM can re-
+                    // run validation if needed and the apps row can show
+                    // a "ready to install" state. The eventual
+                    // PACKAGE_ADDED broadcast (or its absence on cancel)
+                    // is what flips `isPendingInstall` correctly.
+                    Logger.i {
+                        "Orchestrator: AlwaysInstall path returned DELEGATED_TO_SYSTEM " +
+                            "for ${spec.packageName}; Completed-with-pending so DB row stays pending"
+                    }
+                    updateEntry(spec.packageName) {
+                        it.copy(stage = DownloadStage.Completed, installOutcome = outcome)
+                    }
+                }
             }
-            pendingInstallNotifier.clearPending(spec.packageName)
-            updateEntry(spec.packageName) { it.copy(stage = DownloadStage.Completed) }
         } catch (e: CancellationException) {
             throw e
         } catch (t: Throwable) {
