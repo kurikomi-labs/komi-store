@@ -150,6 +150,10 @@
                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
                 <data android:scheme="package" />
             </intent-filter>
+            <!-- Self-update detection: MY_PACKAGE_REPLACED has no data scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
         </receiver>
 
         <!-- Cancel action fired from the download progress notification (#373) -->

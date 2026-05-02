@@ -86,7 +86,15 @@ class PackageEventReceiver() :
         context: Context?,
         intent: Intent?,
     ) {
-        val packageName = intent?.data?.schemeSpecificPart ?: return
+        // MY_PACKAGE_REPLACED has no data URI — the target is the
+        // receiving app itself. Fall back to the context's package name.
+        val packageName = intent?.data?.schemeSpecificPart
+            ?: if (intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
+                context?.packageName
+            } else {
+                null
+            }
+            ?: return
 
         Logger.d { "PackageEventReceiver: ${intent.action} for $packageName" }
 
@@ -94,6 +102,7 @@ class PackageEventReceiver() :
             when (intent.action) {
                 Intent.ACTION_PACKAGE_ADDED,
                 Intent.ACTION_PACKAGE_REPLACED,
+                Intent.ACTION_MY_PACKAGE_REPLACED,
                 -> {
                     scope.launch { onPackageInstalled(packageName) }
                 }
@@ -357,6 +366,7 @@ class PackageEventReceiver() :
                 addAction(Intent.ACTION_PACKAGE_ADDED)
                 addAction(Intent.ACTION_PACKAGE_REPLACED)
                 addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED)
+                addAction(Intent.ACTION_MY_PACKAGE_REPLACED)
                 addDataScheme("package")
             }
     }

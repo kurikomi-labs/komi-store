@@ -145,7 +145,16 @@ class GithubStoreApp : Application() {
                 val selfPackageName = packageName
                 val existing = repo.getAppByPackage(selfPackageName)
 
-                if (existing != null) return@launch
+                if (existing != null) {
+                    // After a self-update the old process is killed before
+                    // ACTION_PACKAGE_REPLACED can be delivered to our own
+                    // receiver, so isPendingInstall stays true. Resolve it
+                    // here at the earliest startup opportunity.
+                    if (existing.isPendingInstall) {
+                        resolveSelfPendingInstall(existing, repo)
+                    }
+                    return@launch
+                }
 
                 val packageMonitor = get<PackageMonitor>()
                 val systemInfo = packageMonitor.getInstalledPackageInfo(selfPackageName)
@@ -196,6 +205,39 @@ class GithubStoreApp : Application() {
             } catch (e: Exception) {
                 Logger.e(e) { "GitHub Store App: Failed to register self as installed app" }
             }
+        }
+    }
+
+    /**
+     * Resolves a stale `isPendingInstall` flag for the app's own
+     * database row. Called on every cold start when the row exists
+     * and still has the flag set — the typical scenario after a
+     * successful self-update where the broadcast path missed.
+     */
+    private suspend fun resolveSelfPendingInstall(
+        existing: InstalledApp,
+        repo: InstalledAppsRepository,
+    ) {
+        try {
+            val packageMonitor = get<PackageMonitor>()
+            val systemInfo = packageMonitor.getInstalledPackageInfo(packageName)
+            if (systemInfo != null) {
+                val latestVersionCode = existing.latestVersionCode ?: 0L
+                repo.updateApp(
+                    existing.copy(
+                        isPendingInstall = false,
+                        installedVersionName = systemInfo.versionName,
+                        installedVersionCode = systemInfo.versionCode,
+                        isUpdateAvailable = latestVersionCode > systemInfo.versionCode,
+                    ),
+                )
+                Logger.i { "Resolved self-update pending install: ${systemInfo.versionName} (code=${systemInfo.versionCode})" }
+            } else {
+                repo.updatePendingStatus(packageName, false)
+                Logger.i { "Resolved self-update pending install (no system info)" }
+            }
+        } catch (e: Exception) {
+            Logger.e(e) { "Failed to resolve self-update pending install" }
         }
     }
 
