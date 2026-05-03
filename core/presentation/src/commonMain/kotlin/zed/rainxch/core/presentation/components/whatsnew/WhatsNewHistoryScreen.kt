@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.WhatsNewEntries
+import zed.rainxch.core.domain.model.WhatsNewEntry
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.whats_new_history_empty
 import zed.rainxch.githubstore.core.presentation.res.whats_new_title
@@ -30,10 +30,9 @@ import zed.rainxch.githubstore.core.presentation.res.whats_new_title
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewHistoryScreen(
+    entries: List<WhatsNewEntry>,
     onNavigateBack: () -> Unit,
 ) {
-    val entries = WhatsNewEntries.all
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {

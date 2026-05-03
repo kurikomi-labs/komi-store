@@ -1,0 +1,31 @@
+{
+  "versionCode": 16,
+  "versionName": "1.8.1",
+  "releaseDate": "2026-05-03",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "APK Inspect: examina el contenido de cualquier release antes de instalarlo.",
+        "La pantalla de Apps ahora agrupa actualizaciones, instalaciones pendientes y apps instaladas.",
+        "Hoja de novedades: descubre qué cambió tras cada actualización."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "El reescaneo manual muestra todas las apps tipo GitHub presentes en el dispositivo.",
+        "Mejor manejo de autenticación: los 401 transitorios ya no provocan cierres de sesión espurios."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Las descargas multi-origen ya no se sobrescriben entre sí.",
+        "Las instalaciones con respaldo Shizuku ya no marcan apps como «instaladas» antes de tiempo.",
+        "La auto-actualización ya no deja apps atascadas en «Preparando para instalar»."
+      ]
+    }
+  ]
+}

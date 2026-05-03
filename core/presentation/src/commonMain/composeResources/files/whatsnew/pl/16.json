@@ -1,0 +1,31 @@
+{
+  "versionCode": 16,
+  "versionName": "1.8.1",
+  "releaseDate": "2026-05-03",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "APK Inspect — zajrzyj do środka dowolnego wydania przed instalacją.",
+        "Ekran aplikacji grupuje teraz aktualizacje, instalacje oczekujące i aplikacje zainstalowane.",
+        "Panel „Co nowego” — od razu wiadomo, co się zmieniło po każdej aktualizacji."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Ręczne ponowne skanowanie pokazuje wszystkie aplikacje z GitHuba obecne na urządzeniu.",
+        "Stabilniejsza obsługa autoryzacji — przejściowe 401 nie powodują już fałszywych wylogowań."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Pobierania z wielu źródeł nie nadpisują już swoich plików APK.",
+        "Instalacje z trybem awaryjnym Shizuku nie oznaczają już aplikacji jako „zainstalowanych” przedwcześnie.",
+        "Auto-aktualizacja nie zostawia już aplikacji w stanie „Przygotowywanie instalacji”."
+      ]
+    }
+  ]
+}

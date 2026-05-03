@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Backend de GitHub Store: autenticación, búsqueda y descubrimiento funcionan en China.",
+        "Importación de biblioteca: detecta automáticamente las apps de GitHub que ya tienes instaladas.",
+        "Sistema de mirrors de descarga: carrera multi-origen con verificación SHA-256.",
+        "Inicio de sesión con Personal Access Token para redes que bloquean el flujo OAuth en navegador."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Envía comentarios desde la app: reportes de errores, ideas y solicitudes de cambio.",
+        "Selector de canal pre-release y opción «volver a estable» en Detalles.",
+        "Paquetes nativos pkg.tar.zst para Arch Linux, junto a deb, rpm y AppImage."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Linux Desktop ya no borra silenciosamente la configuración y la biblioteca al reiniciar.",
+        "Selección de variante respetada: la variante elegida se instala sin sobrescritura.",
+        "Solucionado el bloqueo de accesibilidad en macOS gracias a Compose Multiplatform 1.10.3."
+      ]
+    }
+  ]
+}

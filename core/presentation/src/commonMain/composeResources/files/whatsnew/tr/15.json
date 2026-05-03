@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "GitHub Store kendi arka ucu: kimlik doğrulama, arama ve keşfetme Çin’de de çalışıyor.",
+        "Kütüphane içe aktarma: cihazda zaten kurulu olan GitHub uygulamalarını otomatik tanır.",
+        "İndirme ayna sistemi: çoklu kaynak yarışı ve SHA-256 doğrulaması.",
+        "OAuth tarayıcı akışını engelleyen ağlar için Personal Access Token ile giriş."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Uygulama içinden geri bildirim: hata raporları, özellik fikirleri, değişiklik istekleri.",
+        "Detaylar ekranında ön sürüm kanal seçici ve “kararlıya geri dön” düğmesi.",
+        "Arch Linux için yerel pkg.tar.zst paketleri; deb, rpm ve AppImage’in yanı sıra."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Linux Desktop yeniden başlatmada artık ayarları ve kütüphaneyi sessizce silmiyor.",
+        "Seçilen varyant artık üzerine yazılmadan, olduğu gibi yükleniyor.",
+        "Compose Multiplatform 1.10.3 güncellemesiyle macOS erişilebilirlik çökmesi giderildi."
+      ]
+    }
+  ]
+}

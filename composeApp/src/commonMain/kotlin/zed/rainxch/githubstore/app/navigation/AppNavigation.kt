@@ -331,7 +331,9 @@ fun AppNavigation(
                 }
 
                 composable<GithubStoreGraph.WhatsNewHistoryScreen> {
+                    val historyEntries by whatsNewViewModel.historyEntries.collectAsStateWithLifecycle()
                     WhatsNewHistoryScreen(
+                        entries = historyEntries,
                         onNavigateBack = { navController.navigateUp() },
                     )
                 }

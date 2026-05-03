@@ -1,0 +1,31 @@
+{
+  "versionCode": 16,
+  "versionName": "1.8.1",
+  "releaseDate": "2026-05-03",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "APK Inspect — peek inside any release before installing.",
+        "Apps screen now groups updates, pending installs, and installed apps.",
+        "What's new sheet — see what changed after every update."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Manual rescan surfaces every GitHub-style app on device.",
+        "Tighter auth handling — transient 401s no longer trigger spurious sign-outs."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Multi-source downloads no longer clobber each other's APK file.",
+        "Shizuku-fallback installs no longer flip rows to \"installed\" prematurely.",
+        "Self-update no longer leaves apps stuck on \"Preparing to install\"."
+      ]
+    }
+  ]
+}

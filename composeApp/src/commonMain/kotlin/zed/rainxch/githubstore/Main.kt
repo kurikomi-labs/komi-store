@@ -141,6 +141,7 @@ fun App(deepLinkUri: String? = null) {
 
         val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
         val pendingEntry by whatsNewViewModel.pendingEntry.collectAsStateWithLifecycle()
+        val hasHistory by whatsNewViewModel.hasHistory.collectAsStateWithLifecycle()
         val onHomeScreen = currentScreen is GithubStoreGraph.HomeScreen
         val authSettled = !state.showSessionExpiredDialog && !onAuthScreen
         val rateLimitCleared = !state.showRateLimitDialog
@@ -160,7 +161,7 @@ fun App(deepLinkUri: String? = null) {
         if (entryToShow != null && canShowWhatsNew && debouncedReady) {
             WhatsNewSheet(
                 entry = entryToShow,
-                showHistoryAction = whatsNewViewModel.hasHistory,
+                showHistoryAction = hasHistory,
                 onDismiss = { whatsNewViewModel.markSeen() },
                 onViewHistory = {
                     whatsNewViewModel.markSeen()

@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Własny backend GitHub Store: logowanie, wyszukiwanie i odkrywanie działają również w Chinach.",
+        "Import biblioteki: automatyczne wykrywanie aplikacji z GitHuba zainstalowanych na urządzeniu.",
+        "System mirrorów pobierania: wyścig z wielu źródeł i weryfikacja SHA-256.",
+        "Logowanie przez Personal Access Token dla sieci, w których przeglądarkowy OAuth jest zablokowany."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Wysyłanie opinii z poziomu aplikacji: błędy, propozycje funkcji i prośby o zmiany.",
+        "Przełącznik kanału pre-release oraz przycisk „wróć do stabilnej” w Szczegółach.",
+        "Natywne paczki pkg.tar.zst dla Arch Linuxa, obok deb, rpm i AppImage."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Linux Desktop nie kasuje już po cichu ustawień i biblioteki po restarcie.",
+        "Wybrany wariant jest respektowany — instaluje się bez nadpisywania.",
+        "Naprawiona awaria dostępności na macOS dzięki aktualizacji do Compose Multiplatform 1.10.3."
+      ]
+    }
+  ]
+}

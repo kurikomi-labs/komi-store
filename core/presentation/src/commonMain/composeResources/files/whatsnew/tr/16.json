@@ -1,0 +1,31 @@
+{
+  "versionCode": 16,
+  "versionName": "1.8.1",
+  "releaseDate": "2026-05-03",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "APK Inspect: kurmadan önce herhangi bir sürümün içine göz at.",
+        "Uygulamalar ekranı artık güncellemeleri, bekleyen kurulumları ve kurulu uygulamaları gruplandırıyor.",
+        "“Yenilikler” paneli: her güncellemenin ardından nelerin değiştiğini hemen görün."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Manuel yeniden tarama, cihazdaki tüm GitHub tipi uygulamaları görünür kılıyor.",
+        "Daha sağlam kimlik doğrulama: geçici 401 yanıtları artık yanlışlıkla oturumu kapatmıyor."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Çoklu kaynaklı indirmeler artık birbirinin APK dosyasını ezmez.",
+        "Shizuku yedekli kurulumlar uygulamaları artık erkenden “kuruldu” olarak işaretlemez.",
+        "Otomatik güncelleme uygulamaları artık “Yüklemeye hazırlanıyor” durumunda asılı bırakmaz."
+      ]
+    }
+  ]
+}

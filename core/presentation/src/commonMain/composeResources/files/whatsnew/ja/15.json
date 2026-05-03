@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "GitHub Store 専用バックエンドを導入。中国国内でも認証・検索・発見が動作します。",
+        "ライブラリのインポート: 端末にすでにある GitHub 由来のアプリを自動で検出します。",
+        "ダウンロードミラーシステム: 複数ソースを競合させ、SHA-256 で完全性を検証します。",
+        "OAuth ブラウザフローが通らない環境向けに、Personal Access Token でのサインインに対応。"
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "アプリ内フィードバック: バグ報告・機能要望・変更依頼をそのまま送信できます。",
+        "プレリリースチャネル切替と、詳細画面に「安定版に戻す」ボタンを追加。",
+        "Arch Linux 向けに pkg.tar.zst パッケージを追加。deb / rpm / AppImage と同時提供。"
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Linux Desktop で再起動時に設定とライブラリが消える不具合を修正しました。",
+        "選択したバリアントが上書きされず、そのまま正しくインストールされるようになりました。",
+        "Compose Multiplatform 1.10.3 への更新で、macOS のアクセシビリティクラッシュを解消。"
+      ]
+    }
+  ]
+}

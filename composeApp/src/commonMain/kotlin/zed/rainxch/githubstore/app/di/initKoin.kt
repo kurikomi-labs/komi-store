@@ -24,6 +24,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             networkModule,
             databaseModule,
             viewModelsModule,
+            whatsNewModule,
             appsModule,
             authModule,
             detailsModule,

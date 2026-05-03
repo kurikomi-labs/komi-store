@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "GitHub Store 自有后端上线,登录、搜索和发现在国内也能正常使用。",
+        "应用库导入:自动识别设备上已安装的 GitHub 来源应用。",
+        "下载镜像系统:多源并发下载,SHA-256 完整性校验全程把关。",
+        "OAuth 浏览器流程受限的网络下,可使用 Personal Access Token 登录。"
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "应用内反馈:Bug 报告、功能建议、修改请求都可直接发送。",
+        "详情页新增预发布通道切换器,以及「切回稳定版」按钮。",
+        "为 Arch Linux 提供原生 pkg.tar.zst 包,与 deb、rpm、AppImage 同步发布。"
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "修复 Linux Desktop 重启后设置和应用库被静默清空的问题。",
+        "尊重用户选择的变体,所选变体不会再被静默覆盖。",
+        "升级 Compose Multiplatform 到 1.10.3,修复 macOS 辅助功能崩溃。"
+      ]
+    }
+  ]
+}

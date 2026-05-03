@@ -74,6 +74,7 @@ kotlin {
 
             implementation(libs.touchlab.kermit)
             implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.jetbrains.compose.runtime)
             implementation(libs.jetbrains.compose.foundation)

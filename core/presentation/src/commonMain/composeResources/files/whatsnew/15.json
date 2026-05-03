@@ -1,0 +1,33 @@
+{
+  "versionCode": 15,
+  "versionName": "1.8.0",
+  "releaseDate": "2026-05-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "GitHub Store backend — auth, search, and discovery work in China.",
+        "Library Imports — auto-detects GitHub apps you already have on device.",
+        "Download Mirror System — multi-source race plus SHA-256 verification.",
+        "Personal Access Token sign-in for networks blocking the OAuth browser flow."
+      ]
+    },
+    {
+      "type": "IMPROVED",
+      "bullets": [
+        "Send feedback in-app — bug reports, feature ideas, change requests.",
+        "Pre-release channel chip plus \"switch to stable\" rollback in Details.",
+        "Arch Linux native pkg.tar.zst packages alongside deb, rpm, and AppImage."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Linux Desktop no longer silently wipes settings and library on reboot.",
+        "Variant picking now honored — chosen variant installs without override.",
+        "macOS accessibility crash fixed via Compose Multiplatform 1.10.3."
+      ]
+    }
+  ]
+}
