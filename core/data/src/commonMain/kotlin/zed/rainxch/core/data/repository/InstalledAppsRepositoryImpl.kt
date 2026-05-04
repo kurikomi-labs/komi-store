@@ -39,6 +39,7 @@ class InstalledAppsRepositoryImpl(
     private val historyDao: UpdateHistoryDao,
     private val installer: Installer,
     private val clientProvider: GitHubClientProvider,
+    private val backendApiClient: zed.rainxch.core.data.network.BackendApiClient,
 ) : InstalledAppsRepository {
     // Reads the current Ktor client at every call site so any proxy
     // change (ProxyManager rebuilds the client via [clientProvider])
@@ -126,6 +127,26 @@ class InstalledAppsRepositoryImpl(
         repo: String,
         includePreReleases: Boolean,
     ): List<GithubRelease> {
+        val backendResult = backendApiClient.getReleases(owner, repo, perPage = RELEASE_WINDOW)
+        val backendReleases = backendResult.fold(
+            onSuccess = { it },
+            onFailure = { error ->
+                if (!zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow(error)) {
+                    return emptyList()
+                }
+                null
+            },
+        )
+        if (backendReleases != null) {
+            return backendReleases
+                .asSequence()
+                .filter { it.draft != true }
+                .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
+                .map { it.toDomain() }
+                .filter { includePreReleases || !it.isEffectivelyPreRelease() }
+                .toList()
+        }
+
         return try {
             val releases =
                 httpClient

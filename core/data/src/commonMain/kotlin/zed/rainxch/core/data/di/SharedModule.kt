@@ -123,6 +123,7 @@ val coreModule =
                 historyDao = get(),
                 installer = get(),
                 clientProvider = get(),
+                backendApiClient = get(),
             )
         }
 
