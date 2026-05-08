@@ -34,6 +34,13 @@ class BootReceiver : BroadcastReceiver() {
                 Logger.i { "BootReceiver: Device booted, update check disabled — skipping" }
                 UpdateScheduler.cancel(context)
             }
+        } catch (t: Throwable) {
+            // Don't let scheduling failures crash the framework's
+            // broadcast pipeline — propagation triggers a second
+            // `sendFinished` from the platform after our own
+            // `pendingResult.finish()` and surfaces as
+            // `IllegalStateException: Broadcast already finished`.
+            Logger.e(t) { "BootReceiver: scheduling failed; dropped" }
         } finally {
             pendingResult.finish()
         }

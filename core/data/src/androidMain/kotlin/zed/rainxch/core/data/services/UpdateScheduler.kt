@@ -46,15 +46,15 @@ object UpdateScheduler {
                 request = request,
             )
 
+        // Note: an expedited request CANNOT carry an initial delay —
+        // WorkManager throws `IllegalArgumentException: Expedited jobs
+        // cannot be delayed` at build time. Drop the cold-start backoff
+        // and let the OS scheduler dispatch as soon as the network
+        // constraint is satisfied; on aggressive-OEM ROMs the expedited
+        // tier is what actually gets the work to run.
         val immediateRequest =
             OneTimeWorkRequestBuilder<UpdateCheckWorker>()
                 .setConstraints(constraints)
-                .setInitialDelay(1, TimeUnit.MINUTES)
-                // Aggressive-OEM ROMs (Oppo / OnePlus / Realme / Xiaomi)
-                // throttle generic background work hard. Expedited tier
-                // gets more headroom; fall back to non-expedited when
-                // the system has no expedited budget left so the work
-                // still runs eventually rather than failing outright.
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
