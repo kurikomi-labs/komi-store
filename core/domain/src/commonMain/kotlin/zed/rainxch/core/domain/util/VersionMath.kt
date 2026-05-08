@@ -49,19 +49,65 @@ object VersionMath {
      */
     fun normalizeVersion(version: String?): String {
         if (version.isNullOrBlank()) return ""
-        val withoutRefs =
+        val cleaned = stripFullPrefix(version)
+        val withoutBuildMetadata = cleaned.substringBefore('+')
+        // Hyphenated calver (`2024-10-15`) — semver would otherwise read
+        // the trailing `-10-15` as a pre-release identifier and rank
+        // `2024-10-15 < 2024`, which is the opposite of what users mean
+        // by a date-stamped release. Re-shape into dotted calver so the
+        // semver path numeric-compares each segment.
+        val calverNormalized = normalizeCalverHyphen(withoutBuildMetadata)
+        // Adjacent-letter pre-release (`1.2.0beta01`) — insert the
+        // missing hyphen so the numeric core and the marker can be
+        // parsed independently. Only inserts before known markers to
+        // avoid mauling architecture suffixes like `1arm64`.
+        val separated = insertHyphenBeforeKnownMarker(calverNormalized)
+        if (parseSemanticVersion(separated) != null) {
+            return separated
+        }
+        val match = DOTTED_DIGIT_PATTERN.find(separated)
+        return match?.value ?: separated
+    }
+
+    private fun stripFullPrefix(version: String): String {
+        val trimmed =
             version
                 .trim()
                 .removePrefix("refs/tags/")
-                .removePrefix("v")
-                .removePrefix("V")
                 .trim()
-        val withoutBuildMetadata = withoutRefs.substringBefore('+')
-        if (parseSemanticVersion(withoutBuildMetadata) != null) {
-            return withoutBuildMetadata
-        }
-        val match = DOTTED_DIGIT_PATTERN.find(withoutBuildMetadata)
-        return match?.value ?: withoutBuildMetadata
+        // Word-style prefixes like `version-`, `release/`, `app_`,
+        // `build-`, `ver.` — common in maintainer-customised tag
+        // schemes. Strips a single leading word and any single
+        // separator before the version core. Case-insensitive.
+        val wordMatch = VERSION_WORD_PREFIX.find(trimmed)
+        val withoutWord = if (wordMatch != null) trimmed.substring(wordMatch.range.last + 1) else trimmed
+        return withoutWord.removePrefix("v").removePrefix("V").trim()
+    }
+
+    private fun normalizeCalverHyphen(s: String): String {
+        val m = CALVER_HYPHEN_PATTERN.matchEntire(s) ?: return s
+        val year = m.groupValues[1]
+        val month = m.groupValues[2].padStart(2, '0')
+        val day = m.groupValues[3].padStart(2, '0')
+        val tail = m.groupValues.getOrNull(4).orEmpty()
+        val core = "$year.$month.$day"
+        return if (tail.isNotEmpty()) "$core-$tail" else core
+    }
+
+    private fun insertHyphenBeforeKnownMarker(s: String): String {
+        val match = ADJACENT_ALPHA_PATTERN.find(s) ?: return s
+        val letterStart = match.range.first + 1
+        val tail = s.substring(letterStart).lowercase()
+        // `m\d+` covers the JetBrains-style milestone shorthand (`m5`,
+        // `m12`) which `PRE_RELEASE_MARKER_PATTERN` already matches but
+        // a string `startsWith` over [KNOWN_PRE_RELEASE_PREFIXES] does
+        // not — without the explicit regex check, `1.2.0m5` would slip
+        // past detection and silently rank as stable `1.2.0`.
+        val isKnownMarker =
+            KNOWN_PRE_RELEASE_PREFIXES.any { tail.startsWith(it) } ||
+                M_DIGIT_TAIL_PATTERN.containsMatchIn(tail)
+        if (!isKnownMarker) return s
+        return s.substring(0, letterStart) + "-" + s.substring(letterStart)
     }
 
     /**
@@ -111,14 +157,16 @@ object VersionMath {
     fun isSameVersion(a: String?, b: String?): Boolean = compareVersions(a, b) == 0
 
     /**
-     * Strict literal equality after the conservative cleanup that
-     * [normalizeVersion] applies BEFORE the semver normalization steps:
-     * trim, strip `refs/tags/`, strip leading `v` / `V`, trim again.
+     * Strict literal equality after the conservative cleanup pass that
+     * [stripCommonPrefixes] (delegating to [stripFullPrefix]) applies:
+     * trim, strip `refs/tags/`, strip a single case-insensitive
+     * word-style prefix with separator (`version-`, `release/`, `app_`,
+     * `build-`, `ver.`), strip a leading `v` / `V`, trim again.
      *
      * Differs from [isSameVersion] in that it does NOT strip `+build`
-     * metadata, does NOT extract a dotted-digit core from prefixed
-     * tags, and is case-sensitive on the suffix. Use this in UI
-     * branches that gate "Open" vs "Install" CTAs — semver treats
+     * metadata, does NOT extract a dotted-digit core from arbitrarily
+     * prefixed tags, and is case-sensitive on the suffix. Use this in
+     * UI branches that gate "Open" vs "Install" CTAs — semver treats
      * `1.0.0+build.1` and `1.0.0+build.2` as equivalent for ordering,
      * but users (and maintainers who abuse build metadata to ship
      * distinct artifacts under the same numeric core) consider them
@@ -136,14 +184,8 @@ object VersionMath {
 
     private fun stripCommonPrefixes(version: String?): String? {
         if (version.isNullOrBlank()) return null
-        val trimmed =
-            version
-                .trim()
-                .removePrefix("refs/tags/")
-                .removePrefix("v")
-                .removePrefix("V")
-                .trim()
-        return trimmed.takeIf { it.isNotEmpty() }
+        val cleaned = stripFullPrefix(version)
+        return cleaned.takeIf { it.isNotEmpty() }
     }
 
     private fun compareNormalized(a: String, b: String): Int {
@@ -229,6 +271,96 @@ object VersionMath {
     private val DOTTED_DIGIT_PATTERN = Regex("""\d+(?:\.\d+)*(?:-[\w.]+)?""")
 
     /**
+     * Word-style tag prefix that some maintainers use instead of the
+     * usual leading `v`. Recognises a single leading word followed by
+     * an optional separator and the version core. Case-insensitive so
+     * `Release_1.2.0`, `release/1.2.0`, `App-1.2.0` all collapse.
+     *
+     * The trailing class allows `-`, `_`, `/`, `.` or whitespace as
+     * separators; the regex explicitly does NOT match the bare prefix
+     * with no separator (`version1.2.3`) — that's an unusual format
+     * and safer left to the dotted-digit fallback.
+     */
+    private val VERSION_WORD_PREFIX =
+        Regex(
+            """^(version|release|app|build|ver)\s*[-_/.]\s*""",
+            RegexOption.IGNORE_CASE,
+        )
+
+    /**
+     * Hyphenated calver: `2024-10-15`, `2024-3-1`, optionally followed
+     * by a trailing identifier (`2024-10-15-rc1`). Year is constrained
+     * to 1900–2199 to avoid swallowing semver pre-release identifiers
+     * that start with a small integer (`1.0-10-rc1` should NOT be
+     * treated as the year 10).
+     */
+    private val CALVER_HYPHEN_PATTERN =
+        Regex("""^((?:19|20|21)\d{2})-(\d{1,2})-(\d{1,2})(?:[-.](.+))?$""")
+
+    /**
+     * Catches `1.2.0beta01` / `2.0RC1` / `0.9preview2` — a digit
+     * directly followed by a letter, no separator. Used to insert the
+     * missing hyphen ONLY when the tail starts with a known
+     * pre-release marker (architecture suffixes like `1.2.0arm64` are
+     * left intact).
+     */
+    private val ADJACENT_ALPHA_PATTERN = Regex("""\d[A-Za-z]""")
+
+    /**
+     * JetBrains-style milestone shorthand match used in
+     * [insertHyphenBeforeKnownMarker]. Matches `m1`, `m12`, `M5`,
+     * etc. at the start of a tail like `m5-arm64`. Kept separate
+     * from [KNOWN_PRE_RELEASE_PREFIXES] because that list is
+     * `startsWith`-friendly literal prefixes; this one needs a
+     * regex.
+     */
+    private val M_DIGIT_TAIL_PATTERN = Regex("""^m\d+""", RegexOption.IGNORE_CASE)
+
+    /**
+     * 8-digit date integer like `20260502`. Year constrained to
+     * 1900-2199 to keep this from swallowing arbitrary 8-digit
+     * integers that maintainers might use as monotonic build numbers
+     * unrelated to the calendar.
+     */
+    private val DATE_INTEGER_PATTERN = Regex("""(?:19|20|21)\d{2}\d{2}\d{2}""")
+
+    /**
+     * Dotted calver — `2024.10.15`, optionally with a trailing build
+     * identifier (`2024.10.15.4567`). Year guard same as [DATE_INTEGER_PATTERN].
+     */
+    private val DOTTED_CALVER_PATTERN =
+        Regex("""(?:19|20|21)\d{2}\.\d{1,2}\.\d{1,2}(?:\.\d+)?""")
+
+    /**
+     * Bare commit-hash style tag (7-40 lowercase hex chars). Some
+     * repositories use commit SHAs as release tags — these never
+     * compare meaningfully but should be classified as such so UIs
+     * can render them as "build" rather than as a version number.
+     */
+    private val COMMIT_HASH_PATTERN = Regex("""[0-9a-f]{7,40}""")
+
+    /**
+     * Marker prefixes recognised when separating an adjacent-letter
+     * pre-release. Mirrors [PRE_RELEASE_MARKER_PATTERN] but as plain
+     * strings for the `startsWith` check.
+     */
+    private val KNOWN_PRE_RELEASE_PREFIXES =
+        listOf(
+            "alpha",
+            "beta",
+            "rc",
+            "preview",
+            "prerelease",
+            "snapshot",
+            "canary",
+            "nightly",
+            "milestone",
+            "ea",
+            "dev",
+            "pre",
+        )
+
+    /**
      * Heuristic: returns `true` when [tag] contains a well-known
      * pre-release marker.
      *
@@ -266,7 +398,12 @@ object VersionMath {
      */
     fun isPreReleaseTag(tag: String?): Boolean {
         if (tag.isNullOrBlank()) return false
-        return PRE_RELEASE_MARKER_PATTERN.containsMatchIn(tag)
+        // Pre-process so the regex's `\b` boundary catches markers that
+        // sit flush against the numeric core (e.g. `1.2.0beta01`) — the
+        // regex itself stays anchored on word boundaries to keep the
+        // false-positive rate low for embedded substrings.
+        val separated = insertHyphenBeforeKnownMarker(tag)
+        return PRE_RELEASE_MARKER_PATTERN.containsMatchIn(separated)
     }
 
     /**
@@ -300,7 +437,8 @@ object VersionMath {
      */
     fun preReleaseMarkerLabel(tag: String?): String? {
         if (tag.isNullOrBlank()) return null
-        val match = PRE_RELEASE_MARKER_PATTERN.find(tag) ?: return null
+        val separated = insertHyphenBeforeKnownMarker(tag)
+        val match = PRE_RELEASE_MARKER_PATTERN.find(separated) ?: return null
         val raw = match.groupValues.getOrNull(1)?.lowercase().orEmpty()
         return when {
             raw.startsWith("alpha") -> "Alpha"
@@ -331,4 +469,47 @@ object VersionMath {
             "\\b(alpha|beta|rc|preview|prerelease|snapshot|canary|nightly|milestone|ea|dev|pre|m\\d+)\\d*\\b",
             RegexOption.IGNORE_CASE,
         )
+
+    /**
+     * Coarse classification of the versioning scheme a tag string
+     * appears to follow. Useful for UI surfaces that want to render
+     * a date-stamped release differently from a semver one ("Released
+     * 2024-10-15" vs "Version 1.2.3"), or warn when a maintainer
+     * appears to have switched schemes mid-history (which silently
+     * breaks ordering — `1.2.0` would always read as older than
+     * `20260502` under numeric semver compare even if it was tagged
+     * later).
+     *
+     * The classification is intentionally rough; the underlying
+     * comparator does NOT branch on it. Callers can combine
+     * [detectScheme] outputs from two tags to detect cross-scheme
+     * comparisons that warrant a UI hint.
+     */
+    fun detectScheme(version: String?): Scheme {
+        if (version.isNullOrBlank()) return Scheme.Unknown
+        val cleaned = stripFullPrefix(version).substringBefore('+')
+        if (cleaned.isEmpty()) return Scheme.Unknown
+        // Hyphenated calver — yyyy-mm-dd, optionally with a trailing
+        // identifier we don't care about for the classification.
+        if (CALVER_HYPHEN_PATTERN.matchEntire(cleaned) != null) return Scheme.CalVer
+        // Single 8-digit run looks like yyyymmdd, e.g. `20260502`.
+        DATE_INTEGER_PATTERN.matchEntire(cleaned)?.let { return Scheme.CalVer }
+        // Dotted calver — yyyy.mm.dd inside a semver-shaped string.
+        DOTTED_CALVER_PATTERN.matchEntire(cleaned)?.let { return Scheme.CalVer }
+        // Anything that parses as semver after our normalisation pass
+        // is semver, including adjacent-letter pre-release variants.
+        val separated = insertHyphenBeforeKnownMarker(cleaned)
+        if (parseSemanticVersion(separated) != null) return Scheme.SemVer
+        // Hex-ish commit pointers (`v1.2.0+abc1234` strips the build
+        // metadata, but a bare commit hash falls here).
+        if (COMMIT_HASH_PATTERN.matchEntire(cleaned) != null) return Scheme.CommitHash
+        return Scheme.Unknown
+    }
+
+    enum class Scheme {
+        SemVer,
+        CalVer,
+        CommitHash,
+        Unknown,
+    }
 }
