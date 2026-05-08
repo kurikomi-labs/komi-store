@@ -86,13 +86,12 @@ fun BottomNavigation(
         val targetX = raw.first + rowHorizontalPaddingPx - indicatorHorizontalInsetPx
         val targetW = raw.second + indicatorHorizontalInsetPx * 2f
         launch {
+            // E4.2: tab indicator animated via tween — bouncy spring on a
+            // high-frequency tap target overshoots on every tab change and
+            // reads as jittery (survey #16). Tween stays predictable.
             indicatorX.animateTo(
                 targetValue = targetX,
-                animationSpec =
-                    spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
             )
         }
         launch {
@@ -289,8 +288,8 @@ private fun LiquidGlassTabItem(
         targetValue = if (isSelected) 1.15f else 1f,
         animationSpec =
             spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMedium,
             ),
         label = "iconScale",
     )
@@ -299,8 +298,8 @@ private fun LiquidGlassTabItem(
         targetValue = if (isSelected) (-1).dp else 1.dp,
         animationSpec =
             spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMedium,
             ),
         label = "iconOffsetY",
     )
@@ -326,8 +325,8 @@ private fun LiquidGlassTabItem(
         targetValue = if (isSelected) 1f else 0.6f,
         animationSpec =
             spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMedium,
             ),
         label = "labelScale",
     )

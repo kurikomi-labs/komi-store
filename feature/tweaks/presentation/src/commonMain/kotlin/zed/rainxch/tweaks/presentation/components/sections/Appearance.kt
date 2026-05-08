@@ -186,8 +186,8 @@ private fun ThemeModeOption(
         targetValue = if (isSelected) 1.05f else 1f,
         animationSpec =
             spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMedium,
             ),
     )
 

@@ -83,13 +83,12 @@ fun LiquidGlassCategoryChips(
         val targetW = raw.second + insetPx * 2f
 
         launch {
+            // E4.2: tween over spring for the chip-row indicator — same
+            // jitter rationale as BottomNavigation. Selecting a category
+            // hundreds of times per session shouldn't overshoot.
             indicatorX.animateTo(
                 targetValue = targetX,
-                animationSpec =
-                    spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                animationSpec = tween(durationMillis = 220),
             )
         }
         launch {
@@ -290,8 +289,8 @@ private fun LiquidGlassCategoryChip(
         targetValue = if (isPressed) 0.90f else 1f,
         animationSpec =
             spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMedium,
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMediumLow,
             ),
         label = "chipPressScale",
     )
