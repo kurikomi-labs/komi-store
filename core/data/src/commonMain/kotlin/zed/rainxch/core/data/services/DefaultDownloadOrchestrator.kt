@@ -310,10 +310,18 @@ class DefaultDownloadOrchestrator(
     private suspend fun runInstall(spec: DownloadSpec, filePath: String) {
         updateEntry(spec.packageName) { it.copy(stage = DownloadStage.Installing) }
         val ext = spec.asset.name.substringAfterLast('.', "").lowercase()
+        // Tracks whether `installer.install` already returned
+        // DELEGATED_TO_SYSTEM. The system installer dialog is still up
+        // in that state — releasing the gate from a downstream catch
+        // would let the next queued install fire ACTION_VIEW into the
+        // open dialog and reintroduce the stacking bug. Broadcast or
+        // timeout owns the release in the delegated case.
+        var delegated = false
         try {
             installer.ensurePermissionsOrThrow(ext)
             systemInstallSerializer.awaitFreeAndMarkPending(spec.packageName)
             val outcome = installer.install(filePath, ext)
+            delegated = outcome == InstallOutcome.DELEGATED_TO_SYSTEM
             when (outcome) {
                 InstallOutcome.COMPLETED -> {
                     // Synchronous install (Shizuku / Dhizuku) — broadcast
@@ -344,10 +352,10 @@ class DefaultDownloadOrchestrator(
                 }
             }
         } catch (e: CancellationException) {
-            systemInstallSerializer.markCompleted(spec.packageName)
+            if (!delegated) systemInstallSerializer.markCompleted(spec.packageName)
             throw e
         } catch (t: Throwable) {
-            systemInstallSerializer.markCompleted(spec.packageName)
+            if (!delegated) systemInstallSerializer.markCompleted(spec.packageName)
             Logger.e(t) { "Orchestrator: install failed for ${spec.packageName}" }
             markFailed(spec.packageName, t.message)
         }
@@ -554,10 +562,17 @@ class DefaultDownloadOrchestrator(
         ext: String,
     ): InstallOutcome? {
         updateEntry(packageName) { it.copy(stage = DownloadStage.Installing) }
+        // See [runInstall] — once the install hands off to the system
+        // installer dialog, the gate must stay locked until broadcast
+        // or timeout releases it; otherwise a downstream cancellation
+        // would unlock the gate while the dialog is still up and let
+        // the next queued install stack ACTION_VIEW intents.
+        var delegated = false
         return try {
             installer.ensurePermissionsOrThrow(ext)
             systemInstallSerializer.awaitFreeAndMarkPending(packageName)
             val outcome = installer.install(filePath, ext)
+            delegated = outcome == InstallOutcome.DELEGATED_TO_SYSTEM
             if (outcome == InstallOutcome.COMPLETED) {
                 systemInstallSerializer.markCompleted(packageName)
                 try {
@@ -575,10 +590,10 @@ class DefaultDownloadOrchestrator(
             // PackageEventReceiver handles the final state transition.
             outcome
         } catch (e: CancellationException) {
-            systemInstallSerializer.markCompleted(packageName)
+            if (!delegated) systemInstallSerializer.markCompleted(packageName)
             throw e
         } catch (t: Throwable) {
-            systemInstallSerializer.markCompleted(packageName)
+            if (!delegated) systemInstallSerializer.markCompleted(packageName)
             Logger.e(t) { "Orchestrator: standalone install failed for $packageName" }
             markFailed(packageName, t.message)
             null
