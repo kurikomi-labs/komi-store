@@ -156,4 +156,16 @@ sealed interface TweaksAction {
     data class OnAppLanguageSelected(
         val tag: String?,
     ) : TweaksAction
+
+    data object OnOpenBatteryOptimizationSettings : TweaksAction
+
+    data object OnDismissBatteryOptimizationCard : TweaksAction
+
+    /**
+     * Re-evaluates whether the battery-optimization card should still
+     * show. Fired on Tweaks resume so the card disappears immediately
+     * after the user grants the exemption from the system Settings
+     * screen.
+     */
+    data object OnReevaluateBatteryOptimizationCard : TweaksAction
 }

@@ -293,6 +293,18 @@ fun LazyListScope.updatesSection(
 
         Spacer(Modifier.height(8.dp))
 
+        if (state.showBatteryOptimizationCard) {
+            BatteryOptimizationCard(
+                onOpenSettings = {
+                    onAction(TweaksAction.OnOpenBatteryOptimizationSettings)
+                },
+                onDismiss = {
+                    onAction(TweaksAction.OnDismissBatteryOptimizationCard)
+                },
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+
         BackgroundUpdateCheckToggleCard(
             enabled = state.updateCheckEnabled,
             onToggle = { enabled ->
@@ -826,4 +838,44 @@ private fun HintText(text: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(start = 8.dp, top = 4.dp)
     )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun BatteryOptimizationCard(
+    onOpenSettings: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    ExpressiveCard {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.battery_optimization_card_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = stringResource(Res.string.battery_optimization_card_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            ) {
+                androidx.compose.material3.TextButton(onClick = onDismiss) {
+                    Text(stringResource(Res.string.battery_optimization_card_dismiss))
+                }
+                FilledTonalButton(onClick = onOpenSettings) {
+                    Text(stringResource(Res.string.battery_optimization_card_open))
+                }
+            }
+        }
+    }
 }

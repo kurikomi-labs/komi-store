@@ -8,7 +8,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,6 +30,7 @@ import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.UpdateScheduleManager
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
@@ -54,7 +58,12 @@ class TweaksViewModel(
     private val deviceIdentityRepository: DeviceIdentityRepository,
     private val telemetryRepository: TelemetryRepository,
     private val logger: GitHubStoreLogger,
+    private val aggressiveOemDetector: AggressiveOemDetector,
 ) : ViewModel() {
+    private companion object {
+        private const val BATTERY_OPT_PREF_READ_TIMEOUT_MS: Long = 1_000
+    }
+
     private var hasLoadedInitialData = false
     private var cacheSizeJob: Job? = null
 
@@ -84,6 +93,11 @@ class TweaksViewModel(
                     hasLoadedInitialData = true
                 }
                 refreshCacheSize()
+                // Re-evaluate on every Tweaks (re-)entry: the user may
+                // have whitelisted the app from system Settings since
+                // the last evaluation, in which case the card should
+                // disappear without requiring an explicit dismiss.
+                evaluateBatteryOptimizationCard()
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
@@ -423,6 +437,27 @@ class TweaksViewModel(
             tweaksRepository.getYoudaoAppSecret().collect { appSecret ->
                 _state.update { it.copy(youdaoAppSecret = appSecret) }
             }
+        }
+    }
+
+    private fun evaluateBatteryOptimizationCard() {
+        viewModelScope.launch {
+            val dismissed =
+                runCatching {
+                    withTimeoutOrNull(BATTERY_OPT_PREF_READ_TIMEOUT_MS) {
+                        tweaksRepository.getBatteryOptimizationPromptDismissed().firstOrNull()
+                    }
+                }.onFailure { error ->
+                    logger.error(
+                        "TweaksViewModel: failed to read battery-opt dismissed flag",
+                        error,
+                    )
+                }.getOrNull() ?: false
+            val show =
+                aggressiveOemDetector.isAggressiveOem() &&
+                    !aggressiveOemDetector.isBatteryOptimizationIgnored() &&
+                    !dismissed
+            _state.update { it.copy(showBatteryOptimizationCard = show) }
         }
     }
 
@@ -885,6 +920,31 @@ class TweaksViewModel(
                         _events.send(TweaksEvent.OnAppLanguageChangeRequiresRestart)
                     }
                 }
+            }
+
+            TweaksAction.OnOpenBatteryOptimizationSettings -> {
+                val launched = aggressiveOemDetector.openBatteryOptimizationSettings()
+                if (!launched) {
+                    logger.warn("TweaksViewModel: failed to launch battery optimization settings")
+                }
+            }
+
+            TweaksAction.OnDismissBatteryOptimizationCard -> {
+                viewModelScope.launch {
+                    runCatching {
+                        tweaksRepository.setBatteryOptimizationPromptDismissed(true)
+                    }.onFailure {
+                        logger.error(
+                            "TweaksViewModel: failed to persist battery-opt dismiss",
+                            it,
+                        )
+                    }
+                    _state.update { it.copy(showBatteryOptimizationCard = false) }
+                }
+            }
+
+            TweaksAction.OnReevaluateBatteryOptimizationCard -> {
+                evaluateBatteryOptimizationCard()
             }
         }
     }

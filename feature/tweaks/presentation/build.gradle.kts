@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)
+                implementation(libs.touchlab.kermit)
 
                 api(libs.ktor.client.core)
 

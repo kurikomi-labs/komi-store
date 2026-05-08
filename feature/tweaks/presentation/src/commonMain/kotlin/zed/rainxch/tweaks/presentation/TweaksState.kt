@@ -57,6 +57,13 @@ data class TweaksState(
      */
     val selectedAppLanguage: String? = null,
     val isFeedbackSheetVisible: Boolean = false,
+    /**
+     * True only on aggressive-OEM Android devices (Oppo, OnePlus, Realme,
+     * Xiaomi, vivo, Honor) that have NOT yet whitelisted the app from
+     * battery optimization AND the user has not dismissed the prompt.
+     * Drives the "Allow background updates" card in the Updates section.
+     */
+    val showBatteryOptimizationCard: Boolean = false,
 ) {
     /** Effective provider to render as "selected" in the UI — draft
      *  overrides persisted when a pending selection is in flight. */
