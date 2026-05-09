@@ -7,7 +7,8 @@
     {
       "type": "NEW",
       "bullets": [
-        "Ignorowanie aktualizacji dla każdej aplikacji — wycisz powiadomienie o aktualizacji dla dowolnej aplikacji, której nie chcesz aktualizować."
+        "Ignorowanie aktualizacji dla każdej aplikacji — wycisz powiadomienie o aktualizacji dla dowolnej aplikacji, której nie chcesz aktualizować.",
+        "Pomiń konkretną aktualizację — odrzuć fałszywe powiadomienie o aktualizacji; gdy pojawi się nowsza wersja, zostaniesz powiadomiony ponownie."
       ]
     },
     {

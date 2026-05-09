@@ -7,7 +7,8 @@
     {
       "type": "NEW",
       "bullets": [
-        "Ignora aggiornamenti per app — silenzia la notifica di aggiornamento per le app che non vuoi aggiornare."
+        "Ignora aggiornamenti per app — silenzia la notifica di aggiornamento per le app che non vuoi aggiornare.",
+        "Salta un aggiornamento specifico — scarta una notifica di update se è un falso positivo; verrai avvisato di nuovo quando uscirà una versione più recente."
       ]
     },
     {

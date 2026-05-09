@@ -7,7 +7,8 @@
     {
       "type": "NEW",
       "bullets": [
-        "Uygulama bazında güncelleme yok say — güncellemek istemediğin uygulamaların güncelleme rozetini sustur."
+        "Uygulama bazında güncelleme yok say — güncellemek istemediğin uygulamaların güncelleme rozetini sustur.",
+        "Belirli bir güncellemeyi atla — yanlış bir güncelleme uyarısını yok sayabilirsin; daha yeni bir sürüm geldiğinde tekrar bildirim alırsın."
       ]
     },
     {

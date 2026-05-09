@@ -7,7 +7,8 @@
     {
       "type": "NEW",
       "bullets": [
-        "Ignorer les mises à jour par appli — masque la pastille de mise à jour pour les applis que tu ne veux pas mettre à jour."
+        "Ignorer les mises à jour par appli — masque la pastille de mise à jour pour les applis que tu ne veux pas mettre à jour.",
+        "Ignorer une mise à jour précise — écarte un avis s'il s'agit d'un faux positif ; tu seras réinformé dès qu'une nouvelle version paraîtra."
       ]
     },
     {

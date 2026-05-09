@@ -7,7 +7,8 @@
     {
       "type": "NEW",
       "bullets": [
-        "Ignore updates per app — silence the update badge for any app you don't want to update."
+        "Ignore updates per app — silence the update badge for any app you don't want to update.",
+        "Skip a specific update — dismiss a single release if it's a false-positive prompt; you'll be re-notified when a newer one lands."
       ]
     },
     {
