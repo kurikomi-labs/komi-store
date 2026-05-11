@@ -8,7 +8,8 @@
       "type": "NEW",
       "bullets": [
         "Ignorowanie aktualizacji dla każdej aplikacji — wycisz powiadomienie o aktualizacji dla dowolnej aplikacji, której nie chcesz aktualizować.",
-        "Pomiń konkretną aktualizację — odrzuć fałszywe powiadomienie o aktualizacji; gdy pojawi się nowsza wersja, zostaniesz powiadomiony ponownie."
+        "Pomiń konkretną aktualizację — odrzuć fałszywy alarm aktualizacji; gdy pojawi się nowsza wersja, zostaniesz powiadomiony ponownie.",
+        "Cicha instalacja przez root — użytkownicy Magisk, KernelSU i APatch mogą instalować bez Shizuku lub Dhizuku."
       ]
     },
     {
@@ -22,7 +23,8 @@
     {
       "type": "IMPROVED",
       "bullets": [
-        "Bardziej niezawodne aktualizacje w tle na Oppo, OnePlus, Realme, Xiaomi, vivo i Honor — Ustawienia oferują teraz skrót do wyłączenia optymalizacji baterii w jednym kliknięciu, a zadania aktualizacji działają z przyspieszonym priorytetem."
+        "Bardziej niezawodne aktualizacje w tle na Oppo, OnePlus, Realme, Xiaomi, vivo i Honor — Ustawienia oferują teraz skrót do wyłączenia optymalizacji baterii w jednym kliknięciu, a zadania aktualizacji działają z przyspieszonym priorytetem.",
+        "Cicha instalacja Dhizuku na Androidzie 14+ — aplikacja automatycznie ponawia bez atrybucji instalatora, gdy system wymagałby potwierdzenia."
       ]
     }
   ]

@@ -3,7 +3,8 @@ package zed.rainxch.core.domain.model
 enum class InstallerType {
     DEFAULT,
     SHIZUKU,
-    DHIZUKU;
+    DHIZUKU,
+    ROOT;
 
     companion object {
         fun fromName(name: String?): InstallerType =

@@ -984,6 +984,13 @@
     <string name="dhizuku_grant_permission">権限を付与</string>
     <string name="dhizuku_install_hint">サイレントインストールを有効化するには、DhizukuをインストールしてDevice Ownerとして有効化してください</string>
     <string name="dhizuku_start_hint">サイレントインストールを有効化するには、DhizukuをDevice Ownerとして有効化してください</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Magisk / KernelSU / APatch root によるサイレントインストール</string>
+    <string name="root_status_ready">許可済み</string>
+    <string name="root_status_permission_needed">Root を許可</string>
+    <string name="root_status_unavailable">Root なし</string>
+    <string name="root_grant_permission">Root アクセスを許可</string>
+    <string name="root_unavailable_hint">この端末では Root が利用できません。先に Magisk / KernelSU / APatch をインストールしてください。</string>
     <string name="dhizuku_status_not_installed">Dhizukuはインストールされていません</string>
     <string name="dhizuku_status_not_running">Dhizukuは有効ではありません</string>
     <string name="dhizuku_status_permission_needed">権限が必要</string>

@@ -1087,6 +1087,7 @@ class AppsViewModel(
                         when (installerType) {
                             InstallerType.SHIZUKU -> InstallPolicy.AlwaysInstall
                             InstallerType.DHIZUKU -> InstallPolicy.AlwaysInstall
+                            InstallerType.ROOT -> InstallPolicy.AlwaysInstall
                             InstallerType.DEFAULT -> InstallPolicy.InstallWhileForeground
                         }
 

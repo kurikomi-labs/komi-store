@@ -88,6 +88,7 @@ class TweaksViewModel(
 
                     observeShizukuStatus()
                     observeDhizukuStatus()
+                    observeRootStatus()
                     observeInstallerAttribution()
 
                     hasLoadedInitialData = true
@@ -310,6 +311,16 @@ class TweaksViewModel(
             installerStatusProvider.dhizukuAvailability.collect { availability ->
                 _state.update {
                     it.copy(dhizukuAvailability = availability)
+                }
+            }
+        }
+    }
+
+    private fun observeRootStatus() {
+        viewModelScope.launch {
+            installerStatusProvider.rootAvailability.collect { availability ->
+                _state.update {
+                    it.copy(rootAvailability = availability)
                 }
             }
         }
@@ -670,6 +681,10 @@ class TweaksViewModel(
 
             TweaksAction.OnRequestDhizukuPermission -> {
                 installerStatusProvider.requestDhizukuPermission()
+            }
+
+            TweaksAction.OnRequestRootPermission -> {
+                installerStatusProvider.requestRootPermission()
             }
 
             TweaksAction.OnInstallerAttributionSystemDefault -> {

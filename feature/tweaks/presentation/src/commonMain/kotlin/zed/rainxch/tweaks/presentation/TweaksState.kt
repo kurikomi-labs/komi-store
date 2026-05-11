@@ -6,6 +6,7 @@ import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerAttribution
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.domain.model.RootAvailability
 import zed.rainxch.core.domain.model.ShizukuAvailability
 import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
@@ -28,6 +29,7 @@ data class TweaksState(
     val installerAttributionCustomError: String? = null,
     val shizukuAvailability: ShizukuAvailability = ShizukuAvailability.UNAVAILABLE,
     val dhizukuAvailability: DhizukuAvailability = DhizukuAvailability.UNAVAILABLE,
+    val rootAvailability: RootAvailability = RootAvailability.UNAVAILABLE,
     val autoUpdateEnabled: Boolean = false,
     val updateCheckEnabled: Boolean = true,
     val updateCheckIntervalHours: Long = 6L,

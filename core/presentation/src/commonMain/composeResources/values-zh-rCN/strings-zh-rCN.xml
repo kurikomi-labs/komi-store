@@ -986,6 +986,13 @@
     <string name="dhizuku_grant_permission">授予权限</string>
     <string name="dhizuku_install_hint">安装 Dhizuku 并将其激活为 Device Owner，以启用静默安装</string>
     <string name="dhizuku_start_hint">将 Dhizuku 激活为 Device Owner，以启用静默安装</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">通过 Magisk / KernelSU / APatch root 静默安装</string>
+    <string name="root_status_ready">已授权</string>
+    <string name="root_status_permission_needed">允许 Root</string>
+    <string name="root_status_unavailable">无 Root</string>
+    <string name="root_grant_permission">允许 Root 权限</string>
+    <string name="root_unavailable_hint">此设备未安装 Root。请先安装 Magisk、KernelSU 或 APatch。</string>
     <string name="dhizuku_status_not_installed">Dhizuku 未安装</string>
     <string name="dhizuku_status_not_running">Dhizuku 未激活</string>
     <string name="dhizuku_status_permission_needed">需要权限</string>

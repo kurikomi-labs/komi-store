@@ -111,6 +111,7 @@ class FeedbackViewModel(
                 when (installerType) {
                     InstallerType.DEFAULT -> "Default"
                     InstallerType.SHIZUKU -> "Shizuku"
+                    InstallerType.ROOT -> "Root"
                     InstallerType.DHIZUKU -> "Dhizuku"
                 }
             } else {

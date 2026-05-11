@@ -640,6 +640,13 @@
     <string name="dhizuku_grant_permission">Grant Permission</string>
     <string name="dhizuku_install_hint">Install Dhizuku and activate it as Device Owner to enable silent installs</string>
     <string name="dhizuku_start_hint">Activate Dhizuku as Device Owner to enable silent installs</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Silent install via Magisk, KernelSU, or APatch root</string>
+    <string name="root_status_ready">Granted</string>
+    <string name="root_status_permission_needed">Allow root</string>
+    <string name="root_status_unavailable">No root</string>
+    <string name="root_grant_permission">Allow root access</string>
+    <string name="root_unavailable_hint">Root isn\'t available on this device. Install Magisk, KernelSU, or APatch first.</string>
     <string name="auto_update_title">Auto-update apps</string>
     <string name="auto_update_description">Automatically download and install updates in background via the selected silent installer</string>
 

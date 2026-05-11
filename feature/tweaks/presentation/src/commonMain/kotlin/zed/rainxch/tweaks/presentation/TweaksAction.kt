@@ -75,6 +75,8 @@ sealed interface TweaksAction {
 
     data object OnRequestDhizukuPermission : TweaksAction
 
+    data object OnRequestRootPermission : TweaksAction
+
     data object OnInstallerAttributionSystemDefault : TweaksAction
 
     data class OnInstallerAttributionPresetSelected(

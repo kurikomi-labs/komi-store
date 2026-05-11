@@ -28,6 +28,7 @@ import zed.rainxch.core.data.services.external.ManifestHintExtractor
 import zed.rainxch.core.data.services.dhizuku.DhizukuServiceManager
 import zed.rainxch.core.data.services.installer.AndroidInstallerStatusProvider
 import zed.rainxch.core.data.services.installer.SilentInstallerDispatcher
+import zed.rainxch.core.data.services.root.RootServiceManager
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
 import zed.rainxch.core.data.utils.AndroidAppLauncher
 import zed.rainxch.core.data.utils.AndroidBrowserHelper
@@ -82,14 +83,23 @@ actual val corePlatformModule =
             ).also { it.initialize() }
         }
 
+        // RootServiceManager — detects Magisk/KernelSU/APatch su binaries, probes
+        // for grant status, executes silent installs via `pm install` over `su`.
+        single {
+            RootServiceManager(
+                scope = get<CoroutineScope>(),
+            ).also { it.initialize() }
+        }
+
         // Installer — SilentInstallerDispatcher routes through the user's selected
-        // silent backend (Shizuku, Dhizuku) or falls back to the standard installer.
+        // silent backend (Shizuku, Dhizuku, Root) or falls back to the standard installer.
         single<Installer> {
             SilentInstallerDispatcher(
                 androidContext = androidContext(),
                 androidInstaller = get<AndroidInstaller>(),
                 shizukuServiceManager = get(),
                 dhizukuServiceManager = get(),
+                rootServiceManager = get(),
                 tweaksRepository = get(),
                 scope = get<CoroutineScope>(),
             ).also { dispatcher ->
@@ -97,11 +107,12 @@ actual val corePlatformModule =
             }
         }
 
-        // InstallerStatusProvider — exposes both Shizuku and Dhizuku availability to UI
+        // InstallerStatusProvider — exposes Shizuku, Dhizuku, and Root availability to UI
         single<InstallerStatusProvider> {
             AndroidInstallerStatusProvider(
                 shizukuServiceManager = get(),
                 dhizukuServiceManager = get(),
+                rootServiceManager = get(),
                 scope = get(),
             )
         }

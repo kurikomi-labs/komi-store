@@ -8,7 +8,8 @@
       "type": "NEW",
       "bullets": [
         "Uygulama bazında güncelleme yok say — güncellemek istemediğin uygulamaların güncelleme rozetini sustur.",
-        "Belirli bir güncellemeyi atla — yanlış bir güncelleme uyarısını yok sayabilirsin; daha yeni bir sürüm geldiğinde tekrar bildirim alırsın."
+        "Belirli bir güncellemeyi atla — yanlış bir güncelleme uyarısını yok sayabilirsin; daha yeni bir sürüm geldiğinde tekrar bildirim alırsın.",
+        "Root ile sessiz yükleme — Magisk, KernelSU ve APatch kullanıcıları artık Shizuku veya Dhizuku olmadan yükleyebilir."
       ]
     },
     {
@@ -22,7 +23,8 @@
     {
       "type": "IMPROVED",
       "bullets": [
-        "Oppo, OnePlus, Realme, Xiaomi, vivo ve Honor'da arka plan güncellemeleri daha güvenilir — Ayarlar artık pil optimizasyonundan tek dokunuşla muafiyet kısayolu sunuyor ve güncelleme görevleri öncelikli (expedited) çalışıyor."
+        "Oppo, OnePlus, Realme, Xiaomi, vivo ve Honor'da arka plan güncellemeleri daha güvenilir — Ayarlar artık pil optimizasyonundan tek dokunuşla muafiyet kısayolu sunuyor ve güncelleme görevleri öncelikli (expedited) çalışıyor.",
+        "Android 14+ üzerinde Dhizuku sessiz yüklemesi — sistem onay isteyeceği durumlarda uygulama otomatik olarak yükleyici atfı olmadan yeniden dener."
       ]
     }
   ]

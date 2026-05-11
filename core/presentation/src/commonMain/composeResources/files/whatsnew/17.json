@@ -8,7 +8,8 @@
       "type": "NEW",
       "bullets": [
         "Ignore updates per app — silence the update badge for any app you don't want to update.",
-        "Skip a specific update — dismiss a single release if it's a false-positive prompt; you'll be re-notified when a newer one lands."
+        "Skip a specific update — dismiss a single release if it's a false-positive prompt; you'll be re-notified when a newer one lands.",
+        "Silent install via root — Magisk, KernelSU, and APatch users can now install without Shizuku or Dhizuku."
       ]
     },
     {
@@ -22,7 +23,8 @@
     {
       "type": "IMPROVED",
       "bullets": [
-        "More reliable background updates on Oppo, OnePlus, Realme, Xiaomi, vivo, and Honor — Tweaks now offers a one-tap battery-optimization shortcut and update workers run with expedited priority."
+        "More reliable background updates on Oppo, OnePlus, Realme, Xiaomi, vivo, and Honor — Tweaks now offers a one-tap battery-optimization shortcut and update workers run with expedited priority.",
+        "Dhizuku silent install on Android 14+ — the app now retries automatically without installer attribution when the system would otherwise demand a confirmation tap."
       ]
     }
   ]

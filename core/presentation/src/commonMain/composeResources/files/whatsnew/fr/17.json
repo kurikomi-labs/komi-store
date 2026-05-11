@@ -8,7 +8,8 @@
       "type": "NEW",
       "bullets": [
         "Ignorer les mises à jour par appli — masque la pastille de mise à jour pour les applis que tu ne veux pas mettre à jour.",
-        "Ignorer une mise à jour précise — écarte un avis s'il s'agit d'un faux positif ; tu seras réinformé dès qu'une nouvelle version paraîtra."
+        "Ignorer une mise à jour précise — écarte un avis s'il s'agit d'un faux positif ; tu seras réinformé dès qu'une nouvelle version paraîtra.",
+        "Installation silencieuse via root — les utilisateurs de Magisk, KernelSU et APatch peuvent installer sans Shizuku ni Dhizuku."
       ]
     },
     {
@@ -22,7 +23,8 @@
     {
       "type": "IMPROVED",
       "bullets": [
-        "Mises à jour en arrière-plan plus fiables sur Oppo, OnePlus, Realme, Xiaomi, vivo et Honor — Réglages propose désormais un raccourci d'un seul geste pour l'exclusion de l'optimisation de la batterie, et les vérifications de mise à jour s'exécutent en priorité accélérée."
+        "Mises à jour en arrière-plan plus fiables sur Oppo, OnePlus, Realme, Xiaomi, vivo et Honor — Réglages propose désormais un raccourci d'un seul geste pour l'exclusion de l'optimisation de la batterie, et les vérifications de mise à jour s'exécutent en priorité accélérée.",
+        "Installation silencieuse Dhizuku sur Android 14+ — l'app réessaie automatiquement sans attribution d'installateur quand le système exigerait une confirmation."
       ]
     }
   ]

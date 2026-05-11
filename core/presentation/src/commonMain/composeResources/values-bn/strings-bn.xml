@@ -1017,6 +1017,13 @@
     <string name="dhizuku_grant_permission">অনুমতি দিন</string>
     <string name="dhizuku_install_hint">নীরব ইনস্টল চালু করতে Dhizuku ইনস্টল করুন এবং Device Owner হিসেবে সক্রিয় করুন</string>
     <string name="dhizuku_start_hint">নীরব ইনস্টল চালু করতে Dhizuku-কে Device Owner হিসেবে সক্রিয় করুন</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Magisk, KernelSU বা APatch root দিয়ে নীরব ইনস্টল</string>
+    <string name="root_status_ready">অনুমোদিত</string>
+    <string name="root_status_permission_needed">Root অনুমতি দিন</string>
+    <string name="root_status_unavailable">Root নেই</string>
+    <string name="root_grant_permission">Root অ্যাক্সেস অনুমতি দিন</string>
+    <string name="root_unavailable_hint">এই ডিভাইসে Root নেই। প্রথমে Magisk, KernelSU বা APatch ইনস্টল করুন।</string>
     <string name="dhizuku_status_not_installed">Dhizuku ইনস্টল করা নেই</string>
     <string name="dhizuku_status_not_running">Dhizuku সক্রিয় নয়</string>
     <string name="dhizuku_status_permission_needed">অনুমতি প্রয়োজন</string>

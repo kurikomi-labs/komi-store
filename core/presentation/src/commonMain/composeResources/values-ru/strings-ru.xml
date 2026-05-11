@@ -1010,6 +1010,13 @@
     <string name="dhizuku_grant_permission">Предоставить разрешение</string>
     <string name="dhizuku_install_hint">Установите Dhizuku и активируйте его как Device Owner для тихих установок</string>
     <string name="dhizuku_start_hint">Активируйте Dhizuku как Device Owner для тихих установок</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Тихая установка через Magisk, KernelSU или APatch root</string>
+    <string name="root_status_ready">Предоставлен</string>
+    <string name="root_status_permission_needed">Разрешить root</string>
+    <string name="root_status_unavailable">Нет root</string>
+    <string name="root_grant_permission">Разрешить root-доступ</string>
+    <string name="root_unavailable_hint">Root недоступен на этом устройстве. Сначала установите Magisk, KernelSU или APatch.</string>
     <string name="dhizuku_status_not_installed">Dhizuku не установлен</string>
     <string name="dhizuku_status_not_running">Dhizuku не активен</string>
     <string name="dhizuku_status_permission_needed">Требуется разрешение</string>

@@ -990,6 +990,13 @@
     <string name="dhizuku_grant_permission">Accorder l\'autorisation</string>
     <string name="dhizuku_install_hint">Installez Dhizuku et activez-le comme Device Owner pour activer les installations silencieuses</string>
     <string name="dhizuku_start_hint">Activez Dhizuku comme Device Owner pour activer les installations silencieuses</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Installation silencieuse via Magisk, KernelSU ou APatch root</string>
+    <string name="root_status_ready">Accordé</string>
+    <string name="root_status_permission_needed">Autoriser root</string>
+    <string name="root_status_unavailable">Pas de root</string>
+    <string name="root_grant_permission">Autoriser l\'accès root</string>
+    <string name="root_unavailable_hint">Le root n\'est pas disponible sur cet appareil. Installez d\'abord Magisk, KernelSU ou APatch.</string>
     <string name="dhizuku_status_not_installed">Dhizuku n\'est pas installé</string>
     <string name="dhizuku_status_not_running">Dhizuku n\'est pas actif</string>
     <string name="dhizuku_status_permission_needed">Autorisation requise</string>

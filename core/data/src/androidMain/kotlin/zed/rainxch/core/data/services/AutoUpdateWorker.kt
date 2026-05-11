@@ -20,6 +20,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import zed.rainxch.core.data.services.dhizuku.DhizukuServiceManager
 import zed.rainxch.core.data.services.dhizuku.model.DhizukuStatus
+import zed.rainxch.core.data.services.root.RootServiceManager
+import zed.rainxch.core.data.services.root.model.RootStatus
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
 import zed.rainxch.core.data.services.shizuku.model.ShizukuStatus
 import zed.rainxch.core.domain.model.InstalledApp
@@ -49,6 +51,7 @@ class AutoUpdateWorker(
     private val tweaksRepository: TweaksRepository by inject()
     private val shizukuServiceManager: ShizukuServiceManager by inject()
     private val dhizukuServiceManager: DhizukuServiceManager by inject()
+    private val rootServiceManager: RootServiceManager by inject()
     private val systemInstallSerializer: SystemInstallSerializer by inject()
 
     override suspend fun doWork(): Result {
@@ -66,6 +69,10 @@ class AutoUpdateWorker(
                 InstallerType.DHIZUKU -> {
                     dhizukuServiceManager.refreshStatus()
                     dhizukuServiceManager.status.value == DhizukuStatus.READY
+                }
+                InstallerType.ROOT -> {
+                    rootServiceManager.refreshStatus()
+                    rootServiceManager.status.value == RootStatus.READY
                 }
                 InstallerType.DEFAULT -> false
             }

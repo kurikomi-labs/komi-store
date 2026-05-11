@@ -8,7 +8,8 @@
       "type": "NEW",
       "bullets": [
         "Ignorar actualizaciones por app — silencia la insignia de actualización en cualquier app que no quieras actualizar.",
-        "Saltar una actualización concreta — descarta un aviso si es un falso positivo; recibirás un nuevo aviso cuando salga otra versión."
+        "Saltar una actualización concreta — descarta un aviso si es un falso positivo; recibirás un nuevo aviso cuando salga otra versión.",
+        "Instalación silenciosa por root — usuarios de Magisk, KernelSU y APatch pueden instalar sin Shizuku o Dhizuku."
       ]
     },
     {
@@ -22,7 +23,8 @@
     {
       "type": "IMPROVED",
       "bullets": [
-        "Actualizaciones en segundo plano más fiables en Oppo, OnePlus, Realme, Xiaomi, vivo y Honor — Ajustes ofrece ahora un acceso directo a la exclusión de optimización de batería, y las comprobaciones de actualización se ejecutan con prioridad acelerada."
+        "Actualizaciones en segundo plano más fiables en Oppo, OnePlus, Realme, Xiaomi, vivo y Honor — Ajustes ofrece ahora un acceso directo a la exclusión de optimización de batería, y las comprobaciones de actualización se ejecutan con prioridad acelerada.",
+        "Instalación silenciosa Dhizuku en Android 14+ — la app reintenta automáticamente sin atribución de instalador cuando el sistema exigiría una confirmación."
       ]
     }
   ]

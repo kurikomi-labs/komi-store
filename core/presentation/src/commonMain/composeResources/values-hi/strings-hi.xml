@@ -1028,6 +1028,13 @@
     <string name="dhizuku_grant_permission">अनुमति दें</string>
     <string name="dhizuku_install_hint">साइलेंट इंस्टॉल सक्षम करने के लिए Dhizuku इंस्टॉल करें और इसे Device Owner के रूप में सक्रिय करें</string>
     <string name="dhizuku_start_hint">साइलेंट इंस्टॉल सक्षम करने के लिए Dhizuku को Device Owner के रूप में सक्रिय करें</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Magisk, KernelSU या APatch root के साथ साइलेंट इंस्टॉल</string>
+    <string name="root_status_ready">स्वीकृत</string>
+    <string name="root_status_permission_needed">Root अनुमति दें</string>
+    <string name="root_status_unavailable">Root नहीं</string>
+    <string name="root_grant_permission">Root एक्सेस की अनुमति दें</string>
+    <string name="root_unavailable_hint">इस डिवाइस पर Root उपलब्ध नहीं है। पहले Magisk, KernelSU या APatch इंस्टॉल करें।</string>
     <string name="dhizuku_status_not_installed">Dhizuku इंस्टॉल नहीं है</string>
     <string name="dhizuku_status_not_running">Dhizuku सक्रिय नहीं है</string>
     <string name="dhizuku_status_permission_needed">अनुमति आवश्यक</string>

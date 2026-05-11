@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.AdminPanelSettings
 import androidx.compose.material.icons.outlined.InstallMobile
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Security
@@ -51,6 +52,7 @@ import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.DhizukuAvailability
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.RootAvailability
 import zed.rainxch.core.domain.model.ShizukuAvailability
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -78,6 +80,7 @@ fun LazyListScope.installationSection(
             selectedType = state.installerType,
             shizukuAvailability = state.shizukuAvailability,
             dhizukuAvailability = state.dhizukuAvailability,
+            rootAvailability = state.rootAvailability,
             onTypeSelected = { type ->
                 onAction(TweaksAction.OnInstallerTypeSelected(type))
             },
@@ -86,7 +89,10 @@ fun LazyListScope.installationSection(
             },
             onRequestDhizukuPermission = {
                 onAction(TweaksAction.OnRequestDhizukuPermission)
-            }
+            },
+            onRequestRootPermission = {
+                onAction(TweaksAction.OnRequestRootPermission)
+            },
         )
 
         // Auto-update toggle — shown when a silent installer is selected and ready
@@ -96,6 +102,9 @@ fun LazyListScope.installationSection(
             ) || (
             state.installerType == InstallerType.DHIZUKU &&
                 state.dhizukuAvailability == DhizukuAvailability.READY
+            ) || (
+            state.installerType == InstallerType.ROOT &&
+                state.rootAvailability == RootAvailability.READY
             )
         if (silentReady) {
             Spacer(Modifier.height(12.dp))
@@ -424,9 +433,11 @@ private fun InstallerTypeCard(
     selectedType: InstallerType,
     shizukuAvailability: ShizukuAvailability,
     dhizukuAvailability: DhizukuAvailability,
+    rootAvailability: RootAvailability,
     onTypeSelected: (InstallerType) -> Unit,
     onRequestShizukuPermission: () -> Unit,
-    onRequestDhizukuPermission: () -> Unit
+    onRequestDhizukuPermission: () -> Unit,
+    onRequestRootPermission: () -> Unit,
 ) {
     ExpressiveCard {
         Column(
@@ -482,8 +493,71 @@ private fun InstallerTypeCard(
                     onRequestPermission = onRequestDhizukuPermission
                 )
             }
+
+            InstallerOption(
+                icon = Icons.Outlined.AdminPanelSettings,
+                title = stringResource(Res.string.installer_type_root),
+                description = stringResource(Res.string.installer_type_root_description),
+                isSelected = selectedType == InstallerType.ROOT,
+                onClick = { onTypeSelected(InstallerType.ROOT) },
+                statusBadge = { RootStatusBadge(availability = rootAvailability) },
+            )
+
+            if (selectedType == InstallerType.ROOT) {
+                RootStatusActions(
+                    availability = rootAvailability,
+                    onRequestPermission = onRequestRootPermission,
+                )
+            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun RootStatusActions(
+    availability: RootAvailability,
+    onRequestPermission: () -> Unit,
+) {
+    when (availability) {
+        RootAvailability.PERMISSION_NEEDED -> {
+            FilledTonalButton(
+                onClick = onRequestPermission,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.root_grant_permission),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+        RootAvailability.UNAVAILABLE -> {
+            HintText(text = stringResource(Res.string.root_unavailable_hint))
+        }
+        RootAvailability.READY -> Unit
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun RootStatusBadge(availability: RootAvailability) {
+    val (color, label) = when (availability) {
+        RootAvailability.READY -> Pair(
+            Color(0xFF4CAF50),
+            stringResource(Res.string.root_status_ready),
+        )
+        RootAvailability.PERMISSION_NEEDED -> Pair(
+            Color(0xFFFF9800),
+            stringResource(Res.string.root_status_permission_needed),
+        )
+        RootAvailability.UNAVAILABLE -> Pair(
+            MaterialTheme.colorScheme.outline,
+            stringResource(Res.string.root_status_unavailable),
+        )
+    }
+    StatusDot(color = color, label = label)
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

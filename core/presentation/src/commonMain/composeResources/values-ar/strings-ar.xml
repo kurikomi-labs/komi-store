@@ -1041,6 +1041,13 @@
     <string name="dhizuku_grant_permission">منح الإذن</string>
     <string name="dhizuku_install_hint">ثبّت Dhizuku وفعّله كمالك للجهاز لتمكين التثبيت الصامت</string>
     <string name="dhizuku_start_hint">فعّل Dhizuku كمالك للجهاز لتمكين التثبيت الصامت</string>
+    <string name="installer_type_root">روت</string>
+    <string name="installer_type_root_description">تثبيت صامت عبر Magisk أو KernelSU أو APatch</string>
+    <string name="root_status_ready">ممنوح</string>
+    <string name="root_status_permission_needed">السماح بالروت</string>
+    <string name="root_status_unavailable">لا يوجد روت</string>
+    <string name="root_grant_permission">السماح بالوصول كروت</string>
+    <string name="root_unavailable_hint">الروت غير متاح على هذا الجهاز. ثبّت Magisk أو KernelSU أو APatch أولاً.</string>
     <string name="dhizuku_status_not_installed">Dhizuku غير مثبّت</string>
     <string name="dhizuku_status_not_running">Dhizuku غير نشط</string>
     <string name="dhizuku_status_permission_needed">الإذن مطلوب</string>

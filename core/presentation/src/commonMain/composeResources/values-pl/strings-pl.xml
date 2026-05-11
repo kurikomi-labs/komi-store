@@ -1010,6 +1010,13 @@
     <string name="dhizuku_grant_permission">Udziel uprawnienia</string>
     <string name="dhizuku_install_hint">Zainstaluj Dhizuku i aktywuj jako Device Owner, aby włączyć ciche instalacje</string>
     <string name="dhizuku_start_hint">Aktywuj Dhizuku jako Device Owner, aby włączyć ciche instalacje</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Cicha instalacja przez Magisk, KernelSU lub APatch root</string>
+    <string name="root_status_ready">Przyznano</string>
+    <string name="root_status_permission_needed">Zezwól na root</string>
+    <string name="root_status_unavailable">Brak root</string>
+    <string name="root_grant_permission">Zezwól na dostęp root</string>
+    <string name="root_unavailable_hint">Root nie jest dostępny na tym urządzeniu. Najpierw zainstaluj Magisk, KernelSU lub APatch.</string>
     <string name="dhizuku_status_not_installed">Dhizuku nie jest zainstalowany</string>
     <string name="dhizuku_status_not_running">Dhizuku nie jest aktywny</string>
     <string name="dhizuku_status_permission_needed">Wymagane uprawnienie</string>

@@ -1019,6 +1019,13 @@
     <string name="dhizuku_grant_permission">권한 부여</string>
     <string name="dhizuku_install_hint">자동 설치를 사용하려면 Dhizuku를 설치하고 Device Owner로 활성화하세요</string>
     <string name="dhizuku_start_hint">자동 설치를 사용하려면 Dhizuku를 Device Owner로 활성화하세요</string>
+    <string name="installer_type_root">Root</string>
+    <string name="installer_type_root_description">Magisk, KernelSU 또는 APatch 루트를 사용한 무음 설치</string>
+    <string name="root_status_ready">허용됨</string>
+    <string name="root_status_permission_needed">루트 허용</string>
+    <string name="root_status_unavailable">루트 없음</string>
+    <string name="root_grant_permission">루트 액세스 허용</string>
+    <string name="root_unavailable_hint">이 기기에서는 루트를 사용할 수 없습니다. 먼저 Magisk, KernelSU 또는 APatch를 설치하세요.</string>
     <string name="dhizuku_status_not_installed">Dhizuku가 설치되어 있지 않습니다</string>
     <string name="dhizuku_status_not_running">Dhizuku가 활성화되어 있지 않습니다</string>
     <string name="dhizuku_status_permission_needed">권한 필요</string>
