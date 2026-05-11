@@ -242,6 +242,7 @@ class InstalledAppsRepositoryImpl(
         preferredGlob: String?,
         pickedIndex: Int?,
         pickedSiblingCount: Int?,
+        trackedPackageName: String,
     ): ResolvedRelease? {
         if (releases.isEmpty()) return null
 
@@ -295,9 +296,22 @@ class InstalledAppsRepositoryImpl(
 
             // Layer 5: platform auto-pick (last resort, never null
             // unless the platform installer can't pick anything).
+            //
+            // Scope the auto-pick input by package flavor: when the
+            // tracked app's package id has no flavor token (e.g. plain
+            // `com.foo.bar`), drop release assets that look like flavor
+            // variants (`-fdroid.apk`, `-foss.apk`) so the picker
+            // doesn't silently swap the user's installed APK for a
+            // sibling artifact that ships under a *different* package
+            // id (`com.foo.bar.fdroid`). The mirror also applies: a
+            // tracked `.fdroid` package keeps fdroid-named assets.
+            // Pinned variants are unaffected — fingerprintMatch /
+            // positionMatch run against the full installable set above.
+            val autoPickPool =
+                AssetVariant.filterByPackageFlavor(installableForApp, trackedPackageName)
             val primary = fingerprintMatch
                 ?: positionMatch
-                ?: installer.choosePrimaryAsset(installableForApp)
+                ?: installer.choosePrimaryAsset(autoPickPool)
                 ?: continue
 
             // The variant is "lost" when the user had a pin but neither
@@ -359,6 +373,7 @@ class InstalledAppsRepositoryImpl(
                     preferredGlob = app.assetGlobPattern,
                     pickedIndex = app.pickedAssetIndex,
                     pickedSiblingCount = app.pickedAssetSiblingCount,
+                    trackedPackageName = app.packageName,
                 )
 
             if (resolved == null) {

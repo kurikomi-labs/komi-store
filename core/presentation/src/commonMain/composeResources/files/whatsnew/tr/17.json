@@ -17,7 +17,8 @@
       "bullets": [
         "Sistem ayarlarından kaldırılan uygulamalar artık izlenen listeden anında siliniyor.",
         "Daha iyi sürüm algılama — aynı numarayı paylaşan ancak farklı build meta verisi taşıyan sürümler artık yanlışlıkla 'zaten yüklü' olarak işaretlenmiyor.",
-        "Birkaç uygulamayı arka arkaya güncellemek artık güvenilir — yüklemeler sıralı çalıştığı için sistem diyaloğu önceki APK'yi göstermiyor. Her yüklemenin ardından Uygulamalar ekranındaki sürümler de doğru biçimde güncelleniyor."
+        "Birkaç uygulamayı arka arkaya güncellemek artık güvenilir — yüklemeler sıralı çalıştığı için sistem diyaloğu önceki APK'yi göstermiyor. Her yüklemenin ardından Uygulamalar ekranındaki sürümler de doğru biçimde güncelleniyor.",
+        "Bir sürüm hem standart hem F-Droid varyantı içerdiğinde otomatik güncelleme doğru APK'yi seçer — farklı paket kimliğine sahip kardeş bir uygulamayı yanlışlıkla yüklemek artık yok."
       ]
     },
     {

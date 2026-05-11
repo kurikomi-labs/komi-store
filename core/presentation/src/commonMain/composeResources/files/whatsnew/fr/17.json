@@ -17,7 +17,8 @@
       "bullets": [
         "Les applis désinstallées depuis les Paramètres système disparaissent maintenant immédiatement de la liste suivie.",
         "Meilleure détection de version — les releases qui partagent le même numéro mais portent des métadonnées de build différentes ne sont plus signalées à tort comme 'déjà installées'.",
-        "Mettre à jour plusieurs applis à la suite fonctionne maintenant correctement — les installations se sérialisent pour que chaque boîte de dialogue système affiche le bon APK. Les versions dans l'écran des applis restent aussi à jour après chaque installation."
+        "Mettre à jour plusieurs applis à la suite fonctionne maintenant correctement — les installations se sérialisent pour que chaque boîte de dialogue système affiche le bon APK. Les versions dans l'écran des applis restent aussi à jour après chaque installation.",
+        "La mise à jour auto choisit le bon APK quand une release embarque à la fois une variante standard et F-Droid — fini d'installer par erreur une appli sœur avec un autre ID de paquet."
       ]
     },
     {

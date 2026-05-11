@@ -17,7 +17,8 @@
       "bullets": [
         "Le app disinstallate dalle Impostazioni di sistema spariscono ora subito dalla lista delle app tracciate.",
         "Riconoscimento versioni più preciso — le release con lo stesso numero ma metadati di build diversi non vengono più erroneamente segnalate come 'già installate'.",
-        "Aggiornare più app di fila ora funziona in modo affidabile — le installazioni vengono serializzate, così ogni finestra di sistema mostra l'APK giusto. Anche le versioni nella schermata App restano aggiornate dopo ogni installazione."
+        "Aggiornare più app di fila ora funziona in modo affidabile — le installazioni vengono serializzate, così ogni finestra di sistema mostra l'APK giusto. Anche le versioni nella schermata App restano aggiornate dopo ogni installazione.",
+        "L'aggiornamento automatico sceglie l'APK giusto quando una release include sia la variante normale che quella F-Droid — niente più installazione accidentale di un'app sorella con un ID pacchetto diverso."
       ]
     },
     {

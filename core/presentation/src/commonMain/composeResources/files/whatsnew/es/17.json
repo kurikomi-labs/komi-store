@@ -17,7 +17,8 @@
       "bullets": [
         "Las apps desinstaladas desde Ajustes del sistema ahora desaparecen al instante de la lista de seguimiento.",
         "Mejor detección de versiones — las releases que comparten número pero llevan metadatos de build distintos ya no se marcan por error como 'ya instaladas'.",
-        "Actualizar varias apps seguidas ahora funciona bien — las instalaciones se serializan para que cada diálogo del sistema muestre el APK correcto. Las versiones en la pantalla de apps también se mantienen al día tras cada instalación."
+        "Actualizar varias apps seguidas ahora funciona bien — las instalaciones se serializan para que cada diálogo del sistema muestre el APK correcto. Las versiones en la pantalla de apps también se mantienen al día tras cada instalación.",
+        "La actualización automática elige el APK correcto cuando una release incluye tanto la variante normal como la de F-Droid — adiós a instalar por accidente una app hermana con otro ID de paquete."
       ]
     },
     {

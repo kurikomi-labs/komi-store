@@ -137,6 +137,16 @@ object AssetVariant {
     private val VOCABULARY: Set<String> by lazy { ARCH_TOKENS + FLAVOR_TOKENS }
 
     /**
+     * Strips hyphens/underscores so alias spellings of the same flavor
+     * (`f-droid` ⇄ `fdroid`, `play-store` ⇄ `playstore`) collapse to a
+     * single comparable form. Used by [filterByPackageFlavor] to align
+     * asset-token output (which may carry hyphenated bi-grams) with
+     * package-segment input (which can't legally contain hyphens).
+     */
+    private fun canonicalFlavorToken(token: String): String =
+        token.replace('-', ' ').replace('_', ' ').replace(" ", "").lowercase()
+
+    /**
      * Splits a filename into candidate tokens. Splits on the usual
      * separators (`-`, `_`, ` `, `.`) so that compound names like
      * `arm64-v8a` survive intact only after the recombine step below.
@@ -452,5 +462,60 @@ object AssetVariant {
     fun deserializeTokens(serialized: String?): Set<String> {
         if (serialized.isNullOrBlank()) return emptySet()
         return serialized.split('|').filter { it.isNotBlank() }.toSet()
+    }
+
+    /**
+     * Narrows [assets] to the subset whose filename flavor matches the
+     * flavor implied by [trackedPackageName]. Used by the update-check
+     * auto-picker to avoid swapping the user's installed APK for a
+     * sibling release artifact that ships a different package id
+     * (typically a `.fdroid` variant alongside the stock package).
+     *
+     * The picker only knows asset names — the actual APK package is
+     * inside the binary, which would require downloading every
+     * candidate. Filenames are usually honest about the flavor though:
+     * an `.apk` named `app-fdroid-release.apk` almost always installs
+     * with package id `<base>.fdroid`. We exploit that to keep the
+     * auto-pick safe by default.
+     *
+     * Rules:
+     *  - If the tracked package contains any [FLAVOR_TOKENS] segment
+     *    (case-insensitive, dot-separated), keep only assets whose
+     *    filename tokens contain at least one of those flavor tokens.
+     *  - Otherwise (stock package, no flavor marker), keep only assets
+     *    whose filename tokens contain NO flavor markers.
+     *  - If either filter would eliminate every candidate the input is
+     *    returned unchanged — losing the auto-update prompt is worse
+     *    than picking a marginally wrong-flavor asset, and the user
+     *    can still pin the right variant from the picker UI.
+     */
+    fun filterByPackageFlavor(
+        assets: List<GithubAsset>,
+        trackedPackageName: String,
+    ): List<GithubAsset> {
+        if (assets.isEmpty()) return assets
+        val packageSegments =
+            trackedPackageName.lowercase().split('.').filter { it.isNotBlank() }
+        // Canonicalise both sides via hyphen/underscore strip so package
+        // segments (`fdroid`, can't legally hold `-`) match against asset
+        // tokens that may come back hyphenated (`f-droid`) when the
+        // filename uses an aliased spelling. Without this, the set
+        // intersection misses the alias forms `FLAVOR_TOKENS` deliberately
+        // covers.
+        val packageFlavorTokens = packageSegments.filter { it in FLAVOR_TOKENS }
+            .map(::canonicalFlavorToken)
+            .toSet()
+
+        return if (packageFlavorTokens.isNotEmpty()) {
+            val matching = assets.filter { asset ->
+                extractTokens(asset.name).any { canonicalFlavorToken(it) in packageFlavorTokens }
+            }
+            matching.ifEmpty { assets }
+        } else {
+            val unflavoured = assets.filter { asset ->
+                extractTokens(asset.name).none { it in FLAVOR_TOKENS }
+            }
+            unflavoured.ifEmpty { assets }
+        }
     }
 }
