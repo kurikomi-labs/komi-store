@@ -31,6 +31,7 @@ import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
 import zed.rainxch.core.data.local.db.dao.FavoriteRepoDao
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.SearchHistoryDao
+import zed.rainxch.core.data.local.db.dao.HiddenRepoDao
 import zed.rainxch.core.data.local.db.dao.SeenRepoDao
 import zed.rainxch.core.data.local.db.dao.SigningFingerprintDao
 import zed.rainxch.core.data.local.db.dao.StarredRepoDao
@@ -57,6 +58,7 @@ import zed.rainxch.core.data.repository.DeviceIdentityRepositoryImpl
 import zed.rainxch.core.data.repository.RateLimitRepositoryImpl
 import zed.rainxch.core.data.repository.SearchHistoryRepositoryImpl
 import zed.rainxch.core.data.repository.TelemetryRepositoryImpl
+import zed.rainxch.core.data.repository.HiddenReposRepositoryImpl
 import zed.rainxch.core.data.repository.SeenReposRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
 import zed.rainxch.core.data.repository.AnnouncementsCacheStoreImpl
@@ -85,6 +87,7 @@ import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import zed.rainxch.core.domain.repository.SearchHistoryRepository
+import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TelemetryRepository
@@ -187,6 +190,12 @@ val coreModule =
         single<SeenReposRepository> {
             SeenReposRepositoryImpl(
                 seenRepoDao = get(),
+            )
+        }
+
+        single<HiddenReposRepository> {
+            HiddenReposRepositoryImpl(
+                hiddenRepoDao = get(),
             )
         }
 
@@ -424,6 +433,10 @@ val databaseModule =
 
         single<SeenRepoDao> {
             get<AppDatabase>().seenRepoDao
+        }
+
+        single<HiddenRepoDao> {
+            get<AppDatabase>().hiddenRepoDao
         }
 
         single<SearchHistoryDao> {
