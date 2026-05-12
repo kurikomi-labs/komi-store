@@ -120,7 +120,7 @@ jobs:
           organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
           project-slug: 'GitHub-Store'
           signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
-          artifact-configuration-slug: 'initial-version'
+          artifact-configuration-slug: 'initial'
           github-artifact-id: ${{ needs.build-windows.outputs.windows-artifact-id }}
           wait-for-completion: true
           output-artifact-directory: signed-artifacts
