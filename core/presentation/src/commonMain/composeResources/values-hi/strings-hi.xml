@@ -772,7 +772,7 @@
     <string name="channel_chip_stable_only">केवल स्थिर</string>
     <string name="channel_chip_coachmark_title">अपना रिलीज़ चैनल चुनें</string>
     <string name="channel_chip_coachmark_body">इस ऐप के स्थिर रिलीज़ और बीटा बिल्ड के बीच स्विच करने के लिए टैप करें।</string>
-    <string name="channel_chip_coachmark_dismiss">ठीक है</string>
+    <string name="channel_chip_coachmark_dismiss">समझ गया</string>
     <string name="channel_toggle_cd">इस ऐप के बीटा रिलीज़ टॉगल करें</string>
     <string name="action_switch_to_stable">%1$s स्थिर पर स्विच करें</string>
     <string name="stalled_project_warning_months">%1$d महीनों में कोई स्थिर रिलीज़ नहीं</string>
