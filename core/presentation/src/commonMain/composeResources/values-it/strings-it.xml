@@ -601,8 +601,8 @@
     <string name="import_apps_title">Importa app</string>
     <string name="import_apps_description">Incolla il JSON esportato per ripristinare le app monitorate</string>
     <string name="import_apps_hint">Incolla il JSON esportato qui…</string>
-    <string name="include_pre_releases_title">Includi pre-release</string>
-    <string name="include_pre_releases_description">Monitora le versioni pre-release durante il controllo aggiornamenti. Se disabilitato, vengono considerate solo le versioni stabili.</string>
+    <string name="include_pre_releases_title">Canale beta predefinito</string>
+    <string name="include_pre_releases_description">Le app appena tracciate includono build beta per impostazione predefinita. Le app già tracciate mantengono il proprio canale (modificalo nella schermata Dettagli).</string>
     <string name="confirm_uninstall_title">Disinstallare l'app?</string>
     <string name="confirm_uninstall_message">Sei sicuro di voler disinstallare %1$s? Questa azione non può essere annullata e i dati dell'app potrebbero andare persi.</string>
     <string name="invalid_github_url">URL GitHub non valido. Usa il formato: github.com/owner/repo</string>

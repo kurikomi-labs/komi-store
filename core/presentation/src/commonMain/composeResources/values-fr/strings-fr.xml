@@ -563,8 +563,8 @@
     <string name="import_apps_title">Importer des apps</string>
     <string name="import_apps_description">Collez le JSON exporté pour restaurer vos apps suivies</string>
     <string name="import_apps_hint">Collez le JSON exporté ici…</string>
-    <string name="include_pre_releases_title">Inclure les pré-versions</string>
-    <string name="include_pre_releases_description">Suivre les versions pré-release lors de la vérification des mises à jour. Désactivé, seules les versions stables sont prises en compte.</string>
+    <string name="include_pre_releases_title">Canal bêta par défaut</string>
+    <string name="include_pre_releases_description">Les apps nouvellement suivies incluent les versions bêta par défaut. Les apps déjà suivies conservent leur propre paramètre (modifiable dans Détails de l\'app).</string>
     <string name="confirm_uninstall_title">Désinstaller l'app ?</string>
     <string name="confirm_uninstall_message">Êtes-vous sûr de vouloir désinstaller %1$s ? Cette action est irréversible et les données de l'app pourraient être perdues.</string>
     <string name="invalid_github_url">URL GitHub invalide. Utilisez le format : github.com/owner/repo</string>

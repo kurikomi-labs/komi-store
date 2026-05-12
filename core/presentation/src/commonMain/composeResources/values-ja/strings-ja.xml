@@ -564,8 +564,8 @@
     <string name="import_apps_title">アプリをインポート</string>
     <string name="import_apps_description">エクスポートしたJSONを貼り付けて追跡中のアプリを復元</string>
     <string name="import_apps_hint">エクスポートしたJSONをここに貼り付け…</string>
-    <string name="include_pre_releases_title">プレリリースを含める</string>
-    <string name="include_pre_releases_description">アップデート確認時にプレリリース版を追跡します。無効の場合、安定版リリースのみが対象となります。</string>
+    <string name="include_pre_releases_title">デフォルトのベータチャンネル</string>
+    <string name="include_pre_releases_description">新しく追跡したアプリはデフォルトでベータビルドを含みます。既に追跡中のアプリは独自の設定を保持します（アプリの詳細画面で変更可能）。</string>
     <string name="confirm_uninstall_title">アプリをアンインストールしますか？</string>
     <string name="confirm_uninstall_message">%1$sをアンインストールしてよろしいですか？この操作は元に戻せず、アプリのデータが失われる可能性があります。</string>
     <string name="invalid_github_url">無効なGitHub URL。形式を使用してください：github.com/owner/repo</string>

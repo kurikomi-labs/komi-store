@@ -602,8 +602,8 @@
     <string name="import_apps_title">استيراد التطبيقات</string>
     <string name="import_apps_description">الصق ملف JSON المُصدَّر لاستعادة التطبيقات المتتبعة</string>
     <string name="import_apps_hint">الصق JSON المُصدَّر هنا…</string>
-    <string name="include_pre_releases_title">تضمين الإصدارات التجريبية</string>
-    <string name="include_pre_releases_description">تتبع الإصدارات التجريبية عند التحقق من التحديثات. عند التعطيل، يتم اعتبار الإصدارات المستقرة فقط.</string>
+    <string name="include_pre_releases_title">قناة البيتا الافتراضية</string>
+    <string name="include_pre_releases_description">تشمل التطبيقات التي تتعقبها حديثاً إصدارات البيتا افتراضياً. التطبيقات المتعقَّبة مسبقاً تحتفظ بإعدادها الخاص (بدّله من شاشة التفاصيل).</string>
     <string name="confirm_uninstall_title">إلغاء تثبيت التطبيق؟</string>
     <string name="confirm_uninstall_message">هل أنت متأكد من إلغاء تثبيت %1$s؟ لا يمكن التراجع عن هذا الإجراء وقد تُفقد بيانات التطبيق.</string>
     <string name="invalid_github_url">رابط GitHub غير صالح. استخدم التنسيق: github.com/owner/repo</string>

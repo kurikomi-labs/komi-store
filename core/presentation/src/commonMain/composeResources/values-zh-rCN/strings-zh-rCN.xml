@@ -565,8 +565,8 @@
     <string name="import_apps_title">导入应用</string>
     <string name="import_apps_description">粘贴导出的JSON以恢复跟踪的应用</string>
     <string name="import_apps_hint">在此粘贴导出的JSON…</string>
-    <string name="include_pre_releases_title">包含预发布版本</string>
-    <string name="include_pre_releases_description">检查更新时跟踪预发布版本。禁用后，仅考虑稳定版本。</string>
+    <string name="include_pre_releases_title">默认测试版渠道</string>
+    <string name="include_pre_releases_description">新追踪的应用默认包含测试版。已追踪的应用保留各自设置（在应用详情页切换）。</string>
     <string name="confirm_uninstall_title">卸载应用？</string>
     <string name="confirm_uninstall_message">确定要卸载%1$s吗？此操作无法撤销，应用数据可能会丢失。</string>
     <string name="invalid_github_url">无效的GitHub URL。请使用格式：github.com/owner/repo</string>

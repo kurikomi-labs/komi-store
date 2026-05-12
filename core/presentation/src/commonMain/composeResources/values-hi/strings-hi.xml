@@ -600,8 +600,8 @@
     <string name="import_apps_title">ऐप्स आयात करें</string>
     <string name="import_apps_description">अपने ट्रैक किए गए ऐप्स को पुनर्स्थापित करने के लिए निर्यात किया गया JSON पेस्ट करें</string>
     <string name="import_apps_hint">निर्यात किया गया JSON यहाँ पेस्ट करें…</string>
-    <string name="include_pre_releases_title">प्री-रिलीज़ शामिल करें</string>
-    <string name="include_pre_releases_description">अपडेट की जाँच करते समय प्री-रिलीज़ संस्करणों को ट्रैक करें। अक्षम होने पर, केवल स्थिर रिलीज़ पर विचार किया जाता है।</string>
+    <string name="include_pre_releases_title">डिफ़ॉल्ट बीटा चैनल</string>
+    <string name="include_pre_releases_description">नए ट्रैक किए गए ऐप डिफ़ॉल्ट रूप से बीटा बिल्ड शामिल करते हैं। पहले से ट्रैक किए गए ऐप अपनी सेटिंग रखते हैं (ऐप के विवरण स्क्रीन से बदलें)।</string>
     <string name="confirm_uninstall_title">ऐप अनइंस्टॉल करें?</string>
     <string name="confirm_uninstall_message">क्या आप वाकई %1$s को अनइंस्टॉल करना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती और ऐप डेटा खो सकता है।</string>
     <string name="invalid_github_url">अमान्य GitHub URL। प्रारूप का उपयोग करें: github.com/owner/repo</string>

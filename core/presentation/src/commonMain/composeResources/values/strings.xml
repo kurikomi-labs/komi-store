@@ -739,8 +739,8 @@
     <string name="import_apps_description">Paste the exported JSON to restore your tracked apps</string>
     <string name="import_apps_hint">Paste exported JSON here…</string>
 
-    <string name="include_pre_releases_title">Include pre-releases</string>
-    <string name="include_pre_releases_description">Track pre-release versions when checking for updates. When disabled, only stable releases are considered.</string>
+    <string name="include_pre_releases_title">Default beta channel</string>
+    <string name="include_pre_releases_description">Newly tracked apps include beta builds by default. Already-tracked apps keep their own per-app channel setting (toggle it on the app\'s Details screen).</string>
     <string name="confirm_uninstall_title">Uninstall app?</string>
     <string name="confirm_uninstall_message">Are you sure you want to uninstall %1$s? This action cannot be undone and app data may be lost.</string>
     <string name="confirm_discard_pending_title">Discard pending install?</string>

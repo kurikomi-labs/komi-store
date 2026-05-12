@@ -562,8 +562,8 @@
     <string name="import_apps_title">Importar apps</string>
     <string name="import_apps_description">Pega el JSON exportado para restaurar tus apps rastreadas</string>
     <string name="import_apps_hint">Pega el JSON exportado aquí…</string>
-    <string name="include_pre_releases_title">Incluir pre-lanzamientos</string>
-    <string name="include_pre_releases_description">Rastrear versiones pre-lanzamiento al buscar actualizaciones. Si está desactivado, solo se consideran las versiones estables.</string>
+    <string name="include_pre_releases_title">Canal beta predeterminado</string>
+    <string name="include_pre_releases_description">Las apps recién seguidas incluyen compilaciones beta por defecto. Las ya seguidas conservan su propio canal (cámbialo en la pantalla de Detalles de la app).</string>
     <string name="confirm_uninstall_title">¿Desinstalar app?</string>
     <string name="confirm_uninstall_message">¿Estás seguro de que quieres desinstalar %1$s? Esta acción no se puede deshacer y los datos de la app podrían perderse.</string>
     <string name="invalid_github_url">URL de GitHub no válida. Usa el formato: github.com/owner/repo</string>

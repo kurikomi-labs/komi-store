@@ -599,8 +599,8 @@
     <string name="import_apps_title">Uygulamaları içe aktar</string>
     <string name="import_apps_description">Takip edilen uygulamaları geri yüklemek için dışa aktarılan JSON'u yapıştırın</string>
     <string name="import_apps_hint">Dışa aktarılan JSON'u buraya yapıştırın…</string>
-    <string name="include_pre_releases_title">Ön sürümleri dahil et</string>
-    <string name="include_pre_releases_description">Güncelleme kontrolünde ön sürümleri takip edin. Devre dışı bırakıldığında, yalnızca kararlı sürümler dikkate alınır.</string>
+    <string name="include_pre_releases_title">Varsayılan beta kanalı</string>
+    <string name="include_pre_releases_description">Yeni takip edilen uygulamalar varsayılan olarak beta sürümleri içerir. Önceden takip edilen uygulamalar kendi ayarını korur (uygulamanın Ayrıntılar ekranından değiştirin).</string>
     <string name="confirm_uninstall_title">Uygulama kaldırılsın mı?</string>
     <string name="confirm_uninstall_message">%1$s uygulamasını kaldırmak istediğinizden emin misiniz? Bu işlem geri alınamaz ve uygulama verileri kaybolabilir.</string>
     <string name="invalid_github_url">Geçersiz GitHub URL'si. Biçim: github.com/owner/repo</string>

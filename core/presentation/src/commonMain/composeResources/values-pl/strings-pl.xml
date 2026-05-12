@@ -565,8 +565,8 @@
     <string name="import_apps_title">Importuj aplikacje</string>
     <string name="import_apps_description">Wklej wyeksportowany JSON, aby przywrócić śledzone aplikacje</string>
     <string name="import_apps_hint">Wklej wyeksportowany JSON tutaj…</string>
-    <string name="include_pre_releases_title">Uwzględnij wersje wstępne</string>
-    <string name="include_pre_releases_description">Śledź wersje wstępne podczas sprawdzania aktualizacji. Po wyłączeniu uwzględniane są tylko stabilne wydania.</string>
+    <string name="include_pre_releases_title">Domyślny kanał beta</string>
+    <string name="include_pre_releases_description">Nowo śledzone aplikacje domyślnie zawierają wersje beta. Już śledzone aplikacje zachowują własne ustawienie (zmień je na ekranie Szczegółów aplikacji).</string>
     <string name="confirm_uninstall_title">Odinstalować aplikację?</string>
     <string name="confirm_uninstall_message">Czy na pewno chcesz odinstalować %1$s? Tej czynności nie można cofnąć, a dane aplikacji mogą zostać utracone.</string>
     <string name="invalid_github_url">Nieprawidłowy URL GitHub. Użyj formatu: github.com/owner/repo</string>

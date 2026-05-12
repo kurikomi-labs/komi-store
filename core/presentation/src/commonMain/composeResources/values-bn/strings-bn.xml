@@ -601,8 +601,8 @@
     <string name="import_apps_title">অ্যাপ আমদানি করুন</string>
     <string name="import_apps_description">ট্র্যাক করা অ্যাপ পুনরুদ্ধার করতে রপ্তানি করা JSON পেস্ট করুন</string>
     <string name="import_apps_hint">রপ্তানি করা JSON এখানে পেস্ট করুন…</string>
-    <string name="include_pre_releases_title">প্রি-রিলিজ অন্তর্ভুক্ত করুন</string>
-    <string name="include_pre_releases_description">আপডেট পরীক্ষার সময় প্রি-রিলিজ সংস্করণ ট্র্যাক করুন। নিষ্ক্রিয় থাকলে, শুধুমাত্র স্থিতিশীল রিলিজ বিবেচনা করা হয়।</string>
+    <string name="include_pre_releases_title">ডিফল্ট বেটা চ্যানেল</string>
+    <string name="include_pre_releases_description">নতুন ট্র্যাক করা অ্যাপ ডিফল্টভাবে বেটা বিল্ড অন্তর্ভুক্ত করবে। ইতিমধ্যে ট্র্যাক করা অ্যাপ তাদের নিজস্ব সেটিং রাখবে (অ্যাপের বিস্তারিত স্ক্রিনে পরিবর্তন করুন)।</string>
     <string name="confirm_uninstall_title">অ্যাপ আনইনস্টল করবেন?</string>
     <string name="confirm_uninstall_message">আপনি কি নিশ্চিত যে %1$s আনইনস্টল করতে চান? এই ক্রিয়া পূর্বাবস্থায় ফেরানো যাবে না এবং অ্যাপের ডেটা হারিয়ে যেতে পারে।</string>
     <string name="invalid_github_url">অবৈধ GitHub URL। ফর্ম্যাট ব্যবহার করুন: github.com/owner/repo</string>

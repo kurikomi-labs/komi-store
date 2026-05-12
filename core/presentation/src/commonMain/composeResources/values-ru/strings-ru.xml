@@ -565,8 +565,8 @@
     <string name="import_apps_title">Импорт приложений</string>
     <string name="import_apps_description">Вставьте экспортированный JSON для восстановления отслеживаемых приложений</string>
     <string name="import_apps_hint">Вставьте экспортированный JSON…</string>
-    <string name="include_pre_releases_title">Включить пре-релизы</string>
-    <string name="include_pre_releases_description">Отслеживать пре-релизные версии при проверке обновлений. При отключении учитываются только стабильные релизы.</string>
+    <string name="include_pre_releases_title">Канал бета по умолчанию</string>
+    <string name="include_pre_releases_description">Вновь отслеживаемые приложения по умолчанию включают бета-сборки. Ранее отслеживаемые приложения сохраняют своё значение (переключите на экране Подробностей приложения).</string>
     <string name="confirm_uninstall_title">Удалить приложение?</string>
     <string name="confirm_uninstall_message">Вы уверены, что хотите удалить %1$s? Это действие нельзя отменить, данные приложения могут быть утеряны.</string>
     <string name="invalid_github_url">Неверный URL GitHub. Используйте формат: github.com/owner/repo</string>

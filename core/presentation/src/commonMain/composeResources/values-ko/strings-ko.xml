@@ -599,8 +599,8 @@
     <string name="import_apps_title">앱 가져오기</string>
     <string name="import_apps_description">내보낸 JSON을 붙여넣어 추적 중인 앱을 복원하세요</string>
     <string name="import_apps_hint">내보낸 JSON을 여기에 붙여넣기…</string>
-    <string name="include_pre_releases_title">사전 릴리스 포함</string>
-    <string name="include_pre_releases_description">업데이트 확인 시 사전 릴리스 버전을 추적합니다. 비활성화하면 안정적인 릴리스만 고려됩니다.</string>
+    <string name="include_pre_releases_title">기본 베타 채널</string>
+    <string name="include_pre_releases_description">새로 추적한 앱은 기본적으로 베타 빌드를 포함합니다. 이미 추적 중인 앱은 자체 설정을 유지합니다(앱 세부 정보 화면에서 전환).</string>
     <string name="confirm_uninstall_title">앱을 제거하시겠습니까?</string>
     <string name="confirm_uninstall_message">%1$s을(를) 제거하시겠습니까? 이 작업은 취소할 수 없으며 앱 데이터가 손실될 수 있습니다.</string>
     <string name="invalid_github_url">잘못된 GitHub URL입니다. 형식: github.com/owner/repo</string>
