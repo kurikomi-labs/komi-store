@@ -29,4 +29,5 @@ data class HomeState(
     val isPlatformPopupVisible: Boolean = false,
     val isHideSeenEnabled: Boolean = false,
     val seenRepoIds: Set<Long> = emptySet(),
+    val hiddenRepoIds: Set<Long> = emptySet(),
 )

@@ -605,6 +605,9 @@
     <string name="seen_history_cleared">Historial de vistos borrado</string>
     <string name="seen_badge">Visto</string>
     <string name="self_owned_badge">Eres dueño de este repo</string>
+    <string name="hide_repository">Ocultar repositorio</string>
+    <string name="repository_hidden">Repositorio ocultado</string>
+    <string name="undo_hide">Deshacer</string>
     <string name="privacy_section">Privacidad</string>
     <string name="telemetry_title">Ayudar a mejorar la búsqueda</string>
     <string name="telemetry_description">Compartir datos de uso (búsquedas, instalaciones, interacciones) asociados a un ID de análisis restablecible. No se comparten detalles de la cuenta.</string>
@@ -1097,4 +1100,17 @@
     <string name="skipped_updates_unskip_action">No saltar</string>
     <string name="skipped_updates_unskipped_snackbar">Aviso de actualización reactivado para %1$s</string>
     <string name="skipped_updates_unskip_failure">No se pudo actualizar la preferencia</string>
+    <string name="hidden_repositories_title">Repositorios ocultos</string>
+    <string name="hidden_repositories_entry_description">Gestiona los repositorios que ocultaste de Inicio y Búsqueda.</string>
+    <string name="hidden_repositories_count">%1$d oculto(s)</string>
+    <string name="hidden_repositories_empty_title">Sin repositorios ocultos</string>
+    <string name="hidden_repositories_empty_description">Mantén pulsada una tarjeta de repositorio en Inicio o Búsqueda para ocultarla.</string>
+    <string name="hidden_repositories_unhide_action">Mostrar</string>
+    <string name="hidden_repositories_unhide_all">Mostrar todos</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s vuelto a mostrar</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">Todos los repositorios mostrados</string>
+    <string name="hidden_repositories_unhide_failure">No se pudo mostrar. Inténtalo de nuevo.</string>
+    <string name="open_on_github">Abrir en GitHub</string>
+    <string name="mark_as_viewed">Marcar como visto</string>
+    <string name="mark_as_unviewed">Marcar como no visto</string>
 </resources>

@@ -21,6 +21,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Code
@@ -28,8 +30,14 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +47,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -60,6 +71,10 @@ import zed.rainxch.core.presentation.utils.hasWeekNotPassed
 import zed.rainxch.core.presentation.utils.toIcons
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.forked_repository
+import zed.rainxch.githubstore.core.presentation.res.hide_repository
+import zed.rainxch.githubstore.core.presentation.res.mark_as_unviewed
+import zed.rainxch.githubstore.core.presentation.res.mark_as_viewed
+import zed.rainxch.githubstore.core.presentation.res.open_on_github
 import zed.rainxch.githubstore.core.presentation.res.home_view_details
 import zed.rainxch.githubstore.core.presentation.res.installed
 import zed.rainxch.githubstore.core.presentation.res.open_in_browser
@@ -68,7 +83,11 @@ import zed.rainxch.githubstore.core.presentation.res.self_owned_badge
 import zed.rainxch.githubstore.core.presentation.res.share_repository
 import zed.rainxch.githubstore.core.presentation.res.update_available
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalLayoutApi::class,
+    ExperimentalMaterial3Api::class,
+)
 @Composable
 fun RepositoryCard(
     discoveryRepositoryUi: DiscoveryRepositoryUi,
@@ -76,6 +95,8 @@ fun RepositoryCard(
     onShareClick: () -> Unit,
     onDeveloperClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onHideClick: (() -> Unit)? = null,
+    onToggleSeen: (() -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -85,8 +106,16 @@ fun RepositoryCard(
         label = "seen_content_alpha",
     )
 
+    var showActionsSheet by remember { mutableStateOf(false) }
+    val sheetEnabled = onHideClick != null
+
     ExpressiveCard(
         onClick = onClick,
+        onLongClick = if (sheetEnabled) {
+            { showActionsSheet = true }
+        } else {
+            null
+        },
         modifier = modifier,
     ) {
         Box(modifier = Modifier.alpha(contentAlpha)) {
@@ -338,6 +367,155 @@ fun RepositoryCard(
             }
         }
     }
+
+    if (sheetEnabled && showActionsSheet) {
+        RepositoryActionsBottomSheet(
+            repository = discoveryRepositoryUi.repository,
+            isSeen = discoveryRepositoryUi.isSeen,
+            onDismiss = { showActionsSheet = false },
+            onShare = {
+                showActionsSheet = false
+                onShareClick()
+            },
+            onOpenOnGithub = {
+                showActionsSheet = false
+                uriHandler.openUri(discoveryRepositoryUi.repository.htmlUrl)
+            },
+            onToggleSeen = onToggleSeen?.let {
+                {
+                    showActionsSheet = false
+                    it()
+                }
+            },
+            onHide = onHideClick?.let {
+                {
+                    showActionsSheet = false
+                    it()
+                }
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RepositoryActionsBottomSheet(
+    repository: GithubRepoSummaryUi,
+    isSeen: Boolean,
+    onDismiss: () -> Unit,
+    onShare: () -> Unit,
+    onOpenOnGithub: () -> Unit,
+    onToggleSeen: (() -> Unit)?,
+    onHide: (() -> Unit)?,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+            // Context header so the user can verify which repo they're
+            // acting on without the card behind the sheet.
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                GitHubStoreImage(
+                    imageModel = { repository.owner.avatarUrl },
+                    modifier =
+                        Modifier
+                            .size(36.dp)
+                            .clip(CircleShape),
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = repository.fullName,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    repository.description?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+
+            SheetActionRow(
+                label = stringResource(Res.string.share_repository),
+                icon = Icons.Default.Share,
+                onClick = onShare,
+            )
+            SheetActionRow(
+                label = stringResource(Res.string.open_on_github),
+                icon = Icons.Default.OpenInBrowser,
+                onClick = onOpenOnGithub,
+            )
+            if (onToggleSeen != null) {
+                SheetActionRow(
+                    label =
+                        if (isSeen) {
+                            stringResource(Res.string.mark_as_unviewed)
+                        } else {
+                            stringResource(Res.string.mark_as_viewed)
+                        },
+                    icon = Icons.Outlined.Visibility,
+                    onClick = onToggleSeen,
+                )
+            }
+            if (onHide != null) {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+                SheetActionRow(
+                    label = stringResource(Res.string.hide_repository),
+                    icon = Icons.Default.VisibilityOff,
+                    onClick = onHide,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SheetActionRow(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    tint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+) {
+    ListItem(
+        headlineContent = {
+            Text(text = label, color = tint)
+        },
+        leadingContent = {
+            Icon(imageVector = icon, contentDescription = null, tint = tint)
+        },
+        colors =
+            ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
+        modifier = Modifier.clickable(onClick = onClick),
+    )
 }
 
 @Composable

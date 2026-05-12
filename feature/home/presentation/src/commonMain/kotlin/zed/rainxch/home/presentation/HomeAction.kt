@@ -45,4 +45,20 @@ sealed interface HomeAction {
     data class OnRepositoryDeveloperClick(
         val username: String,
     ) : HomeAction
+
+    data class OnHideRepository(
+        val repo: GithubRepoSummaryUi,
+    ) : HomeAction
+
+    data class OnUndoHideRepository(
+        val repoId: Long,
+    ) : HomeAction
+
+    data class OnMarkAsSeen(
+        val repo: GithubRepoSummaryUi,
+    ) : HomeAction
+
+    data class OnMarkAsUnseen(
+        val repoId: Long,
+    ) : HomeAction
 }

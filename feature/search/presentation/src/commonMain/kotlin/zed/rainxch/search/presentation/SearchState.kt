@@ -20,6 +20,7 @@ data class SearchState(
     val isLoading: Boolean = false,
     val isHideSeenEnabled: Boolean = false,
     val seenRepoIds: Set<Long> = emptySet(),
+    val hiddenRepoIds: Set<Long> = emptySet(),
     val isLoadingMore: Boolean = false,
     val errorMessage: String? = null,
     val hasMorePages: Boolean = true,

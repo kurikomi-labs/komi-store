@@ -46,6 +46,7 @@ import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 fun TweaksRoot(
     onNavigateToMirrorPicker: () -> Unit,
     onNavigateToSkippedUpdates: () -> Unit,
+    onNavigateToHiddenRepositories: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -155,6 +156,8 @@ fun TweaksRoot(
             when (action) {
                 TweaksAction.OnMirrorPickerClick -> onNavigateToMirrorPicker()
                 TweaksAction.OnSkippedUpdatesClick -> onNavigateToSkippedUpdates()
+
+                TweaksAction.OnHiddenRepositoriesClick -> onNavigateToHiddenRepositories()
                 else -> viewModel.onAction(action)
             }
         },

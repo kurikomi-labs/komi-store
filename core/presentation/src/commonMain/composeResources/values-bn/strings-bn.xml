@@ -644,6 +644,9 @@
     <string name="seen_history_cleared">দেখার ইতিহাস মুছে ফেলা হয়েছে</string>
     <string name="seen_badge">দেখা হয়েছে</string>
     <string name="self_owned_badge">এই রিপো আপনার</string>
+    <string name="hide_repository">রিপোজিটরি লুকান</string>
+    <string name="repository_hidden">রিপোজিটরি লুকানো হয়েছে</string>
+    <string name="undo_hide">পূর্বাবস্থা</string>
     <string name="privacy_section">গোপনীয়তা</string>
     <string name="telemetry_title">অনুসন্ধান উন্নত করতে সহায়তা করুন</string>
     <string name="telemetry_description">পুনরায় সেট করা যায় এমন একটি বিশ্লেষণ আইডির সাথে যুক্ত ব্যবহার ডেটা (অনুসন্ধান, ইনস্টল, ইন্টারঅ্যাকশন) শেয়ার করুন। অ্যাকাউন্ট বিবরণ শেয়ার করা হয় না।</string>
@@ -1125,4 +1128,17 @@
     <string name="skipped_updates_unskip_action">এড়িয়ে যাবেন না</string>
     <string name="skipped_updates_unskipped_snackbar">%1$s এর জন্য আপডেট প্রম্পট আবার চালু</string>
     <string name="skipped_updates_unskip_failure">পছন্দ আপডেট করা যায়নি</string>
+    <string name="hidden_repositories_title">লুকানো রিপোজিটরি</string>
+    <string name="hidden_repositories_entry_description">হোম ও সার্চ থেকে লুকানো রিপোজিটরি পরিচালনা করুন।</string>
+    <string name="hidden_repositories_count">%1$d লুকানো</string>
+    <string name="hidden_repositories_empty_title">কোনো লুকানো রিপোজিটরি নেই</string>
+    <string name="hidden_repositories_empty_description">হোম বা সার্চে রিপোজিটরি কার্ডে দীর্ঘক্ষণ চাপ দিয়ে আবিষ্কার থেকে লুকান।</string>
+    <string name="hidden_repositories_unhide_action">দেখান</string>
+    <string name="hidden_repositories_unhide_all">সব দেখান</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s এখন দৃশ্যমান</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">সব রিপোজিটরি দৃশ্যমান</string>
+    <string name="hidden_repositories_unhide_failure">দৃশ্যমান করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="open_on_github">GitHub-এ খুলুন</string>
+    <string name="mark_as_viewed">দেখা হিসেবে চিহ্নিত করুন</string>
+    <string name="mark_as_unviewed">অদেখা হিসেবে চিহ্নিত করুন</string>
 </resources>

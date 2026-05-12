@@ -643,6 +643,9 @@
     <string name="seen_history_cleared">देखने का इतिहास साफ़ किया गया</string>
     <string name="seen_badge">देखा गया</string>
     <string name="self_owned_badge">यह रेपो आपका है</string>
+    <string name="hide_repository">रिपॉजिटरी छिपाएं</string>
+    <string name="repository_hidden">रिपॉजिटरी छिपाई गई</string>
+    <string name="undo_hide">पूर्ववत्</string>
     <string name="privacy_section">गोपनीयता</string>
     <string name="telemetry_title">खोज को बेहतर बनाने में मदद करें</string>
     <string name="telemetry_description">रीसेट करने योग्य एनालिटिक्स आईडी से जुड़े उपयोग डेटा (खोज, इंस्टॉल, इंटरैक्शन) साझा करें। खाता विवरण साझा नहीं किए जाते।</string>
@@ -1136,4 +1139,17 @@
     <string name="skipped_updates_unskip_action">मत छोड़ें</string>
     <string name="skipped_updates_unskipped_snackbar">%1$s के लिए अपडेट प्रॉम्प्ट चालू</string>
     <string name="skipped_updates_unskip_failure">प्राथमिकता अपडेट नहीं हो सकी</string>
+    <string name="hidden_repositories_title">छिपे हुए रिपॉजिटरी</string>
+    <string name="hidden_repositories_entry_description">होम और सर्च से छिपाए गए रिपॉजिटरी प्रबंधित करें।</string>
+    <string name="hidden_repositories_count">%1$d छिपे हुए</string>
+    <string name="hidden_repositories_empty_title">कोई छिपा रिपॉजिटरी नहीं</string>
+    <string name="hidden_repositories_empty_description">होम या सर्च में रेपो कार्ड पर लंबा दबाकर इसे डिस्कवरी से छिपाएं।</string>
+    <string name="hidden_repositories_unhide_action">दिखाएं</string>
+    <string name="hidden_repositories_unhide_all">सभी दिखाएं</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s फिर से दृश्यमान</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">सभी रिपॉजिटरी अब दृश्यमान</string>
+    <string name="hidden_repositories_unhide_failure">दिखाया नहीं जा सका। पुनः प्रयास करें।</string>
+    <string name="open_on_github">GitHub पर खोलें</string>
+    <string name="mark_as_viewed">देखा हुआ चिह्नित करें</string>
+    <string name="mark_as_unviewed">अनदेखा चिह्नित करें</string>
 </resources>

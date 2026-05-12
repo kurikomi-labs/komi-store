@@ -20,15 +20,35 @@ class SeenReposRepositoryImpl(
         }
 
     override suspend fun markAsSeen(repo: GithubRepoSummary) {
+        markAsSeen(
+            repoId = repo.id,
+            repoName = repo.name,
+            repoOwner = repo.owner.login,
+            repoOwnerAvatarUrl = repo.owner.avatarUrl,
+            repoDescription = repo.description,
+            primaryLanguage = repo.language,
+            repoUrl = repo.htmlUrl,
+        )
+    }
+
+    override suspend fun markAsSeen(
+        repoId: Long,
+        repoName: String,
+        repoOwner: String,
+        repoOwnerAvatarUrl: String,
+        repoDescription: String?,
+        primaryLanguage: String?,
+        repoUrl: String,
+    ) {
         seenRepoDao.insert(
             SeenRepoEntity(
-                repoId = repo.id,
-                repoName = repo.name,
-                repoOwner = repo.owner.login,
-                repoOwnerAvatarUrl = repo.owner.avatarUrl,
-                repoDescription = repo.description,
-                primaryLanguage = repo.language,
-                repoUrl = repo.htmlUrl,
+                repoId = repoId,
+                repoName = repoName,
+                repoOwner = repoOwner,
+                repoOwnerAvatarUrl = repoOwnerAvatarUrl,
+                repoDescription = repoDescription,
+                primaryLanguage = primaryLanguage,
+                repoUrl = repoUrl,
                 seenAt = System.currentTimeMillis(),
             ),
         )

@@ -771,6 +771,22 @@
     <string name="seen_history_cleared">Seen history cleared</string>
     <string name="seen_badge">Viewed</string>
     <string name="self_owned_badge">You own this repo</string>
+    <string name="hide_repository">Hide repository</string>
+    <string name="open_on_github">Open on GitHub</string>
+    <string name="mark_as_viewed">Mark as viewed</string>
+    <string name="mark_as_unviewed">Mark as unviewed</string>
+    <string name="repository_hidden">Repository hidden</string>
+    <string name="undo_hide">Undo</string>
+    <string name="hidden_repositories_title">Hidden repositories</string>
+    <string name="hidden_repositories_entry_description">Manage repositories you hid from Home and Search.</string>
+    <string name="hidden_repositories_count">%1$d hidden</string>
+    <string name="hidden_repositories_empty_title">No hidden repositories</string>
+    <string name="hidden_repositories_empty_description">Long-press a repository card on Home or Search to hide it from discovery.</string>
+    <string name="hidden_repositories_unhide_action">Unhide</string>
+    <string name="hidden_repositories_unhide_all">Unhide all</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s unhidden</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">All repositories unhidden</string>
+    <string name="hidden_repositories_unhide_failure">Could not unhide. Try again.</string>
 
     <!-- Privacy / telemetry -->
     <string name="privacy_section">Privacy</string>

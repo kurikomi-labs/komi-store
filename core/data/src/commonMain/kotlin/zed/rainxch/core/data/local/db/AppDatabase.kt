@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import zed.rainxch.core.data.local.db.dao.CacheDao
 import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
 import zed.rainxch.core.data.local.db.dao.FavoriteRepoDao
+import zed.rainxch.core.data.local.db.dao.HiddenRepoDao
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.SearchHistoryDao
 import zed.rainxch.core.data.local.db.dao.SeenRepoDao
@@ -14,6 +15,7 @@ import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
 import zed.rainxch.core.data.local.db.entities.CacheEntryEntity
 import zed.rainxch.core.data.local.db.entities.ExternalLinkEntity
 import zed.rainxch.core.data.local.db.entities.FavoriteRepoEntity
+import zed.rainxch.core.data.local.db.entities.HiddenRepoEntity
 import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
 import zed.rainxch.core.data.local.db.entities.SearchHistoryEntity
 import zed.rainxch.core.data.local.db.entities.SeenRepoEntity
@@ -32,8 +34,9 @@ import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
         SearchHistoryEntity::class,
         ExternalLinkEntity::class,
         SigningFingerprintEntity::class,
+        HiddenRepoEntity::class,
     ],
-    version = 16,
+    version = 17,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -46,4 +49,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val searchHistoryDao: SearchHistoryDao
     abstract val externalLinkDao: ExternalLinkDao
     abstract val signingFingerprintDao: SigningFingerprintDao
+    abstract val hiddenRepoDao: HiddenRepoDao
 }

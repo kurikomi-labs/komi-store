@@ -645,6 +645,9 @@
     <string name="seen_history_cleared">تم مسح سجل المشاهدة</string>
     <string name="seen_badge">تمت المشاهدة</string>
     <string name="self_owned_badge">هذا المستودع لك</string>
+    <string name="hide_repository">إخفاء المستودع</string>
+    <string name="repository_hidden">تم إخفاء المستودع</string>
+    <string name="undo_hide">تراجع</string>
     <string name="privacy_section">الخصوصية</string>
     <string name="telemetry_title">ساعد في تحسين البحث</string>
     <string name="telemetry_description">مشاركة بيانات الاستخدام (عمليات البحث والتثبيتات والتفاعلات) المرتبطة بمعرّف تحليلي قابل لإعادة التعيين. لا تتم مشاركة تفاصيل الحساب.</string>
@@ -1149,4 +1152,17 @@
     <string name="skipped_updates_unskip_action">إلغاء التخطّي</string>
     <string name="skipped_updates_unskipped_snackbar">تم تفعيل الإشعار لـ %1$s</string>
     <string name="skipped_updates_unskip_failure">تعذّر تحديث التفضيل</string>
+    <string name="hidden_repositories_title">المستودعات المخفية</string>
+    <string name="hidden_repositories_entry_description">إدارة المستودعات التي أخفيتها من الرئيسية والبحث.</string>
+    <string name="hidden_repositories_count">%1$d مخفي</string>
+    <string name="hidden_repositories_empty_title">لا توجد مستودعات مخفية</string>
+    <string name="hidden_repositories_empty_description">اضغط مطولاً على بطاقة مستودع في الرئيسية أو البحث لإخفائه من الاستكشاف.</string>
+    <string name="hidden_repositories_unhide_action">إظهار</string>
+    <string name="hidden_repositories_unhide_all">إظهار الكل</string>
+    <string name="hidden_repositories_unhidden_snackbar">تم إظهار %1$s</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">تم إظهار جميع المستودعات</string>
+    <string name="hidden_repositories_unhide_failure">تعذر الإظهار. حاول مرة أخرى.</string>
+    <string name="open_on_github">فتح في GitHub</string>
+    <string name="mark_as_viewed">وضع علامة مشاهد</string>
+    <string name="mark_as_unviewed">إلغاء علامة مشاهد</string>
 </resources>

@@ -57,6 +57,9 @@ sealed interface GithubStoreGraph {
     data object SkippedUpdatesScreen : GithubStoreGraph
 
     @Serializable
+    data object HiddenRepositoriesScreen : GithubStoreGraph
+
+    @Serializable
     data object WhatsNewHistoryScreen : GithubStoreGraph
 
     @Serializable

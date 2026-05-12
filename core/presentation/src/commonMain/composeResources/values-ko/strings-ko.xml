@@ -642,6 +642,9 @@
     <string name="seen_history_cleared">조회 기록이 삭제되었습니다</string>
     <string name="seen_badge">확인함</string>
     <string name="self_owned_badge">내가 소유한 저장소</string>
+    <string name="hide_repository">저장소 숨기기</string>
+    <string name="repository_hidden">저장소가 숨겨졌습니다</string>
+    <string name="undo_hide">실행 취소</string>
     <string name="privacy_section">개인 정보 보호</string>
     <string name="telemetry_title">검색 개선에 도움 주기</string>
     <string name="telemetry_description">재설정 가능한 분석 ID에 연결된 사용 데이터(검색, 설치, 상호작용)를 공유합니다. 계정 정보는 공유되지 않습니다.</string>
@@ -1127,4 +1130,17 @@
     <string name="skipped_updates_unskip_action">건너뛰지 않기</string>
     <string name="skipped_updates_unskipped_snackbar">%1$s에 대한 업데이트 알림 다시 사용 설정</string>
     <string name="skipped_updates_unskip_failure">설정을 업데이트할 수 없습니다</string>
+    <string name="hidden_repositories_title">숨긴 저장소</string>
+    <string name="hidden_repositories_entry_description">홈과 검색에서 숨긴 저장소를 관리합니다.</string>
+    <string name="hidden_repositories_count">%1$d개 숨김</string>
+    <string name="hidden_repositories_empty_title">숨긴 저장소 없음</string>
+    <string name="hidden_repositories_empty_description">홈 또는 검색에서 저장소 카드를 길게 눌러 탐색에서 숨길 수 있습니다.</string>
+    <string name="hidden_repositories_unhide_action">표시</string>
+    <string name="hidden_repositories_unhide_all">모두 표시</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s 다시 표시됨</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">모든 저장소가 다시 표시됨</string>
+    <string name="hidden_repositories_unhide_failure">표시할 수 없습니다. 다시 시도하세요.</string>
+    <string name="open_on_github">GitHub에서 열기</string>
+    <string name="mark_as_viewed">본 항목으로 표시</string>
+    <string name="mark_as_unviewed">본 항목 해제</string>
 </resources>

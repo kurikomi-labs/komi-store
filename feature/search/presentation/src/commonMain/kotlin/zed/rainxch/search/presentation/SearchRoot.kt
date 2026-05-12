@@ -692,6 +692,16 @@ fun SearchScreen(
                                     onShareClick = {
                                         onAction(SearchAction.OnShareClick(discoveryRepository.repository))
                                     },
+                                    onHideClick = {
+                                        onAction(SearchAction.OnHideRepository(discoveryRepository.repository))
+                                    },
+                                    onToggleSeen = {
+                                        if (discoveryRepository.isSeen) {
+                                            onAction(SearchAction.OnMarkAsUnseen(discoveryRepository.repository.id))
+                                        } else {
+                                            onAction(SearchAction.OnMarkAsSeen(discoveryRepository.repository))
+                                        }
+                                    },
                                     modifier = Modifier.animateItem(),
                                 )
                             }

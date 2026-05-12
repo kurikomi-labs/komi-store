@@ -348,6 +348,50 @@ fun LazyListScope.updatesSection(
         SkippedUpdatesEntryCard(
             onClick = { onAction(TweaksAction.OnSkippedUpdatesClick) },
         )
+
+        Spacer(Modifier.height(12.dp))
+
+        HiddenRepositoriesEntryCard(
+            onClick = { onAction(TweaksAction.OnHiddenRepositoriesClick) },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun HiddenRepositoriesEntryCard(
+    onClick: () -> Unit,
+) {
+    OutlinedCard(
+        onClick = onClick,
+        colors =
+            CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            ),
+        shape = RoundedCornerShape(32.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(Res.string.hidden_repositories_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(Res.string.hidden_repositories_entry_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+            )
+        }
     }
 }
 

@@ -523,6 +523,10 @@ class TweaksViewModel(
                 // Handled in composable (navigates to the skipped-updates screen).
             }
 
+            TweaksAction.OnHiddenRepositoriesClick -> {
+                // Handled in composable (navigates to the hidden-repositories screen).
+            }
+
             is TweaksAction.OnThemeColorSelected -> {
                 viewModelScope.launch {
                     tweaksRepository.setThemeColor(action.themeColor)

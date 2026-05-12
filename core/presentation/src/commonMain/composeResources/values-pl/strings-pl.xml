@@ -608,6 +608,9 @@
     <string name="seen_history_cleared">Historia przeglądania wyczyszczona</string>
     <string name="seen_badge">Przeglądane</string>
     <string name="self_owned_badge">Jesteś właścicielem tego repo</string>
+    <string name="hide_repository">Ukryj repozytorium</string>
+    <string name="repository_hidden">Repozytorium ukryte</string>
+    <string name="undo_hide">Cofnij</string>
     <string name="privacy_section">Prywatność</string>
     <string name="telemetry_title">Pomóż ulepszyć wyszukiwanie</string>
     <string name="telemetry_description">Udostępniaj dane o użyciu (wyszukiwania, instalacje, interakcje) powiązane z resetowalnym identyfikatorem analitycznym. Żadne dane konta nie są udostępniane.</string>
@@ -1118,4 +1121,17 @@
     <string name="skipped_updates_unskip_action">Nie pomijaj</string>
     <string name="skipped_updates_unskipped_snackbar">Powiadomienie włączone dla %1$s</string>
     <string name="skipped_updates_unskip_failure">Nie udało się zmienić preferencji</string>
+    <string name="hidden_repositories_title">Ukryte repozytoria</string>
+    <string name="hidden_repositories_entry_description">Zarządzaj repozytoriami ukrytymi na Ekranie głównym i w Wyszukiwarce.</string>
+    <string name="hidden_repositories_count">%1$d ukryte</string>
+    <string name="hidden_repositories_empty_title">Brak ukrytych repozytoriów</string>
+    <string name="hidden_repositories_empty_description">Przytrzymaj kartę repozytorium na Ekranie głównym lub w Wyszukiwarce, aby ukryć ją z odkrywania.</string>
+    <string name="hidden_repositories_unhide_action">Pokaż</string>
+    <string name="hidden_repositories_unhide_all">Pokaż wszystkie</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s znów widoczne</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">Wszystkie repozytoria znów widoczne</string>
+    <string name="hidden_repositories_unhide_failure">Nie udało się pokazać. Spróbuj ponownie.</string>
+    <string name="open_on_github">Otwórz w GitHub</string>
+    <string name="mark_as_viewed">Oznacz jako obejrzane</string>
+    <string name="mark_as_unviewed">Oznacz jako nieobejrzane</string>
 </resources>

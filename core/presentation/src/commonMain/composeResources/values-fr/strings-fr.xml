@@ -606,6 +606,9 @@
     <string name="seen_history_cleared">Historique des consultations effacé</string>
     <string name="seen_badge">Consulté</string>
     <string name="self_owned_badge">Vous possédez ce dépôt</string>
+    <string name="hide_repository">Masquer le dépôt</string>
+    <string name="repository_hidden">Dépôt masqué</string>
+    <string name="undo_hide">Annuler</string>
     <string name="privacy_section">Confidentialité</string>
     <string name="telemetry_title">Aider à améliorer la recherche</string>
     <string name="telemetry_description">Partager des données d'utilisation (recherches, installations, interactions) associées à un identifiant d'analyse réinitialisable. Aucun détail de compte n'est partagé.</string>
@@ -1098,4 +1101,17 @@
     <string name="skipped_updates_unskip_action">Ne plus ignorer</string>
     <string name="skipped_updates_unskipped_snackbar">Avis réactivé pour %1$s</string>
     <string name="skipped_updates_unskip_failure">Impossible de mettre à jour la préférence</string>
+    <string name="hidden_repositories_title">Dépôts masqués</string>
+    <string name="hidden_repositories_entry_description">Gérez les dépôts masqués depuis Accueil et Recherche.</string>
+    <string name="hidden_repositories_count">%1$d masqué(s)</string>
+    <string name="hidden_repositories_empty_title">Aucun dépôt masqué</string>
+    <string name="hidden_repositories_empty_description">Appuyez longuement sur une carte de dépôt dans Accueil ou Recherche pour la masquer.</string>
+    <string name="hidden_repositories_unhide_action">Afficher</string>
+    <string name="hidden_repositories_unhide_all">Tout afficher</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s réaffiché</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">Tous les dépôts réaffichés</string>
+    <string name="hidden_repositories_unhide_failure">Impossible d\'afficher. Réessayez.</string>
+    <string name="open_on_github">Ouvrir sur GitHub</string>
+    <string name="mark_as_viewed">Marquer comme vu</string>
+    <string name="mark_as_unviewed">Marquer comme non vu</string>
 </resources>

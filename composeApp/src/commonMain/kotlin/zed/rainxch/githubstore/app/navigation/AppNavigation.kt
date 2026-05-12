@@ -46,6 +46,7 @@ import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
+import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.mirror.AutoSuggestMirrorViewModel
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
 import zed.rainxch.tweaks.presentation.mirror.components.AutoSuggestMirrorSheet
@@ -382,11 +383,22 @@ fun AppNavigation(
                                 launchSingleTop = true
                             }
                         },
+                        onNavigateToHiddenRepositories = {
+                            navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
+                                launchSingleTop = true
+                            }
+                        },
                     )
                 }
 
                 composable<GithubStoreGraph.SkippedUpdatesScreen> {
                     SkippedUpdatesRoot(
+                        onNavigateBack = { navController.popBackStack() },
+                    )
+                }
+
+                composable<GithubStoreGraph.HiddenRepositoriesScreen> {
+                    HiddenRepositoriesRoot(
                         onNavigateBack = { navController.popBackStack() },
                     )
                 }

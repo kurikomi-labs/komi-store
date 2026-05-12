@@ -24,6 +24,7 @@ import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.model.hasActualUpdate
 import zed.rainxch.core.domain.model.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
+import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.SearchHistoryRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
@@ -65,6 +66,7 @@ class SearchViewModel(
     private val searchHistoryRepository: SearchHistoryRepository,
     private val telemetryRepository: TelemetryRepository,
     private val profileRepository: ProfileRepository,
+    private val hiddenReposRepository: HiddenReposRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
@@ -100,6 +102,7 @@ class SearchViewModel(
                     observeFavouriteApps()
                     observeStarredRepos()
                     observeSeenRepos()
+                    observeHiddenRepos()
                     observeHideSeenEnabled()
                     observeClipboardSetting()
                     observeSearchHistory()
@@ -115,12 +118,17 @@ class SearchViewModel(
                 initialValue = SearchState(),
             )
 
-    private fun computeVisibleRepos(state: SearchState): ImmutableList<DiscoveryRepositoryUi> =
-        if (state.isHideSeenEnabled && state.seenRepoIds.isNotEmpty()) {
-            state.repositories.filter { it.repository.id !in state.seenRepoIds }.toImmutableList()
-        } else {
-            state.repositories
-        }
+    private fun computeVisibleRepos(state: SearchState): ImmutableList<DiscoveryRepositoryUi> {
+        val hidden = state.hiddenRepoIds
+        val needsHideSeenFilter = state.isHideSeenEnabled && state.seenRepoIds.isNotEmpty()
+        if (hidden.isEmpty() && !needsHideSeenFilter) return state.repositories
+        return state.repositories
+            .filter { repo ->
+                repo.repository.id !in hidden &&
+                    (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
+            }
+            .toImmutableList()
+    }
 
     private fun observeSeenRepos() {
         viewModelScope.launch {
@@ -143,6 +151,18 @@ class SearchViewModel(
         viewModelScope.launch {
             tweaksRepository.getHideSeenEnabled().collect { enabled ->
                 _state.update { it.copy(isHideSeenEnabled = enabled) }
+            }
+        }
+    }
+
+    private fun observeHiddenRepos() {
+        viewModelScope.launch {
+            hiddenReposRepository.getAllHiddenRepoIds().collect { ids ->
+                // Track IDs only — `computeVisibleRepos` already filters
+                // hidden at render time. Removing from `repositories`
+                // would break `OnUndoHideRepository`: once the entity is
+                // gone there's nothing to bring back without re-fetching.
+                _state.update { it.copy(hiddenRepoIds = ids) }
             }
         }
     }
@@ -721,6 +741,69 @@ class SearchViewModel(
             SearchAction.OnDisableHideSeenForResults -> {
                 viewModelScope.launch {
                     tweaksRepository.setHideSeenEnabled(false)
+                }
+            }
+
+            is SearchAction.OnHideRepository -> {
+                val repo = action.repo
+                viewModelScope.launch {
+                    try {
+                        hiddenReposRepository.hide(
+                            repoId = repo.id,
+                            repoName = repo.name,
+                            repoOwner = repo.owner.login,
+                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                        )
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Hide repository failed for ${repo.id}: ${e.message}")
+                    }
+                }
+            }
+
+            is SearchAction.OnUndoHideRepository -> {
+                viewModelScope.launch {
+                    try {
+                        hiddenReposRepository.unhide(action.repoId)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Unhide repository failed for ${action.repoId}: ${e.message}")
+                    }
+                }
+            }
+
+            is SearchAction.OnMarkAsSeen -> {
+                val repo = action.repo
+                viewModelScope.launch {
+                    try {
+                        seenReposRepository.markAsSeen(
+                            repoId = repo.id,
+                            repoName = repo.name,
+                            repoOwner = repo.owner.login,
+                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                            repoDescription = repo.description,
+                            primaryLanguage = repo.language,
+                            repoUrl = repo.htmlUrl,
+                        )
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Mark as seen failed for ${repo.id}: ${e.message}")
+                    }
+                }
+            }
+
+            is SearchAction.OnMarkAsUnseen -> {
+                viewModelScope.launch {
+                    try {
+                        seenReposRepository.removeFromHistory(action.repoId)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Mark as unseen failed for ${action.repoId}: ${e.message}")
+                    }
                 }
             }
         }

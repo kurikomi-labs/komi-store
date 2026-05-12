@@ -26,6 +26,7 @@ import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.hasActualUpdate
 import zed.rainxch.core.domain.model.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
+import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
@@ -52,6 +53,7 @@ class HomeViewModel(
     private val shareManager: ShareManager,
     private val tweaksRepository: TweaksRepository,
     private val seenReposRepository: SeenReposRepository,
+    private val hiddenReposRepository: HiddenReposRepository,
     private val profileRepository: ProfileRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
@@ -79,6 +81,7 @@ class HomeViewModel(
                     observeFavourites()
                     observeStarredRepos()
                     observeSeenRepos()
+                    observeHiddenRepos()
                     observeDiscoveryPlatforms()
                     observeHideSeenEnabled()
 
@@ -520,6 +523,69 @@ class HomeViewModel(
                 // Handled in composable
             }
 
+            is HomeAction.OnHideRepository -> {
+                val repo = action.repo
+                viewModelScope.launch {
+                    try {
+                        hiddenReposRepository.hide(
+                            repoId = repo.id,
+                            repoName = repo.name,
+                            repoOwner = repo.owner.login,
+                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                        )
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Hide repository failed for ${repo.id}: ${e.message}")
+                    }
+                }
+            }
+
+            is HomeAction.OnUndoHideRepository -> {
+                viewModelScope.launch {
+                    try {
+                        hiddenReposRepository.unhide(action.repoId)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Unhide repository failed for ${action.repoId}: ${e.message}")
+                    }
+                }
+            }
+
+            is HomeAction.OnMarkAsSeen -> {
+                val repo = action.repo
+                viewModelScope.launch {
+                    try {
+                        seenReposRepository.markAsSeen(
+                            repoId = repo.id,
+                            repoName = repo.name,
+                            repoOwner = repo.owner.login,
+                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                            repoDescription = repo.description,
+                            primaryLanguage = repo.language,
+                            repoUrl = repo.htmlUrl,
+                        )
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Mark as seen failed for ${repo.id}: ${e.message}")
+                    }
+                }
+            }
+
+            is HomeAction.OnMarkAsUnseen -> {
+                viewModelScope.launch {
+                    try {
+                        seenReposRepository.removeFromHistory(action.repoId)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        logger.warn("Mark as unseen failed for ${action.repoId}: ${e.message}")
+                    }
+                }
+            }
+
             HomeAction.OnSearchClick -> {
                 // Handled in composable
             }
@@ -578,6 +644,18 @@ class HomeViewModel(
                                 }.toImmutableList(),
                     )
                 }
+            }
+        }
+    }
+
+    private fun observeHiddenRepos() {
+        viewModelScope.launch {
+            hiddenReposRepository.getAllHiddenRepoIds().collect { ids ->
+                // Track IDs only — mirror the `seenRepoIds` pattern so
+                // unhiding restores the repo to the visible list without
+                // a refresh. `HomeRoot.visibleRepos` filters at render
+                // time using these IDs.
+                _state.update { it.copy(hiddenRepoIds = ids) }
             }
         }
     }

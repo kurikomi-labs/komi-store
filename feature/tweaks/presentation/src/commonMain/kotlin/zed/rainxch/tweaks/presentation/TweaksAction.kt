@@ -131,6 +131,8 @@ sealed interface TweaksAction {
 
     data object OnSkippedUpdatesClick : TweaksAction
 
+    data object OnHiddenRepositoriesClick : TweaksAction
+
     data class OnTelemetryToggled(
         val enabled: Boolean,
     ) : TweaksAction

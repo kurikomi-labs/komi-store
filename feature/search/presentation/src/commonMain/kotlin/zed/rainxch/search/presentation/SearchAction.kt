@@ -75,4 +75,20 @@ sealed interface SearchAction {
     data object ExploreFromGithub : SearchAction
 
     data object OnDisableHideSeenForResults : SearchAction
+
+    data class OnHideRepository(
+        val repo: GithubRepoSummaryUi,
+    ) : SearchAction
+
+    data class OnUndoHideRepository(
+        val repoId: Long,
+    ) : SearchAction
+
+    data class OnMarkAsSeen(
+        val repo: GithubRepoSummaryUi,
+    ) : SearchAction
+
+    data class OnMarkAsUnseen(
+        val repoId: Long,
+    ) : SearchAction
 }

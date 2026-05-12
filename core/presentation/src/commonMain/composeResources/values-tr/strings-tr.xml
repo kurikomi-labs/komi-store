@@ -642,6 +642,9 @@
     <string name="seen_history_cleared">Görüntüleme geçmişi temizlendi</string>
     <string name="seen_badge">Görüntülendi</string>
     <string name="self_owned_badge">Bu deponun sahibisin</string>
+    <string name="hide_repository">Depoyu gizle</string>
+    <string name="repository_hidden">Depo gizlendi</string>
+    <string name="undo_hide">Geri al</string>
     <string name="privacy_section">Gizlilik</string>
     <string name="telemetry_title">Aramayı iyileştirmeye yardım et</string>
     <string name="telemetry_description">Sıfırlanabilir bir analiz kimliğiyle ilişkilendirilmiş kullanım verilerini (aramalar, yüklemeler, etkileşimler) paylaş. Hesap ayrıntıları paylaşılmaz.</string>
@@ -1134,4 +1137,17 @@
     <string name="skipped_updates_unskip_action">Atlamayı kaldır</string>
     <string name="skipped_updates_unskipped_snackbar">%1$s için güncelleme bildirimi yeniden açıldı</string>
     <string name="skipped_updates_unskip_failure">Tercih güncellenemedi</string>
+    <string name="hidden_repositories_title">Gizli depolar</string>
+    <string name="hidden_repositories_entry_description">Ana ekran ve Arama\'da gizlediğin depoları yönet.</string>
+    <string name="hidden_repositories_count">%1$d gizli</string>
+    <string name="hidden_repositories_empty_title">Gizli depo yok</string>
+    <string name="hidden_repositories_empty_description">Ana ekran veya Arama\'da bir depo kartına basılı tutarak keşiften gizleyin.</string>
+    <string name="hidden_repositories_unhide_action">Göster</string>
+    <string name="hidden_repositories_unhide_all">Tümünü göster</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s yeniden görünür</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">Tüm depolar yeniden görünür</string>
+    <string name="hidden_repositories_unhide_failure">Gösterilemedi. Tekrar dene.</string>
+    <string name="open_on_github">GitHub\'da aç</string>
+    <string name="mark_as_viewed">Görüldü olarak işaretle</string>
+    <string name="mark_as_unviewed">Görülmedi olarak işaretle</string>
 </resources>

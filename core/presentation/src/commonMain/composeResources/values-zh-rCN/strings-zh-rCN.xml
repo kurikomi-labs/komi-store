@@ -608,6 +608,9 @@
     <string name="seen_history_cleared">浏览记录已清除</string>
     <string name="seen_badge">已浏览</string>
     <string name="self_owned_badge">你拥有此仓库</string>
+    <string name="hide_repository">隐藏仓库</string>
+    <string name="repository_hidden">仓库已隐藏</string>
+    <string name="undo_hide">撤销</string>
     <string name="privacy_section">隐私</string>
     <string name="telemetry_title">帮助改进搜索</string>
     <string name="telemetry_description">分享与可重置分析 ID 关联的使用数据（搜索、安装、交互）。不分享账户详情。</string>
@@ -1094,4 +1097,17 @@
     <string name="skipped_updates_unskip_action">不要跳过</string>
     <string name="skipped_updates_unskipped_snackbar">已为 %1$s 重新启用更新提示</string>
     <string name="skipped_updates_unskip_failure">无法更新偏好设置</string>
+    <string name="hidden_repositories_title">已隐藏的仓库</string>
+    <string name="hidden_repositories_entry_description">管理从首页和搜索中隐藏的仓库。</string>
+    <string name="hidden_repositories_count">已隐藏 %1$d 个</string>
+    <string name="hidden_repositories_empty_title">没有隐藏的仓库</string>
+    <string name="hidden_repositories_empty_description">在首页或搜索中长按仓库卡片即可从发现中隐藏。</string>
+    <string name="hidden_repositories_unhide_action">取消隐藏</string>
+    <string name="hidden_repositories_unhide_all">全部取消隐藏</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s 已重新显示</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">所有仓库已重新显示</string>
+    <string name="hidden_repositories_unhide_failure">无法取消隐藏。请重试。</string>
+    <string name="open_on_github">在 GitHub 打开</string>
+    <string name="mark_as_viewed">标记为已查看</string>
+    <string name="mark_as_unviewed">取消已查看标记</string>
 </resources>

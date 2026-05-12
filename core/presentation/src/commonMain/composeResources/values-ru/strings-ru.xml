@@ -608,6 +608,9 @@
     <string name="seen_history_cleared">История просмотров очищена</string>
     <string name="seen_badge">Просмотрено</string>
     <string name="self_owned_badge">Ваш репозиторий</string>
+    <string name="hide_repository">Скрыть репозиторий</string>
+    <string name="repository_hidden">Репозиторий скрыт</string>
+    <string name="undo_hide">Отменить</string>
     <string name="privacy_section">Конфиденциальность</string>
     <string name="telemetry_title">Помочь улучшить поиск</string>
     <string name="telemetry_description">Отправлять данные об использовании (поиски, установки, взаимодействия), связанные со сбрасываемым идентификатором аналитики. Данные учётной записи не передаются.</string>
@@ -1118,4 +1121,17 @@
     <string name="skipped_updates_unskip_action">Не пропускать</string>
     <string name="skipped_updates_unskipped_snackbar">Уведомление снова включено для %1$s</string>
     <string name="skipped_updates_unskip_failure">Не удалось обновить настройку</string>
+    <string name="hidden_repositories_title">Скрытые репозитории</string>
+    <string name="hidden_repositories_entry_description">Управление репозиториями, скрытыми с Главной и Поиска.</string>
+    <string name="hidden_repositories_count">%1$d скрыто</string>
+    <string name="hidden_repositories_empty_title">Нет скрытых репозиториев</string>
+    <string name="hidden_repositories_empty_description">Удерживайте карточку репозитория на Главной или в Поиске, чтобы скрыть её из обзора.</string>
+    <string name="hidden_repositories_unhide_action">Показать</string>
+    <string name="hidden_repositories_unhide_all">Показать все</string>
+    <string name="hidden_repositories_unhidden_snackbar">%1$s снова виден</string>
+    <string name="hidden_repositories_unhidden_all_snackbar">Все репозитории снова видны</string>
+    <string name="hidden_repositories_unhide_failure">Не удалось показать. Повторите попытку.</string>
+    <string name="open_on_github">Открыть на GitHub</string>
+    <string name="mark_as_viewed">Отметить как просмотренный</string>
+    <string name="mark_as_unviewed">Снять отметку</string>
 </resources>
