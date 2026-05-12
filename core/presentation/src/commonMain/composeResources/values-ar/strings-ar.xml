@@ -644,6 +644,7 @@
     <string name="clear_seen_history_description">إعادة تعيين جميع المستودعات المشاهَدة لتظهر مجدداً في الخلاصات</string>
     <string name="seen_history_cleared">تم مسح سجل المشاهدة</string>
     <string name="seen_badge">تمت المشاهدة</string>
+    <string name="self_owned_badge">هذا المستودع لك</string>
     <string name="privacy_section">الخصوصية</string>
     <string name="telemetry_title">ساعد في تحسين البحث</string>
     <string name="telemetry_description">مشاركة بيانات الاستخدام (عمليات البحث والتثبيتات والتفاعلات) المرتبطة بمعرّف تحليلي قابل لإعادة التعيين. لا تتم مشاركة تفاصيل الحساب.</string>

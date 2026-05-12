@@ -606,6 +606,7 @@
     <string name="clear_seen_history_description">すべての閲覧済みリポジトリをリセットしてフィードに再表示します</string>
     <string name="seen_history_cleared">閲覧履歴をクリアしました</string>
     <string name="seen_badge">閲覧済み</string>
+    <string name="self_owned_badge">あなたが所有するリポジトリ</string>
     <string name="privacy_section">プライバシー</string>
     <string name="telemetry_title">検索の改善に協力</string>
     <string name="telemetry_description">リセット可能な分析 ID に関連付けられた使用データ(検索、インストール、操作)を共有します。アカウント情報は共有されません。</string>

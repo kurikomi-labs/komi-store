@@ -607,6 +607,7 @@
     <string name="clear_seen_history_description">重置所有已浏览的仓库，使其重新出现在信息流中</string>
     <string name="seen_history_cleared">浏览记录已清除</string>
     <string name="seen_badge">已浏览</string>
+    <string name="self_owned_badge">你拥有此仓库</string>
     <string name="privacy_section">隐私</string>
     <string name="telemetry_title">帮助改进搜索</string>
     <string name="telemetry_description">分享与可重置分析 ID 关联的使用数据（搜索、安装、交互）。不分享账户详情。</string>

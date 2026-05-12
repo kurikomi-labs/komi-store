@@ -641,6 +641,7 @@
     <string name="clear_seen_history_description">Tüm görüntülenen depoları sıfırlayarak akışlarda tekrar görünmelerini sağlayın</string>
     <string name="seen_history_cleared">Görüntüleme geçmişi temizlendi</string>
     <string name="seen_badge">Görüntülendi</string>
+    <string name="self_owned_badge">Bu deponun sahibisin</string>
     <string name="privacy_section">Gizlilik</string>
     <string name="telemetry_title">Aramayı iyileştirmeye yardım et</string>
     <string name="telemetry_description">Sıfırlanabilir bir analiz kimliğiyle ilişkilendirilmiş kullanım verilerini (aramalar, yüklemeler, etkileşimler) paylaş. Hesap ayrıntıları paylaşılmaz.</string>

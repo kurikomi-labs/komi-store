@@ -20,6 +20,7 @@ import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.starred.presentation.mappers.toStarredRepositoryUi
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -28,6 +29,7 @@ class StarredReposViewModel(
     private val authenticationState: AuthenticationState,
     private val starredRepository: StarredRepository,
     private val favouritesRepository: FavouritesRepository,
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
 
@@ -63,12 +65,17 @@ class StarredReposViewModel(
             combine(
                 starredRepository.getAllStarred(),
                 favouritesRepository.getAllFavorites(),
-            ) { starred, favorites ->
+                profileRepository.getUser(),
+            ) { starred, favorites, user ->
                 val favoriteIds = favorites.map { it.repoId }.toSet()
+                val currentLogin = user?.username
 
                 starred.map {
                     it.toStarredRepositoryUi(
                         isFavorite = favoriteIds.contains(it.repoId),
+                        isCurrentUserOwner =
+                            currentLogin != null &&
+                                it.repoOwner.equals(currentLogin, ignoreCase = true),
                     )
                 }
             }.flowOn(Dispatchers.Default)

@@ -10,7 +10,8 @@
         "Ignore updates per app — silence the update badge for any app you don't want to update.",
         "Skip a specific update — dismiss a single release if it's a false-positive prompt; you'll be re-notified when a newer one lands.",
         "Silent install via root — Magisk, KernelSU, and APatch users can now install without Shizuku or Dhizuku.",
-        "Search in Starred and Favourites — quickly filter long lists by repo name, owner, description, or language."
+        "Search in Starred and Favourites — quickly filter long lists by repo name, owner, description, or language.",
+        "Self-owned ✓ badge — when you're signed in, repos you own get a verified checkmark on Home and Search cards."
       ]
     },
     {

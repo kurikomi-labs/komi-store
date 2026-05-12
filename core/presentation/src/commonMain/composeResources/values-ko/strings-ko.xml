@@ -641,6 +641,7 @@
     <string name="clear_seen_history_description">모든 조회 기록을 초기화하여 피드에 다시 표시합니다</string>
     <string name="seen_history_cleared">조회 기록이 삭제되었습니다</string>
     <string name="seen_badge">확인함</string>
+    <string name="self_owned_badge">내가 소유한 저장소</string>
     <string name="privacy_section">개인 정보 보호</string>
     <string name="telemetry_title">검색 개선에 도움 주기</string>
     <string name="telemetry_description">재설정 가능한 분석 ID에 연결된 사용 데이터(검색, 설치, 상호작용)를 공유합니다. 계정 정보는 공유되지 않습니다.</string>

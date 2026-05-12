@@ -642,6 +642,7 @@
     <string name="clear_seen_history_description">सभी देखे गए रिपॉजिटरी रीसेट करें ताकि वे फ़ीड में फिर से दिखें</string>
     <string name="seen_history_cleared">देखने का इतिहास साफ़ किया गया</string>
     <string name="seen_badge">देखा गया</string>
+    <string name="self_owned_badge">यह रेपो आपका है</string>
     <string name="privacy_section">गोपनीयता</string>
     <string name="telemetry_title">खोज को बेहतर बनाने में मदद करें</string>
     <string name="telemetry_description">रीसेट करने योग्य एनालिटिक्स आईडी से जुड़े उपयोग डेटा (खोज, इंस्टॉल, इंटरैक्शन) साझा करें। खाता विवरण साझा नहीं किए जाते।</string>

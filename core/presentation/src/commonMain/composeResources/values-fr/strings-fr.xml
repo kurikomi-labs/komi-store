@@ -605,6 +605,7 @@
     <string name="clear_seen_history_description">Réinitialiser tous les dépôts consultés pour qu'ils réapparaissent dans les flux</string>
     <string name="seen_history_cleared">Historique des consultations effacé</string>
     <string name="seen_badge">Consulté</string>
+    <string name="self_owned_badge">Vous possédez ce dépôt</string>
     <string name="privacy_section">Confidentialité</string>
     <string name="telemetry_title">Aider à améliorer la recherche</string>
     <string name="telemetry_description">Partager des données d'utilisation (recherches, installations, interactions) associées à un identifiant d'analyse réinitialisable. Aucun détail de compte n'est partagé.</string>

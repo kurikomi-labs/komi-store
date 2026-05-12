@@ -8,8 +8,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -128,6 +130,7 @@ class DetailsViewModel(
     private val apkInspector: ApkInspector,
     private val authenticationState: zed.rainxch.core.domain.repository.AuthenticationState,
     private val systemInstallSerializer: zed.rainxch.core.domain.system.SystemInstallSerializer,
+    private val profileRepository: zed.rainxch.profile.domain.repository.ProfileRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentDownloadJob: Job? = null
@@ -142,6 +145,7 @@ class DetailsViewModel(
                 if (!hasLoadedInitialData) {
                     loadInitial()
                     observeApkInspectCoachmark()
+                    observeCurrentUserForBadge()
 
                     hasLoadedInitialData = true
                 }
@@ -804,6 +808,25 @@ class DetailsViewModel(
      * the pulse would render at the exact moment the system install
      * prompt is up, which is the user's peak-attention frame.
      */
+    // Reactively flips `isCurrentUserOwner` whenever either the signed-in
+    // user changes (login/logout/switch-account) or the loaded repository
+    // owner login arrives. Avoids touching every repo-assignment site.
+    private fun observeCurrentUserForBadge() {
+        viewModelScope.launch {
+            combine(
+                profileRepository.getUser(),
+                _state
+                    .map { it.repository?.owner?.login }
+                    .distinctUntilChanged(),
+            ) { user, ownerLogin ->
+                val login = user?.username
+                login != null && ownerLogin != null && ownerLogin.equals(login, ignoreCase = true)
+            }.collect { isOwner ->
+                _state.update { it.copy(isCurrentUserOwner = isOwner) }
+            }
+        }
+    }
+
     private fun observeApkInspectCoachmark() {
         viewModelScope.launch {
             val alreadyShown =

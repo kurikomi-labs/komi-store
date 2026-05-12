@@ -643,6 +643,7 @@
     <string name="clear_seen_history_description">Reimposta tutti i repository visualizzati in modo che ricompaiano nei feed</string>
     <string name="seen_history_cleared">Cronologia visualizzazioni cancellata</string>
     <string name="seen_badge">Visualizzato</string>
+    <string name="self_owned_badge">Sei il proprietario di questo repo</string>
     <string name="privacy_section">Privacy</string>
     <string name="telemetry_title">Aiuta a migliorare la ricerca</string>
     <string name="telemetry_description">Condividi dati di utilizzo (ricerche, installazioni, interazioni) associati a un ID analitico ripristinabile. Nessun dettaglio dell'account viene condiviso.</string>

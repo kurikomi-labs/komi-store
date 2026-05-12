@@ -604,6 +604,7 @@
     <string name="clear_seen_history_description">Restablecer todos los repositorios vistos para que aparezcan de nuevo en las fuentes</string>
     <string name="seen_history_cleared">Historial de vistos borrado</string>
     <string name="seen_badge">Visto</string>
+    <string name="self_owned_badge">Eres dueño de este repo</string>
     <string name="privacy_section">Privacidad</string>
     <string name="telemetry_title">Ayudar a mejorar la búsqueda</string>
     <string name="telemetry_description">Compartir datos de uso (búsquedas, instalaciones, interacciones) asociados a un ID de análisis restablecible. No se comparten detalles de la cuenta.</string>

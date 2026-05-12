@@ -61,6 +61,7 @@ val viewModelsModule =
                 apkInspector = get(),
                 authenticationState = get(),
                 systemInstallSerializer = get(),
+                profileRepository = get(),
             )
         }
         viewModelOf(::DeveloperProfileViewModel)

@@ -767,6 +767,7 @@
     <string name="clear_seen_history_description">Reset all seen repositories so they appear again in feeds</string>
     <string name="seen_history_cleared">Seen history cleared</string>
     <string name="seen_badge">Viewed</string>
+    <string name="self_owned_badge">You own this repo</string>
 
     <!-- Privacy / telemetry -->
     <string name="privacy_section">Privacy</string>

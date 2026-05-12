@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.CallSplit
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
@@ -63,6 +64,7 @@ import zed.rainxch.githubstore.core.presentation.res.home_view_details
 import zed.rainxch.githubstore.core.presentation.res.installed
 import zed.rainxch.githubstore.core.presentation.res.open_in_browser
 import zed.rainxch.githubstore.core.presentation.res.seen_badge
+import zed.rainxch.githubstore.core.presentation.res.self_owned_badge
 import zed.rainxch.githubstore.core.presentation.res.share_repository
 import zed.rainxch.githubstore.core.presentation.res.update_available
 
@@ -150,7 +152,12 @@ fun RepositoryCard(
                             maxLines = 1,
                             softWrap = false,
                             overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
                         )
+
+                        if (discoveryRepositoryUi.isCurrentUserOwner) {
+                            OfficialBadge()
+                        }
                     }
 
                     Text(
@@ -453,6 +460,16 @@ fun InstallStatusBadge(
             )
         }
     }
+}
+
+@Composable
+fun OfficialBadge(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Filled.Verified,
+        contentDescription = stringResource(Res.string.self_owned_badge),
+        modifier = modifier.size(16.dp),
+        tint = MaterialTheme.colorScheme.primary,
+    )
 }
 
 @Composable

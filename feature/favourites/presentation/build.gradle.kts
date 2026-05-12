@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.core.domain)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.favourites.domain)
+                implementation(projects.feature.profile.domain)
 
                 implementation(libs.bundles.landscapist)
                 implementation(libs.kotlinx.collections.immutable)

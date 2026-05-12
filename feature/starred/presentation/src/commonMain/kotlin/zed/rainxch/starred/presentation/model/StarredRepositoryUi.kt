@@ -13,6 +13,7 @@ data class StarredRepositoryUi(
     val openIssuesCount: Int,
     val isInstalled: Boolean,
     val isFavorite: Boolean = false,
+    val isCurrentUserOwner: Boolean = false,
     val latestRelease: String?,
     val latestReleaseUrl: String?,
     val starredAt: Long?,

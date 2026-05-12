@@ -607,6 +607,7 @@
     <string name="clear_seen_history_description">Сбросить все просмотренные репозитории, чтобы они снова появились в лентах</string>
     <string name="seen_history_cleared">История просмотров очищена</string>
     <string name="seen_badge">Просмотрено</string>
+    <string name="self_owned_badge">Ваш репозиторий</string>
     <string name="privacy_section">Конфиденциальность</string>
     <string name="telemetry_title">Помочь улучшить поиск</string>
     <string name="telemetry_description">Отправлять данные об использовании (поиски, установки, взаимодействия), связанные со сбрасываемым идентификатором аналитики. Данные учётной записи не передаются.</string>

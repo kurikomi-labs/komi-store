@@ -43,6 +43,7 @@ import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.OfficialBadge
 import zed.rainxch.favourites.presentation.model.FavouriteRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.remove_from_favourites
@@ -101,8 +102,12 @@ fun FavouriteRepositoryItem(
                     color = MaterialTheme.colorScheme.outline,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f, fill = false),
                 )
+
+                if (favouriteRepository.isCurrentUserOwner) {
+                    OfficialBadge()
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))

@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.core.domain)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.details.domain)
+                implementation(projects.feature.profile.domain)
 
                 implementation(libs.markdown.renderer)
                 implementation(libs.markdown.renderer.coil3)

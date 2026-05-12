@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.core.domain)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.home.domain)
+                implementation(projects.feature.profile.domain)
 
                 implementation(libs.kotlinx.collections.immutable)
 

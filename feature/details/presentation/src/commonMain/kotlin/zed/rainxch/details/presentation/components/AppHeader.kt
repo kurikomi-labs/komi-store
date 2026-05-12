@@ -49,6 +49,7 @@ import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.util.VersionMath
 import zed.rainxch.core.presentation.components.ForkBadge
+import zed.rainxch.core.presentation.components.OfficialBadge
 import zed.rainxch.core.presentation.components.PlatformChip
 import zed.rainxch.core.presentation.utils.formatReleasedAt
 import zed.rainxch.details.presentation.model.DownloadStage
@@ -70,6 +71,7 @@ fun AppHeader(
     modifier: Modifier = Modifier,
     downloadStage: DownloadStage = DownloadStage.IDLE,
     downloadProgress: Int? = null,
+    isCurrentUserOwner: Boolean = false,
 ) {
     val animatedProgress by animateFloatAsState(
         targetValue = (downloadProgress ?: 0) / 100f,
@@ -174,13 +176,23 @@ fun AppHeader(
                     }
                 }
                 author?.login?.let { author ->
-                    Text(
-                        text = stringResource(Res.string.by_author, author),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.by_author, author),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+
+                        if (isCurrentUserOwner) {
+                            OfficialBadge()
+                        }
+                    }
                 }
 
                 Spacer(Modifier.height(8.dp))

@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -15,11 +16,13 @@ import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.model.FavoriteRepo
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.favourites.presentation.mappers.toFavouriteRepositoryUi
+import zed.rainxch.profile.domain.repository.ProfileRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class FavouritesViewModel(
     private val favouritesRepository: FavouritesRepository,
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
 
@@ -40,10 +43,19 @@ class FavouritesViewModel(
 
     private fun loadFavouriteRepos() {
         viewModelScope.launch {
-            favouritesRepository
-                .getAllFavorites()
-                .map { it.map { it.toFavouriteRepositoryUi() } }
-                .flowOn(Dispatchers.Default)
+            combine(
+                favouritesRepository.getAllFavorites(),
+                profileRepository.getUser(),
+            ) { favorites, user ->
+                val currentLogin = user?.username
+                favorites.map { repo ->
+                    repo.toFavouriteRepositoryUi(
+                        isCurrentUserOwner =
+                            currentLogin != null &&
+                                repo.repoOwner.equals(currentLogin, ignoreCase = true),
+                    )
+                }
+            }.flowOn(Dispatchers.Default)
                 .collect { favoriteRepos ->
                     _state.update {
                         it.copy(

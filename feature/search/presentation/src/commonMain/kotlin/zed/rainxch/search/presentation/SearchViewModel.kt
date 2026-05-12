@@ -36,6 +36,7 @@ import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.domain.repository.SearchRepository
+import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_share_link
 import zed.rainxch.githubstore.core.presentation.res.link_copied_to_clipboard
@@ -63,12 +64,18 @@ class SearchViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
     private val telemetryRepository: TelemetryRepository,
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
     private var currentPage = 1
     private var explorePage = 1
     private var lastExploreQuery = ""
+
+    // Cached so each pagination/explore mapping doesn't re-hit
+    // ProfileRepository on every result page. observeCurrentUser() keeps
+    // it in sync with login/logout.
+    @Volatile private var currentUserLogin: String? = null
 
     private val exploreLog = logger.withTag("SearchExplore")
 
@@ -86,6 +93,7 @@ class SearchViewModel(
         _state
             .onStart {
                 if (!hasLoadedInitialData) {
+                    observeCurrentUser()
                     syncSystemState()
 
                     observeInstalledApps()
@@ -135,6 +143,28 @@ class SearchViewModel(
         viewModelScope.launch {
             tweaksRepository.getHideSeenEnabled().collect { enabled ->
                 _state.update { it.copy(isHideSeenEnabled = enabled) }
+            }
+        }
+    }
+
+    private fun observeCurrentUser() {
+        viewModelScope.launch {
+            profileRepository.getUser().collect { user ->
+                currentUserLogin = user?.username
+                val login = user?.username
+                _state.update { current ->
+                    current.copy(
+                        repositories =
+                            current.repositories
+                                .map { repo ->
+                                    repo.copy(
+                                        isCurrentUserOwner =
+                                            login != null &&
+                                                repo.repository.owner.login.equals(login, ignoreCase = true),
+                                    )
+                                }.toImmutableList(),
+                    )
+                }
             }
         }
     }
@@ -349,6 +379,7 @@ class SearchViewModel(
                             currentPage = paginatedRepos.nextPageIndex
 
                             val seenIds = _state.value.seenRepoIds
+                            val currentLogin = currentUserLogin
 
                             val newReposWithStatus =
                                 paginatedRepos.repos.map { repo ->
@@ -361,6 +392,9 @@ class SearchViewModel(
                                         isFavourite = favourite != null,
                                         isStarred = starred != null,
                                         isSeen = repo.id in seenIds,
+                                        isCurrentUserOwner =
+                                            currentLogin != null &&
+                                                repo.owner.login.equals(currentLogin, ignoreCase = true),
                                         isUpdateAvailable = apps.any { it.hasActualUpdate() },
                                         repository = repo.toUi(),
                                     )
@@ -772,6 +806,7 @@ class SearchViewModel(
         val favoritesMap = favouritesRepository.getAllFavorites().first().associateBy { it.repoId }
         val starredMap = starredRepository.getAllStarred().first().associateBy { it.repoId }
         val seenIds = _state.value.seenRepoIds
+        val currentLogin = currentUserLogin
 
         val existingIds = _state.value.repositories.map { it.repository.id }.toSet()
 
@@ -784,6 +819,9 @@ class SearchViewModel(
                     isFavourite = favoritesMap[repo.id] != null,
                     isStarred = starredMap[repo.id] != null,
                     isSeen = repo.id in seenIds,
+                    isCurrentUserOwner =
+                        currentLogin != null &&
+                            repo.owner.login.equals(currentLogin, ignoreCase = true),
                     isUpdateAvailable = apps.any { it.hasActualUpdate() },
                     repository = repo.toUi(),
                 )

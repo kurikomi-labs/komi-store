@@ -57,6 +57,7 @@ fun LazyListScope.header(
                 installedApp = state.installedApp,
                 downloadStage = state.downloadStage,
                 downloadProgress = state.downloadProgressPercent,
+                isCurrentUserOwner = state.isCurrentUserOwner,
             )
         }
     }

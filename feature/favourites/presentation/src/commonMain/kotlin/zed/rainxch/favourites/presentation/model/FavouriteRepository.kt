@@ -11,4 +11,5 @@ data class FavouriteRepository(
     val addedAtFormatter: String,
     val latestRelease: String?,
     val latestReleaseUrl: String?,
+    val isCurrentUserOwner: Boolean = false,
 )
