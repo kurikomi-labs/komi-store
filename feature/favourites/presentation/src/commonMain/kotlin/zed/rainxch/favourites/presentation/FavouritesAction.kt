@@ -16,4 +16,8 @@ sealed interface FavouritesAction {
     data class OnDeveloperProfileClick(
         val username: String,
     ) : FavouritesAction
+
+    data class OnSearchChange(
+        val query: String,
+    ) : FavouritesAction
 }

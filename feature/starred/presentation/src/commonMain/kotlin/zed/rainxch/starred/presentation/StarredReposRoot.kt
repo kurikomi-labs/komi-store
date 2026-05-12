@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,9 +16,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -31,13 +34,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.GithubStoreButton
@@ -144,46 +152,72 @@ fun StarredScreen(
                 }
 
                 else -> {
-                    PullToRefreshBox(
-                        isRefreshing = state.isSyncing,
-                        onRefresh = {
-                            onAction(StarredReposAction.OnRefresh)
-                        },
-                        state = pullRefreshState,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        val gridState = rememberLazyStaggeredGridState()
-                        val isScrollbarEnabled = LocalScrollbarEnabled.current
-                        ScrollbarContainer(
-                            gridState = gridState,
-                            enabled = isScrollbarEnabled,
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        if (state.starredRepositories.isNotEmpty()) {
+                            StarredSearchBar(
+                                query = state.searchQuery,
+                                onQueryChange = { onAction(StarredReposAction.OnSearchChange(it)) },
+                            )
+                        }
+
+                        val filteredRepositories =
+                            remember(state.starredRepositories, state.searchQuery) {
+                                val q = state.searchQuery.trim().lowercase()
+                                if (q.isBlank()) {
+                                    state.starredRepositories
+                                } else {
+                                    state.starredRepositories
+                                        .filter { repo ->
+                                            repo.repoName.lowercase().contains(q) ||
+                                                repo.repoOwner.lowercase().contains(q) ||
+                                                (repo.repoDescription?.lowercase()?.contains(q) == true) ||
+                                                (repo.primaryLanguage?.lowercase()?.contains(q) == true)
+                                        }
+                                        .toImmutableList()
+                                }
+                            }
+
+                        PullToRefreshBox(
+                            isRefreshing = state.isSyncing,
+                            onRefresh = {
+                                onAction(StarredReposAction.OnRefresh)
+                            },
+                            state = pullRefreshState,
                             modifier = Modifier.fillMaxSize(),
                         ) {
-                            LazyVerticalStaggeredGrid(
-                                state = gridState,
-                                columns = StaggeredGridCells.Adaptive(350.dp),
-                                verticalItemSpacing = 12.dp,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
-                                modifier = Modifier.fillMaxSize().arrowKeyScroll(gridState, autoFocus = true),
+                            val gridState = rememberLazyStaggeredGridState()
+                            val isScrollbarEnabled = LocalScrollbarEnabled.current
+                            ScrollbarContainer(
+                                gridState = gridState,
+                                enabled = isScrollbarEnabled,
+                                modifier = Modifier.fillMaxSize(),
                             ) {
-                                items(
-                                    items = state.starredRepositories,
-                                    key = { it.repoId },
-                                ) { repo ->
-                                    StarredRepositoryItem(
-                                        repository = repo,
-                                        onToggleFavoriteClick = {
-                                            onAction(StarredReposAction.OnToggleFavorite(repo))
-                                        },
-                                        onItemClick = {
-                                            onAction(StarredReposAction.OnRepositoryClick(repo))
-                                        },
-                                        onDevProfileClick = {
-                                            onAction(StarredReposAction.OnDeveloperProfileClick(repo.repoOwner))
-                                        },
-                                        modifier = Modifier.animateItem(),
-                                    )
+                                LazyVerticalStaggeredGrid(
+                                    state = gridState,
+                                    columns = StaggeredGridCells.Adaptive(350.dp),
+                                    verticalItemSpacing = 12.dp,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
+                                    modifier = Modifier.fillMaxSize().arrowKeyScroll(gridState, autoFocus = true),
+                                ) {
+                                    items(
+                                        items = filteredRepositories,
+                                        key = { it.repoId },
+                                    ) { repo ->
+                                        StarredRepositoryItem(
+                                            repository = repo,
+                                            onToggleFavoriteClick = {
+                                                onAction(StarredReposAction.OnToggleFavorite(repo))
+                                            },
+                                            onItemClick = {
+                                                onAction(StarredReposAction.OnRepositoryClick(repo))
+                                            },
+                                            onDevProfileClick = {
+                                                onAction(StarredReposAction.OnDeveloperProfileClick(repo.repoOwner))
+                                            },
+                                            modifier = Modifier.animateItem(),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -286,6 +320,41 @@ private fun StarredTopBar(
             },
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StarredSearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+        placeholder = { Text(stringResource(Res.string.search_repositories_hint)) },
+        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(Res.string.clear_search),
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        shape = RoundedCornerShape(16.dp),
+        colors =
+            TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
+    )
 }
 
 @Composable

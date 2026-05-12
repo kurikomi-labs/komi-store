@@ -24,4 +24,8 @@ sealed interface StarredReposAction {
     data class OnToggleFavorite(
         val repository: StarredRepositoryUi,
     ) : StarredReposAction
+
+    data class OnSearchChange(
+        val query: String,
+    ) : StarredReposAction
 }

@@ -139,6 +139,11 @@ class StarredReposViewModel(
             }
 
             StarredReposAction.OnRefresh -> {
+                // Refresh may return a list that no longer matches the active
+                // search query, leaving the user staring at an empty grid with
+                // a stale filter still applied. Clearing the query removes the
+                // ambiguity.
+                _state.update { it.copy(searchQuery = "") }
                 syncStarredRepos(forceRefresh = true)
             }
 
@@ -148,6 +153,10 @@ class StarredReposViewModel(
 
             StarredReposAction.OnDismissError -> {
                 _state.update { it.copy(errorMessage = null) }
+            }
+
+            is StarredReposAction.OnSearchChange -> {
+                _state.update { it.copy(searchQuery = action.query) }
             }
 
             is StarredReposAction.OnToggleFavorite -> {

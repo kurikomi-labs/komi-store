@@ -7,4 +7,5 @@ import zed.rainxch.favourites.presentation.model.FavouriteRepository
 data class FavouritesState(
     val favouriteRepositories: ImmutableList<FavouriteRepository> = persistentListOf(),
     val isLoading: Boolean = false,
+    val searchQuery: String = "",
 )

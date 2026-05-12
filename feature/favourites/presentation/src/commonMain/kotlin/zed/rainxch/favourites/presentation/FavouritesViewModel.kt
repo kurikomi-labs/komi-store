@@ -69,6 +69,10 @@ class FavouritesViewModel(
                 // Handled in composable
             }
 
+            is FavouritesAction.OnSearchChange -> {
+                _state.update { it.copy(searchQuery = action.query) }
+            }
+
             is FavouritesAction.OnToggleFavorite -> {
                 viewModelScope.launch {
                     val repo = action.favouriteRepository

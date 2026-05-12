@@ -11,4 +11,5 @@ data class StarredReposState(
     val errorMessage: String? = null,
     val lastSyncTime: Long? = null,
     val isAuthenticated: Boolean = false,
+    val searchQuery: String = "",
 )
