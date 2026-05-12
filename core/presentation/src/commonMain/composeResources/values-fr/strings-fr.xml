@@ -59,6 +59,8 @@
     <string name="filter_by_language">Filtrer par langage</string>
 
     <string name="results_found">%1$d résultats trouvés</string>
+    <string name="search_results_hidden_by_seen_filter">Tous les résultats sont masqués par le filtre « Masquer vus »</string>
+    <string name="show_all_results">Afficher tous les résultats</string>
 
     <string name="retry">Réessayer</string>
 

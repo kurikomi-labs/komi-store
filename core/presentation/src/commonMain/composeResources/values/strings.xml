@@ -77,6 +77,8 @@
 
     <!-- Results -->
     <string name="results_found">%1$d results were found</string>
+    <string name="search_results_hidden_by_seen_filter">All results are hidden by the \'Hide seen\' filter</string>
+    <string name="show_all_results">Show all results</string>
 
 
     <!-- Sorting -->

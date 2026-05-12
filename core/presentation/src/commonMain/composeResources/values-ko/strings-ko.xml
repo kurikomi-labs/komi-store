@@ -73,6 +73,8 @@
 
     <!-- Results -->
     <string name="results_found">%1$d개의 결과를 찾았습니다</string>
+    <string name="search_results_hidden_by_seen_filter">\'본 항목 숨기기\' 필터로 모든 결과가 숨겨졌습니다</string>
+    <string name="show_all_results">모든 결과 표시</string>
 
     <!-- Sorting -->
     <string name="sort_by">정렬 기준</string>

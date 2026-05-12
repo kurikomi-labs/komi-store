@@ -74,6 +74,8 @@
 
     <!-- Results -->
     <string name="results_found">تم العثور على %1$d نتيجة</string>
+    <string name="search_results_hidden_by_seen_filter">جميع النتائج مخفية بسبب فلتر \'إخفاء المُشاهَد\'</string>
+    <string name="show_all_results">عرض جميع النتائج</string>
 
 
     <!-- Sorting -->

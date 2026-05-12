@@ -61,6 +61,8 @@
     <string name="filter_by_language">按语言筛选</string>
 
     <string name="results_found">找到 %1$d 个结果</string>
+    <string name="search_results_hidden_by_seen_filter">所有结果被\'隐藏已查看\'过滤器隐藏</string>
+    <string name="show_all_results">显示所有结果</string>
 
     <string name="retry">重试</string>
 

@@ -61,6 +61,8 @@
     <string name="filter_by_language">Filtruj według języka</string>
 
     <string name="results_found">Znaleziono %1$d wyników</string>
+    <string name="search_results_hidden_by_seen_filter">Wszystkie wyniki ukryte przez filtr \'Ukryj zobaczone\'</string>
+    <string name="show_all_results">Pokaż wszystkie wyniki</string>
 
 
     <string name="sort_by">Sortuj według</string>
