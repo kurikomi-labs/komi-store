@@ -3,7 +3,9 @@ package zed.rainxch.core.presentation.utils
 import androidx.compose.runtime.Composable
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.getPluralString
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.time.Clock
@@ -65,7 +67,7 @@ fun formatReleasedAt(isoInstant: String): String {
         }
 
         hoursDiff < 24 -> {
-            stringResource(Res.string.released_hours_ago, hoursDiff)
+            pluralStringResource(Res.plurals.released_hours_ago, hoursDiff.toInt(), hoursDiff)
         }
 
         daysDiff == 1L -> {
@@ -73,7 +75,7 @@ fun formatReleasedAt(isoInstant: String): String {
         }
 
         daysDiff < 7 -> {
-            stringResource(Res.string.released_days_ago, daysDiff)
+            pluralStringResource(Res.plurals.released_days_ago, daysDiff.toInt(), daysDiff)
         }
 
         else -> {
@@ -98,7 +100,7 @@ suspend fun formatAddedAt(epochMillis: Long): String {
         }
 
         hoursDiff < 24 -> {
-            getString(Res.string.added_hours_ago, hoursDiff)
+            getPluralString(Res.plurals.added_hours_ago, hoursDiff.toInt(), hoursDiff)
         }
 
         daysDiff == 1L -> {
@@ -106,7 +108,7 @@ suspend fun formatAddedAt(epochMillis: Long): String {
         }
 
         daysDiff < 7 -> {
-            getString(Res.string.added_days_ago, daysDiff)
+            getPluralString(Res.plurals.added_days_ago, daysDiff.toInt(), daysDiff)
         }
 
         else -> {
