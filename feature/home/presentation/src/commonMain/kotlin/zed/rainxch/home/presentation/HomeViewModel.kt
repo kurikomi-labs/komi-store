@@ -597,6 +597,12 @@ class HomeViewModel(
             HomeAction.OnAppsClick -> {
                 // Handled in composable
             }
+
+            HomeAction.OnDisableHideSeenForResults -> {
+                viewModelScope.launch {
+                    tweaksRepository.setHideSeenEnabled(false)
+                }
+            }
         }
     }
 

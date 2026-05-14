@@ -61,4 +61,6 @@ sealed interface HomeAction {
     data class OnMarkAsUnseen(
         val repoId: Long,
     ) : HomeAction
+
+    data object OnDisableHideSeenForResults : HomeAction
 }

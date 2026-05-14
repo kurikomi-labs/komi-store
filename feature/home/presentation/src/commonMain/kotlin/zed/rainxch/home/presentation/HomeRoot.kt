@@ -417,6 +417,28 @@ private fun MainState(
         }
     }
 
+    val isHideSeenFilteringAll =
+        state.repos.isNotEmpty() &&
+            visibleRepos.isEmpty() &&
+            state.isHideSeenEnabled
+
+    LaunchedEffect(
+        state.repos.size,
+        visibleRepos.size,
+        state.isHideSeenEnabled,
+        state.hasMorePages,
+        state.isLoadingMore,
+        state.isLoading,
+    ) {
+        if (isHideSeenFilteringAll &&
+            state.hasMorePages &&
+            !state.isLoadingMore &&
+            !state.isLoading
+        ) {
+            onAction(HomeAction.LoadMore)
+        }
+    }
+
     if (visibleRepos.isNotEmpty()) {
         val isScrollbarEnabled = LocalScrollbarEnabled.current
         ScrollbarContainer(
@@ -513,6 +535,47 @@ private fun MainState(
             }
         }
         } // ScrollbarContainer
+    } else if (isHideSeenFilteringAll && state.hasMorePages) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = stringResource(Res.string.searching_for_unseen_repos),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.outline,
+                )
+            }
+        }
+    } else if (isHideSeenFilteringAll && !state.hasMorePages) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 24.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.search_results_hidden_by_seen_filter),
+                    textAlign = TextAlign.Center,
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                GithubStoreButton(
+                    text = stringResource(Res.string.show_all_results),
+                    onClick = {
+                        onAction(HomeAction.OnDisableHideSeenForResults)
+                    },
+                )
+            }
+        }
     }
 }
 
