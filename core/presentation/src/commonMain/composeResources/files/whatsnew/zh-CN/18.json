@@ -1,0 +1,14 @@
+{
+  "versionCode": 18,
+  "versionName": "1.8.3",
+  "releaseDate": "2026-05-14",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "通过 Homebrew 在 macOS 上安装 — 从我们的新 tap 运行 `brew install --cask github-store`。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+name: Publish to Homebrew Tap
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.8.3)'
+        required: true
+
+jobs:
+  update-cask:
+    name: Update Homebrew Cask
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="$RELEASE_TAG"
+          fi
+          if [ -z "$TAG" ]; then
+            echo "No tag resolved from event inputs" >&2
+            exit 1
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag=$TAG version=$VERSION"
+
+      - name: Download macOS DMGs
+        env:
+          REPO: ${{ github.repository }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          set -euo pipefail
+          BASE="https://github.com/${REPO}/releases/download/${TAG}"
+          curl -fSL -o arm64.dmg "${BASE}/GitHub-Store-${VERSION}-arm64.dmg"
+          curl -fSL -o x64.dmg   "${BASE}/GitHub-Store-${VERSION}-x64.dmg"
+          ls -la *.dmg
+
+      - name: Compute SHA256
+        id: hash
+        run: |
+          set -euo pipefail
+          SHA_ARM=$(sha256sum arm64.dmg | awk '{print $1}')
+          SHA_X64=$(sha256sum x64.dmg | awk '{print $1}')
+          echo "arm=$SHA_ARM"   >> "$GITHUB_OUTPUT"
+          echo "intel=$SHA_X64" >> "$GITHUB_OUTPUT"
+          echo "arm64=$SHA_ARM"
+          echo "x64=$SHA_X64"
+
+      - name: Checkout tap repo
+        uses: actions/checkout@v4
+        with:
+          repository: OpenHub-Store/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Patch cask
+        working-directory: homebrew-tap
+        env:
+          NEW_VERSION: ${{ steps.tag.outputs.version }}
+          NEW_SHA_ARM: ${{ steps.hash.outputs.arm }}
+          NEW_SHA_INTEL: ${{ steps.hash.outputs.intel }}
+        run: |
+          python3 - <<'EOF'
+          import os, re, sys
+          path = "Casks/github-store.rb"
+          version = os.environ["NEW_VERSION"]
+          sha_arm = os.environ["NEW_SHA_ARM"]
+          sha_intel = os.environ["NEW_SHA_INTEL"]
+          text = open(path).read()
+
+          new_text, n_v = re.subn(r'version\s+"[^"]+"', f'version "{version}"', text, count=1)
+          if n_v != 1:
+              print("Failed to patch version stanza", file=sys.stderr)
+              sys.exit(1)
+
+          pattern = re.compile(
+              r'sha256 arm:\s+"[0-9a-f]+",\s*\n\s*intel:\s+"[0-9a-f]+"'
+          )
+          replacement = (
+              f'sha256 arm:   "{sha_arm}",\n'
+              f'         intel: "{sha_intel}"'
+          )
+          new_text, n_s = pattern.subn(replacement, new_text, count=1)
+          if n_s != 1:
+              print("Failed to patch sha256 stanza", file=sys.stderr)
+              sys.exit(1)
+
+          open(path, "w").write(new_text)
+          print("Patched cask:")
+          print(new_text)
+          EOF
+
+      - name: Commit + push
+        working-directory: homebrew-tap
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/github-store.rb
+          if git diff --cached --quiet; then
+            echo "Cask already up to date"
+            exit 0
+          fi
+          git commit -m "Bump github-store to ${VERSION}"
+          git push
