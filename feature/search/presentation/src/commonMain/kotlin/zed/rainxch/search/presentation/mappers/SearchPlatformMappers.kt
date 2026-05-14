@@ -12,3 +12,12 @@ fun SearchPlatformUi.toDomain(): DiscoveryPlatform =
         SearchPlatformUi.Macos -> Macos
         SearchPlatformUi.Linux -> Linux
     }
+
+fun DiscoveryPlatform.toSearchPlatformUi(): SearchPlatformUi =
+    when (this) {
+        All -> SearchPlatformUi.All
+        Android -> SearchPlatformUi.Android
+        Windows -> SearchPlatformUi.Windows
+        Macos -> SearchPlatformUi.Macos
+        Linux -> SearchPlatformUi.Linux
+    }

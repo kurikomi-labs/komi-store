@@ -522,9 +522,11 @@ private fun SheetActionRow(
 fun PlatformChip(
     platform: DiscoveryPlatform,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
 ) {
     Surface(
-        modifier = modifier,
+        modifier =
+            if (onClick != null) modifier.clickable(onClick = onClick) else modifier,
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
     ) {

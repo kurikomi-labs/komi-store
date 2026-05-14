@@ -16,6 +16,7 @@ import zed.rainxch.home.presentation.HomeViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
 import zed.rainxch.search.presentation.SearchViewModel
+import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposViewModel
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.feedback.FeedbackViewModel
@@ -69,7 +70,26 @@ val viewModelsModule =
         viewModelOf(::FavouritesViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RecentlyViewedViewModel)
-        viewModelOf(::SearchViewModel)
+        viewModel { params ->
+            SearchViewModel(
+                searchRepository = get(),
+                installedAppsRepository = get(),
+                syncInstalledAppsUseCase = get(),
+                favouritesRepository = get(),
+                starredRepository = get(),
+                logger = get(),
+                shareManager = get(),
+                platform = get(),
+                clipboardHelper = get(),
+                tweaksRepository = get(),
+                seenReposRepository = get(),
+                searchHistoryRepository = get(),
+                telemetryRepository = get(),
+                profileRepository = get(),
+                hiddenReposRepository = get(),
+                initialPlatform = params.getOrNull<SearchPlatformUi>(),
+            )
+        }
         viewModelOf(::ProfileViewModel)
         viewModelOf(::TweaksViewModel)
         viewModelOf(::FeedbackViewModel)

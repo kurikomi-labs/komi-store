@@ -44,6 +44,7 @@ import zed.rainxch.profile.presentation.ProfileRoot
 import zed.rainxch.profile.presentation.SponsorScreen
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.search.presentation.SearchRoot
+import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
@@ -86,7 +87,7 @@ fun AppNavigation(
                 composable<GithubStoreGraph.HomeScreen> {
                     HomeRoot(
                         onNavigateToSearch = {
-                            navController.navigate(GithubStoreGraph.SearchScreen)
+                            navController.navigate(GithubStoreGraph.SearchScreen())
                         },
                         onNavigateToSettings = {
                             navController.navigate(GithubStoreGraph.ProfileScreen)
@@ -111,7 +112,8 @@ fun AppNavigation(
                     )
                 }
 
-                composable<GithubStoreGraph.SearchScreen> {
+                composable<GithubStoreGraph.SearchScreen> { backStackEntry ->
+                    val args = backStackEntry.toRoute<GithubStoreGraph.SearchScreen>()
                     SearchRoot(
                         onNavigateBack = {
                             navController.navigateUp()
@@ -138,6 +140,10 @@ fun AppNavigation(
                                 ),
                             )
                         },
+                        viewModel =
+                            koinViewModel {
+                                parametersOf(args.initialPlatform)
+                            },
                     )
                 }
 
@@ -158,6 +164,13 @@ fun AppNavigation(
                             navController.navigate(
                                 GithubStoreGraph.DeveloperProfileScreen(
                                     username = username,
+                                ),
+                            )
+                        },
+                        onNavigateToSearchByPlatform = { platform ->
+                            navController.navigate(
+                                GithubStoreGraph.SearchScreen(
+                                    initialPlatform = platform.toSearchPlatformUi(),
                                 ),
                             )
                         },

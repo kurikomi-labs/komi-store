@@ -1,6 +1,7 @@
 package zed.rainxch.githubstore.app.navigation
 
 import kotlinx.serialization.Serializable
+import zed.rainxch.search.presentation.model.SearchPlatformUi
 
 @Serializable
 sealed interface GithubStoreGraph {
@@ -8,7 +9,9 @@ sealed interface GithubStoreGraph {
     data object HomeScreen : GithubStoreGraph
 
     @Serializable
-    data object SearchScreen : GithubStoreGraph
+    data class SearchScreen(
+        val initialPlatform: SearchPlatformUi? = null,
+    ) : GithubStoreGraph
 
     @Serializable
     data object AuthenticationScreen : GithubStoreGraph

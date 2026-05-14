@@ -48,6 +48,7 @@ import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_retry_i
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_signin_hint
 import zed.rainxch.githubstore.core.presentation.res.search_failed
 import zed.rainxch.search.presentation.mappers.toDomain
+import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.search.presentation.utils.isEntirelyGithubUrls
 import zed.rainxch.search.presentation.utils.parseGithubUrls
 
@@ -67,6 +68,7 @@ class SearchViewModel(
     private val telemetryRepository: TelemetryRepository,
     private val profileRepository: ProfileRepository,
     private val hiddenReposRepository: HiddenReposRepository,
+    private val initialPlatform: SearchPlatformUi? = null,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
@@ -95,6 +97,10 @@ class SearchViewModel(
         _state
             .onStart {
                 if (!hasLoadedInitialData) {
+                    initialPlatform?.let { platform ->
+                        _state.update { it.copy(selectedSearchPlatform = platform) }
+                    }
+
                     observeCurrentUser()
                     syncSystemState()
 

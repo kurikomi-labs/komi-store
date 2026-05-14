@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
@@ -136,6 +137,7 @@ fun DetailsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     onOpenRepositoryInApp: (repoId: Long) -> Unit,
+    onNavigateToSearchByPlatform: (DiscoveryPlatform) -> Unit,
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -188,6 +190,10 @@ fun DetailsRoot(
 
                 is DetailsAction.OpenDeveloperProfile -> {
                     onNavigateToDeveloperProfile(action.username)
+                }
+
+                is DetailsAction.OnPlatformChipClick -> {
+                    onNavigateToSearchByPlatform(action.platform)
                 }
 
                 is DetailsAction.OnMessage -> {

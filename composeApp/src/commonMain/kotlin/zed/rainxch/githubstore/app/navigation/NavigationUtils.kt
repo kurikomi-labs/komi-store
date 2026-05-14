@@ -9,7 +9,7 @@ fun NavBackStackEntry?.getCurrentScreen(): GithubStoreGraph? {
 
     return when {
         route.contains("HomeScreen") -> GithubStoreGraph.HomeScreen
-        route.contains("SearchScreen") -> GithubStoreGraph.SearchScreen
+        route.contains("SearchScreen") -> toRoute<GithubStoreGraph.SearchScreen>()
         route.contains("AuthenticationScreen") -> GithubStoreGraph.AuthenticationScreen
         route.contains("DetailsScreen") -> toRoute<GithubStoreGraph.DetailsScreen>()
         route.contains("DeveloperProfileScreen") -> toRoute<GithubStoreGraph.DeveloperProfileScreen>()

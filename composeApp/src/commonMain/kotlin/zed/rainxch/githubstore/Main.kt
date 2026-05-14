@@ -73,7 +73,7 @@ fun App(deepLinkUri: String? = null) {
         when (event) {
             KeyboardNavigationEvent.OnCtrlFClick -> {
                 if (currentScreen !is GithubStoreGraph.SearchScreen) {
-                    navController.navigate(GithubStoreGraph.SearchScreen) {
+                    navController.navigate(GithubStoreGraph.SearchScreen()) {
                         popUpTo(GithubStoreGraph.HomeScreen) {
                             saveState = true
                         }

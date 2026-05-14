@@ -1,12 +1,17 @@
 package zed.rainxch.details.presentation
 
 import org.jetbrains.compose.resources.StringResource
+import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.presentation.model.TranslationTarget
 
 sealed interface DetailsAction {
+    data class OnPlatformChipClick(
+        val platform: DiscoveryPlatform,
+    ) : DetailsAction
+
     data object Retry : DetailsAction
 
     data object RetryReleases : DetailsAction

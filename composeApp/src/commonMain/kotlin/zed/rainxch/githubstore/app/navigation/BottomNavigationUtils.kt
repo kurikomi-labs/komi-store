@@ -29,7 +29,7 @@ object BottomNavigationUtils {
                 titleRes = Res.string.bottom_nav_search_title,
                 iconOutlined = Icons.Outlined.Search,
                 iconFilled = Icons.Filled.Search,
-                screen = GithubStoreGraph.SearchScreen,
+                screen = GithubStoreGraph.SearchScreen(),
             ),
             BottomNavigationItem(
                 titleRes = Res.string.bottom_nav_apps_title,

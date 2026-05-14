@@ -58,6 +58,9 @@ fun LazyListScope.header(
                 downloadStage = state.downloadStage,
                 downloadProgress = state.downloadProgressPercent,
                 isCurrentUserOwner = state.isCurrentUserOwner,
+                onPlatformClick = { platform ->
+                    onAction(DetailsAction.OnPlatformChipClick(platform))
+                },
             )
         }
     }

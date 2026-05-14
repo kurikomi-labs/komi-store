@@ -72,6 +72,7 @@ fun AppHeader(
     downloadStage: DownloadStage = DownloadStage.IDLE,
     downloadProgress: Int? = null,
     isCurrentUserOwner: Boolean = false,
+    onPlatformClick: (DiscoveryPlatform) -> Unit = {},
 ) {
     val animatedProgress by animateFloatAsState(
         targetValue = (downloadProgress ?: 0) / 100f,
@@ -260,7 +261,10 @@ fun AppHeader(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 supportedPlatforms.forEach { platform ->
-                    PlatformChip(platform = platform)
+                    PlatformChip(
+                        platform = platform,
+                        onClick = { onPlatformClick(platform) },
+                    )
                 }
             }
         }

@@ -447,6 +447,10 @@ class DetailsViewModel(
                 // Handled in composable
             }
 
+            is DetailsAction.OnPlatformChipClick -> {
+                // Handled in composable
+            }
+
             is DetailsAction.OnMessage -> {
                 // Handled in composable
             }
