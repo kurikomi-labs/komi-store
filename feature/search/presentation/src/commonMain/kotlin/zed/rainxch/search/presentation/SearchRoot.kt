@@ -954,12 +954,6 @@ private fun SearchTopbar(
                 ),
             keyboardActions =
                 KeyboardActions(
-                    // Some Chinese-language IMEs on Android 12 (and other
-                    // locale-specific keyboards) ignore `ImeAction.Search` and
-                    // emit Done/Go/Next instead, leaving the keyboard search
-                    // button silently broken (#李泽洋 / v1.8.1 zh-Hans). Mirror
-                    // every plausible action onto the same trigger so the IME
-                    // variant no longer matters.
                     onSearch = { onAction(SearchAction.OnSearchImeClick) },
                     onDone = { onAction(SearchAction.OnSearchImeClick) },
                     onGo = { onAction(SearchAction.OnSearchImeClick) },
