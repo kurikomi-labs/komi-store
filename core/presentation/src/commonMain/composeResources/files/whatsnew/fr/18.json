@@ -16,7 +16,8 @@
       "type": "FIXED",
       "bullets": [
         "Les puces de plateforme dans les détails d'un dépôt ouvrent maintenant Search filtré par cette plateforme — auparavant inactives.",
-        "Le bouton de recherche du clavier déclenche maintenant la recherche sur Android 12 avec les IME chinois."
+        "Le bouton de recherche du clavier déclenche maintenant la recherche sur Android 12 avec les IME chinois.",
+        "Le dépôt lié externalement affiche maintenant une bannière sur Détails avec un tap pour dissocier."
       ]
     }
   ]

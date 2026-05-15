@@ -835,6 +835,8 @@
     <string name="details_unlink_external_app_dialog_confirm">リンクを解除</string>
     <string name="details_unlink_external_app_success">リンクを解除しました。次回のスキャンで再度一致候補を提示します。</string>
     <string name="details_unlink_external_app_failure">リンクを解除できませんでした — もう一度お試しください。</string>
+    <string name="details_linked_repo_banner_title">%1$s/%2$s にリンク済み</string>
+    <string name="details_linked_repo_banner_body">違うアプリ？リンク解除して再スキャン。</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">更新</string>

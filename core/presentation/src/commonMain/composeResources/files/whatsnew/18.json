@@ -16,7 +16,8 @@
       "type": "FIXED",
       "bullets": [
         "Platform chips on repo details now open Search filtered by that platform — was a no-op.",
-        "Keyboard search button now triggers search on Android 12 across Chinese IMEs."
+        "Keyboard search button now triggers search on Android 12 across Chinese IMEs.",
+        "Externally-linked repo now shows a banner on Details with one-tap unlink."
       ]
     }
   ]

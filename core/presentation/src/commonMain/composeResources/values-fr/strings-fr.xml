@@ -841,6 +841,8 @@
     <string name="details_unlink_external_app_dialog_confirm">Délier</string>
     <string name="details_unlink_external_app_success">Délié. Nous proposerons une correspondance lors du prochain scan.</string>
     <string name="details_unlink_external_app_failure">Impossible de délier — réessayez.</string>
+    <string name="details_linked_repo_banner_title">Lié à %1$s/%2$s</string>
+    <string name="details_linked_repo_banner_body">Mauvaise app ? Dissociez pour relancer le scan.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Actualiser</string>

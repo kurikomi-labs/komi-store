@@ -16,7 +16,8 @@
       "type": "FIXED",
       "bullets": [
         "Kafelki platformy w szczegółach repo otwierają teraz Search z filtrem tej platformy — wcześniej nieaktywne.",
-        "Przycisk wyszukiwania klawiatury uruchamia teraz wyszukiwanie na Android 12 z chińskimi IME."
+        "Przycisk wyszukiwania klawiatury uruchamia teraz wyszukiwanie na Android 12 z chińskimi IME.",
+        "Zewnętrznie powiązane repo pokazuje teraz baner w Szczegółach z jednym kliknięciem rozłączenia."
       ]
     }
   ]

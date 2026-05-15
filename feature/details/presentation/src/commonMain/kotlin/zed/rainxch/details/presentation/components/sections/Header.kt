@@ -26,9 +26,11 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.components.AppHeader
+import zed.rainxch.details.presentation.components.LinkedRepoBanner
 import zed.rainxch.details.presentation.components.ReleaseAssetsPicker
 import zed.rainxch.details.presentation.components.ReleasesStatus
 import zed.rainxch.details.presentation.components.ReleasesStatusCard
+import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.isReallyInstalled
 import zed.rainxch.details.presentation.components.ApkInspectSheet
 import zed.rainxch.details.presentation.components.InspectApkButton
@@ -61,6 +63,19 @@ fun LazyListScope.header(
                 onPlatformClick = { platform ->
                     onAction(DetailsAction.OnPlatformChipClick(platform))
                 },
+            )
+        }
+    }
+
+    val installedApp = state.installedApp
+    val repository = state.repository
+    if (installedApp?.installSource == InstallSource.MANUAL && repository != null) {
+        item {
+            LinkedRepoBanner(
+                owner = repository.owner.login,
+                repo = repository.name,
+                onUnlink = { onAction(DetailsAction.OnUnlinkExternalApp) },
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

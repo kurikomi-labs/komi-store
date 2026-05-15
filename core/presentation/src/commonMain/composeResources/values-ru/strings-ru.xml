@@ -861,6 +861,8 @@
     <string name="details_unlink_external_app_dialog_confirm">Отвязать</string>
     <string name="details_unlink_external_app_success">Отвязано. При следующем сканировании мы предложим совпадение.</string>
     <string name="details_unlink_external_app_failure">Не удалось отвязать — попробуйте ещё раз.</string>
+    <string name="details_linked_repo_banner_title">Связан с %1$s/%2$s</string>
+    <string name="details_linked_repo_banner_body">Не та программа? Отвяжите, чтобы пересканировать.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Обновить</string>

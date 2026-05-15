@@ -872,6 +872,8 @@
     <string name="details_unlink_external_app_dialog_confirm">আনলিঙ্ক করুন</string>
     <string name="details_unlink_external_app_success">আনলিঙ্ক করা হয়েছে। পরবর্তী স্ক্যানে আবার মিল সাজেস্ট করব।</string>
     <string name="details_unlink_external_app_failure">আনলিঙ্ক করা যায়নি — আবার চেষ্টা করুন।</string>
+    <string name="details_linked_repo_banner_title">%1$s/%2$s এর সাথে লিঙ্ক</string>
+    <string name="details_linked_repo_banner_body">ভুল অ্যাপ? পুনরায় স্ক্যান করতে লিঙ্ক সরান।</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">রিফ্রেশ</string>

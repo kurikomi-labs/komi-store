@@ -879,6 +879,8 @@
     <string name="details_unlink_external_app_dialog_confirm">अनलिंक करें</string>
     <string name="details_unlink_external_app_success">अनलिंक हो गया। अगले स्कैन में हम फिर से मेल सुझाएंगे।</string>
     <string name="details_unlink_external_app_failure">अनलिंक नहीं हो सका — फिर कोशिश करें।</string>
+    <string name="details_linked_repo_banner_title">%1$s/%2$s से लिंक्ड</string>
+    <string name="details_linked_repo_banner_body">गलत ऐप? पुनः स्कैन करने के लिए लिंक हटाएं।</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">रीफ़्रेश</string>

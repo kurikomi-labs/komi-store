@@ -880,6 +880,8 @@
     <string name="details_unlink_external_app_dialog_confirm">Scollega</string>
     <string name="details_unlink_external_app_success">Scollegata. Proporremo una corrispondenza alla prossima scansione.</string>
     <string name="details_unlink_external_app_failure">Impossibile scollegare — riprova.</string>
+    <string name="details_linked_repo_banner_title">Collegato a %1$s/%2$s</string>
+    <string name="details_linked_repo_banner_body">App sbagliata? Scollega per ri-scansionare.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Aggiorna</string>

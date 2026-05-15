@@ -16,7 +16,8 @@
       "type": "FIXED",
       "bullets": [
         "Depo detayındaki platform çipleri artık o platforma göre filtrelenmiş Search açar — önceden tepkisizdi.",
-        "Klavye arama düğmesi Android 12'de Çince IME'lerle artık aramayı tetikliyor."
+        "Klavye arama düğmesi Android 12'de Çince IME'lerle artık aramayı tetikliyor.",
+        "Harici bağlanmış depo artık Detaylar'da tek dokunuşla bağlantı kaldırma için banner gösteriyor."
       ]
     }
   ]
