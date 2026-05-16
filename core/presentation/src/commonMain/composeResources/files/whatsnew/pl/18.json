@@ -22,7 +22,8 @@
         "Logowanie otwiera URL kodu z wstępnie wypełnionym kodem i kopiuje wersję przyjazną do wklejania.",
         "Crash na Android 16 / niestandardowych ROM-ach w Ustawieniach i pobieraniu — przełącza na pamięć wewnętrzną, gdy zewnętrzna jest zablokowana.",
         "Wykrywanie Magisk / KernelSU / APatch na Android 13+ — poprzednia sonda była maskowana przez SELinux.",
-        "Etykieta przypiętego wariantu w Szczegółach odświeża się między wydaniami — stare numery beta/rc nie utrzymują się już w chipie."
+        "Etykieta przypiętego wariantu w Szczegółach odświeża się między wydaniami — stare numery beta/rc nie utrzymują się już w chipie.",
+        "README i notatki wydania nie wracają już na początek po przewinięciu i powrocie — zmierzona wysokość jest teraz zachowywana między usunięciami z viewportu."
       ]
     },
     {

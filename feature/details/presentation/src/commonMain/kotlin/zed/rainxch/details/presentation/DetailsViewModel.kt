@@ -348,6 +348,7 @@ class DetailsViewModel(
                         primaryAsset = primary,
                         isVersionPickerVisible = false,
                         whatsNewTranslation = TranslationState(),
+                        whatsNewMeasuredHeightPx = null,
                     )
                 }
             }
@@ -367,6 +368,20 @@ class DetailsViewModel(
             DetailsAction.ToggleWhatsNewExpanded -> {
                 _state.update {
                     it.copy(isWhatsNewExpanded = !it.isWhatsNewExpanded)
+                }
+            }
+
+            is DetailsAction.OnAboutMeasured -> {
+                val current = _state.value.aboutMeasuredHeightPx
+                if (current == null || action.heightPx > current) {
+                    _state.update { it.copy(aboutMeasuredHeightPx = action.heightPx) }
+                }
+            }
+
+            is DetailsAction.OnWhatsNewMeasured -> {
+                val current = _state.value.whatsNewMeasuredHeightPx
+                if (current == null || action.heightPx > current) {
+                    _state.update { it.copy(whatsNewMeasuredHeightPx = action.heightPx) }
                 }
             }
 

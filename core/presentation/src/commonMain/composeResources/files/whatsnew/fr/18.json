@@ -22,7 +22,8 @@
         "La connexion ouvre l'URL du code pré-remplie et copie un code adapté au collage.",
         "Crash sur Android 16 / ROMs personnalisées dans Paramètres et téléchargements — bascule vers stockage interne quand l'externe est bloqué.",
         "Détection de Magisk / KernelSU / APatch sur Android 13+ — la sonde précédente était masquée par SELinux.",
-        "L'étiquette de variante épinglée dans Détails se rafraîchit entre versions — les anciens numéros beta/rc ne persistent plus dans la puce."
+        "L'étiquette de variante épinglée dans Détails se rafraîchit entre versions — les anciens numéros beta/rc ne persistent plus dans la puce.",
+        "Le README et les notes de version ne reviennent plus en haut quand tu fais défiler puis reviens — la hauteur mesurée est désormais conservée au-delà des disposals du viewport."
       ]
     },
     {

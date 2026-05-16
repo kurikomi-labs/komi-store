@@ -22,7 +22,8 @@
         "Oturum açma, kod URL'sini önceden doldurulmuş açar ve yapıştırmaya uygun kodu kopyalar.",
         "Android 16 / özel ROM'larda Ayarlar çökmesi ve indirme hatası — harici depolama engellendiğinde dahili depolamaya geçer.",
         "Android 13+ üzerinde Magisk / KernelSU / APatch algılama — önceki sonda SELinux tarafından maskeleniyordu.",
-        "Detaylar'daki sabitlenmiş varyant etiketi sürümler arasında yenileniyor — eski beta/rc numaraları artık çipte takılı kalmıyor."
+        "Detaylar'daki sabitlenmiş varyant etiketi sürümler arasında yenileniyor — eski beta/rc numaraları artık çipte takılı kalmıyor.",
+        "README ve sürüm notları kaydırıp dönünce artık başa atlamıyor — ölçülen yükseklik viewport temizliklerinin ardından da korunuyor."
       ]
     },
     {

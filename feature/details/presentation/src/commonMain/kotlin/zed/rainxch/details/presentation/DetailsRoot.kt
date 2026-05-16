@@ -562,6 +562,8 @@ fun DetailsScreen(
                                 isExpanded = state.isWhatsNewExpanded,
                                 onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
                                 collapsedHeight = collapsedSectionHeight,
+                                measuredHeightPx = state.whatsNewMeasuredHeightPx,
+                                onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
                                 translationState = state.whatsNewTranslation,
                                 onTranslateClick = {
                                     onAction(DetailsAction.TranslateWhatsNew(state.deviceLanguageCode))
@@ -582,6 +584,8 @@ fun DetailsScreen(
                                 isExpanded = state.isAboutExpanded,
                                 onToggleExpanded = { onAction(DetailsAction.ToggleAboutExpanded) },
                                 collapsedHeight = collapsedSectionHeight,
+                                measuredHeightPx = state.aboutMeasuredHeightPx,
+                                onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
                                 translationState = state.aboutTranslation,
                                 onTranslateClick = {
                                     onAction(DetailsAction.TranslateAbout(state.deviceLanguageCode))
@@ -602,6 +606,8 @@ fun DetailsScreen(
                                 isExpanded = state.isAboutExpanded,
                                 onToggleExpanded = { onAction(DetailsAction.ToggleAboutExpanded) },
                                 collapsedHeight = collapsedSectionHeight,
+                                measuredHeightPx = state.aboutMeasuredHeightPx,
+                                onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
                                 translationState = state.aboutTranslation,
                                 onTranslateClick = {
                                     onAction(DetailsAction.TranslateAbout(state.deviceLanguageCode))
@@ -621,6 +627,8 @@ fun DetailsScreen(
                                 isExpanded = state.isWhatsNewExpanded,
                                 onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
                                 collapsedHeight = collapsedSectionHeight,
+                                measuredHeightPx = state.whatsNewMeasuredHeightPx,
+                                onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
                                 translationState = state.whatsNewTranslation,
                                 onTranslateClick = {
                                     onAction(DetailsAction.TranslateWhatsNew(state.deviceLanguageCode))

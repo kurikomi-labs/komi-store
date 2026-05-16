@@ -70,6 +70,12 @@ data class DetailsState(
     val isTrackingApp: Boolean = false,
     val isAboutExpanded: Boolean = false,
     val isWhatsNewExpanded: Boolean = false,
+    // Measured intrinsic heights of the rendered markdown blocks, hoisted
+    // out of the composable so LazyColumn item disposal/recompose doesn't
+    // re-trigger the measure → clip → reflow loop that snapped scroll
+    // position to the section start.
+    val aboutMeasuredHeightPx: Float? = null,
+    val whatsNewMeasuredHeightPx: Float? = null,
     val aboutTranslation: TranslationState = TranslationState(),
     val whatsNewTranslation: TranslationState = TranslationState(),
     val isLanguagePickerVisible: Boolean = false,

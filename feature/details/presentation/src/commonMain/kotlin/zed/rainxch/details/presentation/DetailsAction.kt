@@ -91,6 +91,10 @@ sealed interface DetailsAction {
 
     data object ToggleWhatsNewExpanded : DetailsAction
 
+    data class OnAboutMeasured(val heightPx: Float) : DetailsAction
+
+    data class OnWhatsNewMeasured(val heightPx: Float) : DetailsAction
+
     data class TranslateAbout(
         val targetLanguageCode: String,
     ) : DetailsAction

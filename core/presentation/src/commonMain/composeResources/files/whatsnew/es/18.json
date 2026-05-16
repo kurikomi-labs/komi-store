@@ -22,7 +22,8 @@
         "El inicio de sesión abre la URL con el código ya rellenado y copia un código compatible con pegado.",
         "Crash en Android 16 / ROMs personalizadas en Ajustes y descargas — usa almacenamiento interno cuando el externo está bloqueado.",
         "Detección de Magisk / KernelSU / APatch en Android 13+ — la prueba anterior la ocultaba SELinux.",
-        "La etiqueta de variante fijada en Detalles se refresca entre versiones — los números beta/rc antiguos ya no se quedan en el chip."
+        "La etiqueta de variante fijada en Detalles se refresca entre versiones — los números beta/rc antiguos ya no se quedan en el chip.",
+        "El README y las notas de versión ya no vuelven al principio al desplazarte y regresar — la altura medida ahora se conserva entre desasignaciones de viewport."
       ]
     },
     {

@@ -22,7 +22,8 @@
         "Il login apre l'URL del codice precompilato e copia un codice facile da incollare.",
         "Crash su Android 16 / ROM personalizzate in Impostazioni e download — ripiega su archiviazione interna quando quella esterna è bloccata.",
         "Rilevamento di Magisk / KernelSU / APatch su Android 13+ — la sonda precedente era mascherata da SELinux.",
-        "L'etichetta della variante fissata nei Dettagli si aggiorna tra le release — i vecchi numeri beta/rc non restano più nel chip."
+        "L'etichetta della variante fissata nei Dettagli si aggiorna tra le release — i vecchi numeri beta/rc non restano più nel chip.",
+        "README e note di rilascio non tornano più in cima quando scorri via e poi torni — l'altezza misurata ora persiste tra le rimozioni dal viewport."
       ]
     },
     {
