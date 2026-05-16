@@ -19,7 +19,8 @@
         "Les puces de plateforme dans les détails d'un dépôt ouvrent maintenant Search filtré par cette plateforme — auparavant inactives.",
         "Le bouton de recherche du clavier déclenche maintenant la recherche sur Android 12 avec les IME chinois.",
         "Le dépôt lié externalement affiche maintenant une bannière sur Détails avec un tap pour dissocier.",
-        "La connexion ouvre l'URL du code pré-remplie et copie un code adapté au collage."
+        "La connexion ouvre l'URL du code pré-remplie et copie un code adapté au collage.",
+        "Crash sur Android 16 / ROMs personnalisées dans Paramètres et téléchargements — bascule vers stockage interne quand l'externe est bloqué."
       ]
     }
   ]

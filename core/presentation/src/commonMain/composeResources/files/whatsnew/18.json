@@ -19,7 +19,8 @@
         "Platform chips on repo details now open Search filtered by that platform — was a no-op.",
         "Keyboard search button now triggers search on Android 12 across Chinese IMEs.",
         "Externally-linked repo now shows a banner on Details with one-tap unlink.",
-        "Sign-in opens the device-code URL prefilled and copies a paste-friendly code."
+        "Sign-in opens the device-code URL prefilled and copies a paste-friendly code.",
+        "Android 16 / custom-ROM crash on Settings + download failure — falls back to internal storage when external is blocked."
       ]
     }
   ]

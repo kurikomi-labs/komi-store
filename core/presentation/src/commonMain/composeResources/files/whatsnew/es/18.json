@@ -19,7 +19,8 @@
         "Los chips de plataforma en detalles del repo ahora abren Search filtrado por esa plataforma — antes no hacían nada.",
         "El botón de búsqueda del teclado ahora activa la búsqueda en Android 12 con IMEs chinos.",
         "El repo enlazado externamente muestra ahora un banner en Detalles con un toque para desvincular.",
-        "El inicio de sesión abre la URL con el código ya rellenado y copia un código compatible con pegado."
+        "El inicio de sesión abre la URL con el código ya rellenado y copia un código compatible con pegado.",
+        "Crash en Android 16 / ROMs personalizadas en Ajustes y descargas — usa almacenamiento interno cuando el externo está bloqueado."
       ]
     }
   ]
