@@ -481,5 +481,10 @@ fun preprocessMarkdown(
             "",
         )
 
+    // 15. Replace GitHub emoji shortcodes (:rocket: → 🚀). Skips fenced
+    //     code blocks; inline `:foo:` patterns inside `` `code` `` are
+    //     rare enough not to warrant deeper tokenisation.
+    processed = zed.rainxch.core.domain.util.EmojiShortcodes.render(processed)
+
     return processed.trim()
 }

@@ -30,7 +30,8 @@
       "bullets": [
         "Uygulamayı manuel bağlarken — yükleyici kaynağına göre sıralı (önce F-Droid / Obtainium, en sonda Play Store ve sistem güncellemeleri); her uygulamanın kaynağını gösteren çip eklendi.",
         "Manuel bağlama artık eşleşen GitHub depolarını otomatik öneriyor — uygulamayı seçin, sıralı adaylar alın, bağlamak için dokunun. URL'yi manuel girme seçeneği de duruyor.",
-        "README ve sürüm notlarında GitHub tarzı uyarı kutuları — Note, Tip, Important, Warning, Caution artık düz metin yerine ikonlu renkli kartlar olarak görünüyor."
+        "README ve sürüm notlarında GitHub tarzı uyarı kutuları — Note, Tip, Important, Warning, Caution artık düz metin yerine ikonlu renkli kartlar olarak görünüyor.",
+        "README ve sürüm notlarında emoji kısayolları — :rocket: artık 🚀 olarak, :tada: 🎉 olarak ve ~250 başka kısayol."
       ]
     }
   ]

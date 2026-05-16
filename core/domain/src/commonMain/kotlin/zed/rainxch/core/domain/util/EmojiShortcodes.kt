@@ -1,0 +1,387 @@
+package zed.rainxch.core.domain.util
+
+object EmojiShortcodes {
+    // Subset of github/gemoji that covers the long tail of READMEs.
+    // ~250 entries — picked from gemoji download stats + common usage in
+    // README/CHANGELOG headers. Not exhaustive on purpose; missing
+    // shortcodes survive as literal text rather than ballooning the
+    // bundle with a 1500-entry table we mostly don't need.
+    private val TABLE: Map<String, String> =
+        mapOf(
+            // Frequently used in README hero / status sections
+            "rocket" to "🚀",
+            "sparkles" to "✨",
+            "tada" to "🎉",
+            "fire" to "🔥",
+            "star" to "⭐",
+            "star2" to "🌟",
+            "boom" to "💥",
+            "zap" to "⚡",
+            "muscle" to "💪",
+            "raised_hands" to "🙌",
+            "tophat" to "🎩",
+            "crown" to "👑",
+            "trophy" to "🏆",
+            "medal" to "🎖️",
+            "100" to "💯",
+            "ok_hand" to "👌",
+            "pray" to "🙏",
+            "thumbsup" to "👍",
+            "+1" to "👍",
+            "thumbsdown" to "👎",
+            "-1" to "👎",
+            "clap" to "👏",
+            "wave" to "👋",
+            "point_right" to "👉",
+            "point_left" to "👈",
+            "point_up" to "☝️",
+            "point_down" to "👇",
+            // Status / signals
+            "warning" to "⚠️",
+            "white_check_mark" to "✅",
+            "heavy_check_mark" to "✔️",
+            "ballot_box_with_check" to "☑️",
+            "x" to "❌",
+            "negative_squared_cross_mark" to "❎",
+            "heavy_multiplication_x" to "✖️",
+            "no_entry" to "⛔",
+            "no_entry_sign" to "🚫",
+            "exclamation" to "❗",
+            "heavy_exclamation_mark" to "❗",
+            "bangbang" to "‼️",
+            "interrobang" to "⁉️",
+            "question" to "❓",
+            "grey_question" to "❔",
+            "grey_exclamation" to "❕",
+            "information_source" to "ℹ️",
+            // Hearts
+            "heart" to "❤️",
+            "yellow_heart" to "💛",
+            "green_heart" to "💚",
+            "blue_heart" to "💙",
+            "purple_heart" to "💜",
+            "black_heart" to "🖤",
+            "white_heart" to "🤍",
+            "orange_heart" to "🧡",
+            "brown_heart" to "🤎",
+            "broken_heart" to "💔",
+            "heart_eyes" to "😍",
+            "hearts" to "♥️",
+            // Faces
+            "smile" to "😄",
+            "smiley" to "😃",
+            "grin" to "😁",
+            "laughing" to "😆",
+            "joy" to "😂",
+            "wink" to "😉",
+            "blush" to "😊",
+            "innocent" to "😇",
+            "sunglasses" to "😎",
+            "thinking" to "🤔",
+            "raised_eyebrow" to "🤨",
+            "hugs" to "🤗",
+            "kissing_heart" to "😘",
+            "smirk" to "😏",
+            "rolling_eyes" to "🙄",
+            "neutral_face" to "😐",
+            "expressionless" to "😑",
+            "no_mouth" to "😶",
+            "face_with_monocle" to "🧐",
+            "nerd_face" to "🤓",
+            "exploding_head" to "🤯",
+            "cold_face" to "🥶",
+            "hot_face" to "🥵",
+            "partying_face" to "🥳",
+            "sob" to "😭",
+            "cry" to "😢",
+            "weary" to "😩",
+            "scream" to "😱",
+            "angry" to "😠",
+            "rage" to "😡",
+            "skull" to "💀",
+            "skull_and_crossbones" to "☠️",
+            "ghost" to "👻",
+            "alien" to "👽",
+            "robot" to "🤖",
+            "poop" to "💩",
+            "hankey" to "💩",
+            "shit" to "💩",
+            // Dev / engineer
+            "computer" to "💻",
+            "iphone" to "📱",
+            "watch" to "⌚",
+            "keyboard" to "⌨️",
+            "mouse_three_button" to "🖱️",
+            "printer" to "🖨️",
+            "minidisc" to "💽",
+            "floppy_disk" to "💾",
+            "cd" to "💿",
+            "dvd" to "📀",
+            "package" to "📦",
+            "outbox_tray" to "📤",
+            "inbox_tray" to "📥",
+            "envelope" to "✉️",
+            "email" to "📧",
+            "mailbox" to "📫",
+            "satellite" to "📡",
+            "tv" to "📺",
+            "camera" to "📷",
+            "camera_flash" to "📸",
+            "video_camera" to "📹",
+            "movie_camera" to "🎥",
+            "film_projector" to "📽️",
+            "telephone" to "☎️",
+            "phone" to "☎️",
+            "calling" to "📲",
+            "vibration_mode" to "📳",
+            "loud_sound" to "🔊",
+            "sound" to "🔉",
+            "speaker" to "🔈",
+            "mute" to "🔇",
+            "mega" to "📣",
+            "loudspeaker" to "📢",
+            // Tools / build
+            "hammer" to "🔨",
+            "wrench" to "🔧",
+            "screwdriver" to "🪛",
+            "nut_and_bolt" to "🔩",
+            "hammer_and_wrench" to "🛠️",
+            "toolbox" to "🧰",
+            "gear" to "⚙️",
+            "factory" to "🏭",
+            "construction" to "🚧",
+            "test_tube" to "🧪",
+            "petri_dish" to "🧫",
+            "dna" to "🧬",
+            "microscope" to "🔬",
+            "telescope" to "🔭",
+            "satellite_antenna" to "📡",
+            "magnet" to "🧲",
+            "balance_scale" to "⚖️",
+            "scales" to "⚖️",
+            // Symbols
+            "bug" to "🐛",
+            "ant" to "🐜",
+            "bulb" to "💡",
+            "lock" to "🔒",
+            "unlock" to "🔓",
+            "key" to "🔑",
+            "old_key" to "🗝️",
+            "shield" to "🛡️",
+            "scroll" to "📜",
+            "page_facing_up" to "📄",
+            "page_with_curl" to "📃",
+            "bookmark" to "🔖",
+            "bookmark_tabs" to "📑",
+            "books" to "📚",
+            "book" to "📖",
+            "notebook" to "📓",
+            "ledger" to "📒",
+            "memo" to "📝",
+            "pencil" to "📝",
+            "pencil2" to "✏️",
+            "black_nib" to "✒️",
+            "lower_left_fountain_pen" to "🖋️",
+            "lower_left_ballpoint_pen" to "🖊️",
+            "lower_left_paintbrush" to "🖌️",
+            "art" to "🎨",
+            "fireworks" to "🎆",
+            "balloon" to "🎈",
+            "gift" to "🎁",
+            "ribbon" to "🎀",
+            "confetti_ball" to "🎊",
+            "label" to "🏷️",
+            "round_pushpin" to "📍",
+            "pushpin" to "📌",
+            "paperclip" to "📎",
+            "link" to "🔗",
+            "chains" to "⛓️",
+            "triangular_flag_on_post" to "🚩",
+            "checkered_flag" to "🏁",
+            "rainbow" to "🌈",
+            "umbrella" to "☔",
+            "snowflake" to "❄️",
+            "snowman" to "⛄",
+            "sun_with_face" to "🌞",
+            "full_moon_with_face" to "🌝",
+            "earth_americas" to "🌎",
+            "earth_africa" to "🌍",
+            "earth_asia" to "🌏",
+            "globe_with_meridians" to "🌐",
+            // Animals frequently in READMEs
+            "octocat" to "🐙",
+            "cat" to "🐱",
+            "dog" to "🐶",
+            "rabbit" to "🐰",
+            "tiger" to "🐯",
+            "bear" to "🐻",
+            "panda_face" to "🐼",
+            "wolf" to "🐺",
+            "fox_face" to "🦊",
+            "unicorn" to "🦄",
+            "dragon" to "🐉",
+            "snake" to "🐍",
+            "whale" to "🐳",
+            "fish" to "🐟",
+            "penguin" to "🐧",
+            "owl" to "🦉",
+            "bird" to "🐦",
+            "chicken" to "🐔",
+            "duck" to "🦆",
+            "frog" to "🐸",
+            "monkey_face" to "🐵",
+            "monkey" to "🐒",
+            "see_no_evil" to "🙈",
+            "hear_no_evil" to "🙉",
+            "speak_no_evil" to "🙊",
+            // Food / coffee
+            "coffee" to "☕",
+            "tea" to "🍵",
+            "beer" to "🍺",
+            "beers" to "🍻",
+            "cocktail" to "🍸",
+            "wine_glass" to "🍷",
+            "champagne" to "🍾",
+            "tropical_drink" to "🍹",
+            "cake" to "🍰",
+            "birthday" to "🎂",
+            "cookie" to "🍪",
+            "doughnut" to "🍩",
+            "candy" to "🍬",
+            "lollipop" to "🍭",
+            "chocolate_bar" to "🍫",
+            "pizza" to "🍕",
+            "hamburger" to "🍔",
+            "fries" to "🍟",
+            "hot_dog" to "🌭",
+            "taco" to "🌮",
+            "burrito" to "🌯",
+            "sushi" to "🍣",
+            "ramen" to "🍜",
+            "rice" to "🍚",
+            "spaghetti" to "🍝",
+            "bread" to "🍞",
+            "cheese" to "🧀",
+            "egg" to "🥚",
+            "bacon" to "🥓",
+            "salad" to "🥗",
+            "apple" to "🍎",
+            "green_apple" to "🍏",
+            "banana" to "🍌",
+            "lemon" to "🍋",
+            "grapes" to "🍇",
+            "watermelon" to "🍉",
+            "strawberry" to "🍓",
+            "cherries" to "🍒",
+            "peach" to "🍑",
+            "pineapple" to "🍍",
+            "coconut" to "🥥",
+            "avocado" to "🥑",
+            "kiwi_fruit" to "🥝",
+            "carrot" to "🥕",
+            "corn" to "🌽",
+            "tomato" to "🍅",
+            "potato" to "🥔",
+            "hot_pepper" to "🌶️",
+            "mushroom" to "🍄",
+            "shamrock" to "☘️",
+            "leaves" to "🍃",
+            "fallen_leaf" to "🍂",
+            "maple_leaf" to "🍁",
+            "herb" to "🌿",
+            "evergreen_tree" to "🌲",
+            "deciduous_tree" to "🌳",
+            "palm_tree" to "🌴",
+            "cactus" to "🌵",
+            "tulip" to "🌷",
+            "sunflower" to "🌻",
+            "rose" to "🌹",
+            "wilted_flower" to "🥀",
+            "bouquet" to "💐",
+            "cherry_blossom" to "🌸",
+            // Travel / weather
+            "airplane" to "✈️",
+            "rocket_ship" to "🚀",
+            "car" to "🚗",
+            "taxi" to "🚕",
+            "bus" to "🚌",
+            "train" to "🚂",
+            "bike" to "🚲",
+            "house" to "🏠",
+            "house_with_garden" to "🏡",
+            "office" to "🏢",
+            "school" to "🏫",
+            "hospital" to "🏥",
+            "bank" to "🏦",
+            "atm" to "🏧",
+            "hotel" to "🏨",
+            "convenience_store" to "🏪",
+            "department_store" to "🏬",
+            "japanese_castle" to "🏯",
+            "european_castle" to "🏰",
+            "mountain" to "⛰️",
+            "volcano" to "🌋",
+            "sunny" to "☀️",
+            "cloud" to "☁️",
+            "partly_sunny" to "⛅",
+            "umbrella_with_rain_drops" to "☔",
+            "thunder_cloud_and_rain" to "⛈️",
+            "lightning" to "🌩️",
+            "tornado" to "🌪️",
+        )
+
+    // [a-z0-9_+\-] is a superset of github shortcode chars. The
+    // bookend `:` markers must be tight against the token (no spaces),
+    // and the shortcode itself must not embed `:` (so URL like
+    // `https://example.com:8080` doesn't grab `8080` as a code).
+    private val PATTERN = Regex(""":([a-z0-9_+\-]{1,40}):""")
+
+    fun render(input: String): String {
+        if (input.isEmpty()) return input
+        if (!input.contains(':')) return input
+        return splitOutCodeRegions(input).joinToString("") { (chunk, isCode) ->
+            if (isCode) chunk else replaceInText(chunk)
+        }
+    }
+
+    private fun replaceInText(text: String): String =
+        PATTERN.replace(text) { match ->
+            val key = match.groupValues[1]
+            TABLE[key] ?: match.value
+        }
+
+    // Split the markdown body into alternating (text, code) regions
+    // anchored on triple-backtick fences. Single-backtick inline code
+    // is left in the text regions on purpose — losing rare emoji
+    // collisions in inline code is fine; properly tokenising inline
+    // spans isn't worth the parser complexity.
+    private data class Chunk(val content: String, val isCode: Boolean)
+
+    private fun splitOutCodeRegions(input: String): List<Chunk> {
+        val fence = "```"
+        if (!input.contains(fence)) return listOf(Chunk(input, isCode = false))
+        val out = mutableListOf<Chunk>()
+        var i = 0
+        var inCode = false
+        while (i < input.length) {
+            val next = input.indexOf(fence, startIndex = i)
+            if (next < 0) {
+                out += Chunk(input.substring(i), isCode = inCode)
+                break
+            }
+            // Take everything up to and including the fence into the
+            // current region — the fence itself is part of the code
+            // block when we're transitioning out, so always include
+            // 3 chars in the "code" side.
+            if (inCode) {
+                out += Chunk(input.substring(i, next + fence.length), isCode = true)
+            } else {
+                out += Chunk(input.substring(i, next), isCode = false)
+                out += Chunk(fence, isCode = true)
+            }
+            i = next + fence.length
+            inCode = !inCode
+        }
+        return out
+    }
+}

@@ -30,7 +30,8 @@
       "bullets": [
         "Lors du lien manuel — tri par source d'installation (F-Droid / Obtainium d'abord, Play Store et mises à jour système en dernier) avec une puce indiquant la source de chaque app.",
         "Le lien manuel suggère désormais automatiquement les dépôts GitHub correspondants — choisis une app, obtiens des candidats classés, touche pour lier. Saisie d'URL manuelle toujours disponible.",
-        "Encadrés d'alerte style GitHub dans README et notes de version — Note, Tip, Important, Warning, Caution s'affichent en cartes teintées avec icônes plutôt qu'en texte brut."
+        "Encadrés d'alerte style GitHub dans README et notes de version — Note, Tip, Important, Warning, Caution s'affichent en cartes teintées avec icônes plutôt qu'en texte brut.",
+        "Raccourcis emoji dans README et notes de version — :rocket: s'affiche en 🚀, :tada: en 🎉, et ~250 autres."
       ]
     }
   ]

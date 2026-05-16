@@ -30,7 +30,8 @@
       "bullets": [
         "Al vincular apps manualmente — orden por origen del instalador (F-Droid / Obtainium primero, Play Store y actualizaciones del sistema al final) con un chip que muestra el origen de cada app.",
         "El enlace manual ahora sugiere repos de GitHub coincidentes automáticamente — elige una app, obtén candidatos clasificados, toca para vincular. Sigue disponible la entrada manual de URL.",
-        "Llamadas de alerta estilo GitHub en README y notas de versión — Note, Tip, Important, Warning, Caution se muestran como tarjetas tintadas con iconos en vez de texto literal."
+        "Llamadas de alerta estilo GitHub en README y notas de versión — Note, Tip, Important, Warning, Caution se muestran como tarjetas tintadas con iconos en vez de texto literal.",
+        "Atajos de emoji en README y notas de versión — :rocket: ahora se ve como 🚀, :tada: como 🎉, y ~250 más."
       ]
     }
   ]
