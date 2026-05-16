@@ -36,7 +36,8 @@
         "SVG images in README and release notes now render natively (diagrams, hero images). Theme-only images respect light/dark — no more both-variants-stacked. Browser-like User-Agent fixes hotlink-blocked badges from common CDNs.",
         "Code blocks in README and release notes now have syntax highlighting — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, and more. Theme-aware colors for light + dark.",
         "Markdown polish — HTML blockquotes and <pre><code> fences now render correctly. Sub/superscript convert to unicode (H₂O, x²). Named HTML entities (©, ™, —, “curly quotes”, etc.) decoded.",
-        "Collapsible <details>/<summary> sections render as tap-to-expand cards. Adjacent badge / button images (Play Store, GitHub Releases, etc.) flow in a single row instead of stacking."
+        "Collapsible <details>/<summary> sections render as tap-to-expand cards. Adjacent badge / button images (Play Store, GitHub Releases, etc.) flow in a single row instead of stacking.",
+        "Manual app matching no longer re-downloads to verify — your selected version is trusted as-is. Details banner notes when an app was manually linked."
       ]
     }
   ]

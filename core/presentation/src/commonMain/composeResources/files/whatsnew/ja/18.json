@@ -36,7 +36,8 @@
         "README とリリースノートの SVG 画像をネイティブに描画（図、ヒーロー画像）。テーマ専用画像はライト／ダークを尊重。ブラウザ風 User-Agent で CDN ホットリンクブロックを回避。",
         "README とリリースノートのコードブロックにシンタックスハイライト — Kotlin、Java、Python、JS/TS、Rust、Swift、C#、Ruby、Shell など。ライト／ダーク対応の配色。",
         "Markdown 微調整 — HTML の blockquote と <pre><code> が正しく描画。上付き/下付き文字を Unicode に変換（H₂O、x²）。名前付き HTML エンティティ（©、™、—、カーリークォート）をデコード。",
-        "<details>/<summary> 折りたたみ可能セクションをタップで展開できるカードに。隣接するバッジ／ボタン画像（Play Store、GitHub Releases など）が縦に積まれず一行に並びます。"
+        "<details>/<summary> 折りたたみ可能セクションをタップで展開できるカードに。隣接するバッジ／ボタン画像（Play Store、GitHub Releases など）が縦に積まれず一行に並びます。",
+        "アプリの手動マッチングで再ダウンロードが不要に — 選んだバージョンをそのまま信頼します。詳細画面に手動リンクである旨のバナーを表示。"
       ]
     }
   ]

@@ -36,7 +36,8 @@
         "Les images SVG dans README et notes de version s'affichent maintenant nativement (diagrammes, héros). Les images mono-thème respectent clair/sombre. User-Agent navigateur débloque les badges CDN.",
         "Les blocs de code dans README et notes de version ont une coloration syntaxique — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, etc. Couleurs adaptées au thème clair/sombre.",
         "Polish Markdown — blockquotes HTML et blocs <pre><code> rendus correctement. Sub/superscripts en Unicode (H₂O, x²). Entités HTML nommées (©, ™, —, guillemets courbes) décodées.",
-        "Sections <details>/<summary> dépliables en cartes tap-to-expand. Images de badges/boutons adjacents (Play Store, GitHub Releases, etc.) flottent sur une seule ligne au lieu d'être empilées."
+        "Sections <details>/<summary> dépliables en cartes tap-to-expand. Images de badges/boutons adjacents (Play Store, GitHub Releases, etc.) flottent sur une seule ligne au lieu d'être empilées.",
+        "Lier une app manuellement ne nécessite plus de re-télécharger — ta version sélectionnée est acceptée telle quelle. Un bandeau sur Détails indique qu'une app a été liée manuellement."
       ]
     }
   ]

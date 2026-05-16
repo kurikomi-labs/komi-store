@@ -898,7 +898,7 @@
     <string name="details_unlink_external_app_success">Bağlantı kesildi. Bir sonraki taramada eşleşme önereceğiz.</string>
     <string name="details_unlink_external_app_failure">Bağlantı kesilemedi — tekrar deneyin.</string>
     <string name="details_linked_repo_banner_title">%1$s/%2$s ile bağlantılı</string>
-    <string name="details_linked_repo_banner_body">Yanlış uygulama mı? Yeniden taramak için bağlantıyı kaldırın.</string>
+    <string name="details_linked_repo_banner_body">Manuel bağlandı — sizin tarafınızdan doğrulandı. Yeniden taramak için bağlantıyı kaldırın.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Yenile</string>

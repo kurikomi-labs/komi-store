@@ -882,7 +882,7 @@
     <string name="details_unlink_external_app_success">Odłączono. Zasugerujemy dopasowanie przy następnym skanowaniu.</string>
     <string name="details_unlink_external_app_failure">Nie udało się odłączyć — spróbuj ponownie.</string>
     <string name="details_linked_repo_banner_title">Powiązano z %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">Zła aplikacja? Rozłącz, by przeskanować ponownie.</string>
+    <string name="details_linked_repo_banner_body">Powiązane ręcznie — zweryfikowane przez Ciebie. Rozłącz, by przeskanować ponownie.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Odśwież</string>

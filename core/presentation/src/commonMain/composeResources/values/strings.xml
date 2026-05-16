@@ -998,7 +998,7 @@
     <string name="details_unlink_external_app_success">Unlinked. We'll re-suggest a match next scan.</string>
     <string name="details_unlink_external_app_failure">Couldn't unlink — try again.</string>
     <string name="details_linked_repo_banner_title">Linked to %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">Wrong app? Unlink to re-scan.</string>
+    <string name="details_linked_repo_banner_body">Manually linked — verified by you. Unlink to re-scan.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Refresh</string>

@@ -1992,88 +1992,21 @@ class AppsViewModel(
         val assetFilterRegex = _state.value.linkAssetFilter.takeIf { it.isNotBlank() }
         val fallbackToOlder = _state.value.linkFallbackToOlder
 
+        // The user explicitly picked this asset → trust the choice.
+        // Skip the re-download + signing-key verification dance (which
+        // burned bandwidth and time for nothing the user couldn't already
+        // confirm). The `installSource = MANUAL` field linkAppToRepo
+        // writes is what the Details banner reads to flag manual links.
         viewModelScope.launch {
             _state.update {
                 it.copy(
                     linkSelectedAsset = asset,
-                    linkDownloadProgress = 0,
-                    linkValidationStatus = getString(Res.string.downloading_for_verification),
+                    linkDownloadProgress = null,
+                    linkValidationStatus = null,
                     repoValidationError = null,
                 )
             }
-
-            var filePath: String? = null
             try {
-                downloader.download(asset.downloadUrl, asset.name).collect { progress ->
-                    _state.update { it.copy(linkDownloadProgress = progress.percent) }
-                }
-
-                filePath = downloader.getDownloadedFilePath(asset.name)
-                if (filePath == null) {
-                    _state.update {
-                        it.copy(
-                            linkDownloadProgress = null,
-                            linkValidationStatus = null,
-                            repoValidationError = getString(Res.string.download_failed),
-                        )
-                    }
-                    return@launch
-                }
-
-                _state.update {
-                    it.copy(
-                        linkDownloadProgress = 100,
-                        linkValidationStatus = getString(Res.string.verifying_signing_key),
-                    )
-                }
-
-                val apkInfo = installer.getApkInfoExtractor().extractPackageInfo(filePath)
-                if (apkInfo == null) {
-                    logger.debug("Could not extract APK info for validation, linking anyway")
-                    appsRepository.linkAppToRepo(
-                        deviceApp = selectedApp.toDomain(),
-                        repoInfo = repoInfo.toDomain(),
-                        assetFilterRegex = assetFilterRegex,
-                        fallbackToOlderReleases = fallbackToOlder,
-                        pickedAssetName = asset.name,
-                        pickedAssetSiblingCount = siblingCount,
-                        pickedAssetIndex = pickedIndex,
-                    )
-                    _state.update {
-                        it.copy(
-                            linkDownloadProgress = null,
-                            linkValidationStatus = null,
-                            showLinkSheet = false,
-                        )
-                    }
-                    _events.send(AppsEvent.AppLinkedSuccessfully(selectedApp.appName))
-                    _events.send(
-                        AppsEvent.ShowSuccess(
-                            getString(
-                                Res.string.app_linked_success,
-                                selectedApp.appName,
-                                repoInfo.owner,
-                                repoInfo.name,
-                            ),
-                        ),
-                    )
-                    return@launch
-                }
-
-                val deviceFingerprint = selectedApp.signingFingerprint
-                val apkFingerprint = apkInfo.signingFingerprint
-
-                if (deviceFingerprint != null && apkFingerprint != null && deviceFingerprint != apkFingerprint) {
-                    _state.update {
-                        it.copy(
-                            linkDownloadProgress = null,
-                            linkValidationStatus = null,
-                            repoValidationError = getString(Res.string.signing_key_mismatch_link),
-                        )
-                    }
-                    return@launch
-                }
-
                 appsRepository.linkAppToRepo(
                     deviceApp = selectedApp.toDomain(),
                     repoInfo = repoInfo.toDomain(),
@@ -2101,27 +2034,14 @@ class AppsViewModel(
                         ),
                     ),
                 )
-            } catch (_: RateLimitException) {
-                _state.update {
-                    it.copy(
-                        linkDownloadProgress = null,
-                        linkValidationStatus = null,
-                        repoValidationError = getString(Res.string.rate_limit_try_again),
-                    )
-                }
             } catch (e: Exception) {
-                logger.error("Failed to validate and link app: ${e.message}")
+                logger.error("Failed to link app: ${e.message}")
                 _state.update {
                     it.copy(
                         linkDownloadProgress = null,
                         linkValidationStatus = null,
                         repoValidationError = getString(Res.string.failed_to_link, e.message ?: ""),
                     )
-                }
-            } finally {
-                try {
-                    if (filePath != null) File(filePath).delete()
-                } catch (_: Exception) {
                 }
             }
         }

@@ -858,7 +858,7 @@
     <string name="details_unlink_external_app_success">已取消关联。下次扫描时将重新建议匹配。</string>
     <string name="details_unlink_external_app_failure">无法取消关联 — 请重试。</string>
     <string name="details_linked_repo_banner_title">已链接到 %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">应用错了？解除链接以重新扫描。</string>
+    <string name="details_linked_repo_banner_body">手动链接 — 由你验证。解除链接以重新扫描。</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">刷新</string>

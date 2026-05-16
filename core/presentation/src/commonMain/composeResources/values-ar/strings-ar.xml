@@ -917,7 +917,7 @@
     <string name="details_unlink_external_app_success">تم إلغاء الربط. سنقترح تطابقاً مجدداً في الفحص التالي.</string>
     <string name="details_unlink_external_app_failure">تعذّر إلغاء الربط — حاول مجدداً.</string>
     <string name="details_linked_repo_banner_title">مرتبط بـ %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">تطبيق خاطئ؟ افصل الارتباط لإعادة الفحص.</string>
+    <string name="details_linked_repo_banner_body">ربط يدوي — متحقق منه من قِبلك. افصل الارتباط لإعادة الفحص.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">تحديث</string>

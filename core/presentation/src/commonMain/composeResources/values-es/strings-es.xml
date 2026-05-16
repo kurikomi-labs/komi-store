@@ -861,7 +861,7 @@
     <string name="details_unlink_external_app_success">Desvinculado. Sugeriremos una coincidencia en el próximo análisis.</string>
     <string name="details_unlink_external_app_failure">No se pudo desvincular — inténtalo de nuevo.</string>
     <string name="details_linked_repo_banner_title">Vinculado a %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">¿App equivocada? Desvincula para volver a escanear.</string>
+    <string name="details_linked_repo_banner_body">Vinculada manualmente — verificada por ti. Desvincula para volver a escanear.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Actualizar</string>
