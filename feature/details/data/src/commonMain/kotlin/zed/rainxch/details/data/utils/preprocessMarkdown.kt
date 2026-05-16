@@ -455,8 +455,22 @@ fun preprocessMarkdown(
         ) { match ->
             val summary = match.groupValues[1].trim()
             val body = match.groupValues[2].trim()
-            val encodedSummary = encodeDetailsSummary(summary)
-            "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
+            // Inline details (entire match on one line) usually sits
+            // inside a GFM table cell. A multi-line fenced block there
+            // would terminate the table mid-row. Fall back to a flat
+            // `**summary**: body` rendering that stays on one line.
+            val isInline = !match.value.contains('\n')
+            if (isInline) {
+                when {
+                    summary.isEmpty() && body.isEmpty() -> ""
+                    body.isEmpty() -> "**$summary**"
+                    summary.isEmpty() -> body
+                    else -> "**$summary**: $body"
+                }
+            } else {
+                val encodedSummary = encodeDetailsSummary(summary)
+                "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
+            }
         }
     // Handle bare/stripped <details> without inner <summary> — keep
     // contents as plain markdown.
