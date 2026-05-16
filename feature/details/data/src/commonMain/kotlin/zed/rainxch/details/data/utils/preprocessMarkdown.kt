@@ -189,6 +189,49 @@ fun preprocessMarkdown(
         }
 
     // ========================================================================
+    // Phase 0.5: <details>/<summary> normalisation
+    // ========================================================================
+    // Must run BEFORE Phase 1 — once `<br>` → `\n` and `<div>` → `\n\n`
+    // pass over a table cell, the row gets split and our context check
+    // (`linePrefix.contains('|')`) below would no longer see the pipe.
+    // Inline / table-cell details flatten to one line; standalone block
+    // details emit a fenced `ghs-details` block for ExpandableDetails.
+    processed =
+        processed.replace(
+            Regex(
+                """<details\b[^>]*?>.*?<summary[^>]*?>(.*?)</summary>(.*?)</details>""",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+            ),
+        ) { match ->
+            val summary = match.groupValues[1].trim()
+            val body = match.groupValues[2].trim()
+            val isInline = !match.value.contains('\n')
+            val lineStart = processed.lastIndexOf('\n', match.range.first) + 1
+            val linePrefix = processed.substring(lineStart, match.range.first)
+            val isInTableCell = linePrefix.contains('|')
+            val mustFlatten = isInline || isInTableCell
+
+            if (mustFlatten) {
+                // Collapse any whitespace (incl. embedded HTML tags
+                // that would otherwise expand to newlines) to single
+                // spaces so the result stays on one source line.
+                val flatBody = body
+                    .replace(Regex("""<br\s*/?>""", RegexOption.IGNORE_CASE), " ")
+                    .replace(Regex("""\s+"""), " ")
+                    .trim()
+                when {
+                    summary.isEmpty() && flatBody.isEmpty() -> ""
+                    flatBody.isEmpty() -> "**$summary**"
+                    summary.isEmpty() -> flatBody
+                    else -> "**$summary**: $flatBody"
+                }
+            } else {
+                val encodedSummary = encodeDetailsSummary(summary)
+                "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
+            }
+        }
+
+    // ========================================================================
     // Phase 1: HTML → Markdown conversions
     // ========================================================================
 
@@ -434,51 +477,6 @@ fun preprocessMarkdown(
             Regex("""</p>""", RegexOption.IGNORE_CASE),
             "\n",
         )
-    // <details>…<summary>X</summary>BODY</details> → fenced code block
-    // with `ghs-details` info string. Summary text is %-encoded after a
-    // `|` so it survives markdown whitespace + special chars. Custom
-    // codeFence slot recognises the lang prefix and renders an
-    // ExpandableDetails card.
-    //
-    // Gap between `<details>` and `<summary>` is permissive (`.*?`) —
-    // earlier passes have already stripped `<div>` / `<p>` into newlines
-    // but may have left trailing whitespace or stray text in between.
-    // Padding with blank lines around the fence is required so the
-    // intellij-markdown parser recognises it as a real fenced block
-    // rather than inline text.
-    processed =
-        processed.replace(
-            Regex(
-                """<details\b[^>]*?>.*?<summary[^>]*?>(.*?)</summary>(.*?)</details>""",
-                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
-            ),
-        ) { match ->
-            val summary = match.groupValues[1].trim()
-            val body = match.groupValues[2].trim()
-            // Details inside a GFM table cell would break the table if
-            // emitted as a multi-line fenced block. Detect two ways:
-            //   1. Entire match on one line (typical inline case).
-            //   2. Start of <details> sits on a line that already has
-            //      a `|` before it (multi-line cells some authors write).
-            val isInline = !match.value.contains('\n')
-            val lineStart = processed.lastIndexOf('\n', match.range.first) + 1
-            val linePrefix = processed.substring(lineStart, match.range.first)
-            val isInTableCell = linePrefix.contains('|')
-            val mustFlatten = isInline || isInTableCell
-
-            if (mustFlatten) {
-                val flatBody = body.replace(Regex("""\s+"""), " ")
-                when {
-                    summary.isEmpty() && flatBody.isEmpty() -> ""
-                    flatBody.isEmpty() -> "**$summary**"
-                    summary.isEmpty() -> flatBody
-                    else -> "**$summary**: $flatBody"
-                }
-            } else {
-                val encodedSummary = encodeDetailsSummary(summary)
-                "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
-            }
-        }
     // Handle bare/stripped <details> without inner <summary> — keep
     // contents as plain markdown.
     processed =
