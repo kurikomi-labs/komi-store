@@ -33,7 +33,8 @@
         "README やリリースノートで GitHub スタイルのアラートが表示されるように — Note、Tip、Important、Warning、Caution がアイコン付きの色付きカードでレンダリングされます。",
         "README とリリースノートで絵文字ショートコードに対応 — :rocket: は 🚀、:tada: は 🎉、合計約 250 種類。",
         "README とリリースノートの SVG 画像をネイティブに描画（図、ヒーロー画像）。テーマ専用画像はライト／ダークを尊重。ブラウザ風 User-Agent で CDN ホットリンクブロックを回避。",
-        "README とリリースノートのコードブロックにシンタックスハイライト — Kotlin、Java、Python、JS/TS、Rust、Swift、C#、Ruby、Shell など。ライト／ダーク対応の配色。"
+        "README とリリースノートのコードブロックにシンタックスハイライト — Kotlin、Java、Python、JS/TS、Rust、Swift、C#、Ruby、Shell など。ライト／ダーク対応の配色。",
+        "Markdown 微調整 — HTML の blockquote と <pre><code> が正しく描画。上付き/下付き文字を Unicode に変換（H₂O、x²）。名前付き HTML エンティティ（©、™、—、カーリークォート）をデコード。"
       ]
     }
   ]

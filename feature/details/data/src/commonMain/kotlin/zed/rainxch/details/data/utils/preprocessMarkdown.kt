@@ -336,6 +336,20 @@ fun preprocessMarkdown(
         ) { match ->
             "*${match.groupValues[2]}*"
         }
+    // <pre><code class="language-XYZ"> → ``` fence with language hint.
+    // Must run BEFORE the single-line <code> rule below — that one would
+    // otherwise grab the inner <code> and lose the language attribute.
+    processed =
+        processed.replace(
+            Regex(
+                """<pre[^>]*>\s*<code(?:\s+[^>]*?class\s*=\s*["'][^"']*?language-(\w+)[^"']*?["'])?[^>]*>(.*?)</code>\s*</pre>""",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+            ),
+        ) { match ->
+            val lang = match.groupValues[1]
+            val code = match.groupValues[2]
+            "\n```$lang\n$code\n```\n"
+        }
     // <code> → `text` (single-line only, not <pre><code>)
     processed =
         processed.replace(
@@ -345,6 +359,17 @@ fun preprocessMarkdown(
             ),
         ) { match ->
             "`${match.groupValues[1]}`"
+        }
+    // <blockquote>X</blockquote> → markdown `> ` lines.
+    processed =
+        processed.replace(
+            Regex(
+                """<blockquote[^>]*>(.*?)</blockquote>""",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+            ),
+        ) { match ->
+            val body = match.groupValues[1].trim()
+            body.lineSequence().joinToString("\n") { "> $it" }
         }
     // <s> / <del> / <strike> → ~~text~~
     processed =
@@ -429,10 +454,27 @@ fun preprocessMarkdown(
         ) { match ->
             "**${match.groupValues[1].trim()}**\n"
         }
-    // <span>, <sup>, <sub> — strip tags, keep content
+    // <sup>X</sup> / <sub>X</sub> → Unicode superscript/subscript chars
+    // where mappable (digits + operators + a few letters). Falls back
+    // to the literal char when no Unicode codepoint exists — markdown
+    // lib doesn't expose inline BaselineShift, so this is the best we
+    // can do without a custom text span.
     processed =
         processed.replace(
-            Regex("""</?(?:span|sup|sub)[^>]*?>""", RegexOption.IGNORE_CASE),
+            Regex("""<sup[^>]*>(.*?)</sup>""", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)),
+        ) { match ->
+            match.groupValues[1].map { SUPERSCRIPTS[it] ?: it }.joinToString("")
+        }
+    processed =
+        processed.replace(
+            Regex("""<sub[^>]*>(.*?)</sub>""", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)),
+        ) { match ->
+            match.groupValues[1].map { SUBSCRIPTS[it] ?: it }.joinToString("")
+        }
+    // <span> — strip tags, keep content
+    processed =
+        processed.replace(
+            Regex("""</?span[^>]*?>""", RegexOption.IGNORE_CASE),
             "",
         )
     // Strip other common straggler HTML tags
@@ -445,21 +487,25 @@ fun preprocessMarkdown(
             "\n",
         )
 
-    // 12. Decode common HTML entities
-    processed =
-        processed
-            .replace("&amp;", "&")
-            .replace("&lt;", "<")
-            .replace("&gt;", ">")
-            .replace("&quot;", "\"")
-            .replace("&#39;", "'")
-            .replace("&apos;", "'")
-            .replace("&nbsp;", " ")
-    // Numeric HTML entities
+    // 12. Decode HTML entities. Named entity table covers the long tail
+    //     of READMEs (©, ™, ‘curly quotes’, em/en-dash, ellipsis,
+    //     French/Spanish quotation marks, currency symbols).
+    HTML_ENTITIES.forEach { (entity, char) -> processed = processed.replace(entity, char) }
+    // Numeric HTML entities (decimal): &#NNN; → char.
     processed =
         processed.replace(Regex("""&#(\d+);""")) { match ->
             val code = match.groupValues[1].toIntOrNull()
-            if (code != null && code in 32..126) {
+            if (code != null && code in 32..0x10FFFF) {
+                code.toChar().toString()
+            } else {
+                match.value
+            }
+        }
+    // Numeric HTML entities (hex): &#xHHHH; → char.
+    processed =
+        processed.replace(Regex("""&#x([0-9A-Fa-f]+);""")) { match ->
+            val code = match.groupValues[1].toIntOrNull(16)
+            if (code != null && code in 32..0x10FFFF) {
                 code.toChar().toString()
             } else {
                 match.value
@@ -492,3 +538,83 @@ fun preprocessMarkdown(
 
     return processed.trim()
 }
+
+// ============================================================================
+// Lookup tables for HTML entity decoding + sub/sup Unicode mapping.
+// ============================================================================
+
+private val HTML_ENTITIES: Map<String, String> = mapOf(
+    // Core 5 (must come first; processor relies on them being decoded
+    // before any subsequent regex that operates on raw `<`/`>`).
+    "&amp;" to "&",
+    "&lt;" to "<",
+    "&gt;" to ">",
+    "&quot;" to "\"",
+    "&apos;" to "'",
+    "&#39;" to "'",
+    // Whitespace
+    "&nbsp;" to " ",
+    "&ensp;" to " ",
+    "&emsp;" to " ",
+    "&thinsp;" to " ",
+    // Punctuation / typography
+    "&hellip;" to "…",
+    "&mdash;" to "—",
+    "&ndash;" to "–",
+    "&laquo;" to "«",
+    "&raquo;" to "»",
+    "&ldquo;" to "“",
+    "&rdquo;" to "”",
+    "&lsquo;" to "‘",
+    "&rsquo;" to "’",
+    "&sbquo;" to "‚",
+    "&bdquo;" to "„",
+    "&bull;" to "•",
+    "&middot;" to "·",
+    "&sect;" to "§",
+    "&para;" to "¶",
+    // Math / arrows
+    "&times;" to "×",
+    "&divide;" to "÷",
+    "&plusmn;" to "±",
+    "&deg;" to "°",
+    "&micro;" to "µ",
+    "&fnof;" to "ƒ",
+    "&infin;" to "∞",
+    "&asymp;" to "≈",
+    "&ne;" to "≠",
+    "&le;" to "≤",
+    "&ge;" to "≥",
+    "&larr;" to "←",
+    "&rarr;" to "→",
+    "&uarr;" to "↑",
+    "&darr;" to "↓",
+    "&harr;" to "↔",
+    "&lArr;" to "⇐",
+    "&rArr;" to "⇒",
+    // Legal / brand
+    "&copy;" to "©",
+    "&reg;" to "®",
+    "&trade;" to "™",
+    // Currency
+    "&euro;" to "€",
+    "&pound;" to "£",
+    "&yen;" to "¥",
+    "&cent;" to "¢",
+)
+
+private val SUPERSCRIPTS: Map<Char, Char> = mapOf(
+    '0' to '⁰', '1' to '¹', '2' to '²', '3' to '³', '4' to '⁴',
+    '5' to '⁵', '6' to '⁶', '7' to '⁷', '8' to '⁸', '9' to '⁹',
+    '+' to '⁺', '-' to '⁻', '=' to '⁼', '(' to '⁽', ')' to '⁾',
+    'n' to 'ⁿ', 'i' to 'ⁱ',
+)
+
+private val SUBSCRIPTS: Map<Char, Char> = mapOf(
+    '0' to '₀', '1' to '₁', '2' to '₂', '3' to '₃', '4' to '₄',
+    '5' to '₅', '6' to '₆', '7' to '₇', '8' to '₈', '9' to '₉',
+    '+' to '₊', '-' to '₋', '=' to '₌', '(' to '₍', ')' to '₎',
+    'a' to 'ₐ', 'e' to 'ₑ', 'o' to 'ₒ', 'x' to 'ₓ',
+    'h' to 'ₕ', 'k' to 'ₖ', 'l' to 'ₗ', 'm' to 'ₘ',
+    'n' to 'ₙ', 'p' to 'ₚ', 's' to 'ₛ', 't' to 'ₜ',
+)

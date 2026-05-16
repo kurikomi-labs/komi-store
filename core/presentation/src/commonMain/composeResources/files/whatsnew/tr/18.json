@@ -33,7 +33,8 @@
         "README ve sürüm notlarında GitHub tarzı uyarı kutuları — Note, Tip, Important, Warning, Caution artık düz metin yerine ikonlu renkli kartlar olarak görünüyor.",
         "README ve sürüm notlarında emoji kısayolları — :rocket: artık 🚀 olarak, :tada: 🎉 olarak ve ~250 başka kısayol.",
         "README ve sürüm notlarındaki SVG resimleri artık doğrudan render ediliyor (diyagram, hero). Tema özel resimler açık/koyu temaya saygı duyuyor. Tarayıcı benzeri User-Agent CDN hotlink engelini aşıyor.",
-        "README ve sürüm notlarındaki kod bloklarında sözdizimi vurgulama — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell ve diğerleri. Açık/koyu temaya uyumlu renkler."
+        "README ve sürüm notlarındaki kod bloklarında sözdizimi vurgulama — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell ve diğerleri. Açık/koyu temaya uyumlu renkler.",
+        "Markdown rötuşu — HTML blockquote'ları ve <pre><code> blokları doğru render. Alt/üst simgeler Unicode'a çevriliyor (H₂O, x²). Adlandırılmış HTML varlıkları (©, ™, —, kıvrık tırnaklar) çözülüyor."
       ]
     }
   ]

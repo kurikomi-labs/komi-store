@@ -33,7 +33,8 @@
         "Encadrés d'alerte style GitHub dans README et notes de version — Note, Tip, Important, Warning, Caution s'affichent en cartes teintées avec icônes plutôt qu'en texte brut.",
         "Raccourcis emoji dans README et notes de version — :rocket: s'affiche en 🚀, :tada: en 🎉, et ~250 autres.",
         "Les images SVG dans README et notes de version s'affichent maintenant nativement (diagrammes, héros). Les images mono-thème respectent clair/sombre. User-Agent navigateur débloque les badges CDN.",
-        "Les blocs de code dans README et notes de version ont une coloration syntaxique — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, etc. Couleurs adaptées au thème clair/sombre."
+        "Les blocs de code dans README et notes de version ont une coloration syntaxique — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, etc. Couleurs adaptées au thème clair/sombre.",
+        "Polish Markdown — blockquotes HTML et blocs <pre><code> rendus correctement. Sub/superscripts en Unicode (H₂O, x²). Entités HTML nommées (©, ™, —, guillemets courbes) décodées."
       ]
     }
   ]

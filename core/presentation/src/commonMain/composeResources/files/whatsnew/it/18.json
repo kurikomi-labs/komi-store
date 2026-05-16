@@ -33,7 +33,8 @@
         "Avvisi stile GitHub in README e note di rilascio — Note, Tip, Important, Warning, Caution ora si vedono come card colorate con icone invece di testo letterale.",
         "Codici emoji in README e note di rilascio — :rocket: ora appare come 🚀, :tada: come 🎉, e ~250 altri.",
         "Le immagini SVG in README e note di rilascio ora si renderizzano nativamente (diagrammi, hero). Le immagini per tema rispettano chiaro/scuro. User-Agent da browser sblocca i badge CDN.",
-        "I blocchi di codice in README e note di rilascio hanno l'evidenziazione della sintassi — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell e altri. Colori adattati a chiaro/scuro."
+        "I blocchi di codice in README e note di rilascio hanno l'evidenziazione della sintassi — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell e altri. Colori adattati a chiaro/scuro.",
+        "Rifinitura Markdown — blockquote HTML e <pre><code> renderizzano correttamente. Sub/apice in Unicode (H₂O, x²). Entità HTML nominate (©, ™, —, virgolette curve) decodificate."
       ]
     }
   ]

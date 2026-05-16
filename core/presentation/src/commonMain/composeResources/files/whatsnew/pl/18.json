@@ -33,7 +33,8 @@
         "Wyróżnienia w stylu GitHub w README i notatkach wydania — Note, Tip, Important, Warning, Caution renderują się teraz jako kolorowe karty z ikonami zamiast surowego tekstu.",
         "Skróty emoji w README i notatkach wydania — :rocket: pokazuje się jako 🚀, :tada: jako 🎉, łącznie ~250 skrótów.",
         "Obrazy SVG w README i notatkach wydania renderują się teraz natywnie (diagramy, hero). Obrazy tylko-jasny/tylko-ciemny respektują motyw. Przeglądarkowy User-Agent odblokuje badge'e CDN.",
-        "Bloki kodu w README i notatkach wydania mają teraz podświetlanie składni — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell i inne. Kolory dopasowane do trybu jasnego/ciemnego."
+        "Bloki kodu w README i notatkach wydania mają teraz podświetlanie składni — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell i inne. Kolory dopasowane do trybu jasnego/ciemnego.",
+        "Szlif Markdown — blockquote HTML i bloki <pre><code> renderują się prawidłowo. Indeksy górne/dolne w Unicode (H₂O, x²). Nazwane encje HTML (©, ™, —, krzywe cudzysłowy) zdekodowane."
       ]
     }
   ]
