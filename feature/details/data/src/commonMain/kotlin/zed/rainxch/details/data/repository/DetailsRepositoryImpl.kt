@@ -378,10 +378,6 @@ class DetailsRepositoryImpl(
         defaultBranch: String,
     ): String? =
         body
-            ?.replace("<details>", "")
-            ?.replace("</details>", "")
-            ?.replace("<summary>", "")
-            ?.replace("</summary>", "")
             ?.replace("\r\n", "\n")
             ?.let { rawMarkdown ->
                 preprocessMarkdown(
@@ -395,7 +391,11 @@ class DetailsRepositoryImpl(
         repo: String,
         defaultBranch: String,
     ): Triple<String, String?, String>? {
-        val cacheKey = "details:readme:$owner/$repo"
+        // v2 — bumped after markdown preprocessor overhaul (alerts,
+        // emoji, details, image-row). Forces re-fetch so users get a
+        // properly-processed readme instead of waiting for the stale
+        // v1 entry to expire.
+        val cacheKey = "details:readme:v2:$owner/$repo"
 
         cacheManager.get<CachedReadme>(cacheKey)?.let { cached ->
             logger.debug("Cache hit for readme $owner/$repo")
