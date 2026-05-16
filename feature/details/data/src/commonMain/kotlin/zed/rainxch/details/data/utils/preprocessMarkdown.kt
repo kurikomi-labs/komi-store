@@ -455,17 +455,24 @@ fun preprocessMarkdown(
         ) { match ->
             val summary = match.groupValues[1].trim()
             val body = match.groupValues[2].trim()
-            // Inline details (entire match on one line) usually sits
-            // inside a GFM table cell. A multi-line fenced block there
-            // would terminate the table mid-row. Fall back to a flat
-            // `**summary**: body` rendering that stays on one line.
+            // Details inside a GFM table cell would break the table if
+            // emitted as a multi-line fenced block. Detect two ways:
+            //   1. Entire match on one line (typical inline case).
+            //   2. Start of <details> sits on a line that already has
+            //      a `|` before it (multi-line cells some authors write).
             val isInline = !match.value.contains('\n')
-            if (isInline) {
+            val lineStart = processed.lastIndexOf('\n', match.range.first) + 1
+            val linePrefix = processed.substring(lineStart, match.range.first)
+            val isInTableCell = linePrefix.contains('|')
+            val mustFlatten = isInline || isInTableCell
+
+            if (mustFlatten) {
+                val flatBody = body.replace(Regex("""\s+"""), " ")
                 when {
-                    summary.isEmpty() && body.isEmpty() -> ""
-                    body.isEmpty() -> "**$summary**"
-                    summary.isEmpty() -> body
-                    else -> "**$summary**: $body"
+                    summary.isEmpty() && flatBody.isEmpty() -> ""
+                    flatBody.isEmpty() -> "**$summary**"
+                    summary.isEmpty() -> flatBody
+                    else -> "**$summary**: $flatBody"
                 }
             } else {
                 val encodedSummary = encodeDetailsSummary(summary)
