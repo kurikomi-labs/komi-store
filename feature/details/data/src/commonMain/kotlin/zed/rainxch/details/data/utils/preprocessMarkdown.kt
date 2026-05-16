@@ -42,7 +42,11 @@ fun preprocessMarkdown(
             (lower.contains("/badge") && isSvgUrl(lower))
     }
 
-    fun shouldSkipImage(url: String): Boolean = isSvgUrl(url) || isBadgeUrl(url)
+    // SVGs are no longer skipped wholesale — Coil's SVG decoder now
+    // handles them (registered in the App composable). Only known badge
+    // / shields services stay skipped because they're noise even when
+    // rendered correctly (status badges = clutter on small screens).
+    fun shouldSkipImage(url: String): Boolean = isBadgeUrl(url)
 
     fun resolveUrl(path: String): String {
         val trimmed = path.trim()

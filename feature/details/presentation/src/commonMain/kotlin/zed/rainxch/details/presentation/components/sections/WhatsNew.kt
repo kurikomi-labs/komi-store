@@ -142,11 +142,16 @@ private fun ExpandableMarkdownContent(
     isExpanded: Boolean,
     onToggleExpanded: () -> Unit,
 ) {
-    val displayContent =
+    val raw =
         if (translationState.isShowingTranslation && translationState.translatedText != null) {
             translationState.translatedText
         } else {
             release.description ?: stringResource(Res.string.no_release_notes)
+        }
+    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val displayContent =
+        remember(raw, isDark) {
+            zed.rainxch.core.domain.util.applyThemeAwareImages(raw, isDark)
         }
 
     val density = LocalDensity.current

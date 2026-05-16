@@ -33,6 +33,16 @@ import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 
 @Composable
 fun App(deepLinkUri: String? = null) {
+    // Wire Coil's singleton ImageLoader with the SVG decoder so README
+    // images that point to .svg URLs (shields.io badges, diagrams,
+    // hero images) render natively instead of failing silently.
+    coil3.compose.setSingletonImageLoaderFactory { context ->
+        coil3.ImageLoader
+            .Builder(context)
+            .components { add(coil3.svg.SvgDecoder.Factory()) }
+            .build()
+    }
+
     val viewModel: MainViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 

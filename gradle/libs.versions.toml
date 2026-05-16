@@ -40,6 +40,7 @@ moko = "0.20.1"
 buildkonfig = "0.17.1"
 markdownRenderer = "0.39.2"
 landscapist = "2.9.5"
+coil3 = "3.3.0"
 shizuku = "13.1.5"
 dhizuku = "2.5.4"
 hidden-api = "4.4.0"
@@ -110,6 +111,9 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 # Image loading
 landscapist-image = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist" }
 landscapist-core = { module = "com.github.skydoves:landscapist-core", version.ref = "landscapist" }
+coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil3-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+coil3-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil3" }
 
 #Permission handling
 moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "moko" }
@@ -211,5 +215,7 @@ ktor-common = [
 
 landscapist = [
     "landscapist-core",
-    "landscapist-image"
+    "landscapist-image",
+    "coil3-compose",
+    "coil3-svg",
 ]

@@ -28,6 +28,10 @@ kotlin {
             implementation(projects.core.domain)
             implementation(projects.core.presentation)
 
+            // Coil SVG decoder registered in App() via SingletonImageLoaderFactory
+            implementation(libs.coil3.compose)
+            implementation(libs.coil3.svg)
+
             implementation(projects.feature.apps.domain)
             implementation(projects.feature.apps.data)
             implementation(projects.feature.apps.presentation)
