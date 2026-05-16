@@ -361,11 +361,19 @@ object AssetVariant {
     fun extract(assetName: String): String? {
         val withoutExt = assetName.substringBeforeLast('.')
         val match = VERSION_SEGMENT.find(withoutExt) ?: return null
-        val tail =
+        var tail =
             withoutExt
                 .substring(match.range.last + 1)
                 .trimStart(*LEADING_SEPARATORS)
                 .trim()
+        // Strip pre-release qualifier counters (beta.24, rc.1, m12, …)
+        // that drift release-over-release. Issue #612.
+        while (true) {
+            val qmatch = PRE_RELEASE_PREFIX.find(tail) ?: break
+            tail = tail.substring(qmatch.range.last + 1)
+                .trimStart(*LEADING_SEPARATORS)
+                .trim()
+        }
         return tail
     }
 
@@ -379,6 +387,12 @@ object AssetVariant {
      */
     private val VERSION_SEGMENT =
         Regex("[-_ ]v?\\d+(?:\\.\\d+)+(?=[-_. ]|$)", RegexOption.IGNORE_CASE)
+
+    private val PRE_RELEASE_PREFIX =
+        Regex(
+            "^(beta|rc|alpha|dev|nightly|snapshot|pre|preview|m|milestone|pr)[.\\-_]?\\d+(?=[-_. ]|$)",
+            RegexOption.IGNORE_CASE,
+        )
 
     private val LEADING_SEPARATORS = charArrayOf('-', '_', ' ', '.')
 

@@ -21,7 +21,8 @@
         "Externally-linked repo now shows a banner on Details with one-tap unlink.",
         "Sign-in opens the device-code URL prefilled and copies a paste-friendly code.",
         "Android 16 / custom-ROM crash on Settings + download failure — falls back to internal storage when external is blocked.",
-        "Magisk / KernelSU / APatch detection on Android 13+ — previous probe was masked by SELinux."
+        "Magisk / KernelSU / APatch detection on Android 13+ — previous probe was masked by SELinux.",
+        "Pinned-variant label on Details refreshes across releases — old beta/rc qualifier numbers no longer linger in the chip."
       ]
     },
     {

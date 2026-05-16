@@ -21,7 +21,8 @@
         "Il repo collegato esternamente ora mostra un banner sui Dettagli con un tap per scollegare.",
         "Il login apre l'URL del codice precompilato e copia un codice facile da incollare.",
         "Crash su Android 16 / ROM personalizzate in Impostazioni e download — ripiega su archiviazione interna quando quella esterna è bloccata.",
-        "Rilevamento di Magisk / KernelSU / APatch su Android 13+ — la sonda precedente era mascherata da SELinux."
+        "Rilevamento di Magisk / KernelSU / APatch su Android 13+ — la sonda precedente era mascherata da SELinux.",
+        "L'etichetta della variante fissata nei Dettagli si aggiorna tra le release — i vecchi numeri beta/rc non restano più nel chip."
       ]
     },
     {

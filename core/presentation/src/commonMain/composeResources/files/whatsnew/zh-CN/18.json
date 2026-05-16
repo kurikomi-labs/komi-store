@@ -21,7 +21,8 @@
         "外部链接的仓库现在在详情中显示一键解除链接的横幅。",
         "登录现在打开预填了设备代码的 URL 并复制粘贴友好的代码。",
         "修复 Android 16 / 定制 ROM 上设置闪退与下载失败 — 外部存储被阻止时回退到内部存储。",
-        "Android 13+ 上检测 Magisk / KernelSU / APatch — 之前的探测被 SELinux 屏蔽。"
+        "Android 13+ 上检测 Magisk / KernelSU / APatch — 之前的探测被 SELinux 屏蔽。",
+        "详情页的已固定变体标签会随版本刷新 — 旧的 beta/rc 编号不再残留在标签中。"
       ]
     },
     {

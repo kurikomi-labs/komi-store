@@ -21,7 +21,8 @@
         "Zewnętrznie powiązane repo pokazuje teraz baner w Szczegółach z jednym kliknięciem rozłączenia.",
         "Logowanie otwiera URL kodu z wstępnie wypełnionym kodem i kopiuje wersję przyjazną do wklejania.",
         "Crash na Android 16 / niestandardowych ROM-ach w Ustawieniach i pobieraniu — przełącza na pamięć wewnętrzną, gdy zewnętrzna jest zablokowana.",
-        "Wykrywanie Magisk / KernelSU / APatch na Android 13+ — poprzednia sonda była maskowana przez SELinux."
+        "Wykrywanie Magisk / KernelSU / APatch na Android 13+ — poprzednia sonda była maskowana przez SELinux.",
+        "Etykieta przypiętego wariantu w Szczegółach odświeża się między wydaniami — stare numery beta/rc nie utrzymują się już w chipie."
       ]
     },
     {

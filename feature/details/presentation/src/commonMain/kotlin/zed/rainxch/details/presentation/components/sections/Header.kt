@@ -138,11 +138,22 @@ fun LazyListScope.header(
                                 }
                                 .orEmpty()
                         }
+                    // Refresh pinned label from the currently matched asset
+                    // — stored value may carry a stale qualifier-counter
+                    // prefix (e.g. `beta.24-arm64-v8a`) from when the pin
+                    // was first set. Issue #612.
+                    val pinnedVariantLabel =
+                        state.installedApp?.preferredAssetVariant?.let { stored ->
+                            state.primaryAsset?.name?.let { name ->
+                                zed.rainxch.core.domain.util.AssetVariant.extract(name)
+                                    ?.takeIf { it.isNotBlank() }
+                            } ?: stored
+                        }
                     ReleaseAssetsPicker(
                         assetsList = state.installableAssets,
                         selectedAsset = state.primaryAsset,
                         isPickerVisible = state.isReleaseSelectorVisible,
-                        pinnedVariant = state.installedApp?.preferredAssetVariant,
+                        pinnedVariant = pinnedVariantLabel,
                         showAllPlatforms = state.showAllPlatforms,
                         crossPlatformAssets = crossPlatformAssets,
                         onAction = onAction,
