@@ -32,7 +32,8 @@
         "El enlace manual ahora sugiere repos de GitHub coincidentes automáticamente — elige una app, obtén candidatos clasificados, toca para vincular. Sigue disponible la entrada manual de URL.",
         "Llamadas de alerta estilo GitHub en README y notas de versión — Note, Tip, Important, Warning, Caution se muestran como tarjetas tintadas con iconos en vez de texto literal.",
         "Atajos de emoji en README y notas de versión — :rocket: ahora se ve como 🚀, :tada: como 🎉, y ~250 más.",
-        "Imágenes SVG en README y notas de versión ahora se renderizan nativamente (diagramas, hero). Imágenes de tema único respetan claro/oscuro. User-Agent de navegador desbloquea badges de CDN."
+        "Imágenes SVG en README y notas de versión ahora se renderizan nativamente (diagramas, hero). Imágenes de tema único respetan claro/oscuro. User-Agent de navegador desbloquea badges de CDN.",
+        "Los bloques de código en README y notas de versión tienen resaltado de sintaxis — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, etc. Colores adaptados a claro/oscuro."
       ]
     }
   ]

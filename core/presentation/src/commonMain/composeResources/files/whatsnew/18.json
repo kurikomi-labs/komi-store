@@ -32,7 +32,8 @@
         "Manual link now suggests matching GitHub repos automatically — pick an app, get ranked candidates, tap to link. Manual URL entry still available.",
         "GitHub-style alert callouts in README and release notes — Note, Tip, Important, Warning, Caution now render as tinted cards with icons instead of literal text.",
         "Emoji shortcodes in README and release notes — :rocket: now renders as 🚀, :tada: as 🎉, and ~250 others. Common dev/status icons covered out of the box.",
-        "SVG images in README and release notes now render natively (diagrams, hero images). Theme-only images respect light/dark — no more both-variants-stacked. Browser-like User-Agent fixes hotlink-blocked badges from common CDNs."
+        "SVG images in README and release notes now render natively (diagrams, hero images). Theme-only images respect light/dark — no more both-variants-stacked. Browser-like User-Agent fixes hotlink-blocked badges from common CDNs.",
+        "Code blocks in README and release notes now have syntax highlighting — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, and more. Theme-aware colors for light + dark."
       ]
     }
   ]

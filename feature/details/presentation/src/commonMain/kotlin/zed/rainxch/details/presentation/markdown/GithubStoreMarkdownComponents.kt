@@ -8,6 +8,7 @@ import com.mikepenz.markdown.model.ImageTransformer
 @Composable
 fun githubStoreMarkdownComponents(
     imageTransformer: ImageTransformer,
+    isDark: Boolean,
 ): MarkdownComponents = markdownComponents(
     blockQuote = { model ->
         AlertBlockQuote(
@@ -15,5 +16,8 @@ fun githubStoreMarkdownComponents(
             imageTransformer = imageTransformer,
             fallback = { defaultBlockQuoteFallback(model) },
         )
+    },
+    codeFence = { model ->
+        SyntaxHighlightedCode(model, isDark)
     },
 )

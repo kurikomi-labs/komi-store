@@ -187,6 +187,7 @@ private fun ExpandableMarkdownContent(
                             Modifier
                         },
                 ) {
+                    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
                     Markdown(
                         content = content,
                         colors = colors,
@@ -194,7 +195,7 @@ private fun ExpandableMarkdownContent(
                         flavour = flavour,
                         imageTransformer = MarkdownImageTransformer,
                         components = zed.rainxch.details.presentation.markdown
-                            .githubStoreMarkdownComponents(MarkdownImageTransformer),
+                            .githubStoreMarkdownComponents(MarkdownImageTransformer, isDark),
                         modifier =
                             Modifier
                                 .fillMaxWidth()
