@@ -101,11 +101,16 @@ fun LazyListScope.about(
     }
 
     item {
-        val displayContent =
+        val raw =
             if (translationState.isShowingTranslation && translationState.translatedText != null) {
                 translationState.translatedText
             } else {
                 readmeMarkdown
+            }
+        val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+        val displayContent =
+            androidx.compose.runtime.remember(raw, isDark) {
+                zed.rainxch.core.domain.util.applyThemeAwareImages(raw, isDark)
             }
 
         AnimatedContent(
