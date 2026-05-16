@@ -709,6 +709,11 @@
     <string name="variant_picker_stale_was">पहले था: %1$s</string>
     <string name="variant_picker_auto_title">स्वचालित</string>
     <string name="variant_picker_auto_subtitle">GitHub Store को अपने डिवाइस के लिए सर्वोत्तम वेरिएंट चुनने दें</string>
+    <string name="markdown_alert_note">नोट</string>
+    <string name="markdown_alert_tip">सुझाव</string>
+    <string name="markdown_alert_important">महत्वपूर्ण</string>
+    <string name="markdown_alert_warning">चेतावनी</string>
+    <string name="markdown_alert_caution">सावधान</string>
     <string name="variant_picker_pinned">पिन किया गया: %1$s</string>
     <string name="variant_stale_hint">वेरिएंट बदला — फिर से चुनने के लिए अपडेट टैप करें</string>
     <string name="variant_label_inline">वेरिएंट: %1$s</string>

@@ -867,6 +867,11 @@
     <string name="variant_picker_stale_was">Was: %1$s</string>
     <string name="variant_picker_auto_title">Automatic</string>
     <string name="variant_picker_auto_subtitle">Let GitHub Store pick the best variant for your device</string>
+    <string name="markdown_alert_note">Note</string>
+    <string name="markdown_alert_tip">Tip</string>
+    <string name="markdown_alert_important">Important</string>
+    <string name="markdown_alert_warning">Warning</string>
+    <string name="markdown_alert_caution">Caution</string>
     <string name="variant_picker_pinned">Pinned to: %1$s</string>
     <string name="variant_stale_hint">Variant changed — tap Update to pick again</string>
     <string name="variant_label_inline">Variant: %1$s</string>

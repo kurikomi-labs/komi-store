@@ -188,6 +188,8 @@ private fun ExpandableMarkdownContent(
                         typography = typography,
                         flavour = flavour,
                         imageTransformer = MarkdownImageTransformer,
+                        components = zed.rainxch.details.presentation.markdown
+                            .githubStoreMarkdownComponents(MarkdownImageTransformer),
                         modifier =
                             Modifier
                                 .fillMaxWidth()

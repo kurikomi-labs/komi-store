@@ -710,6 +710,11 @@
     <string name="variant_picker_stale_was">Era: %1$s</string>
     <string name="variant_picker_auto_title">Automatica</string>
     <string name="variant_picker_auto_subtitle">Lascia che GitHub Store scelga la variante migliore per il tuo dispositivo</string>
+    <string name="markdown_alert_note">Nota</string>
+    <string name="markdown_alert_tip">Suggerimento</string>
+    <string name="markdown_alert_important">Importante</string>
+    <string name="markdown_alert_warning">Avviso</string>
+    <string name="markdown_alert_caution">Attenzione</string>
     <string name="variant_picker_pinned">Bloccata su: %1$s</string>
     <string name="variant_stale_hint">Variante cambiata — tocca Aggiorna per scegliere di nuovo</string>
     <string name="variant_label_inline">Variante: %1$s</string>

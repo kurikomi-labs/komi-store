@@ -671,6 +671,11 @@
     <string name="variant_picker_stale_was">以前: %1$s</string>
     <string name="variant_picker_auto_title">自動</string>
     <string name="variant_picker_auto_subtitle">GitHub Storeにデバイスに最適なバリアントを選ばせる</string>
+    <string name="markdown_alert_note">メモ</string>
+    <string name="markdown_alert_tip">ヒント</string>
+    <string name="markdown_alert_important">重要</string>
+    <string name="markdown_alert_warning">警告</string>
+    <string name="markdown_alert_caution">注意</string>
     <string name="variant_picker_pinned">固定中: %1$s</string>
     <string name="variant_stale_hint">バリアントが変更されました — アップデートをタップして再選択</string>
     <string name="variant_label_inline">バリアント: %1$s</string>
