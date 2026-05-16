@@ -434,15 +434,30 @@ fun preprocessMarkdown(
             Regex("""</p>""", RegexOption.IGNORE_CASE),
             "\n",
         )
-    // <details> / <summary>
+    // <details><summary>X</summary>BODY</details> → fenced code block
+    // with `ghs-details` info string. Summary text is base64-encoded
+    // after a `|` so it survives markdown whitespace + special chars.
+    // Custom codeFence slot recognises the lang prefix and renders an
+    // ExpandableSection. Falls through to default fence rendering when
+    // the lib's parser doesn't reach our custom slot for any reason
+    // (degraded but never broken).
     processed =
         processed.replace(
-            Regex("""<details[^>]*?>""", RegexOption.IGNORE_CASE),
-            "\n",
-        )
+            Regex(
+                """<details[^>]*?>\s*<summary[^>]*?>(.*?)</summary>(.*?)</details>""",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+            ),
+        ) { match ->
+            val summary = match.groupValues[1].trim()
+            val body = match.groupValues[2].trim()
+            val encodedSummary = encodeDetailsSummary(summary)
+            "\n```ghs-details|$encodedSummary\n$body\n```\n"
+        }
+    // Handle bare/stripped <details> without inner <summary> — keep
+    // contents as plain markdown.
     processed =
         processed.replace(
-            Regex("""</details>""", RegexOption.IGNORE_CASE),
+            Regex("""</?details[^>]*?>""", RegexOption.IGNORE_CASE),
             "\n",
         )
     processed =
@@ -536,7 +551,56 @@ fun preprocessMarkdown(
     //     rare enough not to warrant deeper tokenisation.
     processed = zed.rainxch.core.domain.util.EmojiShortcodes.render(processed)
 
+    // 16. Join consecutive image-only lines into a single paragraph so
+    //     badge galleries (Play Store + GitHub buttons etc.) render
+    //     in a row instead of stacking one per line.
+    processed = joinAdjacentImageLines(processed)
+
     return processed.trim()
+}
+
+private fun encodeDetailsSummary(text: String): String {
+    // URL-encode special chars to keep summary on one line inside the
+    // fence info string. Decoder mirror lives in the codeFence slot.
+    val safe = StringBuilder()
+    text.forEach { c ->
+        when (c) {
+            '\n', '\r', '\t', '`', ' ', '|' -> {
+                safe.append("%").append(c.code.toString(16).padStart(2, '0').uppercase())
+            }
+
+            else -> safe.append(c)
+        }
+    }
+    return safe.toString()
+}
+
+private fun joinAdjacentImageLines(content: String): String {
+    val imageOnlyLine =
+        Regex("""^\s*(?:!\[[^\]]*]\([^)]+\)\s*){1,}\s*$""")
+    val lines = content.split('\n')
+    val out = StringBuilder()
+    var i = 0
+    while (i < lines.size) {
+        val line = lines[i]
+        if (imageOnlyLine.matches(line)) {
+            // Greedily collect adjacent image-only lines.
+            val group = StringBuilder(line.trim())
+            var j = i + 1
+            while (j < lines.size && imageOnlyLine.matches(lines[j])) {
+                group.append(' ').append(lines[j].trim())
+                j++
+            }
+            out.append(group)
+            if (j < lines.size) out.append('\n')
+            i = j
+        } else {
+            out.append(line)
+            if (i + 1 < lines.size) out.append('\n')
+            i++
+        }
+    }
+    return out.toString()
 }
 
 // ============================================================================

@@ -34,7 +34,8 @@
         "Emoji shortcodes in README and release notes — :rocket: now renders as 🚀, :tada: as 🎉, and ~250 others. Common dev/status icons covered out of the box.",
         "SVG images in README and release notes now render natively (diagrams, hero images). Theme-only images respect light/dark — no more both-variants-stacked. Browser-like User-Agent fixes hotlink-blocked badges from common CDNs.",
         "Code blocks in README and release notes now have syntax highlighting — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, and more. Theme-aware colors for light + dark.",
-        "Markdown polish — HTML blockquotes and <pre><code> fences now render correctly. Sub/superscript convert to unicode (H₂O, x²). Named HTML entities (©, ™, —, “curly quotes”, etc.) decoded."
+        "Markdown polish — HTML blockquotes and <pre><code> fences now render correctly. Sub/superscript convert to unicode (H₂O, x²). Named HTML entities (©, ™, —, “curly quotes”, etc.) decoded.",
+        "Collapsible <details>/<summary> sections render as tap-to-expand cards. Adjacent badge / button images (Play Store, GitHub Releases, etc.) flow in a single row instead of stacking."
       ]
     }
   ]
