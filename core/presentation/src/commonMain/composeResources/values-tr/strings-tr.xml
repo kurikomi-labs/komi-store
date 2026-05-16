@@ -708,6 +708,11 @@
     <string name="variant_picker_stale_was">Önceki: %1$s</string>
     <string name="variant_picker_auto_title">Otomatik</string>
     <string name="variant_picker_auto_subtitle">Cihazınız için en iyi varyantı GitHub Store seçsin</string>
+    <string name="markdown_alert_note">Not</string>
+    <string name="markdown_alert_tip">İpucu</string>
+    <string name="markdown_alert_important">Önemli</string>
+    <string name="markdown_alert_warning">Uyarı</string>
+    <string name="markdown_alert_caution">Dikkat</string>
     <string name="variant_picker_pinned">Sabitlendi: %1$s</string>
     <string name="variant_stale_hint">Varyant değişti — tekrar seçmek için Güncelle'ye dokunun</string>
     <string name="variant_label_inline">Varyant: %1$s</string>

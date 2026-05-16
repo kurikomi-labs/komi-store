@@ -706,6 +706,11 @@
     <string name="variant_picker_stale_was">이전: %1$s</string>
     <string name="variant_picker_auto_title">자동</string>
     <string name="variant_picker_auto_subtitle">GitHub Store가 기기에 가장 적합한 변형을 선택하도록 합니다</string>
+    <string name="markdown_alert_note">참고</string>
+    <string name="markdown_alert_tip">팁</string>
+    <string name="markdown_alert_important">중요</string>
+    <string name="markdown_alert_warning">경고</string>
+    <string name="markdown_alert_caution">주의</string>
     <string name="variant_picker_pinned">고정됨: %1$s</string>
     <string name="variant_stale_hint">변형이 변경되었습니다 — 업데이트를 탭하여 다시 선택하세요</string>
     <string name="variant_label_inline">변형: %1$s</string>

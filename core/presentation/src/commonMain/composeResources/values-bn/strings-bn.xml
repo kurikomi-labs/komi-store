@@ -710,6 +710,11 @@
     <string name="variant_picker_stale_was">ছিল: %1$s</string>
     <string name="variant_picker_auto_title">স্বয়ংক্রিয়</string>
     <string name="variant_picker_auto_subtitle">GitHub Store-কে আপনার ডিভাইসের জন্য সেরা ভ্যারিয়েন্ট বাছাই করতে দিন</string>
+    <string name="markdown_alert_note">নোট</string>
+    <string name="markdown_alert_tip">টিপ</string>
+    <string name="markdown_alert_important">গুরুত্বপূর্ণ</string>
+    <string name="markdown_alert_warning">সতর্কতা</string>
+    <string name="markdown_alert_caution">সাবধান</string>
     <string name="variant_picker_pinned">পিন করা: %1$s</string>
     <string name="variant_stale_hint">ভ্যারিয়েন্ট পরিবর্তিত — আবার বাছাই করতে আপডেট ট্যাপ করুন</string>
     <string name="variant_label_inline">ভ্যারিয়েন্ট: %1$s</string>

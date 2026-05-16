@@ -29,7 +29,8 @@
       "type": "IMPROVED",
       "bullets": [
         "Ręczne powiązywanie aplikacji — sortowane wg źródła instalatora (F-Droid / Obtainium na początku, Play Store i aktualizacje systemu na końcu) z chipem pokazującym źródło każdej aplikacji.",
-        "Ręczne powiązanie automatycznie proponuje pasujące repozytoria GitHub — wybierz aplikację, otrzymaj uszeregowanych kandydatów, dotknij, aby powiązać. Ręczne wpisanie URL nadal dostępne."
+        "Ręczne powiązanie automatycznie proponuje pasujące repozytoria GitHub — wybierz aplikację, otrzymaj uszeregowanych kandydatów, dotknij, aby powiązać. Ręczne wpisanie URL nadal dostępne.",
+        "Wyróżnienia w stylu GitHub w README i notatkach wydania — Note, Tip, Important, Warning, Caution renderują się teraz jako kolorowe karty z ikonami zamiast surowego tekstu."
       ]
     }
   ]

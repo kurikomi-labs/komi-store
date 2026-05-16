@@ -678,6 +678,11 @@
     <string name="variant_picker_stale_was">Poprzednio: %1$s</string>
     <string name="variant_picker_auto_title">Automatyczny</string>
     <string name="variant_picker_auto_subtitle">Pozwól GitHub Store wybrać najlepszy wariant dla Twojego urządzenia</string>
+    <string name="markdown_alert_note">Notatka</string>
+    <string name="markdown_alert_tip">Wskazówka</string>
+    <string name="markdown_alert_important">Ważne</string>
+    <string name="markdown_alert_warning">Ostrzeżenie</string>
+    <string name="markdown_alert_caution">Uwaga</string>
     <string name="variant_picker_pinned">Przypięty do: %1$s</string>
     <string name="variant_stale_hint">Wariant zmieniony — naciśnij Aktualizuj, aby wybrać ponownie</string>
     <string name="variant_label_inline">Wariant: %1$s</string>

@@ -672,6 +672,11 @@
     <string name="variant_picker_stale_was">原为：%1$s</string>
     <string name="variant_picker_auto_title">自动</string>
     <string name="variant_picker_auto_subtitle">让 GitHub Store 为您的设备选择最佳变体</string>
+    <string name="markdown_alert_note">备注</string>
+    <string name="markdown_alert_tip">提示</string>
+    <string name="markdown_alert_important">重要</string>
+    <string name="markdown_alert_warning">警告</string>
+    <string name="markdown_alert_caution">注意</string>
     <string name="variant_picker_pinned">已固定为：%1$s</string>
     <string name="variant_stale_hint">变体已更改 — 点击更新以重新选择</string>
     <string name="variant_label_inline">变体：%1$s</string>

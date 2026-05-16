@@ -711,6 +711,11 @@
     <string name="variant_picker_stale_was">كان: %1$s</string>
     <string name="variant_picker_auto_title">تلقائي</string>
     <string name="variant_picker_auto_subtitle">دع GitHub Store يختار أفضل نوع لجهازك</string>
+    <string name="markdown_alert_note">ملاحظة</string>
+    <string name="markdown_alert_tip">نصيحة</string>
+    <string name="markdown_alert_important">مهم</string>
+    <string name="markdown_alert_warning">تحذير</string>
+    <string name="markdown_alert_caution">تنبيه</string>
     <string name="variant_picker_pinned">مثبت على: %1$s</string>
     <string name="variant_stale_hint">تغير النوع — انقر تحديث للاختيار مرة أخرى</string>
     <string name="variant_label_inline">النوع: %1$s</string>
