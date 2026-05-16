@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -170,9 +170,10 @@ fun ExpandableMarkdownContent(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .onGloballyPositioned { coordinates ->
-                                val measured = coordinates.size.height.toFloat()
-                                if (measured > effectiveHeight) {
+                            .onSizeChanged { size ->
+                                val measured = size.height.toFloat()
+                                val decisive = effectiveHeight > collapsedHeightPx
+                                if (!decisive && measured > effectiveHeight) {
                                     onMeasured(measured)
                                 }
                             },
