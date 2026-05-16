@@ -2,6 +2,8 @@ package zed.rainxch.details.presentation.components.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -161,15 +164,28 @@ private fun ExpandableMarkdownContent(
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
     val effectiveHeight = measuredHeightPx ?: 0f
     val needsExpansion = effectiveHeight > collapsedHeightPx && collapsedHeightPx > 0f
+    val measuredDp =
+        measuredHeightPx?.let { with(density) { it.toDp() } }
 
-    Column {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    LaunchedEffect(isExpanded) {
+        if (isExpanded) {
+            bringIntoViewRequester.bringIntoView()
+        }
+    }
+
+    Column(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)) {
         Box {
             Box(
                 modifier =
-                    if (!isExpanded && needsExpansion) {
-                        Modifier.heightIn(max = collapsedHeight).clipToBounds()
-                    } else {
-                        Modifier
+                    when {
+                        !isExpanded && needsExpansion ->
+                            Modifier
+                                .height(collapsedHeight)
+                                .clipToBounds()
+                        isExpanded && measuredDp != null ->
+                            Modifier.heightIn(min = measuredDp)
+                        else -> Modifier
                     },
             ) {
                 Markdown(
