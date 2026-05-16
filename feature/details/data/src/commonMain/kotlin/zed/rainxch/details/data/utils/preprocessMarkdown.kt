@@ -434,24 +434,29 @@ fun preprocessMarkdown(
             Regex("""</p>""", RegexOption.IGNORE_CASE),
             "\n",
         )
-    // <details><summary>X</summary>BODY</details> → fenced code block
-    // with `ghs-details` info string. Summary text is base64-encoded
-    // after a `|` so it survives markdown whitespace + special chars.
-    // Custom codeFence slot recognises the lang prefix and renders an
-    // ExpandableSection. Falls through to default fence rendering when
-    // the lib's parser doesn't reach our custom slot for any reason
-    // (degraded but never broken).
+    // <details>…<summary>X</summary>BODY</details> → fenced code block
+    // with `ghs-details` info string. Summary text is %-encoded after a
+    // `|` so it survives markdown whitespace + special chars. Custom
+    // codeFence slot recognises the lang prefix and renders an
+    // ExpandableDetails card.
+    //
+    // Gap between `<details>` and `<summary>` is permissive (`.*?`) —
+    // earlier passes have already stripped `<div>` / `<p>` into newlines
+    // but may have left trailing whitespace or stray text in between.
+    // Padding with blank lines around the fence is required so the
+    // intellij-markdown parser recognises it as a real fenced block
+    // rather than inline text.
     processed =
         processed.replace(
             Regex(
-                """<details[^>]*?>\s*<summary[^>]*?>(.*?)</summary>(.*?)</details>""",
+                """<details\b[^>]*?>.*?<summary[^>]*?>(.*?)</summary>(.*?)</details>""",
                 setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
             ),
         ) { match ->
             val summary = match.groupValues[1].trim()
             val body = match.groupValues[2].trim()
             val encodedSummary = encodeDetailsSummary(summary)
-            "\n```ghs-details|$encodedSummary\n$body\n```\n"
+            "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
         }
     // Handle bare/stripped <details> without inner <summary> — keep
     // contents as plain markdown.
