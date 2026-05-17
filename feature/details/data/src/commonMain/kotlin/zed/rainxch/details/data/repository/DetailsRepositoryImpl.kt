@@ -395,7 +395,7 @@ class DetailsRepositoryImpl(
         // emoji, details, image-row). Forces re-fetch so users get a
         // properly-processed readme instead of waiting for the stale
         // v1 entry to expire.
-        val cacheKey = "details:readme:v3:$owner/$repo"
+        val cacheKey = "details:readme:v4:$owner/$repo"
 
         cacheManager.get<CachedReadme>(cacheKey)?.let { cached ->
             logger.debug("Cache hit for readme $owner/$repo")

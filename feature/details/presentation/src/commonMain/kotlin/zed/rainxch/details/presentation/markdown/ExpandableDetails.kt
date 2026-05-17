@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.compose.components.MarkdownComponentModel
 import com.mikepenz.markdown.model.ImageTransformer
@@ -85,6 +86,7 @@ fun ExpandableDetails(
                 )
             }
             AnimatedVisibility(visible = expanded) {
+                val isDark = isSystemInDarkTheme()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -96,6 +98,7 @@ fun ExpandableDetails(
                         typography = rememberMarkdownTypography(),
                         flavour = GFMFlavourDescriptor(),
                         imageTransformer = imageTransformer,
+                        components = githubStoreMarkdownComponents(imageTransformer, isDark),
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(Modifier.width(0.dp))
@@ -126,20 +129,16 @@ private fun decodeDetailsSummary(encoded: String): String {
 }
 
 private fun extractFenceBody(model: MarkdownComponentModel): String {
+    // Slice the original source between the first and last
+    // CODE_FENCE_CONTENT child. Iterating child-by-child and
+    // re-inserting newlines double-counts (prepend on content + EOL
+    // token), producing a blank line between every body line — which
+    // breaks GFM tables, lists, and any block that needs contiguous
+    // source lines.
     val content = model.content
-    val body = StringBuilder()
-    var sawContent = false
-    model.node.children.forEach { child ->
-        when (child.type) {
-            MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
-                if (sawContent) body.append('\n')
-                body.append(content.substring(child.startOffset, child.endOffset))
-                sawContent = true
-            }
-
-            MarkdownTokenTypes.EOL -> if (sawContent) body.append('\n')
-            else -> Unit
-        }
-    }
-    return body.toString().trim()
+    val contentNodes = model.node.children.filter { it.type == MarkdownTokenTypes.CODE_FENCE_CONTENT }
+    if (contentNodes.isEmpty()) return ""
+    val start = contentNodes.first().startOffset
+    val end = contentNodes.last().endOffset
+    return content.substring(start, end).trim()
 }
