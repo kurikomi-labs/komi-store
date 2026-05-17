@@ -335,6 +335,8 @@
     <string name="sort">Sırala</string>
     <string name="sort_recently_updated">Yeni Güncellenmiş</string>
     <string name="sort_name">Ad</string>
+    <string name="sort_recently_added">Son Eklenenler</string>
+    <string name="sort_selected">Seçili</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repo</string>

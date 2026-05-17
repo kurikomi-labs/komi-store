@@ -37,7 +37,8 @@
         "Bloki kodu w README i notatkach wydania mają teraz podświetlanie składni — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell i inne. Kolory dopasowane do trybu jasnego/ciemnego.",
         "Szlif Markdown — blockquote HTML i bloki <pre><code> renderują się prawidłowo. Indeksy górne/dolne w Unicode (H₂O, x²). Nazwane encje HTML (©, ™, —, krzywe cudzysłowy) zdekodowane.",
         "Rozwijane sekcje <details>/<summary> jako karty z tap-to-expand. Sąsiednie obrazy odznak/przycisków (Play Store, GitHub Releases itp.) płyną w jednym wierszu zamiast się układać.",
-        "Ręczne powiązywanie aplikacji nie wymaga już ponownego pobrania — wybrana wersja jest akceptowana bez weryfikacji. Baner na Szczegółach pokazuje ręcznie powiązane aplikacje."
+        "Ręczne powiązywanie aplikacji nie wymaga już ponownego pobrania — wybrana wersja jest akceptowana bez weryfikacji. Baner na Szczegółach pokazuje ręcznie powiązane aplikacje.",
+        "Sortowanie zależne od sekcji — Zainstalowane (aktualizacje, data, nazwa), Z gwiazdką (data, nazwa, gwiazdki), Ulubione (data, nazwa); każda sekcja pamięta swój wybór."
       ]
     }
   ]

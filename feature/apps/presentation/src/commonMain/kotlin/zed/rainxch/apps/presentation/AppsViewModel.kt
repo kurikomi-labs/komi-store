@@ -148,7 +148,12 @@ class AppsViewModel(
                     logger.error("Sync had issues but continuing: ${syncResult.exceptionOrNull()?.message}")
                 }
 
-                appsRepository.getApps().collect { apps ->
+                combine(
+                    appsRepository.getApps(),
+                    tweaksRepository.getAppsSortRule(),
+                ) { apps, sortStored ->
+                    apps to AppSortRule.fromName(sortStored)
+                }.collect { (apps, sortRule) ->
                     val appItems =
                         apps
                             .map { it.toUi() }
@@ -163,12 +168,13 @@ class AppsViewModel(
                                     downloadProgress = existing?.downloadProgress,
                                     error = existing?.error,
                                 )
-                            }.sortedWith(appComparator(AppSortRule.UpdatesFirst))
+                            }.sortedWith(appComparator(sortRule))
                             .toImmutableList()
 
                     _state.update {
                         it.copy(
                             apps = appItems,
+                            sortRule = sortRule,
                             isLoading = false,
                             updateAllButtonEnabled =
                                 appItems.any { item ->
@@ -266,6 +272,16 @@ class AppsViewModel(
                 }
 
                 filterApps()
+
+                viewModelScope.launch {
+                    try {
+                        tweaksRepository.setAppsSortRule(action.sortRule.name)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        logger.error("Failed to persist apps sort rule: ${e.message}")
+                    }
+                }
             }
 
             is AppsAction.OnOpenApp -> {

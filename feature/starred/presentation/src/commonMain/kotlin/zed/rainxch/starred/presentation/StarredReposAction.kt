@@ -1,6 +1,7 @@
 package zed.rainxch.starred.presentation
 
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
+import zed.rainxch.starred.presentation.model.StarredSortRule
 
 sealed interface StarredReposAction {
     data object OnNavigateBackClick : StarredReposAction
@@ -27,5 +28,9 @@ sealed interface StarredReposAction {
 
     data class OnSearchChange(
         val query: String,
+    ) : StarredReposAction
+
+    data class OnSortRuleSelected(
+        val sortRule: StarredSortRule,
     ) : StarredReposAction
 }

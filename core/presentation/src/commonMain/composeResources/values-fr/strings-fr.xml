@@ -283,6 +283,8 @@
     <string name="sort">Trier</string>
     <string name="sort_recently_updated">Récemment mis à jour</string>
     <string name="sort_name">Nom</string>
+    <string name="sort_recently_added">Récemment ajoutés</string>
+    <string name="sort_selected">Sélectionné</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">dépôt</string>

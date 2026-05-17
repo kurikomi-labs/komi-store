@@ -15,9 +15,13 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -31,7 +35,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +53,7 @@ import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.favourites.presentation.components.FavouriteRepositoryItem
+import zed.rainxch.favourites.presentation.model.FavouritesSortRule
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -90,7 +97,11 @@ fun FavouritesScreen(
 ) {
     Scaffold(
         topBar = {
-            FavouritesTopbar(onAction)
+            FavouritesTopbar(
+                sortRule = state.sortRule,
+                hasRepos = state.favouriteRepositories.isNotEmpty(),
+                onAction = onAction,
+            )
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
@@ -176,7 +187,13 @@ fun FavouritesScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun FavouritesTopbar(onAction: (FavouritesAction) -> Unit) {
+private fun FavouritesTopbar(
+    sortRule: FavouritesSortRule,
+    hasRepos: Boolean,
+    onAction: (FavouritesAction) -> Unit,
+) {
+    var showSortMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = {
             Text(
@@ -200,8 +217,49 @@ private fun FavouritesTopbar(onAction: (FavouritesAction) -> Unit) {
                 )
             }
         },
+        actions = {
+            if (hasRepos) {
+                Box {
+                    IconButton(onClick = { showSortMenu = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = stringResource(Res.string.sort_label),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false },
+                    ) {
+                        FavouritesSortRule.entries.forEach { rule ->
+                            val selected = rule == sortRule
+                            DropdownMenuItem(
+                                text = { Text(stringResource(rule.labelRes())) },
+                                leadingIcon = {
+                                    if (selected) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = stringResource(Res.string.sort_selected),
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    showSortMenu = false
+                                    onAction(FavouritesAction.OnSortRuleSelected(rule))
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        },
     )
 }
+
+private fun FavouritesSortRule.labelRes() =
+    when (this) {
+        FavouritesSortRule.RecentlyAdded -> Res.string.sort_recently_added
+        FavouritesSortRule.NameAsc -> Res.string.sort_name
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

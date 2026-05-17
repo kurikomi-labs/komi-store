@@ -3,6 +3,7 @@ package zed.rainxch.starred.presentation
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
+import zed.rainxch.starred.presentation.model.StarredSortRule
 
 data class StarredReposState(
     val starredRepositories: ImmutableList<StarredRepositoryUi> = persistentListOf(),
@@ -12,4 +13,5 @@ data class StarredReposState(
     val lastSyncTime: Long? = null,
     val isAuthenticated: Boolean = false,
     val searchQuery: String = "",
+    val sortRule: StarredSortRule = StarredSortRule.RecentlyStarred,
 )

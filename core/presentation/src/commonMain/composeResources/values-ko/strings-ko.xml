@@ -335,6 +335,8 @@
     <string name="sort">정렬</string>
     <string name="sort_recently_updated">최근 업데이트</string>
     <string name="sort_name">이름</string>
+    <string name="sort_recently_added">최근 추가됨</string>
+    <string name="sort_selected">선택됨</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">저장소</string>

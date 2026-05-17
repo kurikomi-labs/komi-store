@@ -446,6 +446,8 @@
     <string name="sort">Sort</string>
     <string name="sort_recently_updated">Recently Updated</string>
     <string name="sort_name">Name</string>
+    <string name="sort_recently_added">Recently added</string>
+    <string name="sort_selected">Selected</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repository</string>

@@ -37,7 +37,8 @@
         "I blocchi di codice in README e note di rilascio hanno l'evidenziazione della sintassi — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell e altri. Colori adattati a chiaro/scuro.",
         "Rifinitura Markdown — blockquote HTML e <pre><code> renderizzano correttamente. Sub/apice in Unicode (H₂O, x²). Entità HTML nominate (©, ™, —, virgolette curve) decodificate.",
         "Sezioni <details>/<summary> espandibili come card tap-to-expand. Immagini di badge/pulsante adiacenti (Play Store, GitHub Releases, ecc.) scorrono su una riga invece di impilarsi.",
-        "Il collegamento manuale delle app non richiede più il re-download — la versione che scegli viene accettata così com'è. Un banner sui Dettagli segnala quando un'app è stata collegata manualmente."
+        "Il collegamento manuale delle app non richiede più il re-download — la versione che scegli viene accettata così com'è. Un banner sui Dettagli segnala quando un'app è stata collegata manualmente.",
+        "Ordinamento per sezione — Installate (aggiornamenti, recenza, nome), Con stella (recenza, nome, stelle), Preferiti (recenza, nome); ogni sezione ricorda la propria scelta."
       ]
     }
   ]
