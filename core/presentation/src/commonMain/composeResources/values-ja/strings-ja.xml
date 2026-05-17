@@ -284,6 +284,7 @@
     <string name="sort">並べ替え</string>
     <string name="sort_recently_updated">最近更新</string>
     <string name="sort_name">名前</string>
+    <string name="sort_recently_added">最近追加</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">リポジトリ</string>

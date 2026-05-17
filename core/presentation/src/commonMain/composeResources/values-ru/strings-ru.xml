@@ -302,6 +302,7 @@
     <string name="sort">Сортировка</string>
     <string name="sort_recently_updated">Недавно обновлённые</string>
     <string name="sort_name">Название</string>
+    <string name="sort_recently_added">Недавно добавленные</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">репозиторий</string>

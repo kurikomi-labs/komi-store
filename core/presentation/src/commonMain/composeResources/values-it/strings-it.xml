@@ -333,6 +333,7 @@
     <string name="sort">Ordina</string>
     <string name="sort_recently_updated">Aggiornati di recente</string>
     <string name="sort_name">Nome</string>
+    <string name="sort_recently_added">Aggiunti di recente</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repository</string>

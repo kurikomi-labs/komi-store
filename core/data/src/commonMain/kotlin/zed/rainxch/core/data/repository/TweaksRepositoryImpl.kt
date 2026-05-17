@@ -451,6 +451,27 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getAppsSortRule(): Flow<String?> =
+        preferences.data.map { prefs -> prefs[APPS_SORT_RULE_KEY] }
+
+    override suspend fun setAppsSortRule(name: String) {
+        preferences.edit { prefs -> prefs[APPS_SORT_RULE_KEY] = name }
+    }
+
+    override fun getStarredSortRule(): Flow<String?> =
+        preferences.data.map { prefs -> prefs[STARRED_SORT_RULE_KEY] }
+
+    override suspend fun setStarredSortRule(name: String) {
+        preferences.edit { prefs -> prefs[STARRED_SORT_RULE_KEY] = name }
+    }
+
+    override fun getFavouritesSortRule(): Flow<String?> =
+        preferences.data.map { prefs -> prefs[FAVOURITES_SORT_RULE_KEY] }
+
+    override suspend fun setFavouritesSortRule(name: String) {
+        preferences.edit { prefs -> prefs[FAVOURITES_SORT_RULE_KEY] = name }
+    }
+
     companion object {
         private const val DEFAULT_UPDATE_CHECK_INTERVAL_HOURS = 6L
 
@@ -487,5 +508,8 @@ class TweaksRepositoryImpl(
         private val ANNOUNCEMENTS_ACKNOWLEDGED_IDS_KEY = stringSetPreferencesKey("announcements_acknowledged_ids")
         private val ANNOUNCEMENTS_MUTED_CATEGORIES_KEY = stringSetPreferencesKey("announcements_muted_categories")
         private val ANNOUNCEMENTS_LAST_FETCHED_AT_KEY = longPreferencesKey("announcements_last_fetched_at")
+        private val APPS_SORT_RULE_KEY = stringPreferencesKey("apps_sort_rule")
+        private val STARRED_SORT_RULE_KEY = stringPreferencesKey("starred_sort_rule")
+        private val FAVOURITES_SORT_RULE_KEY = stringPreferencesKey("favourites_sort_rule")
     }
 }

@@ -387,6 +387,7 @@
     <string name="sort">ترتيب</string>
     <string name="sort_recently_updated">المحدّث مؤخراً</string>
     <string name="sort_name">الاسم</string>
+    <string name="sort_recently_added">أُضيف مؤخراً</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">مستودع</string>

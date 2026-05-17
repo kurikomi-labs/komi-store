@@ -96,6 +96,7 @@ class AppsViewModel(
                     loadApps()
                     observePendingExternalImports()
                     observeKaoBannerDismissed()
+                    observeSortRule()
                     hasLoadedInitialData = true
                 }
             }.stateIn(
@@ -108,6 +109,18 @@ class AppsViewModel(
         viewModelScope.launch {
             tweaksRepository.getKaoBannerDismissed().collect { dismissed ->
                 _state.update { it.copy(showKaoBanner = !dismissed) }
+            }
+        }
+    }
+
+    private fun observeSortRule() {
+        viewModelScope.launch {
+            tweaksRepository.getAppsSortRule().collect { stored ->
+                val rule = AppSortRule.fromName(stored)
+                if (_state.value.sortRule != rule) {
+                    _state.update { it.copy(sortRule = rule) }
+                    filterApps()
+                }
             }
         }
     }
@@ -163,7 +176,7 @@ class AppsViewModel(
                                     downloadProgress = existing?.downloadProgress,
                                     error = existing?.error,
                                 )
-                            }.sortedWith(appComparator(AppSortRule.UpdatesFirst))
+                            }.sortedWith(appComparator(_state.value.sortRule))
                             .toImmutableList()
 
                     _state.update {
@@ -266,6 +279,10 @@ class AppsViewModel(
                 }
 
                 filterApps()
+
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setAppsSortRule(action.sortRule.name) }
+                }
             }
 
             is AppsAction.OnOpenApp -> {

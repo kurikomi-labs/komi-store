@@ -19,9 +19,12 @@ import zed.rainxch.core.domain.model.FavoriteRepo
 import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.StarredRepository
+import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.starred.presentation.mappers.toStarredRepositoryUi
+import zed.rainxch.starred.presentation.model.StarredRepositoryUi
+import zed.rainxch.starred.presentation.model.StarredSortRule
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -30,6 +33,7 @@ class StarredReposViewModel(
     private val starredRepository: StarredRepository,
     private val favouritesRepository: FavouritesRepository,
     private val profileRepository: ProfileRepository,
+    private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
 
@@ -66,11 +70,13 @@ class StarredReposViewModel(
                 starredRepository.getAllStarred(),
                 favouritesRepository.getAllFavorites(),
                 profileRepository.getUser(),
-            ) { starred, favorites, user ->
+                tweaksRepository.getStarredSortRule(),
+            ) { starred, favorites, user, sortStored ->
+                val sortRule = StarredSortRule.fromName(sortStored)
                 val favoriteIds = favorites.map { it.repoId }.toSet()
                 val currentLogin = user?.username
 
-                starred.map {
+                val items = starred.map {
                     it.toStarredRepositoryUi(
                         isFavorite = favoriteIds.contains(it.repoId),
                         isCurrentUserOwner =
@@ -78,17 +84,35 @@ class StarredReposViewModel(
                                 it.repoOwner.equals(currentLogin, ignoreCase = true),
                     )
                 }
+
+                items.sortedWith(starredComparator(sortRule)) to sortRule
             }.flowOn(Dispatchers.Default)
-                .collect { starredRepos ->
+                .collect { (starredRepos, sortRule) ->
                     _state.update {
                         it.copy(
                             starredRepositories = starredRepos.toImmutableList(),
+                            sortRule = sortRule,
                             isLoading = false,
                         )
                     }
                 }
         }
     }
+
+    private fun starredComparator(sortRule: StarredSortRule): Comparator<StarredRepositoryUi> =
+        when (sortRule) {
+            StarredSortRule.RecentlyStarred ->
+                compareByDescending<StarredRepositoryUi> { it.starredAt ?: Long.MIN_VALUE }
+                    .thenBy { it.repoName.lowercase() }
+
+            StarredSortRule.NameAsc ->
+                compareBy<StarredRepositoryUi> { it.repoName.lowercase() }
+                    .thenBy { it.repoOwner.lowercase() }
+
+            StarredSortRule.StarsDesc ->
+                compareByDescending<StarredRepositoryUi> { it.stargazersCount }
+                    .thenBy { it.repoName.lowercase() }
+        }
 
     private fun syncIfNeeded() {
         viewModelScope.launch {
@@ -164,6 +188,12 @@ class StarredReposViewModel(
 
             is StarredReposAction.OnSearchChange -> {
                 _state.update { it.copy(searchQuery = action.query) }
+            }
+
+            is StarredReposAction.OnSortRuleSelected -> {
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setStarredSortRule(action.sortRule.name) }
+                }
             }
 
             is StarredReposAction.OnToggleFavorite -> {

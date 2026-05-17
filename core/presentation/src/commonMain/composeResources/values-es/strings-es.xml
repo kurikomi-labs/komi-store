@@ -283,6 +283,7 @@
     <string name="sort">Ordenar</string>
     <string name="sort_recently_updated">Actualizados recientemente</string>
     <string name="sort_name">Nombre</string>
+    <string name="sort_recently_added">Añadidos recientemente</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repositorio</string>
