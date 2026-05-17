@@ -96,7 +96,6 @@ class AppsViewModel(
                     loadApps()
                     observePendingExternalImports()
                     observeKaoBannerDismissed()
-                    observeSortRule()
                     hasLoadedInitialData = true
                 }
             }.stateIn(
@@ -109,18 +108,6 @@ class AppsViewModel(
         viewModelScope.launch {
             tweaksRepository.getKaoBannerDismissed().collect { dismissed ->
                 _state.update { it.copy(showKaoBanner = !dismissed) }
-            }
-        }
-    }
-
-    private fun observeSortRule() {
-        viewModelScope.launch {
-            tweaksRepository.getAppsSortRule().collect { stored ->
-                val rule = AppSortRule.fromName(stored)
-                if (_state.value.sortRule != rule) {
-                    _state.update { it.copy(sortRule = rule) }
-                    filterApps()
-                }
             }
         }
     }
@@ -161,7 +148,12 @@ class AppsViewModel(
                     logger.error("Sync had issues but continuing: ${syncResult.exceptionOrNull()?.message}")
                 }
 
-                appsRepository.getApps().collect { apps ->
+                combine(
+                    appsRepository.getApps(),
+                    tweaksRepository.getAppsSortRule(),
+                ) { apps, sortStored ->
+                    apps to AppSortRule.fromName(sortStored)
+                }.collect { (apps, sortRule) ->
                     val appItems =
                         apps
                             .map { it.toUi() }
@@ -176,12 +168,13 @@ class AppsViewModel(
                                     downloadProgress = existing?.downloadProgress,
                                     error = existing?.error,
                                 )
-                            }.sortedWith(appComparator(_state.value.sortRule))
+                            }.sortedWith(appComparator(sortRule))
                             .toImmutableList()
 
                     _state.update {
                         it.copy(
                             apps = appItems,
+                            sortRule = sortRule,
                             isLoading = false,
                             updateAllButtonEnabled =
                                 appItems.any { item ->
