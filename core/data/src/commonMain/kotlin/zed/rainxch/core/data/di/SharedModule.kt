@@ -122,7 +122,11 @@ val coreModule =
             )
         }
 
-        single { ForgejoClientRegistry() }
+        single {
+            ForgejoClientRegistry(
+                proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
+            )
+        }
 
         single<InstalledAppsRepository> {
             InstalledAppsRepositoryImpl(

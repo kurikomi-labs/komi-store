@@ -20,7 +20,7 @@ object RepositoryUrlParser {
         val match = urlRegex.matchEntire(trimmed) ?: return null
         val host = match.groupValues[1].lowercase()
         val owner = match.groupValues[2]
-        val repo = match.groupValues[3].removeSuffix(".git")
+        val repo = stripGitSuffix(match.groupValues[3])
         if (owner.isEmpty() || repo.isEmpty()) return null
 
         val source = when {
@@ -32,8 +32,19 @@ object RepositoryUrlParser {
         return RepositoryReference(source, owner, repo)
     }
 
+    private fun stripGitSuffix(name: String): String =
+        if (name.length > 4 && name.regionMatches(name.length - 4, ".git", 0, 4, ignoreCase = true)) {
+            name.substring(0, name.length - 4)
+        } else {
+            name
+        }
+
     private fun looksLikeForgejoHost(host: String): Boolean {
         val lower = host.lowercase()
-        return lower.contains("forgejo") || lower.contains("gitea")
+        return lower.contains("forgejo") ||
+            lower.contains("gitea") ||
+            lower.startsWith("git.") ||
+            lower.startsWith("code.") ||
+            lower.startsWith("source.")
     }
 }

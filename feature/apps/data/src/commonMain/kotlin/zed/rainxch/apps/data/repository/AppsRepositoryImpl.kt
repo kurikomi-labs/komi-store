@@ -591,7 +591,7 @@ class AppsRepositoryImpl(
             val repoModel = client.getRepository(owner, repo).getOrNull() ?: return null
             val latestTag = client.getLatestRelease(owner, repo).getOrNull()?.tagName
             GithubRepoInfo(
-                id = repoModel.id,
+                id = zed.rainxch.core.domain.util.RepoIdCodec.encode(host, repoModel.id),
                 name = repoModel.name,
                 owner = repoModel.owner.login,
                 ownerAvatarUrl = repoModel.owner.avatarUrl,
