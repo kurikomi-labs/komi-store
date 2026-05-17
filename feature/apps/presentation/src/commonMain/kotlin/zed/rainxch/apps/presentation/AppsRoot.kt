@@ -732,7 +732,11 @@ fun AppsScreen(
                                                 onUpdateClick = { onAction(AppsAction.OnUpdateApp(appItem.installedApp)) },
                                                 onCancelClick = { onAction(AppsAction.OnCancelUpdate(appItem.installedApp.packageName)) },
                                                 onUninstallClick = { onAction(AppsAction.OnUninstallApp(appItem.installedApp)) },
-                                                onRepoClick = { onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId)) },
+                                                onRepoClick = {
+                                                    if (appItem.installedApp.installSource != zed.rainxch.core.domain.model.InstallSource.DIRECT_URL) {
+                                                        onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId))
+                                                    }
+                                                },
                                                 onTogglePreReleases = { enabled ->
                                                     onAction(AppsAction.OnTogglePreReleases(appItem.installedApp.packageName, enabled))
                                                 },
@@ -842,7 +846,9 @@ fun AppsScreen(
                                                         )
                                                     },
                                                     onRowClick = {
-                                                        onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId))
+                                                        if (appItem.installedApp.installSource != zed.rainxch.core.domain.model.InstallSource.DIRECT_URL) {
+                                                            onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId))
+                                                        }
                                                     },
                                                 )
                                             }

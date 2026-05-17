@@ -23,6 +23,10 @@ import zed.rainxch.apps.presentation.AppsAction
 import zed.rainxch.apps.presentation.AppsState
 import zed.rainxch.githubstore.core.presentation.res.*
 
+private const val URL_EXAMPLE = "https://example.com/app.apk"
+private const val VERSION_EXAMPLE = "1.0.0"
+private const val ICON_EXAMPLE = "https://example.com/icon.png"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DirectUrlBottomSheet(
@@ -56,7 +60,7 @@ fun DirectUrlBottomSheet(
                 value = state.directUrlDraft,
                 onValueChange = { onAction(AppsAction.OnDirectUrlChanged(it)) },
                 label = { Text(stringResource(Res.string.direct_url_field_url)) },
-                placeholder = { Text("https://example.com/app.apk") },
+                placeholder = { Text(URL_EXAMPLE) },
                 singleLine = true,
                 isError = state.directUrlError != null,
                 modifier = Modifier.fillMaxWidth(),
@@ -74,7 +78,7 @@ fun DirectUrlBottomSheet(
                 value = state.directUrlVersionDraft,
                 onValueChange = { onAction(AppsAction.OnDirectUrlVersionChanged(it)) },
                 label = { Text(stringResource(Res.string.direct_url_field_version)) },
-                placeholder = { Text("1.0.0") },
+                placeholder = { Text(VERSION_EXAMPLE) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -83,7 +87,7 @@ fun DirectUrlBottomSheet(
                 value = state.directUrlIconDraft,
                 onValueChange = { onAction(AppsAction.OnDirectUrlIconChanged(it)) },
                 label = { Text(stringResource(Res.string.direct_url_field_icon)) },
-                placeholder = { Text("https://example.com/icon.png") },
+                placeholder = { Text(ICON_EXAMPLE) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )

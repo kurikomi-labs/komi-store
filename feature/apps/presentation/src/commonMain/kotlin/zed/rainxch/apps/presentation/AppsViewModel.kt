@@ -655,15 +655,15 @@ class AppsViewModel(
             }
 
             is AppsAction.OnDirectUrlNameChanged -> {
-                _state.update { it.copy(directUrlNameDraft = action.name) }
+                _state.update { it.copy(directUrlNameDraft = action.name, directUrlError = null) }
             }
 
             is AppsAction.OnDirectUrlVersionChanged -> {
-                _state.update { it.copy(directUrlVersionDraft = action.version) }
+                _state.update { it.copy(directUrlVersionDraft = action.version, directUrlError = null) }
             }
 
             is AppsAction.OnDirectUrlIconChanged -> {
-                _state.update { it.copy(directUrlIconDraft = action.iconUrl) }
+                _state.update { it.copy(directUrlIconDraft = action.iconUrl, directUrlError = null) }
             }
 
             AppsAction.OnConfirmAddDirectUrl -> {
