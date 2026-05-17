@@ -227,7 +227,13 @@ fun preprocessMarkdown(
                 }
             } else {
                 val encodedSummary = encodeDetailsSummary(summary)
-                "\n\n```ghs-details|$encodedSummary\n$body\n```\n\n"
+                // Body may contain its own ```fenced``` code blocks. Pick a
+                // fence delimiter at least one backtick longer than the
+                // longest run inside the body so nested fences don't
+                // terminate our wrapper early.
+                val longestRun = longestBacktickRun(body)
+                val fence = "`".repeat(maxOf(4, longestRun + 1))
+                "\n\n${fence}ghs-details|$encodedSummary\n$body\n$fence\n\n"
             }
         }
 
@@ -581,6 +587,20 @@ fun preprocessMarkdown(
     processed = joinAdjacentImageLines(processed)
 
     return processed.trim()
+}
+
+private fun longestBacktickRun(text: String): Int {
+    var max = 0
+    var current = 0
+    for (c in text) {
+        if (c == '`') {
+            current++
+            if (current > max) max = current
+        } else {
+            current = 0
+        }
+    }
+    return max
 }
 
 private fun encodeDetailsSummary(text: String): String {
