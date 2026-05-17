@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -343,8 +344,17 @@ private fun StarredTopBar(
                             onDismissRequest = { showSortMenu = false },
                         ) {
                             StarredSortRule.entries.forEach { rule ->
+                                val selected = rule == sortRule
                                 DropdownMenuItem(
                                     text = { Text(stringResource(rule.labelRes())) },
+                                    leadingIcon = {
+                                        if (selected) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = stringResource(Res.string.sort_selected),
+                                            )
+                                        }
+                                    },
                                     onClick = {
                                         showSortMenu = false
                                         onAction(StarredReposAction.OnSortRuleSelected(rule))

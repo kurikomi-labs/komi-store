@@ -3,6 +3,7 @@ package zed.rainxch.favourites.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -105,7 +106,12 @@ class FavouritesViewModel(
 
             is FavouritesAction.OnSortRuleSelected -> {
                 viewModelScope.launch {
-                    runCatching { tweaksRepository.setFavouritesSortRule(action.sortRule.name) }
+                    try {
+                        tweaksRepository.setFavouritesSortRule(action.sortRule.name)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (_: Throwable) {
+                    }
                 }
             }
 

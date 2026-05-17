@@ -38,7 +38,7 @@
         "Markdown rötuşu — HTML blockquote'ları ve <pre><code> blokları doğru render. Alt/üst simgeler Unicode'a çevriliyor (H₂O, x²). Adlandırılmış HTML varlıkları (©, ™, —, kıvrık tırnaklar) çözülüyor.",
         "<details>/<summary> daraltılabilir bölümler dokunmayla açılan kart olarak gösteriliyor. Komşu rozet/buton görselleri (Play Store, GitHub Releases vs.) üst üste değil tek satırda akıyor.",
         "Uygulamayı manuel eşlemek için artık yeniden indirme gerekmiyor — seçtiğiniz sürüm olduğu gibi güvenle kabul ediliyor. Detaylar'daki banner manuel bağlanan uygulamaları belirtiyor.",
-        "Yüklü, Yıldızlı ve Favoriler bölümleri için sıralama — ada, yenilik veya yıldız sayısına göre; tercih her bölüm için ayrı hatırlanır."
+        "Bölüme özel sıralama — Yüklü (güncellemeler, yenilik, ad), Yıldızlı (yenilik, ad, yıldız), Favoriler (yenilik, ad); her bölüm kendi tercihini hatırlar."
       ]
     }
   ]

@@ -327,6 +327,7 @@
     <string name="sort_recently_updated">हाल ही में अपडेट किया गया</string>
     <string name="sort_name">नाम</string>
     <string name="sort_recently_added">हाल ही में जोड़े गए</string>
+    <string name="sort_selected">चयनित</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">रिपॉजिटरी</string>

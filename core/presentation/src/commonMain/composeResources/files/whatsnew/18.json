@@ -38,7 +38,7 @@
         "Markdown polish — HTML blockquotes and <pre><code> fences now render correctly. Sub/superscript convert to unicode (H₂O, x²). Named HTML entities (©, ™, —, “curly quotes”, etc.) decoded.",
         "Collapsible <details>/<summary> sections render as tap-to-expand cards. Adjacent badge / button images (Play Store, GitHub Releases, etc.) flow in a single row instead of stacking.",
         "Manual app matching no longer re-downloads to verify — your selected version is trusted as-is. Details banner notes when an app was manually linked.",
-        "Sort Installed, Starred, and Favourites — pick by name, recency, or stars; your choice is remembered per section."
+        "Section-aware sort across the library — Installed (updates, recency, name), Starred (recency, name, stars), Favourites (recency, name); each section remembers its own choice."
       ]
     }
   ]

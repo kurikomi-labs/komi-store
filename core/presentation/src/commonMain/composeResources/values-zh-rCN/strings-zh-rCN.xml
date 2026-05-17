@@ -286,6 +286,7 @@
     <string name="sort_recently_updated">最近更新</string>
     <string name="sort_name">名称</string>
     <string name="sort_recently_added">最近添加</string>
+    <string name="sort_selected">已选中</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">个仓库</string>

@@ -302,6 +302,7 @@
     <string name="sort_recently_updated">Ostatnio zaktualizowane</string>
     <string name="sort_name">Nazwa</string>
     <string name="sort_recently_added">Ostatnio dodane</string>
+    <string name="sort_selected">Wybrane</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repozytorium</string>

@@ -338,6 +338,7 @@
     <string name="sort_recently_updated">সাম্প্রতিক আপডেট</string>
     <string name="sort_name">নাম</string>
     <string name="sort_recently_added">সম্প্রতি যোগ করা</string>
+    <string name="sort_selected">নির্বাচিত</string>
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">রিপোজিটরি</string>

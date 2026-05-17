@@ -281,7 +281,13 @@ class AppsViewModel(
                 filterApps()
 
                 viewModelScope.launch {
-                    runCatching { tweaksRepository.setAppsSortRule(action.sortRule.name) }
+                    try {
+                        tweaksRepository.setAppsSortRule(action.sortRule.name)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        logger.error("Failed to persist apps sort rule: ${e.message}")
+                    }
                 }
             }
 
