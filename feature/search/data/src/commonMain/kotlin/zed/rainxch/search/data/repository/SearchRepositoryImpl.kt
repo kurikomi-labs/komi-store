@@ -43,6 +43,7 @@ class SearchRepositoryImpl(
     private val clientProvider: GitHubClientProvider,
     private val backendApiClient: BackendApiClient,
     private val cacheManager: CacheManager,
+    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : SearchRepository {
     private val httpClient: HttpClient get() = clientProvider.client
     private val releaseCheckCache = LruCache<String, GithubRepoSummary>(maxSize = 500)
@@ -81,8 +82,14 @@ class SearchRepositoryImpl(
         sortBy: SortBy,
         sortOrder: SortOrder,
         page: Int,
+        source: zed.rainxch.domain.model.SearchSource,
     ): Flow<PaginatedDiscoveryRepositories> =
         channelFlow {
+            if (source is zed.rainxch.domain.model.SearchSource.Forgejo) {
+                forgejoSearch(source.host, query, page)
+                return@channelFlow
+            }
+
             val cacheKey = searchCacheKey(query, platform, language, sortBy, sortOrder, page)
 
             val cached = cacheManager.get<PaginatedDiscoveryRepositories>(cacheKey)
@@ -102,6 +109,49 @@ class SearchRepositoryImpl(
             // Fallback to GitHub REST search
             fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey)
         }.flowOn(Dispatchers.IO)
+
+    private suspend fun kotlinx.coroutines.channels.ProducerScope<PaginatedDiscoveryRepositories>.forgejoSearch(
+        host: String,
+        query: String,
+        page: Int,
+    ) {
+        val client = forgejoClientRegistry.clientFor(host)
+        val result = client.searchRepositories(query = query, page = page, limit = PER_PAGE)
+        val repos = result.getOrNull()?.data.orEmpty()
+        val summaries = repos.map { repo ->
+            zed.rainxch.core.domain.model.GithubRepoSummary(
+                id = zed.rainxch.core.domain.util.RepoIdCodec.encode(host, repo.id),
+                name = repo.name,
+                fullName = repo.fullName ?: "${repo.owner.login}/${repo.name}",
+                owner = zed.rainxch.core.domain.model.GithubUser(
+                    id = repo.owner.id,
+                    login = repo.owner.login,
+                    avatarUrl = repo.owner.avatarUrl,
+                    htmlUrl = repo.owner.htmlUrl,
+                ),
+                description = repo.description,
+                defaultBranch = repo.defaultBranch ?: "main",
+                htmlUrl = repo.htmlUrl,
+                stargazersCount = repo.starsCount,
+                forksCount = repo.forksCount,
+                language = repo.language,
+                topics = null,
+                releasesUrl = "${repo.htmlUrl}/releases",
+                updatedAt = repo.updatedAt ?: "",
+                isFork = false,
+                sourceHost = host,
+            )
+        }
+        send(
+            PaginatedDiscoveryRepositories(
+                repos = summaries,
+                hasMore = repos.size >= PER_PAGE,
+                nextPageIndex = page + 1,
+                totalCount = null,
+                passthroughAttempted = false,
+            ),
+        )
+    }
 
     // ── Backend search ────────────────────────────────────────────────
 

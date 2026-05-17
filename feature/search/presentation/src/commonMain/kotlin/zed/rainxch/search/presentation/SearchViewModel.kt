@@ -401,6 +401,7 @@ class SearchViewModel(
                             sortBy = _state.value.selectedSortBy.toDomain(),
                             sortOrder = _state.value.selectedSortOrder.toDomain(),
                             page = currentPage,
+                            source = _state.value.selectedSource.toDomain(),
                         ).collect { paginatedRepos ->
                             currentPage = paginatedRepos.nextPageIndex
 
@@ -508,7 +509,15 @@ class SearchViewModel(
                         it.copy(selectedSearchPlatform = action.searchPlatform)
                     }
                     currentPage = 1
-    
+
+                    performSearch(isInitial = true)
+                }
+            }
+
+            is SearchAction.OnSourceSelected -> {
+                if (_state.value.selectedSource != action.source) {
+                    _state.update { it.copy(selectedSource = action.source) }
+                    currentPage = 1
                     performSearch(isInitial = true)
                 }
             }

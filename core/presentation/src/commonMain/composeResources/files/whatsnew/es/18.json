@@ -39,7 +39,7 @@
         "Secciones <details>/<summary> colapsables como tarjetas tap-to-expand. Imágenes de insignia/botón adyacentes (Play Store, GitHub Releases, etc.) fluyen en una fila en vez de apilarse.",
         "Vincular apps manualmente ya no requiere re-descargar — tu versión seleccionada se acepta tal cual. Un banner en Detalles indica cuando una app fue vinculada manualmente.",
         "Orden por sección — Instaladas (actualizaciones, recencia, nombre), Con estrella (recencia, nombre, estrellas), Favoritos (recencia, nombre); cada sección recuerda su propia elección.",
-        "Soporte para Codeberg + Forgejo — pega una URL de Codeberg.org o de cualquier host Forgejo/Gitea en el formulario de vinculación manual; GHS elige el asset, descarga, instala y consulta actualizaciones como repos de GitHub. El chip de la fila muestra el origen. ¿Self-hosted? Ajustes → Red → Forjas personalizadas permite añadir cualquier host."
+        "Soporte para Codeberg + Forgejo — pega una URL de Codeberg.org o de cualquier host Forgejo/Gitea en el formulario de vinculación manual; GHS elige el asset, descarga, instala y consulta actualizaciones como repos de GitHub. El chip de la fila muestra el origen. ¿Self-hosted? Ajustes → Red → Forjas personalizadas permite añadir cualquier host. La búsqueda ahora tiene un selector de origen GitHub / Codeberg."
       ]
     }
   ]

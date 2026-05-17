@@ -39,7 +39,7 @@
         "Rozwijane sekcje <details>/<summary> jako karty z tap-to-expand. Sąsiednie obrazy odznak/przycisków (Play Store, GitHub Releases itp.) płyną w jednym wierszu zamiast się układać.",
         "Ręczne powiązywanie aplikacji nie wymaga już ponownego pobrania — wybrana wersja jest akceptowana bez weryfikacji. Baner na Szczegółach pokazuje ręcznie powiązane aplikacje.",
         "Sortowanie zależne od sekcji — Zainstalowane (aktualizacje, data, nazwa), Z gwiazdką (data, nazwa, gwiazdki), Ulubione (data, nazwa); każda sekcja pamięta swój wybór.",
-        "Wsparcie Codeberg + Forgejo — wklej URL Codeberg.org lub dowolnego hosta Forgejo/Gitea w formularzu ręcznego powiązania; GHS wybiera asset, pobiera, instaluje i odpytuje aktualizacje tak jak repozytoria GitHub. Chip w wierszu wskazuje źródło. Własny host? Tweaks → Sieć → Niestandardowe forge pozwala dodać dowolny host."
+        "Wsparcie Codeberg + Forgejo — wklej URL Codeberg.org lub dowolnego hosta Forgejo/Gitea w formularzu ręcznego powiązania; GHS wybiera asset, pobiera, instaluje i odpytuje aktualizacje tak jak repozytoria GitHub. Chip w wierszu wskazuje źródło. Własny host? Tweaks → Sieć → Niestandardowe forge pozwala dodać dowolny host. Wyszukiwanie ma teraz przełącznik źródła GitHub / Codeberg."
       ]
     }
   ]

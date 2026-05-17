@@ -366,6 +366,29 @@ fun SearchScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                items(zed.rainxch.search.presentation.model.SearchSourceUi.entries) { source ->
+                    FilterChip(
+                        selected = state.selectedSource == source,
+                        label = {
+                            Text(
+                                text = source.name,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        },
+                        onClick = {
+                            onAction(SearchAction.OnSourceSelected(source))
+                        },
+                    )
+                }
+            }
+
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 items(SearchPlatformUi.entries) { sortBy ->
                     FilterChip(
                         selected = state.selectedSearchPlatform == sortBy,

@@ -39,7 +39,7 @@
         "Sezioni <details>/<summary> espandibili come card tap-to-expand. Immagini di badge/pulsante adiacenti (Play Store, GitHub Releases, ecc.) scorrono su una riga invece di impilarsi.",
         "Il collegamento manuale delle app non richiede più il re-download — la versione che scegli viene accettata così com'è. Un banner sui Dettagli segnala quando un'app è stata collegata manualmente.",
         "Ordinamento per sezione — Installate (aggiornamenti, recenza, nome), Con stella (recenza, nome, stelle), Preferiti (recenza, nome); ogni sezione ricorda la propria scelta.",
-        "Supporto Codeberg + Forgejo — incolla un URL Codeberg.org o di qualsiasi host Forgejo/Gitea nel modulo di collegamento manuale; GHS sceglie l'asset, scarica, installa e sonda gli aggiornamenti come i repo GitHub. Il chip sulla riga indica la fonte. Self-hosted? Tweaks → Rete → Forge personalizzate per aggiungere qualunque host."
+        "Supporto Codeberg + Forgejo — incolla un URL Codeberg.org o di qualsiasi host Forgejo/Gitea nel modulo di collegamento manuale; GHS sceglie l'asset, scarica, installa e sonda gli aggiornamenti come i repo GitHub. Il chip sulla riga indica la fonte. Self-hosted? Tweaks → Rete → Forge personalizzate per aggiungere qualunque host. La ricerca ora ha un selettore di origine GitHub / Codeberg."
       ]
     }
   ]
