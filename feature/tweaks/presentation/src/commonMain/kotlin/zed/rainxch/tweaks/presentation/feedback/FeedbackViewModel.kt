@@ -31,7 +31,7 @@ class FeedbackViewModel(
     private val _state = MutableStateFlow(FeedbackState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<FeedbackEvent>()
+    private val _events = Channel<FeedbackEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {

@@ -157,7 +157,7 @@ class DetailsViewModel(
                 DetailsState(),
             )
 
-    private val _events = Channel<DetailsEvent>()
+    private val _events = Channel<DetailsEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private val rateLimited = AtomicBoolean(false)

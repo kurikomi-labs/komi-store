@@ -128,7 +128,7 @@ class TweaksViewModel(
                 initialValue = TweaksState(),
             )
 
-    private val _events = Channel<TweaksEvent>()
+    private val _events = Channel<TweaksEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private fun refreshCacheSize() {

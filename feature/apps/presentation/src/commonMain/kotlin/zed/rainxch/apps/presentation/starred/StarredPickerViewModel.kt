@@ -27,7 +27,7 @@ class StarredPickerViewModel(
     private val _state = MutableStateFlow(StarredPickerState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<StarredPickerEvent>()
+    private val _events = Channel<StarredPickerEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private var scanJob: Job? = null
