@@ -1212,4 +1212,8 @@
     <string name="kao_banner_body">Google's developer-verification policy threatens open Android distribution. GitHub Store stands with the coalition.</string>
     <string name="kao_banner_cta">Learn more</string>
     <string name="kao_banner_dismiss_cd">Dismiss banner</string>
+
+    <!-- Auto-translate -->
+    <string name="translation_auto_title">Auto-translate repositories</string>
+    <string name="translation_auto_subtitle">Translate README and release notes automatically when opening a repository. Uses your app language as the target.</string>
 </resources>

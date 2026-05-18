@@ -58,6 +58,8 @@ data class TweaksState(
      * which chip is selected.
      */
     val selectedAppLanguage: String? = null,
+    val autoTranslateEnabled: Boolean = false,
+    val autoTranslateTargetLang: String? = null,
     val isFeedbackSheetVisible: Boolean = false,
     /**
      * True only on aggressive-OEM Android devices (Oppo, OnePlus, Realme,

@@ -155,6 +155,14 @@ sealed interface TweaksAction {
 
     data object OnYoudaoCredentialsSave : TweaksAction
 
+    data class OnAutoTranslateEnabledToggle(
+        val enabled: Boolean,
+    ) : TweaksAction
+
+    data class OnAutoTranslateTargetSelected(
+        val tag: String?,
+    ) : TweaksAction
+
     /**
      * User picked a UI language. `tag == null` means "follow system
      * locale" — cleared persisted preference.

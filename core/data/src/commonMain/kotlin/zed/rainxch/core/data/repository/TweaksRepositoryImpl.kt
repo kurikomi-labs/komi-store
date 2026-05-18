@@ -215,6 +215,29 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getAutoTranslateEnabled(): Flow<Boolean> =
+        gatedGetFlow(K_AUTO_TRANSLATE_ENABLED, false)
+
+    override suspend fun setAutoTranslateEnabled(enabled: Boolean) {
+        migrationDeferred.await()
+        ksafe.put(K_AUTO_TRANSLATE_ENABLED, enabled)
+    }
+
+    override fun getAutoTranslateTargetLang(): Flow<String?> =
+        gatedGetFlow<String?>(K_AUTO_TRANSLATE_TARGET, null).map { raw ->
+            raw?.trim()?.takeIf { it.isNotEmpty() }
+        }
+
+    override suspend fun setAutoTranslateTargetLang(tag: String?) {
+        migrationDeferred.await()
+        val normalized = tag?.trim().orEmpty()
+        if (normalized.isEmpty()) {
+            ksafe.delete(K_AUTO_TRANSLATE_TARGET)
+        } else {
+            ksafe.put(K_AUTO_TRANSLATE_TARGET, normalized)
+        }
+    }
+
     override fun getExternalImportEnabled(): Flow<Boolean> = gatedGetFlow(K_EXTERNAL_IMPORT_ENABLED, true)
     override suspend fun setExternalImportEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_EXTERNAL_IMPORT_ENABLED, enabled) }
 
@@ -322,6 +345,8 @@ class TweaksRepositoryImpl(
         MigrationEntry(stringPreferencesKey("youdao_app_key"), K_YOUDAO_APP_KEY),
         MigrationEntry(stringPreferencesKey("youdao_app_secret"), K_YOUDAO_APP_SECRET),
         MigrationEntry(stringPreferencesKey("app_language"), K_APP_LANGUAGE),
+        MigrationEntry(booleanPreferencesKey("auto_translate_enabled"), K_AUTO_TRANSLATE_ENABLED),
+        MigrationEntry(stringPreferencesKey("auto_translate_target_lang"), K_AUTO_TRANSLATE_TARGET),
         MigrationEntry(booleanPreferencesKey("external_import_enabled"), K_EXTERNAL_IMPORT_ENABLED),
         MigrationEntry(booleanPreferencesKey("external_match_search_enabled"), K_EXTERNAL_MATCH_SEARCH_ENABLED),
         MigrationEntry(intPreferencesKey("external_import_banner_dismissed_at"), K_EXTERNAL_IMPORT_BANNER_DISMISSED_AT),
@@ -363,6 +388,8 @@ class TweaksRepositoryImpl(
         private const val K_YOUDAO_APP_KEY = "youdao_app_key"
         private const val K_YOUDAO_APP_SECRET = "youdao_app_secret"
         private const val K_APP_LANGUAGE = "app_language"
+        private const val K_AUTO_TRANSLATE_ENABLED = "auto_translate_enabled"
+        private const val K_AUTO_TRANSLATE_TARGET = "auto_translate_target_lang"
         private const val K_EXTERNAL_IMPORT_ENABLED = "external_import_enabled"
         private const val K_EXTERNAL_MATCH_SEARCH_ENABLED = "external_match_search_enabled"
         private const val K_EXTERNAL_IMPORT_BANNER_DISMISSED_AT = "external_import_banner_dismissed_at"

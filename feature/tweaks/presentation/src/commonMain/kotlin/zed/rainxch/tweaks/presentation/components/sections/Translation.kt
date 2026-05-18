@@ -66,6 +66,50 @@ fun LazyListScope.translationSection(
             state = state,
             onAction = onAction,
         )
+
+        Spacer(Modifier.height(8.dp))
+
+        AutoTranslateCard(
+            enabled = state.autoTranslateEnabled,
+            onToggle = { onAction(TweaksAction.OnAutoTranslateEnabledToggle(it)) },
+        )
+    }
+}
+
+@Composable
+private fun AutoTranslateCard(
+    enabled: Boolean,
+    onToggle: (Boolean) -> Unit,
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+        shape = RoundedCornerShape(32.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(Res.string.translation_auto_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(Res.string.translation_auto_subtitle),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            androidx.compose.material3.Switch(
+                checked = enabled,
+                onCheckedChange = onToggle,
+            )
+        }
     }
 }
 

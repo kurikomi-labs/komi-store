@@ -2717,6 +2717,11 @@ class DetailsViewModel(
                 telemetryRepository.recordRepoViewed(repo.id)
 
                 observeInstalledApp(repo.id)
+
+                maybeAutoTranslate(
+                    readmeBody = readme?.first,
+                    releaseDescription = selectedRelease?.description,
+                )
             } catch (e: RateLimitException) {
                 logger.error("Rate limited: ${e.message}")
                 val seconds = e.rateLimitInfo.timeUntilReset().inWholeSeconds
@@ -2879,6 +2884,46 @@ class DetailsViewModel(
                 _state.update { it.copy(isRefreshing = false) }
                 _events.send(
                     DetailsEvent.OnRefreshError(kind = RefreshError.GENERIC),
+                )
+            }
+        }
+    }
+
+    private fun maybeAutoTranslate(readmeBody: String?, releaseDescription: String?) {
+        viewModelScope.launch {
+            val enabled = runCatching {
+                tweaksRepository.getAutoTranslateEnabled().first()
+            }.getOrDefault(false)
+            if (!enabled) return@launch
+            val explicit = runCatching {
+                tweaksRepository.getAutoTranslateTargetLang().first()
+            }.getOrNull()
+            val app = runCatching { tweaksRepository.getAppLanguage().first() }.getOrNull()
+            val target = explicit ?: app ?: translationRepository.getDeviceLanguageCode()
+            if (target.isBlank()) return@launch
+
+            val currentReadmeLang = _state.value.readmeLanguage
+            if (!readmeBody.isNullOrBlank() &&
+                _state.value.aboutTranslation.translatedText == null &&
+                currentReadmeLang?.equals(target, ignoreCase = true) != true
+            ) {
+                aboutTranslationJob?.cancel()
+                aboutTranslationJob = translateContent(
+                    text = readmeBody,
+                    targetLanguageCode = target,
+                    updateState = { ts -> _state.update { it.copy(aboutTranslation = ts) } },
+                    getCurrentState = { _state.value.aboutTranslation },
+                )
+            }
+            if (!releaseDescription.isNullOrBlank() &&
+                _state.value.whatsNewTranslation.translatedText == null
+            ) {
+                whatsNewTranslationJob?.cancel()
+                whatsNewTranslationJob = translateContent(
+                    text = releaseDescription,
+                    targetLanguageCode = target,
+                    updateState = { ts -> _state.update { it.copy(whatsNewTranslation = ts) } },
+                    getCurrentState = { _state.value.whatsNewTranslation },
                 )
             }
         }

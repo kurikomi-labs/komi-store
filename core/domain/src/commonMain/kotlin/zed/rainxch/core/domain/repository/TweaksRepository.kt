@@ -92,6 +92,24 @@ interface TweaksRepository {
 
     suspend fun setAppLanguage(tag: String?)
 
+    /**
+     * When `true`, Details kicks off a translation of the README and
+     * release notes immediately on load, using
+     * [getAutoTranslateTargetLang] as the target. Default `false`.
+     */
+    fun getAutoTranslateEnabled(): Flow<Boolean>
+
+    suspend fun setAutoTranslateEnabled(enabled: Boolean)
+
+    /**
+     * BCP 47 tag of the language Details auto-translates into when
+     * [getAutoTranslateEnabled] is `true`. `null` falls back to the
+     * UI language ([getAppLanguage]) at translate time.
+     */
+    fun getAutoTranslateTargetLang(): Flow<String?>
+
+    suspend fun setAutoTranslateTargetLang(tag: String?)
+
     fun getExternalImportEnabled(): Flow<Boolean>
 
     suspend fun setExternalImportEnabled(enabled: Boolean)

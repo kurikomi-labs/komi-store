@@ -108,6 +108,7 @@ class TweaksViewModel(
                     loadTelemetryEnabled()
                     loadTranslationSettings()
                     loadAppLanguage()
+                    loadAutoTranslate()
 
                     observeShizukuStatus()
                     observeDhizukuStatus()
@@ -499,6 +500,19 @@ class TweaksViewModel(
         viewModelScope.launch {
             tweaksRepository.getAppLanguage().collect { tag ->
                 _state.update { it.copy(selectedAppLanguage = tag) }
+            }
+        }
+    }
+
+    private fun loadAutoTranslate() {
+        viewModelScope.launch {
+            tweaksRepository.getAutoTranslateEnabled().collect { enabled ->
+                _state.update { it.copy(autoTranslateEnabled = enabled) }
+            }
+        }
+        viewModelScope.launch {
+            tweaksRepository.getAutoTranslateTargetLang().collect { tag ->
+                _state.update { it.copy(autoTranslateTargetLang = tag) }
             }
         }
     }
@@ -968,6 +982,18 @@ class TweaksViewModel(
                     if (getPlatform() != Platform.ANDROID) {
                         _events.send(TweaksEvent.OnAppLanguageChangeRequiresRestart)
                     }
+                }
+            }
+
+            is TweaksAction.OnAutoTranslateEnabledToggle -> {
+                viewModelScope.launch {
+                    tweaksRepository.setAutoTranslateEnabled(action.enabled)
+                }
+            }
+
+            is TweaksAction.OnAutoTranslateTargetSelected -> {
+                viewModelScope.launch {
+                    tweaksRepository.setAutoTranslateTargetLang(action.tag)
                 }
             }
 
