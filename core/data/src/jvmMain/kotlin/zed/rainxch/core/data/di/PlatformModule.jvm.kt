@@ -100,6 +100,14 @@ actual val corePlatformModule = module {
         eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-tokens")
     }
 
+    single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-prefs")
+    }
+
+    single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-announcements")
+    }
+
 
     // Utils
 

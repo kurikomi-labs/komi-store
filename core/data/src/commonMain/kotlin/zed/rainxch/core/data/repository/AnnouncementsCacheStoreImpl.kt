@@ -3,40 +3,64 @@ package zed.rainxch.core.data.repository
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CancellationException
+import eu.anifantakis.lib.ksafe.KSafe
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
 
 class AnnouncementsCacheStoreImpl(
-    private val preferences: DataStore<Preferences>,
+    private val ksafe: KSafe,
+    private val legacyDataStore: DataStore<Preferences>,
 ) : AnnouncementsCacheStore {
     private val logger = Logger.withTag("AnnouncementsCacheStore")
+    private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    @Volatile private var migrated: Boolean = false
+
+    init {
+        migrationScope.launch { migrateIfNeeded() }
+    }
 
     override fun getCachedPayload(): Flow<String?> =
-        preferences.data
-            .catch { error ->
-                if (error is CancellationException) throw error
-                logger.w("Cache read failed: ${error.message}")
-                emit(emptyPreferences())
-            }
-            .map { prefs -> prefs[CACHED_PAYLOAD_KEY] }
+        ksafe.getFlow<String?>(K_CACHED_PAYLOAD, null).map { it?.takeIf { v -> v.isNotEmpty() } }
 
     override suspend fun setCachedPayload(payload: String?) {
-        preferences.edit { prefs ->
-            if (payload == null) {
-                prefs.remove(CACHED_PAYLOAD_KEY)
-            } else {
-                prefs[CACHED_PAYLOAD_KEY] = payload
-            }
+        if (payload == null) {
+            ksafe.delete(K_CACHED_PAYLOAD)
+        } else {
+            ksafe.put(K_CACHED_PAYLOAD, payload)
         }
     }
 
+    private suspend fun migrateIfNeeded() {
+        if (migrated) return
+        val existing = runCatching { ksafe.get<String?>(K_CACHED_PAYLOAD, null) }.getOrNull()
+        if (existing != null) {
+            migrated = true
+            return
+        }
+        val legacy = runCatching {
+            legacyDataStore.data.first()[stringPreferencesKey("announcements_cached_payload")]
+        }.getOrNull()
+        if (!legacy.isNullOrEmpty()) {
+            runCatching { ksafe.put(K_CACHED_PAYLOAD, legacy) }
+            runCatching {
+                legacyDataStore.edit {
+                    it.remove(stringPreferencesKey("announcements_cached_payload"))
+                }
+            }.onFailure { logger.w("legacy clear failed: ${it.message}") }
+        }
+        migrated = true
+    }
+
     private companion object {
-        val CACHED_PAYLOAD_KEY = stringPreferencesKey("announcements_cached_payload")
+        const val K_CACHED_PAYLOAD = "announcements_cached_payload"
     }
 }

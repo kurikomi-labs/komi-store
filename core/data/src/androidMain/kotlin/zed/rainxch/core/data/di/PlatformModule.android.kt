@@ -190,6 +190,20 @@ actual val corePlatformModule =
             )
         }
 
+        single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
+            eu.anifantakis.lib.ksafe.KSafe(
+                context = androidContext(),
+                fileName = "ghs-prefs",
+            )
+        }
+
+        single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
+            eu.anifantakis.lib.ksafe.KSafe(
+                context = androidContext(),
+                fileName = "ghs-announcements",
+            )
+        }
+
         // Utils
 
         single<BrowserHelper> {

@@ -11,7 +11,7 @@
         "커뮤니티 미러로 fastly.jsdelivr.net 추가. GitHub가 제한될 때 유용.",
         "Keep Android Open 연합 합류 — Apps의 배너로 이유 설명.",
         "GitHub 로그인이 표준 웹 플로우로 — 탭, 브라우저에서 인증, 완료. 8자리 코드 불필요.",
-        "GitHub 인증 토큰이 이제 KSafe로 AES-256-GCM 암호화 저장됩니다 (Android에서는 하드웨어 Keystore). 기존 토큰은 첫 실행 시 자동으로 마이그레이션됩니다."
+        "저장되는 모든 환경설정과 자격증명이 이제 KSafe로 AES-256-GCM 암호화 저장됩니다 — GitHub 토큰, 프록시 자격증명, 앱 설정, 디바이스 ID, 미러 선택, 모든 코치마크, 공지 캐시. Android에서는 하드웨어 Keystore. 기존 데이터는 첫 실행 시 자동으로 마이그레이션됩니다."
       ]
     },
     {

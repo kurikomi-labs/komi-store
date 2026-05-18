@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import co.touchlab.kermit.Logger
+import eu.anifantakis.lib.ksafe.KSafe
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +39,8 @@ class ExternalImportRepositoryImpl(
     private val scanner: ExternalAppScanner,
     private val externalLinkDao: ExternalLinkDao,
     private val signingFingerprintDao: SigningFingerprintDao,
-    private val preferences: DataStore<Preferences>,
+    private val ksafe: KSafe,
+    private val legacyDataStore: DataStore<Preferences>,
     private val externalMatchApi: ExternalMatchApi,
     private val backendClient: BackendApiClient,
     private val telemetry: TelemetryRepository,
@@ -62,7 +64,10 @@ class ExternalImportRepositoryImpl(
     override fun pendingCandidateCountFlow(): Flow<Int> = externalLinkDao.observePendingReviewCount()
 
     override suspend fun scheduleInitialScanIfNeeded() {
-        val firstLaunch = preferences.data.first()[INITIAL_SCAN_COMPLETED_AT_KEY] == null
+        migrateLegacyInitialScanFlag()
+        val firstLaunch = runCatching {
+            ksafe.get<Long?>(K_INITIAL_SCAN_AT, null)
+        }.getOrNull() == null
         runCatching {
             if (firstLaunch) {
                 runCatching { telemetry.importScanStarted(trigger = "first_launch") }
@@ -468,8 +473,18 @@ class ExternalImportRepositoryImpl(
     override suspend fun isPermissionGranted(): Boolean = scanner.isPermissionGranted()
 
     private suspend fun markInitialScanComplete() {
-        preferences.edit { prefs ->
-            prefs[INITIAL_SCAN_COMPLETED_AT_KEY] = nowMillis()
+        ksafe.put(K_INITIAL_SCAN_AT, nowMillis())
+    }
+
+    private suspend fun migrateLegacyInitialScanFlag() {
+        val existing = runCatching { ksafe.get<Long?>(K_INITIAL_SCAN_AT, null) }.getOrNull()
+        if (existing != null) return
+        val legacyValue = runCatching {
+            legacyDataStore.data.first()[longPreferencesKey("external_import_initial_scan_at")]
+        }.getOrNull() ?: return
+        runCatching { ksafe.put(K_INITIAL_SCAN_AT, legacyValue) }
+        runCatching {
+            legacyDataStore.edit { it.remove(longPreferencesKey("external_import_initial_scan_at")) }
         }
     }
 
@@ -582,7 +597,7 @@ class ExternalImportRepositoryImpl(
         }
 
     companion object {
-        private val INITIAL_SCAN_COMPLETED_AT_KEY = longPreferencesKey("external_import_initial_scan_at")
+        private const val K_INITIAL_SCAN_AT = "external_import_initial_scan_at"
         private const val SKIP_TTL_MILLIS: Long = 7L * 24 * 60 * 60 * 1000
         private const val MATCH_BATCH_SIZE = 25
         private const val FINGERPRINT_CONFIDENCE = 0.92

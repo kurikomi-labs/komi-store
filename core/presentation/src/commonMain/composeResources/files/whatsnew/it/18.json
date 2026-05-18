@@ -11,7 +11,7 @@
         "Aggiunto fastly.jsdelivr.net come mirror della community. Utile quando GitHub è limitato.",
         "Aderito alla coalizione Keep Android Open — un banner in-app su Apps lo spiega.",
         "L'accesso GitHub ora usa il flusso web standard — un tap, autorizza nel browser, fatto. Niente più codice a 8 cifre.",
-        "I token di autenticazione GitHub sono ora cifrati (AES-256-GCM, Keystore hardware su Android) tramite KSafe. I token esistenti migrano automaticamente al primo avvio."
+        "Tutte le preferenze e credenziali persistite ora sono cifrate (AES-256-GCM) tramite KSafe — token GitHub, credenziali proxy, impostazioni app, ID dispositivo, scelta mirror, tutti i coachmark, cache annunci. Keystore hardware su Android. I dati esistenti migrano automaticamente al primo avvio."
       ]
     },
     {

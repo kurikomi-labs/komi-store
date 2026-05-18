@@ -11,7 +11,7 @@
         "Topluluk yansısı olarak fastly.jsdelivr.net eklendi. GitHub kısıtlandığında işe yarar.",
         "Keep Android Open koalisyonuna katıldık — Apps'teki banner nedenini açıklıyor.",
         "GitHub girişi artık standart web akışını kullanıyor — dokun, tarayıcıda yetkilendir, tamam. 8 haneli koda gerek yok.",
-        "GitHub kimlik doğrulama token'ları artık KSafe ile AES-256-GCM şifreli (Android'de donanım destekli Keystore). Mevcut tokenlar ilk açılışta sorunsuz taşınır."
+        "Kalıcı saklanan tüm tercihler ve kimlik bilgileri artık KSafe ile AES-256-GCM şifreli — GitHub token'ları, proxy kimlik bilgileri, uygulama ayarları, cihaz ID'si, mirror seçimi, tüm coachmark'lar, duyuru önbelleği. Android'de donanım destekli Keystore. Mevcut veriler ilk açılışta sorunsuz taşınır."
       ]
     },
     {
