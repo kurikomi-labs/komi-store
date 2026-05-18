@@ -59,29 +59,29 @@ class MigrationEntry(
     suspend fun copy(snapshot: Preferences, ksafe: KSafe): Boolean = copyBlock(snapshot, ksafe)
 
     companion object {
-        operator fun <T : Any> invoke(
-            legacyKey: Preferences.Key<T>,
+        operator fun invoke(
+            legacyKey: Preferences.Key<*>,
             ksafeKey: String,
         ): MigrationEntry = MigrationEntry(
             legacyKeys = listOf(legacyKey),
             copyBlock = { snapshot, ksafe ->
-                val value = snapshot[legacyKey]
-                if (value != null) {
-                    @Suppress("UNCHECKED_CAST")
-                    when (value) {
-                        is Boolean -> ksafe.put(ksafeKey, value)
-                        is Int -> ksafe.put(ksafeKey, value)
-                        is Long -> ksafe.put(ksafeKey, value)
-                        is Float -> ksafe.put(ksafeKey, value)
-                        is Double -> ksafe.put(ksafeKey, value)
-                        is String -> ksafe.put(ksafeKey, value)
-                        is Set<*> -> ksafe.put(ksafeKey, (value as Set<String>).toList())
-                        else -> return@MigrationEntry false
+                val value: Any? = snapshot[legacyKey]
+                if (value == null) return@MigrationEntry false
+                when (value) {
+                    is Boolean -> ksafe.put<Boolean>(ksafeKey, value)
+                    is Int -> ksafe.put<Int>(ksafeKey, value)
+                    is Long -> ksafe.put<Long>(ksafeKey, value)
+                    is Float -> ksafe.put<Float>(ksafeKey, value)
+                    is Double -> ksafe.put<Double>(ksafeKey, value)
+                    is String -> ksafe.put<String>(ksafeKey, value)
+                    is Set<*> -> {
+                        @Suppress("UNCHECKED_CAST")
+                        val asStrings = (value as Set<String>).toList()
+                        ksafe.put<List<String>>(ksafeKey, asStrings)
                     }
-                    true
-                } else {
-                    false
+                    else -> return@MigrationEntry false
                 }
+                true
             },
         )
     }
