@@ -186,21 +186,21 @@ actual val corePlatformModule =
         single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("tokens")) {
             eu.anifantakis.lib.ksafe.KSafe(
                 context = androidContext(),
-                fileName = "ghs-tokens",
+                fileName = "ghs_tokens",
             )
         }
 
         single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
             eu.anifantakis.lib.ksafe.KSafe(
                 context = androidContext(),
-                fileName = "ghs-prefs",
+                fileName = "ghs_prefs",
             )
         }
 
         single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
             eu.anifantakis.lib.ksafe.KSafe(
                 context = androidContext(),
-                fileName = "ghs-announcements",
+                fileName = "ghs_announcements",
             )
         }
 

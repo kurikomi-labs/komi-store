@@ -97,15 +97,15 @@ actual val corePlatformModule = module {
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("tokens")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-tokens")
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_tokens")
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-prefs")
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_prefs")
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs-announcements")
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_announcements")
     }
 
 
