@@ -164,8 +164,8 @@ private fun ExpandableMarkdownContent(
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     // Off-main pre-processing — see About.kt for the rationale.
-    var displayContent by remember(raw, isDark) { mutableStateOf<String?>(null) }
     var previewContent by remember(raw, isDark) { mutableStateOf<String?>(null) }
+    var fullChunks by remember(raw, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(raw, isDark) {
         val processed = withContext(Dispatchers.Default) {
             applyThemeAwareImages(raw, isDark)
@@ -174,8 +174,12 @@ private fun ExpandableMarkdownContent(
             zed.rainxch.details.presentation.utils
                 .truncateMarkdownPreview(processed, maxChars = 6000)
         }
+        val chunks = withContext(Dispatchers.Default) {
+            zed.rainxch.details.presentation.utils
+                .splitMarkdownIntoChunks(processed, targetChunkChars = 4000)
+        }
         previewContent = preview
-        displayContent = processed
+        fullChunks = chunks
     }
 
     val density = LocalDensity.current
@@ -215,49 +219,22 @@ private fun ExpandableMarkdownContent(
                         else -> Modifier
                     },
             ) {
-                val content = when {
-                    isExpanded -> displayContent
-                    !isExpanded && previewContent != null -> previewContent
-                    else -> displayContent
-                }
-                if (content == null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(collapsedHeight.takeIf { it > 0.dp } ?: 120.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.size(28.dp))
-                    }
-                } else {
-                    val markdownState = rememberMarkdownState(
-                        content = content,
-                        flavour = flavour,
-                        parser = parser,
-                        retainState = true,
-                    )
-                    var lastReportedPx by remember(raw) { mutableStateOf(0f) }
-                    Markdown(
-                        markdownState = markdownState,
-                        colors = colors,
-                        typography = typography,
-                        imageTransformer = MarkdownImageTransformer,
-                        components = components,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .onSizeChanged { size ->
-                                    val measured = size.height.toFloat()
-                                    val decisive = effectiveHeight > collapsedHeightPx
-                                    if (decisive) return@onSizeChanged
-                                    if (kotlin.math.abs(measured - lastReportedPx) < 1f) return@onSizeChanged
-                                    lastReportedPx = measured
-                                    if (measured > effectiveHeight) {
-                                        onMeasured(measured)
-                                    }
-                                },
-                    )
-                }
+                ProgressiveMarkdown(
+                    isExpanded = isExpanded,
+                    previewContent = previewContent,
+                    fullChunks = fullChunks,
+                    collapsedHeight = collapsedHeight,
+                    colors = colors,
+                    typography = typography,
+                    components = components,
+                    flavour = flavour,
+                    parser = parser,
+                    imageTransformer = MarkdownImageTransformer,
+                    onMeasured = onMeasured,
+                    effectiveHeight = effectiveHeight,
+                    collapsedHeightPx = collapsedHeightPx,
+                    rawKey = raw,
+                )
             }
 
             if (!isExpanded && needsExpansion) {

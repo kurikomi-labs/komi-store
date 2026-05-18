@@ -25,3 +25,51 @@ fun truncateMarkdownPreview(content: String, maxChars: Int): String {
     }
     return window.trimEnd() + "…"
 }
+
+/**
+ * Splits a markdown document into roughly equal chunks at top-level block
+ * boundaries (double newlines), each ≤ `targetChunkChars`. Each chunk is a
+ * self-contained snippet the markdown parser can handle in isolation; we
+ * render them as separate `Markdown(...)` composables so the expensive
+ * AST-to-Compose pass happens once per chunk rather than once for the
+ * entire document.
+ *
+ * Code fences are kept whole (we never slice between ```...```), even if
+ * that makes one chunk larger than `targetChunkChars`. Without that
+ * guard the parser would emit half-open fence nodes and the renderer
+ * would print raw backticks.
+ *
+ * Always callable from any thread — no Compose APIs touched.
+ */
+fun splitMarkdownIntoChunks(content: String, targetChunkChars: Int): List<String> {
+    if (content.length <= targetChunkChars) return listOf(content)
+    val chunks = mutableListOf<String>()
+    val current = StringBuilder()
+    var inFence = false
+    val lines = content.split('\n')
+    fun flush() {
+        if (current.isNotEmpty()) {
+            chunks += current.toString()
+            current.clear()
+        }
+    }
+    for (line in lines) {
+        val trimmed = line.trimStart()
+        // Toggle fence flag on lines starting with ``` (markdown fence
+        // opener / closer). `~~~` is the alternate syntax used by some
+        // forges; same toggle rules apply.
+        if (trimmed.startsWith("```") || trimmed.startsWith("~~~")) {
+            inFence = !inFence
+        }
+        if (current.isNotEmpty()) current.append('\n')
+        current.append(line)
+        if (!inFence &&
+            current.length >= targetChunkChars &&
+            line.isBlank()
+        ) {
+            flush()
+        }
+    }
+    flush()
+    return chunks
+}

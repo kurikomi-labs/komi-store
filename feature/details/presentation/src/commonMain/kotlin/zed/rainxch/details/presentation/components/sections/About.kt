@@ -53,6 +53,7 @@ import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
 import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
+import zed.rainxch.details.presentation.utils.splitMarkdownIntoChunks
 import zed.rainxch.details.presentation.utils.truncateMarkdownPreview
 import zed.rainxch.githubstore.core.presentation.res.*
 
@@ -159,21 +160,29 @@ fun ExpandableMarkdownContent(
     // composition thread (typically Main) and contributed to the visible
     // freeze on first render and theme toggle. We launch it on Default and
     // gate rendering on completion via `displayContent` being non-null.
-    var displayContent by remember(rawMarkdown, isDark) { mutableStateOf<String?>(null) }
     var previewContent by remember(rawMarkdown, isDark) { mutableStateOf<String?>(null) }
+    var fullChunks by remember(rawMarkdown, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(rawMarkdown, isDark) {
         val processed = withContext(Dispatchers.Default) {
             applyThemeAwareImages(rawMarkdown, isDark)
         }
         // Light truncated version for the collapsed state — first ~6000 chars
         // truncated at a paragraph boundary. Renders far fewer markdown nodes
-        // (cheap initial composition); the full string is only handed to the
-        // renderer once the user taps "Read more".
+        // (cheap initial composition); the full body is only progressively
+        // streamed in once the user taps "Read more".
         val preview = withContext(Dispatchers.Default) {
             truncateMarkdownPreview(processed, maxChars = 6000)
         }
+        // Pre-split the full body into ~4 000-char chunks (kept whole around
+        // code fences) so the expanded view can compose them one frame at a
+        // time instead of dropping a single multi-megabyte composition pass
+        // on Main when the user taps Expand. Observed Davey of 4.4s on a
+        // big README — this distributes that across many frames.
+        val chunks = withContext(Dispatchers.Default) {
+            splitMarkdownIntoChunks(processed, targetChunkChars = 4000)
+        }
         previewContent = preview
-        displayContent = processed
+        fullChunks = chunks
     }
 
     // Parser + flavour are heavy to construct and identical across recompositions;
@@ -216,64 +225,22 @@ fun ExpandableMarkdownContent(
                         else -> Modifier
                     },
             ) {
-                // When collapsed, render the truncated preview — far cheaper
-                // composition than the full markdown tree. Switch to the full
-                // tree only when the user expands.
-                val content = when {
-                    isExpanded -> displayContent
-                    !isExpanded && previewContent != null -> previewContent
-                    else -> displayContent
-                }
-                if (content == null) {
-                    // Pre-processing in flight. Show a small spinner clamped
-                    // to the collapsed-section height so the scroll position
-                    // doesn't jump once content lands.
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(collapsedHeight.takeIf { it > 0.dp } ?: 120.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.size(28.dp))
-                    }
-                } else {
-                    // `retainState = true` keeps the previous parsed AST on
-                    // screen while the next parse runs in the background —
-                    // no flash to a blank Loading state on theme toggle or
-                    // minor edits.
-                    val markdownState = rememberMarkdownState(
-                        content = content,
-                        flavour = flavour,
-                        parser = parser,
-                        retainState = true,
-                    )
-                    // Local-only measure latch — write the size up to the
-                    // hoisted VM state once it has stabilised (within 1px of
-                    // the previous local value), instead of forwarding every
-                    // onSizeChanged tick. Each forwarded write recopies the
-                    // full DetailsState; this damps that churn.
-                    var lastReportedPx by remember(rawMarkdown) { mutableStateOf(0f) }
-                    Markdown(
-                        markdownState = markdownState,
-                        colors = colors,
-                        typography = typography,
-                        imageTransformer = imageTransformer,
-                        components = components,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .onSizeChanged { size ->
-                                    val measured = size.height.toFloat()
-                                    val decisive = effectiveHeight > collapsedHeightPx
-                                    if (decisive) return@onSizeChanged
-                                    if (abs(measured - lastReportedPx) < 1f) return@onSizeChanged
-                                    lastReportedPx = measured
-                                    if (measured > effectiveHeight) {
-                                        onMeasured(measured)
-                                    }
-                                },
-                    )
-                }
+                ProgressiveMarkdown(
+                    isExpanded = isExpanded,
+                    previewContent = previewContent,
+                    fullChunks = fullChunks,
+                    collapsedHeight = collapsedHeight,
+                    colors = colors,
+                    typography = typography,
+                    components = components,
+                    flavour = flavour,
+                    parser = parser,
+                    imageTransformer = imageTransformer,
+                    onMeasured = onMeasured,
+                    effectiveHeight = effectiveHeight,
+                    collapsedHeightPx = collapsedHeightPx,
+                    rawKey = rawMarkdown,
+                )
             }
 
             if (!isExpanded && needsExpansion) {
@@ -308,6 +275,123 @@ fun ExpandableMarkdownContent(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
+            }
+        }
+    }
+}
+
+/**
+ * Streams `fullChunks` into the composition one chunk per frame when
+ * `isExpanded` flips true. Renders `previewContent` when collapsed.
+ *
+ * Each chunk is its own `Markdown(...)` composable with its own
+ * `MarkdownState` (parser still runs on `Dispatchers.Default` per the
+ * mikepenz lib). The "one per frame" cadence keeps composition cost
+ * predictable instead of dropping the entire body's compose pass on
+ * Main in a single 4-second hit (observed Davey on a kubernetes-sized
+ * README before this change).
+ */
+@Composable
+internal fun ProgressiveMarkdown(
+    isExpanded: Boolean,
+    previewContent: String?,
+    fullChunks: List<String>?,
+    collapsedHeight: Dp,
+    colors: com.mikepenz.markdown.model.MarkdownColors,
+    typography: com.mikepenz.markdown.model.MarkdownTypography,
+    components: com.mikepenz.markdown.compose.components.MarkdownComponents,
+    flavour: GFMFlavourDescriptor,
+    parser: MarkdownParser,
+    imageTransformer: ImageTransformer,
+    onMeasured: (Float) -> Unit,
+    effectiveHeight: Float,
+    collapsedHeightPx: Float,
+    rawKey: String,
+) {
+    val isLoading = previewContent == null && fullChunks == null
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(collapsedHeight.takeIf { it > 0.dp } ?: 120.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(28.dp))
+        }
+        return
+    }
+
+    if (!isExpanded) {
+        val content = previewContent ?: fullChunks?.firstOrNull() ?: return
+        val markdownState = rememberMarkdownState(
+            content = content,
+            flavour = flavour,
+            parser = parser,
+            retainState = true,
+        )
+        var lastReportedPx by remember(rawKey) { mutableStateOf(0f) }
+        Markdown(
+            markdownState = markdownState,
+            colors = colors,
+            typography = typography,
+            imageTransformer = imageTransformer,
+            components = components,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged { size ->
+                    val measured = size.height.toFloat()
+                    val decisive = effectiveHeight > collapsedHeightPx
+                    if (decisive) return@onSizeChanged
+                    if (abs(measured - lastReportedPx) < 1f) return@onSizeChanged
+                    lastReportedPx = measured
+                    if (measured > effectiveHeight) onMeasured(measured)
+                },
+        )
+        return
+    }
+
+    val chunks = fullChunks ?: return
+    // Counter starts at 1 so the first chunk renders synchronously on
+    // expand (instant feedback) and the rest stream in one per frame.
+    var renderedCount by remember(rawKey) { mutableStateOf(1) }
+    LaunchedEffect(rawKey, chunks.size) {
+        while (renderedCount < chunks.size) {
+            // Yield to the frame so the previously-added chunk has a chance
+            // to compose + layout + draw before the next chunk arrives.
+            // `delay(16)` would also work; yield is cheaper and lets us
+            // catch up faster on idle frames.
+            kotlinx.coroutines.yield()
+            renderedCount++
+        }
+    }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        val toRender = chunks.take(renderedCount.coerceAtMost(chunks.size))
+        toRender.forEachIndexed { index, chunk ->
+            androidx.compose.runtime.key(rawKey, index) {
+                val markdownState = rememberMarkdownState(
+                    content = chunk,
+                    flavour = flavour,
+                    parser = parser,
+                    retainState = true,
+                )
+                Markdown(
+                    markdownState = markdownState,
+                    colors = colors,
+                    typography = typography,
+                    imageTransformer = imageTransformer,
+                    components = components,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+        if (renderedCount < chunks.size) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(20.dp))
             }
         }
     }
