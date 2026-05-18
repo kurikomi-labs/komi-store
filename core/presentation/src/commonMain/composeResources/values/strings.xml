@@ -1216,4 +1216,6 @@
     <!-- Auto-translate -->
     <string name="translation_auto_title">Auto-translate repositories</string>
     <string name="translation_auto_subtitle">Translate README and release notes automatically when opening a repository. Uses your app language as the target.</string>
+    <string name="translation_auto_target">Target: %1$s</string>
+    <string name="translation_auto_target_reset">Reset</string>
 </resources>

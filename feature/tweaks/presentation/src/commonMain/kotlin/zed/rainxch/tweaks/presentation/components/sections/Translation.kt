@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,7 +72,12 @@ fun LazyListScope.translationSection(
 
         AutoTranslateCard(
             enabled = state.autoTranslateEnabled,
+            targetLanguageTag = state.autoTranslateTargetLang,
+            appLanguageTag = state.selectedAppLanguage,
             onToggle = { onAction(TweaksAction.OnAutoTranslateEnabledToggle(it)) },
+            onClearExplicitTarget = {
+                onAction(TweaksAction.OnAutoTranslateTargetSelected(null))
+            },
         )
     }
 }
@@ -79,7 +85,10 @@ fun LazyListScope.translationSection(
 @Composable
 private fun AutoTranslateCard(
     enabled: Boolean,
+    targetLanguageTag: String?,
+    appLanguageTag: String?,
     onToggle: (Boolean) -> Unit,
+    onClearExplicitTarget: () -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -88,27 +97,53 @@ private fun AutoTranslateCard(
         ),
         shape = RoundedCornerShape(32.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(Res.string.translation_auto_title),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = stringResource(Res.string.translation_auto_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(Res.string.translation_auto_title),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = stringResource(Res.string.translation_auto_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = enabled,
+                    onCheckedChange = onToggle,
                 )
             }
-            androidx.compose.material3.Switch(
-                checked = enabled,
-                onCheckedChange = onToggle,
-            )
+            if (enabled) {
+                val effectiveTarget = (targetLanguageTag ?: appLanguageTag).orEmpty()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(
+                            Res.string.translation_auto_target,
+                            effectiveTarget.ifBlank { stringResource(Res.string.language_follow_system) },
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (targetLanguageTag != null) {
+                        androidx.compose.material3.TextButton(onClick = onClearExplicitTarget) {
+                            Text(stringResource(Res.string.translation_auto_target_reset))
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -2895,10 +2895,15 @@ class DetailsViewModel(
                 tweaksRepository.getAutoTranslateEnabled().first()
             }.getOrDefault(false)
             if (!enabled) return@launch
+            // Treat blank explicit target as "unset" so fallback chain can
+            // run — `explicit = ""` would otherwise short-circuit the
+            // `?:` operator and disable auto-translate.
             val explicit = runCatching {
                 tweaksRepository.getAutoTranslateTargetLang().first()
-            }.getOrNull()
-            val app = runCatching { tweaksRepository.getAppLanguage().first() }.getOrNull()
+            }.getOrNull()?.takeIf { it.isNotBlank() }
+            val app = runCatching {
+                tweaksRepository.getAppLanguage().first()
+            }.getOrNull()?.takeIf { it.isNotBlank() }
             val target = explicit ?: app ?: translationRepository.getDeviceLanguageCode()
             if (target.isBlank()) return@launch
 
@@ -2915,8 +2920,16 @@ class DetailsViewModel(
                     getCurrentState = { _state.value.aboutTranslation },
                 )
             }
+            // Source-language guard mirrors the README branch — if the
+            // release-notes source language already matches the target,
+            // skip the translation round-trip. The release model carries
+            // no language hint, so we fall back to `readmeLanguage` as the
+            // best available signal for repositories that consistently
+            // author release notes in the repo's primary language.
+            val releaseSourceLang = currentReadmeLang
             if (!releaseDescription.isNullOrBlank() &&
-                _state.value.whatsNewTranslation.translatedText == null
+                _state.value.whatsNewTranslation.translatedText == null &&
+                releaseSourceLang?.equals(target, ignoreCase = true) != true
             ) {
                 whatsNewTranslationJob?.cancel()
                 whatsNewTranslationJob = translateContent(
