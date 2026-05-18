@@ -40,3 +40,5 @@ composeApp/kotzilla.json
 
 roadmap/
 .brain/
+# macOS
+**/.DS_Store

@@ -1,25 +1,22 @@
 package zed.rainxch.core.data.download
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import eu.anifantakis.lib.ksafe.KSafe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.time.Clock
-import zed.rainxch.core.data.mirror.MirrorPersistence
 import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.model.DownloadProgress
 import zed.rainxch.core.domain.model.TrafficKind
 import zed.rainxch.core.domain.network.SlowDownloadDetector
 
 class SlowDownloadDetectorImpl(
-    private val preferences: DataStore<Preferences>,
+    private val ksafe: KSafe,
     private val appScope: CoroutineScope,
 ) : SlowDownloadDetector {
     private val windowMs = 10L * 60 * 1000
@@ -31,12 +28,11 @@ class SlowDownloadDetectorImpl(
     private val samples: ArrayDeque<Pair<Long, Long>> = ArrayDeque()
     private val recentSlowEvents: ArrayDeque<Long> = ArrayDeque()
 
-    private val _suggestMirror =
-        MutableSharedFlow<Unit>(
-            replay = 0,
-            extraBufferCapacity = 1,
-            onBufferOverflow = BufferOverflow.DROP_OLDEST,
-        )
+    private val _suggestMirror = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     override val suggestMirror: Flow<Unit> = _suggestMirror.asSharedFlow()
 
@@ -70,19 +66,30 @@ class SlowDownloadDetectorImpl(
         }
         if (recentSlowEvents.size < triggerCount) return
 
-        // A mirror that already handles release-asset traffic means the user
-        // is on a slow path despite mirroring — don't double-nag them with the
-        // pick-a-mirror suggestion. A raw-file-only mirror (e.g. jsDelivr) is
-        // bypassed for release downloads, so they're effectively Direct and
-        // still benefit from a release-capable mirror suggestion.
         val active = ProxyManager.currentMirror()
         if (active != null && TrafficKind.RELEASE_ASSET in active.trafficKinds) return
-        val prefs = preferences.data.first()
-        if (prefs[MirrorPersistence.AUTO_SUGGEST_DISMISSED_KEY] == true) return
-        val snoozeUntil = prefs[MirrorPersistence.AUTO_SUGGEST_SNOOZE_UNTIL_KEY] ?: 0L
+
+        // Mirror's KSafe migration runs on init in MirrorRepositoryImpl. Until
+        // it flips this marker, K_SUGGEST_* read as defaults — which would
+        // re-prompt users who'd already dismissed permanently. Bail out
+        // silently until migration is observed complete.
+        val migrationDone = runCatching { ksafe.get(MIRROR_MIGRATION_MARKER, false) }.getOrDefault(false)
+        if (!migrationDone) return
+
+        val dismissed = runCatching { ksafe.get(K_SUGGEST_DISMISSED, false) }.getOrDefault(false)
+        if (dismissed) return
+        val snoozeUntil = runCatching { ksafe.get(K_SUGGEST_SNOOZE, 0L) }.getOrDefault(0L)
         if (snoozeUntil > timestampMs) return
 
         recentSlowEvents.clear()
         _suggestMirror.tryEmit(Unit)
+    }
+
+    private companion object {
+        // Same keys MirrorRepositoryImpl writes — shared across both files
+        // to avoid coupling on a constants object that no longer exists.
+        const val K_SUGGEST_DISMISSED = "mirror_auto_suggest_dismissed"
+        const val K_SUGGEST_SNOOZE = "mirror_auto_suggest_snooze_until"
+        const val MIRROR_MIGRATION_MARKER = "__migrated_mirror_v1__"
     }
 }

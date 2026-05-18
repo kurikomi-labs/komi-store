@@ -10,7 +10,8 @@
         "通过 Homebrew 在 macOS 上安装 — 从我们的新 tap 运行 `brew install --cask github-store`。",
         "新增社区镜像 fastly.jsdelivr.net。GitHub 受限时很有用。",
         "加入 Keep Android Open 联盟 — Apps 上的横幅说明原因。",
-        "GitHub 登录改用标准网页流程 — 点击,浏览器中授权,完成。无需 8 位代码。"
+        "GitHub 登录改用标准网页流程 — 点击,浏览器中授权,完成。无需 8 位代码。",
+        "所有持久化的偏好与凭据现在均通过 KSafe 以 AES-256-GCM 加密存储 — GitHub 登录令牌、代理凭据、应用设置、设备 ID、镜像选择、所有教学提示、公告缓存。Android 上使用硬件支持的 Keystore。已有数据首次启动时无缝迁移。"
       ]
     },
     {
