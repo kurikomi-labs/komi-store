@@ -33,6 +33,8 @@ import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 
+private const val MAX_HIGHLIGHTABLE_CHARS = 16_000
+
 @Composable
 fun SyntaxHighlightedCode(
     model: MarkdownComponentModel,
@@ -51,6 +53,10 @@ fun SyntaxHighlightedCode(
     }
     LaunchedEffect(code, language, isDark) {
         if (code.isEmpty() || language == SyntaxLanguage.DEFAULT) return@LaunchedEffect
+        // Skip giant code blocks (e.g. embedded JSON dumps, generated YAML).
+        // The Highlights tokenizer is super-linear in input size and the
+        // payoff for plain-eye reading shrinks fast past a few thousand chars.
+        if (code.length > MAX_HIGHLIGHTABLE_CHARS) return@LaunchedEffect
         val result = withContext(Dispatchers.Default) {
             buildHighlighted(code, language, isDark)
         }
