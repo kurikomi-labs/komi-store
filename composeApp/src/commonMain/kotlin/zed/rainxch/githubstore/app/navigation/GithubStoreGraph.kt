@@ -74,4 +74,7 @@ sealed interface GithubStoreGraph {
 
     @Serializable
     data object StarredPickerScreen : GithubStoreGraph
+
+    @Serializable
+    data object HostTokensScreen : GithubStoreGraph
 }
