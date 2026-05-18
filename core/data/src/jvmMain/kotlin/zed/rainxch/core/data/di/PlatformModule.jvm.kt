@@ -96,6 +96,18 @@ actual val corePlatformModule = module {
         createAnnouncementsDataStore()
     }
 
+    single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("tokens")) {
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_tokens")
+    }
+
+    single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_prefs")
+    }
+
+    single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
+        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_announcements")
+    }
+
 
     // Utils
 

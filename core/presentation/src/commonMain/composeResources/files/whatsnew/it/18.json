@@ -10,7 +10,8 @@
         "Installazione macOS con Homebrew — `brew install --cask github-store` dal nostro nuovo tap.",
         "Aggiunto fastly.jsdelivr.net come mirror della community. Utile quando GitHub è limitato.",
         "Aderito alla coalizione Keep Android Open — un banner in-app su Apps lo spiega.",
-        "L'accesso GitHub ora usa il flusso web standard — un tap, autorizza nel browser, fatto. Niente più codice a 8 cifre."
+        "L'accesso GitHub ora usa il flusso web standard — un tap, autorizza nel browser, fatto. Niente più codice a 8 cifre.",
+        "Tutte le preferenze e credenziali persistite ora sono cifrate (AES-256-GCM) tramite KSafe — token GitHub, credenziali proxy, impostazioni app, ID dispositivo, scelta mirror, tutti i coachmark, cache annunci. Keystore hardware su Android. I dati esistenti migrano automaticamente al primo avvio."
       ]
     },
     {

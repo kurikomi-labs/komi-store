@@ -152,7 +152,8 @@ val coreModule =
 
         single<TweaksRepository> {
             TweaksRepositoryImpl(
-                preferences = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                legacyDataStore = get(),
             )
         }
 
@@ -162,7 +163,8 @@ val coreModule =
 
         single<AnnouncementsCacheStore> {
             AnnouncementsCacheStoreImpl(
-                preferences = get(qualifier = org.koin.core.qualifier.named("announcements")),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("announcements_cache")),
+                legacyDataStore = get(qualifier = org.koin.core.qualifier.named("announcements")),
             )
         }
 
@@ -185,7 +187,8 @@ val coreModule =
         single<MirrorRepository> {
             val repo =
                 MirrorRepositoryImpl(
-                    preferences = get(),
+                    ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                    legacyDataStore = get(),
                     apiClient = get(),
                     appScope = get(),
                 )
@@ -215,7 +218,8 @@ val coreModule =
 
         single<ProxyRepository> {
             ProxyRepositoryImpl(
-                preferences = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                legacyDataStore = get(),
                 logger = get(),
             )
         }
@@ -260,7 +264,8 @@ val coreModule =
 
         single<DeviceIdentityRepository> {
             DeviceIdentityRepositoryImpl(
-                preferences = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                legacyDataStore = get(),
             )
         }
 
@@ -293,7 +298,8 @@ val coreModule =
                 scanner = get<ExternalAppScanner>(),
                 externalLinkDao = get(),
                 signingFingerprintDao = get(),
-                preferences = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                legacyDataStore = get(),
                 externalMatchApi = get(),
                 backendClient = get(),
                 telemetry = get(),
@@ -308,7 +314,7 @@ val coreModule =
 
         single<SlowDownloadDetector> {
             SlowDownloadDetectorImpl(
-                preferences = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
                 appScope = get(),
             )
         }
@@ -395,7 +401,8 @@ val networkModule =
 
         single<TokenStore> {
             DefaultTokenStore(
-                dataStore = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("tokens")),
+                legacyDataStore = get(),
             )
         }
 
