@@ -9,21 +9,51 @@ package zed.rainxch.details.presentation.utils
  * Always callable from any thread — no Compose APIs touched.
  */
 fun truncateMarkdownPreview(content: String, maxChars: Int): String {
+    require(maxChars >= 0) { "maxChars must be >= 0, got $maxChars" }
+    if (maxChars == 0) return ""
     if (content.length <= maxChars) return content
-    val window = content.substring(0, maxChars)
 
-    // Prefer cutting at paragraph break (blank line) inside the last 25%
-    // of the window so the preview ends on a natural section boundary.
+    // First pass: prefer a paragraph-break boundary in the last 25% of the
+    // window — the natural end-of-section cut.
     val searchFrom = (maxChars * 0.75).toInt().coerceAtLeast(0)
+    val window = content.substring(0, maxChars)
     val paragraphBreak = window.lastIndexOf("\n\n", maxChars).takeIf { it >= searchFrom }
-    if (paragraphBreak != null && paragraphBreak > 0) {
-        return window.substring(0, paragraphBreak).trimEnd() + "\n"
+    val candidate = when {
+        paragraphBreak != null && paragraphBreak > 0 -> window.substring(0, paragraphBreak)
+        else -> {
+            val newline = window.lastIndexOf('\n', maxChars).takeIf { it >= searchFrom }
+            if (newline != null && newline > 0) window.substring(0, newline) else window
+        }
     }
-    val newline = window.lastIndexOf('\n', maxChars).takeIf { it >= searchFrom }
-    if (newline != null && newline > 0) {
-        return window.substring(0, newline).trimEnd() + "\n"
+
+    // Code-fence safety: if the candidate has an odd number of fence
+    // openers (` ``` ` or ` ~~~ ` at line start), the cut is inside a
+    // code block. Walking the renderer over that would emit raw
+    // backticks in the preview. Truncate further back to the line
+    // BEFORE the unclosed fence opener.
+    val safe = closeOpenFence(candidate)
+    return if (safe.length == content.length) content else safe.trimEnd() + "\n"
+}
+
+private fun closeOpenFence(candidate: String): String {
+    var opens = 0
+    var lastFenceLineStart = -1
+    var lineStart = 0
+    for (i in candidate.indices) {
+        if (i == lineStart) {
+            val rest = candidate.substring(i)
+            val starts3 = rest.startsWith("```") || rest.startsWith("~~~")
+            if (starts3) {
+                opens++
+                lastFenceLineStart = lineStart
+            }
+        }
+        if (candidate[i] == '\n') lineStart = i + 1
     }
-    return window.trimEnd() + "…"
+    if (opens % 2 == 0) return candidate
+    // Odd → unclosed fence. Cut before the last opener.
+    return if (lastFenceLineStart > 0) candidate.substring(0, lastFenceLineStart).trimEnd()
+    else candidate
 }
 
 /**
@@ -42,6 +72,7 @@ fun truncateMarkdownPreview(content: String, maxChars: Int): String {
  * Always callable from any thread — no Compose APIs touched.
  */
 fun splitMarkdownIntoChunks(content: String, targetChunkChars: Int): List<String> {
+    require(targetChunkChars > 0) { "targetChunkChars must be > 0, got $targetChunkChars" }
     if (content.length <= targetChunkChars) return listOf(content)
     val chunks = mutableListOf<String>()
     val current = StringBuilder()

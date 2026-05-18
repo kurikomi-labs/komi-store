@@ -494,7 +494,13 @@ fun DetailsScreen(
             }
 
             val density = LocalDensity.current
-            var containerHeightDp by remember { mutableStateOf(0.dp) }
+            // 600.dp seed = a sensible "before-we've-measured" collapsed
+            // section ceiling. Without it, the first-frame `containerHeightDp`
+            // is 0 and `collapsedSectionHeight = 0.dp` skips the clip,
+            // letting the full markdown subtree render once before the
+            // measure callback fires (matches the perf regression flagged
+            // in CR on PR #636).
+            var containerHeightDp by remember { mutableStateOf(600.dp) }
             val collapsedSectionHeight = containerHeightDp * 0.7f
             val listState = rememberLazyListState()
             val isScrollbarEnabled = LocalScrollbarEnabled.current

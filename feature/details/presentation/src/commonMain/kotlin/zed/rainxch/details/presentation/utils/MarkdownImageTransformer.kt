@@ -75,22 +75,20 @@ class MarkdownImageTransformer(
         val isDataUri = normalizedLink.startsWith("data:")
 
         var probeResult by remember(normalizedLink) {
-            mutableStateOf<ProbeResult>(probeCache[normalizedLink] ?: ProbeResult.Pending)
+            mutableStateOf<ProbeResult>(cachedProbe(normalizedLink) ?: ProbeResult.Pending)
         }
         LaunchedEffect(normalizedLink) {
             if (isDataUri) {
                 probeResult = ProbeResult.Allowed
                 return@LaunchedEffect
             }
-            val cached = probeCache[normalizedLink]
-            if (cached != null) {
-                probeResult = cached
+            cachedProbe(normalizedLink)?.let {
+                probeResult = it
                 return@LaunchedEffect
             }
             val result = withContext(Dispatchers.IO) {
                 probeOnce(normalizedLink)
             }
-            probeCache[normalizedLink] = result
             probeResult = result
         }
 
@@ -128,7 +126,7 @@ class MarkdownImageTransformer(
 
     private suspend fun probeOnce(url: String): ProbeResult {
         probeMutex.withLock {
-            probeCache[url]?.let { return it }
+            cachedProbe(url)?.let { return it }
             val result = runCatching {
                 val response: HttpResponse = probeClient.head(url)
                 val contentLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
@@ -143,10 +141,16 @@ class MarkdownImageTransformer(
                 // fails. We don't penalise unreachable servers here.
                 ProbeResult.Allowed
             }
-            probeCache[url] = result
+            // Replace the whole map snapshot under the mutex so concurrent
+            // reads via `cachedProbe(url)` always see a consistent state —
+            // a plain `mutableMapOf.put` is not safe for read-from-another
+            // thread without synchronisation.
+            probeCache = probeCache + (url to result)
             return result
         }
     }
+
+    private fun cachedProbe(url: String): ProbeResult? = probeCache[url]
 
     sealed interface ProbeResult {
         data object Pending : ProbeResult
@@ -180,8 +184,12 @@ class MarkdownImageTransformer(
 
         // Process-wide probe cache. README rerenders, theme toggles, and
         // recompositions all share the same map so the HEAD round-trip
-        // only happens once per URL per app session.
-        private val probeCache = mutableMapOf<String, ProbeResult>()
+        // only happens once per URL per app session. Stored as an
+        // immutable Map and replaced atomically under `probeMutex`; reads
+        // from the Main thread go through the field directly and always
+        // observe a fully-built snapshot.
+        @kotlin.concurrent.Volatile
+        private var probeCache: Map<String, ProbeResult> = emptyMap()
         private val probeMutex = Mutex()
     }
 }
