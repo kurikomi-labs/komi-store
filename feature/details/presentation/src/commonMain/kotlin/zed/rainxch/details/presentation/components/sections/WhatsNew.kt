@@ -12,16 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -30,6 +35,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.intellij.markdown.parser.MarkdownParser
+import com.mikepenz.markdown.model.rememberMarkdownState
+import zed.rainxch.core.domain.util.applyThemeAwareImages
+import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
 import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.compose.Markdown
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
@@ -150,15 +162,24 @@ private fun ExpandableMarkdownContent(
             release.description ?: stringResource(Res.string.no_release_notes)
         }
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
-    val displayContent =
-        remember(raw, isDark) {
-            zed.rainxch.core.domain.util.applyThemeAwareImages(raw, isDark)
+
+    // Off-main pre-processing — see About.kt for the rationale.
+    var displayContent by remember(raw, isDark) { mutableStateOf<String?>(null) }
+    LaunchedEffect(raw, isDark) {
+        val processed = withContext(Dispatchers.Default) {
+            applyThemeAwareImages(raw, isDark)
         }
+        displayContent = processed
+    }
 
     val density = LocalDensity.current
     val colors = rememberMarkdownColors()
     val typography = rememberMarkdownTypography()
     val flavour = remember { GFMFlavourDescriptor() }
+    val parser = remember(flavour) { MarkdownParser(flavour) }
+    val components = remember(isDark) {
+        githubStoreMarkdownComponents(MarkdownImageTransformer, isDark)
+    }
     val cardColor = MaterialTheme.colorScheme.surfaceContainerLow
 
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
@@ -188,25 +209,45 @@ private fun ExpandableMarkdownContent(
                         else -> Modifier
                     },
             ) {
-                Markdown(
-                    content = displayContent,
-                    colors = colors,
-                    typography = typography,
-                    flavour = flavour,
-                    imageTransformer = MarkdownImageTransformer,
-                    components = zed.rainxch.details.presentation.markdown
-                        .githubStoreMarkdownComponents(MarkdownImageTransformer, isDark),
-                    modifier =
-                        Modifier
+                val content = displayContent
+                if (content == null) {
+                    Box(
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .onSizeChanged { size ->
-                                val measured = size.height.toFloat()
-                                val decisive = effectiveHeight > collapsedHeightPx
-                                if (!decisive && measured > effectiveHeight) {
-                                    onMeasured(measured)
-                                }
-                            },
-                )
+                            .height(collapsedHeight.takeIf { it > 0.dp } ?: 120.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(28.dp))
+                    }
+                } else {
+                    val markdownState = rememberMarkdownState(
+                        content = content,
+                        flavour = flavour,
+                        parser = parser,
+                        retainState = true,
+                    )
+                    var lastReportedPx by remember(raw) { mutableStateOf(0f) }
+                    Markdown(
+                        markdownState = markdownState,
+                        colors = colors,
+                        typography = typography,
+                        imageTransformer = MarkdownImageTransformer,
+                        components = components,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .onSizeChanged { size ->
+                                    val measured = size.height.toFloat()
+                                    val decisive = effectiveHeight > collapsedHeightPx
+                                    if (decisive) return@onSizeChanged
+                                    if (kotlin.math.abs(measured - lastReportedPx) < 1f) return@onSizeChanged
+                                    lastReportedPx = measured
+                                    if (measured > effectiveHeight) {
+                                        onMeasured(measured)
+                                    }
+                                },
+                    )
+                }
             }
 
             if (!isExpanded && needsExpansion) {

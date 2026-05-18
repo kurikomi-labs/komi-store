@@ -1,12 +1,13 @@
 package zed.rainxch.details.presentation.markdown
 
-import androidx.compose.runtime.Composable
 import com.mikepenz.markdown.compose.components.MarkdownComponents
 import com.mikepenz.markdown.compose.components.markdownComponents
 import com.mikepenz.markdown.model.ImageTransformer
 import org.intellij.markdown.MarkdownTokenTypes
 
-@Composable
+// Plain (non-@Composable) factory so callers can wrap in `remember(isDark)`
+// — the wrapped MarkdownComponents holds lambdas that get invoked inside the
+// Markdown render scope, but constructing the wrapper has no composition cost.
 fun githubStoreMarkdownComponents(
     imageTransformer: ImageTransformer,
     isDark: Boolean,
