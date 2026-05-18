@@ -29,7 +29,11 @@ fun LazyListScope.logs(state: DetailsState) {
         )
     }
 
-    items(state.installLogs) { log ->
+    items(
+        items = state.installLogs,
+        key = { it.timeIso + it.assetName },
+        contentType = { "install_log" },
+    ) { log ->
         Text(
             text = "> ${log.result.asText()}: ${log.assetName}",
             style =
