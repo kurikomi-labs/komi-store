@@ -25,7 +25,9 @@ class DeviceIdentityRepositoryImpl(
     override suspend fun getDeviceId(): String =
         deviceIdMutex.withLock {
             migrateIfNeeded()
-            val existing = runCatching { ksafe.get(DEVICE_ID_KEY, "") }.getOrDefault("")
+            // Let read failures surface — a transient Keystore / DataStore
+            // hiccup must not silently mint a new ID and orphan telemetry.
+            val existing = ksafe.get(DEVICE_ID_KEY, "")
             if (existing.isNotBlank()) return existing
 
             val generated = Uuid.random().toString()
@@ -57,15 +59,22 @@ class DeviceIdentityRepositoryImpl(
         val legacy = runCatching {
             legacyDataStore.data.first()[stringPreferencesKey("anonymous_device_id")]
         }.getOrNull()
-        if (!legacy.isNullOrBlank()) {
-            val putResult = runCatching { ksafe.put(DEVICE_ID_KEY, legacy) }
-            if (putResult.isFailure) {
-                // Keep legacy intact for next attempt.
-                return
-            }
-            runCatching {
-                legacyDataStore.edit { it.remove(stringPreferencesKey("anonymous_device_id")) }
-            }
+        if (legacy.isNullOrBlank()) {
+            // Nothing to migrate; first-run install or already cleaned.
+            migrated = true
+            return
+        }
+        val putResult = runCatching { ksafe.put(DEVICE_ID_KEY, legacy) }
+        if (putResult.isFailure) {
+            // Keep legacy intact for next attempt; do not flip marker.
+            return
+        }
+        val deleteResult = runCatching {
+            legacyDataStore.edit { it.remove(stringPreferencesKey("anonymous_device_id")) }
+        }
+        if (deleteResult.isFailure) {
+            // Plaintext copy still on disk — retry cleanup next launch.
+            return
         }
         migrated = true
     }

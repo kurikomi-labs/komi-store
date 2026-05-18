@@ -66,8 +66,12 @@ class DefaultTokenStore(
 
     override suspend fun clear() {
         migrationDeferred.await()
-        runCatching { ksafe.delete(tokenKey) }
+        val ksafeError = runCatching { ksafe.delete(tokenKey) }.exceptionOrNull()
+        // Legacy cleanup is best-effort: do it regardless so a sign-out
+        // never leaves a stale plaintext token behind. The original ksafe
+        // exception still surfaces to the caller below.
         runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
+        if (ksafeError != null) throw ksafeError
     }
 
     override suspend fun isTokenExpired(): Boolean {
