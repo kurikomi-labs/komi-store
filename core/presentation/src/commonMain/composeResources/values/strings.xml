@@ -1248,7 +1248,7 @@
     <string name="host_tokens_compose_will_connect">Will connect to %1$s</string>
     <string name="host_tokens_compose_detected">Detected: %1$s</string>
     <string name="host_tokens_compose_replace_hint">Leave blank to keep the existing token. Type a new value to replace it.</string>
-    <string name="host_tokens_oauth_coexistence">You\'re also signed in to GitHub via the app. Tokens here authenticate direct API calls; the app sign-in is separate.</string>
+    <string name="host_tokens_oauth_coexistence">You\'re signed in to GitHub via the app — that\'s the recommended path. Add a token here only if browser sign-in won\'t work (restrictive network, no browser) or for forges other than GitHub.</string>
     <string name="host_tokens_row_validate">Check</string>
     <string name="host_tokens_row_menu">More</string>
     <string name="host_tokens_row_edit_label">Edit label</string>

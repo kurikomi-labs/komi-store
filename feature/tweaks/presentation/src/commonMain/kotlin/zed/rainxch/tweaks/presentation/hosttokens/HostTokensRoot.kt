@@ -173,6 +173,7 @@ fun HostTokensRoot(
                 }
                 state.tokens.isEmpty() -> {
                     EmptyStatePicker(
+                        presetForges = visiblePresetForges(state),
                         onPickPreset = { kind -> viewModel.onAction(HostTokensAction.OnPickPresetForge(kind)) },
                         onPickOther = { viewModel.onAction(HostTokensAction.OnPickOtherForge) },
                         onOpenTokenCreationPage = { kind ->
@@ -210,6 +211,7 @@ fun HostTokensRoot(
         DraftMode.Closed -> Unit
         DraftMode.Picker -> {
             PickerDialog(
+                presetForges = visiblePresetForges(state),
                 onPickPreset = { kind -> viewModel.onAction(HostTokensAction.OnPickPresetForge(kind)) },
                 onPickOther = { viewModel.onAction(HostTokensAction.OnPickOtherForge) },
                 onOpenTokenCreationPage = { kind ->
@@ -224,6 +226,22 @@ fun HostTokensRoot(
                 replacingExisting = mode.replacingExisting,
                 onAction = viewModel::onAction,
             )
+        }
+    }
+}
+
+private fun visiblePresetForges(state: HostTokensState): List<ForgeKind> {
+    // Hide the GitHub preset card when the user is already signed in via
+    // the in-app OAuth flow — for those users a PAT for github.com is
+    // redundant. Power users can still reach it via "Other forge".
+    // Always show forges the user already has a stored token for, so the
+    // picker stays consistent with the row list when those rows exist.
+    val storedHosts = state.tokens.map { it.host }.toSet()
+    return ForgeKind.entries.filter { kind ->
+        when {
+            kind.tokenHost in storedHosts -> true
+            kind == ForgeKind.GITHUB && state.isOAuthSignedInToGithub -> false
+            else -> true
         }
     }
 }
@@ -261,6 +279,7 @@ private fun OAuthCoexistenceNote() {
 
 @Composable
 private fun EmptyStatePicker(
+    presetForges: List<ForgeKind>,
     onPickPreset: (ForgeKind) -> Unit,
     onPickOther: () -> Unit,
     onOpenTokenCreationPage: (ForgeKind) -> Unit,
@@ -288,7 +307,7 @@ private fun EmptyStatePicker(
             )
             Spacer(Modifier.height(8.dp))
         }
-        items(ForgeKind.entries, key = { it.tokenHost }) { kind ->
+        items(presetForges, key = { it.tokenHost }) { kind ->
             PresetForgeCard(
                 kind = kind,
                 onPick = { onPickPreset(kind) },
@@ -396,6 +415,7 @@ private fun OtherForgeCard(onPick: () -> Unit) {
 
 @Composable
 private fun PickerDialog(
+    presetForges: List<ForgeKind>,
     onPickPreset: (ForgeKind) -> Unit,
     onPickOther: () -> Unit,
     onOpenTokenCreationPage: (ForgeKind) -> Unit,
@@ -406,7 +426,7 @@ private fun PickerDialog(
         title = { Text(stringResource(Res.string.host_tokens_picker_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                ForgeKind.entries.forEach { kind ->
+                presetForges.forEach { kind ->
                     PresetForgeCard(
                         kind = kind,
                         onPick = { onPickPreset(kind) },
