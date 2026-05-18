@@ -1237,4 +1237,28 @@
     <string name="host_tokens_removed">Removed token for %1$s</string>
     <string name="host_tokens_validation_success">Token accepted (login=%1$s, scopes=%2$s)</string>
     <string name="host_tokens_validation_failed">Validation failed: %1$s</string>
+
+    <!-- Host tokens — picker / forge presets / inline feedback / undo -->
+    <string name="host_tokens_picker_title">Add token for…</string>
+    <string name="host_tokens_picker_other">Other forge</string>
+    <string name="host_tokens_picker_other_subtitle">Forgejo, Gitea, self-hosted</string>
+    <string name="host_tokens_picker_open_page">Open token page</string>
+    <string name="host_tokens_picker_paste">Paste token</string>
+    <string name="host_tokens_compose_field_forge_address">Forge address</string>
+    <string name="host_tokens_compose_will_connect">Will connect to %1$s</string>
+    <string name="host_tokens_compose_detected">Detected: %1$s</string>
+    <string name="host_tokens_compose_replace_hint">Leave blank to keep the existing token. Type a new value to replace it.</string>
+    <string name="host_tokens_oauth_coexistence">You\'re also signed in to GitHub via the app. Tokens here authenticate direct API calls; the app sign-in is separate.</string>
+    <string name="host_tokens_row_validate">Check</string>
+    <string name="host_tokens_row_menu">More</string>
+    <string name="host_tokens_row_edit_label">Edit label</string>
+    <string name="host_tokens_row_replace_token">Replace token</string>
+    <string name="host_tokens_row_open_token_page">Manage on %1$s</string>
+    <string name="host_tokens_row_valid_short">Valid · %1$s</string>
+    <string name="host_tokens_row_valid_rate">%1$s remaining</string>
+    <string name="host_tokens_row_invalid_short">Invalid · %1$s</string>
+    <string name="host_tokens_undo_snackbar">Token for %1$s removed</string>
+    <string name="host_tokens_undo_action">Undo</string>
+    <string name="host_tokens_compose_replace_title">Replace token for %1$s</string>
+    <string name="host_tokens_compose_add_title">Add token</string>
 </resources>

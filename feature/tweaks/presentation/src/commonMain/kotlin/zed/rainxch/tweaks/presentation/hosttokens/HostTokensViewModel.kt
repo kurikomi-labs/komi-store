@@ -9,20 +9,21 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.model.ForgeKind
 import zed.rainxch.core.domain.model.HostNames
+import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.host_tokens_removed
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_saved
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_failed
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_invalid
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_required
-import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_success
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_token_required
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_token_short
 
 class HostTokensViewModel(
     private val repository: HostTokenRepository,
+    private val authenticationState: AuthenticationState,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HostTokensState(isLoading = true))
@@ -34,7 +35,17 @@ class HostTokensViewModel(
     init {
         viewModelScope.launch {
             repository.observeAll().collect { tokens ->
-                _state.update { it.copy(tokens = tokens.sortedBy { t -> t.host }, isLoading = false) }
+                _state.update {
+                    it.copy(
+                        tokens = tokens.sortedBy { t -> t.host },
+                        isLoading = false,
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            authenticationState.isUserLoggedIn().collect { signedIn ->
+                _state.update { it.copy(isOAuthSignedInToGithub = signedIn) }
             }
         }
     }
@@ -42,83 +53,149 @@ class HostTokensViewModel(
     fun onAction(action: HostTokensAction) {
         when (action) {
             HostTokensAction.OnNavigateBack -> { /* host handles */ }
+
             HostTokensAction.OnAddClicked ->
+                _state.update { it.copy(draftMode = DraftMode.Picker) }
+            HostTokensAction.OnAddDismiss -> closeDraft()
+
+            is HostTokensAction.OnPickPresetForge ->
+                openCompose(forge = action.kind, host = action.kind.tokenHost)
+            HostTokensAction.OnPickOtherForge -> openCompose(forge = null, host = "")
+            is HostTokensAction.OnOpenTokenCreationPage ->
+                viewModelScope.launch {
+                    _events.send(HostTokensEvent.OpenUrl(action.kind.tokenCreationUrl))
+                }
+            is HostTokensAction.OnReplaceToken ->
                 _state.update {
                     it.copy(
-                        isAddDialogVisible = true,
-                        draftHost = "",
+                        draftMode = DraftMode.Compose(replacingExisting = action.existing),
+                        draftForge = ForgeKind.fromHost(action.existing.host),
+                        draftHost = action.existing.host,
+                        draftHostNormalized = action.existing.host,
                         draftToken = "",
-                        draftDisplayName = "",
+                        draftDisplayName = action.existing.displayName.orEmpty(),
                         draftHostError = null,
                         draftTokenError = null,
-                        validationMessage = null,
+                        draftDetectedTokenKind = null,
                     )
                 }
-            HostTokensAction.OnAddDismiss ->
-                _state.update { it.copy(isAddDialogVisible = false) }
-            is HostTokensAction.OnDraftHostChanged ->
+            is HostTokensAction.OnEditLabel ->
+                _state.update {
+                    it.copy(
+                        draftMode = DraftMode.Compose(replacingExisting = action.existing),
+                        draftForge = ForgeKind.fromHost(action.existing.host),
+                        draftHost = action.existing.host,
+                        draftHostNormalized = action.existing.host,
+                        draftToken = "",
+                        draftDisplayName = action.existing.displayName.orEmpty(),
+                        draftHostError = null,
+                        draftTokenError = null,
+                        draftDetectedTokenKind = null,
+                    )
+                }
+
+            is HostTokensAction.OnDraftHostChanged -> {
+                val normalized = HostNames.normalize(action.value)
                 _state.update {
                     it.copy(
                         draftHost = action.value,
-                        draftHostError = validateHost(action.value),
+                        draftHostNormalized = normalized,
+                        draftHostError = validateHost(normalized),
                     )
                 }
-            is HostTokensAction.OnDraftTokenChanged ->
+            }
+            is HostTokensAction.OnDraftTokenChanged -> {
+                val sanitized = HostNames.sanitizePastedToken(action.value)
                 _state.update {
                     it.copy(
-                        draftToken = action.value,
-                        draftTokenError = validateToken(action.value),
+                        draftToken = sanitized,
+                        draftTokenError = validateToken(sanitized),
+                        draftDetectedTokenKind = HostNames.detectPatKind(sanitized),
                     )
                 }
+            }
             is HostTokensAction.OnDraftDisplayNameChanged ->
                 _state.update { it.copy(draftDisplayName = action.value) }
+
             HostTokensAction.OnAddConfirm -> persistDraft()
             is HostTokensAction.OnDelete -> deleteHost(action.host)
+            HostTokensAction.OnUndoDelete -> undoDelete()
+            HostTokensAction.OnDismissUndoDelete ->
+                _state.update { it.copy(pendingUndoDelete = null) }
             is HostTokensAction.OnValidate -> validateExisting(action.host)
         }
     }
 
-    private fun validateHost(value: String): org.jetbrains.compose.resources.StringResource? {
-        val normalized = HostNames.normalize(value)
-        if (normalized.isEmpty()) return Res.string.host_tokens_validation_host_required
-        if (!normalized.contains('.')) return Res.string.host_tokens_validation_host_invalid
-        return null
+    private fun openCompose(forge: ForgeKind?, host: String) {
+        _state.update {
+            it.copy(
+                draftMode = DraftMode.Compose(replacingExisting = null),
+                draftForge = forge,
+                draftHost = host,
+                draftHostNormalized = host,
+                draftToken = "",
+                draftDisplayName = "",
+                draftHostError = null,
+                draftTokenError = null,
+                draftDetectedTokenKind = null,
+            )
+        }
+    }
+
+    private fun closeDraft() {
+        _state.update {
+            it.copy(
+                draftMode = DraftMode.Closed,
+                draftForge = null,
+                draftHost = "",
+                draftHostNormalized = "",
+                draftToken = "",
+                draftDisplayName = "",
+                draftHostError = null,
+                draftTokenError = null,
+                draftDetectedTokenKind = null,
+            )
+        }
+    }
+
+    private fun validateHost(normalized: String): org.jetbrains.compose.resources.StringResource? = when {
+        normalized.isEmpty() -> Res.string.host_tokens_validation_host_required
+        !normalized.contains('.') -> Res.string.host_tokens_validation_host_invalid
+        else -> null
     }
 
     private fun validateToken(value: String): org.jetbrains.compose.resources.StringResource? {
         val trimmed = value.trim()
-        if (trimmed.isEmpty()) return Res.string.host_tokens_validation_token_required
-        if (trimmed.length < 8) return Res.string.host_tokens_validation_token_short
-        return null
+        return when {
+            trimmed.isEmpty() -> Res.string.host_tokens_validation_token_required
+            trimmed.length < 8 -> Res.string.host_tokens_validation_token_short
+            else -> null
+        }
     }
 
     private fun persistDraft() {
         val current = state.value
-        val hostError = validateHost(current.draftHost)
-        val tokenError = validateToken(current.draftToken)
+        val mode = current.draftMode as? DraftMode.Compose ?: return
+        val replacing = mode.replacingExisting
+
+        val hostError = validateHost(current.draftHostNormalized)
+        val token = current.draftToken.trim()
+        val keepExistingToken = replacing != null && token.isEmpty()
+        val tokenError = if (keepExistingToken) null else validateToken(token)
         if (hostError != null || tokenError != null) {
             _state.update { it.copy(draftHostError = hostError, draftTokenError = tokenError) }
             return
         }
-        val host = HostNames.normalize(current.draftHost)
-        val token = current.draftToken.trim()
+        val host = current.draftHostNormalized
+        val effectiveToken = if (keepExistingToken) replacing!!.token else token
         val displayName = current.draftDisplayName.trim().takeIf { it.isNotEmpty() }
         viewModelScope.launch {
-            val saveResult = runCatching { repository.set(host, token, displayName) }
+            val saveResult = runCatching { repository.set(host, effectiveToken, displayName) }
             if (saveResult.isSuccess) {
-                _state.update {
-                    it.copy(
-                        isAddDialogVisible = false,
-                        draftHost = "",
-                        draftToken = "",
-                        draftDisplayName = "",
-                    )
-                }
+                closeDraft()
                 _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_saved, host)))
+                validateExisting(host, fromAdd = true)
             } else {
-                // Keep the dialog open with the draft intact so the user can
-                // retry — the persistence failure (Keystore unavailable,
-                // device locked, etc.) should not look like a silent success.
                 val msg = saveResult.exceptionOrNull()?.message.orEmpty()
                 _events.send(
                     HostTokensEvent.Message(
@@ -131,11 +208,19 @@ class HostTokensViewModel(
 
     private fun deleteHost(host: String) {
         viewModelScope.launch {
+            val snapshot = state.value.tokens.firstOrNull { it.host == host }
             val result = runCatching { repository.delete(host) }
             if (result.isSuccess) {
-                _events.send(
-                    HostTokensEvent.Message(getString(Res.string.host_tokens_removed, host)),
-                )
+                _state.update {
+                    it.copy(
+                        pendingUndoDelete = snapshot,
+                        validationByHost = it.validationByHost - host,
+                        validatingHosts = it.validatingHosts - host,
+                    )
+                }
+                if (snapshot != null) {
+                    _events.send(HostTokensEvent.TokenDeletedWithUndo(snapshot))
+                }
             } else {
                 val msg = result.exceptionOrNull()?.message.orEmpty()
                 _events.send(
@@ -147,34 +232,48 @@ class HostTokensViewModel(
         }
     }
 
-    private fun validateExisting(host: String) {
-        // Refuse to start another validation while one is in flight against
-        // the same host — concurrent calls would race shared UI flags
-        // (`isValidating`, `pendingValidationFor`) and emit stale messages.
-        if (state.value.isValidating && state.value.pendingValidationFor == host) return
+    private fun undoDelete() {
+        val pending = state.value.pendingUndoDelete ?: return
+        viewModelScope.launch {
+            runCatching { repository.set(pending.host, pending.token, pending.displayName) }
+            _state.update { it.copy(pendingUndoDelete = null) }
+        }
+    }
+
+    private fun validateExisting(host: String, fromAdd: Boolean = false) {
+        if (host in state.value.validatingHosts) return
         viewModelScope.launch {
             val token = runCatching { repository.get(host)?.token }.getOrNull() ?: return@launch
-            _state.update { it.copy(isValidating = true, pendingValidationFor = host, validationMessage = null) }
+            _state.update { it.copy(validatingHosts = it.validatingHosts + host) }
             val result = repository.validate(host, token)
-            val message = result.fold(
+            val line = result.fold(
                 onSuccess = { v ->
-                    val login = v.login ?: "?"
-                    val scopes = if (v.scopes.isEmpty()) "-" else v.scopes.joinToString(",")
-                    getString(Res.string.host_tokens_validation_success, login, scopes)
+                    ValidationLine(
+                        login = v.login,
+                        scopes = v.scopes,
+                        rateLimitRemaining = v.rateLimitRemaining,
+                        errorMessage = null,
+                    )
                 },
                 onFailure = { t ->
-                    getString(Res.string.host_tokens_validation_failed, t.message ?: "")
+                    ValidationLine(
+                        login = null,
+                        scopes = emptyList(),
+                        rateLimitRemaining = null,
+                        errorMessage = t.message ?: "validation failed",
+                    )
                 },
             )
             _state.update {
-                // Only clear the in-flight flags if THIS host is still the
-                // one being shown as pending — defends against a second
-                // validation racing in past the guard above (e.g. for a
-                // different host).
-                if (it.pendingValidationFor == host) {
-                    it.copy(isValidating = false, pendingValidationFor = null, validationMessage = message)
-                } else {
-                    it.copy(validationMessage = message)
+                it.copy(
+                    validatingHosts = it.validatingHosts - host,
+                    validationByHost = it.validationByHost + (host to line),
+                )
+            }
+            if (fromAdd && line.isSuccess && !line.login.isNullOrBlank()) {
+                val current = repository.get(host)
+                if (current != null && current.displayName.isNullOrBlank()) {
+                    runCatching { repository.set(host, current.token, line.login) }
                 }
             }
         }
