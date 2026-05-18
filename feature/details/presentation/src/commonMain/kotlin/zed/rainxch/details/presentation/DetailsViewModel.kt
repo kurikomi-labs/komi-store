@@ -550,6 +550,7 @@ class DetailsViewModel(
         val installed = _state.value.installedApp
         val parkedPath = installed?.pendingInstallFilePath
         val packageName = installed?.packageName
+        val isPending = installed?.isPendingInstall == true
         if (installed == null && parkedPath == null) {
             logger.warn("openApkInspectSheet: nothing inspectable in current state")
             return
@@ -563,7 +564,7 @@ class DetailsViewModel(
         }
         viewModelScope.launch {
             val inspection =
-                if (packageName != null && installed?.isPendingInstall == false) {
+                if (packageName != null && !isPending) {
                     apkInspector.inspectInstalled(packageName)
                         ?: parkedPath?.let { apkInspector.inspectFile(it) }
                 } else if (parkedPath != null) {
@@ -1581,7 +1582,7 @@ class DetailsViewModel(
                 // install path (`installRelease`): non-Android installers
                 // never receive the broadcast that releases the gate.
                 val gatePackageName =
-                    if (platform == Platform.ANDROID) warning.pendingApkInfo?.packageName else null
+                    if (platform == Platform.ANDROID) warning.pendingApkInfo.packageName else null
                 if (gatePackageName != null) {
                     systemInstallSerializer.awaitFreeAndMarkPending(gatePackageName)
                 }

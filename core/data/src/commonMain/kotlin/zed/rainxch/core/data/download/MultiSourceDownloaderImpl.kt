@@ -2,6 +2,7 @@ package zed.rainxch.core.data.download
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -14,6 +15,7 @@ import zed.rainxch.core.domain.model.TrafficKind
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.system.MultiSourceDownloader
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MultiSourceDownloaderImpl(
     private val downloader: Downloader,
 ) : MultiSourceDownloader {

@@ -429,8 +429,7 @@ class InstalledAppsRepositoryImpl(
             val installedCode = app.installedVersionCode
             val latestCode = app.latestVersionCode
             val codesAlreadyMatch =
-                installedCode != null &&
-                    installedCode > 0L &&
+                installedCode > 0L &&
                     latestCode != null &&
                     latestCode > 0L &&
                     installedCode == latestCode
@@ -492,7 +491,6 @@ class InstalledAppsRepositoryImpl(
             // self-update completed), pin the tag to the matched
             // release so subsequent checks don't keep re-flagging.
             if (codesAlreadyMatch &&
-                installedCode != null &&
                 app.installedVersion != matchedRelease.tagName
             ) {
                 installedAppsDao.updateInstalledVersion(

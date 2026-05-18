@@ -387,11 +387,9 @@ fun RepositoryCard(
                     it()
                 }
             },
-            onHide = onHideClick?.let {
-                {
-                    showActionsSheet = false
-                    it()
-                }
+            onHide = {
+                showActionsSheet = false
+                onHideClick()
             },
         )
     }
