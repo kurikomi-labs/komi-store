@@ -1,5 +1,6 @@
 package zed.rainxch.tweaks.presentation.hosttokens
 
+import org.jetbrains.compose.resources.StringResource
 import zed.rainxch.core.domain.model.HostToken
 
 data class HostTokensState(
@@ -7,8 +8,8 @@ data class HostTokensState(
     val draftHost: String = "",
     val draftToken: String = "",
     val draftDisplayName: String = "",
-    val draftHostError: String? = null,
-    val draftTokenError: String? = null,
+    val draftHostError: StringResource? = null,
+    val draftTokenError: StringResource? = null,
     val isAddDialogVisible: Boolean = false,
     val isValidating: Boolean = false,
     val pendingValidationFor: String? = null,

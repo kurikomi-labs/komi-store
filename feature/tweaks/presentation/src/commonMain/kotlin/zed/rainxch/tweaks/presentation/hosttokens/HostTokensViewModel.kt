@@ -8,8 +8,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.model.HostNames
 import zed.rainxch.core.domain.repository.HostTokenRepository
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_removed
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_saved
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_failed
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_invalid
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_required
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_success
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_token_required
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_token_short
 
 class HostTokensViewModel(
     private val repository: HostTokenRepository,
@@ -68,17 +78,17 @@ class HostTokensViewModel(
         }
     }
 
-    private fun validateHost(value: String): String? {
+    private fun validateHost(value: String): org.jetbrains.compose.resources.StringResource? {
         val normalized = HostNames.normalize(value)
-        if (normalized.isEmpty()) return "Host required"
-        if (!normalized.contains('.')) return "Invalid host"
+        if (normalized.isEmpty()) return Res.string.host_tokens_validation_host_required
+        if (!normalized.contains('.')) return Res.string.host_tokens_validation_host_invalid
         return null
     }
 
-    private fun validateToken(value: String): String? {
+    private fun validateToken(value: String): org.jetbrains.compose.resources.StringResource? {
         val trimmed = value.trim()
-        if (trimmed.isEmpty()) return "Token required"
-        if (trimmed.length < 8) return "Token too short"
+        if (trimmed.isEmpty()) return Res.string.host_tokens_validation_token_required
+        if (trimmed.length < 8) return Res.string.host_tokens_validation_token_short
         return null
     }
 
@@ -103,14 +113,14 @@ class HostTokensViewModel(
                     draftDisplayName = "",
                 )
             }
-            _events.send(HostTokensEvent.Message("Saved token for $host"))
+            _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_saved, host)))
         }
     }
 
     private fun deleteHost(host: String) {
         viewModelScope.launch {
             repository.delete(host)
-            _events.send(HostTokensEvent.Message("Removed token for $host"))
+            _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_removed, host)))
         }
     }
 
@@ -121,11 +131,13 @@ class HostTokensViewModel(
             val result = repository.validate(host, token)
             val message = result.fold(
                 onSuccess = { v ->
-                    val login = v.login ?: "(unknown)"
-                    val scopes = if (v.scopes.isEmpty()) "no scopes" else v.scopes.joinToString(",")
-                    "✓ $host accepts token (login=$login, scopes=$scopes)"
+                    val login = v.login ?: "?"
+                    val scopes = if (v.scopes.isEmpty()) "-" else v.scopes.joinToString(",")
+                    getString(Res.string.host_tokens_validation_success, login, scopes)
                 },
-                onFailure = { t -> "✗ ${t.message ?: "validation failed"}" },
+                onFailure = { t ->
+                    getString(Res.string.host_tokens_validation_failed, t.message ?: "")
+                },
             )
             _state.update { it.copy(isValidating = false, pendingValidationFor = null, validationMessage = message) }
         }

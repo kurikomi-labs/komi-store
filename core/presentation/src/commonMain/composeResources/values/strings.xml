@@ -1212,4 +1212,29 @@
     <string name="kao_banner_body">Google's developer-verification policy threatens open Android distribution. GitHub Store stands with the coalition.</string>
     <string name="kao_banner_cta">Learn more</string>
     <string name="kao_banner_dismiss_cd">Dismiss banner</string>
+
+    <!-- Host tokens -->
+    <string name="host_tokens_title">Authentication tokens</string>
+    <string name="host_tokens_entry_subtitle">Personal access tokens per forge host (GitHub, Codeberg, Forgejo)</string>
+    <string name="host_tokens_intro">Personal access tokens stored encrypted per forge host. Used to authenticate direct API calls.</string>
+    <string name="host_tokens_empty_title">No tokens stored</string>
+    <string name="host_tokens_empty_subtitle">Tap + to add a personal access token</string>
+    <string name="host_tokens_add_dialog_title">Add token</string>
+    <string name="host_tokens_field_host">Host (e.g. github.com)</string>
+    <string name="host_tokens_field_token">Personal access token</string>
+    <string name="host_tokens_field_display_name">Display name (optional)</string>
+    <string name="host_tokens_validation_host_required">Host required</string>
+    <string name="host_tokens_validation_host_invalid">Invalid host</string>
+    <string name="host_tokens_validation_token_required">Token required</string>
+    <string name="host_tokens_validation_token_short">Token too short</string>
+    <string name="host_tokens_action_save">Save</string>
+    <string name="host_tokens_action_cancel">Cancel</string>
+    <string name="host_tokens_action_back">Back</string>
+    <string name="host_tokens_action_add">Add token</string>
+    <string name="host_tokens_action_validate">Validate</string>
+    <string name="host_tokens_action_delete">Delete</string>
+    <string name="host_tokens_saved">Saved token for %1$s</string>
+    <string name="host_tokens_removed">Removed token for %1$s</string>
+    <string name="host_tokens_validation_success">Token accepted (login=%1$s, scopes=%2$s)</string>
+    <string name="host_tokens_validation_failed">Validation failed: %1$s</string>
 </resources>

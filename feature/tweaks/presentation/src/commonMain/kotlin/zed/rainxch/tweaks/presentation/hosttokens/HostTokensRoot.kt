@@ -47,9 +47,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.HostToken
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_add
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_back
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_cancel
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_delete
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_save
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_validate
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_add_dialog_title
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_empty_subtitle
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_empty_title
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_field_display_name
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_field_host
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_field_token
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_intro
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,10 +89,13 @@ fun HostTokensRoot(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Authentication tokens") },
+                title = { Text(stringResource(Res.string.host_tokens_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.host_tokens_action_back),
+                        )
                     }
                 },
             )
@@ -84,7 +103,10 @@ fun HostTokensRoot(
         snackbarHost = { SnackbarHost(snackbarState) },
         floatingActionButton = {
             FloatingActionButton(onClick = { viewModel.onAction(HostTokensAction.OnAddClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add token")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.host_tokens_action_add),
+                )
             }
         },
     ) { padding ->
@@ -96,8 +118,7 @@ fun HostTokensRoot(
         ) {
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Personal access tokens stored encrypted per forge host. " +
-                    "Used to authenticate direct GitHub / Codeberg / Forgejo API calls.",
+                text = stringResource(Res.string.host_tokens_intro),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -139,11 +160,11 @@ fun HostTokensRoot(
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                text = "No tokens stored",
+                                text = stringResource(Res.string.host_tokens_empty_title),
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             Text(
-                                text = "Tap + to add a personal access token",
+                                text = stringResource(Res.string.host_tokens_empty_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -217,13 +238,16 @@ private fun TokenRow(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp))
             } else {
                 IconButton(onClick = onValidate) {
-                    Icon(Icons.Default.Check, contentDescription = "Validate")
+                    Icon(
+                        Icons.Default.Check,
+                        contentDescription = stringResource(Res.string.host_tokens_action_validate),
+                    )
                 }
             }
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(Res.string.host_tokens_action_delete),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }
@@ -243,42 +267,42 @@ private fun AddTokenDialog(
 ) {
     AlertDialog(
         onDismissRequest = { onAction(HostTokensAction.OnAddDismiss) },
-        title = { Text("Add token") },
+        title = { Text(stringResource(Res.string.host_tokens_add_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = state.draftHost,
                     onValueChange = { onAction(HostTokensAction.OnDraftHostChanged(it)) },
-                    label = { Text("Host (e.g. github.com)") },
+                    label = { Text(stringResource(Res.string.host_tokens_field_host)) },
                     singleLine = true,
                     isError = state.draftHostError != null,
-                    supportingText = state.draftHostError?.let { { Text(it) } },
+                    supportingText = state.draftHostError?.let { res -> { Text(stringResource(res)) } },
                 )
                 OutlinedTextField(
                     value = state.draftToken,
                     onValueChange = { onAction(HostTokensAction.OnDraftTokenChanged(it)) },
-                    label = { Text("Personal access token") },
+                    label = { Text(stringResource(Res.string.host_tokens_field_token)) },
                     singleLine = true,
                     isError = state.draftTokenError != null,
-                    supportingText = state.draftTokenError?.let { { Text(it) } },
+                    supportingText = state.draftTokenError?.let { res -> { Text(stringResource(res)) } },
                     visualTransformation = PasswordVisualTransformation(),
                 )
                 OutlinedTextField(
                     value = state.draftDisplayName,
                     onValueChange = { onAction(HostTokensAction.OnDraftDisplayNameChanged(it)) },
-                    label = { Text("Display name (optional)") },
+                    label = { Text(stringResource(Res.string.host_tokens_field_display_name)) },
                     singleLine = true,
                 )
             }
         },
         confirmButton = {
             TextButton(onClick = { onAction(HostTokensAction.OnAddConfirm) }) {
-                Text("Save")
+                Text(stringResource(Res.string.host_tokens_action_save))
             }
         },
         dismissButton = {
             TextButton(onClick = { onAction(HostTokensAction.OnAddDismiss) }) {
-                Text("Cancel")
+                Text(stringResource(Res.string.host_tokens_action_cancel))
             }
         },
     )

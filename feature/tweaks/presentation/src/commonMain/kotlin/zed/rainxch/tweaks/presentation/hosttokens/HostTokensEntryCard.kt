@@ -18,6 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_entry_subtitle
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_title
 
 @Composable
 fun HostTokensEntryCard(
@@ -42,11 +46,11 @@ fun HostTokensEntryCard(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Authentication tokens",
+                    text = stringResource(Res.string.host_tokens_title),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "Personal access tokens per forge host (GitHub, Codeberg, Forgejo)",
+                    text = stringResource(Res.string.host_tokens_entry_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
