@@ -5,13 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import eu.anifantakis.lib.ksafe.KSafe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -28,33 +29,33 @@ class DefaultTokenStore(
     private val tokenKey = TOKEN_KEY_NAME
     private val legacyKey = stringPreferencesKey("token")
     private val json = Json { ignoreUnknownKeys = true }
+
     private val migrationLock = Mutex()
-
-    @Volatile private var migrated: Boolean = false
-
+    private val migrationDeferred = CompletableDeferred<Unit>()
     private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     init {
-        migrationScope.launch { migrateIfNeeded() }
+        migrationScope.launch {
+            runCatching { migrateIfNeeded() }
+            migrationDeferred.complete(Unit)
+        }
     }
 
     override suspend fun save(token: GithubDeviceTokenSuccessDto) {
+        migrationDeferred.await()
         val stamped = token.copy(
             savedAtEpochMillis = token.savedAtEpochMillis ?: Clock.System.now().toEpochMilliseconds(),
         )
         ksafe.put(tokenKey, stamped)
     }
 
-    override fun tokenFlow(): Flow<GithubDeviceTokenSuccessDto?> = callbackFlow {
-        migrateIfNeeded()
-        val current = runCatching {
-            ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
-        }.getOrNull()
-        trySend(current)
-        awaitClose { }
+    override fun tokenFlow(): Flow<GithubDeviceTokenSuccessDto?> = flow {
+        migrationDeferred.await()
+        emitAll(ksafe.getFlow<GithubDeviceTokenSuccessDto?>(tokenKey, null))
     }
 
     override suspend fun currentToken(): GithubDeviceTokenSuccessDto? {
-        migrateIfNeeded()
+        migrationDeferred.await()
         return runCatching {
             ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
         }.getOrNull()
@@ -64,6 +65,7 @@ class DefaultTokenStore(
         runBlocking { currentToken() }
 
     override suspend fun clear() {
+        migrationDeferred.await()
         runCatching { ksafe.delete(tokenKey) }
         runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
     }
@@ -76,31 +78,32 @@ class DefaultTokenStore(
         return Clock.System.now().toEpochMilliseconds() > expiresAtMillis
     }
 
-    private suspend fun migrateIfNeeded() {
-        if (migrated) return
-        migrationLock.withLock {
-            if (migrated) return
-            val existing = runCatching {
-                ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
-            }.getOrNull()
-            if (existing != null) {
-                migrated = true
-                return
-            }
-            val legacyRaw = runCatching {
-                legacyDataStore.data.first()[legacyKey]
-            }.getOrNull()
-            if (legacyRaw != null) {
-                val parsed = runCatching {
-                    json.decodeFromString(GithubDeviceTokenSuccessDto.serializer(), legacyRaw)
-                }.getOrNull()
-                if (parsed != null) {
-                    runCatching { ksafe.put(tokenKey, parsed) }
-                }
-                runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
-            }
-            migrated = true
+    private suspend fun migrateIfNeeded() = migrationLock.withLock {
+        val existing = runCatching {
+            ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
+        }.getOrNull()
+        if (existing != null) return@withLock
+
+        val legacyRaw = runCatching {
+            legacyDataStore.data.first()[legacyKey]
+        }.getOrNull() ?: return@withLock
+
+        val parsed = runCatching {
+            json.decodeFromString(GithubDeviceTokenSuccessDto.serializer(), legacyRaw)
+        }.getOrNull() ?: run {
+            // Legacy value present but unparseable — leave it in DataStore
+            // (don't drop the only copy) and bail out without marking
+            // migrated, so a code change that fixes the parse can retry.
+            return@withLock
         }
+
+        val putResult = runCatching { ksafe.put(tokenKey, parsed) }
+        if (putResult.isFailure) {
+            // Never drop the legacy entry if we couldn't persist into KSafe.
+            // The user's token stays readable via the slow path next launch.
+            return@withLock
+        }
+        runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
     }
 
     private companion object {

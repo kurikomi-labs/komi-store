@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import eu.anifantakis.lib.ksafe.KSafe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
@@ -48,6 +51,7 @@ class MirrorRepositoryImpl(
         extraBufferCapacity = 4,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
+    private val migrationDeferred = CompletableDeferred<Unit>()
 
     init {
         appScope.launch {
@@ -66,6 +70,7 @@ class MirrorRepositoryImpl(
                     ),
                 )
             }
+            migrationDeferred.complete(Unit)
             _catalog.value = readCachedCatalogOrBundled()
             val cachedAt = runCatching { ksafe.get(K_CACHED_AT, 0L) }.getOrDefault(0L)
             if (Clock.System.now().toEpochMilliseconds() - cachedAt > cacheTtlMs) {
@@ -88,20 +93,25 @@ class MirrorRepositoryImpl(
                 checkSelectedMirrorStillExists(fresh = configs, previous = previousCatalog)
             }.map { }
 
-    override fun observePreference(): Flow<MirrorPreference> =
-        combine(
-            ksafe.getFlow(K_PREFERRED, DIRECT_MIRROR_ID),
-            ksafe.getFlow(K_CUSTOM_TEMPLATE, ""),
-        ) { id, template ->
-            when (id) {
-                DIRECT_MIRROR_ID -> MirrorPreference.Direct
-                CUSTOM_MIRROR_ID_SENTINEL ->
-                    if (template.isBlank()) MirrorPreference.Direct else MirrorPreference.Custom(template)
-                else -> MirrorPreference.Selected(id)
-            }
-        }
+    override fun observePreference(): Flow<MirrorPreference> = flow {
+        migrationDeferred.await()
+        emitAll(
+            combine(
+                ksafe.getFlow(K_PREFERRED, DIRECT_MIRROR_ID),
+                ksafe.getFlow(K_CUSTOM_TEMPLATE, ""),
+            ) { id, template ->
+                when (id) {
+                    DIRECT_MIRROR_ID -> MirrorPreference.Direct
+                    CUSTOM_MIRROR_ID_SENTINEL ->
+                        if (template.isBlank()) MirrorPreference.Direct else MirrorPreference.Custom(template)
+                    else -> MirrorPreference.Selected(id)
+                }
+            },
+        )
+    }
 
     override suspend fun setPreference(pref: MirrorPreference) {
+        migrationDeferred.await()
         when (pref) {
             MirrorPreference.Direct -> {
                 ksafe.put(K_PREFERRED, DIRECT_MIRROR_ID)
@@ -121,10 +131,12 @@ class MirrorRepositoryImpl(
     override fun observeRemovedNotices(): Flow<MirrorRemoved> = _removedNotices.asSharedFlow()
 
     override suspend fun snoozeAutoSuggest(forMs: Long) {
+        migrationDeferred.await()
         ksafe.put(K_SUGGEST_SNOOZE, Clock.System.now().toEpochMilliseconds() + forMs)
     }
 
     override suspend fun dismissAutoSuggestPermanently() {
+        migrationDeferred.await()
         ksafe.put(K_SUGGEST_DISMISSED, true)
     }
 

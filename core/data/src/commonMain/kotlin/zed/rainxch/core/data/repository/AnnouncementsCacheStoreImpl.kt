@@ -6,11 +6,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.kermit.Logger
 import eu.anifantakis.lib.ksafe.KSafe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
@@ -21,17 +24,26 @@ class AnnouncementsCacheStoreImpl(
 ) : AnnouncementsCacheStore {
     private val logger = Logger.withTag("AnnouncementsCacheStore")
     private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val migrationDeferred = CompletableDeferred<Unit>()
 
     @Volatile private var migrated: Boolean = false
 
     init {
-        migrationScope.launch { migrateIfNeeded() }
+        migrationScope.launch {
+            runCatching { migrateIfNeeded() }
+            migrationDeferred.complete(Unit)
+        }
     }
 
-    override fun getCachedPayload(): Flow<String?> =
-        ksafe.getFlow<String?>(K_CACHED_PAYLOAD, null).map { it?.takeIf { v -> v.isNotEmpty() } }
+    override fun getCachedPayload(): Flow<String?> = flow {
+        migrationDeferred.await()
+        emitAll(
+            ksafe.getFlow<String?>(K_CACHED_PAYLOAD, null).map { it?.takeIf { v -> v.isNotEmpty() } },
+        )
+    }
 
     override suspend fun setCachedPayload(payload: String?) {
+        migrationDeferred.await()
         if (payload == null) {
             ksafe.delete(K_CACHED_PAYLOAD)
         } else {
@@ -50,7 +62,11 @@ class AnnouncementsCacheStoreImpl(
             legacyDataStore.data.first()[stringPreferencesKey("announcements_cached_payload")]
         }.getOrNull()
         if (!legacy.isNullOrEmpty()) {
-            runCatching { ksafe.put(K_CACHED_PAYLOAD, legacy) }
+            val putResult = runCatching { ksafe.put(K_CACHED_PAYLOAD, legacy) }
+            if (putResult.isFailure) {
+                // Don't drop the only copy if write failed; retry next launch.
+                return
+            }
             runCatching {
                 legacyDataStore.edit {
                     it.remove(stringPreferencesKey("announcements_cached_payload"))

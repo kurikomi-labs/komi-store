@@ -482,7 +482,8 @@ class ExternalImportRepositoryImpl(
         val legacyValue = runCatching {
             legacyDataStore.data.first()[longPreferencesKey("external_import_initial_scan_at")]
         }.getOrNull() ?: return
-        runCatching { ksafe.put(K_INITIAL_SCAN_AT, legacyValue) }
+        val putResult = runCatching { ksafe.put(K_INITIAL_SCAN_AT, legacyValue) }
+        if (putResult.isFailure) return
         runCatching {
             legacyDataStore.edit { it.remove(longPreferencesKey("external_import_initial_scan_at")) }
         }

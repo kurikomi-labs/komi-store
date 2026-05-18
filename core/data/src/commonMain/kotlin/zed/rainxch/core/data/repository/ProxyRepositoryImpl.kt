@@ -6,12 +6,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import eu.anifantakis.lib.ksafe.KSafe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -29,11 +32,15 @@ class ProxyRepositoryImpl(
 
     private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val migrationLock = Mutex()
+    private val migrationDeferred = CompletableDeferred<Unit>()
 
     @Volatile private var migrated: Boolean = false
 
     init {
-        migrationScope.launch { migrateIfNeeded() }
+        migrationScope.launch {
+            runCatching { migrateIfNeeded() }
+            migrationDeferred.complete(Unit)
+        }
     }
 
     private data class ScopeKeys(
@@ -59,17 +66,20 @@ class ProxyRepositoryImpl(
         )
     }
 
-    override fun getProxyConfig(scope: ProxyScope): Flow<ProxyConfig> {
+    override fun getProxyConfig(scope: ProxyScope): Flow<ProxyConfig> = flow {
+        migrationDeferred.await()
         val keys = keysFor(scope)
-        return combine(
-            ksafe.getFlow<String?>(keys.type, null),
-            ksafe.getFlow<String?>(keys.host, null),
-            ksafe.getFlow<Int?>(keys.port, null),
-            ksafe.getFlow<String?>(keys.username, null),
-            ksafe.getFlow<String?>(keys.password, null),
-        ) { type, host, port, user, pass ->
-            parseConfig(type, host, port, user, pass)
-        }
+        emitAll(
+            combine(
+                ksafe.getFlow<String?>(keys.type, null),
+                ksafe.getFlow<String?>(keys.host, null),
+                ksafe.getFlow<Int?>(keys.port, null),
+                ksafe.getFlow<String?>(keys.username, null),
+                ksafe.getFlow<String?>(keys.password, null),
+            ) { type, host, port, user, pass ->
+                parseConfig(type, host, port, user, pass)
+            },
+        )
     }
 
     private fun parseConfig(
@@ -106,6 +116,7 @@ class ProxyRepositoryImpl(
         }
 
     override suspend fun setProxyConfig(scope: ProxyScope, config: ProxyConfig) {
+        migrationDeferred.await()
         val keys = keysFor(scope)
         when (config) {
             is ProxyConfig.None -> {
@@ -151,53 +162,81 @@ class ProxyRepositoryImpl(
             }
             val snapshot = runCatching { legacyDataStore.data.first() }.getOrNull()
             if (snapshot == null) {
-                runCatching { ksafe.put(MIGRATION_MARKER, true) }
-                migrated = true
+                // Don't mark complete — retry on next launch.
                 return
             }
 
+            var anyFailure = false
+            val keysToClear = mutableListOf<Preferences.Key<*>>()
+
             ProxyScope.entries.forEach { scope ->
                 val keys = keysFor(scope)
-                val scopeType = snapshot[stringPreferencesKey(keys.type)]
-                val source = if (scopeType != null) scope else null
                 val prefix = when (scope) {
                     ProxyScope.DISCOVERY -> "discovery"
                     ProxyScope.DOWNLOAD -> "download"
                     ProxyScope.TRANSLATION -> "translation"
                 }
+                val typeLegacyKey = stringPreferencesKey("${prefix}_proxy_type")
+                val hostLegacyKey = stringPreferencesKey("${prefix}_proxy_host")
+                val portLegacyKey = intPreferencesKey("${prefix}_proxy_port")
+                val userLegacyKey = stringPreferencesKey("${prefix}_proxy_username")
+                val passLegacyKey = stringPreferencesKey("${prefix}_proxy_password")
+
+                val scopeType = snapshot[typeLegacyKey]
                 val type = scopeType ?: snapshot[stringPreferencesKey("proxy_type")] ?: return@forEach
-                val host = snapshot[stringPreferencesKey("${prefix}_proxy_host")]
-                    ?: snapshot[stringPreferencesKey("proxy_host")]
-                val port = snapshot[intPreferencesKey("${prefix}_proxy_port")]
-                    ?: snapshot[intPreferencesKey("proxy_port")]
-                val user = snapshot[stringPreferencesKey("${prefix}_proxy_username")]
-                    ?: snapshot[stringPreferencesKey("proxy_username")]
-                val pass = snapshot[stringPreferencesKey("${prefix}_proxy_password")]
-                    ?: snapshot[stringPreferencesKey("proxy_password")]
+                val host = snapshot[hostLegacyKey] ?: snapshot[stringPreferencesKey("proxy_host")]
+                val port = snapshot[portLegacyKey] ?: snapshot[intPreferencesKey("proxy_port")]
+                val user = snapshot[userLegacyKey] ?: snapshot[stringPreferencesKey("proxy_username")]
+                val pass = snapshot[passLegacyKey] ?: snapshot[stringPreferencesKey("proxy_password")]
 
-                runCatching { ksafe.put(keys.type, type) }
-                host?.let { runCatching { ksafe.put(keys.host, it) } }
-                port?.let { runCatching { ksafe.put(keys.port, it) } }
-                user?.let { runCatching { ksafe.put(keys.username, it) } }
-                pass?.let { runCatching { ksafe.put(keys.password, it) } }
-                @Suppress("UNUSED_EXPRESSION") source
-            }
+                // Per-field tracking — only enqueue legacy delete if KSafe write succeeded.
+                val typeOk = runCatching { ksafe.put(keys.type, type) }.isSuccess
+                if (!typeOk) { anyFailure = true; return@forEach }
+                scopeType?.let { keysToClear += typeLegacyKey }
 
-            runCatching {
-                legacyDataStore.edit { prefs ->
-                    listOf(
-                        "proxy_type", "proxy_host", "proxy_username", "proxy_password",
-                        "discovery_proxy_type", "discovery_proxy_host", "discovery_proxy_username", "discovery_proxy_password",
-                        "download_proxy_type", "download_proxy_host", "download_proxy_username", "download_proxy_password",
-                        "translation_proxy_type", "translation_proxy_host", "translation_proxy_username", "translation_proxy_password",
-                    ).forEach { prefs.remove(stringPreferencesKey(it)) }
-                    listOf(
-                        "proxy_port", "discovery_proxy_port", "download_proxy_port", "translation_proxy_port",
-                    ).forEach { prefs.remove(intPreferencesKey(it)) }
+                if (host != null) {
+                    if (runCatching { ksafe.put(keys.host, host) }.isSuccess) keysToClear += hostLegacyKey
+                    else anyFailure = true
+                }
+                if (port != null) {
+                    if (runCatching { ksafe.put(keys.port, port) }.isSuccess) keysToClear += portLegacyKey
+                    else anyFailure = true
+                }
+                if (user != null) {
+                    if (runCatching { ksafe.put(keys.username, user) }.isSuccess) keysToClear += userLegacyKey
+                    else anyFailure = true
+                }
+                if (pass != null) {
+                    if (runCatching { ksafe.put(keys.password, pass) }.isSuccess) keysToClear += passLegacyKey
+                    else anyFailure = true
                 }
             }
-            runCatching { ksafe.put(MIGRATION_MARKER, true) }
-            migrated = true
+
+            // Drop the unscoped legacy keys only if we actually transferred them
+            // into at least one scope above. We don't know which scope owns them,
+            // but their fallback role is exhausted once any scope is populated.
+            val anyScopeTouched = keysToClear.isNotEmpty()
+            if (anyScopeTouched) {
+                keysToClear += stringPreferencesKey("proxy_type")
+                keysToClear += stringPreferencesKey("proxy_host")
+                keysToClear += intPreferencesKey("proxy_port")
+                keysToClear += stringPreferencesKey("proxy_username")
+                keysToClear += stringPreferencesKey("proxy_password")
+            }
+
+            if (keysToClear.isNotEmpty()) {
+                val cleared = runCatching {
+                    legacyDataStore.edit { prefs ->
+                        keysToClear.forEach { prefs.remove(it) }
+                    }
+                }
+                if (cleared.isFailure) anyFailure = true
+            }
+
+            if (!anyFailure) {
+                runCatching { ksafe.put(MIGRATION_MARKER, true) }
+                migrated = true
+            }
         }
     }
 

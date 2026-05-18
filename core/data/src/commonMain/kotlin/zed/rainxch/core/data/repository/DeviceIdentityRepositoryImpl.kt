@@ -35,8 +35,15 @@ class DeviceIdentityRepositoryImpl(
 
     override suspend fun resetDeviceId(): String =
         deviceIdMutex.withLock {
+            // Migrate first so any pre-existing legacy entry is removed even
+            // if the user resets before the first getDeviceId() call.
+            migrateIfNeeded()
             val next = Uuid.random().toString()
             ksafe.put(DEVICE_ID_KEY, next)
+            // Reset semantics: any legacy copy must die too.
+            runCatching {
+                legacyDataStore.edit { it.remove(stringPreferencesKey("anonymous_device_id")) }
+            }
             next
         }
 
@@ -51,7 +58,11 @@ class DeviceIdentityRepositoryImpl(
             legacyDataStore.data.first()[stringPreferencesKey("anonymous_device_id")]
         }.getOrNull()
         if (!legacy.isNullOrBlank()) {
-            runCatching { ksafe.put(DEVICE_ID_KEY, legacy) }
+            val putResult = runCatching { ksafe.put(DEVICE_ID_KEY, legacy) }
+            if (putResult.isFailure) {
+                // Keep legacy intact for next attempt.
+                return
+            }
             runCatching {
                 legacyDataStore.edit { it.remove(stringPreferencesKey("anonymous_device_id")) }
             }

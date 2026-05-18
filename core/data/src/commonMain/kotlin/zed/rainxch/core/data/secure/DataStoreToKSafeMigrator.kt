@@ -27,29 +27,39 @@ suspend fun migrateDataStoreToKSafe(
     val alreadyMigrated = runCatching { ksafe.get(markerKey, false) }.getOrDefault(false)
     if (alreadyMigrated) return
 
-    val snapshot = runCatching { legacy.data.first() }.getOrNull() ?: run {
-        runCatching { ksafe.put(markerKey, true) }
+    val snapshotResult = runCatching { legacy.data.first() }
+    val snapshot = snapshotResult.getOrNull()
+    if (snapshot == null) {
+        // Legacy file unreadable. Don't set the marker — retry next launch
+        // so a transient I/O failure doesn't permanently skip migration.
         return
     }
 
     val movedKeys = mutableListOf<Preferences.Key<*>>()
+    var anyFailure = false
     entries.forEach { entry ->
-        runCatching {
-            if (entry.copy(snapshot, ksafe)) {
-                movedKeys += entry.legacyKeys
-            }
+        val copyResult = runCatching { entry.copy(snapshot, ksafe) }
+        when {
+            copyResult.isFailure -> anyFailure = true
+            copyResult.getOrNull() == true -> movedKeys += entry.legacyKeys
+            // null/false → key absent or unsupported type; not a failure
         }
     }
 
+    // Only delete legacy keys we know we copied successfully. Even on
+    // partial failure, what we *did* copy is safe to remove.
     if (movedKeys.isNotEmpty()) {
-        runCatching {
-            legacy.edit { prefs ->
-                movedKeys.forEach { prefs.remove(it) }
-            }
+        val deleteResult = runCatching {
+            legacy.edit { prefs -> movedKeys.forEach { prefs.remove(it) } }
         }
+        if (deleteResult.isFailure) anyFailure = true
     }
 
-    runCatching { ksafe.put(markerKey, true) }
+    // Only mark complete if every entry succeeded AND legacy cleanup
+    // succeeded. Otherwise next launch retries the missing entries.
+    if (!anyFailure) {
+        runCatching { ksafe.put(markerKey, true) }
+    }
 }
 
 class MigrationEntry(
