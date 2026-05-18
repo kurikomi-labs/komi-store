@@ -2,7 +2,7 @@ package zed.rainxch.details.presentation.components.sections
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,11 +29,16 @@ fun LazyListScope.logs(state: DetailsState) {
         )
     }
 
-    items(
+    // `timeIso` is second-precision, so the same APK installed twice in
+    // one second would collide on a (timeIso + assetName) composite key.
+    // Including the list index makes the key unconditionally unique while
+    // still cheaper than no-key (kept stable across recompositions of the
+    // same list shape).
+    itemsIndexed(
         items = state.installLogs,
-        key = { it.timeIso + it.assetName },
-        contentType = { "install_log" },
-    ) { log ->
+        key = { index, log -> "$index|${log.timeIso}|${log.assetName}" },
+        contentType = { _, _ -> "install_log" },
+    ) { _, log ->
         Text(
             text = "> ${log.result.asText()}: ${log.assetName}",
             style =
