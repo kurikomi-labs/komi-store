@@ -10,7 +10,8 @@
         "Homebrew で macOS にインストール — 新しい tap から `brew install --cask github-store`。",
         "コミュニティミラーに fastly.jsdelivr.net を追加。GitHub が制限されたときに便利。",
         "Keep Android Open 連合に参加 — Apps のバナーで理由を説明。",
-        "GitHub サインインが標準のウェブフローに — タップ、ブラウザで承認、完了。8 桁コードは不要。"
+        "GitHub サインインが標準のウェブフローに — タップ、ブラウザで承認、完了。8 桁コードは不要。",
+        "GitHub認証トークンがKSafe経由でAES-256-GCM暗号化保存に（Androidではハードウェア対応Keystore）。既存のトークンは初回起動時にシームレスに移行されます。"
       ]
     },
     {

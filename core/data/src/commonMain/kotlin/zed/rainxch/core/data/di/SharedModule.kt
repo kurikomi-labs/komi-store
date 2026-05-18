@@ -387,7 +387,8 @@ val networkModule =
 
         single<TokenStore> {
             DefaultTokenStore(
-                dataStore = get(),
+                ksafe = get(qualifier = org.koin.core.qualifier.named("tokens")),
+                legacyDataStore = get(),
             )
         }
 

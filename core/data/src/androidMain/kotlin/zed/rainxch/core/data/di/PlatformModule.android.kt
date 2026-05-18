@@ -183,6 +183,13 @@ actual val corePlatformModule =
             createAnnouncementsDataStore(androidContext())
         }
 
+        single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("tokens")) {
+            eu.anifantakis.lib.ksafe.KSafe(
+                context = androidContext(),
+                fileName = "ghs-tokens",
+            )
+        }
+
         // Utils
 
         single<BrowserHelper> {

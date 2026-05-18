@@ -25,6 +25,7 @@ kotlin {
 
                 implementation(libs.datastore)
                 implementation(libs.datastore.preferences)
+                implementation(libs.ksafe)
 
                 implementation(libs.kotlinx.datetime)
             }

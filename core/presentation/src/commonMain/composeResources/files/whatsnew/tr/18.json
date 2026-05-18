@@ -10,7 +10,8 @@
         "macOS'ta Homebrew ile kurulum — yeni tap'imizden `brew install --cask github-store`.",
         "Topluluk yansısı olarak fastly.jsdelivr.net eklendi. GitHub kısıtlandığında işe yarar.",
         "Keep Android Open koalisyonuna katıldık — Apps'teki banner nedenini açıklıyor.",
-        "GitHub girişi artık standart web akışını kullanıyor — dokun, tarayıcıda yetkilendir, tamam. 8 haneli koda gerek yok."
+        "GitHub girişi artık standart web akışını kullanıyor — dokun, tarayıcıda yetkilendir, tamam. 8 haneli koda gerek yok.",
+        "GitHub kimlik doğrulama token'ları artık KSafe ile AES-256-GCM şifreli (Android'de donanım destekli Keystore). Mevcut tokenlar ilk açılışta sorunsuz taşınır."
       ]
     },
     {

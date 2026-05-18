@@ -33,6 +33,7 @@ room = "2.8.4"
 slf4jSimple = "2.0.17"
 sqlite = "2.6.2"
 datastore = "1.2.0"
+ksafe = "2.0.0"
 compose-jetbrains = "1.10.3"
 compose-jetbrains-material-you = "1.11.0-alpha03"
 jetbrains-savedstate = "1.4.0"
@@ -102,6 +103,9 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 # DataStore
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+# KSafe — encrypted KMP key/value persistence (replaces DataStore wrappers)
+ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
 
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
