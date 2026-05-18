@@ -16,7 +16,11 @@ val HostTokenInterceptor = createClientPlugin("HostTokenInterceptor", ::HostToke
     onRequest { request, _ ->
         val existing = request.headers[HttpHeaders.Authorization]
         if (!existing.isNullOrBlank()) return@onRequest
-        val host = HostNames.normalize(request.url.host)
+        // `api.github.com` requests must map back to the `github.com`
+        // storage key, otherwise the PAT is never attached. Forgejo /
+        // Codeberg / Gitea APIs share the host with storage, so the
+        // mapping is a no-op for them.
+        val host = HostNames.apiHostToTokenHost(request.url.host)
         if (host.isBlank()) return@onRequest
         val token = try {
             repo.get(host)?.token
