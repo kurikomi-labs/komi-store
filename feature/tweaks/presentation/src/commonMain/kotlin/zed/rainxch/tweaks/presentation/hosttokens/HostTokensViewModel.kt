@@ -104,29 +104,56 @@ class HostTokensViewModel(
         val token = current.draftToken.trim()
         val displayName = current.draftDisplayName.trim().takeIf { it.isNotEmpty() }
         viewModelScope.launch {
-            repository.set(host, token, displayName)
-            _state.update {
-                it.copy(
-                    isAddDialogVisible = false,
-                    draftHost = "",
-                    draftToken = "",
-                    draftDisplayName = "",
+            val saveResult = runCatching { repository.set(host, token, displayName) }
+            if (saveResult.isSuccess) {
+                _state.update {
+                    it.copy(
+                        isAddDialogVisible = false,
+                        draftHost = "",
+                        draftToken = "",
+                        draftDisplayName = "",
+                    )
+                }
+                _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_saved, host)))
+            } else {
+                // Keep the dialog open with the draft intact so the user can
+                // retry — the persistence failure (Keystore unavailable,
+                // device locked, etc.) should not look like a silent success.
+                val msg = saveResult.exceptionOrNull()?.message.orEmpty()
+                _events.send(
+                    HostTokensEvent.Message(
+                        getString(Res.string.host_tokens_validation_failed, msg),
+                    ),
                 )
             }
-            _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_saved, host)))
         }
     }
 
     private fun deleteHost(host: String) {
         viewModelScope.launch {
-            repository.delete(host)
-            _events.send(HostTokensEvent.Message(getString(Res.string.host_tokens_removed, host)))
+            val result = runCatching { repository.delete(host) }
+            if (result.isSuccess) {
+                _events.send(
+                    HostTokensEvent.Message(getString(Res.string.host_tokens_removed, host)),
+                )
+            } else {
+                val msg = result.exceptionOrNull()?.message.orEmpty()
+                _events.send(
+                    HostTokensEvent.Message(
+                        getString(Res.string.host_tokens_validation_failed, msg),
+                    ),
+                )
+            }
         }
     }
 
     private fun validateExisting(host: String) {
+        // Refuse to start another validation while one is in flight against
+        // the same host — concurrent calls would race shared UI flags
+        // (`isValidating`, `pendingValidationFor`) and emit stale messages.
+        if (state.value.isValidating && state.value.pendingValidationFor == host) return
         viewModelScope.launch {
-            val token = repository.get(host)?.token ?: return@launch
+            val token = runCatching { repository.get(host)?.token }.getOrNull() ?: return@launch
             _state.update { it.copy(isValidating = true, pendingValidationFor = host, validationMessage = null) }
             val result = repository.validate(host, token)
             val message = result.fold(
@@ -139,7 +166,17 @@ class HostTokensViewModel(
                     getString(Res.string.host_tokens_validation_failed, t.message ?: "")
                 },
             )
-            _state.update { it.copy(isValidating = false, pendingValidationFor = null, validationMessage = message) }
+            _state.update {
+                // Only clear the in-flight flags if THIS host is still the
+                // one being shown as pending — defends against a second
+                // validation racing in past the guard above (e.g. for a
+                // different host).
+                if (it.pendingValidationFor == host) {
+                    it.copy(isValidating = false, pendingValidationFor = null, validationMessage = message)
+                } else {
+                    it.copy(validationMessage = message)
+                }
+            }
         }
     }
 }

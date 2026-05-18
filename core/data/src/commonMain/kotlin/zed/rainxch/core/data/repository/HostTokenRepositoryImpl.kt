@@ -9,15 +9,18 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import zed.rainxch.core.domain.model.HostNames
@@ -30,6 +33,7 @@ class HostTokenRepositoryImpl(
     private val httpClient: HttpClient,
 ) : HostTokenRepository {
 
+    private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val rmwLock = Mutex()
     private val cache = MutableStateFlow<List<HostToken>>(emptyList())
     private val loadOnce = Mutex()
@@ -38,7 +42,18 @@ class HostTokenRepositoryImpl(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun observeAll(): Flow<List<HostToken>> = cache.asStateFlow()
+    init {
+        // Kick off the initial KSafe read so the first collector of
+        // `observeAll()` already sees the persisted list rather than an
+        // empty value emitted from a fresh `MutableStateFlow`.
+        initScope.launch { runCatching { ensureLoaded() } }
+    }
+
+    // `onStart` guarantees the load runs before the first emission, so
+    // collectors that subscribe before `init { … }` lands still get the
+    // persisted list as their initial value.
+    override fun observeAll(): Flow<List<HostToken>> =
+        cache.asStateFlow().onStart { ensureLoaded() }
 
     override suspend fun get(host: String): HostToken? {
         ensureLoaded()
@@ -59,7 +74,7 @@ class HostTokenRepositoryImpl(
                 createdAtEpochMillis = now,
             )
             val next = cache.value.filterNot { it.host == key } + updated
-            persist(next)
+            persistOrThrow(next)
         }
     }
 
@@ -70,23 +85,24 @@ class HostTokenRepositoryImpl(
             val before = cache.value
             val after = before.filterNot { it.host == key }
             if (after.size == before.size) return@withLock
-            persist(after)
+            persistOrThrow(after)
         }
     }
 
     override suspend fun validate(host: String, token: String): Result<TokenValidation> {
         val key = HostNames.normalize(host)
         if (key.isBlank()) return Result.failure(IllegalArgumentException("blank host"))
-        return runCatching {
+        return try {
             val response = httpClient.get(buildUserUrl(key)) {
                 accept(ContentType.Application.Json)
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.UserAgent, "GithubStore/1.0 (host-token-validate)")
             }
-            mapValidation(response)
-        }.recoverCatching { t ->
-            if (t is CancellationException) throw t
-            throw t
+            Result.success(mapValidation(response))
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (t: Throwable) {
+            Result.failure(t)
         }
     }
 
@@ -132,16 +148,25 @@ class HostTokenRepositoryImpl(
         loaded = true
     }
 
-    private suspend fun persist(list: List<HostToken>) {
-        cache.value = list
+    // Persists then promotes the in-memory cache. If KSafe write fails,
+    // the in-memory value is rolled back and the exception is thrown so
+    // the caller can surface the failure to the UI instead of pretending
+    // the save succeeded.
+    private suspend fun persistOrThrow(list: List<HostToken>) {
+        val previous = cache.value
         val encoded = json.encodeToString(ListSerializer(HostToken.serializer()), list)
-        runCatching { ksafe.put(KEY_TOKENS_JSON, encoded) }
+        try {
+            ksafe.put(KEY_TOKENS_JSON, encoded)
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (t: Throwable) {
+            cache.value = previous
+            throw t
+        }
+        cache.value = list
     }
 
     private companion object {
         const val KEY_TOKENS_JSON = "host_tokens_v1"
-        // String.serializer kept to silence unused-import warning if file lifts to plain key list.
-        @Suppress("unused")
-        private val stringSerializer = String.serializer()
     }
 }
