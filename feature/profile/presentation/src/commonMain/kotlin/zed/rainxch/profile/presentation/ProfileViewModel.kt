@@ -35,7 +35,7 @@ class ProfileViewModel(
                 initialValue = ProfileState(),
             )
 
-    private val _events = Channel<ProfileEvent>()
+    private val _events = Channel<ProfileEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private fun formatCacheSize(bytes: Long): String {

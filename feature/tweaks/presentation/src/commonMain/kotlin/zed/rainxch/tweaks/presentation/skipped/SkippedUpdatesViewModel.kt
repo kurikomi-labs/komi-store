@@ -19,7 +19,7 @@ class SkippedUpdatesViewModel(
     private val _state = MutableStateFlow(SkippedUpdatesState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<SkippedUpdatesEvent>()
+    private val _events = Channel<SkippedUpdatesEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {

@@ -91,7 +91,7 @@ class ExternalImportViewModel(
                 initialValue = ExternalImportState(),
             )
 
-    private val _events = Channel<ExternalImportEvent>()
+    private val _events = Channel<ExternalImportEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     fun onAction(action: ExternalImportAction) {

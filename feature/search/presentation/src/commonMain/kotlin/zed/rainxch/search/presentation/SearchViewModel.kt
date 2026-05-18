@@ -195,7 +195,7 @@ class SearchViewModel(
         }
     }
 
-    private val _events = Channel<SearchEvent>()
+    private val _events = Channel<SearchEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private fun syncSystemState() {
