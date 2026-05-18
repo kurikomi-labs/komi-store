@@ -1261,4 +1261,6 @@
     <string name="host_tokens_undo_action">Undo</string>
     <string name="host_tokens_compose_replace_title">Replace token for %1$s</string>
     <string name="host_tokens_compose_add_title">Add token</string>
+    <string name="host_tokens_validation_failed_fallback">unknown error</string>
+    <string name="host_tokens_undo_failed">Couldn\'t restore token for %1$s</string>
 </resources>

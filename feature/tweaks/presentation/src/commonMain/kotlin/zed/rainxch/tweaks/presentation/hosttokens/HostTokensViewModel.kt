@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,7 +16,9 @@ import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_saved
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_undo_failed
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_failed
+import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_failed_fallback
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_invalid
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_host_required
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_token_required
@@ -29,24 +32,39 @@ class HostTokensViewModel(
     private val _state = MutableStateFlow(HostTokensState(isLoading = true))
     val state = _state.asStateFlow()
 
-    private val _events = Channel<HostTokensEvent>()
+    private val _events = Channel<HostTokensEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {
         viewModelScope.launch {
-            repository.observeAll().collect { tokens ->
-                _state.update {
-                    it.copy(
-                        tokens = tokens.sortedBy { t -> t.host },
-                        isLoading = false,
+            // .catch so a downstream KSafe / serialization throw doesn't
+            // tear down the collector and leave the screen stuck on the
+            // initial loading spinner. We surface the failure once via
+            // Message and drop isLoading so the UI shows the empty state.
+            repository.observeAll()
+                .catch { t ->
+                    _state.update { it.copy(isLoading = false) }
+                    _events.send(
+                        HostTokensEvent.Message(
+                            getString(Res.string.host_tokens_validation_failed, t.message.orEmpty()),
+                        ),
                     )
                 }
-            }
+                .collect { tokens ->
+                    _state.update {
+                        it.copy(
+                            tokens = tokens.sortedBy { t -> t.host },
+                            isLoading = false,
+                        )
+                    }
+                }
         }
         viewModelScope.launch {
-            authenticationState.isUserLoggedIn().collect { signedIn ->
-                _state.update { it.copy(isOAuthSignedInToGithub = signedIn) }
-            }
+            authenticationState.isUserLoggedIn()
+                .catch { /* swallow — OAuth state is non-critical for this screen */ }
+                .collect { signedIn ->
+                    _state.update { it.copy(isOAuthSignedInToGithub = signedIn) }
+                }
         }
     }
 
@@ -235,8 +253,22 @@ class HostTokensViewModel(
     private fun undoDelete() {
         val pending = state.value.pendingUndoDelete ?: return
         viewModelScope.launch {
-            runCatching { repository.set(pending.host, pending.token, pending.displayName) }
-            _state.update { it.copy(pendingUndoDelete = null) }
+            val result = runCatching {
+                repository.set(pending.host, pending.token, pending.displayName)
+            }
+            if (result.isSuccess) {
+                _state.update { it.copy(pendingUndoDelete = null) }
+            } else {
+                // Surface the failure but keep `pendingUndoDelete` populated so
+                // the user could trigger another undo (if surfaced) instead of
+                // losing the bytes silently. The actual "another undo" surface
+                // does not exist today; at minimum we emit the error.
+                _events.send(
+                    HostTokensEvent.Message(
+                        getString(Res.string.host_tokens_undo_failed, pending.host),
+                    ),
+                )
+            }
         }
     }
 
@@ -260,7 +292,8 @@ class HostTokensViewModel(
                         login = null,
                         scopes = emptyList(),
                         rateLimitRemaining = null,
-                        errorMessage = t.message ?: "validation failed",
+                        errorMessage = t.message
+                            ?: getString(Res.string.host_tokens_validation_failed_fallback),
                     )
                 },
             )
