@@ -239,15 +239,38 @@ class ExternalImportRepositoryImpl(
         }
 
         // Strategy 4: query each configured Forgejo / Codeberg host using
-        // the app label as a free-text search term. We always include the
-        // canonical Codeberg + Gitea hosts; user-added hosts come from
-        // TweaksRepository. Cheap fail-soft — any host that errors just
-        // contributes no suggestions.
+        // the app label as a free-text search term. Strict bounds:
+        //
+        //   * Only run for candidates with no high-confidence existing
+        //     hit (manifest / fingerprint / backend ≥ 0.7). Most installed
+        //     apps either match by fingerprint or have nothing useful to
+        //     match against; running a 5-host fanout per candidate
+        //     blew up scan time from seconds to minutes for users with
+        //     larger installed-app lists.
+        //   * Cap the total number of candidates that trigger a Forgejo
+        //     search per scan invocation, so even worst-case unmatched
+        //     populations don't burn through Codeberg's rate limit
+        //     (2000 req / 300s per IP).
+        //   * The pricier `resolveMatches` callers (full scan) are
+        //     already off the main thread; smart-match's single-
+        //     candidate variant skips the cap.
         val forgejoHits = mutableMapOf<String, MutableList<RepoMatchSuggestion>>()
         val forgejoHostList = forgejoSearchHosts()
         if (forgejoHostList.isNotEmpty()) {
+            var budget = FORGEJO_SEARCH_CANDIDATE_BUDGET
             for (candidate in candidates) {
+                if (budget <= 0) break
+                // Skip candidates that already have a strong GitHub hit
+                // — Forgejo results would only sit below them anyway.
+                val existingTopConfidence = listOfNotNull(
+                    candidate.manifestHint?.confidence,
+                    fingerprintHits[candidate.packageName]?.confidence,
+                    backendResults[candidate.packageName]?.maxOfOrNull { it.confidence },
+                ).maxOrNull() ?: 0.0
+                if (existingTopConfidence >= FORGEJO_SEARCH_SKIP_THRESHOLD) continue
+
                 val query = candidate.appLabel.trim().takeIf { it.isNotEmpty() } ?: continue
+                budget--
                 for (host in forgejoHostList) {
                     val matches = searchForgejoHostForSuggestions(host, query)
                     if (matches.isNotEmpty()) {
@@ -690,6 +713,20 @@ class ExternalImportRepositoryImpl(
         // doesn't trigger a many-way HTTP burst on every smart-match.
         private const val FORGEJO_SEARCH_MAX_HOSTS = 5
         private const val FORGEJO_SEARCH_LIMIT = 5
+
+        // Hard cap on how many candidates trigger a Forgejo fanout per
+        // resolveMatches call. Smart-match always sends a single
+        // candidate so this only matters for the import-scan path with
+        // dozens to hundreds of installed apps. 12 unmatched candidates
+        // × 5 hosts = at most 60 HTTP calls per scan — well under
+        // Codeberg's rate limit and finishes in seconds.
+        private const val FORGEJO_SEARCH_CANDIDATE_BUDGET = 12
+
+        // Confidence threshold above which we DON'T bother running the
+        // Forgejo search — the GitHub-side hit will dominate the
+        // suggestion list and a remote search would be pure waste. 0.7
+        // matches the backend's "confident" bucket.
+        private const val FORGEJO_SEARCH_SKIP_THRESHOLD = 0.7
 
         // Sits below the high-confidence GitHub strategies (manifest /
         // fingerprint / backend) but above zero so Forgejo hits still
