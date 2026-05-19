@@ -1,11 +1,9 @@
 package zed.rainxch.core.domain.model
 
-enum class ContentWidth(
-    val displayName: String,
-) {
-    COMPACT("Compact"),
-    WIDE("Wide"),
-    EXTRA_WIDE("Extra wide"),
+enum class ContentWidth {
+    COMPACT,
+    WIDE,
+    EXTRA_WIDE,
     ;
 
     companion object {
