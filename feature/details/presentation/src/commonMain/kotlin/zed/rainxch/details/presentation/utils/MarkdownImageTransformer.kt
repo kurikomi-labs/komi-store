@@ -117,22 +117,53 @@ class MarkdownImageTransformer(
 
         val painter = rememberAsyncImagePainter(model = request)
 
+        val isBadgeLike = looksLikeBadge(normalizedLink)
+        val inlineModifier = if (isBadgeLike) {
+            // SVG / shields.io / GitHub Actions badge / Codecov tile —
+            // narrow vector content. Cap tight so several badges tile
+            // on one line without overlap.
+            Modifier
+                .heightIn(max = BADGE_MAX_HEIGHT_DP.dp)
+                .widthIn(max = BADGE_MAX_WIDTH_DP.dp)
+        } else {
+            // Raster image (PNG / JPG / WEBP / GIF) — typically a
+            // banner, hero, or screenshot. Give it room while still
+            // bounded so a stray oversized PNG can't take over the
+            // page. Block-level rendering of these goes through
+            // `LinkAwareMarkdownImage` and ignores this modifier.
+            Modifier
+                .heightIn(max = RASTER_MAX_HEIGHT_DP.dp)
+                .widthIn(max = RASTER_MAX_WIDTH_DP.dp)
+        }
+
         return ImageData(
             painter = painter,
-            // Hard cap inline images at `INLINE_MAX_HEIGHT_DP` so badges
-            // don't paint outside their `Placeholder` slot and overlap
-            // the next line. ContentScale.Fit + this height bound means
-            // the rendered width is proportional to the badge aspect —
-            // narrow badges stay narrow, wide badges stay wide, but
-            // none escape the inline strip vertically. Block-level
-            // rendering (`LinkAwareMarkdownImage`) ignores this and
-            // applies `fillMaxWidth() + heightIn(600.dp) + clipToBounds`.
-            modifier = Modifier
-                .heightIn(max = INLINE_MAX_HEIGHT_DP.dp)
-                .widthIn(max = INLINE_MAX_WIDTH_DP.dp),
+            modifier = inlineModifier,
             contentDescription = "Image",
             contentScale = ContentScale.Fit,
         )
+    }
+
+    private fun looksLikeBadge(url: String): Boolean {
+        val lower = url.lowercase()
+        // 1. Explicit `.svg` (with or without query string). Covers most
+        //    repos' own action badges + custom shields.
+        val pathOnly = lower.substringBefore('?').substringBefore('#')
+        if (pathOnly.endsWith(".svg")) return true
+        // 2. Known badge providers — many serve SVG without an
+        //    extension in the URL (`https://img.shields.io/badge/...`).
+        val host = lower
+            .removePrefix("https://")
+            .removePrefix("http://")
+            .substringBefore('/')
+        return host in BADGE_HOSTS ||
+            // 3. Path-based hints — GitHub Actions workflow badges
+            //    (`/actions/workflows/.../badge.svg`), Open Source
+            //    Insights, Bestpractices.dev tiles.
+            "/badge" in pathOnly ||
+            "/badges/" in pathOnly ||
+            "/workflows/" in pathOnly && pathOnly.endsWith("/badge") ||
+            "/bestpractices/" in pathOnly
     }
 
     @Composable
@@ -251,12 +282,24 @@ class MarkdownImageTransformer(
         // constraints. Defensive: stops the image painting outside its
         // slot if the lib's placeholder constraint propagation is
         // weaker than expected on a given Compose version.
-        private const val INLINE_MAX_HEIGHT_DP = 40
-        // Width ceiling on inline badges. 220dp covers a "Get it on
-        // Google Play" / "AppGallery" tile (~180dp natural) plus
-        // longest shields.io status string. ContentScale.Fit picks the
-        // tighter of width vs height so aspect ratio stays correct.
-        private const val INLINE_MAX_WIDTH_DP = 220
+        // SVG / vector badge bounds — designed for narrow vector content.
+        private const val BADGE_MAX_HEIGHT_DP = 40
+        private const val BADGE_MAX_WIDTH_DP = 220
+
+        // Raster image bounds — banners, screenshots, hero shots. Looser
+        // height + width so they're actually legible inline (when they
+        // appear inline at all — most are top-level via LinkAwareMarkdownImage).
+        private const val RASTER_MAX_HEIGHT_DP = 320
+        private const val RASTER_MAX_WIDTH_DP = 480
+
+        // Hosts that overwhelmingly serve SVG badges, often without a
+        // `.svg` URL suffix. Matched case-insensitively.
+        private val BADGE_HOSTS = setOf(
+            "img.shields.io",
+            "shields.io",
+            "badgen.net",
+            "badge.fury.io",
+        )
 
         private val networkHeaders =
             NetworkHeaders.Builder()
