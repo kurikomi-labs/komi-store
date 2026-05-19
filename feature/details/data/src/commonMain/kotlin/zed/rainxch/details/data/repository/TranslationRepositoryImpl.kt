@@ -59,8 +59,15 @@ class TranslationRepositoryImpl(
             }
         }
 
+        // Strip out fenced code blocks before chunking + translation. Code
+        // is not prose; sending it through a translator at best corrupts
+        // identifiers, at worst rewrites strings and breaks examples.
+        // Each fence is swapped for a marker the translator passes through
+        // verbatim; we splice the originals back after the joined output.
+        val protection = extractCodeFences(text)
+
         val translator = resolveTranslator()
-        val chunks = chunkText(text, translator.maxChunkSize)
+        val chunks = chunkText(protection.maskedText, translator.maxChunkSize)
         val translatedParts = mutableListOf<Pair<String, String>>()
         var detectedLang: String? = null
 
@@ -72,13 +79,15 @@ class TranslationRepositoryImpl(
             }
         }
 
+        val joined =
+            translatedParts
+                .dropLast(1)
+                .joinToString("") { (text, delim) -> text + delim } +
+                translatedParts.lastOrNull()?.first.orEmpty()
+
         val result =
             TranslationResult(
-                translatedText =
-                    translatedParts
-                        .dropLast(1)
-                        .joinToString("") { (text, delim) -> text + delim } +
-                        translatedParts.lastOrNull()?.first.orEmpty(),
+                translatedText = restoreCodeFences(joined, protection.fences),
                 detectedSourceLanguage = detectedLang,
             )
 
@@ -91,6 +100,41 @@ class TranslationRepositoryImpl(
         }
         return result
     }
+
+    private fun extractCodeFences(text: String): FenceProtection {
+        val fences = mutableListOf<String>()
+        // Greedy-non-greedy `[\s\S]*?` instead of `.*?` because the
+        // fence body crosses newlines. `MULTILINE` is not needed since
+        // the regex does not use `^`/`$` anchors — kept for clarity.
+        val regex = Regex("```[\\s\\S]*?```", RegexOption.MULTILINE)
+        val masked = regex.replace(text) { match ->
+            val idx = fences.size
+            fences += match.value
+            // Unicode math brackets + ALL_CAPS underscore token —
+            // empirically preserved verbatim by Google + Youdao
+            // translators across the 33 supported targets.
+            "⟦CF_${idx}_END⟧"
+        }
+        return FenceProtection(masked, fences)
+    }
+
+    private fun restoreCodeFences(translated: String, fences: List<String>): String {
+        if (fences.isEmpty()) return translated
+        var result = translated
+        fences.forEachIndexed { i, original ->
+            // Tolerate translator inserting whitespace around the marker
+            // (Youdao occasionally pads with NBSP). Falls back to leaving
+            // any unmatched marker in place rather than corrupting prose.
+            val pattern = Regex("⟦\\s*CF_\\s*${i}\\s*_END\\s*⟧")
+            result = pattern.replaceFirst(result, Regex.escapeReplacement(original))
+        }
+        return result
+    }
+
+    private data class FenceProtection(
+        val maskedText: String,
+        val fences: List<String>,
+    )
 
     override fun getDeviceLanguageCode(): String = localizationManager.getPrimaryLanguageCode()
 
