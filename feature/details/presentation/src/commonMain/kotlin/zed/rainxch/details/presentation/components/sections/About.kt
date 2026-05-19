@@ -149,6 +149,21 @@ fun ExpandableMarkdownContent(
     val measuredDp =
         measuredHeightPx?.let { with(density) { it.toDp() } }
 
+    val effectiveHeightState = androidx.compose.runtime.rememberUpdatedState(effectiveHeight)
+    val collapsedHeightPxState = androidx.compose.runtime.rememberUpdatedState(collapsedHeightPx)
+    val onMeasuredState = androidx.compose.runtime.rememberUpdatedState(onMeasured)
+    val markdownModifier = remember {
+        Modifier
+            .fillMaxWidth()
+            .onSizeChanged { size ->
+                val measured = size.height.toFloat()
+                val decisive = effectiveHeightState.value > collapsedHeightPxState.value
+                if (!decisive && measured > effectiveHeightState.value) {
+                    onMeasuredState.value(measured)
+                }
+            }
+    }
+
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     LaunchedEffect(isExpanded) {
         if (isExpanded) {
@@ -175,24 +190,18 @@ fun ExpandableMarkdownContent(
                     },
             ) {
                 val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+                val components = remember(imageTransformer, isDark) {
+                    zed.rainxch.details.presentation.markdown
+                        .githubStoreMarkdownComponents(imageTransformer, isDark)
+                }
                 Markdown(
                     content = content,
                     colors = colors,
                     typography = typography,
                     flavour = flavour,
                     imageTransformer = imageTransformer,
-                    components = zed.rainxch.details.presentation.markdown
-                        .githubStoreMarkdownComponents(imageTransformer, isDark),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .onSizeChanged { size ->
-                                val measured = size.height.toFloat()
-                                val decisive = effectiveHeight > collapsedHeightPx
-                                if (!decisive && measured > effectiveHeight) {
-                                    onMeasured(measured)
-                                }
-                            },
+                    components = components,
+                    modifier = markdownModifier,
                 )
             }
 

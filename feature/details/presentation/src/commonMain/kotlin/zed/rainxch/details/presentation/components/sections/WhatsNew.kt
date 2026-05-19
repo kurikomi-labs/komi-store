@@ -174,6 +174,26 @@ private fun ExpandableMarkdownContent(
         }
     }
 
+    val components = remember(isDark) {
+        zed.rainxch.details.presentation.markdown
+            .githubStoreMarkdownComponents(MarkdownImageTransformer, isDark)
+    }
+
+    val effectiveHeightState = androidx.compose.runtime.rememberUpdatedState(effectiveHeight)
+    val collapsedHeightPxState = androidx.compose.runtime.rememberUpdatedState(collapsedHeightPx)
+    val onMeasuredState = androidx.compose.runtime.rememberUpdatedState(onMeasured)
+    val markdownModifier = remember {
+        Modifier
+            .fillMaxWidth()
+            .onSizeChanged { size ->
+                val measured = size.height.toFloat()
+                val decisive = effectiveHeightState.value > collapsedHeightPxState.value
+                if (!decisive && measured > effectiveHeightState.value) {
+                    onMeasuredState.value(measured)
+                }
+            }
+    }
+
     Column(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)) {
         Box {
             Box(
@@ -194,18 +214,8 @@ private fun ExpandableMarkdownContent(
                     typography = typography,
                     flavour = flavour,
                     imageTransformer = MarkdownImageTransformer,
-                    components = zed.rainxch.details.presentation.markdown
-                        .githubStoreMarkdownComponents(MarkdownImageTransformer, isDark),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .onSizeChanged { size ->
-                                val measured = size.height.toFloat()
-                                val decisive = effectiveHeight > collapsedHeightPx
-                                if (!decisive && measured > effectiveHeight) {
-                                    onMeasured(measured)
-                                }
-                            },
+                    components = components,
+                    modifier = markdownModifier,
                 )
             }
 
