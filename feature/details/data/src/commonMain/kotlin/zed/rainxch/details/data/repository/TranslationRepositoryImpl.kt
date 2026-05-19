@@ -59,12 +59,10 @@ class TranslationRepositoryImpl(
             }
         }
 
-        // Strip out fenced code blocks before chunking + translation. Code
-        // is not prose; sending it through a translator at best corrupts
-        // identifiers, at worst rewrites strings and breaks examples.
-        // Each fence is swapped for a marker the translator passes through
-        // verbatim; we splice the originals back after the joined output.
-        val protection = extractCodeFences(text)
+        // Mask out machine-readable spans (code fences, HTML tags,
+        // markdown URLs, bare URLs) so the translator doesn't mangle
+        // them. See `protectFromTranslation` kdoc for the full list.
+        val protection = protectFromTranslation(text)
 
         val translator = resolveTranslator()
         val chunks = chunkText(protection.maskedText, translator.maxChunkSize)
@@ -87,7 +85,7 @@ class TranslationRepositoryImpl(
 
         val result =
             TranslationResult(
-                translatedText = restoreCodeFences(joined, protection.fences),
+                translatedText = restoreProtectedSpans(joined, protection.spans),
                 detectedSourceLanguage = detectedLang,
             )
 
@@ -101,39 +99,85 @@ class TranslationRepositoryImpl(
         return result
     }
 
-    private fun extractCodeFences(text: String): FenceProtection {
-        val fences = mutableListOf<String>()
-        // Greedy-non-greedy `[\s\S]*?` instead of `.*?` because the
-        // fence body crosses newlines. `MULTILINE` is not needed since
-        // the regex does not use `^`/`$` anchors — kept for clarity.
-        val regex = Regex("```[\\s\\S]*?```", RegexOption.MULTILINE)
-        val masked = regex.replace(text) { match ->
-            val idx = fences.size
-            fences += match.value
-            // Unicode math brackets + ALL_CAPS underscore token —
-            // empirically preserved verbatim by Google + Youdao
-            // translators across the 33 supported targets.
-            "⟦CF_${idx}_END⟧"
+    /**
+     * Strips machine-readable spans (code fences, HTML tags, markdown
+     * link/image URLs) that translators will otherwise mangle. Each span
+     * is replaced with an opaque marker the translator passes through
+     * verbatim, then restored after the joined translation comes back.
+     *
+     * Why bigger than just fenced code: real READMEs commonly stack
+     * `[![alt](badge.svg)](https://store/...)` badge rows and raw
+     * `<img>` tags. Translators tokenize on `(` and `<`, then insert
+     * whitespace into URLs (observed on `https://appgallery.cloud.
+     * huawei.com/...`) or translate alt text into the href slot. Both
+     * corrupt the rendered markdown.
+     */
+    private fun protectFromTranslation(text: String): TranslationProtection {
+        val spans = mutableListOf<String>()
+        var masked = text
+
+        // 1. Fenced code blocks first — these are the most disruptive
+        //    spans and matching them before everything else means later
+        //    passes won't accidentally re-mask their inner content.
+        masked = Regex("```[\\s\\S]*?```", RegexOption.MULTILINE).replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
         }
-        return FenceProtection(masked, fences)
+        // 2. HTML tags including their bodies (`<a>...</a>`, `<img …/>`,
+        //    `<picture>...</picture>`). Translators rewrite `href` and
+        //    `src` attributes; preserve the whole element.
+        masked = Regex("<[^/!][a-zA-Z0-9]*[^>]*?/>").replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
+        }
+        masked = Regex(
+            "<(a|img|picture|source|video|audio|svg)\\b[^>]*>[\\s\\S]*?</\\1>",
+            RegexOption.IGNORE_CASE,
+        ).replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
+        }
+        masked = Regex("<img\\b[^>]*>", RegexOption.IGNORE_CASE).replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
+        }
+        // 3. Markdown link / image URLs: the `](url)` tail. Keep the
+        //    `[label]` part untouched so prose-style link text still
+        //    translates (e.g. `[the docs]` → `[la documentación]`).
+        masked = Regex("\\]\\(([^)]+)\\)").replace(masked) { match ->
+            val url = match.groupValues[1]
+            "](" + replaceWithMarker(spans, url) + ")"
+        }
+        // 4. Bare URLs in plain text. Without this, translators
+        //    sometimes split long URLs across whitespace.
+        masked = Regex("https?://[^\\s<>\")]+").replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
+        }
+
+        return TranslationProtection(masked, spans)
     }
 
-    private fun restoreCodeFences(translated: String, fences: List<String>): String {
-        if (fences.isEmpty()) return translated
+    private fun replaceWithMarker(spans: MutableList<String>, value: String): String {
+        val idx = spans.size
+        spans += value
+        // Unicode math brackets + ALL_CAPS underscore token — empirically
+        // preserved verbatim by Google + Youdao translators across the 33
+        // supported targets.
+        return "⟦TR_${idx}_END⟧"
+    }
+
+    private fun restoreProtectedSpans(translated: String, spans: List<String>): String {
+        if (spans.isEmpty()) return translated
         var result = translated
-        fences.forEachIndexed { i, original ->
-            // Tolerate translator inserting whitespace around the marker
-            // (Youdao occasionally pads with NBSP). Falls back to leaving
-            // any unmatched marker in place rather than corrupting prose.
-            val pattern = Regex("⟦\\s*CF_\\s*${i}\\s*_END\\s*⟧")
+        spans.forEachIndexed { i, original ->
+            // Tolerate translator inserting whitespace around the marker.
+            // Falls back to leaving any unmatched marker in place rather
+            // than corrupting prose.
+            val pattern = Regex("⟦\\s*TR_\\s*${i}\\s*_END\\s*⟧")
             result = pattern.replaceFirst(result, Regex.escapeReplacement(original))
         }
         return result
     }
 
-    private data class FenceProtection(
+    private data class TranslationProtection(
         val maskedText: String,
-        val fences: List<String>,
+        val spans: List<String>,
     )
 
     override fun getDeviceLanguageCode(): String = localizationManager.getPrimaryLanguageCode()
