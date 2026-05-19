@@ -103,7 +103,7 @@ private fun LanguagePickerCard(
 }
 
 @Composable
-private fun LanguageDropdown(
+internal fun LanguageDropdown(
     selectedTag: String?,
     onLanguageSelected: (String?) -> Unit,
 ) {

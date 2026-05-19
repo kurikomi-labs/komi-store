@@ -75,8 +75,8 @@ fun LazyListScope.translationSection(
             targetLanguageTag = state.autoTranslateTargetLang,
             appLanguageTag = state.selectedAppLanguage,
             onToggle = { onAction(TweaksAction.OnAutoTranslateEnabledToggle(it)) },
-            onClearExplicitTarget = {
-                onAction(TweaksAction.OnAutoTranslateTargetSelected(null))
+            onTargetSelected = { tag ->
+                onAction(TweaksAction.OnAutoTranslateTargetSelected(tag))
             },
         )
     }
@@ -88,7 +88,7 @@ private fun AutoTranslateCard(
     targetLanguageTag: String?,
     appLanguageTag: String?,
     onToggle: (Boolean) -> Unit,
-    onClearExplicitTarget: () -> Unit,
+    onTargetSelected: (String?) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -121,26 +121,31 @@ private fun AutoTranslateCard(
                 )
             }
             if (enabled) {
-                val effectiveTarget = (targetLanguageTag ?: appLanguageTag).orEmpty()
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = stringResource(
-                            Res.string.translation_auto_target,
-                            effectiveTarget.ifBlank { stringResource(Res.string.language_follow_system) },
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
+                        text = stringResource(Res.string.translation_auto_target_label),
+                        style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f),
                     )
-                    if (targetLanguageTag != null) {
-                        androidx.compose.material3.TextButton(onClick = onClearExplicitTarget) {
-                            Text(stringResource(Res.string.translation_auto_target_reset))
-                        }
+                    Spacer(Modifier.height(6.dp))
+                    LanguageDropdown(
+                        selectedTag = targetLanguageTag,
+                        onLanguageSelected = onTargetSelected,
+                    )
+                    if (targetLanguageTag == null && !appLanguageTag.isNullOrBlank()) {
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            text = stringResource(
+                                Res.string.translation_auto_target_followup,
+                                appLanguageTag,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
