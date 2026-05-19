@@ -167,7 +167,8 @@ private fun ExpandableMarkdownContent(
     var fullChunks by remember(raw, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(raw, isDark) {
         val processed = withContext(Dispatchers.Default) {
-            applyThemeAwareImages(raw, isDark)
+            val themed = applyThemeAwareImages(raw, isDark)
+            zed.rainxch.core.domain.util.separateAdjacentImageLinks(themed)
         }
         val chunks = withContext(Dispatchers.Default) {
             zed.rainxch.details.presentation.utils

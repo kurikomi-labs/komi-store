@@ -175,7 +175,11 @@ fun ExpandableMarkdownContent(
     var fullChunks by remember(rawMarkdown, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(rawMarkdown, isDark) {
         val processed = withContext(Dispatchers.Default) {
-            applyThemeAwareImages(rawMarkdown, isDark)
+            // Theme-aware image substitution first, then split adjacent
+            // image-link rows into their own paragraphs so badge stacks
+            // render as block-level images (no inline-overlap).
+            val themed = applyThemeAwareImages(rawMarkdown, isDark)
+            zed.rainxch.core.domain.util.separateAdjacentImageLinks(themed)
         }
         val chunks = withContext(Dispatchers.Default) {
             splitMarkdownIntoChunks(processed, targetChunkChars = 4000)
