@@ -402,6 +402,13 @@ val networkModule =
             RateLimitRepositoryImpl()
         }
 
+        single<zed.rainxch.core.domain.repository.HostTokenRepository> {
+            zed.rainxch.core.data.repository.HostTokenRepositoryImpl(
+                ksafe = get(qualifier = org.koin.core.qualifier.named("tokens")),
+                httpClient = get(qualifier = org.koin.core.qualifier.named("test")),
+            )
+        }
+
         single<HttpClient>(qualifier = named("test")) {
             createPlatformHttpClient(ProxyConfig.System).config {
                 install(HttpTimeout) {

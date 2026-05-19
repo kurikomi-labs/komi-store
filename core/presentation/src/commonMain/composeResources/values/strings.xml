@@ -1220,4 +1220,55 @@
     <string name="translation_auto_target_reset">Reset</string>
     <string name="translation_auto_target_label">Translate into</string>
     <string name="translation_auto_target_followup">Following app language (%1$s)</string>
+
+    <!-- Host tokens -->
+    <string name="host_tokens_title">Authentication tokens</string>
+    <string name="host_tokens_entry_subtitle">Personal access tokens per forge host (GitHub, Codeberg, Forgejo)</string>
+    <string name="host_tokens_intro">Personal access tokens stored encrypted per forge host. Used to authenticate direct API calls.</string>
+    <string name="host_tokens_empty_title">No tokens stored</string>
+    <string name="host_tokens_empty_subtitle">Tap + to add a personal access token</string>
+    <string name="host_tokens_add_dialog_title">Add token</string>
+    <string name="host_tokens_field_host">Host (e.g. github.com)</string>
+    <string name="host_tokens_field_token">Personal access token</string>
+    <string name="host_tokens_field_display_name">Display name (optional)</string>
+    <string name="host_tokens_validation_host_required">Host required</string>
+    <string name="host_tokens_validation_host_invalid">Invalid host</string>
+    <string name="host_tokens_validation_token_required">Token required</string>
+    <string name="host_tokens_validation_token_short">Token too short</string>
+    <string name="host_tokens_action_save">Save</string>
+    <string name="host_tokens_action_cancel">Cancel</string>
+    <string name="host_tokens_action_back">Back</string>
+    <string name="host_tokens_action_add">Add token</string>
+    <string name="host_tokens_action_validate">Validate</string>
+    <string name="host_tokens_action_delete">Delete</string>
+    <string name="host_tokens_saved">Saved token for %1$s</string>
+    <string name="host_tokens_removed">Removed token for %1$s</string>
+    <string name="host_tokens_validation_success">Token accepted (login=%1$s, scopes=%2$s)</string>
+    <string name="host_tokens_validation_failed">Validation failed: %1$s</string>
+
+    <!-- Host tokens — picker / forge presets / inline feedback / undo -->
+    <string name="host_tokens_picker_title">Add token for…</string>
+    <string name="host_tokens_picker_other">Other forge</string>
+    <string name="host_tokens_picker_other_subtitle">Forgejo, Gitea, self-hosted</string>
+    <string name="host_tokens_picker_open_page">Open token page</string>
+    <string name="host_tokens_picker_paste">Paste token</string>
+    <string name="host_tokens_compose_field_forge_address">Forge address</string>
+    <string name="host_tokens_compose_will_connect">Will connect to %1$s</string>
+    <string name="host_tokens_compose_detected">Detected: %1$s</string>
+    <string name="host_tokens_compose_replace_hint">Leave blank to keep the existing token. Type a new value to replace it.</string>
+    <string name="host_tokens_oauth_coexistence">You\'re signed in to GitHub via the app — that\'s the recommended path. Add a token here only if browser sign-in won\'t work (restrictive network, no browser) or for forges other than GitHub.</string>
+    <string name="host_tokens_row_validate">Check</string>
+    <string name="host_tokens_row_menu">More</string>
+    <string name="host_tokens_row_edit_label">Edit label</string>
+    <string name="host_tokens_row_replace_token">Replace token</string>
+    <string name="host_tokens_row_open_token_page">Manage on %1$s</string>
+    <string name="host_tokens_row_valid_short">Valid · %1$s</string>
+    <string name="host_tokens_row_valid_rate">%1$s remaining</string>
+    <string name="host_tokens_row_invalid_short">Invalid · %1$s</string>
+    <string name="host_tokens_undo_snackbar">Token for %1$s removed</string>
+    <string name="host_tokens_undo_action">Undo</string>
+    <string name="host_tokens_compose_replace_title">Replace token for %1$s</string>
+    <string name="host_tokens_compose_add_title">Add token</string>
+    <string name="host_tokens_validation_failed_fallback">unknown error</string>
+    <string name="host_tokens_undo_failed">Couldn\'t restore token for %1$s</string>
 </resources>

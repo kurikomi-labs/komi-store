@@ -28,7 +28,7 @@ class MirrorPickerViewModel(
     private val _state = MutableStateFlow(MirrorPickerState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<MirrorPickerEvent>()
+    private val _events = Channel<MirrorPickerEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {

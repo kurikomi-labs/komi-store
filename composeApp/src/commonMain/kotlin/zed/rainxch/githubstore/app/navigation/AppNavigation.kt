@@ -48,6 +48,7 @@ import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
+import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
 import zed.rainxch.tweaks.presentation.mirror.AutoSuggestMirrorViewModel
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
 import zed.rainxch.tweaks.presentation.mirror.components.AutoSuggestMirrorSheet
@@ -408,6 +409,11 @@ fun AppNavigation(
                                 launchSingleTop = true
                             }
                         },
+                        onNavigateToHostTokens = {
+                            navController.navigate(GithubStoreGraph.HostTokensScreen) {
+                                launchSingleTop = true
+                            }
+                        },
                     )
                 }
 
@@ -419,6 +425,12 @@ fun AppNavigation(
 
                 composable<GithubStoreGraph.HiddenRepositoriesScreen> {
                     HiddenRepositoriesRoot(
+                        onNavigateBack = { navController.popBackStack() },
+                    )
+                }
+
+                composable<GithubStoreGraph.HostTokensScreen> {
+                    HostTokensRoot(
                         onNavigateBack = { navController.popBackStack() },
                     )
                 }
