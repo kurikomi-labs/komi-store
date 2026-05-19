@@ -2,8 +2,12 @@ package zed.rainxch.details.presentation.markdown
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.compose.components.MarkdownComponents
 import com.mikepenz.markdown.compose.components.markdownComponents
 import com.mikepenz.markdown.model.ImageTransformer
@@ -71,12 +75,21 @@ private fun LinkAwareMarkdownImage(
     val outerHref = findEnclosingLinkDestination(node, content)
     val imageData = imageTransformer.transform(imageSrc) ?: return
 
+    // Block-level images get their own layout modifier (fillMaxWidth +
+    // height cap + clip). The transformer's `imageData.modifier` is
+    // intentionally empty so inline-content rendering stays bounded by
+    // the shared `Placeholder` slot — see kdoc on `MarkdownImageTransformer`.
+    val blockModifier = androidx.compose.ui.Modifier
+        .fillMaxWidth()
+        .heightIn(max = 600.dp)
+        .clipToBounds()
+
     if (outerHref != null) {
         val uriHandler = LocalUriHandler.current
         Image(
             painter = imageData.painter,
             contentDescription = imageData.contentDescription,
-            modifier = imageData.modifier.clickable {
+            modifier = blockModifier.clickable {
                 runCatching { uriHandler.openUri(outerHref) }
             },
             alignment = imageData.alignment,
@@ -88,7 +101,7 @@ private fun LinkAwareMarkdownImage(
         Image(
             painter = imageData.painter,
             contentDescription = imageData.contentDescription,
-            modifier = imageData.modifier,
+            modifier = blockModifier,
             alignment = imageData.alignment,
             contentScale = imageData.contentScale,
             alpha = imageData.alpha,

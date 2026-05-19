@@ -118,7 +118,14 @@ class MarkdownImageTransformer(
 
         return ImageData(
             painter = painter,
-            modifier = Modifier.fillMaxWidth().heightIn(max = 600.dp),
+            // Empty modifier so the inline `Image` composable receives
+            // ONLY the constraints derived from the shared `Placeholder`
+            // slot — no `fillMaxWidth()` finding the paragraph's full
+            // column width and blowing badges up to screen-wide where
+            // they overlap each other. Block-level rendering
+            // (`LinkAwareMarkdownImage` in `GithubStoreMarkdownComponents`)
+            // replaces this with its own `fillMaxWidth().heightIn(...)`.
+            modifier = Modifier,
             contentDescription = "Image",
             contentScale = ContentScale.Fit,
         )
