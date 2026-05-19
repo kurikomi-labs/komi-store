@@ -118,14 +118,15 @@ class MarkdownImageTransformer(
 
         return ImageData(
             painter = painter,
-            // Empty modifier so the inline `Image` composable receives
-            // ONLY the constraints derived from the shared `Placeholder`
-            // slot — no `fillMaxWidth()` finding the paragraph's full
-            // column width and blowing badges up to screen-wide where
-            // they overlap each other. Block-level rendering
-            // (`LinkAwareMarkdownImage` in `GithubStoreMarkdownComponents`)
-            // replaces this with its own `fillMaxWidth().heightIn(...)`.
-            modifier = Modifier,
+            // Hard cap inline images at `INLINE_MAX_HEIGHT_DP` so badges
+            // don't paint outside their `Placeholder` slot and overlap
+            // the next line. ContentScale.Fit + this height bound means
+            // the rendered width is proportional to the badge aspect —
+            // narrow badges stay narrow, wide badges stay wide, but
+            // none escape the inline strip vertically. Block-level
+            // rendering (`LinkAwareMarkdownImage`) ignores this and
+            // applies `fillMaxWidth() + heightIn(600.dp) + clipToBounds`.
+            modifier = Modifier.heightIn(max = INLINE_MAX_HEIGHT_DP.dp),
             contentDescription = "Image",
             contentScale = ContentScale.Fit,
         )
@@ -242,6 +243,12 @@ class MarkdownImageTransformer(
         // Cap inline image height when intrinsic size IS known so a
         // stray hero image inside a paragraph can't blow up the line.
         private const val MAX_INLINE_HEIGHT_PX = 240f
+        // Compose dp ceiling on what the inline `Image` itself will
+        // render at, in addition to the `Placeholder`-derived
+        // constraints. Defensive: stops the image painting outside its
+        // slot if the lib's placeholder constraint propagation is
+        // weaker than expected on a given Compose version.
+        private const val INLINE_MAX_HEIGHT_DP = 40
 
         private val networkHeaders =
             NetworkHeaders.Builder()
