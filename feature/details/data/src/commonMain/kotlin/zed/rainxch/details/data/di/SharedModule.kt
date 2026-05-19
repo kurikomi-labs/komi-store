@@ -19,6 +19,7 @@ val detailsModule =
                 backendApiClient = get(),
                 localizationManager = get(),
                 cacheManager = get(),
+                forgejoClientRegistry = get(),
             )
         }
 

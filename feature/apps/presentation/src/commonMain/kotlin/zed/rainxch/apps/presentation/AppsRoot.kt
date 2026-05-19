@@ -166,7 +166,7 @@ import zed.rainxch.githubstore.core.presentation.res.updating_x_of_y
 @Composable
 fun AppsRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToRepo: (repoId: Long) -> Unit,
+    onNavigateToRepo: (repoId: Long, sourceHost: String?) -> Unit,
     onNavigateToExternalImport: () -> Unit,
     onNavigateToStarredPicker: () -> Unit,
     viewModel: AppsViewModel = koinViewModel(),
@@ -195,7 +195,7 @@ fun AppsRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is AppsEvent.NavigateToRepo -> {
-                onNavigateToRepo(event.repoId)
+                onNavigateToRepo(event.repoId, event.sourceHost)
             }
 
             is AppsEvent.ShowError -> {
@@ -710,7 +710,14 @@ fun AppsScreen(
                                                 onUpdateClick = { onAction(AppsAction.OnUpdateApp(appItem.installedApp)) },
                                                 onCancelClick = { onAction(AppsAction.OnCancelUpdate(appItem.installedApp.packageName)) },
                                                 onUninstallClick = { onAction(AppsAction.OnUninstallApp(appItem.installedApp)) },
-                                                onRepoClick = { onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId)) },
+                                                onRepoClick = {
+                                                    onAction(
+                                                        AppsAction.OnNavigateToRepo(
+                                                            repoId = appItem.installedApp.repoId,
+                                                            sourceHost = appItem.installedApp.sourceHost,
+                                                        ),
+                                                    )
+                                                },
                                                 onTogglePreReleases = { enabled ->
                                                     onAction(AppsAction.OnTogglePreReleases(appItem.installedApp.packageName, enabled))
                                                 },
@@ -820,7 +827,12 @@ fun AppsScreen(
                                                         )
                                                     },
                                                     onRowClick = {
-                                                        onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId))
+                                                        onAction(
+                                                            AppsAction.OnNavigateToRepo(
+                                                                repoId = appItem.installedApp.repoId,
+                                                                sourceHost = appItem.installedApp.sourceHost,
+                                                            ),
+                                                        )
                                                     },
                                                 )
                                             }

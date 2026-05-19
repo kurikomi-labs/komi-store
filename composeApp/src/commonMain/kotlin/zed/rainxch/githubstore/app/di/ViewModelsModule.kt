@@ -41,6 +41,7 @@ val viewModelsModule =
                 ownerParam = params.get(1),
                 repoParam = params.get(2),
                 isComingFromUpdate = params.get(3),
+                sourceHostParam = params.getOrNull<String>(),
                 detailsRepository = get(),
                 downloader = get(),
                 installer = get(),

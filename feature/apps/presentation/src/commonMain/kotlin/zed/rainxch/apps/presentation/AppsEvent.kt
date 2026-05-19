@@ -13,6 +13,7 @@ sealed interface AppsEvent {
 
     data class NavigateToRepo(
         val repoId: Long,
+        val sourceHost: String? = null,
     ) : AppsEvent
 
     data class AppLinkedSuccessfully(

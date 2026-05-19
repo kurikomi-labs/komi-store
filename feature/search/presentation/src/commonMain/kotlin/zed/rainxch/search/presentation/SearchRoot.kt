@@ -106,7 +106,7 @@ import zed.rainxch.search.presentation.utils.label
 @Composable
 fun SearchRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToDetails: (repoId: Long) -> Unit,
+    onNavigateToDetails: (repoId: Long, sourceHost: String?) -> Unit,
     onNavigateToDetailsFromLink: (owner: String, repo: String) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
@@ -135,7 +135,7 @@ fun SearchRoot(
         onAction = { action ->
             when (action) {
                 is SearchAction.OnRepositoryClick -> {
-                    onNavigateToDetails(action.repository.id)
+                    onNavigateToDetails(action.repository.id, action.repository.sourceHost)
                 }
 
                 SearchAction.OnNavigateBackClick -> {

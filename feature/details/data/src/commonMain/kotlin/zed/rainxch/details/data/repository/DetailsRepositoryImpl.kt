@@ -54,8 +54,33 @@ class DetailsRepositoryImpl(
     private val localizationManager: LocalizationManager,
     private val logger: GitHubStoreLogger,
     private val cacheManager: CacheManager,
+    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : DetailsRepository {
     private val httpClient: HttpClient get() = clientProvider.client
+
+    private fun zed.rainxch.core.data.dto.ForgejoRepoNetworkModel.toForgejoSummary(
+        sourceHost: String,
+    ): GithubRepoSummary = GithubRepoSummary(
+        id = zed.rainxch.core.domain.util.RepoIdCodec.encode(sourceHost, id),
+        name = name,
+        fullName = fullName ?: "${owner.login}/$name",
+        owner = GithubUser(
+            id = owner.id,
+            login = owner.login,
+            avatarUrl = owner.avatarUrl,
+            htmlUrl = owner.htmlUrl,
+        ),
+        description = description,
+        htmlUrl = htmlUrl,
+        stargazersCount = starsCount,
+        forksCount = forksCount,
+        language = language,
+        topics = null,
+        releasesUrl = "$htmlUrl/releases",
+        updatedAt = updatedAt ?: "",
+        defaultBranch = defaultBranch ?: "main",
+        sourceHost = sourceHost,
+    )
 
     @Serializable
     private data class CachedReadme(
@@ -144,7 +169,9 @@ class DetailsRepositoryImpl(
     override suspend fun getRepositoryByOwnerAndName(
         owner: String,
         name: String,
+        sourceHost: String?,
     ): GithubRepoSummary {
+        if (sourceHost != null) return getForgejoRepository(owner, name, sourceHost)
         val cacheKey = "details:repo:$owner/$name"
 
         cacheManager.get<GithubRepoSummary>(cacheKey)?.let { cached ->
@@ -239,7 +266,12 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): GithubRelease? {
+        if (sourceHost != null) {
+            return getForgejoAllReleases(owner, repo, sourceHost)
+                .firstOrNull { !it.isPrerelease }
+        }
         val cacheKey = "details:latest_release:$owner/$repo"
 
         cacheManager.get<GithubRelease>(cacheKey)?.let { cached ->
@@ -285,7 +317,9 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): List<GithubRelease> {
+        if (sourceHost != null) return getForgejoAllReleases(owner, repo, sourceHost)
         val cacheKey = "details:releases:$owner/$repo"
 
         cacheManager.get<List<GithubRelease>>(cacheKey)?.let { cached ->
@@ -390,7 +424,9 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): Triple<String, String?, String>? {
+        if (sourceHost != null) return getForgejoReadme(owner, repo, defaultBranch, sourceHost)
         // v2 — bumped after markdown preprocessor overhaul (alerts,
         // emoji, details, image-row). Forces re-fetch so users get a
         // properly-processed readme instead of waiting for the stale
@@ -515,7 +551,9 @@ class DetailsRepositoryImpl(
     override suspend fun getRepoStats(
         owner: String,
         repo: String,
+        sourceHost: String?,
     ): RepoStats {
+        if (sourceHost != null) return getForgejoRepoStats(owner, repo, sourceHost)
         // v3 — backend now supplies license. Bumping the key forces re-fetch
         // so post-upgrade users get a populated license instead of waiting
         // 6h for the stale v2 entry (license=null) to expire.
@@ -653,6 +691,120 @@ class DetailsRepositoryImpl(
             blog = blog,
             twitterUsername = twitterUsername,
         )
+
+    // ── Forgejo / Codeberg branch ─────────────────────────────────────
+    //
+    // No backend proxy, no GitHub fallback — all reads go straight to the
+    // forge instance. Cache keys are namespaced by host so the same
+    // `owner/repo` slug on github.com and codeberg.org never collide. Stats
+    // are derived from the repo response (stars / forks / openIssues /
+    // license fields exposed by Gitea/Forgejo API v1).
+
+    private suspend fun getForgejoRepository(
+        owner: String,
+        name: String,
+        sourceHost: String,
+    ): GithubRepoSummary {
+        val cacheKey = "details:repo:forgejo:$sourceHost:$owner/$name"
+        cacheManager.get<GithubRepoSummary>(cacheKey)?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val result = client.getRepository(owner, name).getOrThrow()
+                .toForgejoSummary(sourceHost)
+            cacheManager.put(cacheKey, result, REPO_DETAILS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
+
+    private suspend fun getForgejoAllReleases(
+        owner: String,
+        repo: String,
+        sourceHost: String,
+    ): List<GithubRelease> {
+        val cacheKey = "details:releases:forgejo:$sourceHost:$owner/$repo"
+        cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val releases = client.getReleases(owner, repo).getOrNull().orEmpty()
+            val result = releases
+                .filter { it.draft != true }
+                .map { it.toDomain() }
+                .sortedByDescending { it.publishedAt }
+            if (result.isNotEmpty()) cacheManager.put(cacheKey, result, RELEASES)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<List<GithubRelease>>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private suspend fun getForgejoReadme(
+        owner: String,
+        repo: String,
+        defaultBranch: String,
+        sourceHost: String,
+    ): Triple<String, String?, String>? {
+        val cacheKey = "details:readme:forgejo:v1:$sourceHost:$owner/$repo"
+        cacheManager.get<CachedReadme>(cacheKey)?.let {
+            return Triple(it.content, it.languageCode, it.path)
+        }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        val dto = client.getReadme(owner, repo).getOrNull() ?: run {
+            cacheManager.getStale<CachedReadme>(cacheKey)?.let {
+                return Triple(it.content, it.languageCode, it.path)
+            }
+            return null
+        }
+        // Forgejo's response shape matches GitHub's contents API — content
+        // is base64 (Mime variant tolerates embedded newlines transparently).
+        val decoded = try {
+            Base64.Mime.decode(dto.content).decodeToString()
+        } catch (e: IllegalArgumentException) {
+            logger.warn("Failed to decode Forgejo readme for $sourceHost/$owner/$repo: ${e.message}")
+            return null
+        }
+        val path = dto.path?.takeIf { it.isNotBlank() } ?: "README.md"
+        // Relative image refs in a Forgejo README need the per-host raw URL
+        // base, not raw.githubusercontent.com.
+        val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/$defaultBranch/"
+        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl)
+        val detected = readmeHelper.detectReadmeLanguage(processed)
+        cacheManager.put(
+            cacheKey,
+            CachedReadme(content = processed, languageCode = detected, path = path),
+            README,
+        )
+        return Triple(processed, detected, path)
+    }
+
+    private suspend fun getForgejoRepoStats(
+        owner: String,
+        repo: String,
+        sourceHost: String,
+    ): RepoStats {
+        val cacheKey = "details:stats:forgejo:v1:$sourceHost:$owner/$repo"
+        cacheManager.get<RepoStats>(cacheKey)?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val info = client.getRepository(owner, repo).getOrThrow()
+            val result = RepoStats(
+                stars = info.starsCount,
+                forks = info.forksCount,
+                openIssues = info.openIssuesCount,
+                license = null,
+                totalDownloads = 0,
+            )
+            cacheManager.put(cacheKey, result, REPO_STATS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<RepoStats>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
 
     override suspend fun checkAttestations(
         owner: String,

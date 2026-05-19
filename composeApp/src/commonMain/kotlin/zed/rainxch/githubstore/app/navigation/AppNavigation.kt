@@ -126,10 +126,11 @@ fun AppNavigation(
                         onNavigateBack = {
                             navController.navigateUp()
                         },
-                        onNavigateToDetails = { repoId ->
+                        onNavigateToDetails = { repoId, sourceHost ->
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
+                                    sourceHost = sourceHost,
                                 ),
                             )
                         },
@@ -189,6 +190,7 @@ fun AppNavigation(
                                     args.owner,
                                     args.repo,
                                     args.isComingFromUpdate,
+                                    args.sourceHost,
                                 )
                             },
                     )
@@ -451,11 +453,12 @@ fun AppNavigation(
                         onNavigateBack = {
                             navController.navigateUp()
                         },
-                        onNavigateToRepo = { repoId ->
+                        onNavigateToRepo = { repoId, sourceHost ->
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
+                                    sourceHost = sourceHost,
                                 ),
                             )
                         },

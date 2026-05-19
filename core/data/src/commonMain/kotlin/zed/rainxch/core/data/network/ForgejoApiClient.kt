@@ -17,6 +17,7 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.dto.ForgejoRepoNetworkModel
 import zed.rainxch.core.data.dto.ForgejoSearchResponse
+import zed.rainxch.core.data.dto.GithubReadmeResponseDto
 import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.domain.model.ProxyConfig
 import java.io.IOException
@@ -89,6 +90,19 @@ class ForgejoApiClient(
                 parameter("page", page)
                 parameter("limit", limit)
             }
+        }
+
+    /**
+     * Forgejo `/repos/{o}/{r}/readme` mirrors GitHub's shape — returns the
+     * default README as a base64-encoded content blob, so the DetailsRepo
+     * decode pipeline (`Base64.Mime.decode(...)`) works without branching.
+     */
+    suspend fun getReadme(
+        owner: String,
+        repo: String,
+    ): Result<GithubReadmeResponseDto> =
+        client.executeRequest {
+            get("$baseUrl/repos/$owner/$repo/readme")
         }
 
     /**
