@@ -811,23 +811,110 @@ class DetailsRepositoryImpl(
         repo: String,
         sourceHost: String,
     ): RepoStats {
-        val cacheKey = "details:stats:forgejo:v1:$sourceHost:$owner/$repo"
+        // v2 — added license sniffing (from /contents/LICENSE) +
+        // aggregated download count (from release assets), neither of
+        // which Forgejo exposes on the /repos endpoint itself.
+        val cacheKey = "details:stats:forgejo:v2:$sourceHost:$owner/$repo"
         cacheManager.get<RepoStats>(cacheKey)?.let { return it }
         val client = forgejoClientRegistry.clientFor(sourceHost)
         return try {
             val info = client.getRepository(owner, repo).getOrThrow()
+            // Best-effort license + downloads enrichment. Both can fail
+            // silently — repo stats still render with the core counters
+            // pulled directly from the /repos payload.
+            val license = detectForgejoLicense(client, owner, repo, info.defaultBranch ?: "main")
+            val downloads = sumForgejoReleaseDownloads(sourceHost, owner, repo)
             val result = RepoStats(
                 stars = info.starsCount,
                 forks = info.forksCount,
                 openIssues = info.openIssuesCount,
-                license = null,
-                totalDownloads = 0,
+                license = license,
+                totalDownloads = downloads,
             )
             cacheManager.put(cacheKey, result, REPO_STATS)
             result
         } catch (e: Exception) {
             cacheManager.getStale<RepoStats>(cacheKey)?.let { return it }
             throw e
+        }
+    }
+
+    /**
+     * Forgejo / Gitea does NOT expose a `license` field on
+     * `/repos/{o}/{r}`. The dedicated `/license` endpoint is
+     * GitHub-specific (404 on Forgejo). Best-effort: fetch the LICENSE
+     * file from the repo root and regex-match the first ~200 chars
+     * against canonical license headers. Returns SPDX-style id when
+     * matched, falls back to a short label, returns `null` on miss.
+     */
+    @OptIn(ExperimentalEncodingApi::class)
+    private suspend fun detectForgejoLicense(
+        client: zed.rainxch.core.data.network.ForgejoApiClient,
+        owner: String,
+        repo: String,
+        ref: String,
+    ): String? {
+        // Try common LICENSE filenames in priority order. Most repos use
+        // bare `LICENSE`; common alternates covered below.
+        val candidates = listOf("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
+        val dto = candidates.firstNotNullOfOrNull { name ->
+            client.getContentsFile(owner, repo, name, ref).getOrNull()
+        } ?: return null
+        val raw = dto.content ?: return null
+        val text = try {
+            Base64.Mime.decode(raw).decodeToString().take(400)
+        } catch (e: IllegalArgumentException) {
+            return null
+        }
+        return spdxFromLicenseHeader(text)
+    }
+
+    private fun spdxFromLicenseHeader(text: String): String? {
+        val upper = text.uppercase()
+        return when {
+            upper.contains("GNU AFFERO GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "AGPL-3.0"
+            upper.contains("GNU LESSER GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "LGPL-3.0"
+            upper.contains("GNU LESSER GENERAL PUBLIC LICENSE") && upper.contains("VERSION 2.1") -> "LGPL-2.1"
+            upper.contains("GNU GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "GPL-3.0"
+            upper.contains("GNU GENERAL PUBLIC LICENSE") && upper.contains("VERSION 2") -> "GPL-2.0"
+            upper.contains("APACHE LICENSE") && upper.contains("VERSION 2.0") -> "Apache-2.0"
+            upper.contains("MIT LICENSE") || (upper.startsWith("MIT ") && upper.contains("PERMISSION")) -> "MIT"
+            upper.contains("BSD 3-CLAUSE") || upper.contains("BSD-3-CLAUSE") -> "BSD-3-Clause"
+            upper.contains("BSD 2-CLAUSE") || upper.contains("BSD-2-CLAUSE") -> "BSD-2-Clause"
+            upper.contains("MOZILLA PUBLIC LICENSE") && upper.contains("VERSION 2.0") -> "MPL-2.0"
+            upper.contains("THE UNLICENSE") || upper.contains("UNLICENSE") -> "Unlicense"
+            upper.contains("CREATIVE COMMONS") && upper.contains("CC0") -> "CC0-1.0"
+            upper.contains("EUROPEAN UNION PUBLIC LICENCE") -> "EUPL-1.2"
+            else -> null
+        }
+    }
+
+    /**
+     * Forgejo's `/repos/{o}/{r}` response carries no aggregate download
+     * count. Each release `asset.download_count` is per-asset, and the
+     * stable channel for total downloads is the sum across all release
+     * assets. Reuses the cached releases list when present so we don't
+     * double-fetch when stats + releases load in parallel from the VM.
+     */
+    private suspend fun sumForgejoReleaseDownloads(
+        sourceHost: String,
+        owner: String,
+        repo: String,
+    ): Long {
+        val cacheKey = "details:releases:forgejo:$sourceHost:$owner/$repo"
+        val cached = cacheManager.get<List<GithubRelease>>(cacheKey).orEmpty()
+        val releases = if (cached.isNotEmpty()) {
+            cached
+        } else {
+            try {
+                getForgejoAllReleases(owner, repo, sourceHost)
+            } catch (e: Exception) {
+                logger.debug("Forgejo downloads sum: releases fetch failed: ${e.message}")
+                return 0L
+            }
+        }
+        return releases.sumOf { release ->
+            release.assets.sumOf { it.downloadCount }
         }
     }
 
