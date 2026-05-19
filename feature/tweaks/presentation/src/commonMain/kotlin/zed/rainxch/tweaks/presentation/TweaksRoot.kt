@@ -47,6 +47,7 @@ fun TweaksRoot(
     onNavigateToMirrorPicker: () -> Unit,
     onNavigateToSkippedUpdates: () -> Unit,
     onNavigateToHiddenRepositories: () -> Unit,
+    onNavigateToHostTokens: () -> Unit = {},
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -162,6 +163,7 @@ fun TweaksRoot(
             }
         },
         snackbarState = snackbarState,
+        onNavigateToHostTokens = onNavigateToHostTokens,
     )
 
     if (state.isClearDownloadsDialogVisible) {
@@ -218,6 +220,7 @@ fun TweaksScreen(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
     snackbarState: SnackbarHostState,
+    onNavigateToHostTokens: () -> Unit = {},
 ) {
     val bottomNavHeight = LocalBottomNavigationHeight.current
     Scaffold(
@@ -248,6 +251,10 @@ fun TweaksScreen(
             )
 
             item {
+                Spacer(Modifier.height(16.dp))
+                zed.rainxch.tweaks.presentation.hosttokens.HostTokensEntryCard(
+                    onClick = onNavigateToHostTokens,
+                )
                 Spacer(Modifier.height(16.dp))
             }
 

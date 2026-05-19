@@ -9,7 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,20 +27,42 @@ import dev.snipme.highlights.model.BoldHighlight
 import dev.snipme.highlights.model.ColorHighlight
 import dev.snipme.highlights.model.SyntaxLanguage
 import dev.snipme.highlights.model.SyntaxThemes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
+
+private const val MAX_HIGHLIGHTABLE_CHARS = 16_000
 
 @Composable
 fun SyntaxHighlightedCode(
     model: MarkdownComponentModel,
     isDark: Boolean,
 ) {
-    val (language, code) = extractFenceContent(model.node, model.content)
-    val highlighted =
-        remember(code, language, isDark) {
+    val (language, code) = remember(model.node, model.content) {
+        extractFenceContent(model.node, model.content)
+    }
+
+    // Highlight tokenization is CPU-heavy on big code blocks. Run it on
+    // Default and render the plain code immediately so the markdown pass
+    // never blocks waiting for highlighting — Main-thread ANR observed
+    // previously with multiple large fences on a single README.
+    var highlighted by remember(code, language, isDark) {
+        mutableStateOf(AnnotatedString(code))
+    }
+    LaunchedEffect(code, language, isDark) {
+        if (code.isEmpty() || language == SyntaxLanguage.DEFAULT) return@LaunchedEffect
+        // Skip giant code blocks (e.g. embedded JSON dumps, generated YAML).
+        // The Highlights tokenizer is super-linear in input size and the
+        // payoff for plain-eye reading shrinks fast past a few thousand chars.
+        if (code.length > MAX_HIGHLIGHTABLE_CHARS) return@LaunchedEffect
+        val result = withContext(Dispatchers.Default) {
             buildHighlighted(code, language, isDark)
         }
+        highlighted = result
+    }
+
     val container = MaterialTheme.colorScheme.surfaceContainerHigh
     val onContainer = MaterialTheme.colorScheme.onSurface
 

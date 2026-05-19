@@ -93,7 +93,7 @@ class HomeViewModel(
                 initialValue = HomeState(),
             )
 
-    private val _events = Channel<HomeEvent>()
+    private val _events = Channel<HomeEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private fun syncSystemState() {

@@ -368,7 +368,8 @@ fun RepositoryCard(
         }
     }
 
-    if (sheetEnabled && showActionsSheet) {
+    val hideAction = onHideClick
+    if (showActionsSheet && hideAction != null) {
         RepositoryActionsBottomSheet(
             repository = discoveryRepositoryUi.repository,
             isSeen = discoveryRepositoryUi.isSeen,
@@ -387,11 +388,9 @@ fun RepositoryCard(
                     it()
                 }
             },
-            onHide = onHideClick?.let {
-                {
-                    showActionsSheet = false
-                    it()
-                }
+            onHide = {
+                showActionsSheet = false
+                hideAction()
             },
         )
     }

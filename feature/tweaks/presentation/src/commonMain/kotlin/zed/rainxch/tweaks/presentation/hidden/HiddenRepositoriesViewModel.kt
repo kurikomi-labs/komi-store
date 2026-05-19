@@ -19,7 +19,7 @@ class HiddenRepositoriesViewModel(
     private val _state = MutableStateFlow(HiddenRepositoriesState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<HiddenRepositoriesEvent>()
+    private val _events = Channel<HiddenRepositoriesEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {

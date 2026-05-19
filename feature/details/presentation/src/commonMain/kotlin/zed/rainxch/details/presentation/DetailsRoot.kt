@@ -3,7 +3,6 @@ package zed.rainxch.details.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -63,6 +62,8 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -504,15 +505,27 @@ fun DetailsScreen(
                 return@Scaffold
             }
 
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+            val density = LocalDensity.current
+            var containerHeightDp by remember { mutableStateOf(0.dp) }
+            val collapsedSectionHeight = containerHeightDp * 0.7f
+            val listState = rememberLazyListState()
+            val isScrollbarEnabled = LocalScrollbarEnabled.current
+            val pullEnabled = remember { isPullToRefreshSupported() }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onSizeChanged { size ->
+                        // Layout-phase write; cheaper than BoxWithConstraints
+                        // which subcomposes during the measure pass. Setting
+                        // a state var here recomposes only the consumers that
+                        // read it (the about/whatsNew sections), not the
+                        // entire Scaffold subtree.
+                        val newHeight = with(density) { size.height.toDp() }
+                        if (newHeight != containerHeightDp) containerHeightDp = newHeight
+                    },
                 contentAlignment = Alignment.Center,
             ) {
-                val collapsedSectionHeight = maxHeight * 0.7f
-                val listState = rememberLazyListState()
-                val isScrollbarEnabled = LocalScrollbarEnabled.current
-                val pullEnabled = remember { isPullToRefreshSupported() }
-
                 ScrollbarContainer(
                     listState = listState,
                     enabled = isScrollbarEnabled,

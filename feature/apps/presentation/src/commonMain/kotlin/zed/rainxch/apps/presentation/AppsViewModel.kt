@@ -135,7 +135,7 @@ class AppsViewModel(
         }
     }
 
-    private val _events = Channel<AppsEvent>()
+    private val _events = Channel<AppsEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private fun loadApps() {
