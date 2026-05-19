@@ -14,24 +14,72 @@ import java.util.concurrent.atomic.AtomicBoolean
  *     androidx.compose.ui.platform.a11y.SemanticsOwnerAccessibility.accessibleParentOf
  *        -> sun.lwawt.macosx.CAccessible$AXChangeNotifier.propertyChange
  *
- * The uncaught exception poisons the AWT EventDispatchThread and the app
- * appears to freeze/crash on click. Installing a filtering [EventQueue]
- * swallows only that specific NPE so the EDT keeps draining events.
- * Trade-off: macOS VoiceOver may miss updates on those removed nodes.
- * Remove once the upstream fix lands (track against Compose MP 1.11+).
+ * The NPE surfaces via two propagation paths and both are guarded here:
  *
- * See [GitHub-Store#330](https://github.com/OpenHub-Store/GitHub-Store/issues/330).
+ * 1. **EDT path** — NPE escapes `DispatchedTask.run` and propagates through
+ *    the AWT event queue dispatch chain. [FilteringEventQueue] swallows it so
+ *    the EDT keeps draining events.
+ *
+ * 2. **Coroutine-failure path** — `BaseContinuationImpl.resumeWith` catches the
+ *    NPE and routes the coroutine failure through `handleCoroutineException` to
+ *    the default uncaught-exception handler, bypassing [FilteringEventQueue].
+ *    The handler wrapper installed in [install] intercepts this path before it
+ *    reaches [CrashReporter], preventing a spurious crash dump.
+ *
+ * Trade-off: macOS VoiceOver may miss updates on those removed nodes for the
+ * remainder of the session. Remove once the upstream fix lands (track against
+ * Compose MP 1.11+).
+ *
+ * See [GitHub-Store#330](https://github.com/OpenHub-Store/GitHub-Store/issues/330)
+ * and [GitHub-Store#640](https://github.com/OpenHub-Store/GitHub-Store/issues/640).
  */
 object A11yCrashGuard {
+    private val warned = AtomicBoolean(false)
+
     fun install() {
         val osName = System.getProperty("os.name")?.lowercase().orEmpty()
         if (!osName.contains("mac")) return
+
+        // Path 1: NPE propagates out of the coroutine dispatcher and through the
+        // AWT EventQueue dispatch chain.
         Toolkit.getDefaultToolkit().systemEventQueue.push(FilteringEventQueue())
+
+        // Path 2: NPE is intercepted by BaseContinuationImpl.resumeWith and
+        // forwarded to the default uncaught-exception handler via coroutine
+        // failure handling. Wrap the handler that CrashReporter already installed
+        // so all non-a11y exceptions still reach it.
+        val previous = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            if (isComposeA11yNpe(throwable)) {
+                if (warned.compareAndSet(false, true)) {
+                    System.err.println(
+                        "[A11yCrashGuard] Suppressed Compose a11y NPE via uncaught-exception path " +
+                            "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
+                    )
+                }
+                return@setDefaultUncaughtExceptionHandler
+            }
+            previous?.uncaughtException(thread, throwable)
+        }
+    }
+
+    private fun isComposeA11yNpe(throwable: Throwable): Boolean {
+        if (throwable !is NullPointerException) return false
+        var current: Throwable? = throwable
+        while (current != null) {
+            if (current.stackTrace.any { frame ->
+                    frame.className.startsWith("androidx.compose.ui.platform.a11y") ||
+                        frame.className.startsWith("sun.lwawt.macosx.CAccessible")
+                }
+            ) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
     }
 
     private class FilteringEventQueue : EventQueue() {
-        private val warned = AtomicBoolean(false)
-
         override fun dispatchEvent(event: AWTEvent) {
             try {
                 super.dispatchEvent(event)
@@ -40,27 +88,13 @@ object A11yCrashGuard {
                     if (warned.compareAndSet(false, true)) {
                         System.err.println(
                             "[A11yCrashGuard] Suppressed Compose a11y NPE on macOS " +
-                                "(known issue, see GitHub-Store#330). Further occurrences silenced.",
+                                "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
                         )
                     }
                     return
                 }
                 throw npe
             }
-        }
-
-        private fun isComposeA11yNpe(throwable: Throwable): Boolean {
-            var current: Throwable? = throwable
-            while (current != null) {
-                if (current.stackTrace.any { frame ->
-                        frame.className.startsWith("androidx.compose.ui.platform.a11y")
-                    }
-                ) {
-                    return true
-                }
-                current = current.cause
-            }
-            return false
         }
     }
 }
