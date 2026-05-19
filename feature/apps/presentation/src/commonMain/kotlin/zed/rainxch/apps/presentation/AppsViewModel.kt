@@ -347,7 +347,14 @@ class AppsViewModel(
 
             is AppsAction.OnNavigateToRepo -> {
                 viewModelScope.launch {
-                    _events.send(AppsEvent.NavigateToRepo(action.repoId, action.sourceHost))
+                    _events.send(
+                        AppsEvent.NavigateToRepo(
+                            repoId = action.repoId,
+                            sourceHost = action.sourceHost,
+                            owner = action.owner,
+                            repo = action.repo,
+                        ),
+                    )
                 }
             }
 

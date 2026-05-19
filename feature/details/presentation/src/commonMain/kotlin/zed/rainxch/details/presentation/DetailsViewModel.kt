@@ -2516,14 +2516,28 @@ class DetailsViewModel(
                 }
 
                 val repo =
-                    if (ownerParam.isNotEmpty() && repoParam.isNotEmpty()) {
-                        detailsRepository.getRepositoryByOwnerAndName(
-                            owner = ownerParam,
-                            name = repoParam,
-                            sourceHost = sourceHostParam,
-                        )
-                    } else {
-                        detailsRepository.getRepositoryById(repositoryId)
+                    when {
+                        // Forgejo / Codeberg path — repoId is a synthetic
+                        // foreign id (see RepoIdCodec), so the GitHub
+                        // `/repositories/{id}` endpoint can't resolve it.
+                        // Owner+name must be supplied by the caller.
+                        sourceHostParam != null -> {
+                            if (ownerParam.isBlank() || repoParam.isBlank()) {
+                                error("Foreign-source Details opened without owner/repo for host=$sourceHostParam")
+                            }
+                            detailsRepository.getRepositoryByOwnerAndName(
+                                owner = ownerParam,
+                                name = repoParam,
+                                sourceHost = sourceHostParam,
+                            )
+                        }
+                        ownerParam.isNotEmpty() && repoParam.isNotEmpty() ->
+                            detailsRepository.getRepositoryByOwnerAndName(
+                                owner = ownerParam,
+                                name = repoParam,
+                                sourceHost = null,
+                            )
+                        else -> detailsRepository.getRepositoryById(repositoryId)
                     }
                 launch { seenReposRepository.markAsSeen(repo) }
 

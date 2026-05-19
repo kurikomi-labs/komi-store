@@ -453,12 +453,14 @@ fun AppNavigation(
                         onNavigateBack = {
                             navController.navigateUp()
                         },
-                        onNavigateToRepo = { repoId, sourceHost ->
+                        onNavigateToRepo = { repoId, sourceHost, owner, repo ->
                             navController.navigate(
                                 GithubStoreGraph.DetailsScreen(
                                     repositoryId = repoId,
                                     isComingFromUpdate = true,
                                     sourceHost = sourceHost,
+                                    owner = owner.orEmpty(),
+                                    repo = repo.orEmpty(),
                                 ),
                             )
                         },

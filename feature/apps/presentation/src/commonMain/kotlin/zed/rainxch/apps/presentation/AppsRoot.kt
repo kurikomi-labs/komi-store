@@ -166,7 +166,7 @@ import zed.rainxch.githubstore.core.presentation.res.updating_x_of_y
 @Composable
 fun AppsRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToRepo: (repoId: Long, sourceHost: String?) -> Unit,
+    onNavigateToRepo: (repoId: Long, sourceHost: String?, owner: String?, repo: String?) -> Unit,
     onNavigateToExternalImport: () -> Unit,
     onNavigateToStarredPicker: () -> Unit,
     viewModel: AppsViewModel = koinViewModel(),
@@ -195,7 +195,7 @@ fun AppsRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is AppsEvent.NavigateToRepo -> {
-                onNavigateToRepo(event.repoId, event.sourceHost)
+                onNavigateToRepo(event.repoId, event.sourceHost, event.owner, event.repo)
             }
 
             is AppsEvent.ShowError -> {
@@ -715,6 +715,8 @@ fun AppsScreen(
                                                         AppsAction.OnNavigateToRepo(
                                                             repoId = appItem.installedApp.repoId,
                                                             sourceHost = appItem.installedApp.sourceHost,
+                                                            owner = appItem.installedApp.repoOwner,
+                                                            repo = appItem.installedApp.repoName,
                                                         ),
                                                     )
                                                 },
@@ -831,6 +833,8 @@ fun AppsScreen(
                                                             AppsAction.OnNavigateToRepo(
                                                                 repoId = appItem.installedApp.repoId,
                                                                 sourceHost = appItem.installedApp.sourceHost,
+                                                                owner = appItem.installedApp.repoOwner,
+                                                                repo = appItem.installedApp.repoName,
                                                             ),
                                                         )
                                                     },

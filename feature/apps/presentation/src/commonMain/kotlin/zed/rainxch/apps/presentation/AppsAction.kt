@@ -51,6 +51,8 @@ sealed interface AppsAction {
     data class OnNavigateToRepo(
         val repoId: Long,
         val sourceHost: String? = null,
+        val owner: String? = null,
+        val repo: String? = null,
     ) : AppsAction
 
     data class OnUninstallApp(
