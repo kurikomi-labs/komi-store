@@ -183,8 +183,9 @@ class MarkdownImageTransformer(
      * of the lib's 180×180 default. That tiles cleanly horizontally on
      * a single line. Once Coil decodes and the painter reports a real
      * `intrinsicImageSize`, we scale into the container width with the
-     * height capped at [MAX_INLINE_HEIGHT_PX] (240 px) so a stray hero
-     * image doesn't dominate. Container width of `0f` (first
+     * height capped at [BADGE_MAX_HEIGHT_DP] (40 dp); when that cap
+     * trims height we scale width proportionally so aspect ratio and
+     * placeholder slot stay consistent. Container width of `0f` (first
      * composition before the layout pass) is treated the same as
      * unspecified — otherwise the placeholder collapses to zero size,
      * the image is invisible on first frame, and a second
@@ -212,11 +213,26 @@ class MarkdownImageTransformer(
                     containerSize.width <= 0f -> intrinsicImageSize.width
                     else -> containerSize.width
                 }
-                val targetWidth = minOf(intrinsicImageSize.width, containerWidthPx)
-                val ratio = intrinsicImageSize.height / intrinsicImageSize.width.coerceAtLeast(1f)
-                val targetHeight = (targetWidth * ratio).coerceAtMost(
-                    MAX_INLINE_HEIGHT_PX,
-                )
+                val initialWidth = minOf(intrinsicImageSize.width, containerWidthPx)
+                val ratio = intrinsicImageSize.height /
+                    intrinsicImageSize.width.coerceAtLeast(1f)
+                val rawHeight = initialWidth * ratio
+                // Derive both bounds from a single dp constant so the
+                // placeholder cap, the image-modifier cap, and the unit
+                // (dp, not raw px) all stay in lock-step across screen
+                // densities. Mixing px here with dp in the image
+                // modifier caused a ~7× mismatch on 3× density screens.
+                val maxHeightPx = BADGE_MAX_HEIGHT_DP.dp.toPx()
+                val targetHeight = rawHeight.coerceAtMost(maxHeightPx)
+                // Preserve aspect ratio: when height was clamped, scale
+                // the width down by the same factor so the placeholder
+                // box matches the actual rendered image shape — avoids
+                // excess horizontal whitespace and badge re-wrapping.
+                val targetWidth = if (rawHeight > maxHeightPx && ratio > 0f) {
+                    targetHeight / ratio
+                } else {
+                    initialWidth
+                }
                 targetWidth.toSp().value to targetHeight.toSp().value
             }
         }
@@ -274,15 +290,12 @@ class MarkdownImageTransformer(
         // to breathe; 120sp wide is the typical "Get it on …" width.
         private const val BADGE_DEFAULT_WIDTH_SP = 120f
         private const val BADGE_DEFAULT_HEIGHT_SP = 32f
-        // Cap inline image height when intrinsic size IS known so a
-        // stray hero image inside a paragraph can't blow up the line.
-        private const val MAX_INLINE_HEIGHT_PX = 240f
-        // Compose dp ceiling on what the inline `Image` itself will
-        // render at, in addition to the `Placeholder`-derived
-        // constraints. Defensive: stops the image painting outside its
-        // slot if the lib's placeholder constraint propagation is
-        // weaker than expected on a given Compose version.
-        // SVG / vector badge bounds — designed for narrow vector content.
+
+        // SVG / vector badge bounds — designed for narrow vector
+        // content. Single source of truth: placeholder cap and
+        // ImageData.modifier height cap derive from the same dp
+        // constant so the placeholder slot and the rendered Image
+        // remain in lock-step at every density.
         private const val BADGE_MAX_HEIGHT_DP = 40
         private const val BADGE_MAX_WIDTH_DP = 220
 
