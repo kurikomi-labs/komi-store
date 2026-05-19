@@ -183,9 +183,12 @@ class MarkdownImageTransformer(
      * of the lib's 180×180 default. That tiles cleanly horizontally on
      * a single line. Once Coil decodes and the painter reports a real
      * `intrinsicImageSize`, we scale into the container width with the
-     * height capped at [BADGE_MAX_HEIGHT_DP] (40 dp); when that cap
-     * trims height we scale width proportionally so aspect ratio and
-     * placeholder slot stay consistent. Container width of `0f` (first
+     * height capped at [RASTER_MAX_HEIGHT_DP] (the larger of the two
+     * per-kind ceilings, so a single shared placeholder per paragraph
+     * still fits a raster image without vertical overflow); when that
+     * cap trims height we scale width proportionally so aspect ratio
+     * and placeholder slot stay consistent. Badge images remain bounded
+     * at 40 dp by their own modifier inside this slot. Container width of `0f` (first
      * composition before the layout pass) is treated the same as
      * unspecified — otherwise the placeholder collapses to zero size,
      * the image is invisible on first frame, and a second
@@ -217,12 +220,19 @@ class MarkdownImageTransformer(
                 val ratio = intrinsicImageSize.height /
                     intrinsicImageSize.width.coerceAtLeast(1f)
                 val rawHeight = initialWidth * ratio
-                // Derive both bounds from a single dp constant so the
-                // placeholder cap, the image-modifier cap, and the unit
-                // (dp, not raw px) all stay in lock-step across screen
-                // densities. Mixing px here with dp in the image
-                // modifier caused a ~7× mismatch on 3× density screens.
-                val maxHeightPx = BADGE_MAX_HEIGHT_DP.dp.toPx()
+                // Cap at the LARGER of the two per-kind modifier
+                // ceilings (raster). The mikepenz lib uses a single
+                // shared `Placeholder` per paragraph, so if a paragraph
+                // contains a genuinely inline raster image (e.g.
+                // `Some text ![screenshot](img.png) more text`) and we
+                // capped here at `BADGE_MAX_HEIGHT_DP` (40 dp), the
+                // placeholder slot would be 40 dp while the raster's
+                // own modifier still allows 320 dp — the image would
+                // overflow the text flow vertically. Using the raster
+                // cap reserves enough slot for either kind; badge
+                // images are still independently bounded at 40 dp by
+                // their own modifier inside this slot.
+                val maxHeightPx = RASTER_MAX_HEIGHT_DP.dp.toPx()
                 val targetHeight = rawHeight.coerceAtMost(maxHeightPx)
                 // Preserve aspect ratio: when height was clamped, scale
                 // the width down by the same factor so the placeholder
