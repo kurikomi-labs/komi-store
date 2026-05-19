@@ -2,6 +2,7 @@ package zed.rainxch.details.presentation.utils
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -126,7 +127,9 @@ class MarkdownImageTransformer(
             // none escape the inline strip vertically. Block-level
             // rendering (`LinkAwareMarkdownImage`) ignores this and
             // applies `fillMaxWidth() + heightIn(600.dp) + clipToBounds`.
-            modifier = Modifier.heightIn(max = INLINE_MAX_HEIGHT_DP.dp),
+            modifier = Modifier
+                .heightIn(max = INLINE_MAX_HEIGHT_DP.dp)
+                .widthIn(max = INLINE_MAX_WIDTH_DP.dp),
             contentDescription = "Image",
             contentScale = ContentScale.Fit,
         )
@@ -249,6 +252,11 @@ class MarkdownImageTransformer(
         // slot if the lib's placeholder constraint propagation is
         // weaker than expected on a given Compose version.
         private const val INLINE_MAX_HEIGHT_DP = 40
+        // Width ceiling on inline badges. 220dp covers a "Get it on
+        // Google Play" / "AppGallery" tile (~180dp natural) plus
+        // longest shields.io status string. ContentScale.Fit picks the
+        // tighter of width vs height so aspect ratio stays correct.
+        private const val INLINE_MAX_WIDTH_DP = 220
 
         private val networkHeaders =
             NetworkHeaders.Builder()
