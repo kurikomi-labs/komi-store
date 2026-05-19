@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -126,6 +127,50 @@ class MarkdownImageTransformer(
     @Composable
     override fun intrinsicSize(painter: Painter): Size = painter.intrinsicSize
 
+    /**
+     * Override the lib's per-paragraph placeholder size so badge rows
+     * (the typical `[![…](svg)](url) [![…](svg)](url)` stack in a
+     * README header) don't all inherit the FIRST image's placeholder
+     * dimensions — which is what produces the observed overlap when the
+     * first image is an SVG with no intrinsic size (`Size(0, 180)`
+     * defaults from the lib) and every following badge takes a 180sp
+     * tall slot in the same line.
+     *
+     * Strategy: when the painter has not yet reported an intrinsic
+     * size, allocate a badge-sized slot (32sp tall, 120sp wide) instead
+     * of the lib's 180×180 default. That tiles cleanly horizontally on
+     * a single line. Once Coil decodes and the painter reports a real
+     * `intrinsicImageSize`, we scale into the container width with the
+     * height capped at 200sp so a stray hero image doesn't dominate.
+     */
+    override fun placeholderConfig(
+        density: androidx.compose.ui.unit.Density,
+        containerSize: Size,
+        intrinsicImageSize: Size,
+    ): com.mikepenz.markdown.model.PlaceholderConfig {
+        val (widthSp, heightSp) = when {
+            intrinsicImageSize.isUnspecified ||
+                intrinsicImageSize.width <= 0f ||
+                intrinsicImageSize.height <= 0f ->
+                BADGE_DEFAULT_WIDTH_SP to BADGE_DEFAULT_HEIGHT_SP
+            else -> with(density) {
+                val containerWidthPx =
+                    if (containerSize.isUnspecified) intrinsicImageSize.width
+                    else containerSize.width
+                val targetWidth = minOf(intrinsicImageSize.width, containerWidthPx)
+                val ratio = intrinsicImageSize.height / intrinsicImageSize.width.coerceAtLeast(1f)
+                val targetHeight = (targetWidth * ratio).coerceAtMost(
+                    MAX_INLINE_HEIGHT_PX,
+                )
+                targetWidth.toSp().value to targetHeight.toSp().value
+            }
+        }
+        return com.mikepenz.markdown.model.PlaceholderConfig(
+            size = Size(widthSp, heightSp),
+            verticalAlign = androidx.compose.ui.text.PlaceholderVerticalAlign.Center,
+        )
+    }
+
     private suspend fun probeOnce(url: String): ProbeResult {
         probeMutex.withLock {
             probeCache[url]?.let { return it }
@@ -168,6 +213,15 @@ class MarkdownImageTransformer(
         // an uncompressed source export that would be unreadable inline
         // anyway.
         const val MAX_IMAGE_BYTES = 5L * 1024 * 1024
+
+        // Default inline slot for badges (most common SVG inline case).
+        // 32sp tall fits a Shields.io / GitHub Actions badge with room
+        // to breathe; 120sp wide is the typical "Get it on …" width.
+        private const val BADGE_DEFAULT_WIDTH_SP = 120f
+        private const val BADGE_DEFAULT_HEIGHT_SP = 32f
+        // Cap inline image height when intrinsic size IS known so a
+        // stray hero image inside a paragraph can't blow up the line.
+        private const val MAX_INLINE_HEIGHT_PX = 240f
 
         private val networkHeaders =
             NetworkHeaders.Builder()
