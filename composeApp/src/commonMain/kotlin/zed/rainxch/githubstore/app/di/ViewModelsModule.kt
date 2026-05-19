@@ -41,7 +41,11 @@ val viewModelsModule =
                 ownerParam = params.get(1),
                 repoParam = params.get(2),
                 isComingFromUpdate = params.get(3),
-                sourceHostParam = params.getOrNull<String>(),
+                // Indexed access — `getOrNull<String>()` would pick the
+                // first matching String (`ownerParam`) since type-based
+                // resolution doesn't disambiguate against the other
+                // String slots in this factory.
+                sourceHostParam = if (params.size() > 4) params.get<String?>(4) else null,
                 detailsRepository = get(),
                 downloader = get(),
                 installer = get(),
