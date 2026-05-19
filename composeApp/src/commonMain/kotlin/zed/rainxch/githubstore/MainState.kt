@@ -1,6 +1,7 @@
 package zed.rainxch.githubstore
 
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.RateLimitInfo
 
@@ -14,4 +15,5 @@ data class MainState(
     val isDarkTheme: Boolean? = null,
     val currentFontTheme: FontTheme = FontTheme.CUSTOM,
     val isScrollbarEnabled: Boolean = false,
+    val contentWidth: ContentWidth = ContentWidth.WIDE,
 )

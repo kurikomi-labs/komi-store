@@ -3,6 +3,7 @@ package zed.rainxch.core.domain.repository
 import kotlinx.coroutines.flow.Flow
 import zed.rainxch.core.domain.model.AnnouncementCategory
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
@@ -64,6 +65,10 @@ interface TweaksRepository {
     fun getScrollbarEnabled(): Flow<Boolean>
 
     suspend fun setScrollbarEnabled(enabled: Boolean)
+
+    fun getContentWidth(): Flow<ContentWidth>
+
+    suspend fun setContentWidth(width: ContentWidth)
 
     fun getTelemetryEnabled(): Flow<Boolean>
 

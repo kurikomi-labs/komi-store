@@ -781,6 +781,9 @@
     <string name="scrollbar_option_title">Scrollbar</string>
     <string name="scrollbar_option_description">Show scrollbar on scrollable lists (desktop)</string>
 
+    <string name="content_width_title">Content width</string>
+    <string name="content_width_description">Controls the maximum column width of the details screen (desktop)</string>
+
     <string name="hide_seen_title">Hide Seen Repositories</string>
     <string name="hide_seen_description">Hide repositories you have already viewed from discovery feeds</string>
     <string name="clear_seen_history">Clear Seen History</string>

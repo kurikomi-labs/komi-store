@@ -105,6 +105,7 @@ class TweaksViewModel(
                     loadIncludePreReleases()
                     loadHideSeenEnabled()
                     loadScrollbarEnabled()
+                    loadContentWidth()
                     loadTelemetryEnabled()
                     loadTranslationSettings()
                     loadAppLanguage()
@@ -447,6 +448,14 @@ class TweaksViewModel(
         }
     }
 
+    private fun loadContentWidth() {
+        viewModelScope.launch {
+            tweaksRepository.getContentWidth().collect { width ->
+                _state.update { it.copy(contentWidth = width) }
+            }
+        }
+    }
+
     private fun loadTelemetryEnabled() {
         viewModelScope.launch {
             tweaksRepository.getTelemetryEnabled().collect { enabled ->
@@ -568,6 +577,12 @@ class TweaksViewModel(
             is TweaksAction.OnScrollbarToggled -> {
                 viewModelScope.launch {
                     tweaksRepository.setScrollbarEnabled(action.enabled)
+                }
+            }
+
+            is TweaksAction.OnContentWidthSelected -> {
+                viewModelScope.launch {
+                    tweaksRepository.setContentWidth(action.width)
                 }
             }
 

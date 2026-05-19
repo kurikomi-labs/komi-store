@@ -24,6 +24,7 @@ import zed.rainxch.core.data.secure.migrateDataStoreToKSafe
 import zed.rainxch.core.domain.model.AnnouncementCategory
 import zed.rainxch.core.domain.model.AppLanguages
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
@@ -174,6 +175,14 @@ class TweaksRepositoryImpl(
 
     override fun getScrollbarEnabled(): Flow<Boolean> = gatedGetFlow(K_SCROLLBAR_ENABLED, false)
     override suspend fun setScrollbarEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_SCROLLBAR_ENABLED, enabled) }
+
+    override fun getContentWidth(): Flow<ContentWidth> =
+        gatedGetFlow(K_CONTENT_WIDTH, "").map { ContentWidth.fromName(it.ifEmpty { null }) }
+
+    override suspend fun setContentWidth(width: ContentWidth) {
+        migrationDeferred.await()
+        ksafe.put(K_CONTENT_WIDTH, width.name)
+    }
 
     override fun getTelemetryEnabled(): Flow<Boolean> = gatedGetFlow(K_TELEMETRY_ENABLED, false)
     override suspend fun setTelemetryEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_TELEMETRY_ENABLED, enabled) }
@@ -406,5 +415,6 @@ class TweaksRepositoryImpl(
         private const val K_APPS_SORT_RULE = "apps_sort_rule"
         private const val K_STARRED_SORT_RULE = "starred_sort_rule"
         private const val K_FAVOURITES_SORT_RULE = "favourites_sort_rule"
+        private const val K_CONTENT_WIDTH = "content_width"
     }
 }

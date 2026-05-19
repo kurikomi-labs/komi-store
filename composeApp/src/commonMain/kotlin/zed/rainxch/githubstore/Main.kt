@@ -170,6 +170,7 @@ fun App(deepLinkUri: String? = null) {
         AppNavigation(
             navController = navController,
             isScrollbarEnabled = state.isScrollbarEnabled,
+            contentWidth = state.contentWidth,
         )
 
         val whatsNewViewModel: WhatsNewViewModel = koinViewModel()

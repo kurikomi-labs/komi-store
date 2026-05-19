@@ -1,6 +1,7 @@
 package zed.rainxch.tweaks.presentation
 
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.ProxyScope
@@ -28,6 +29,10 @@ sealed interface TweaksAction {
 
     data class OnScrollbarToggled(
         val enabled: Boolean,
+    ) : TweaksAction
+
+    data class OnContentWidthSelected(
+        val width: ContentWidth,
     ) : TweaksAction
 
     data class OnProxyTypeSelected(

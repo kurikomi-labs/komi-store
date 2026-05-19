@@ -32,7 +32,9 @@ import zed.rainxch.apps.presentation.import.ExternalImportRoot
 import zed.rainxch.auth.presentation.AuthenticationRoot
 import zed.rainxch.core.presentation.components.announcements.AnnouncementsRoot
 import zed.rainxch.core.presentation.components.whatsnew.WhatsNewHistoryScreen
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
+import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.details.presentation.DetailsRoot
 import zed.rainxch.devprofile.presentation.DeveloperProfileRoot
@@ -62,6 +64,7 @@ private const val EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY = "external_import_open_li
 fun AppNavigation(
     navController: NavHostController,
     isScrollbarEnabled: Boolean = false,
+    contentWidth: ContentWidth = ContentWidth.WIDE,
 ) {
     var bottomNavigationHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
@@ -76,6 +79,7 @@ fun AppNavigation(
     CompositionLocalProvider(
         LocalBottomNavigationHeight provides bottomNavigationHeight,
         LocalScrollbarEnabled provides isScrollbarEnabled,
+        LocalContentWidth provides contentWidth,
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

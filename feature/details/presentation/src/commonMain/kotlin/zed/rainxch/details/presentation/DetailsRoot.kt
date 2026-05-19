@@ -76,7 +76,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -498,6 +500,11 @@ fun DetailsScreen(
             val collapsedSectionHeight = containerHeightDp * 0.7f
             val listState = rememberLazyListState()
             val isScrollbarEnabled = LocalScrollbarEnabled.current
+            val contentWidthDp = when (LocalContentWidth.current) {
+                ContentWidth.COMPACT -> 480.dp
+                ContentWidth.WIDE -> 680.dp
+                ContentWidth.EXTRA_WIDE -> androidx.compose.ui.unit.Dp.Unspecified
+            }
             val pullEnabled = remember { isPullToRefreshSupported() }
 
             Box(
@@ -520,13 +527,13 @@ fun DetailsScreen(
                     modifier =
                         Modifier
                             .fillMaxHeight()
-                            .widthIn(max = 680.dp)
+                            .widthIn(max = contentWidthDp)
                             .fillMaxWidth(),
                 ) {
                     val listModifier =
                         Modifier
                             .fillMaxHeight()
-                            .widthIn(max = 680.dp)
+                            .widthIn(max = contentWidthDp)
                             .fillMaxWidth()
                             .arrowKeyScroll(listState, autoFocus = true)
                             .onPreviewKeyEvent { event ->

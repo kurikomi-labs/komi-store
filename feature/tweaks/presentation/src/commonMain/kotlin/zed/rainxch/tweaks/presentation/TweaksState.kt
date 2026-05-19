@@ -1,6 +1,7 @@
 package zed.rainxch.tweaks.presentation
 
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DhizukuAvailability
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerAttribution
@@ -36,6 +37,7 @@ data class TweaksState(
     val includePreReleases: Boolean = false,
     val isHideSeenEnabled: Boolean = false,
     val isScrollbarEnabled: Boolean = false,
+    val contentWidth: ContentWidth = ContentWidth.WIDE,
     val isTelemetryEnabled: Boolean = false,
     val translationProvider: TranslationProvider = TranslationProvider.Default,
     /**

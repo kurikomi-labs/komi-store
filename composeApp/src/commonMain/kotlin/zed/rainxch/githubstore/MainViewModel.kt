@@ -81,6 +81,12 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
+            tweaksRepository.getContentWidth().collect { width ->
+                _state.update { it.copy(contentWidth = width) }
+            }
+        }
+
+        viewModelScope.launch {
             rateLimitRepository.rateLimitState.collect { rateLimitInfo ->
                 _state.update { currentState ->
                     currentState.copy(rateLimitInfo = rateLimitInfo)

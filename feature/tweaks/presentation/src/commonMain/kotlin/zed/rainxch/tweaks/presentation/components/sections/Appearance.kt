@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.components.ExpressiveCard
@@ -130,6 +131,13 @@ fun LazyListScope.appearanceSection(
                 onCheckedChange = { enabled ->
                     onAction(TweaksAction.OnScrollbarToggled(enabled))
                 },
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            ContentWidthCard(
+                selected = state.contentWidth,
+                onSelected = { width -> onAction(TweaksAction.OnContentWidthSelected(width)) },
             )
         }
     }
@@ -359,5 +367,74 @@ private fun ThemeColorOption(
                 },
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ContentWidthCard(
+    selected: ContentWidth,
+    onSelected: (ContentWidth) -> Unit,
+) {
+    ExpressiveCard {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(Res.string.content_width_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold,
+            )
+
+            Text(
+                text = stringResource(Res.string.content_width_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ContentWidth.entries.forEach { width ->
+                    val isSelected = width == selected
+                    val scale by animateFloatAsState(
+                        targetValue = if (isSelected) 1.05f else 1f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                            stiffness = Spring.StiffnessMedium,
+                        ),
+                    )
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .scale(scale)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
+                            )
+                            .clickable { onSelected(width) }
+                            .padding(vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = width.displayName,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (isSelected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
+                        )
+                    }
+                }
+            }
+        }
     }
 }
