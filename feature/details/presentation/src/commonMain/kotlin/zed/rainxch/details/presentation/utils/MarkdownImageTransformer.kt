@@ -141,7 +141,12 @@ class MarkdownImageTransformer(
      * of the lib's 180×180 default. That tiles cleanly horizontally on
      * a single line. Once Coil decodes and the painter reports a real
      * `intrinsicImageSize`, we scale into the container width with the
-     * height capped at 200sp so a stray hero image doesn't dominate.
+     * height capped at [MAX_INLINE_HEIGHT_PX] (240 px) so a stray hero
+     * image doesn't dominate. Container width of `0f` (first
+     * composition before the layout pass) is treated the same as
+     * unspecified — otherwise the placeholder collapses to zero size,
+     * the image is invisible on first frame, and a second
+     * recomposition is forced once layout reports a real width.
      */
     override fun placeholderConfig(
         density: androidx.compose.ui.unit.Density,
@@ -154,9 +159,17 @@ class MarkdownImageTransformer(
                 intrinsicImageSize.height <= 0f ->
                 BADGE_DEFAULT_WIDTH_SP to BADGE_DEFAULT_HEIGHT_SP
             else -> with(density) {
-                val containerWidthPx =
-                    if (containerSize.isUnspecified) intrinsicImageSize.width
-                    else containerSize.width
+                // Treat a zero container width the same as unspecified.
+                // Compose can hand us `containerSize.width == 0f` on the
+                // first composition before the surrounding paragraph
+                // has been measured; without this fallback the
+                // placeholder collapses to zero size and the image
+                // disappears for one frame.
+                val containerWidthPx = when {
+                    containerSize.isUnspecified -> intrinsicImageSize.width
+                    containerSize.width <= 0f -> intrinsicImageSize.width
+                    else -> containerSize.width
+                }
                 val targetWidth = minOf(intrinsicImageSize.width, containerWidthPx)
                 val ratio = intrinsicImageSize.height / intrinsicImageSize.width.coerceAtLeast(1f)
                 val targetHeight = (targetWidth * ratio).coerceAtMost(
