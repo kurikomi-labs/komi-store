@@ -149,6 +149,18 @@ class TranslationRepositoryImpl(
         masked = Regex("https?://[^\\s<>\")]+").replace(masked) { match ->
             replaceWithMarker(spans, match.value)
         }
+        // 5. GFM alert callout markers: `[!NOTE]`, `[!TIP]`,
+        //    `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`. The renderer
+        //    pattern-matches these literally to pick the alert kind /
+        //    icon / tint; translation rewrites `[!IMPORTANT]` into
+        //    e.g. `[!Vajno]` (ru) and the renderer falls back to a
+        //    plain blockquote, losing the formatting entirely.
+        masked = Regex(
+            "\\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\\]",
+            RegexOption.IGNORE_CASE,
+        ).replace(masked) { match ->
+            replaceWithMarker(spans, match.value)
+        }
 
         return TranslationProtection(masked, spans)
     }
