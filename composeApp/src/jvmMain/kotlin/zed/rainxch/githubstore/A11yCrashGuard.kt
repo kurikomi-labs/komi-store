@@ -34,8 +34,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  * and [GitHub-Store#640](https://github.com/OpenHub-Store/GitHub-Store/issues/640).
  */
 object A11yCrashGuard {
-    private val warned = AtomicBoolean(false)
+    // Separate flags per path so each path logs its first suppression independently.
+    private val warnedEdt = AtomicBoolean(false)
+    private val warnedUncaught = AtomicBoolean(false)
 
+    // Must be called after CrashReporter.install() so the uncaught-exception handler
+    // chain is: A11yCrashGuard (filter) -> CrashReporter (log + dump) -> JVM default.
     fun install() {
         val osName = System.getProperty("os.name")?.lowercase().orEmpty()
         if (!osName.contains("mac")) return
@@ -51,7 +55,7 @@ object A11yCrashGuard {
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             if (isComposeA11yNpe(throwable)) {
-                if (warned.compareAndSet(false, true)) {
+                if (warnedUncaught.compareAndSet(false, true)) {
                     System.err.println(
                         "[A11yCrashGuard] Suppressed Compose a11y NPE via uncaught-exception path " +
                             "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
@@ -59,7 +63,10 @@ object A11yCrashGuard {
                 }
                 return@setDefaultUncaughtExceptionHandler
             }
+            // Forward to CrashReporter (or JVM default if previous is null, which
+            // would only happen if install() is called before CrashReporter.install()).
             previous?.uncaughtException(thread, throwable)
+                ?: throwable.printStackTrace(System.err)
         }
     }
 
@@ -69,7 +76,8 @@ object A11yCrashGuard {
         while (current != null) {
             if (current.stackTrace.any { frame ->
                     frame.className.startsWith("androidx.compose.ui.platform.a11y") ||
-                        frame.className.startsWith("sun.lwawt.macosx.CAccessible")
+                        // Specific AX bridge inner class present in all known traces for this bug.
+                        frame.className.startsWith("sun.lwawt.macosx.CAccessible\$AXChangeNotifier")
                 }
             ) {
                 return true
@@ -85,7 +93,7 @@ object A11yCrashGuard {
                 super.dispatchEvent(event)
             } catch (npe: NullPointerException) {
                 if (isComposeA11yNpe(npe)) {
-                    if (warned.compareAndSet(false, true)) {
+                    if (warnedEdt.compareAndSet(false, true)) {
                         System.err.println(
                             "[A11yCrashGuard] Suppressed Compose a11y NPE on macOS " +
                                 "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
