@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
@@ -37,6 +38,21 @@ fun CustomForgesDialog(
         title = { Text(stringResource(Res.string.custom_forges_dialog_title)) },
         text = {
             Column {
+                // Reassure the user: Codeberg ships built-in, so adding
+                // it here is a no-op. The dialog is purely for users
+                // running their own Forgejo / Gitea host.
+                Surface(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    modifier = Modifier.padding(bottom = 10.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.custom_forges_dialog_builtin_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    )
+                }
                 Text(
                     text = stringResource(Res.string.custom_forges_dialog_help),
                     style = MaterialTheme.typography.bodySmall,

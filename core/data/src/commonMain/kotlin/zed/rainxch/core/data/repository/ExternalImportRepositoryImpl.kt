@@ -256,8 +256,15 @@ class ExternalImportRepositoryImpl(
         //     candidate variant skips the cap.
         val forgejoHits = mutableMapOf<String, MutableList<RepoMatchSuggestion>>()
         val forgejoHostList = forgejoSearchHosts()
+        // When the user has explicitly added custom forges, they care
+        // about forge results enough to warrant a wider sweep — double
+        // the budget so more apps actually get cross-checked against
+        // the user's hosts before we cap out.
+        val hasUserHosts = runCatching {
+            tweaksRepository.getCustomForgeHosts().first().isNotEmpty()
+        }.getOrDefault(false)
         if (forgejoHostList.isNotEmpty()) {
-            var budget = FORGEJO_SEARCH_CANDIDATE_BUDGET
+            var budget = if (hasUserHosts) FORGEJO_SEARCH_CANDIDATE_BUDGET * 2 else FORGEJO_SEARCH_CANDIDATE_BUDGET
             for (candidate in candidates) {
                 if (budget <= 0) break
                 // Skip candidates that already have a strong GitHub hit
@@ -649,7 +656,11 @@ class ExternalImportRepositoryImpl(
      * hosts are dropped silently rather than queued.
      */
     private suspend fun forgejoSearchHosts(): List<String> {
-        val canonical = listOf("codeberg.org")
+        // Mirror the known-Forgejo set in RepositoryUrlParser so the
+        // URL-parse path and the smart-match path stay aligned — a URL
+        // we accept as a Forgejo link is also a host we'll proactively
+        // search during auto-import.
+        val canonical = listOf("codeberg.org", "gitea.com", "git.disroot.org")
         val user = runCatching { tweaksRepository.getCustomForgeHosts().first() }
             .getOrNull()
             .orEmpty()

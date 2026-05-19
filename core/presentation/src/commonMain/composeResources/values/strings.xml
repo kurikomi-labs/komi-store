@@ -1064,6 +1064,7 @@
     <string name="custom_forges_count_label">%1$d added</string>
     <string name="custom_forges_dialog_title">Custom forges</string>
     <string name="custom_forges_dialog_help">Enter the hostname of a Forgejo or Gitea instance (e.g. git.example.com). GHS will accept URLs from these hosts in the manual-link sheet.</string>
+    <string name="custom_forges_dialog_builtin_note">Codeberg, gitea.com and git.disroot.org are already searched by default — you don\'t need to add them here. Use this list only for your own self-hosted Forgejo or Gitea.</string>
     <string name="custom_forges_add_button">Add</string>
     <string name="custom_forges_empty">No custom forges yet.</string>
     <string name="done">Done</string>

@@ -530,6 +530,9 @@ private fun SuggestionRow(
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Host badge — answers "where is this suggestion from".
+                HostBadge(suggestion.sourceHost)
+                Spacer(Modifier.width(6.dp))
                 MatchSourceChip(suggestion.source)
                 Spacer(Modifier.width(6.dp))
                 Text(
@@ -547,6 +550,43 @@ private fun SuggestionRow(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HostBadge(sourceHost: String?) {
+    val (label, bg, fg) = when {
+        sourceHost == null ->
+            Triple(
+                "GitHub",
+                MaterialTheme.colorScheme.surfaceVariant,
+                MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        sourceHost.equals("codeberg.org", ignoreCase = true) ->
+            Triple(
+                "Codeberg",
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+        else ->
+            Triple(
+                sourceHost,
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+    }
+    Surface(
+        color = bg,
+        shape = RoundedCornerShape(6.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = fg,
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+        )
     }
 }
 
