@@ -7,39 +7,39 @@
     {
       "type": "NEW",
       "bullets": [
-        "Instalación en macOS con Homebrew — `brew install --cask github-store` desde nuestro nuevo tap.",
-        "Añadido fastly.jsdelivr.net como mirror comunitario. Útil cuando GitHub está limitado.",
-        "Nos unimos a la coalición Keep Android Open — un banner en Apps lo explica.",
-        "Iniciar sesión con GitHub ahora usa el flujo web estándar — un toque, autorizas en el navegador, listo. Sin código de 8 dígitos.",
-        "Todas las preferencias y credenciales persistidas ahora se almacenan cifradas (AES-256-GCM) mediante KSafe — tokens de GitHub, credenciales de proxy, ajustes de la app, ID del dispositivo, elección de mirror, todos los coachmarks, caché de anuncios. Keystore por hardware en Android. Los datos existentes migran al primer arranque."
+        "Instalación en macOS con Homebrew: `brew install --cask github-store`.",
+        "Iniciar sesión con GitHub usa el flujo web estándar — sin código de 8 dígitos.",
+        "Preferencias y credenciales cifradas con AES-256-GCM vía KSafe (Keystore por hardware en Android). Migración al primer arranque.",
+        "Mirror fastly.jsdelivr.net para GitHub limitado.",
+        "Nos unimos a la coalición Keep Android Open — banner lo explica."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "Los chips de plataforma en detalles del repo ahora abren Search filtrado por esa plataforma — antes no hacían nada.",
-        "El botón de búsqueda del teclado ahora activa la búsqueda en Android 12 con IMEs chinos.",
-        "El repo enlazado externamente muestra ahora un banner en Detalles con un toque para desvincular.",
-        "El inicio de sesión abre la URL con el código ya rellenado y copia un código compatible con pegado.",
-        "Crash en Android 16 / ROMs personalizadas en Ajustes y descargas — usa almacenamiento interno cuando el externo está bloqueado.",
-        "Detección de Magisk / KernelSU / APatch en Android 13+ — la prueba anterior la ocultaba SELinux.",
-        "La etiqueta de variante fijada en Detalles se refresca entre versiones — los números beta/rc antiguos ya no se quedan en el chip.",
-        "El README y las notas de versión ya no vuelven al principio al desplazarte y regresar — la altura medida ahora se conserva entre desasignaciones de viewport."
+        "Chips de plataforma en Detalles abren Search filtrado (antes no hacían nada).",
+        "Botón de búsqueda del teclado funciona en Android 12 con IMEs chinos.",
+        "Repo enlazado externamente muestra banner en Detalles con un toque para desvincular.",
+        "Inicio de sesión abre URL del código prellenada y copia código compatible con pegado.",
+        "Crash en Android 16 / ROMs personalizadas en Ajustes + descargas — usa almacenamiento interno.",
+        "Detección de Magisk / KernelSU / APatch en Android 13+ (probe ocultado por SELinux).",
+        "Etiqueta de variante fijada se refresca — sin números beta/rc obsoletos.",
+        "README / notas de versión conservan posición de scroll entre desasignaciones de viewport."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "Al vincular apps manualmente — orden por origen del instalador (F-Droid / Obtainium primero, Play Store y actualizaciones del sistema al final) con un chip que muestra el origen de cada app.",
-        "El enlace manual ahora sugiere repos de GitHub coincidentes automáticamente — elige una app, obtén candidatos clasificados, toca para vincular. Sigue disponible la entrada manual de URL.",
-        "Llamadas de alerta estilo GitHub en README y notas de versión — Note, Tip, Important, Warning, Caution se muestran como tarjetas tintadas con iconos en vez de texto literal.",
-        "Atajos de emoji en README y notas de versión — :rocket: ahora se ve como 🚀, :tada: como 🎉, y ~250 más.",
-        "Imágenes SVG en README y notas de versión ahora se renderizan nativamente (diagramas, hero). Imágenes de tema único respetan claro/oscuro. User-Agent de navegador desbloquea badges de CDN.",
-        "Los bloques de código en README y notas de versión tienen resaltado de sintaxis — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, etc. Colores adaptados a claro/oscuro.",
-        "Pulido de Markdown — blockquotes HTML y bloques <pre><code> renderizan bien. Sub/superíndices convierten a Unicode (H₂O, x²). Entidades HTML con nombre (©, ™, —, comillas curvas) decodificadas.",
-        "Secciones <details>/<summary> colapsables como tarjetas tap-to-expand. Imágenes de insignia/botón adyacentes (Play Store, GitHub Releases, etc.) fluyen en una fila en vez de apilarse.",
-        "Vincular apps manualmente ya no requiere re-descargar — tu versión seleccionada se acepta tal cual. Un banner en Detalles indica cuando una app fue vinculada manualmente.",
-        "Orden por sección — Instaladas (actualizaciones, recencia, nombre), Con estrella (recencia, nombre, estrellas), Favoritos (recencia, nombre); cada sección recuerda su propia elección."
+        "Hoja de enlace manual ordena por origen del instalador (F-Droid / Obtainium primero, actualizaciones del sistema al final) con chip de origen por app.",
+        "Smart match sugiere repos GitHub clasificados — toca para vincular, entrada manual de URL sigue disponible.",
+        "Llamadas de alerta GFM (Note / Tip / Important / Warning / Caution) como tarjetas tintadas.",
+        "Atajos de emoji — :rocket: → 🚀 (~250 cubiertos).",
+        "Imágenes SVG renderizan nativamente. Imágenes con tema respetan claro/oscuro. UA de navegador desbloquea badges de CDN.",
+        "Bloques de código con resaltado (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, adaptado al tema).",
+        "Pulido de Markdown — blockquotes HTML y `<pre><code>` renderizan, sub/superíndice → unicode, entidades HTML decodificadas.",
+        "Secciones `<details>` colapsables como tarjetas tap-to-expand. Filas de imágenes badge/botón fluyen en línea.",
+        "Vinculación manual confía en tu versión — sin re-descarga para verificar.",
+        "Orden por sección — Instaladas, Con estrella, Favoritos recuerdan su propia elección."
       ]
     }
   ]

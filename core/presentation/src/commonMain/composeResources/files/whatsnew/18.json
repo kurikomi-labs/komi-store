@@ -7,39 +7,39 @@
     {
       "type": "NEW",
       "bullets": [
-        "macOS install via Homebrew — `brew install --cask github-store` from our new tap.",
-        "Added fastly.jsdelivr.net as a community mirror. Useful when GitHub is throttled.",
-        "Joined the Keep Android Open coalition — in-app banner on Apps explains why.",
-        "Sign in with GitHub now uses the standard web flow — tap, authorize in browser, done. No 8-digit code to type.",
-        "All persisted preferences and credentials now stored AES-256-GCM encrypted via KSafe — GitHub auth tokens, proxy credentials, app settings, device ID, mirror choice, every coachmark, and the announcements cache. Hardware-backed Keystore on Android. Existing data migrates seamlessly on first launch."
+        "macOS install via Homebrew tap: `brew install --cask github-store`.",
+        "Sign in with GitHub uses the standard web flow — no 8-digit code.",
+        "All prefs + credentials AES-256-GCM encrypted via KSafe (hardware-backed Keystore on Android). Migrates on first launch.",
+        "Added fastly.jsdelivr.net mirror for throttled GitHub.",
+        "Joined Keep Android Open coalition — banner explains why."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "Platform chips on repo details now open Search filtered by that platform — was a no-op.",
-        "Keyboard search button now triggers search on Android 12 across Chinese IMEs.",
-        "Externally-linked repo now shows a banner on Details with one-tap unlink.",
-        "Sign-in opens the device-code URL prefilled and copies a paste-friendly code.",
-        "Android 16 / custom-ROM crash on Settings + download failure — falls back to internal storage when external is blocked.",
-        "Magisk / KernelSU / APatch detection on Android 13+ — previous probe was masked by SELinux.",
-        "Pinned-variant label on Details refreshes across releases — old beta/rc qualifier numbers no longer linger in the chip.",
-        "README and release-notes no longer snap back to the top when you scroll past and return — measured height now persists across viewport disposal."
+        "Platform chips on Details now open filtered Search (was no-op).",
+        "Android 12 keyboard search button works across Chinese IMEs.",
+        "Externally-linked repo shows banner on Details with one-tap unlink.",
+        "Sign-in opens device-code URL prefilled + copies paste-friendly code.",
+        "Android 16 / custom-ROM Settings + download crash — falls back to internal storage.",
+        "Magisk / KernelSU / APatch detection on Android 13+ (SELinux-masked probe).",
+        "Pinned-variant label refreshes — no stale beta/rc qualifiers.",
+        "README / release-notes keep scroll position across viewport disposal."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "Manually linking apps — sorted by installer source (F-Droid / Obtainium first, Play Store and system updates last) with a chip showing each app's source.",
-        "Manual link now suggests matching GitHub repos automatically — pick an app, get ranked candidates, tap to link. Manual URL entry still available.",
-        "GitHub-style alert callouts in README and release notes — Note, Tip, Important, Warning, Caution now render as tinted cards with icons instead of literal text.",
-        "Emoji shortcodes in README and release notes — :rocket: now renders as 🚀, :tada: as 🎉, and ~250 others. Common dev/status icons covered out of the box.",
-        "SVG images in README and release notes now render natively (diagrams, hero images). Theme-only images respect light/dark — no more both-variants-stacked. Browser-like User-Agent fixes hotlink-blocked badges from common CDNs.",
-        "Code blocks in README and release notes now have syntax highlighting — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell, and more. Theme-aware colors for light + dark.",
-        "Markdown polish — HTML blockquotes and <pre><code> fences now render correctly. Sub/superscript convert to unicode (H₂O, x²). Named HTML entities (©, ™, —, “curly quotes”, etc.) decoded.",
-        "Collapsible <details>/<summary> sections render as tap-to-expand cards. Adjacent badge / button images (Play Store, GitHub Releases, etc.) flow in a single row instead of stacking.",
-        "Manual app matching no longer re-downloads to verify — your selected version is trusted as-is. Details banner notes when an app was manually linked.",
-        "Section-aware sort across the library — Installed (updates, recency, name), Starred (recency, name, stars), Favourites (recency, name); each section remembers its own choice."
+        "Manual link sheet sorts by installer source (F-Droid / Obtainium first, system updates last) with source chip per app.",
+        "Smart match suggests ranked GitHub repos — tap to link, manual URL still available.",
+        "GFM alert callouts (Note / Tip / Important / Warning / Caution) render as tinted cards.",
+        "Emoji shortcodes — :rocket: → 🚀 (~250 covered).",
+        "SVG images render natively. Theme-aware images respect light/dark. Browser UA unblocks CDN-hotlinked badges.",
+        "Code blocks syntax-highlighted (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, theme-aware).",
+        "Markdown polish — HTML blockquotes + `<pre><code>` render, sub/superscript → unicode, HTML entities decoded.",
+        "Collapsible `<details>` render as tap-to-expand cards. Badge / button image rows flow inline.",
+        "Manual matching trusts your version — no re-download to verify.",
+        "Section-aware sort across library — Installed, Starred, Favourites each remember their own choice."
       ]
     }
   ]

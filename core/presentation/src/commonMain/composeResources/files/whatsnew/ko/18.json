@@ -7,39 +7,39 @@
     {
       "type": "NEW",
       "bullets": [
-        "Homebrew로 macOS에 설치 — 새 tap에서 `brew install --cask github-store`.",
-        "커뮤니티 미러로 fastly.jsdelivr.net 추가. GitHub가 제한될 때 유용.",
-        "Keep Android Open 연합 합류 — Apps의 배너로 이유 설명.",
-        "GitHub 로그인이 표준 웹 플로우로 — 탭, 브라우저에서 인증, 완료. 8자리 코드 불필요.",
-        "저장되는 모든 환경설정과 자격증명이 이제 KSafe로 AES-256-GCM 암호화 저장됩니다 — GitHub 토큰, 프록시 자격증명, 앱 설정, 디바이스 ID, 미러 선택, 모든 코치마크, 공지 캐시. Android에서는 하드웨어 Keystore. 기존 데이터는 첫 실행 시 자동으로 마이그레이션됩니다."
+        "Homebrew로 macOS 설치: `brew install --cask github-store`.",
+        "GitHub 로그인이 표준 웹 플로우 사용 — 8자리 코드 불필요.",
+        "환경설정과 자격증명을 KSafe로 AES-256-GCM 암호화 (Android는 하드웨어 Keystore). 첫 실행 시 마이그레이션.",
+        "GitHub 제한 시 fastly.jsdelivr.net 미러 추가.",
+        "Keep Android Open 연합 합류 — 배너로 설명."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "리포 상세의 플랫폼 칩이 이제 해당 플랫폼으로 필터된 Search 를 엽니다 — 이전엔 무반응.",
-        "Android 12 의 키보드 검색 버튼이 중국어 IME에서도 안정적으로 검색을 트리거합니다.",
-        "외부 연결된 리포는 이제 상세에서 한 번 탭으로 연결 해제 배너를 표시합니다.",
-        "로그인이 기기 코드가 채워진 URL을 열고 붙여넣기 친화적인 코드를 복사합니다.",
-        "Android 16 / 커스텀 ROM에서 설정 크래시 및 다운로드 실패 수정 — 외부 저장소가 차단되면 내부 저장소로 폴백.",
-        "Android 13+ 에서 Magisk / KernelSU / APatch 감지 — 이전 검사는 SELinux 로 가려졌었습니다.",
-        "상세의 고정된 변형 라벨이 릴리스마다 새로고침됩니다 — 오래된 beta/rc 번호가 더 이상 칩에 남지 않습니다.",
-        "README와 릴리스 노트가 스크롤로 지나갔다가 돌아와도 더 이상 처음으로 튀지 않습니다 — 측정된 높이가 뷰포트 폐기 사이에도 유지됩니다."
+        "상세의 플랫폼 칩이 Search를 필터로 엽니다 (이전엔 무반응).",
+        "Android 12의 키보드 검색 버튼이 중국어 IME에서 작동.",
+        "외부 연결된 리포는 상세에 한 번 탭으로 해제할 수 있는 배너 표시.",
+        "로그인이 코드 채워진 URL을 열고 붙여넣기 친화적인 코드를 복사.",
+        "Android 16 / 커스텀 ROM에서 설정 + 다운로드 크래시 — 내부 저장소로 폴백.",
+        "Android 13+에서 Magisk / KernelSU / APatch 감지 (SELinux로 가려졌던 검사).",
+        "고정된 변형 라벨이 새로고침 — 오래된 beta/rc 번호 없음.",
+        "README / 릴리스 노트가 뷰포트 폐기 사이에서도 스크롤 위치를 유지."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "수동 연결 — 설치 출처별 정렬(F-Droid / Obtainium 먼저, Play 스토어와 시스템 업데이트는 마지막)에 각 앱의 출처를 보여주는 칩 표시.",
-        "수동 연결이 일치하는 GitHub 리포를 자동으로 제안합니다 — 앱 선택 후 순위 후보를 받고 탭하여 연결. 수동 URL 입력도 그대로 사용 가능.",
-        "README와 릴리스 노트에서 GitHub 스타일 알림 카드 — Note, Tip, Important, Warning, Caution이 아이콘과 함께 색상 카드로 표시됩니다.",
-        "README와 릴리스 노트에서 이모지 단축코드 지원 — :rocket: 은 🚀, :tada: 는 🎉, 총 약 250개.",
-        "README와 릴리스 노트의 SVG 이미지가 네이티브로 렌더링됩니다 (다이어그램, 히어로). 테마 전용 이미지는 라이트/다크를 따릅니다. 브라우저 같은 User-Agent로 CDN 핫링크 차단 우회.",
-        "README와 릴리스 노트의 코드 블록에 구문 강조 — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell 등. 라이트/다크 테마에 맞는 색상.",
-        "Markdown 다듬기 — HTML blockquote와 <pre><code>가 올바르게 렌더링. 위첨자/아래첨자가 유니코드로 변환 (H₂O, x²). 명명된 HTML 엔티티 (©, ™, —, 곡선 따옴표) 디코드.",
-        "<details>/<summary> 접이식 섹션이 탭하여 펼치는 카드로 표시됩니다. 인접한 배지/버튼 이미지(Play Store, GitHub Releases 등)가 쌓이지 않고 한 줄에 정렬됩니다.",
-        "수동 앱 매칭에서 더 이상 재다운로드가 필요 없습니다 — 선택한 버전을 그대로 신뢰합니다. 상세 화면 배너로 수동 연결 여부를 표시합니다.",
-        "섹션별 정렬 — 설치됨(업데이트, 최근, 이름), 별표(최근, 이름, 별 수), 즐겨찾기(최근, 이름); 섹션마다 선택을 따로 기억합니다."
+        "수동 연결 시트를 설치 출처별로 정렬(F-Droid / Obtainium 먼저, 시스템 업데이트는 마지막)하고 앱별 출처 칩 표시.",
+        "Smart match가 순위 매겨진 GitHub 리포를 제안 — 탭으로 연결, 수동 URL 입력도 사용 가능.",
+        "GFM 알림(Note / Tip / Important / Warning / Caution)을 색상 카드로 표시.",
+        "이모지 단축코드 — :rocket: → 🚀 (약 250개 지원).",
+        "SVG 이미지를 네이티브 렌더링. 테마 이미지는 라이트/다크 따름. 브라우저 UA로 CDN 배지 핫링크 차단 우회.",
+        "코드 블록에 구문 강조 (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, 테마 대응).",
+        "Markdown 다듬기 — HTML blockquote와 `<pre><code>` 렌더링, 위/아래첨자 → 유니코드, HTML 엔티티 디코드.",
+        "`<details>` 접이식 섹션을 탭으로 펼치는 카드로 표시. 배지/버튼 이미지 행이 한 줄에 정렬.",
+        "수동 매칭은 선택한 버전을 신뢰 — 검증용 재다운로드 불필요.",
+        "섹션별 정렬 — 설치됨, 별표, 즐겨찾기가 각자의 선택을 기억."
       ]
     }
   ]
