@@ -1,6 +1,8 @@
 package zed.rainxch.details.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -522,6 +524,11 @@ fun DetailsScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .scrollable(
+                        state = listState,
+                        orientation = Orientation.Vertical,
+                        reverseDirection = true,
+                    )
                     .onSizeChanged { size ->
                         // Layout-phase write; cheaper than BoxWithConstraints
                         // which subcomposes during the measure pass. Setting
