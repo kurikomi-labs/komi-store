@@ -33,6 +33,8 @@ sealed interface TweaksEvent {
 
     data object OnDeeplCredentialsSaved : TweaksEvent
 
+    data object OnMicrosoftTranslatorCredentialsSaved : TweaksEvent
+
     /**
      * Fired on platforms where changing the UI language cannot be
      * applied in-place (currently Desktop — no `Activity.recreate()`

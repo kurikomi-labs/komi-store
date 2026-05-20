@@ -17,6 +17,7 @@ enum class TranslationProvider {
     YOUDAO,
     LIBRE_TRANSLATE,
     DEEPL,
+    MICROSOFT,
     ;
 
     companion object {

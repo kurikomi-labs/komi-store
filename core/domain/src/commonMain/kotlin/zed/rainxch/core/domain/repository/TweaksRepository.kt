@@ -98,6 +98,14 @@ interface TweaksRepository {
 
     suspend fun setDeeplAuthKey(authKey: String)
 
+    fun getMicrosoftTranslatorKey(): Flow<String>
+
+    suspend fun setMicrosoftTranslatorKey(key: String)
+
+    fun getMicrosoftTranslatorRegion(): Flow<String>
+
+    suspend fun setMicrosoftTranslatorRegion(region: String)
+
     /**
      * Selected UI language as a BCP 47 tag (e.g. `zh-CN`). Emits
      * `null` when the user hasn't picked one — which means "follow

@@ -180,6 +180,18 @@ sealed interface TweaksAction {
 
     data object OnDeeplCredentialsSave : TweaksAction
 
+    data class OnMicrosoftTranslatorKeyChanged(
+        val key: String,
+    ) : TweaksAction
+
+    data class OnMicrosoftTranslatorRegionChanged(
+        val region: String,
+    ) : TweaksAction
+
+    data object OnMicrosoftTranslatorKeyVisibilityToggle : TweaksAction
+
+    data object OnMicrosoftTranslatorCredentialsSave : TweaksAction
+
     data class OnAutoTranslateEnabledToggle(
         val enabled: Boolean,
     ) : TweaksAction

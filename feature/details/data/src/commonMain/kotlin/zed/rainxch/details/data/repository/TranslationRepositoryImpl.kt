@@ -13,6 +13,7 @@ import zed.rainxch.details.data.translation.GoogleTranslator
 import zed.rainxch.details.data.translation.Translator
 import zed.rainxch.details.data.translation.DeeplTranslator
 import zed.rainxch.details.data.translation.LibreTranslator
+import zed.rainxch.details.data.translation.MicrosoftTranslator
 import zed.rainxch.details.data.translation.YoudaoTranslator
 import zed.rainxch.details.domain.model.TranslationResult
 import zed.rainxch.details.domain.repository.TranslationRepository
@@ -233,6 +234,16 @@ class TranslationRepositoryImpl(
                     httpClient = { httpClient },
                     json = json,
                     authKey = authKey,
+                )
+            }
+            TranslationProvider.MICROSOFT -> {
+                val key = tweaksRepository.getMicrosoftTranslatorKey().first()
+                val region = tweaksRepository.getMicrosoftTranslatorRegion().first()
+                MicrosoftTranslator(
+                    httpClient = { httpClient },
+                    json = json,
+                    subscriptionKey = key,
+                    subscriptionRegion = region,
                 )
             }
         }

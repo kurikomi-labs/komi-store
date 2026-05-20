@@ -254,6 +254,17 @@ private fun TranslationProviderCard(
                     onAction = onAction,
                 )
             }
+
+            AnimatedVisibility(
+                visible = state.displayedTranslationProvider == TranslationProvider.MICROSOFT,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                MicrosoftCredentialsForm(
+                    state = state,
+                    onAction = onAction,
+                )
+            }
         }
     }
 }
@@ -265,6 +276,7 @@ private fun providerLabel(provider: TranslationProvider): String =
         TranslationProvider.YOUDAO -> stringResource(Res.string.translation_provider_youdao)
         TranslationProvider.LIBRE_TRANSLATE -> stringResource(Res.string.translation_provider_libre)
         TranslationProvider.DEEPL -> stringResource(Res.string.translation_provider_deepl)
+        TranslationProvider.MICROSOFT -> stringResource(Res.string.translation_provider_microsoft)
     }
 
 /**
@@ -607,6 +619,98 @@ private fun DeeplCredentialsForm(
                 )
                 Spacer(Modifier.size(8.dp))
                 Text(stringResource(Res.string.translation_deepl_save))
+            }
+        }
+    }
+}
+
+@Composable
+private fun MicrosoftCredentialsForm(
+    state: TweaksState,
+    onAction: (TweaksAction) -> Unit,
+) {
+    val canSave = state.microsoftTranslatorKey.isNotBlank()
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+
+    Column(
+        modifier = Modifier.padding(top = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = stringResource(Res.string.translation_microsoft_help),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        androidx.compose.material3.TextButton(
+            onClick = { runCatching { uriHandler.openUri("https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation") } },
+            modifier = Modifier.align(Alignment.Start),
+        ) {
+            Text(stringResource(Res.string.translation_microsoft_get_free_key))
+        }
+
+        OutlinedTextField(
+            value = state.microsoftTranslatorKey,
+            onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorKeyChanged(it)) },
+            label = { Text(stringResource(Res.string.translation_microsoft_key)) },
+            singleLine = true,
+            visualTransformation =
+                if (state.isMicrosoftTranslatorKeyVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+            trailingIcon = {
+                IconButton(
+                    onClick = { onAction(TweaksAction.OnMicrosoftTranslatorKeyVisibilityToggle) },
+                ) {
+                    Icon(
+                        imageVector =
+                            if (state.isMicrosoftTranslatorKeyVisible) {
+                                Icons.Default.VisibilityOff
+                            } else {
+                                Icons.Default.Visibility
+                            },
+                        contentDescription =
+                            if (state.isMicrosoftTranslatorKeyVisible) {
+                                stringResource(Res.string.proxy_hide_password)
+                            } else {
+                                stringResource(Res.string.proxy_show_password)
+                            },
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+        )
+
+        OutlinedTextField(
+            value = state.microsoftTranslatorRegion,
+            onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorRegionChanged(it)) },
+            label = { Text(stringResource(Res.string.translation_microsoft_region)) },
+            placeholder = { Text("global") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+        )
+
+        Row(
+            modifier = Modifier.align(Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FilledTonalButton(
+                onClick = { onAction(TweaksAction.OnMicrosoftTranslatorCredentialsSave) },
+                enabled = canSave,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.size(8.dp))
+                Text(stringResource(Res.string.translation_microsoft_save))
             }
         }
     }

@@ -503,6 +503,16 @@ class TweaksViewModel(
                 _state.update { it.copy(deeplAuthKey = authKey) }
             }
         }
+        viewModelScope.launch {
+            tweaksRepository.getMicrosoftTranslatorKey().collect { key ->
+                _state.update { it.copy(microsoftTranslatorKey = key) }
+            }
+        }
+        viewModelScope.launch {
+            tweaksRepository.getMicrosoftTranslatorRegion().collect { region ->
+                _state.update { it.copy(microsoftTranslatorRegion = region) }
+            }
+        }
     }
 
     private fun evaluateBatteryOptimizationCard() {
@@ -992,6 +1002,21 @@ class TweaksViewModel(
                             }
                         }
                     }
+                    TranslationProvider.MICROSOFT -> {
+                        val current = _state.value
+                        val hasCreds = current.microsoftTranslatorKey.isNotBlank()
+                        if (hasCreds) {
+                            _state.update { it.copy(draftTranslationProvider = null) }
+                            viewModelScope.launch {
+                                tweaksRepository.setTranslationProvider(action.provider)
+                                _events.send(TweaksEvent.OnTranslationProviderSaved)
+                            }
+                        } else {
+                            _state.update {
+                                it.copy(draftTranslationProvider = TranslationProvider.MICROSOFT)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1095,6 +1120,39 @@ class TweaksViewModel(
                     }
                     _state.update { it.copy(draftTranslationProvider = null) }
                     _events.send(TweaksEvent.OnDeeplCredentialsSaved)
+                }
+            }
+
+            is TweaksAction.OnMicrosoftTranslatorKeyChanged -> {
+                _state.update { it.copy(microsoftTranslatorKey = action.key) }
+            }
+
+            is TweaksAction.OnMicrosoftTranslatorRegionChanged -> {
+                _state.update { it.copy(microsoftTranslatorRegion = action.region) }
+            }
+
+            TweaksAction.OnMicrosoftTranslatorKeyVisibilityToggle -> {
+                _state.update {
+                    it.copy(isMicrosoftTranslatorKeyVisible = !it.isMicrosoftTranslatorKeyVisible)
+                }
+            }
+
+            TweaksAction.OnMicrosoftTranslatorCredentialsSave -> {
+                val current = _state.value
+                viewModelScope.launch {
+                    tweaksRepository.setMicrosoftTranslatorKey(current.microsoftTranslatorKey)
+                    tweaksRepository.setMicrosoftTranslatorRegion(current.microsoftTranslatorRegion)
+                    val shouldActivate =
+                        current.microsoftTranslatorKey.isNotBlank() &&
+                            (
+                                current.translationProvider != TranslationProvider.MICROSOFT ||
+                                    current.draftTranslationProvider == TranslationProvider.MICROSOFT
+                            )
+                    if (shouldActivate) {
+                        tweaksRepository.setTranslationProvider(TranslationProvider.MICROSOFT)
+                    }
+                    _state.update { it.copy(draftTranslationProvider = null) }
+                    _events.send(TweaksEvent.OnMicrosoftTranslatorCredentialsSaved)
                 }
             }
 

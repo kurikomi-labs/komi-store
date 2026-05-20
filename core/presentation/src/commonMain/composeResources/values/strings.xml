@@ -922,6 +922,13 @@
     <string name="translation_deepl_save">Save key</string>
     <string name="translation_deepl_saved">DeepL key saved</string>
     <string name="translation_deepl_get_free_key">Get a free DeepL key →</string>
+    <string name="translation_provider_microsoft">Microsoft</string>
+    <string name="translation_microsoft_help">Azure Translator is privacy-respecting (No-Trace by default — your text is never stored or used for training). Free tier covers 2M characters/month. Region is only needed for non-global resources.</string>
+    <string name="translation_microsoft_key">Subscription key</string>
+    <string name="translation_microsoft_region">Region (e.g. westeurope, leave empty for Global)</string>
+    <string name="translation_microsoft_save">Save credentials</string>
+    <string name="translation_microsoft_saved">Microsoft Translator credentials saved</string>
+    <string name="translation_microsoft_get_free_key">Get a free Azure key →</string>
 
     <!-- E1: External import wizard -->
     <string name="external_import_top_bar_title">Import installed apps</string>

@@ -234,6 +234,20 @@ class TweaksRepositoryImpl(
         if (trimmed.isEmpty()) ksafe.safeDelete(K_DEEPL_AUTH_KEY) else ksafe.safePut(K_DEEPL_AUTH_KEY, trimmed)
     }
 
+    override fun getMicrosoftTranslatorKey(): Flow<String> = gatedGetFlow(K_MS_KEY, "")
+    override suspend fun setMicrosoftTranslatorKey(key: String) {
+        migrationDeferred.await()
+        val trimmed = key.trim()
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_MS_KEY) else ksafe.safePut(K_MS_KEY, trimmed)
+    }
+
+    override fun getMicrosoftTranslatorRegion(): Flow<String> = gatedGetFlow(K_MS_REGION, "")
+    override suspend fun setMicrosoftTranslatorRegion(region: String) {
+        migrationDeferred.await()
+        val trimmed = region.trim()
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_MS_REGION) else ksafe.safePut(K_MS_REGION, trimmed)
+    }
+
     override fun getAppLanguage(): Flow<String?> =
         gatedGetFlow<String?>(K_APP_LANGUAGE, null).map { raw ->
             raw?.trim()?.takeIf { it.isNotEmpty() && AppLanguages.containsTag(it) }
@@ -451,6 +465,8 @@ class TweaksRepositoryImpl(
         private const val K_LIBRE_BASE_URL = "libre_translate_base_url"
         private const val K_LIBRE_API_KEY = "libre_translate_api_key"
         private const val K_DEEPL_AUTH_KEY = "deepl_auth_key"
+        private const val K_MS_KEY = "microsoft_translator_key"
+        private const val K_MS_REGION = "microsoft_translator_region"
         private const val K_APP_LANGUAGE = "app_language"
         private const val K_AUTO_TRANSLATE_ENABLED = "auto_translate_enabled"
         private const val K_AUTO_TRANSLATE_TARGET = "auto_translate_target_lang"
