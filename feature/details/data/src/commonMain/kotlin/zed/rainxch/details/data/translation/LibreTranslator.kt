@@ -4,6 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
+import io.ktor.http.isSuccess
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -28,9 +30,10 @@ internal class LibreTranslator(
             )
         }
 
+        val target = mapTargetLanguageCode(targetLanguage)
+            ?: throw RuntimeException("LibreTranslate target language required (got '$targetLanguage')")
+        val source = mapSourceLanguageCode(sourceLanguage)
         val endpoint = baseUrl.trimEnd('/') + "/translate"
-        val source = mapLanguageCode(sourceLanguage)
-        val target = mapLanguageCode(targetLanguage)
 
         val response = httpClient().submitForm(
             url = endpoint,
@@ -44,13 +47,33 @@ internal class LibreTranslator(
         )
 
         val body = response.bodyAsText()
-        val root = json.parseToJsonElement(body).jsonObject
+        if (!response.status.isSuccess()) {
+            // Try to parse the JSON error envelope; fall through to raw
+            // body when the upstream returned HTML / plain text (proxy
+            // pages, WAF blocks, misconfigured self-host).
+            val message = runCatching {
+                json.parseToJsonElement(body).jsonObject["error"]?.jsonPrimitive?.content
+            }.getOrNull()
+            throw RuntimeException(
+                "LibreTranslate HTTP ${response.status.value}: ${message ?: body.take(200)}",
+            )
+        }
+
+        val root = try {
+            json.parseToJsonElement(body).jsonObject
+        } catch (e: SerializationException) {
+            throw RuntimeException(
+                "LibreTranslate returned non-JSON response: ${body.take(200)}",
+                e,
+            )
+        }
 
         root["error"]?.jsonPrimitive?.content?.let { msg ->
             throw RuntimeException("LibreTranslate error: $msg")
         }
 
-        val translation = root["translatedText"]?.jsonPrimitive?.content.orEmpty()
+        val translation = root["translatedText"]?.jsonPrimitive?.content
+            ?: throw RuntimeException("LibreTranslate response missing translatedText")
         val detected = root["detectedLanguage"]
             ?.jsonObject
             ?.get("language")
@@ -64,9 +87,17 @@ internal class LibreTranslator(
         )
     }
 
-    private fun mapLanguageCode(code: String): String =
+    private fun mapSourceLanguageCode(code: String): String =
         when (code.lowercase()) {
             "", "auto" -> "auto"
+            "zh-cn", "zh-hans" -> "zh"
+            "zh-tw", "zh-hant" -> "zt"
+            else -> code.lowercase().substringBefore('-')
+        }
+
+    private fun mapTargetLanguageCode(code: String): String? =
+        when (code.lowercase()) {
+            "", "auto" -> null
             "zh-cn", "zh-hans" -> "zh"
             "zh-tw", "zh-hant" -> "zt"
             else -> code.lowercase().substringBefore('-')

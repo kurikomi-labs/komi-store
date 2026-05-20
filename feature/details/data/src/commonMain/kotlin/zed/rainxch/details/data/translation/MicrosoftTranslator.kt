@@ -7,6 +7,8 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -59,7 +61,28 @@ internal class MicrosoftTranslator(
         }
 
         val body = response.bodyAsText()
-        val parsed = json.parseToJsonElement(body)
+        if (!response.status.isSuccess()) {
+            val errorMsg = runCatching {
+                json.parseToJsonElement(body)
+                    .jsonObject["error"]
+                    ?.jsonObject
+                    ?.get("message")
+                    ?.jsonPrimitive
+                    ?.content
+            }.getOrNull()
+            throw RuntimeException(
+                "Microsoft Translator HTTP ${response.status.value}: ${errorMsg ?: body.take(200)}",
+            )
+        }
+
+        val parsed = try {
+            json.parseToJsonElement(body)
+        } catch (e: SerializationException) {
+            throw RuntimeException(
+                "Microsoft Translator returned non-JSON response: ${body.take(200)}",
+                e,
+            )
+        }
 
         if (parsed is JsonObject) {
             val errorMsg = parsed["error"]?.jsonObject?.get("message")?.jsonPrimitive?.content
@@ -76,7 +99,7 @@ internal class MicrosoftTranslator(
             ?.get("text")
             ?.jsonPrimitive
             ?.content
-            .orEmpty()
+            ?: throw RuntimeException("Microsoft Translator response missing translation text")
 
         val detected = first["detectedLanguage"]
             ?.jsonObject

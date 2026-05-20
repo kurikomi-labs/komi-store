@@ -6,6 +6,8 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
+import io.ktor.http.isSuccess
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -52,17 +54,39 @@ internal class DeeplTranslator(
         }
 
         val body = response.bodyAsText()
-        val root = json.parseToJsonElement(body).jsonObject
-
-        root["message"]?.jsonPrimitive?.content?.let { msg ->
-            if (root["translations"] == null) {
-                throw RuntimeException("DeepL error: $msg")
-            }
+        if (!response.status.isSuccess()) {
+            val message = runCatching {
+                json.parseToJsonElement(body).jsonObject["message"]?.jsonPrimitive?.content
+            }.getOrNull()
+            throw RuntimeException(
+                "DeepL HTTP ${response.status.value}: ${message ?: body.take(200)}",
+            )
         }
 
-        val first = root["translations"]?.jsonArray?.firstOrNull()?.jsonObject
+        val root = try {
+            json.parseToJsonElement(body).jsonObject
+        } catch (e: SerializationException) {
+            throw RuntimeException(
+                "DeepL returned non-JSON response: ${body.take(200)}",
+                e,
+            )
+        }
+
+        // Surface `message` whenever it's present alongside a missing /
+        // empty translations array — DeepL sometimes returns
+        // `{"translations":[], "message":"..."}` instead of an HTTP error.
+        val translations = root["translations"]?.jsonArray
+        val errorMessage = root["message"]?.jsonPrimitive?.content
+        if (translations.isNullOrEmpty()) {
+            throw RuntimeException(
+                "DeepL ${errorMessage?.let { "error: $it" } ?: "response missing translations"}",
+            )
+        }
+
+        val first = translations.firstOrNull()?.jsonObject
             ?: throw RuntimeException("DeepL response missing translations")
-        val translation = first["text"]?.jsonPrimitive?.content.orEmpty()
+        val translation = first["text"]?.jsonPrimitive?.content
+            ?: throw RuntimeException("DeepL response missing translation text")
         val detected = first["detected_source_language"]
             ?.jsonPrimitive
             ?.content
