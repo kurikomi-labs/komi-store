@@ -47,5 +47,6 @@ fun initDatabase(context: Context): AppDatabase {
             MIGRATION_15_16,
             MIGRATION_16_17,
             MIGRATION_17_18,
-        ).build()
+        ).fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
+        .build()
 }
