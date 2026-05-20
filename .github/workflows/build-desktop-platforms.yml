@@ -520,7 +520,7 @@ jobs:
           manifest-path: packaging/flatpak/zed.rainxch.githubstore.yml
           run-tests: false
           upload-artifact: false
-          cache-key: flatpak-builder-${{ github.sha }}
+          cache-key: flatpak-builder-${{ hashFiles('packaging/flatpak/flatpak-sources.json', 'packaging/flatpak/zed.rainxch.githubstore.yml') }}
 
       - name: Upload Flatpak bundle
         uses: actions/upload-artifact@v4
