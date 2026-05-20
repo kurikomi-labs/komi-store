@@ -185,7 +185,7 @@ class TweaksRepositoryImpl(
 
     override suspend fun setContentWidth(width: ContentWidth) {
         migrationDeferred.await()
-        ksafe.put(K_CONTENT_WIDTH, width.name)
+        ksafe.safePut(K_CONTENT_WIDTH, width.name)
     }
 
     override fun getTelemetryEnabled(): Flow<Boolean> = gatedGetFlow(K_TELEMETRY_ENABLED, false)

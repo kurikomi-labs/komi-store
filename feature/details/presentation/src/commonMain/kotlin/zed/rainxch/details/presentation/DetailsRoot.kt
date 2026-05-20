@@ -527,7 +527,6 @@ fun DetailsScreen(
                     .scrollable(
                         state = listState,
                         orientation = Orientation.Vertical,
-                        reverseDirection = true,
                     )
                     .onSizeChanged { size ->
                         // Layout-phase write; cheaper than BoxWithConstraints
