@@ -1062,21 +1062,55 @@ class DetailsViewModel(
         return installable to primary
     }
 
+    /**
+     * Pick the "primary" installed app for a repo when multiple
+     * variants are tracked (e.g. generic + Play-flavored APKs of the
+     * same project). Earlier code picked `apps.firstOrNull()`, which
+     * for OSS-DocumentScanner-style multi-flavor repos could pick the
+     * outdated variant and surface a misleading "Update" CTA even
+     * when the variant the user is actually running is current.
+     * Issue #638.
+     *
+     * Preference order:
+     *   1. Variant whose `assetFilterRegex` matches the current
+     *      primaryAsset name — strongest signal that this row owns
+     *      the selected release asset.
+     *   2. Variant that is up-to-date (`isUpdateAvailable == false`).
+     *   3. First app — preserves prior behavior for single-variant repos.
+     */
+    private fun pickPrimaryInstalledApp(
+        apps: List<InstalledApp>,
+        primaryAssetName: String?,
+    ): InstalledApp? {
+        if (apps.isEmpty()) return null
+        if (apps.size == 1) return apps.first()
+        if (primaryAssetName != null) {
+            val filterMatch = apps.firstOrNull { existing ->
+                val filter = existing.assetFilterRegex
+                filter != null && runCatching { Regex(filter).containsMatchIn(primaryAssetName) }
+                    .getOrDefault(false)
+            }
+            if (filterMatch != null) return filterMatch
+        }
+        return apps.firstOrNull { !it.isUpdateAvailable } ?: apps.first()
+    }
+
     private fun observeInstalledApp(repoId: Long) {
         viewModelScope.launch {
             installedAppsRepository
                 .getAppsByRepoIdAsFlow(repoId)
                 .distinctUntilChanged()
                 .collect { apps ->
-                    // Pick the "primary" tracked app: the one whose
-                    // package name matches the currently selected
-                    // asset's prior install, or just the first.
-                    val primary = apps.firstOrNull { existing ->
-                        _state.value.primaryAsset?.name?.let { assetName ->
-                            val filter = existing.assetFilterRegex
-                            filter != null && Regex(filter).containsMatchIn(assetName)
-                        } == true
-                    } ?: apps.firstOrNull()
+                    // See [pickPrimaryInstalledApp]. Picks the variant
+                    // that already matches the latest release first,
+                    // so multi-variant projects (e.g. an app shipped
+                    // as both a generic + Play-store-flavored APK)
+                    // don't surface a false "Update" CTA when only one
+                    // of the variants is current. Issue #638.
+                    val primary = pickPrimaryInstalledApp(
+                        apps = apps,
+                        primaryAssetName = _state.value.primaryAsset?.name,
+                    )
 
                     // Recompute merged changelog + stalled signals
                     // against the new installed version — if the
@@ -2688,7 +2722,10 @@ class DetailsViewModel(
                 val readme = readmeDeferred.await()
                 val userProfile = userProfileDeferred.await()
                 val allInstalledApps = installedAppsDeferred.await()
-                val installedApp = allInstalledApps.firstOrNull()
+                val installedApp = pickPrimaryInstalledApp(
+                    apps = allInstalledApps,
+                    primaryAssetName = null,
+                )
 
                 if (rateLimited.get()) {
                     // Any deferred tripping the rate-limit flag leaves the UI
