@@ -537,6 +537,15 @@ fun DetailsScreen(
                     .scrollable(
                         state = listState,
                         orientation = Orientation.Vertical,
+                        // LazyColumn's internal scrollable uses
+                        // reverseDirection=true (vertical, default
+                        // layout direction). Matching that here makes
+                        // the wheel-direction sign convention agree
+                        // — otherwise wheel-up at the top jumps to
+                        // the bottom and vice versa, because parent
+                        // and child interpret the same pointer delta
+                        // with opposite signs.
+                        reverseDirection = true,
                         enabled = isDesktop,
                     )
                     .onSizeChanged { size ->
