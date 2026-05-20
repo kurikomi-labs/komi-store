@@ -3,6 +3,8 @@ package zed.rainxch.details.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.model.Platform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -521,12 +523,21 @@ fun DetailsScreen(
             }
             val pullEnabled = remember { isPullToRefreshSupported() }
 
+            // Gutter scroll forwarding is a desktop-only UX polish
+            // (mouse-wheel-in-side-margins → scrolls content column).
+            // On Android the outer scrollable fought the inner
+            // LazyColumn's own scroll handler — both pointing at the
+            // same `listState` doubled-up gesture handling and the
+            // touch scroll froze. Issue tracked under content-width
+            // PR follow-up. Keep enabled = isDesktop.
+            val isDesktop = remember { getPlatform() != Platform.ANDROID }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .scrollable(
                         state = listState,
                         orientation = Orientation.Vertical,
+                        enabled = isDesktop,
                     )
                     .onSizeChanged { size ->
                         // Layout-phase write; cheaper than BoxWithConstraints
