@@ -448,7 +448,9 @@ private fun LibreTranslateCredentialsForm(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
 ) {
-    val canSave = state.libreTranslateBaseUrl.isNotBlank()
+    // Always allow save — empty URL is a valid state (falls back to
+    // the bundled public mirror in the repository layer).
+    val canSave = true
 
     Column(
         modifier = Modifier.padding(top = 16.dp),
@@ -464,7 +466,7 @@ private fun LibreTranslateCredentialsForm(
             value = state.libreTranslateBaseUrl,
             onValueChange = { onAction(TweaksAction.OnLibreTranslateBaseUrlChanged(it)) },
             label = { Text(stringResource(Res.string.translation_libre_base_url)) },
-            placeholder = { Text("https://translate.example.com") },
+            placeholder = { Text("https://translate.disroot.org") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
             modifier = Modifier.fillMaxWidth(),
@@ -534,6 +536,7 @@ private fun DeeplCredentialsForm(
     onAction: (TweaksAction) -> Unit,
 ) {
     val canSave = state.deeplAuthKey.isNotBlank()
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     Column(
         modifier = Modifier.padding(top = 16.dp),
@@ -544,6 +547,13 @@ private fun DeeplCredentialsForm(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        androidx.compose.material3.TextButton(
+            onClick = { runCatching { uriHandler.openUri("https://www.deepl.com/pro-api") } },
+            modifier = Modifier.align(Alignment.Start),
+        ) {
+            Text(stringResource(Res.string.translation_deepl_get_free_key))
+        }
 
         OutlinedTextField(
             value = state.deeplAuthKey,

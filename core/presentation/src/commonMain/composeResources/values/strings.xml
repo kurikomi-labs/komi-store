@@ -912,7 +912,7 @@
     <string name="translation_youdao_saved">Youdao credentials saved</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_deepl">DeepL</string>
-    <string name="translation_libre_help">Self-hosted = best privacy. Paste your LibreTranslate instance URL. API key is optional for open mirrors.</string>
+    <string name="translation_libre_help">Works out of the box via the public Disroot mirror — leave fields empty to use it. For more privacy, paste your own self-hosted URL. API key only needed if the instance requires one.</string>
     <string name="translation_libre_base_url">Instance URL</string>
     <string name="translation_libre_api_key">API key (optional)</string>
     <string name="translation_libre_save">Save settings</string>
@@ -921,6 +921,7 @@
     <string name="translation_deepl_auth_key">Auth key</string>
     <string name="translation_deepl_save">Save key</string>
     <string name="translation_deepl_saved">DeepL key saved</string>
+    <string name="translation_deepl_get_free_key">Get a free DeepL key →</string>
 
     <!-- E1: External import wizard -->
     <string name="external_import_top_bar_title">Import installed apps</string>

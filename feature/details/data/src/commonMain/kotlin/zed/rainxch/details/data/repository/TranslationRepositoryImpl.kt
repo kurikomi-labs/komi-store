@@ -217,7 +217,8 @@ class TranslationRepositoryImpl(
                 )
             }
             TranslationProvider.LIBRE_TRANSLATE -> {
-                val baseUrl = tweaksRepository.getLibreTranslateBaseUrl().first()
+                val configured = tweaksRepository.getLibreTranslateBaseUrl().first()
+                val baseUrl = configured.takeIf { it.isNotBlank() } ?: LIBRE_TRANSLATE_DEFAULT_URL
                 val apiKey = tweaksRepository.getLibreTranslateApiKey().first().takeIf { it.isNotBlank() }
                 LibreTranslator(
                     httpClient = { httpClient },
@@ -304,6 +305,11 @@ class TranslationRepositoryImpl(
     companion object {
         private const val MAX_CACHE_SIZE = 50
         private const val CACHE_TTL_MS = 30 * 60 * 1000L // 30 minutes
+        // Public Disroot-hosted LibreTranslate mirror — anonymous, no
+        // API key required. Used when the user picks LibreTranslate
+        // without configuring a self-hosted URL. Override in Tweaks →
+        // Translation when a mirror you trust more is available.
+        private const val LIBRE_TRANSLATE_DEFAULT_URL = "https://translate.disroot.org"
     }
 
     @OptIn(ExperimentalTime::class)

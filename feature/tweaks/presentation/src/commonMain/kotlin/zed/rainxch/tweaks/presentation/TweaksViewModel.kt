@@ -967,18 +967,14 @@ class TweaksViewModel(
                         }
                     }
                     TranslationProvider.LIBRE_TRANSLATE -> {
-                        val current = _state.value
-                        val hasCreds = current.libreTranslateBaseUrl.isNotBlank()
-                        if (hasCreds) {
-                            _state.update { it.copy(draftTranslationProvider = null) }
-                            viewModelScope.launch {
-                                tweaksRepository.setTranslationProvider(action.provider)
-                                _events.send(TweaksEvent.OnTranslationProviderSaved)
-                            }
-                        } else {
-                            _state.update {
-                                it.copy(draftTranslationProvider = TranslationProvider.LIBRE_TRANSLATE)
-                            }
+                        // No gating — repository falls back to the
+                        // public Disroot mirror when no URL configured,
+                        // so first-tap "just works" without going
+                        // through a config dialog.
+                        _state.update { it.copy(draftTranslationProvider = null) }
+                        viewModelScope.launch {
+                            tweaksRepository.setTranslationProvider(action.provider)
+                            _events.send(TweaksEvent.OnTranslationProviderSaved)
                         }
                     }
                     TranslationProvider.DEEPL -> {
