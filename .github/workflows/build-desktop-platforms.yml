@@ -506,9 +506,34 @@ jobs:
           retention-days: 30
           compression-level: 0
 
+  build-flatpak:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Flatpak bundle
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: GitHub-Store-x86_64.flatpak
+          manifest-path: packaging/flatpak/zed.rainxch.githubstore.yml
+          run-tests: false
+          upload-artifact: false
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-flatpak
+          path: GitHub-Store-x86_64.flatpak
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
   release:
     name: Draft release with all installers
-    needs: [sign-windows, build-macos, build-linux]
+    needs: [sign-windows, build-macos, build-linux, build-flatpak]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -572,6 +597,7 @@ jobs:
           linux_debian12_count=0
           linux_appimage_count=0
           linux_arch_count=0
+          linux_flatpak_count=0
 
           # Windows — names already unique (.exe, .msi). Files come from the
           # signed artifact, not the raw build output, so they carry the
@@ -625,11 +651,17 @@ jobs:
             stage "$f" "$(basename "$f")" && linux_arch_count=$((linux_arch_count + 1)) || true
           done < <(find artifacts/linux-arch -type f -name '*.pkg.tar.zst' 2>/dev/null)
 
+          # Linux Flatpak bundle (.flatpak)
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            stage "$f" "$(basename "$f")" && linux_flatpak_count=$((linux_flatpak_count + 1)) || true
+          done < <(find artifacts/linux-flatpak -type f -name '*.flatpak' 2>/dev/null)
+
           echo
           echo "Final staged files:"
           ls -la release-files/
           echo
-          echo "Per-group counts: windows=$windows_count macos-x64=$macos_x64_count macos-arm64=$macos_arm64_count linux-modern=$linux_modern_count linux-debian12=$linux_debian12_count linux-appimage=$linux_appimage_count linux-arch=$linux_arch_count"
+          echo "Per-group counts: windows=$windows_count macos-x64=$macos_x64_count macos-arm64=$macos_arm64_count linux-modern=$linux_modern_count linux-debian12=$linux_debian12_count linux-appimage=$linux_appimage_count linux-arch=$linux_arch_count linux-flatpak=$linux_flatpak_count"
 
           # Completeness guard: refuse to ship an incomplete release. Each
           # group must produce >= 1 staged file. Without this guard, a build
@@ -644,6 +676,7 @@ jobs:
           [ "$linux_debian12_count" -eq 0 ] && missing+=("Linux debian12-compat (.deb/.rpm)")
           [ "$linux_appimage_count" -eq 0 ] && missing+=("Linux AppImage (.AppImage/.zsync)")
           [ "$linux_arch_count" -eq 0 ] && missing+=("Linux Arch (.pkg.tar.zst)")
+          [ "$linux_flatpak_count" -eq 0 ] && missing+=("Linux Flatpak (.flatpak)")
 
           if [ ${#missing[@]} -gt 0 ]; then
             echo

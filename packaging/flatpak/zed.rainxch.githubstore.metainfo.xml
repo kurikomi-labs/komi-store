@@ -62,6 +62,35 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.8.2" date="2026-05-13">
+      <description>
+        <p>Multi-OS release picker: download APKs from desktop and .debs from phone;
+           cross-platform downloads open in your browser. Adds "Hide seen repositories"
+           to declutter discovery feeds, content-width preference for desktop, and
+           AppImage distribution for Linux.</p>
+      </description>
+    </release>
+    <release version="1.8.1" date="2026-05-06">
+      <description>
+        <p>APK inspection: view signatures, permissions, and metadata before installing.
+           Background update-check toggle to save battery. Migration tooling for
+           switching between installer types.</p>
+      </description>
+    </release>
+    <release version="1.8.0" date="2026-04-30">
+      <description>
+        <p>Switched to a dedicated backend for improved reliability and faster response
+           times in throttled regions. Adds external import (paste a GitHub URL to add
+           a repository) and mirror picker for China users.</p>
+      </description>
+    </release>
+    <release version="1.7.0" date="2026-03-28">
+      <description>
+        <p>Tweaks overhaul: installer attribution, font and theme customisation, and
+           per-app update channels. Link Apps feature: associate any installed app with
+           its GitHub repository for one-tap updates.</p>
+      </description>
+    </release>
     <release version="1.6.2" date="2026-03-18">
       <description>
         <p>Security improvements: package name and signing key validation on updates,

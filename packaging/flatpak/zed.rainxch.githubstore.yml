@@ -106,7 +106,7 @@ modules:
       - ./gradlew :composeApp:packageUberJarForCurrentOS
           --no-daemon
           --no-configuration-cache
-          -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=2g"
+          -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
           -Dorg.gradle.parallel=false
       # Install the JAR
       - install -Dm644 "$(find composeApp/build/compose/jars/ -name '*.jar' -type f | head -1)"
