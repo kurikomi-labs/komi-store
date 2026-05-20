@@ -7,6 +7,6 @@ enum class ContentWidth {
     ;
 
     companion object {
-        fun fromName(name: String?): ContentWidth = entries.find { it.name == name } ?: WIDE
+        fun fromName(name: String?): ContentWidth = entries.find { it.name == name } ?: COMPACT
     }
 }

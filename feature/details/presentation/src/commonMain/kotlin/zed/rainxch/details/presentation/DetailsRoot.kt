@@ -513,8 +513,8 @@ fun DetailsScreen(
             val listState = rememberLazyListState()
             val isScrollbarEnabled = LocalScrollbarEnabled.current
             val contentWidthDp = when (LocalContentWidth.current) {
-                ContentWidth.COMPACT -> 480.dp
-                ContentWidth.WIDE -> 680.dp
+                ContentWidth.COMPACT -> 680.dp
+                ContentWidth.WIDE -> 960.dp
                 ContentWidth.EXTRA_WIDE -> androidx.compose.ui.unit.Dp.Unspecified
             }
             val pullEnabled = remember { isPullToRefreshSupported() }

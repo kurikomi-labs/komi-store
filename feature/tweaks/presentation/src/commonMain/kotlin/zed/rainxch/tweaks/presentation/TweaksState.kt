@@ -37,7 +37,7 @@ data class TweaksState(
     val includePreReleases: Boolean = false,
     val isHideSeenEnabled: Boolean = false,
     val isScrollbarEnabled: Boolean = false,
-    val contentWidth: ContentWidth = ContentWidth.WIDE,
+    val contentWidth: ContentWidth = ContentWidth.COMPACT,
     val isTelemetryEnabled: Boolean = false,
     val translationProvider: TranslationProvider = TranslationProvider.Default,
     /**
