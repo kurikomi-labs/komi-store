@@ -601,7 +601,12 @@
     <string name="update_signing_key_mismatch">Несоответствие ключа подписи: обновление подписано другим разработчиком. Обновление заблокировано.</string>
 
     <string name="scrollbar_option_title">Полоса прокрутки</string>
-    <string name="scrollbar_option_description">Показывать полосу прокрутки в прокручиваемых списках (ПК)</string>
+    <string name="scrollbar_option_description">Показывать скроллбар в длинных списках (ПК)</string>
+    <string name="content_width_title">Ширина контента</string>
+    <string name="content_width_description">Максимальная ширина колонки на экране подробностей (ПК)</string>
+    <string name="content_width_compact">Компактная</string>
+    <string name="content_width_wide">Широкая</string>
+    <string name="content_width_extra_wide">Очень широкая</string>
 
     <string name="hide_seen_title">Скрыть просмотренные репозитории</string>
     <string name="hide_seen_description">Скрыть уже просмотренные репозитории из лент обнаружения</string>

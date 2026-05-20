@@ -602,6 +602,11 @@
 
     <string name="scrollbar_option_title">滚动条</string>
     <string name="scrollbar_option_description">在可滚动列表中显示滚动条（桌面）</string>
+    <string name="content_width_title">内容宽度</string>
+    <string name="content_width_description">详情页内容列的最大宽度（桌面）</string>
+    <string name="content_width_compact">紧凑</string>
+    <string name="content_width_wide">宽</string>
+    <string name="content_width_extra_wide">超宽</string>
 
     <string name="hide_seen_title">隐藏已浏览的仓库</string>
     <string name="hide_seen_description">在发现信息流中隐藏你已经浏览过的仓库</string>

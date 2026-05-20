@@ -638,6 +638,11 @@
 
     <string name="scrollbar_option_title">স্ক্রলবার</string>
     <string name="scrollbar_option_description">স্ক্রলযোগ্য তালিকায় স্ক্রলবার দেখান (ডেস্কটপ)</string>
+    <string name="content_width_title">কন্টেন্টের প্রস্থ</string>
+    <string name="content_width_description">বিবরণ স্ক্রিনের সর্বাধিক কলাম প্রস্থ নিয়ন্ত্রণ করে (ডেস্কটপ)</string>
+    <string name="content_width_compact">কম্প্যাক্ট</string>
+    <string name="content_width_wide">প্রশস্ত</string>
+    <string name="content_width_extra_wide">অতিরিক্ত প্রশস্ত</string>
 
     <string name="hide_seen_title">দেখা রিপোজিটরি লুকান</string>
     <string name="hide_seen_description">আপনি ইতিমধ্যে দেখেছেন এমন রিপোজিটরি আবিষ্কার ফিড থেকে লুকান</string>

@@ -636,6 +636,11 @@
 
     <string name="scrollbar_option_title">스크롤바</string>
     <string name="scrollbar_option_description">스크롤 가능한 목록에 스크롤바 표시 (데스크톱)</string>
+    <string name="content_width_title">콘텐츠 너비</string>
+    <string name="content_width_description">상세 화면의 최대 열 너비 (데스크톱)</string>
+    <string name="content_width_compact">컴팩트</string>
+    <string name="content_width_wide">넓게</string>
+    <string name="content_width_extra_wide">매우 넓게</string>
 
     <string name="hide_seen_title">본 저장소 숨기기</string>
     <string name="hide_seen_description">이미 본 저장소를 디스커버리 피드에서 숨깁니다</string>

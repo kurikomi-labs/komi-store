@@ -636,6 +636,11 @@
 
     <string name="scrollbar_option_title">Kaydırma çubuğu</string>
     <string name="scrollbar_option_description">Kaydırılabilir listelerde kaydırma çubuğunu göster (masaüstü)</string>
+    <string name="content_width_title">İçerik genişliği</string>
+    <string name="content_width_description">Detay ekranının maksimum sütun genişliği (masaüstü)</string>
+    <string name="content_width_compact">Kompakt</string>
+    <string name="content_width_wide">Geniş</string>
+    <string name="content_width_extra_wide">Çok geniş</string>
 
     <string name="hide_seen_title">Görülen depoları gizle</string>
     <string name="hide_seen_description">Zaten görüntülediğiniz depoları keşif akışlarından gizleyin</string>

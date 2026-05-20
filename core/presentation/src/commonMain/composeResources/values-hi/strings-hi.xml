@@ -637,6 +637,11 @@
 
     <string name="scrollbar_option_title">स्क्रॉलबार</string>
     <string name="scrollbar_option_description">स्क्रॉल करने योग्य सूचियों में स्क्रॉलबार दिखाएँ (डेस्कटॉप)</string>
+    <string name="content_width_title">सामग्री की चौड़ाई</string>
+    <string name="content_width_description">विवरण स्क्रीन की कॉलम की अधिकतम चौड़ाई (डेस्कटॉप)</string>
+    <string name="content_width_compact">कॉम्पैक्ट</string>
+    <string name="content_width_wide">चौड़ा</string>
+    <string name="content_width_extra_wide">अतिरिक्त चौड़ा</string>
 
     <string name="hide_seen_title">देखे गए रिपॉजिटरी छुपाएँ</string>
     <string name="hide_seen_description">पहले से देखे गए रिपॉजिटरी को डिस्कवरी फ़ीड से छुपाएँ</string>

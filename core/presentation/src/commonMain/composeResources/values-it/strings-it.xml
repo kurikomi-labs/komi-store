@@ -638,6 +638,11 @@
 
     <string name="scrollbar_option_title">Barra di scorrimento</string>
     <string name="scrollbar_option_description">Mostra la barra di scorrimento nelle liste scorrevoli (desktop)</string>
+    <string name="content_width_title">Larghezza del contenuto</string>
+    <string name="content_width_description">Larghezza massima della colonna nella schermata Dettagli (desktop)</string>
+    <string name="content_width_compact">Compatto</string>
+    <string name="content_width_wide">Ampio</string>
+    <string name="content_width_extra_wide">Extra ampio</string>
 
     <string name="hide_seen_title">Nascondi repository visualizzati</string>
     <string name="hide_seen_description">Nascondi i repository già visualizzati dai feed di scoperta</string>

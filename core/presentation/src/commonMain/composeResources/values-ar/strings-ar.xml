@@ -639,6 +639,11 @@
 
     <string name="scrollbar_option_title">شريط التمرير</string>
     <string name="scrollbar_option_description">إظهار شريط التمرير في القوائم القابلة للتمرير (سطح المكتب)</string>
+    <string name="content_width_title">عرض المحتوى</string>
+    <string name="content_width_description">يتحكم في الحد الأقصى لعرض عمود شاشة التفاصيل (سطح المكتب)</string>
+    <string name="content_width_compact">ضيّق</string>
+    <string name="content_width_wide">واسع</string>
+    <string name="content_width_extra_wide">واسع جدًا</string>
 
     <string name="hide_seen_title">إخفاء المستودعات المشاهَدة</string>
     <string name="hide_seen_description">إخفاء المستودعات التي شاهدتها بالفعل من خلاصات الاكتشاف</string>

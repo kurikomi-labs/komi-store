@@ -399,17 +399,9 @@ private fun ContentWidthCard(
             ) {
                 ContentWidth.entries.forEach { width ->
                     val isSelected = width == selected
-                    val scale by animateFloatAsState(
-                        targetValue = if (isSelected) 1.05f else 1f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium,
-                        ),
-                    )
                     Column(
                         modifier = Modifier
                             .weight(1f)
-                            .scale(scale)
                             .clip(RoundedCornerShape(24.dp))
                             .background(
                                 if (isSelected) {

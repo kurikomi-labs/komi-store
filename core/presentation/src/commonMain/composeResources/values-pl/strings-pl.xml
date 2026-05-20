@@ -602,6 +602,11 @@
 
     <string name="scrollbar_option_title">Pasek przewijania</string>
     <string name="scrollbar_option_description">Pokaż pasek przewijania w przewijalnych listach (komputer)</string>
+    <string name="content_width_title">Szerokość treści</string>
+    <string name="content_width_description">Maksymalna szerokość kolumny ekranu szczegółów (komputer)</string>
+    <string name="content_width_compact">Kompaktowa</string>
+    <string name="content_width_wide">Szeroka</string>
+    <string name="content_width_extra_wide">Bardzo szeroka</string>
 
     <string name="hide_seen_title">Ukryj przeglądane repozytoria</string>
     <string name="hide_seen_description">Ukryj repozytoria, które już przeglądałeś, z kanałów odkrywania</string>

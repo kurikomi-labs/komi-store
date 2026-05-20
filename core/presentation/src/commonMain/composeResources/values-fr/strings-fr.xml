@@ -600,6 +600,11 @@
 
     <string name="scrollbar_option_title">Barre de défilement</string>
     <string name="scrollbar_option_description">Afficher la barre de défilement dans les listes défilantes (bureau)</string>
+    <string name="content_width_title">Largeur du contenu</string>
+    <string name="content_width_description">Largeur maximale de la colonne sur l\'écran de détails (bureau)</string>
+    <string name="content_width_compact">Compact</string>
+    <string name="content_width_wide">Large</string>
+    <string name="content_width_extra_wide">Très large</string>
 
     <string name="hide_seen_title">Masquer les dépôts consultés</string>
     <string name="hide_seen_description">Masquer les dépôts que vous avez déjà consultés des flux de découverte</string>

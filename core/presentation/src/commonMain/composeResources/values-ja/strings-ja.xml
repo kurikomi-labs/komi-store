@@ -601,6 +601,11 @@
 
     <string name="scrollbar_option_title">スクロールバー</string>
     <string name="scrollbar_option_description">スクロール可能なリストでスクロールバーを表示（デスクトップ）</string>
+    <string name="content_width_title">コンテンツ幅</string>
+    <string name="content_width_description">詳細画面のカラム最大幅（デスクトップ）</string>
+    <string name="content_width_compact">コンパクト</string>
+    <string name="content_width_wide">ワイド</string>
+    <string name="content_width_extra_wide">超ワイド</string>
 
     <string name="hide_seen_title">閲覧済みリポジトリを非表示</string>
     <string name="hide_seen_description">すでに閲覧したリポジトリをディスカバリーフィードから非表示にします</string>

@@ -599,6 +599,11 @@
 
     <string name="scrollbar_option_title">Barra de desplazamiento</string>
     <string name="scrollbar_option_description">Mostrar barra de desplazamiento en listas desplazables (escritorio)</string>
+    <string name="content_width_title">Ancho del contenido</string>
+    <string name="content_width_description">Ancho máximo de la columna en la pantalla de detalles (escritorio)</string>
+    <string name="content_width_compact">Compacto</string>
+    <string name="content_width_wide">Ancho</string>
+    <string name="content_width_extra_wide">Extra ancho</string>
 
     <string name="hide_seen_title">Ocultar repositorios vistos</string>
     <string name="hide_seen_description">Ocultar repositorios que ya has visto de las fuentes de descubrimiento</string>
