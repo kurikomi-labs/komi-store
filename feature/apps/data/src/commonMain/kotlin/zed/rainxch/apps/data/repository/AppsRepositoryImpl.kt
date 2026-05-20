@@ -34,6 +34,7 @@ import zed.rainxch.core.domain.model.ExportedApp
 import zed.rainxch.core.domain.model.ExportedAppList
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.model.isEffectivelyPreRelease
 import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -51,6 +52,7 @@ class AppsRepositoryImpl(
     private val backendApiClient: BackendApiClient,
     private val packageMonitor: PackageMonitor,
     private val tweaksRepository: TweaksRepository,
+    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : AppsRepository {
     private val httpClient: HttpClient get() = clientProvider.client
     private val json = Json { ignoreUnknownKeys = true }
@@ -79,7 +81,11 @@ class AppsRepositoryImpl(
         owner: String,
         repo: String,
         includePreReleases: Boolean,
+        sourceHost: String?,
     ): GithubRelease? {
+        if (sourceHost != null) {
+            return fetchForgejoLatestRelease(sourceHost, owner, repo, includePreReleases)
+        }
         val backendResult = backendApiClient.getReleases(owner, repo, perPage = 10)
         backendResult.fold(
             onSuccess = { releases ->
@@ -131,7 +137,11 @@ class AppsRepositoryImpl(
     override suspend fun fetchRepoInfo(
         owner: String,
         repo: String,
+        sourceHost: String?,
     ): GithubRepoInfo? {
+        if (sourceHost != null) {
+            return fetchForgejoRepoInfo(sourceHost, owner, repo)
+        }
         val backendResult = backendApiClient.getRepo(owner, repo)
         backendResult.fold(
             onSuccess = { backendRepo ->
@@ -240,6 +250,7 @@ class AppsRepositoryImpl(
         preferredAssetTokens: String?,
         assetGlobPattern: String?,
         pickedAssetIndex: Int?,
+        sourceHost: String?,
     ) {
         val now = Clock.System.now().toEpochMilliseconds()
         val globalPreRelease = tweaksRepository.getIncludePreReleases().first()
@@ -309,6 +320,7 @@ class AppsRepositoryImpl(
                 assetGlobPattern = resolvedGlob,
                 pickedAssetIndex = pickedAssetIndex,
                 pickedAssetSiblingCount = resolvedSiblingCount,
+                sourceHost = sourceHost,
             )
 
         appsRepository.saveInstalledApp(installedApp)
@@ -544,6 +556,63 @@ class AppsRepositoryImpl(
             failedItems = failed,
             sourceFormat = ImportFormat.OBTAINIUM,
         )
+    }
+
+    private suspend fun fetchForgejoLatestRelease(
+        host: String,
+        owner: String,
+        repo: String,
+        includePreReleases: Boolean,
+    ): GithubRelease? {
+        val client = forgejoClientRegistry.clientFor(host)
+        return try {
+            val releases = client.getReleases(owner, repo, perPage = 10).getOrNull()
+                ?: return null
+            releases
+                .asSequence()
+                .filter { it.draft != true }
+                .map { it.toDomain() }
+                .filter {
+                    // Use the same tag-aware pre-release filter as the
+                    // GitHub path (`InstalledAppsRepositoryImpl`) so a
+                    // `v2.0.0-rc1` release with a `prerelease: false`
+                    // flag is still correctly excluded.
+                    includePreReleases || !it.isEffectivelyPreRelease()
+                }
+                .maxByOrNull { it.publishedAt }
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Forgejo latest-release fetch failed for $host/$owner/$repo: ${e.message}")
+            null
+        }
+    }
+
+    private suspend fun fetchForgejoRepoInfo(
+        host: String,
+        owner: String,
+        repo: String,
+    ): GithubRepoInfo? {
+        val client = forgejoClientRegistry.clientFor(host)
+        return try {
+            val repoModel = client.getRepository(owner, repo).getOrNull() ?: return null
+            val latestTag = client.getLatestRelease(owner, repo).getOrNull()?.tagName
+            GithubRepoInfo(
+                id = zed.rainxch.core.domain.util.RepoIdCodec.encode(host, repoModel.id),
+                name = repoModel.name,
+                owner = repoModel.owner.login,
+                ownerAvatarUrl = repoModel.owner.avatarUrl,
+                description = repoModel.description,
+                language = repoModel.language,
+                htmlUrl = repoModel.htmlUrl,
+                latestReleaseTag = latestTag,
+            )
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Forgejo repo fetch failed for $host/$owner/$repo: ${e.message}")
+            null
+        }
     }
 
     private companion object {

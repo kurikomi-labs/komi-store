@@ -17,6 +17,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
+import zed.rainxch.core.data.secure.safeDelete
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safeGetFlow
+import zed.rainxch.core.data.secure.safePut
 
 class AnnouncementsCacheStoreImpl(
     private val ksafe: KSafe,
@@ -38,22 +42,22 @@ class AnnouncementsCacheStoreImpl(
     override fun getCachedPayload(): Flow<String?> = flow {
         migrationDeferred.await()
         emitAll(
-            ksafe.getFlow<String?>(K_CACHED_PAYLOAD, null).map { it?.takeIf { v -> v.isNotEmpty() } },
+            ksafe.safeGetFlow<String?>(K_CACHED_PAYLOAD, null).map { it?.takeIf { v -> v.isNotEmpty() } },
         )
     }
 
     override suspend fun setCachedPayload(payload: String?) {
         migrationDeferred.await()
         if (payload == null) {
-            ksafe.delete(K_CACHED_PAYLOAD)
+            ksafe.safeDelete(K_CACHED_PAYLOAD)
         } else {
-            ksafe.put(K_CACHED_PAYLOAD, payload)
+            ksafe.safePut(K_CACHED_PAYLOAD, payload)
         }
     }
 
     private suspend fun migrateIfNeeded() {
         if (migrated) return
-        val existing = runCatching { ksafe.get<String?>(K_CACHED_PAYLOAD, null) }.getOrNull()
+        val existing = runCatching { ksafe.safeGet<String?>(K_CACHED_PAYLOAD, null) }.getOrNull()
         if (existing != null) {
             migrated = true
             return
@@ -62,8 +66,8 @@ class AnnouncementsCacheStoreImpl(
             legacyDataStore.data.first()[stringPreferencesKey("announcements_cached_payload")]
         }.getOrNull()
         if (!legacy.isNullOrEmpty()) {
-            val putResult = runCatching { ksafe.put(K_CACHED_PAYLOAD, legacy) }
-            if (putResult.isFailure) {
+            val putOk = ksafe.safePut(K_CACHED_PAYLOAD, legacy)
+            if (!putOk) {
                 // Don't drop the only copy if write failed; retry next launch.
                 return
             }

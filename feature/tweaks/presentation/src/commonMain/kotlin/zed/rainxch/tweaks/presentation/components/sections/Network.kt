@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Visibility
@@ -101,6 +102,53 @@ fun LazyListScope.networkSection(
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                )
+            }
+        }
+    }
+    item {
+        Spacer(Modifier.height(12.dp))
+        OutlinedCard(
+            onClick = { onAction(TweaksAction.OnOpenCustomForgesDialog) },
+            colors =
+                CardDefaults.outlinedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                ),
+            shape = RoundedCornerShape(32.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Dns,
+                    contentDescription = null,
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(Res.string.custom_forges_entry_label),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    val count = state.customForgeHosts.size
+                    if (count > 0) {
+                        Text(
+                            text = stringResource(Res.string.custom_forges_count_label, count),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(Res.string.custom_forges_entry_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                 )
             }

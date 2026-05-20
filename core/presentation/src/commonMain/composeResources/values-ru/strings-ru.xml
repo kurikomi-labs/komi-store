@@ -936,6 +936,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">Свои форджи</string>
+    <string name="custom_forges_entry_subtitle">Добавьте хосты Forgejo / Gitea, которые GHS должен распознавать</string>
+    <string name="custom_forges_count_label">Добавлено: %1$d</string>
+    <string name="custom_forges_dialog_title">Свои форджи</string>
+    <string name="custom_forges_dialog_help">Введите имя хоста Forgejo или Gitea (например git.example.com). GHS будет принимать URL с этих хостов в форме ручной привязки.</string>
+    <string name="custom_forges_add_button">Добавить</string>
+    <string name="custom_forges_empty">Пока нет своих форджей.</string>
+    <string name="done">Готово</string>
+
     <string name="mirror_tweaks_entry_label">Зеркало для загрузки</string>
     <string name="mirror_picker_title">Зеркало для загрузки</string>
     <string name="mirror_picker_description">Используется для загрузки файлов релизов. Обращения к API GitHub всегда идут напрямую. Большинству пользователей следует оставить настройку «Напрямую через GitHub».</string>

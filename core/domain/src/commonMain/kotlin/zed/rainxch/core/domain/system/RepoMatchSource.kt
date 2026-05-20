@@ -5,4 +5,5 @@ enum class RepoMatchSource {
     SEARCH,
     FINGERPRINT,
     MANUAL,
+    FORGEJO_SEARCH,
 }

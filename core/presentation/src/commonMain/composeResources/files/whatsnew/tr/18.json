@@ -7,39 +7,40 @@
     {
       "type": "NEW",
       "bullets": [
-        "macOS'ta Homebrew ile kurulum — yeni tap'imizden `brew install --cask github-store`.",
-        "Topluluk yansısı olarak fastly.jsdelivr.net eklendi. GitHub kısıtlandığında işe yarar.",
-        "Keep Android Open koalisyonuna katıldık — Apps'teki banner nedenini açıklıyor.",
-        "GitHub girişi artık standart web akışını kullanıyor — dokun, tarayıcıda yetkilendir, tamam. 8 haneli koda gerek yok.",
-        "Kalıcı saklanan tüm tercihler ve kimlik bilgileri artık KSafe ile AES-256-GCM şifreli — GitHub token'ları, proxy kimlik bilgileri, uygulama ayarları, cihaz ID'si, mirror seçimi, tüm coachmark'lar, duyuru önbelleği. Android'de donanım destekli Keystore. Mevcut veriler ilk açılışta sorunsuz taşınır."
+        "Codeberg + Forgejo + Gitea desteği. Codeberg / Forgejo URL'sini yapıştır veya Ayarlar → Ağ altında kendi host'unu ekle. Detaylar, kurulum, güncellemeler, arama — tümü bağlı.",
+        "Homebrew ile macOS kurulumu: `brew install --cask github-store`.",
+        "GitHub girişi standart web akışını kullanır — 8 haneli kod yok.",
+        "Tercihler ve kimlik bilgileri KSafe ile AES-256-GCM şifreli (Android'de donanım Keystore). İlk açılışta taşıma.",
+        "Kısıtlı GitHub için fastly.jsdelivr.net mirror eklendi.",
+        "Keep Android Open koalisyonuna katıldık — banner açıklıyor."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "Depo detayındaki platform çipleri artık o platforma göre filtrelenmiş Search açar — önceden tepkisizdi.",
-        "Klavye arama düğmesi Android 12'de Çince IME'lerle artık aramayı tetikliyor.",
-        "Harici bağlanmış depo artık Detaylar'da tek dokunuşla bağlantı kaldırma için banner gösteriyor.",
-        "Oturum açma, kod URL'sini önceden doldurulmuş açar ve yapıştırmaya uygun kodu kopyalar.",
-        "Android 16 / özel ROM'larda Ayarlar çökmesi ve indirme hatası — harici depolama engellendiğinde dahili depolamaya geçer.",
-        "Android 13+ üzerinde Magisk / KernelSU / APatch algılama — önceki sonda SELinux tarafından maskeleniyordu.",
-        "Detaylar'daki sabitlenmiş varyant etiketi sürümler arasında yenileniyor — eski beta/rc numaraları artık çipte takılı kalmıyor.",
-        "README ve sürüm notları kaydırıp dönünce artık başa atlamıyor — ölçülen yükseklik viewport temizliklerinin ardından da korunuyor."
+        "Detaylar'daki platform çipleri filtrelenmiş Search açıyor (önceden tepkisizdi).",
+        "Klavye arama düğmesi Android 12'de Çince IME'lerle çalışıyor.",
+        "Harici bağlanmış depo Detaylar'da tek dokunuşla bağlantı kaldırma banner'ı gösteriyor.",
+        "Oturum açma önceden doldurulmuş kod URL'sini açıyor + yapıştırmaya uygun kodu kopyalıyor.",
+        "Android 16 / özel ROM'larda Ayarlar + indirme çökmesi — dahili depolamaya geçer.",
+        "Android 13+ üzerinde Magisk / KernelSU / APatch algılama (SELinux ile maskelenmiş sonda).",
+        "Sabitlenmiş varyant etiketi yenileniyor — eski beta/rc numaraları yok.",
+        "README / sürüm notları viewport temizlikleri arası kaydırma konumunu koruyor."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "Uygulamayı manuel bağlarken — yükleyici kaynağına göre sıralı (önce F-Droid / Obtainium, en sonda Play Store ve sistem güncellemeleri); her uygulamanın kaynağını gösteren çip eklendi.",
-        "Manuel bağlama artık eşleşen GitHub depolarını otomatik öneriyor — uygulamayı seçin, sıralı adaylar alın, bağlamak için dokunun. URL'yi manuel girme seçeneği de duruyor.",
-        "README ve sürüm notlarında GitHub tarzı uyarı kutuları — Note, Tip, Important, Warning, Caution artık düz metin yerine ikonlu renkli kartlar olarak görünüyor.",
-        "README ve sürüm notlarında emoji kısayolları — :rocket: artık 🚀 olarak, :tada: 🎉 olarak ve ~250 başka kısayol.",
-        "README ve sürüm notlarındaki SVG resimleri artık doğrudan render ediliyor (diyagram, hero). Tema özel resimler açık/koyu temaya saygı duyuyor. Tarayıcı benzeri User-Agent CDN hotlink engelini aşıyor.",
-        "README ve sürüm notlarındaki kod bloklarında sözdizimi vurgulama — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell ve diğerleri. Açık/koyu temaya uyumlu renkler.",
-        "Markdown rötuşu — HTML blockquote'ları ve <pre><code> blokları doğru render. Alt/üst simgeler Unicode'a çevriliyor (H₂O, x²). Adlandırılmış HTML varlıkları (©, ™, —, kıvrık tırnaklar) çözülüyor.",
-        "<details>/<summary> daraltılabilir bölümler dokunmayla açılan kart olarak gösteriliyor. Komşu rozet/buton görselleri (Play Store, GitHub Releases vs.) üst üste değil tek satırda akıyor.",
-        "Uygulamayı manuel eşlemek için artık yeniden indirme gerekmiyor — seçtiğiniz sürüm olduğu gibi güvenle kabul ediliyor. Detaylar'daki banner manuel bağlanan uygulamaları belirtiyor.",
-        "Bölüme özel sıralama — Yüklü (güncellemeler, yenilik, ad), Yıldızlı (yenilik, ad, yıldız), Favoriler (yenilik, ad); her bölüm kendi tercihini hatırlar."
+        "Manuel bağlama sayfası yükleyici kaynağına göre sıralı (önce F-Droid / Obtainium, en sonda sistem güncellemeleri), uygulama başına kaynak çipi.",
+        "Smart match GitHub + Codeberg + özel forge'lardan sıralı depo öneriyor.",
+        "GFM uyarıları (Note / Tip / Important / Warning / Caution) renkli kartlar olarak.",
+        "Emoji kısayolları — :rocket: → 🚀 (~250 kapsanır).",
+        "SVG görselleri doğrudan render. Temaya özel görseller açık/koyu'ya saygı duyar. Tarayıcı UA CDN rozet engelini aşar.",
+        "Kod bloklarında sözdizimi vurgulama (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, temaya uyumlu).",
+        "Markdown rötuşu — HTML blockquote'ları ve `<pre><code>` render, alt/üst → unicode, HTML varlıkları çözülür.",
+        "Daraltılabilir `<details>` bölümleri dokunmayla açılan kartlar. Rozet/buton görsel satırları tek satırda akar.",
+        "Manuel eşleme seçtiğin sürüme güvenir — doğrulama için yeniden indirme yok.",
+        "Bölüme özel sıralama — Yüklü, Yıldızlı, Favoriler kendi tercihini hatırlar."
       ]
     }
   ]

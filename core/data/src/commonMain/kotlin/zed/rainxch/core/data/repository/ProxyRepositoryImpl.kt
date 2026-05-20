@@ -23,6 +23,10 @@ import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.ProxyScope
 import zed.rainxch.core.domain.repository.ProxyRepository
+import zed.rainxch.core.data.secure.safeDelete
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safeGetFlow
+import zed.rainxch.core.data.secure.safePut
 
 class ProxyRepositoryImpl(
     private val ksafe: KSafe,
@@ -71,11 +75,11 @@ class ProxyRepositoryImpl(
         val keys = keysFor(scope)
         emitAll(
             combine(
-                ksafe.getFlow<String?>(keys.type, null),
-                ksafe.getFlow<String?>(keys.host, null),
-                ksafe.getFlow<Int?>(keys.port, null),
-                ksafe.getFlow<String?>(keys.username, null),
-                ksafe.getFlow<String?>(keys.password, null),
+                ksafe.safeGetFlow<String?>(keys.type, null),
+                ksafe.safeGetFlow<String?>(keys.host, null),
+                ksafe.safeGetFlow<Int?>(keys.port, null),
+                ksafe.safeGetFlow<String?>(keys.username, null),
+                ksafe.safeGetFlow<String?>(keys.password, null),
             ) { type, host, port, user, pass ->
                 parseConfig(type, host, port, user, pass)
             },
@@ -120,26 +124,26 @@ class ProxyRepositoryImpl(
         val keys = keysFor(scope)
         when (config) {
             is ProxyConfig.None -> {
-                ksafe.put(keys.type, "none")
-                ksafe.delete(keys.host); ksafe.delete(keys.port)
-                ksafe.delete(keys.username); ksafe.delete(keys.password)
+                ksafe.safePut(keys.type, "none")
+                ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
+                ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
             }
             is ProxyConfig.System -> {
-                ksafe.put(keys.type, "system")
-                ksafe.delete(keys.host); ksafe.delete(keys.port)
-                ksafe.delete(keys.username); ksafe.delete(keys.password)
+                ksafe.safePut(keys.type, "system")
+                ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
+                ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
             }
             is ProxyConfig.Http -> {
-                ksafe.put(keys.type, "http")
-                ksafe.put(keys.host, config.host)
-                ksafe.put(keys.port, config.port)
+                ksafe.safePut(keys.type, "http")
+                ksafe.safePut(keys.host, config.host)
+                ksafe.safePut(keys.port, config.port)
                 writeOrClear(keys.username, config.username)
                 writeOrClear(keys.password, config.password)
             }
             is ProxyConfig.Socks -> {
-                ksafe.put(keys.type, "socks")
-                ksafe.put(keys.host, config.host)
-                ksafe.put(keys.port, config.port)
+                ksafe.safePut(keys.type, "socks")
+                ksafe.safePut(keys.host, config.host)
+                ksafe.safePut(keys.port, config.port)
                 writeOrClear(keys.username, config.username)
                 writeOrClear(keys.password, config.password)
             }
@@ -148,14 +152,14 @@ class ProxyRepositoryImpl(
     }
 
     private suspend fun writeOrClear(key: String, value: String?) {
-        if (value != null) ksafe.put(key, value) else ksafe.delete(key)
+        if (value != null) ksafe.safePut(key, value) else ksafe.safeDelete(key)
     }
 
     private suspend fun migrateIfNeeded() {
         if (migrated) return
         migrationLock.withLock {
             if (migrated) return
-            val alreadyMarked = runCatching { ksafe.get(MIGRATION_MARKER, false) }.getOrDefault(false)
+            val alreadyMarked = runCatching { ksafe.safeGet(MIGRATION_MARKER, false) }.getOrDefault(false)
             if (alreadyMarked) {
                 migrated = true
                 return
@@ -190,24 +194,24 @@ class ProxyRepositoryImpl(
                 val pass = snapshot[passLegacyKey] ?: snapshot[stringPreferencesKey("proxy_password")]
 
                 // Per-field tracking — only enqueue legacy delete if KSafe write succeeded.
-                val typeOk = runCatching { ksafe.put(keys.type, type) }.isSuccess
+                val typeOk = ksafe.safePut(keys.type, type)
                 if (!typeOk) { anyFailure = true; return@forEach }
                 scopeType?.let { keysToClear += typeLegacyKey }
 
                 if (host != null) {
-                    if (runCatching { ksafe.put(keys.host, host) }.isSuccess) keysToClear += hostLegacyKey
+                    if (ksafe.safePut(keys.host, host)) keysToClear += hostLegacyKey
                     else anyFailure = true
                 }
                 if (port != null) {
-                    if (runCatching { ksafe.put(keys.port, port) }.isSuccess) keysToClear += portLegacyKey
+                    if (ksafe.safePut(keys.port, port)) keysToClear += portLegacyKey
                     else anyFailure = true
                 }
                 if (user != null) {
-                    if (runCatching { ksafe.put(keys.username, user) }.isSuccess) keysToClear += userLegacyKey
+                    if (ksafe.safePut(keys.username, user)) keysToClear += userLegacyKey
                     else anyFailure = true
                 }
                 if (pass != null) {
-                    if (runCatching { ksafe.put(keys.password, pass) }.isSuccess) keysToClear += passLegacyKey
+                    if (ksafe.safePut(keys.password, pass)) keysToClear += passLegacyKey
                     else anyFailure = true
                 }
             }
@@ -234,7 +238,7 @@ class ProxyRepositoryImpl(
             }
 
             if (!anyFailure) {
-                runCatching { ksafe.put(MIGRATION_MARKER, true) }
+                runCatching { ksafe.safePut(MIGRATION_MARKER, true) }
                 migrated = true
             }
         }

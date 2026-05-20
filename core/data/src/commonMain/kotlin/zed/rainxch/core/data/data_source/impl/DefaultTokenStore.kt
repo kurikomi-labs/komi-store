@@ -21,6 +21,10 @@ import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.dto.GithubDeviceTokenSuccessDto
 import kotlin.time.Clock
+import zed.rainxch.core.data.secure.safeDelete
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safeGetFlow
+import zed.rainxch.core.data.secure.safePut
 
 class DefaultTokenStore(
     private val ksafe: KSafe,
@@ -46,18 +50,18 @@ class DefaultTokenStore(
         val stamped = token.copy(
             savedAtEpochMillis = token.savedAtEpochMillis ?: Clock.System.now().toEpochMilliseconds(),
         )
-        ksafe.put(tokenKey, stamped)
+        ksafe.safePut(tokenKey, stamped)
     }
 
     override fun tokenFlow(): Flow<GithubDeviceTokenSuccessDto?> = flow {
         migrationDeferred.await()
-        emitAll(ksafe.getFlow<GithubDeviceTokenSuccessDto?>(tokenKey, null))
+        emitAll(ksafe.safeGetFlow<GithubDeviceTokenSuccessDto?>(tokenKey, null))
     }
 
     override suspend fun currentToken(): GithubDeviceTokenSuccessDto? {
         migrationDeferred.await()
         return runCatching {
-            ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
+            ksafe.safeGet<GithubDeviceTokenSuccessDto?>(tokenKey, null)
         }.getOrNull()
     }
 
@@ -66,12 +70,13 @@ class DefaultTokenStore(
 
     override suspend fun clear() {
         migrationDeferred.await()
-        val ksafeError = runCatching { ksafe.delete(tokenKey) }.exceptionOrNull()
-        // Legacy cleanup is best-effort: do it regardless so a sign-out
-        // never leaves a stale plaintext token behind. The original ksafe
-        // exception still surfaces to the caller below.
+        // safeDelete swallows KSafe failures (returns false). Legacy cleanup
+        // runs unconditionally so a sign-out never leaves a stale plaintext
+        // token. If KSafe delete silently failed, the encrypted token row
+        // remains but is unreachable without a re-issued auth — acceptable
+        // trade vs crashing the sign-out flow.
+        ksafe.safeDelete(tokenKey)
         runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
-        if (ksafeError != null) throw ksafeError
     }
 
     override suspend fun isTokenExpired(): Boolean {
@@ -84,7 +89,7 @@ class DefaultTokenStore(
 
     private suspend fun migrateIfNeeded() = migrationLock.withLock {
         val existing = runCatching {
-            ksafe.get<GithubDeviceTokenSuccessDto?>(tokenKey, null)
+            ksafe.safeGet<GithubDeviceTokenSuccessDto?>(tokenKey, null)
         }.getOrNull()
         if (existing != null) return@withLock
 
@@ -101,8 +106,8 @@ class DefaultTokenStore(
             return@withLock
         }
 
-        val putResult = runCatching { ksafe.put(tokenKey, parsed) }
-        if (putResult.isFailure) {
+        val putOk = ksafe.safePut(tokenKey, parsed)
+        if (!putOk) {
             // Never drop the legacy entry if we couldn't persist into KSafe.
             // The user's token stays readable via the slow path next launch.
             return@withLock

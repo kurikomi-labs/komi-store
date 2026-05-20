@@ -13,6 +13,14 @@ sealed interface AppsEvent {
 
     data class NavigateToRepo(
         val repoId: Long,
+        val sourceHost: String? = null,
+        // Forgejo / Codeberg repos use a synthetic 64-bit repoId
+        // (RepoIdCodec) that the backend / GitHub APIs don't recognise.
+        // When sourceHost is set we have to look the repo up by
+        // owner+name instead. Carry them through nav so the VM doesn't
+        // fall back to GitHub `/repositories/{id}` and 404.
+        val owner: String? = null,
+        val repo: String? = null,
     ) : AppsEvent
 
     data class AppLinkedSuccessfully(

@@ -44,4 +44,13 @@ sealed interface ExternalImportAction {
     data object OnAutoSummaryUndoAll : ExternalImportAction
 
     data object OnAddManually : ExternalImportAction
+
+    /**
+     * Cancels in-flight scan / auto-import work and drops to the review
+     * wizard with whatever candidates have already been resolved (or an
+     * empty Done state if nothing made it through yet). Exposed via the
+     * Skip button that surfaces after the progress screen has been up
+     * past the skip threshold (~5 s).
+     */
+    data object OnSkipLongScan : ExternalImportAction
 }

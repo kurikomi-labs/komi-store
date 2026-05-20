@@ -166,7 +166,7 @@ import zed.rainxch.githubstore.core.presentation.res.updating_x_of_y
 @Composable
 fun AppsRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToRepo: (repoId: Long) -> Unit,
+    onNavigateToRepo: (repoId: Long, sourceHost: String?, owner: String?, repo: String?) -> Unit,
     onNavigateToExternalImport: () -> Unit,
     onNavigateToStarredPicker: () -> Unit,
     viewModel: AppsViewModel = koinViewModel(),
@@ -195,7 +195,7 @@ fun AppsRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is AppsEvent.NavigateToRepo -> {
-                onNavigateToRepo(event.repoId)
+                onNavigateToRepo(event.repoId, event.sourceHost, event.owner, event.repo)
             }
 
             is AppsEvent.ShowError -> {
@@ -710,7 +710,16 @@ fun AppsScreen(
                                                 onUpdateClick = { onAction(AppsAction.OnUpdateApp(appItem.installedApp)) },
                                                 onCancelClick = { onAction(AppsAction.OnCancelUpdate(appItem.installedApp.packageName)) },
                                                 onUninstallClick = { onAction(AppsAction.OnUninstallApp(appItem.installedApp)) },
-                                                onRepoClick = { onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId)) },
+                                                onRepoClick = {
+                                                    onAction(
+                                                        AppsAction.OnNavigateToRepo(
+                                                            repoId = appItem.installedApp.repoId,
+                                                            sourceHost = appItem.installedApp.sourceHost,
+                                                            owner = appItem.installedApp.repoOwner,
+                                                            repo = appItem.installedApp.repoName,
+                                                        ),
+                                                    )
+                                                },
                                                 onTogglePreReleases = { enabled ->
                                                     onAction(AppsAction.OnTogglePreReleases(appItem.installedApp.packageName, enabled))
                                                 },
@@ -820,7 +829,14 @@ fun AppsScreen(
                                                         )
                                                     },
                                                     onRowClick = {
-                                                        onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId))
+                                                        onAction(
+                                                            AppsAction.OnNavigateToRepo(
+                                                                repoId = appItem.installedApp.repoId,
+                                                                sourceHost = appItem.installedApp.sourceHost,
+                                                                owner = appItem.installedApp.repoOwner,
+                                                                repo = appItem.installedApp.repoName,
+                                                            ),
+                                                        )
                                                     },
                                                 )
                                             }
@@ -986,6 +1002,10 @@ fun AppItemCard(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f, fill = false),
                         )
+                        app.sourceHost?.let {
+                            Spacer(Modifier.width(6.dp))
+                            zed.rainxch.apps.presentation.components.SourceChip(host = it)
+                        }
                     }
 
                     when {

@@ -6,6 +6,7 @@ import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.search.presentation.model.ParsedGithubLink
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
+import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.model.SortOrderUi
 
@@ -34,6 +35,9 @@ data class SearchState(
     val recentSearches: ImmutableList<String> = persistentListOf(),
     val exploreStatus: ExploreStatus = ExploreStatus.IDLE,
     val passthroughAttempted: Boolean? = null,
+    val selectedSource: SearchSourceUi = SearchSourceUi.GitHub,
+    val availableSources: ImmutableList<SearchSourceUi> =
+        persistentListOf(SearchSourceUi.GitHub, SearchSourceUi.Codeberg),
 ) {
     enum class ExploreStatus {
         IDLE,

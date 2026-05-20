@@ -910,6 +910,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">カスタムフォージ</string>
+    <string name="custom_forges_entry_subtitle">GHSに認識させたいForgejo / Giteaホストを追加</string>
+    <string name="custom_forges_count_label">%1$d 件追加済み</string>
+    <string name="custom_forges_dialog_title">カスタムフォージ</string>
+    <string name="custom_forges_dialog_help">ForgejoまたはGiteaインスタンスのホスト名を入力（例: git.example.com）。手動リンクシートでこれらのホストのURLが受け入れられます。</string>
+    <string name="custom_forges_add_button">追加</string>
+    <string name="custom_forges_empty">カスタムフォージはまだありません。</string>
+    <string name="done">完了</string>
+
     <string name="mirror_tweaks_entry_label">ダウンロードミラー</string>
     <string name="mirror_picker_title">ダウンロードミラー</string>
     <string name="mirror_picker_description">リリースアセットのダウンロードに使用されます。GitHub API の呼び出しは常に直接行われます。ほとんどのユーザーは「GitHub 直接」のままにしておくことをお勧めします。</string>

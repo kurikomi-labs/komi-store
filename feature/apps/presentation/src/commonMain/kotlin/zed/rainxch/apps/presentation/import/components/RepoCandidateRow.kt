@@ -71,16 +71,27 @@ fun RepoCandidateRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = stringResource(
-                    Res.string.external_import_card_owner_byline,
-                    suggestion.owner,
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(
+                    text = stringResource(
+                        Res.string.external_import_card_owner_byline,
+                        suggestion.owner,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                // Source chip: where this suggestion actually lives.
+                // Distinct tonal color so a Codeberg row visibly stands
+                // apart from a GitHub one — answers "why is this here
+                // and where is it from".
+                SuggestionHostChip(suggestion.sourceHost)
+            }
             if (!suggestion.description.isNullOrBlank()) {
                 Text(
                     text = suggestion.description,
@@ -136,3 +147,40 @@ private fun formatStars(stars: Int): String =
         stars >= 1_000 -> "${(stars / 100) / 10.0}k"
         else -> stars.toString()
     }
+
+@Composable
+private fun SuggestionHostChip(sourceHost: String?) {
+    val (label, bg, fg) = when {
+        sourceHost == null ->
+            Triple(
+                "GitHub",
+                MaterialTheme.colorScheme.surfaceVariant,
+                MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        sourceHost.equals("codeberg.org", ignoreCase = true) ->
+            Triple(
+                "Codeberg",
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+        else ->
+            Triple(
+                sourceHost,
+                MaterialTheme.colorScheme.secondaryContainer,
+                MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+    }
+    Surface(
+        color = bg,
+        shape = RoundedCornerShape(6.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = fg,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+        )
+    }
+}

@@ -110,6 +110,7 @@ class SearchViewModel(
                     observeSeenRepos()
                     observeHiddenRepos()
                     observeHideSeenEnabled()
+                    observeCustomForgeHosts()
                     observeClipboardSetting()
                     observeSearchHistory()
                     checkClipboardForLinks()
@@ -157,6 +158,32 @@ class SearchViewModel(
         viewModelScope.launch {
             tweaksRepository.getHideSeenEnabled().collect { enabled ->
                 _state.update { it.copy(isHideSeenEnabled = enabled) }
+            }
+        }
+    }
+
+    private fun observeCustomForgeHosts() {
+        viewModelScope.launch {
+            tweaksRepository.getCustomForgeHosts().collect { hosts ->
+                val base = listOf(
+                    zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
+                    zed.rainxch.search.presentation.model.SearchSourceUi.Codeberg,
+                )
+                val extra = hosts
+                    .filter { it.isNotBlank() && !it.equals("codeberg.org", ignoreCase = true) }
+                    .sorted()
+                    .map { zed.rainxch.search.presentation.model.SearchSourceUi.CustomForge(it) }
+                val all = kotlinx.collections.immutable.persistentListOf<zed.rainxch.search.presentation.model.SearchSourceUi>()
+                    .addAll(base + extra)
+                _state.update { current ->
+                    val current_sel = current.selectedSource
+                    val stillValid = all.contains(current_sel)
+                    current.copy(
+                        availableSources = all,
+                        selectedSource = if (stillValid) current_sel
+                        else zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
+                    )
+                }
             }
         }
     }
@@ -401,6 +428,7 @@ class SearchViewModel(
                             sortBy = _state.value.selectedSortBy.toDomain(),
                             sortOrder = _state.value.selectedSortOrder.toDomain(),
                             page = currentPage,
+                            source = _state.value.selectedSource.toDomain(),
                         ).collect { paginatedRepos ->
                             currentPage = paginatedRepos.nextPageIndex
 
@@ -508,7 +536,15 @@ class SearchViewModel(
                         it.copy(selectedSearchPlatform = action.searchPlatform)
                     }
                     currentPage = 1
-    
+
+                    performSearch(isInitial = true)
+                }
+            }
+
+            is SearchAction.OnSourceSelected -> {
+                if (_state.value.selectedSource != action.source) {
+                    _state.update { it.copy(selectedSource = action.source) }
+                    currentPage = 1
                     performSearch(isInitial = true)
                 }
             }

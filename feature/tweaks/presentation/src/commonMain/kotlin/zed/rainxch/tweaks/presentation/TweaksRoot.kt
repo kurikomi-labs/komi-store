@@ -178,6 +178,13 @@ fun TweaksRoot(
         )
     }
 
+    if (state.showCustomForgesDialog) {
+        zed.rainxch.tweaks.presentation.components.CustomForgesDialog(
+            state = state,
+            onAction = { viewModel.onAction(it) },
+        )
+    }
+
     if (state.isFeedbackSheetVisible) {
         FeedbackBottomSheet(
             onDismiss = {

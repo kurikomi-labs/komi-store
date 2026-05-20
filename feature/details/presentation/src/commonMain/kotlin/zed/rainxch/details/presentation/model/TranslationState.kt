@@ -1,5 +1,8 @@
 package zed.rainxch.details.presentation.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class TranslationState(
     val isTranslating: Boolean = false,
     val translatedText: String? = null,

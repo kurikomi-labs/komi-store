@@ -50,6 +50,7 @@ fun InstalledApp.toEntity(): InstalledAppEntity =
         pendingInstallVersion = pendingInstallVersion,
         pendingInstallAssetName = pendingInstallAssetName,
         skippedReleaseTag = skippedReleaseTag,
+        sourceHost = sourceHost,
     )
 
 fun InstalledAppEntity.toDomain(): InstalledApp =
@@ -99,4 +100,5 @@ fun InstalledAppEntity.toDomain(): InstalledApp =
         pendingInstallVersion = pendingInstallVersion,
         pendingInstallAssetName = pendingInstallAssetName,
         skippedReleaseTag = skippedReleaseTag,
+        sourceHost = sourceHost,
     )

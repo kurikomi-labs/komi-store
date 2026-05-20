@@ -54,8 +54,33 @@ class DetailsRepositoryImpl(
     private val localizationManager: LocalizationManager,
     private val logger: GitHubStoreLogger,
     private val cacheManager: CacheManager,
+    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : DetailsRepository {
     private val httpClient: HttpClient get() = clientProvider.client
+
+    private fun zed.rainxch.core.data.dto.ForgejoRepoNetworkModel.toForgejoSummary(
+        sourceHost: String,
+    ): GithubRepoSummary = GithubRepoSummary(
+        id = zed.rainxch.core.domain.util.RepoIdCodec.encode(sourceHost, id),
+        name = name,
+        fullName = fullName ?: "${owner.login}/$name",
+        owner = GithubUser(
+            id = owner.id,
+            login = owner.login,
+            avatarUrl = owner.avatarUrl,
+            htmlUrl = owner.htmlUrl,
+        ),
+        description = description,
+        htmlUrl = htmlUrl,
+        stargazersCount = starsCount,
+        forksCount = forksCount,
+        language = language,
+        topics = null,
+        releasesUrl = "$htmlUrl/releases",
+        updatedAt = updatedAt ?: "",
+        defaultBranch = defaultBranch ?: "main",
+        sourceHost = sourceHost,
+    )
 
     @Serializable
     private data class CachedReadme(
@@ -144,7 +169,9 @@ class DetailsRepositoryImpl(
     override suspend fun getRepositoryByOwnerAndName(
         owner: String,
         name: String,
+        sourceHost: String?,
     ): GithubRepoSummary {
+        if (sourceHost != null) return getForgejoRepository(owner, name, sourceHost)
         val cacheKey = "details:repo:$owner/$name"
 
         cacheManager.get<GithubRepoSummary>(cacheKey)?.let { cached ->
@@ -239,7 +266,12 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): GithubRelease? {
+        if (sourceHost != null) {
+            return getForgejoAllReleases(owner, repo, sourceHost)
+                .firstOrNull { !it.isPrerelease }
+        }
         val cacheKey = "details:latest_release:$owner/$repo"
 
         cacheManager.get<GithubRelease>(cacheKey)?.let { cached ->
@@ -285,7 +317,9 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): List<GithubRelease> {
+        if (sourceHost != null) return getForgejoAllReleases(owner, repo, sourceHost)
         val cacheKey = "details:releases:$owner/$repo"
 
         cacheManager.get<List<GithubRelease>>(cacheKey)?.let { cached ->
@@ -390,7 +424,9 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String?,
     ): Triple<String, String?, String>? {
+        if (sourceHost != null) return getForgejoReadme(owner, repo, defaultBranch, sourceHost)
         // v2 — bumped after markdown preprocessor overhaul (alerts,
         // emoji, details, image-row). Forces re-fetch so users get a
         // properly-processed readme instead of waiting for the stale
@@ -468,8 +504,9 @@ class DetailsRepositoryImpl(
         // variant tolerates all whitespace transparently so we don't have
         // to pre-strip. Narrow catch: only IAE is decode-related, other
         // throwables (OOM, etc.) propagate.
+        val rawContent = dto.content ?: return null
         val decoded = try {
-            Base64.Mime.decode(dto.content).decodeToString()
+            Base64.Mime.decode(rawContent).decodeToString()
         } catch (e: IllegalArgumentException) {
             logger.warn("Failed to base64-decode backend readme for $owner/$repo: ${e.message}")
             return null
@@ -515,7 +552,9 @@ class DetailsRepositoryImpl(
     override suspend fun getRepoStats(
         owner: String,
         repo: String,
+        sourceHost: String?,
     ): RepoStats {
+        if (sourceHost != null) return getForgejoRepoStats(owner, repo, sourceHost)
         // v3 — backend now supplies license. Bumping the key forces re-fetch
         // so post-upgrade users get a populated license instead of waiting
         // 6h for the stale v2 entry (license=null) to expire.
@@ -653,6 +692,256 @@ class DetailsRepositoryImpl(
             blog = blog,
             twitterUsername = twitterUsername,
         )
+
+    // ── Forgejo / Codeberg branch ─────────────────────────────────────
+    //
+    // No backend proxy, no GitHub fallback — all reads go straight to the
+    // forge instance. Cache keys are namespaced by host so the same
+    // `owner/repo` slug on github.com and codeberg.org never collide. Stats
+    // are derived from the repo response (stars / forks / openIssues /
+    // license fields exposed by Gitea/Forgejo API v1).
+
+    private suspend fun getForgejoRepository(
+        owner: String,
+        name: String,
+        sourceHost: String,
+    ): GithubRepoSummary {
+        val cacheKey = "details:repo:forgejo:$sourceHost:$owner/$name"
+        cacheManager.get<GithubRepoSummary>(cacheKey)?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val result = client.getRepository(owner, name).getOrThrow()
+                .toForgejoSummary(sourceHost)
+            cacheManager.put(cacheKey, result, REPO_DETAILS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
+
+    private suspend fun getForgejoAllReleases(
+        owner: String,
+        repo: String,
+        sourceHost: String,
+    ): List<GithubRelease> {
+        // v2 — release `body` is now pre-processed (CRLF → LF + relative
+        // URL rewrite to the Forgejo raw endpoint). Previously the raw
+        // CRLF bodies broke GFM table parsing in the markdown renderer
+        // (Gadgetbridge changelog tables rendered as literal pipes).
+        val cacheKey = "details:releases:forgejo:v2:$sourceHost:$owner/$repo"
+        cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val releases = client.getReleases(owner, repo).getOrNull().orEmpty()
+            val result = releases
+                .filter { it.draft != true }
+                .map { network ->
+                    val processedBody = network.body?.let {
+                        processForgejoBody(it, sourceHost, owner, repo)
+                    }
+                    network.copy(body = processedBody).toDomain()
+                }
+                .sortedByDescending { it.publishedAt }
+            if (result.isNotEmpty()) cacheManager.put(cacheKey, result, RELEASES)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<List<GithubRelease>>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
+
+    private fun processForgejoBody(
+        body: String,
+        sourceHost: String,
+        owner: String,
+        repo: String,
+    ): String {
+        // Forgejo emits CRLF line endings. The intellij-markdown GFM
+        // table parser is line-sensitive — `\r` left in the separator
+        // row makes the table degrade to literal pipes. Normalize first,
+        // then run the same image / URL rewriting used on GitHub
+        // release bodies, but pointed at the Forgejo raw-branch URL.
+        val normalized = body.replace("\r\n", "\n")
+        val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/HEAD/"
+        return preprocessMarkdown(markdown = normalized, baseUrl = baseUrl)
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private suspend fun getForgejoReadme(
+        owner: String,
+        repo: String,
+        defaultBranch: String,
+        sourceHost: String,
+    ): Triple<String, String?, String>? {
+        // v2 — moved off the non-existent `/readme` endpoint (404s on every
+        // Forgejo / Gitea instance) onto `/contents/README.md`.
+        val cacheKey = "details:readme:forgejo:v2:$sourceHost:$owner/$repo"
+        cacheManager.get<CachedReadme>(cacheKey)?.let {
+            return Triple(it.content, it.languageCode, it.path)
+        }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+
+        // Forgejo / Gitea does NOT implement GitHub's `/repos/{o}/{r}/readme`
+        // convenience endpoint — verified live against codeberg.org. We hit
+        // the contents endpoint directly. Try `README.md` first (covers the
+        // overwhelming majority including Gadgetbridge), and on 404 fall
+        // back to listing the repo root and scanning for any
+        // `^README(\..+)?$` file.
+        val dto = client.getContentsFile(owner, repo, "README.md", defaultBranch).getOrNull()
+            ?: client.listContentsRoot(owner, repo, defaultBranch).getOrNull()
+                ?.firstOrNull { entry ->
+                    entry.type == "file" && entry.name?.let { READMEFileNameRegex.matches(it) } == true
+                }
+                ?.let { entry ->
+                    client.getContentsFile(owner, repo, entry.path ?: entry.name!!, defaultBranch).getOrNull()
+                }
+            ?: run {
+                cacheManager.getStale<CachedReadme>(cacheKey)?.let {
+                    return Triple(it.content, it.languageCode, it.path)
+                }
+                return null
+            }
+
+        // Forgejo's contents response is base64 (single continuous line,
+        // no MIME wrapping — Mime variant tolerates both forms transparently).
+        val rawContent = dto.content ?: return null
+        val decoded = try {
+            Base64.Mime.decode(rawContent).decodeToString()
+        } catch (e: IllegalArgumentException) {
+            logger.warn("Failed to decode Forgejo readme for $sourceHost/$owner/$repo: ${e.message}")
+            return null
+        }
+        val path = dto.path?.takeIf { it.isNotBlank() } ?: "README.md"
+        // Relative image refs in a Forgejo README need the per-host raw URL
+        // base. Forgejo's raw path shape is `/{o}/{r}/raw/branch/{ref}/`.
+        val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/$defaultBranch/"
+        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl)
+        val detected = readmeHelper.detectReadmeLanguage(processed)
+        cacheManager.put(
+            cacheKey,
+            CachedReadme(content = processed, languageCode = detected, path = path),
+            README,
+        )
+        return Triple(processed, detected, path)
+    }
+
+    private companion object {
+        // README, README.md, README.rst, README.adoc, Readme.txt, etc.
+        private val READMEFileNameRegex = Regex("""^README(\..+)?$""", RegexOption.IGNORE_CASE)
+    }
+
+    private suspend fun getForgejoRepoStats(
+        owner: String,
+        repo: String,
+        sourceHost: String,
+    ): RepoStats {
+        // v2 — added license sniffing (from /contents/LICENSE) +
+        // aggregated download count (from release assets), neither of
+        // which Forgejo exposes on the /repos endpoint itself.
+        val cacheKey = "details:stats:forgejo:v2:$sourceHost:$owner/$repo"
+        cacheManager.get<RepoStats>(cacheKey)?.let { return it }
+        val client = forgejoClientRegistry.clientFor(sourceHost)
+        return try {
+            val info = client.getRepository(owner, repo).getOrThrow()
+            // Best-effort license + downloads enrichment. Both can fail
+            // silently — repo stats still render with the core counters
+            // pulled directly from the /repos payload.
+            val license = detectForgejoLicense(client, owner, repo, info.defaultBranch ?: "main")
+            val downloads = sumForgejoReleaseDownloads(sourceHost, owner, repo)
+            val result = RepoStats(
+                stars = info.starsCount,
+                forks = info.forksCount,
+                openIssues = info.openIssuesCount,
+                license = license,
+                totalDownloads = downloads,
+            )
+            cacheManager.put(cacheKey, result, REPO_STATS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<RepoStats>(cacheKey)?.let { return it }
+            throw e
+        }
+    }
+
+    /**
+     * Forgejo / Gitea does NOT expose a `license` field on
+     * `/repos/{o}/{r}`. The dedicated `/license` endpoint is
+     * GitHub-specific (404 on Forgejo). Best-effort: fetch the LICENSE
+     * file from the repo root and regex-match the first ~200 chars
+     * against canonical license headers. Returns SPDX-style id when
+     * matched, falls back to a short label, returns `null` on miss.
+     */
+    @OptIn(ExperimentalEncodingApi::class)
+    private suspend fun detectForgejoLicense(
+        client: zed.rainxch.core.data.network.ForgejoApiClient,
+        owner: String,
+        repo: String,
+        ref: String,
+    ): String? {
+        // Try common LICENSE filenames in priority order. Most repos use
+        // bare `LICENSE`; common alternates covered below.
+        val candidates = listOf("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
+        val dto = candidates.firstNotNullOfOrNull { name ->
+            client.getContentsFile(owner, repo, name, ref).getOrNull()
+        } ?: return null
+        val raw = dto.content ?: return null
+        val text = try {
+            Base64.Mime.decode(raw).decodeToString().take(400)
+        } catch (e: IllegalArgumentException) {
+            return null
+        }
+        return spdxFromLicenseHeader(text)
+    }
+
+    private fun spdxFromLicenseHeader(text: String): String? {
+        val upper = text.uppercase()
+        return when {
+            upper.contains("GNU AFFERO GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "AGPL-3.0"
+            upper.contains("GNU LESSER GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "LGPL-3.0"
+            upper.contains("GNU LESSER GENERAL PUBLIC LICENSE") && upper.contains("VERSION 2.1") -> "LGPL-2.1"
+            upper.contains("GNU GENERAL PUBLIC LICENSE") && upper.contains("VERSION 3") -> "GPL-3.0"
+            upper.contains("GNU GENERAL PUBLIC LICENSE") && upper.contains("VERSION 2") -> "GPL-2.0"
+            upper.contains("APACHE LICENSE") && upper.contains("VERSION 2.0") -> "Apache-2.0"
+            upper.contains("MIT LICENSE") || (upper.startsWith("MIT ") && upper.contains("PERMISSION")) -> "MIT"
+            upper.contains("BSD 3-CLAUSE") || upper.contains("BSD-3-CLAUSE") -> "BSD-3-Clause"
+            upper.contains("BSD 2-CLAUSE") || upper.contains("BSD-2-CLAUSE") -> "BSD-2-Clause"
+            upper.contains("MOZILLA PUBLIC LICENSE") && upper.contains("VERSION 2.0") -> "MPL-2.0"
+            upper.contains("THE UNLICENSE") || upper.contains("UNLICENSE") -> "Unlicense"
+            upper.contains("CREATIVE COMMONS") && upper.contains("CC0") -> "CC0-1.0"
+            upper.contains("EUROPEAN UNION PUBLIC LICENCE") -> "EUPL-1.2"
+            else -> null
+        }
+    }
+
+    /**
+     * Forgejo's `/repos/{o}/{r}` response carries no aggregate download
+     * count. Each release `asset.download_count` is per-asset, and the
+     * stable channel for total downloads is the sum across all release
+     * assets. Reuses the cached releases list when present so we don't
+     * double-fetch when stats + releases load in parallel from the VM.
+     */
+    private suspend fun sumForgejoReleaseDownloads(
+        sourceHost: String,
+        owner: String,
+        repo: String,
+    ): Long {
+        val cacheKey = "details:releases:forgejo:$sourceHost:$owner/$repo"
+        val cached = cacheManager.get<List<GithubRelease>>(cacheKey).orEmpty()
+        val releases = if (cached.isNotEmpty()) {
+            cached
+        } else {
+            try {
+                getForgejoAllReleases(owner, repo, sourceHost)
+            } catch (e: Exception) {
+                logger.debug("Forgejo downloads sum: releases fetch failed: ${e.message}")
+                return 0L
+            }
+        }
+        return releases.sumOf { release ->
+            release.assets.sumOf { it.downloadCount }
+        }
+    }
 
     override suspend fun checkAttestations(
         owner: String,

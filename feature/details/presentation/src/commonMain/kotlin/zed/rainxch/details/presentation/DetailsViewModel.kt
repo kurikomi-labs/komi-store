@@ -106,6 +106,10 @@ class DetailsViewModel(
     private val repositoryId: Long,
     private val ownerParam: String,
     private val repoParam: String,
+    // Non-null for Forgejo / Codeberg / custom-forge repos. Routes all
+    // DetailsRepository calls through the Forgejo API client instead of
+    // the GitHub-backed default path.
+    private val sourceHostParam: String?,
     private val detailsRepository: DetailsRepository,
     private val downloader: Downloader,
     private val installer: Installer,
@@ -953,6 +957,7 @@ class DetailsViewModel(
                         owner = repo.owner.login,
                         repo = repo.name,
                         defaultBranch = repo.defaultBranch,
+                        sourceHost = sourceHostParam,
                     )
                 // Prefer a release that matches the user's previous category.
                 // Only fall back to the generic "first stable, else first" rule
@@ -2511,10 +2516,28 @@ class DetailsViewModel(
                 }
 
                 val repo =
-                    if (ownerParam.isNotEmpty() && repoParam.isNotEmpty()) {
-                        detailsRepository.getRepositoryByOwnerAndName(ownerParam, repoParam)
-                    } else {
-                        detailsRepository.getRepositoryById(repositoryId)
+                    when {
+                        // Forgejo / Codeberg path — repoId is a synthetic
+                        // foreign id (see RepoIdCodec), so the GitHub
+                        // `/repositories/{id}` endpoint can't resolve it.
+                        // Owner+name must be supplied by the caller.
+                        sourceHostParam != null -> {
+                            if (ownerParam.isBlank() || repoParam.isBlank()) {
+                                error("Foreign-source Details opened without owner/repo for host=$sourceHostParam")
+                            }
+                            detailsRepository.getRepositoryByOwnerAndName(
+                                owner = ownerParam,
+                                name = repoParam,
+                                sourceHost = sourceHostParam,
+                            )
+                        }
+                        ownerParam.isNotEmpty() && repoParam.isNotEmpty() ->
+                            detailsRepository.getRepositoryByOwnerAndName(
+                                owner = ownerParam,
+                                name = repoParam,
+                                sourceHost = null,
+                            )
+                        else -> detailsRepository.getRepositoryById(repositoryId)
                     }
                 launch { seenReposRepository.markAsSeen(repo) }
 
@@ -2566,6 +2589,7 @@ class DetailsViewModel(
                                 owner = owner,
                                 repo = name,
                                 defaultBranch = repo.defaultBranch,
+                                sourceHost = sourceHostParam,
                             ) to false
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
@@ -2579,7 +2603,11 @@ class DetailsViewModel(
                 val statsDeferred =
                     async {
                         try {
-                            detailsRepository.getRepoStats(owner, name)
+                            detailsRepository.getRepoStats(
+                                owner = owner,
+                                repo = name,
+                                sourceHost = sourceHostParam,
+                            )
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
@@ -2595,6 +2623,7 @@ class DetailsViewModel(
                                 owner = owner,
                                 repo = name,
                                 defaultBranch = repo.defaultBranch,
+                                sourceHost = sourceHostParam,
                             )
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
@@ -2606,6 +2635,11 @@ class DetailsViewModel(
 
                 val userProfileDeferred =
                     async {
+                        // GitHub user profile lookup is GitHub-only — skip
+                        // for Forgejo / Codeberg repos to avoid hitting the
+                        // wrong API + leaking a 404 toast. Author card just
+                        // hides when null.
+                        if (sourceHostParam != null) return@async null
                         try {
                             detailsRepository.getUserProfile(owner)
                         } catch (_: RateLimitException) {
@@ -2778,13 +2812,25 @@ class DetailsViewModel(
         _state.update { it.copy(isRefreshing = true) }
         viewModelScope.launch {
             try {
-                val refreshed = detailsRepository.refreshRepository(owner, name)
+                // Refresh is GitHub-backend-only. For Forgejo repos there's
+                // no backend mediator; we just re-fetch via the Forgejo APIs
+                // directly using the same load path.
+                val refreshed = if (sourceHostParam != null) {
+                    detailsRepository.getRepositoryByOwnerAndName(
+                        owner = owner,
+                        name = name,
+                        sourceHost = sourceHostParam,
+                    )
+                } else {
+                    detailsRepository.refreshRepository(owner, name)
+                }
                 val releasesDeferred = async {
                     try {
                         detailsRepository.getAllReleases(
                             owner = owner,
                             repo = name,
                             defaultBranch = refreshed.defaultBranch,
+                            sourceHost = sourceHostParam,
                         )
                     } catch (e: CancellationException) {
                         throw e
@@ -2795,7 +2841,11 @@ class DetailsViewModel(
                 }
                 val statsDeferred = async {
                     try {
-                        detailsRepository.getRepoStats(owner, name)
+                        detailsRepository.getRepoStats(
+                            owner = owner,
+                            repo = name,
+                            sourceHost = sourceHostParam,
+                        )
                     } catch (e: CancellationException) {
                         throw e
                     } catch (t: Throwable) {

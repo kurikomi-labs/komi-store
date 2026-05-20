@@ -966,6 +966,16 @@
     <string name="feedback_send_success_github">شكراً — جارٍ فتح المتصفح.</string>
     <string name="feedback_send_error">تعذّر فتح قناة الملاحظات: %1$s</string>
 
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">منصّات مخصّصة</string>
+    <string name="custom_forges_entry_subtitle">أضف مضيفات Forgejo / Gitea ليتعرّف عليها GHS</string>
+    <string name="custom_forges_count_label">%1$d مُضافة</string>
+    <string name="custom_forges_dialog_title">منصّات مخصّصة</string>
+    <string name="custom_forges_dialog_help">أدخل اسم مضيف Forgejo أو Gitea (مثل git.example.com). سيقبل GHS روابط هذه المضيفات في نموذج الربط اليدوي.</string>
+    <string name="custom_forges_add_button">إضافة</string>
+    <string name="custom_forges_empty">لا توجد منصّات مخصّصة بعد.</string>
+    <string name="done">تم</string>
+
     <!-- E5 — Mirror feature -->
     <string name="mirror_tweaks_entry_label">مرآة التنزيل</string>
     <string name="mirror_picker_title">مرآة التنزيل</string>

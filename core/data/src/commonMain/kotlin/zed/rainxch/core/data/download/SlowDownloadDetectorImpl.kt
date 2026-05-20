@@ -14,6 +14,7 @@ import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.model.DownloadProgress
 import zed.rainxch.core.domain.model.TrafficKind
 import zed.rainxch.core.domain.network.SlowDownloadDetector
+import zed.rainxch.core.data.secure.safeGet
 
 class SlowDownloadDetectorImpl(
     private val ksafe: KSafe,
@@ -73,12 +74,12 @@ class SlowDownloadDetectorImpl(
         // it flips this marker, K_SUGGEST_* read as defaults — which would
         // re-prompt users who'd already dismissed permanently. Bail out
         // silently until migration is observed complete.
-        val migrationDone = runCatching { ksafe.get(MIRROR_MIGRATION_MARKER, false) }.getOrDefault(false)
+        val migrationDone = runCatching { ksafe.safeGet(MIRROR_MIGRATION_MARKER, false) }.getOrDefault(false)
         if (!migrationDone) return
 
-        val dismissed = runCatching { ksafe.get(K_SUGGEST_DISMISSED, false) }.getOrDefault(false)
+        val dismissed = runCatching { ksafe.safeGet(K_SUGGEST_DISMISSED, false) }.getOrDefault(false)
         if (dismissed) return
-        val snoozeUntil = runCatching { ksafe.get(K_SUGGEST_SNOOZE, 0L) }.getOrDefault(0L)
+        val snoozeUntil = runCatching { ksafe.safeGet(K_SUGGEST_SNOOZE, 0L) }.getOrDefault(0L)
         if (snoozeUntil > timestampMs) return
 
         recentSlowEvents.clear()

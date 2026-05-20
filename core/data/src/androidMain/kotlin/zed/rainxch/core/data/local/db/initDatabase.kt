@@ -19,6 +19,7 @@ import zed.rainxch.core.data.local.db.migrations.MIGRATION_13_14
 import zed.rainxch.core.data.local.db.migrations.MIGRATION_14_15
 import zed.rainxch.core.data.local.db.migrations.MIGRATION_15_16
 import zed.rainxch.core.data.local.db.migrations.MIGRATION_16_17
+import zed.rainxch.core.data.local.db.migrations.MIGRATION_17_18
 
 fun initDatabase(context: Context): AppDatabase {
     val appContext = context.applicationContext
@@ -45,5 +46,7 @@ fun initDatabase(context: Context): AppDatabase {
             MIGRATION_14_15,
             MIGRATION_15_16,
             MIGRATION_16_17,
-        ).build()
+            MIGRATION_17_18,
+        ).fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
+        .build()
 }

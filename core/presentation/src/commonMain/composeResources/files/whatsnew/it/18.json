@@ -7,39 +7,40 @@
     {
       "type": "NEW",
       "bullets": [
-        "Installazione macOS con Homebrew — `brew install --cask github-store` dal nostro nuovo tap.",
-        "Aggiunto fastly.jsdelivr.net come mirror della community. Utile quando GitHub è limitato.",
-        "Aderito alla coalizione Keep Android Open — un banner in-app su Apps lo spiega.",
-        "L'accesso GitHub ora usa il flusso web standard — un tap, autorizza nel browser, fatto. Niente più codice a 8 cifre.",
-        "Tutte le preferenze e credenziali persistite ora sono cifrate (AES-256-GCM) tramite KSafe — token GitHub, credenziali proxy, impostazioni app, ID dispositivo, scelta mirror, tutti i coachmark, cache annunci. Keystore hardware su Android. I dati esistenti migrano automaticamente al primo avvio."
+        "Supporto Codeberg + Forgejo + Gitea. Incolla un URL Codeberg / Forgejo o aggiungi il tuo host self-hosted sotto Tweaks → Rete. Dettagli, install, aggiornamenti, ricerca — tutto collegato.",
+        "Installazione macOS con Homebrew: `brew install --cask github-store`.",
+        "Accesso GitHub usa il flusso web standard — niente più codice a 8 cifre.",
+        "Preferenze e credenziali cifrate AES-256-GCM via KSafe (Keystore hardware su Android). Migrazione al primo avvio.",
+        "Mirror fastly.jsdelivr.net per GitHub limitato.",
+        "Aderito alla coalizione Keep Android Open — banner lo spiega."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "I chip di piattaforma nei dettagli del repo ora aprono Search filtrato per quella piattaforma — prima erano inerti.",
-        "Il pulsante di ricerca della tastiera ora attiva la ricerca su Android 12 con gli IME cinesi.",
-        "Il repo collegato esternamente ora mostra un banner sui Dettagli con un tap per scollegare.",
-        "Il login apre l'URL del codice precompilato e copia un codice facile da incollare.",
-        "Crash su Android 16 / ROM personalizzate in Impostazioni e download — ripiega su archiviazione interna quando quella esterna è bloccata.",
-        "Rilevamento di Magisk / KernelSU / APatch su Android 13+ — la sonda precedente era mascherata da SELinux.",
-        "L'etichetta della variante fissata nei Dettagli si aggiorna tra le release — i vecchi numeri beta/rc non restano più nel chip.",
-        "README e note di rilascio non tornano più in cima quando scorri via e poi torni — l'altezza misurata ora persiste tra le rimozioni dal viewport."
+        "Chip di piattaforma su Dettagli aprono Search filtrato (erano inerti).",
+        "Pulsante di ricerca della tastiera funziona su Android 12 con IME cinesi.",
+        "Repo collegato esternamente mostra banner sui Dettagli con un tap per scollegare.",
+        "Login apre URL del codice precompilato + copia codice facile da incollare.",
+        "Crash Android 16 / ROM personalizzate su Impostazioni + download — ripiega su archiviazione interna.",
+        "Rilevamento Magisk / KernelSU / APatch su Android 13+ (sonda mascherata da SELinux).",
+        "Etichetta variante fissata si aggiorna — niente più numeri beta/rc obsoleti.",
+        "README / note di rilascio conservano la posizione di scroll oltre le rimozioni dal viewport."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "Collegamento manuale di app — ordinate per origine di installazione (F-Droid / Obtainium per primi, Play Store e aggiornamenti di sistema per ultimi) con un chip che mostra l'origine di ogni app.",
-        "Il collegamento manuale ora suggerisce automaticamente repo GitHub corrispondenti — scegli un'app, ottieni candidati classificati, tocca per collegare. L'inserimento manuale dell'URL resta disponibile.",
-        "Avvisi stile GitHub in README e note di rilascio — Note, Tip, Important, Warning, Caution ora si vedono come card colorate con icone invece di testo letterale.",
-        "Codici emoji in README e note di rilascio — :rocket: ora appare come 🚀, :tada: come 🎉, e ~250 altri.",
-        "Le immagini SVG in README e note di rilascio ora si renderizzano nativamente (diagrammi, hero). Le immagini per tema rispettano chiaro/scuro. User-Agent da browser sblocca i badge CDN.",
-        "I blocchi di codice in README e note di rilascio hanno l'evidenziazione della sintassi — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell e altri. Colori adattati a chiaro/scuro.",
-        "Rifinitura Markdown — blockquote HTML e <pre><code> renderizzano correttamente. Sub/apice in Unicode (H₂O, x²). Entità HTML nominate (©, ™, —, virgolette curve) decodificate.",
-        "Sezioni <details>/<summary> espandibili come card tap-to-expand. Immagini di badge/pulsante adiacenti (Play Store, GitHub Releases, ecc.) scorrono su una riga invece di impilarsi.",
-        "Il collegamento manuale delle app non richiede più il re-download — la versione che scegli viene accettata così com'è. Un banner sui Dettagli segnala quando un'app è stata collegata manualmente.",
-        "Ordinamento per sezione — Installate (aggiornamenti, recenza, nome), Con stella (recenza, nome, stelle), Preferiti (recenza, nome); ogni sezione ricorda la propria scelta."
+        "Foglio di collegamento manuale ordinato per origine di installazione (F-Droid / Obtainium per primi, aggiornamenti di sistema per ultimi) con chip di origine per app.",
+        "Smart match suggerisce repo classificati su GitHub + Codeberg + forge personalizzate.",
+        "Avvisi GFM (Note / Tip / Important / Warning / Caution) come card colorate.",
+        "Codici emoji — :rocket: → 🚀 (~250 coperti).",
+        "Immagini SVG renderizzate nativamente. Immagini per tema rispettano chiaro/scuro. UA browser sblocca i badge CDN.",
+        "Blocchi di codice evidenziati (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, adattato al tema).",
+        "Rifinitura Markdown — blockquote HTML e `<pre><code>` renderizzano, sub/apice → unicode, entità HTML decodificate.",
+        "Sezioni `<details>` espandibili come card tap-to-expand. Righe di immagini badge/pulsante scorrono in linea.",
+        "Collegamento manuale si fida della tua versione — nessun re-download per verificare.",
+        "Ordinamento per sezione — Installate, Con stella, Preferiti ricordano ognuno la propria scelta."
       ]
     }
   ]

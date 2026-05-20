@@ -120,6 +120,7 @@ data class InstalledApp(
      * release lands so the user gets re-notified next cycle.
      */
     val skippedReleaseTag: String? = null,
+    val sourceHost: String? = null,
 )
 
 /**

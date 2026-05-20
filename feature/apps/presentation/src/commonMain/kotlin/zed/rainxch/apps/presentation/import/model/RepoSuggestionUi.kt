@@ -7,6 +7,10 @@ data class RepoSuggestionUi(
     val source: SuggestionSource,
     val stars: Int? = null,
     val description: String? = null,
+    // Non-null when the suggestion lives on a non-GitHub forge.
+    // Carries through from import paste / smart-match to the linker
+    // so the row is actually stored against the right host.
+    val sourceHost: String? = null,
 ) {
     val ownerSlashRepo: String get() = "$owner/$repo"
 }

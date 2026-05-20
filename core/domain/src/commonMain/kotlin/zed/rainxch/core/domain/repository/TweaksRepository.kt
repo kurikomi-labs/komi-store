@@ -206,4 +206,10 @@ interface TweaksRepository {
     fun getFavouritesSortRule(): Flow<String?>
 
     suspend fun setFavouritesSortRule(name: String)
+
+    fun getCustomForgeHosts(): Flow<Set<String>>
+
+    suspend fun addCustomForgeHost(host: String)
+
+    suspend fun removeCustomForgeHost(host: String)
 }

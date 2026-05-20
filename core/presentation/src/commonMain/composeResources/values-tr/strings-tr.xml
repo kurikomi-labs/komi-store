@@ -952,6 +952,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">Özel forgeler</string>
+    <string name="custom_forges_entry_subtitle">GHS'in tanımasını istediğin Forgejo / Gitea hostlarını ekle</string>
+    <string name="custom_forges_count_label">%1$d eklendi</string>
+    <string name="custom_forges_dialog_title">Özel forgeler</string>
+    <string name="custom_forges_dialog_help">Bir Forgejo veya Gitea örneğinin host adını gir (örn. git.example.com). GHS, manuel bağlama sayfasında bu hostlardan URL kabul eder.</string>
+    <string name="custom_forges_add_button">Ekle</string>
+    <string name="custom_forges_empty">Henüz özel forge yok.</string>
+    <string name="done">Bitti</string>
+
     <string name="mirror_tweaks_entry_label">İndirme Aynası</string>
     <string name="mirror_picker_title">İndirme Aynası</string>
     <string name="mirror_picker_description">Sürüm dosyalarını indirmek için kullanılır. GitHub API çağrıları her zaman doğrudan gider. Çoğu kullanıcı bunu Doğrudan GitHub olarak bırakmalıdır.</string>

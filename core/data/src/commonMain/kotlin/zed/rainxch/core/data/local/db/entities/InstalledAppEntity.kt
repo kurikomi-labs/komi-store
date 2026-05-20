@@ -167,4 +167,6 @@ data class InstalledAppEntity(
      */
     @ColumnInfo(defaultValue = "NULL")
     val skippedReleaseTag: String? = null,
+    @ColumnInfo(defaultValue = "NULL")
+    val sourceHost: String? = null,
 )

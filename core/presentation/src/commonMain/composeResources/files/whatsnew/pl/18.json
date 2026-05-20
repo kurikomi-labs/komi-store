@@ -7,39 +7,40 @@
     {
       "type": "NEW",
       "bullets": [
-        "Instalacja na macOS przez Homebrew — `brew install --cask github-store` z naszego nowego tap.",
-        "Dodano fastly.jsdelivr.net jako mirror społeczności. Przydatne, gdy GitHub jest ograniczony.",
-        "Dołączyliśmy do koalicji Keep Android Open — baner w Apps wyjaśnia dlaczego.",
-        "Logowanie GitHub używa teraz standardowego przepływu webowego — tap, autoryzacja w przeglądarce, gotowe. Bez 8-cyfrowego kodu.",
-        "Wszystkie zapisane preferencje i dane uwierzytelniające są teraz szyfrowane (AES-256-GCM) przez KSafe — tokeny GitHub, dane proxy, ustawienia aplikacji, ID urządzenia, wybór mirror'a, wszystkie coachmarki, cache ogłoszeń. Sprzętowy Keystore na Androidzie. Istniejące dane migrują automatycznie przy pierwszym uruchomieniu."
+        "Wsparcie Codeberg + Forgejo + Gitea. Wklej URL Codeberg / Forgejo lub dodaj własny host pod Tweaks → Sieć. Szczegóły, install, aktualizacje, wyszukiwanie — wszystko podłączone.",
+        "Instalacja na macOS przez Homebrew: `brew install --cask github-store`.",
+        "Logowanie GitHub używa standardowego przepływu webowego — bez 8-cyfrowego kodu.",
+        "Preferencje i dane uwierzytelniające szyfrowane AES-256-GCM przez KSafe (sprzętowy Keystore na Androidzie). Migracja przy pierwszym uruchomieniu.",
+        "Mirror fastly.jsdelivr.net dla ograniczonego GitHub.",
+        "Dołączyliśmy do koalicji Keep Android Open — baner wyjaśnia."
       ]
     },
     {
       "type": "FIXED",
       "bullets": [
-        "Kafelki platformy w szczegółach repo otwierają teraz Search z filtrem tej platformy — wcześniej nieaktywne.",
-        "Przycisk wyszukiwania klawiatury uruchamia teraz wyszukiwanie na Android 12 z chińskimi IME.",
-        "Zewnętrznie powiązane repo pokazuje teraz baner w Szczegółach z jednym kliknięciem rozłączenia.",
-        "Logowanie otwiera URL kodu z wstępnie wypełnionym kodem i kopiuje wersję przyjazną do wklejania.",
-        "Crash na Android 16 / niestandardowych ROM-ach w Ustawieniach i pobieraniu — przełącza na pamięć wewnętrzną, gdy zewnętrzna jest zablokowana.",
-        "Wykrywanie Magisk / KernelSU / APatch na Android 13+ — poprzednia sonda była maskowana przez SELinux.",
-        "Etykieta przypiętego wariantu w Szczegółach odświeża się między wydaniami — stare numery beta/rc nie utrzymują się już w chipie.",
-        "README i notatki wydania nie wracają już na początek po przewinięciu i powrocie — zmierzona wysokość jest teraz zachowywana między usunięciami z viewportu."
+        "Kafelki platformy w Szczegółach otwierają Search z filtrem (były nieaktywne).",
+        "Przycisk wyszukiwania klawiatury działa na Android 12 z chińskimi IME.",
+        "Zewnętrznie powiązane repo pokazuje baner w Szczegółach z jednym kliknięciem rozłączenia.",
+        "Logowanie otwiera URL kodu wstępnie wypełniony + kopiuje wersję przyjazną do wklejania.",
+        "Crash na Android 16 / niestandardowych ROM w Ustawieniach + pobieraniu — przełącza na pamięć wewnętrzną.",
+        "Wykrywanie Magisk / KernelSU / APatch na Android 13+ (sonda maskowana przez SELinux).",
+        "Etykieta przypiętego wariantu odświeża się — bez przestarzałych numerów beta/rc.",
+        "README / notatki wydania zachowują pozycję przewijania po usunięciu z viewportu."
       ]
     },
     {
       "type": "IMPROVED",
       "bullets": [
-        "Ręczne powiązywanie aplikacji — sortowane wg źródła instalatora (F-Droid / Obtainium na początku, Play Store i aktualizacje systemu na końcu) z chipem pokazującym źródło każdej aplikacji.",
-        "Ręczne powiązanie automatycznie proponuje pasujące repozytoria GitHub — wybierz aplikację, otrzymaj uszeregowanych kandydatów, dotknij, aby powiązać. Ręczne wpisanie URL nadal dostępne.",
-        "Wyróżnienia w stylu GitHub w README i notatkach wydania — Note, Tip, Important, Warning, Caution renderują się teraz jako kolorowe karty z ikonami zamiast surowego tekstu.",
-        "Skróty emoji w README i notatkach wydania — :rocket: pokazuje się jako 🚀, :tada: jako 🎉, łącznie ~250 skrótów.",
-        "Obrazy SVG w README i notatkach wydania renderują się teraz natywnie (diagramy, hero). Obrazy tylko-jasny/tylko-ciemny respektują motyw. Przeglądarkowy User-Agent odblokuje badge'e CDN.",
-        "Bloki kodu w README i notatkach wydania mają teraz podświetlanie składni — Kotlin, Java, Python, JS/TS, Rust, Swift, C#, Ruby, Shell i inne. Kolory dopasowane do trybu jasnego/ciemnego.",
-        "Szlif Markdown — blockquote HTML i bloki <pre><code> renderują się prawidłowo. Indeksy górne/dolne w Unicode (H₂O, x²). Nazwane encje HTML (©, ™, —, krzywe cudzysłowy) zdekodowane.",
-        "Rozwijane sekcje <details>/<summary> jako karty z tap-to-expand. Sąsiednie obrazy odznak/przycisków (Play Store, GitHub Releases itp.) płyną w jednym wierszu zamiast się układać.",
-        "Ręczne powiązywanie aplikacji nie wymaga już ponownego pobrania — wybrana wersja jest akceptowana bez weryfikacji. Baner na Szczegółach pokazuje ręcznie powiązane aplikacje.",
-        "Sortowanie zależne od sekcji — Zainstalowane (aktualizacje, data, nazwa), Z gwiazdką (data, nazwa, gwiazdki), Ulubione (data, nazwa); każda sekcja pamięta swój wybór."
+        "Arkusz ręcznego powiązania sortuje wg źródła instalatora (F-Droid / Obtainium na początku, aktualizacje systemu na końcu) z chipem źródła dla aplikacji.",
+        "Smart match proponuje uszeregowane repo z GitHub + Codeberg + niestandardowe forge.",
+        "Wyróżnienia GFM (Note / Tip / Important / Warning / Caution) jako kolorowe karty.",
+        "Skróty emoji — :rocket: → 🚀 (~250 pokrytych).",
+        "Obrazy SVG renderują natywnie. Obrazy tematyczne respektują jasny/ciemny. UA przeglądarki odblokuje badge'e CDN.",
+        "Bloki kodu z podświetlaniem składni (Kotlin / Java / Python / JS/TS / Rust / Swift / C# / Ruby / Shell, dopasowane do motywu).",
+        "Szlif Markdown — blockquote HTML i `<pre><code>` renderują, indeksy → unicode, encje HTML zdekodowane.",
+        "Rozwijane sekcje `<details>` jako karty tap-to-expand. Wiersze obrazów odznak/przycisków płyną w linii.",
+        "Ręczne powiązanie ufa twojej wersji — bez ponownego pobierania do weryfikacji.",
+        "Sortowanie zależne od sekcji — Zainstalowane, Z gwiazdką, Ulubione pamiętają swój wybór."
       ]
     }
   ]
