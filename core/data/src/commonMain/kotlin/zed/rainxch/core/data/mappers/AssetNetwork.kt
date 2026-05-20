@@ -8,7 +8,10 @@ fun AssetNetwork.toDomain(): GithubAsset =
     GithubAsset(
         id = id,
         name = name,
-        contentType = contentType,
+        // Forgejo / Codeberg omits `content_type` on release assets;
+        // fall back to a reasonable default so installer / MIME-based
+        // classifiers don't NPE.
+        contentType = contentType ?: "application/octet-stream",
         size = size,
         downloadUrl = downloadUrl,
         uploader =

@@ -210,6 +210,12 @@ class TweaksViewModel(
                 }
             }
         }
+
+        viewModelScope.launch {
+            tweaksRepository.getCustomForgeHosts().collect { hosts ->
+                _state.update { it.copy(customForgeHosts = hosts) }
+            }
+        }
     }
 
     private fun loadProxyConfig() {
@@ -1020,6 +1026,69 @@ class TweaksViewModel(
 
             TweaksAction.OnReevaluateBatteryOptimizationCard -> {
                 evaluateBatteryOptimizationCard()
+            }
+
+            TweaksAction.OnOpenCustomForgesDialog -> {
+                _state.update {
+                    it.copy(
+                        showCustomForgesDialog = true,
+                        customForgeDraft = "",
+                        customForgeError = null,
+                    )
+                }
+            }
+
+            TweaksAction.OnDismissCustomForgesDialog -> {
+                _state.update { it.copy(showCustomForgesDialog = false) }
+            }
+
+            is TweaksAction.OnCustomForgeDraftChanged -> {
+                _state.update { it.copy(customForgeDraft = action.draft, customForgeError = null) }
+            }
+
+            TweaksAction.OnAddCustomForge -> {
+                val raw = _state.value.customForgeDraft
+                    .trim()
+                    .lowercase()
+                    .removePrefix("https://")
+                    .removePrefix("http://")
+                    .substringBefore('/')
+                if (raw.isEmpty() || !raw.contains('.') || raw.contains(' ')) {
+                    _state.update {
+                        it.copy(customForgeError = "Enter a valid hostname (e.g. forgejo.example.com).")
+                    }
+                    return
+                }
+                viewModelScope.launch {
+                    val result = runCatching { tweaksRepository.addCustomForgeHost(raw) }
+                    if (result.isSuccess) {
+                        _state.update { it.copy(customForgeDraft = "", customForgeError = null) }
+                    } else {
+                        // Surface persistence failure (KSafe write
+                        // rejected by hardware-backed Keystore, etc.)
+                        // instead of silently clearing the draft.
+                        _state.update {
+                            it.copy(
+                                customForgeError = result.exceptionOrNull()?.message
+                                    ?: "Couldn't save the host. Try again.",
+                            )
+                        }
+                    }
+                }
+            }
+
+            is TweaksAction.OnRemoveCustomForge -> {
+                viewModelScope.launch {
+                    val result = runCatching { tweaksRepository.removeCustomForgeHost(action.host) }
+                    if (result.isFailure) {
+                        _state.update {
+                            it.copy(
+                                customForgeError = result.exceptionOrNull()?.message
+                                    ?: "Couldn't remove the host. Try again.",
+                            )
+                        }
+                    }
+                }
             }
         }
     }

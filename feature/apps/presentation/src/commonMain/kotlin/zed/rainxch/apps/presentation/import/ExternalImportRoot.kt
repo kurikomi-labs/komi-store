@@ -156,6 +156,12 @@ fun ExternalImportRoot(
                         ImportProgressScreen(
                             phase = state.phase,
                             totalCandidates = state.totalCandidates,
+                            canSkip = state.isSkipAvailable &&
+                                (state.phase == ImportPhase.Scanning ||
+                                    state.phase == ImportPhase.AutoImporting),
+                            onSkip = {
+                                viewModel.onAction(ExternalImportAction.OnSkipLongScan)
+                            },
                         )
                     }
 

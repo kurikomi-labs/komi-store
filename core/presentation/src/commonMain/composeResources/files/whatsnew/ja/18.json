@@ -7,6 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
+        "Codeberg + Forgejo + Gitea 対応。Codeberg / Forgejo の URL を貼り付け、または設定 → ネットワークでセルフホスト先を追加。詳細、インストール、更新、検索 — すべて配線済み。",
         "Homebrew で macOS にインストール: `brew install --cask github-store`。",
         "GitHub サインインは標準のウェブフロー — 8桁コード不要。",
         "設定と認証情報を KSafe 経由で AES-256-GCM 暗号化（Android はハードウェア Keystore）。初回起動時に移行。",
@@ -31,7 +32,7 @@
       "type": "IMPROVED",
       "bullets": [
         "手動リンクシートをインストーラ別に並べ替え（F-Droid / Obtainium が先、システム更新が最後）し、入手元チップを表示。",
-        "Smart match がランク付きで GitHub リポを提案 — タップでリンク、手動 URL 入力も引き続き利用可能。",
+        "Smart match が GitHub + Codeberg + カスタムフォージのリポをランク付き提案。",
         "GFM アラート（Note / Tip / Important / Warning / Caution）を色付きカードで表示。",
         "絵文字ショートコード — :rocket: → 🚀（約 250 種類）。",
         "SVG 画像をネイティブ描画。テーマ別画像はライト／ダーク対応。ブラウザ UA で CDN バッジのホットリンク解除。",

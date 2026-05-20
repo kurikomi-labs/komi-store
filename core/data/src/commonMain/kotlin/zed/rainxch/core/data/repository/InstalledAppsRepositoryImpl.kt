@@ -40,6 +40,7 @@ class InstalledAppsRepositoryImpl(
     private val installer: Installer,
     private val clientProvider: GitHubClientProvider,
     private val backendApiClient: zed.rainxch.core.data.network.BackendApiClient,
+    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : InstalledAppsRepository {
     // Reads the current Ktor client at every call site so any proxy
     // change (ProxyManager rebuilds the client via [clientProvider])
@@ -126,7 +127,11 @@ class InstalledAppsRepositoryImpl(
         owner: String,
         repo: String,
         includePreReleases: Boolean,
+        sourceHost: String? = null,
     ): List<GithubRelease> {
+        if (sourceHost != null) {
+            return fetchForgejoReleaseWindow(sourceHost, owner, repo, includePreReleases)
+        }
         val backendResult = backendApiClient.getReleases(owner, repo, perPage = RELEASE_WINDOW)
         val backendReleases = backendResult.fold(
             onSuccess = { it },
@@ -370,6 +375,7 @@ class InstalledAppsRepositoryImpl(
                     owner = app.repoOwner,
                     repo = app.repoName,
                     includePreReleases = app.includePreReleases,
+                    sourceHost = app.sourceHost,
                 )
 
             if (releases.isEmpty()) {
@@ -808,4 +814,29 @@ class InstalledAppsRepositoryImpl(
     // `core.domain.util.VersionMath` so the periodic update check,
     // the external-install verdict in `PackageEventReceiver`, and any
     // future surfaces all share one comparator. See #378.
+
+    private suspend fun fetchForgejoReleaseWindow(
+        host: String,
+        owner: String,
+        repo: String,
+        includePreReleases: Boolean,
+    ): List<GithubRelease> {
+        val client = forgejoClientRegistry.clientFor(host)
+        return try {
+            val releases = client.getReleases(owner, repo, perPage = RELEASE_WINDOW).getOrNull()
+                ?: return emptyList()
+            releases
+                .asSequence()
+                .filter { it.draft != true }
+                .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
+                .map { it.toDomain() }
+                .filter { includePreReleases || !it.isEffectivelyPreRelease() }
+                .toList()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Logger.e { "Forgejo fetch failed for $host/$owner/$repo: ${e.message}" }
+            emptyList()
+        }
+    }
 }

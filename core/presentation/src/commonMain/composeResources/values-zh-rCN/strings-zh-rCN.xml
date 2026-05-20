@@ -912,6 +912,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">自定义代码托管</string>
+    <string name="custom_forges_entry_subtitle">添加你希望 GHS 识别的 Forgejo / Gitea 主机</string>
+    <string name="custom_forges_count_label">已添加 %1$d 个</string>
+    <string name="custom_forges_dialog_title">自定义代码托管</string>
+    <string name="custom_forges_dialog_help">输入 Forgejo 或 Gitea 实例的主机名（例如 git.example.com）。在手动关联表单中，GHS 将接受这些主机的链接。</string>
+    <string name="custom_forges_add_button">添加</string>
+    <string name="custom_forges_empty">尚无自定义代码托管。</string>
+    <string name="done">完成</string>
+
     <string name="mirror_tweaks_entry_label">下载镜像</string>
     <string name="mirror_picker_title">下载镜像</string>
     <string name="mirror_picker_description">用于下载发布资源。GitHub API 调用始终直接进行。大多数用户应保持"直连 GitHub"设置。</string>

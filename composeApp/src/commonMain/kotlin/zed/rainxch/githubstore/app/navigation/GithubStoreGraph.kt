@@ -26,6 +26,10 @@ sealed interface GithubStoreGraph {
         val owner: String = "",
         val repo: String = "",
         val isComingFromUpdate: Boolean = false,
+        // Non-null when the repo lives on a non-GitHub forge (Codeberg /
+        // Forgejo / Gitea / custom). Drives the foreign-source branch in
+        // DetailsViewModel so we hit the Forgejo API instead of GitHub.
+        val sourceHost: String? = null,
     ) : GithubStoreGraph
 
     @Serializable

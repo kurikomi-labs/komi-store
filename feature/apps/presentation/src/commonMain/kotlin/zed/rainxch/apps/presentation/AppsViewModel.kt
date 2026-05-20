@@ -347,7 +347,14 @@ class AppsViewModel(
 
             is AppsAction.OnNavigateToRepo -> {
                 viewModelScope.launch {
-                    _events.send(AppsEvent.NavigateToRepo(action.repoId))
+                    _events.send(
+                        AppsEvent.NavigateToRepo(
+                            repoId = action.repoId,
+                            sourceHost = action.sourceHost,
+                            owner = action.owner,
+                            repo = action.repo,
+                        ),
+                    )
                 }
             }
 
@@ -372,9 +379,10 @@ class AppsViewModel(
             }
 
             is AppsAction.OnLinkSuggestionSelected -> {
+                val baseHost = action.sourceHost ?: "github.com"
                 _state.update {
                     it.copy(
-                        repoUrl = "https://github.com/${action.owner}/${action.repo}",
+                        repoUrl = "https://$baseHost/${action.owner}/${action.repo}",
                         repoValidationError = null,
                     )
                 }
@@ -1852,15 +1860,22 @@ class AppsViewModel(
         val selectedApp = _state.value.selectedDeviceApp ?: return
         val url = _state.value.repoUrl.trim()
 
-        val parsed = parseGithubUrl(url)
-
         viewModelScope.launch {
-            if (parsed == null) {
+            val customHosts = runCatching {
+                tweaksRepository.getCustomForgeHosts().first()
+            }.getOrElse { emptySet() }
+            val parsedRef = zed.rainxch.core.domain.util.RepositoryUrlParser.parse(url, customHosts)
+            if (parsedRef == null) {
                 _state.update { it.copy(repoValidationError = getString(Res.string.invalid_github_url)) }
                 return@launch
             }
 
-            val (owner, repo) = parsed
+            val owner = parsedRef.owner
+            val repo = parsedRef.repo
+            val sourceHost: String? = when (val src = parsedRef.source) {
+                zed.rainxch.core.domain.model.RepositorySource.GitHub -> null
+                is zed.rainxch.core.domain.model.RepositorySource.Forgejo -> src.host
+            }
             _state.update {
                 it.copy(
                     isValidatingRepo = true,
@@ -1872,7 +1887,7 @@ class AppsViewModel(
             try {
                 _state.update { it.copy(linkValidationStatus = getString(Res.string.validating_repo)) }
 
-                val repoInfo = appsRepository.fetchRepoInfo(owner, repo)
+                val repoInfo = appsRepository.fetchRepoInfo(owner, repo, sourceHost)
                 if (repoInfo == null) {
                     _state.update {
                         it.copy(
@@ -1887,13 +1902,14 @@ class AppsViewModel(
                 _state.update {
                     it.copy(
                         fetchedRepoInfo = repoInfo.toUi(),
+                        linkSourceHost = sourceHost,
                         linkValidationStatus = getString(Res.string.checking_release),
                     )
                 }
 
                 val latestRelease =
                     try {
-                        appsRepository.getLatestRelease(owner, repo)
+                        appsRepository.getLatestRelease(owner, repo, sourceHost = sourceHost)
                     } catch (e: RateLimitException) {
                         throw e
                     } catch (e: Exception) {
@@ -1902,7 +1918,7 @@ class AppsViewModel(
                     }
 
                 if (latestRelease == null) {
-                    appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo)
+                    appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo, sourceHost = sourceHost)
                     _state.update {
                         it.copy(
                             isValidatingRepo = false,
@@ -1931,7 +1947,7 @@ class AppsViewModel(
                         .map { it.toUi() }
                         .toImmutableList()
                 if (installableAssets.isEmpty()) {
-                    appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo)
+                    appsRepository.linkAppToRepo(selectedApp.toDomain(), repoInfo, sourceHost = sourceHost)
                     _state.update {
                         it.copy(
                             isValidatingRepo = false,
@@ -2031,6 +2047,7 @@ class AppsViewModel(
                     pickedAssetName = asset.name,
                     pickedAssetSiblingCount = siblingCount,
                     pickedAssetIndex = pickedIndex,
+                    sourceHost = _state.value.linkSourceHost,
                 )
                 _state.update {
                     it.copy(

@@ -7,7 +7,10 @@ import kotlinx.serialization.Serializable
 data class AssetNetwork(
     @SerialName("id") val id: Long,
     @SerialName("name") val name: String,
-    @SerialName("content_type") val contentType: String,
+    // Optional: GitHub always emits this, Forgejo / Codeberg / Gitea
+    // releases payload omits it entirely. Defaulting to null lets the
+    // shared DTO deserialize against both shapes.
+    @SerialName("content_type") val contentType: String? = null,
     @SerialName("size") val size: Long,
     @SerialName("browser_download_url") val downloadUrl: String,
     @SerialName("uploader") val uploader: OwnerNetwork? = null,

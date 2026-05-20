@@ -94,6 +94,7 @@ data class AppsState(
     val isExternalImportInFlight: Boolean = false,
     // Keep Android Open campaign banner
     val showKaoBanner: Boolean = false,
+    val linkSourceHost: String? = null,
 ) {
     val filteredDeviceApps: ImmutableList<DeviceAppUi>
         get() {

@@ -943,6 +943,16 @@
     <string name="feedback_send_error">ফিডব্যাক চ্যানেল খোলা যায়নি: %1$s</string>
 
     <!-- E5 — Mirror feature -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">কাস্টম ফোর্জ</string>
+    <string name="custom_forges_entry_subtitle">GHS যেসব Forgejo / Gitea হোস্ট চিনবে যোগ করুন</string>
+    <string name="custom_forges_count_label">%1$d যোগ করা হয়েছে</string>
+    <string name="custom_forges_dialog_title">কাস্টম ফোর্জ</string>
+    <string name="custom_forges_dialog_help">Forgejo বা Gitea ইনস্ট্যান্সের হোস্টনেম দিন (যেমন git.example.com)। ম্যানুয়াল লিঙ্ক শিটে GHS এই হোস্টের URL গ্রহণ করবে।</string>
+    <string name="custom_forges_add_button">যোগ</string>
+    <string name="custom_forges_empty">এখনো কোনো কাস্টম ফোর্জ নেই।</string>
+    <string name="done">সম্পন্ন</string>
+
     <string name="mirror_tweaks_entry_label">ডাউনলোড মিরর</string>
     <string name="mirror_picker_title">ডাউনলোড মিরর</string>
     <string name="mirror_picker_description">রিলিজ অ্যাসেট ডাউনলোড করতে ব্যবহৃত। GitHub API কল সবসময় সরাসরি যায়। বেশিরভাগ ব্যবহারকারীর Direct GitHub-এ রাখা উচিত।</string>

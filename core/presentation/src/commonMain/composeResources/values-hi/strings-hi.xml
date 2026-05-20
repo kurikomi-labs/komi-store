@@ -954,6 +954,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">कस्टम फोर्ज</string>
+    <string name="custom_forges_entry_subtitle">जो Forgejo / Gitea होस्ट GHS पहचाने उन्हें जोड़ें</string>
+    <string name="custom_forges_count_label">%1$d जोड़े गए</string>
+    <string name="custom_forges_dialog_title">कस्टम फोर्ज</string>
+    <string name="custom_forges_dialog_help">Forgejo या Gitea इंस्टेंस का होस्टनेम डालें (जैसे git.example.com)। GHS मैन्युअल लिंक शीट में इन होस्ट के URL स्वीकार करेगा।</string>
+    <string name="custom_forges_add_button">जोड़ें</string>
+    <string name="custom_forges_empty">अभी कोई कस्टम फोर्ज नहीं।</string>
+    <string name="done">पूर्ण</string>
+
     <string name="mirror_tweaks_entry_label">डाउनलोड मिरर</string>
     <string name="mirror_picker_title">डाउनलोड मिरर</string>
     <string name="mirror_picker_description">रिलीज़ फ़ाइलें डाउनलोड करने के लिए उपयोग किया जाता है। GitHub API कॉल हमेशा सीधे जाते हैं। अधिकांश उपयोगकर्ताओं को इसे Direct GitHub पर छोड़ देना चाहिए।</string>

@@ -945,6 +945,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">사용자 포지</string>
+    <string name="custom_forges_entry_subtitle">GHS가 인식할 Forgejo / Gitea 호스트를 추가하세요</string>
+    <string name="custom_forges_count_label">%1$d개 추가됨</string>
+    <string name="custom_forges_dialog_title">사용자 포지</string>
+    <string name="custom_forges_dialog_help">Forgejo 또는 Gitea 인스턴스의 호스트명을 입력하세요 (예: git.example.com). 수동 연결 시트에서 이러한 호스트의 URL을 GHS가 받습니다.</string>
+    <string name="custom_forges_add_button">추가</string>
+    <string name="custom_forges_empty">아직 사용자 포지가 없습니다.</string>
+    <string name="done">완료</string>
+
     <string name="mirror_tweaks_entry_label">다운로드 미러</string>
     <string name="mirror_picker_title">다운로드 미러</string>
     <string name="mirror_picker_description">릴리스 파일 다운로드에 사용됩니다. GitHub API 호출은 항상 직접 이루어집니다. 대부분의 사용자는 GitHub 직접으로 두는 것이 좋습니다.</string>

@@ -7,6 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
+        "支持 Codeberg + Forgejo + Gitea。粘贴 Codeberg / Forgejo 链接，或在设置 → 网络添加自托管主机。详情、安装、更新、搜索 — 全部接通。",
         "Homebrew 安装 macOS：`brew install --cask github-store`。",
         "GitHub 登录改用标准网页流程 — 无需 8 位代码。",
         "偏好和凭据通过 KSafe 以 AES-256-GCM 加密（Android 使用硬件 Keystore）。首次启动时迁移。",
@@ -31,7 +32,7 @@
       "type": "IMPROVED",
       "bullets": [
         "手动关联表单按安装来源排序（F-Droid / Obtainium 在前，系统更新在后），每个应用带来源标签。",
-        "Smart match 推荐排序后的 GitHub 仓库 — 点击即可链接，仍支持手动输入 URL。",
+        "Smart match 跨 GitHub + Codeberg + 自定义代码托管推荐排序后的仓库。",
         "GFM 警示框（Note / Tip / Important / Warning / Caution）以彩色卡片呈现。",
         "Emoji 简写 — :rocket: → 🚀（约 250 种）。",
         "SVG 图片原生渲染。主题图片遵循浅色/深色。浏览器 UA 绕过 CDN 防盗链。",

@@ -180,10 +180,15 @@ fun DetailsRoot(
         }
     }
 
-    DetailsScreen(
-        state = state,
-        snackbarHostState = snackbarHostState,
-        onAction = { action ->
+    val onAction: (DetailsAction) -> Unit = remember(
+        viewModel,
+        coroutineScope,
+        snackbarHostState,
+        onNavigateBack,
+        onNavigateToDeveloperProfile,
+        onNavigateToSearchByPlatform,
+    ) {
+        { action ->
             when (action) {
                 DetailsAction.OnNavigateBackClick -> {
                     onNavigateBack()
@@ -207,7 +212,14 @@ fun DetailsRoot(
                     viewModel.onAction(action)
                 }
             }
-        },
+            Unit
+        }
+    }
+
+    DetailsScreen(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onAction = onAction,
     )
 
     state.downgradeWarning?.let { warning ->

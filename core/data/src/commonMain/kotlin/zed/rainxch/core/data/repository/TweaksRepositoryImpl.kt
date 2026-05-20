@@ -29,6 +29,10 @@ import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.data.secure.safeDelete
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safeGetFlow
+import zed.rainxch.core.data.secure.safePut
 
 class TweaksRepositoryImpl(
     private val ksafe: KSafe,
@@ -55,7 +59,7 @@ class TweaksRepositoryImpl(
 
     private inline fun <reified T> gatedGetFlow(key: String, default: T): Flow<T> = flow {
         migrationDeferred.await()
-        emitAll(ksafe.getFlow(key, default))
+        emitAll(ksafe.safeGetFlow(key, default))
     }
 
     override fun getThemeColor(): Flow<AppTheme> =
@@ -63,7 +67,7 @@ class TweaksRepositoryImpl(
 
     override suspend fun setThemeColor(theme: AppTheme) {
         migrationDeferred.await()
-        ksafe.put(K_THEME, theme.name)
+        ksafe.safePut(K_THEME, theme.name)
     }
 
     override fun getIsDarkTheme(): Flow<Boolean?> =
@@ -71,29 +75,29 @@ class TweaksRepositoryImpl(
 
     override suspend fun setDarkTheme(isDarkTheme: Boolean?) {
         migrationDeferred.await()
-        if (isDarkTheme == null) ksafe.delete(K_IS_DARK) else ksafe.put(K_IS_DARK, isDarkTheme)
+        if (isDarkTheme == null) ksafe.safeDelete(K_IS_DARK) else ksafe.safePut(K_IS_DARK, isDarkTheme)
     }
 
     override fun getAmoledTheme(): Flow<Boolean> = gatedGetFlow(K_AMOLED, false)
-    override suspend fun setAmoledTheme(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_AMOLED, enabled) }
+    override suspend fun setAmoledTheme(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_AMOLED, enabled) }
 
     override fun getFontTheme(): Flow<FontTheme> =
         gatedGetFlow(K_FONT, "").map { FontTheme.fromName(it.ifEmpty { null }) }
 
     override suspend fun setFontTheme(fontTheme: FontTheme) {
         migrationDeferred.await()
-        ksafe.put(K_FONT, fontTheme.name)
+        ksafe.safePut(K_FONT, fontTheme.name)
     }
 
     override fun getAutoDetectClipboardLinks(): Flow<Boolean> = gatedGetFlow(K_AUTO_DETECT_CLIPBOARD, false)
-    override suspend fun setAutoDetectClipboardLinks(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_AUTO_DETECT_CLIPBOARD, enabled) }
+    override suspend fun setAutoDetectClipboardLinks(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_AUTO_DETECT_CLIPBOARD, enabled) }
 
     override fun getInstallerType(): Flow<InstallerType> =
         gatedGetFlow(K_INSTALLER_TYPE, "").map { InstallerType.fromName(it.ifEmpty { null }) }
 
     override suspend fun setInstallerType(type: InstallerType) {
         migrationDeferred.await()
-        ksafe.put(K_INSTALLER_TYPE, type.name)
+        ksafe.safePut(K_INSTALLER_TYPE, type.name)
     }
 
     override fun getInstallerAttribution(): Flow<zed.rainxch.core.domain.model.InstallerAttribution> =
@@ -103,7 +107,7 @@ class TweaksRepositoryImpl(
         attribution: zed.rainxch.core.domain.model.InstallerAttribution,
     ) {
         migrationDeferred.await()
-        ksafe.put(K_INSTALLER_ATTRIBUTION, encodeInstallerAttribution(attribution))
+        ksafe.safePut(K_INSTALLER_ATTRIBUTION, encodeInstallerAttribution(attribution))
     }
 
     private fun decodeInstallerAttribution(
@@ -143,19 +147,19 @@ class TweaksRepositoryImpl(
     }
 
     override fun getAutoUpdateEnabled(): Flow<Boolean> = gatedGetFlow(K_AUTO_UPDATE, false)
-    override suspend fun setAutoUpdateEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_AUTO_UPDATE, enabled) }
+    override suspend fun setAutoUpdateEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_AUTO_UPDATE, enabled) }
 
     override fun getUpdateCheckEnabled(): Flow<Boolean> = gatedGetFlow(K_UPDATE_CHECK_ENABLED, true)
-    override suspend fun setUpdateCheckEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_UPDATE_CHECK_ENABLED, enabled) }
+    override suspend fun setUpdateCheckEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_UPDATE_CHECK_ENABLED, enabled) }
 
     override fun getUpdateCheckInterval(): Flow<Long> = gatedGetFlow(K_UPDATE_CHECK_INTERVAL, DEFAULT_UPDATE_CHECK_INTERVAL_HOURS)
-    override suspend fun setUpdateCheckInterval(hours: Long) { migrationDeferred.await(); ksafe.put(K_UPDATE_CHECK_INTERVAL, hours) }
+    override suspend fun setUpdateCheckInterval(hours: Long) { migrationDeferred.await(); ksafe.safePut(K_UPDATE_CHECK_INTERVAL, hours) }
 
     override fun getIncludePreReleases(): Flow<Boolean> = gatedGetFlow(K_INCLUDE_PRE_RELEASES, false)
-    override suspend fun setIncludePreReleases(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_INCLUDE_PRE_RELEASES, enabled) }
+    override suspend fun setIncludePreReleases(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_INCLUDE_PRE_RELEASES, enabled) }
 
     override fun getHideSeenEnabled(): Flow<Boolean> = gatedGetFlow(K_HIDE_SEEN_ENABLED, false)
-    override suspend fun setHideSeenEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_HIDE_SEEN_ENABLED, enabled) }
+    override suspend fun setHideSeenEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_HIDE_SEEN_ENABLED, enabled) }
 
     override fun getDiscoveryPlatforms(): Flow<Set<DiscoveryPlatform>> =
         gatedGetFlow<List<String>>(K_DISCOVERY_PLATFORMS, emptyList()).map { stored ->
@@ -166,38 +170,38 @@ class TweaksRepositoryImpl(
 
     override suspend fun setDiscoveryPlatforms(platforms: Set<DiscoveryPlatform>) {
         migrationDeferred.await()
-        ksafe.put(
+        ksafe.safePut(
             K_DISCOVERY_PLATFORMS,
             platforms.filter { it != DiscoveryPlatform.All }.map { it.name },
         )
     }
 
     override fun getScrollbarEnabled(): Flow<Boolean> = gatedGetFlow(K_SCROLLBAR_ENABLED, false)
-    override suspend fun setScrollbarEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_SCROLLBAR_ENABLED, enabled) }
+    override suspend fun setScrollbarEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_SCROLLBAR_ENABLED, enabled) }
 
     override fun getTelemetryEnabled(): Flow<Boolean> = gatedGetFlow(K_TELEMETRY_ENABLED, false)
-    override suspend fun setTelemetryEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_TELEMETRY_ENABLED, enabled) }
+    override suspend fun setTelemetryEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_TELEMETRY_ENABLED, enabled) }
 
     override fun getTranslationProvider(): Flow<TranslationProvider> =
         gatedGetFlow(K_TRANSLATION_PROVIDER, "").map { TranslationProvider.fromName(it.ifEmpty { null }) }
 
     override suspend fun setTranslationProvider(provider: TranslationProvider) {
         migrationDeferred.await()
-        ksafe.put(K_TRANSLATION_PROVIDER, provider.name)
+        ksafe.safePut(K_TRANSLATION_PROVIDER, provider.name)
     }
 
     override fun getYoudaoAppKey(): Flow<String> = gatedGetFlow(K_YOUDAO_APP_KEY, "")
     override suspend fun setYoudaoAppKey(appKey: String) {
         migrationDeferred.await()
         val trimmed = appKey.trim()
-        if (trimmed.isEmpty()) ksafe.delete(K_YOUDAO_APP_KEY) else ksafe.put(K_YOUDAO_APP_KEY, trimmed)
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_YOUDAO_APP_KEY) else ksafe.safePut(K_YOUDAO_APP_KEY, trimmed)
     }
 
     override fun getYoudaoAppSecret(): Flow<String> = gatedGetFlow(K_YOUDAO_APP_SECRET, "")
     override suspend fun setYoudaoAppSecret(appSecret: String) {
         migrationDeferred.await()
         val trimmed = appSecret.trim()
-        if (trimmed.isEmpty()) ksafe.delete(K_YOUDAO_APP_SECRET) else ksafe.put(K_YOUDAO_APP_SECRET, trimmed)
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_YOUDAO_APP_SECRET) else ksafe.safePut(K_YOUDAO_APP_SECRET, trimmed)
     }
 
     override fun getAppLanguage(): Flow<String?> =
@@ -209,9 +213,9 @@ class TweaksRepositoryImpl(
         migrationDeferred.await()
         val normalized = tag?.trim().orEmpty()
         if (normalized.isEmpty() || !AppLanguages.containsTag(normalized)) {
-            ksafe.delete(K_APP_LANGUAGE)
+            ksafe.safeDelete(K_APP_LANGUAGE)
         } else {
-            ksafe.put(K_APP_LANGUAGE, normalized)
+            ksafe.safePut(K_APP_LANGUAGE, normalized)
         }
     }
 
@@ -239,28 +243,28 @@ class TweaksRepositoryImpl(
     }
 
     override fun getExternalImportEnabled(): Flow<Boolean> = gatedGetFlow(K_EXTERNAL_IMPORT_ENABLED, true)
-    override suspend fun setExternalImportEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_EXTERNAL_IMPORT_ENABLED, enabled) }
+    override suspend fun setExternalImportEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_EXTERNAL_IMPORT_ENABLED, enabled) }
 
     override fun getExternalMatchSearchEnabled(): Flow<Boolean> = gatedGetFlow(K_EXTERNAL_MATCH_SEARCH_ENABLED, true)
-    override suspend fun setExternalMatchSearchEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_EXTERNAL_MATCH_SEARCH_ENABLED, enabled) }
+    override suspend fun setExternalMatchSearchEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_EXTERNAL_MATCH_SEARCH_ENABLED, enabled) }
 
     override fun getExternalImportBannerDismissedAtCount(): Flow<Int> = gatedGetFlow(K_EXTERNAL_IMPORT_BANNER_DISMISSED_AT, 0)
-    override suspend fun setExternalImportBannerDismissedAtCount(count: Int) { migrationDeferred.await(); ksafe.put(K_EXTERNAL_IMPORT_BANNER_DISMISSED_AT, count) }
+    override suspend fun setExternalImportBannerDismissedAtCount(count: Int) { migrationDeferred.await(); ksafe.safePut(K_EXTERNAL_IMPORT_BANNER_DISMISSED_AT, count) }
 
     override fun getKaoBannerDismissed(): Flow<Boolean> = gatedGetFlow(K_KAO_BANNER_DISMISSED, false)
-    override suspend fun setKaoBannerDismissed(dismissed: Boolean) { migrationDeferred.await(); ksafe.put(K_KAO_BANNER_DISMISSED, dismissed) }
+    override suspend fun setKaoBannerDismissed(dismissed: Boolean) { migrationDeferred.await(); ksafe.safePut(K_KAO_BANNER_DISMISSED, dismissed) }
 
     override fun getApkInspectCoachmarkShown(): Flow<Boolean> = gatedGetFlow(K_APK_INSPECT_COACHMARK_SHOWN, false)
-    override suspend fun setApkInspectCoachmarkShown(shown: Boolean) { migrationDeferred.await(); ksafe.put(K_APK_INSPECT_COACHMARK_SHOWN, shown) }
+    override suspend fun setApkInspectCoachmarkShown(shown: Boolean) { migrationDeferred.await(); ksafe.safePut(K_APK_INSPECT_COACHMARK_SHOWN, shown) }
 
     override fun getChannelChipCoachmarkShown(): Flow<Boolean> = gatedGetFlow(K_CHANNEL_CHIP_COACHMARK_SHOWN, false)
-    override suspend fun setChannelChipCoachmarkShown(shown: Boolean) { migrationDeferred.await(); ksafe.put(K_CHANNEL_CHIP_COACHMARK_SHOWN, shown) }
+    override suspend fun setChannelChipCoachmarkShown(shown: Boolean) { migrationDeferred.await(); ksafe.safePut(K_CHANNEL_CHIP_COACHMARK_SHOWN, shown) }
 
     override fun getShowAllPlatforms(): Flow<Boolean> = gatedGetFlow(K_SHOW_ALL_PLATFORMS, false)
-    override suspend fun setShowAllPlatforms(enabled: Boolean) { migrationDeferred.await(); ksafe.put(K_SHOW_ALL_PLATFORMS, enabled) }
+    override suspend fun setShowAllPlatforms(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_SHOW_ALL_PLATFORMS, enabled) }
 
     override fun getBatteryOptimizationPromptDismissed(): Flow<Boolean> = gatedGetFlow(K_BATTERY_OPT_PROMPT_DISMISSED, false)
-    override suspend fun setBatteryOptimizationPromptDismissed(dismissed: Boolean) { migrationDeferred.await(); ksafe.put(K_BATTERY_OPT_PROMPT_DISMISSED, dismissed) }
+    override suspend fun setBatteryOptimizationPromptDismissed(dismissed: Boolean) { migrationDeferred.await(); ksafe.safePut(K_BATTERY_OPT_PROMPT_DISMISSED, dismissed) }
 
     override fun getLastSeenWhatsNewVersionCode(): Flow<Int?> =
         gatedGetFlow<Int?>(K_LAST_SEEN_WHATS_NEW_VERSION_CODE, null)
@@ -268,9 +272,9 @@ class TweaksRepositoryImpl(
     override suspend fun setLastSeenWhatsNewVersionCode(versionCode: Int) {
         migrationDeferred.await()
         rmwLock.withLock {
-            val current = ksafe.get<Int?>(K_LAST_SEEN_WHATS_NEW_VERSION_CODE, null) ?: Int.MIN_VALUE
+            val current = ksafe.safeGet<Int?>(K_LAST_SEEN_WHATS_NEW_VERSION_CODE, null) ?: Int.MIN_VALUE
             if (versionCode > current) {
-                ksafe.put(K_LAST_SEEN_WHATS_NEW_VERSION_CODE, versionCode)
+                ksafe.safePut(K_LAST_SEEN_WHATS_NEW_VERSION_CODE, versionCode)
             }
         }
     }
@@ -281,8 +285,8 @@ class TweaksRepositoryImpl(
     override suspend fun addAnnouncementDismissedId(id: String) {
         migrationDeferred.await()
         rmwLock.withLock {
-            val current = ksafe.get<List<String>>(K_ANNOUNCEMENTS_DISMISSED_IDS, emptyList()).toSet()
-            ksafe.put(K_ANNOUNCEMENTS_DISMISSED_IDS, (current + id).toList())
+            val current = ksafe.safeGet<List<String>>(K_ANNOUNCEMENTS_DISMISSED_IDS, emptyList()).toSet()
+            ksafe.safePut(K_ANNOUNCEMENTS_DISMISSED_IDS, (current + id).toList())
         }
     }
 
@@ -292,8 +296,8 @@ class TweaksRepositoryImpl(
     override suspend fun addAnnouncementAcknowledgedId(id: String) {
         migrationDeferred.await()
         rmwLock.withLock {
-            val current = ksafe.get<List<String>>(K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS, emptyList()).toSet()
-            ksafe.put(K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS, (current + id).toList())
+            val current = ksafe.safeGet<List<String>>(K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS, emptyList()).toSet()
+            ksafe.safePut(K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS, (current + id).toList())
         }
     }
 
@@ -307,23 +311,23 @@ class TweaksRepositoryImpl(
     override suspend fun setAnnouncementCategoryMuted(category: AnnouncementCategory, muted: Boolean) {
         migrationDeferred.await()
         rmwLock.withLock {
-            val current = ksafe.get<List<String>>(K_ANNOUNCEMENTS_MUTED_CATEGORIES, emptyList()).toSet()
+            val current = ksafe.safeGet<List<String>>(K_ANNOUNCEMENTS_MUTED_CATEGORIES, emptyList()).toSet()
             val updated = if (muted) current + category.name else current - category.name
-            ksafe.put(K_ANNOUNCEMENTS_MUTED_CATEGORIES, updated.toList())
+            ksafe.safePut(K_ANNOUNCEMENTS_MUTED_CATEGORIES, updated.toList())
         }
     }
 
     override fun getAnnouncementsLastFetchedAt(): Flow<Long> = gatedGetFlow(K_ANNOUNCEMENTS_LAST_FETCHED_AT, 0L)
-    override suspend fun setAnnouncementsLastFetchedAt(epochMillis: Long) { migrationDeferred.await(); ksafe.put(K_ANNOUNCEMENTS_LAST_FETCHED_AT, epochMillis) }
+    override suspend fun setAnnouncementsLastFetchedAt(epochMillis: Long) { migrationDeferred.await(); ksafe.safePut(K_ANNOUNCEMENTS_LAST_FETCHED_AT, epochMillis) }
 
     override fun getAppsSortRule(): Flow<String?> = gatedGetFlow<String?>(K_APPS_SORT_RULE, null)
-    override suspend fun setAppsSortRule(name: String) { migrationDeferred.await(); ksafe.put(K_APPS_SORT_RULE, name) }
+    override suspend fun setAppsSortRule(name: String) { migrationDeferred.await(); ksafe.safePut(K_APPS_SORT_RULE, name) }
 
     override fun getStarredSortRule(): Flow<String?> = gatedGetFlow<String?>(K_STARRED_SORT_RULE, null)
-    override suspend fun setStarredSortRule(name: String) { migrationDeferred.await(); ksafe.put(K_STARRED_SORT_RULE, name) }
+    override suspend fun setStarredSortRule(name: String) { migrationDeferred.await(); ksafe.safePut(K_STARRED_SORT_RULE, name) }
 
     override fun getFavouritesSortRule(): Flow<String?> = gatedGetFlow<String?>(K_FAVOURITES_SORT_RULE, null)
-    override suspend fun setFavouritesSortRule(name: String) { migrationDeferred.await(); ksafe.put(K_FAVOURITES_SORT_RULE, name) }
+    override suspend fun setFavouritesSortRule(name: String) { migrationDeferred.await(); ksafe.safePut(K_FAVOURITES_SORT_RULE, name) }
 
     private fun legacyEntries(): List<MigrationEntry> = listOf(
         MigrationEntry(stringPreferencesKey("app_theme"), K_THEME),
@@ -363,7 +367,34 @@ class TweaksRepositoryImpl(
         MigrationEntry(stringPreferencesKey("apps_sort_rule"), K_APPS_SORT_RULE),
         MigrationEntry(stringPreferencesKey("starred_sort_rule"), K_STARRED_SORT_RULE),
         MigrationEntry(stringPreferencesKey("favourites_sort_rule"), K_FAVOURITES_SORT_RULE),
+        MigrationEntry(stringSetPreferencesKey("custom_forge_hosts"), K_CUSTOM_FORGE_HOSTS),
     )
+
+    override fun getCustomForgeHosts(): Flow<Set<String>> =
+        gatedGetFlow<List<String>>(K_CUSTOM_FORGE_HOSTS, emptyList()).map { stored ->
+            stored.mapNotNull { it.trim().lowercase().takeIf(String::isNotEmpty) }.toSet()
+        }
+
+    override suspend fun addCustomForgeHost(host: String) {
+        migrationDeferred.await()
+        val normalized = host.trim().lowercase()
+        if (normalized.isEmpty()) return
+        rmwLock.withLock {
+            val current = ksafe.safeGet<List<String>>(K_CUSTOM_FORGE_HOSTS, emptyList()).toSet()
+            ksafe.safePut(K_CUSTOM_FORGE_HOSTS, (current + normalized).toList())
+        }
+    }
+
+    override suspend fun removeCustomForgeHost(host: String) {
+        migrationDeferred.await()
+        val normalized = host.trim().lowercase()
+        if (normalized.isEmpty()) return
+        rmwLock.withLock {
+            val current = ksafe.safeGet<List<String>>(K_CUSTOM_FORGE_HOSTS, emptyList()).toSet()
+            if (normalized !in current) return@withLock
+            ksafe.safePut(K_CUSTOM_FORGE_HOSTS, (current - normalized).toList())
+        }
+    }
 
     companion object {
         private const val DEFAULT_UPDATE_CHECK_INTERVAL_HOURS = 6L
@@ -406,5 +437,6 @@ class TweaksRepositoryImpl(
         private const val K_APPS_SORT_RULE = "apps_sort_rule"
         private const val K_STARRED_SORT_RULE = "starred_sort_rule"
         private const val K_FAVOURITES_SORT_RULE = "favourites_sort_rule"
+        private const val K_CUSTOM_FORGE_HOSTS = "custom_forge_hosts"
     }
 }

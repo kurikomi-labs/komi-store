@@ -182,4 +182,10 @@ sealed interface TweaksAction {
      * screen.
      */
     data object OnReevaluateBatteryOptimizationCard : TweaksAction
+
+    data object OnOpenCustomForgesDialog : TweaksAction
+    data object OnDismissCustomForgesDialog : TweaksAction
+    data class OnCustomForgeDraftChanged(val draft: String) : TweaksAction
+    data object OnAddCustomForge : TweaksAction
+    data class OnRemoveCustomForge(val host: String) : TweaksAction
 }

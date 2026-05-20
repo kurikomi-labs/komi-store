@@ -50,6 +50,9 @@ sealed interface AppsAction {
 
     data class OnNavigateToRepo(
         val repoId: Long,
+        val sourceHost: String? = null,
+        val owner: String? = null,
+        val repo: String? = null,
     ) : AppsAction
 
     data class OnUninstallApp(
@@ -65,7 +68,15 @@ sealed interface AppsAction {
     data object OnDismissLinkSheet : AppsAction
     data class OnDeviceAppSearchChange(val query: String) : AppsAction
     data class OnDeviceAppSelected(val app: DeviceAppUi) : AppsAction
-    data class OnLinkSuggestionSelected(val owner: String, val repo: String) : AppsAction
+    data class OnLinkSuggestionSelected(
+        val owner: String,
+        val repo: String,
+        // Non-null when the suggestion came from a Forgejo / Codeberg /
+        // custom-forge search. Drives the URL the VM hands to the
+        // validate-and-link path so we don't navigate to github.com for
+        // a Forgejo repo.
+        val sourceHost: String? = null,
+    ) : AppsAction
     data object OnLinkEnterUrlManually : AppsAction
     data object OnRetryLinkSearch : AppsAction
     data class OnRepoUrlChanged(val url: String) : AppsAction

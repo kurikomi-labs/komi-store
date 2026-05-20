@@ -913,6 +913,7 @@
     <string name="external_import_progress_scanning">Scanning your apps…</string>
     <string name="external_import_progress_auto_importing">Importing matches…</string>
     <string name="external_import_progress_working">Working…</string>
+    <string name="external_import_progress_skip">Skip and review later</string>
     <plurals name="external_import_progress_subtitle_count">
         <item quantity="one">Looked at %1$d app</item>
         <item quantity="other">Looked at %1$d apps</item>
@@ -1056,6 +1057,17 @@
     <string name="feedback_send_success_email">Thanks — opening your mail client.</string>
     <string name="feedback_send_success_github">Thanks — opening your browser.</string>
     <string name="feedback_send_error">Couldn't open feedback channel: %1$s</string>
+
+    <!-- Tweaks feature - Custom forges -->
+    <string name="custom_forges_entry_label">Custom forges</string>
+    <string name="custom_forges_entry_subtitle">Add Forgejo / Gitea hosts you want GHS to recognise</string>
+    <string name="custom_forges_count_label">%1$d added</string>
+    <string name="custom_forges_dialog_title">Custom forges</string>
+    <string name="custom_forges_dialog_help">Enter the hostname of a Forgejo or Gitea instance (e.g. git.example.com). GHS will accept URLs from these hosts in the manual-link sheet.</string>
+    <string name="custom_forges_dialog_builtin_note">Codeberg, gitea.com and git.disroot.org are already searched by default — you don't need to add them here. Use this list only for your own self-hosted Forgejo or Gitea.</string>
+    <string name="custom_forges_add_button">Add</string>
+    <string name="custom_forges_empty">No custom forges yet.</string>
+    <string name="done">Done</string>
 
     <!-- Tweaks feature - Mirror -->
     <string name="mirror_tweaks_entry_label">Download Mirror</string>
@@ -1256,7 +1268,7 @@
     <string name="host_tokens_compose_will_connect">Will connect to %1$s</string>
     <string name="host_tokens_compose_detected">Detected: %1$s</string>
     <string name="host_tokens_compose_replace_hint">Leave blank to keep the existing token. Type a new value to replace it.</string>
-    <string name="host_tokens_oauth_coexistence">You\'re signed in to GitHub via the app — that\'s the recommended path. Add a token here only if browser sign-in won\'t work (restrictive network, no browser) or for forges other than GitHub.</string>
+    <string name="host_tokens_oauth_coexistence">You're signed in to GitHub via the app — that's the recommended path. Add a token here only if browser sign-in won't work (restrictive network, no browser) or for forges other than GitHub.</string>
     <string name="host_tokens_row_validate">Check</string>
     <string name="host_tokens_row_menu">More</string>
     <string name="host_tokens_row_edit_label">Edit label</string>
@@ -1270,5 +1282,5 @@
     <string name="host_tokens_compose_replace_title">Replace token for %1$s</string>
     <string name="host_tokens_compose_add_title">Add token</string>
     <string name="host_tokens_validation_failed_fallback">unknown error</string>
-    <string name="host_tokens_undo_failed">Couldn\'t restore token for %1$s</string>
+    <string name="host_tokens_undo_failed">Couldn't restore token for %1$s</string>
 </resources>

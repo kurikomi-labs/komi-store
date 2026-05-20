@@ -7,6 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
+        "Support Codeberg + Forgejo + Gitea. Colle une URL de Codeberg / Forgejo ou ajoute ton hôte auto-hébergé sous Tweaks → Réseau. Détails, install, mises à jour, recherche — tout est câblé.",
         "Installation macOS via Homebrew : `brew install --cask github-store`.",
         "Connexion GitHub utilise le flux web standard — plus de code à 8 chiffres.",
         "Préférences et identifiants chiffrés AES-256-GCM via KSafe (Keystore matériel sur Android). Migration au premier lancement.",
@@ -31,7 +32,7 @@
       "type": "IMPROVED",
       "bullets": [
         "Feuille de lien manuel triée par source d'installation (F-Droid / Obtainium d'abord, mises à jour système en dernier) avec chip de source par app.",
-        "Smart match suggère des dépôts GitHub classés — touche pour lier, saisie d'URL manuelle reste disponible.",
+        "Smart match suggère des dépôts classés sur GitHub + Codeberg + forges personnalisées.",
         "Encadrés d'alerte GFM (Note / Tip / Important / Warning / Caution) en cartes teintées.",
         "Raccourcis emoji — :rocket: → 🚀 (~250 couverts).",
         "Images SVG rendues nativement. Images à thème respectent clair/sombre. UA navigateur débloque les badges CDN.",

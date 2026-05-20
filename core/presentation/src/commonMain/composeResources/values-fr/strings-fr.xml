@@ -916,6 +916,16 @@
     <!-- ═══════════════════════════════════════════════════════════════
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
+    <!-- Tweaks - Custom forges -->
+    <string name="custom_forges_entry_label">Forges personnalisées</string>
+    <string name="custom_forges_entry_subtitle">Ajoute des hôtes Forgejo / Gitea que tu veux que GHS reconnaisse</string>
+    <string name="custom_forges_count_label">%1$d ajoutées</string>
+    <string name="custom_forges_dialog_title">Forges personnalisées</string>
+    <string name="custom_forges_dialog_help">Saisis le nom d'hôte d'une instance Forgejo ou Gitea (ex. git.example.com). GHS acceptera les URLs de ces hôtes dans le formulaire de liaison manuelle.</string>
+    <string name="custom_forges_add_button">Ajouter</string>
+    <string name="custom_forges_empty">Aucune forge personnalisée pour l'instant.</string>
+    <string name="done">Terminé</string>
+
     <string name="mirror_tweaks_entry_label">Miroir de téléchargement</string>
     <string name="mirror_picker_title">Miroir de téléchargement</string>
     <string name="mirror_picker_description">Utilisé pour télécharger les fichiers de versions. Les appels à l'API GitHub passent toujours en direct. La plupart des utilisateurs devraient laisser ce paramètre sur GitHub direct.</string>

@@ -97,7 +97,12 @@ fun AppHeader(
                 modifier = Modifier.size(100.dp),
             ) {
                 CoilImage(
-                    imageModel = { author?.avatarUrl },
+                    // Fall back to `repository.owner.avatarUrl` when no
+                    // user profile was fetched — covers the Forgejo /
+                    // Codeberg path where we skip the GitHub-only
+                    // `/users/{login}` lookup, as well as transient
+                    // profile fetch failures on the GitHub path.
+                    imageModel = { author?.avatarUrl ?: repository.owner.avatarUrl },
                     modifier =
                         Modifier
                             .size(100.dp)

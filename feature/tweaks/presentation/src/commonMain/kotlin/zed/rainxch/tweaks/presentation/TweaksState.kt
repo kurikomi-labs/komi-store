@@ -68,6 +68,10 @@ data class TweaksState(
      * Drives the "Allow background updates" card in the Updates section.
      */
     val showBatteryOptimizationCard: Boolean = false,
+    val customForgeHosts: Set<String> = emptySet(),
+    val showCustomForgesDialog: Boolean = false,
+    val customForgeDraft: String = "",
+    val customForgeError: String? = null,
 ) {
     /** Effective provider to render as "selected" in the UI — draft
      *  overrides persisted when a pending selection is in flight. */

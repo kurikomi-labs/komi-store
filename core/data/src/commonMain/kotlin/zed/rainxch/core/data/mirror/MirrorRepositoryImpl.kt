@@ -35,6 +35,10 @@ import zed.rainxch.core.domain.model.MirrorType
 import zed.rainxch.core.domain.model.TrafficKind
 import zed.rainxch.core.domain.repository.MirrorRemoved
 import zed.rainxch.core.domain.repository.MirrorRepository
+import zed.rainxch.core.data.secure.safeDelete
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safeGetFlow
+import zed.rainxch.core.data.secure.safePut
 
 class MirrorRepositoryImpl(
     private val ksafe: KSafe,
@@ -72,7 +76,7 @@ class MirrorRepositoryImpl(
             }
             migrationDeferred.complete(Unit)
             _catalog.value = readCachedCatalogOrBundled()
-            val cachedAt = runCatching { ksafe.get(K_CACHED_AT, 0L) }.getOrDefault(0L)
+            val cachedAt = runCatching { ksafe.safeGet(K_CACHED_AT, 0L) }.getOrDefault(0L)
             if (Clock.System.now().toEpochMilliseconds() - cachedAt > cacheTtlMs) {
                 refreshCatalog()
             }
@@ -88,8 +92,8 @@ class MirrorRepositoryImpl(
                 val configs = response.mirrors.map { it.toDomain() }
                 val previousCatalog = _catalog.value
                 _catalog.value = configs
-                ksafe.put(K_CACHED_JSON, json.encodeToString(MirrorListResponse.serializer(), response))
-                ksafe.put(K_CACHED_AT, Clock.System.now().toEpochMilliseconds())
+                ksafe.safePut(K_CACHED_JSON, json.encodeToString(MirrorListResponse.serializer(), response))
+                ksafe.safePut(K_CACHED_AT, Clock.System.now().toEpochMilliseconds())
                 checkSelectedMirrorStillExists(fresh = configs, previous = previousCatalog)
             }.map { }
 
@@ -97,8 +101,8 @@ class MirrorRepositoryImpl(
         migrationDeferred.await()
         emitAll(
             combine(
-                ksafe.getFlow(K_PREFERRED, DIRECT_MIRROR_ID),
-                ksafe.getFlow(K_CUSTOM_TEMPLATE, ""),
+                ksafe.safeGetFlow(K_PREFERRED, DIRECT_MIRROR_ID),
+                ksafe.safeGetFlow(K_CUSTOM_TEMPLATE, ""),
             ) { id, template ->
                 when (id) {
                     DIRECT_MIRROR_ID -> MirrorPreference.Direct
@@ -114,16 +118,16 @@ class MirrorRepositoryImpl(
         migrationDeferred.await()
         when (pref) {
             MirrorPreference.Direct -> {
-                ksafe.put(K_PREFERRED, DIRECT_MIRROR_ID)
-                ksafe.delete(K_CUSTOM_TEMPLATE)
+                ksafe.safePut(K_PREFERRED, DIRECT_MIRROR_ID)
+                ksafe.safeDelete(K_CUSTOM_TEMPLATE)
             }
             is MirrorPreference.Selected -> {
-                ksafe.put(K_PREFERRED, pref.id)
-                ksafe.delete(K_CUSTOM_TEMPLATE)
+                ksafe.safePut(K_PREFERRED, pref.id)
+                ksafe.safeDelete(K_CUSTOM_TEMPLATE)
             }
             is MirrorPreference.Custom -> {
-                ksafe.put(K_PREFERRED, CUSTOM_MIRROR_ID_SENTINEL)
-                ksafe.put(K_CUSTOM_TEMPLATE, pref.template)
+                ksafe.safePut(K_PREFERRED, CUSTOM_MIRROR_ID_SENTINEL)
+                ksafe.safePut(K_CUSTOM_TEMPLATE, pref.template)
             }
         }
     }
@@ -132,16 +136,16 @@ class MirrorRepositoryImpl(
 
     override suspend fun snoozeAutoSuggest(forMs: Long) {
         migrationDeferred.await()
-        ksafe.put(K_SUGGEST_SNOOZE, Clock.System.now().toEpochMilliseconds() + forMs)
+        ksafe.safePut(K_SUGGEST_SNOOZE, Clock.System.now().toEpochMilliseconds() + forMs)
     }
 
     override suspend fun dismissAutoSuggestPermanently() {
         migrationDeferred.await()
-        ksafe.put(K_SUGGEST_DISMISSED, true)
+        ksafe.safePut(K_SUGGEST_DISMISSED, true)
     }
 
     private suspend fun readCachedCatalogOrBundled(): List<MirrorConfig> {
-        val cachedJson = runCatching { ksafe.get(K_CACHED_JSON, "") }.getOrDefault("")
+        val cachedJson = runCatching { ksafe.safeGet(K_CACHED_JSON, "") }.getOrDefault("")
         return if (cachedJson.isBlank()) {
             BundledMirrors.ALL
         } else {

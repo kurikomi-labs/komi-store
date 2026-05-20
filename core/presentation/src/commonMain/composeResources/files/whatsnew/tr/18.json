@@ -7,6 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
+        "Codeberg + Forgejo + Gitea desteği. Codeberg / Forgejo URL'sini yapıştır veya Ayarlar → Ağ altında kendi host'unu ekle. Detaylar, kurulum, güncellemeler, arama — tümü bağlı.",
         "Homebrew ile macOS kurulumu: `brew install --cask github-store`.",
         "GitHub girişi standart web akışını kullanır — 8 haneli kod yok.",
         "Tercihler ve kimlik bilgileri KSafe ile AES-256-GCM şifreli (Android'de donanım Keystore). İlk açılışta taşıma.",
@@ -31,7 +32,7 @@
       "type": "IMPROVED",
       "bullets": [
         "Manuel bağlama sayfası yükleyici kaynağına göre sıralı (önce F-Droid / Obtainium, en sonda sistem güncellemeleri), uygulama başına kaynak çipi.",
-        "Smart match sıralı GitHub depoları öneriyor — bağlamak için dokun, URL'yi manuel girme seçeneği de duruyor.",
+        "Smart match GitHub + Codeberg + özel forge'lardan sıralı depo öneriyor.",
         "GFM uyarıları (Note / Tip / Important / Warning / Caution) renkli kartlar olarak.",
         "Emoji kısayolları — :rocket: → 🚀 (~250 kapsanır).",
         "SVG görselleri doğrudan render. Temaya özel görseller açık/koyu'ya saygı duyar. Tarayıcı UA CDN rozet engelini aşar.",

@@ -15,6 +15,7 @@ interface DetailsRepository {
     suspend fun getRepositoryByOwnerAndName(
         owner: String,
         name: String,
+        sourceHost: String? = null,
     ): GithubRepoSummary
 
     suspend fun refreshRepository(
@@ -26,23 +27,27 @@ interface DetailsRepository {
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String? = null,
     ): GithubRelease?
 
     suspend fun getAllReleases(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String? = null,
     ): List<GithubRelease>
 
     suspend fun getReadme(
         owner: String,
         repo: String,
         defaultBranch: String,
+        sourceHost: String? = null,
     ): Triple<ReadmeContent, LanguageCode?, ReadmePath>?
 
     suspend fun getRepoStats(
         owner: String,
         repo: String,
+        sourceHost: String? = null,
     ): RepoStats
 
     suspend fun getUserProfile(username: String): GithubUserProfile

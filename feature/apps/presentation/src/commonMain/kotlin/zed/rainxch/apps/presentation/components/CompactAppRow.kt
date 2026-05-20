@@ -145,6 +145,7 @@ fun CompactAppRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
+                app.sourceHost?.let { SourceChip(host = it) }
                 Text(
                     text = app.installedVersion,
                     style = MaterialTheme.typography.bodySmall,

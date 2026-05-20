@@ -11,6 +11,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import zed.rainxch.core.domain.repository.DeviceIdentityRepository
+import zed.rainxch.core.data.secure.safeGet
+import zed.rainxch.core.data.secure.safePut
 
 @OptIn(ExperimentalUuidApi::class)
 class DeviceIdentityRepositoryImpl(
@@ -27,11 +29,11 @@ class DeviceIdentityRepositoryImpl(
             migrateIfNeeded()
             // Let read failures surface — a transient Keystore / DataStore
             // hiccup must not silently mint a new ID and orphan telemetry.
-            val existing = ksafe.get(DEVICE_ID_KEY, "")
+            val existing = ksafe.safeGet(DEVICE_ID_KEY, "")
             if (existing.isNotBlank()) return existing
 
             val generated = Uuid.random().toString()
-            ksafe.put(DEVICE_ID_KEY, generated)
+            ksafe.safePut(DEVICE_ID_KEY, generated)
             generated
         }
 
@@ -41,7 +43,7 @@ class DeviceIdentityRepositoryImpl(
             // if the user resets before the first getDeviceId() call.
             migrateIfNeeded()
             val next = Uuid.random().toString()
-            ksafe.put(DEVICE_ID_KEY, next)
+            ksafe.safePut(DEVICE_ID_KEY, next)
             // Reset semantics: any legacy copy must die too.
             runCatching {
                 legacyDataStore.edit { it.remove(stringPreferencesKey("anonymous_device_id")) }
@@ -51,7 +53,7 @@ class DeviceIdentityRepositoryImpl(
 
     private suspend fun migrateIfNeeded() {
         if (migrated) return
-        val existing = runCatching { ksafe.get(DEVICE_ID_KEY, "") }.getOrDefault("")
+        val existing = runCatching { ksafe.safeGet(DEVICE_ID_KEY, "") }.getOrDefault("")
         if (existing.isNotBlank()) {
             migrated = true
             return
@@ -64,8 +66,8 @@ class DeviceIdentityRepositoryImpl(
             migrated = true
             return
         }
-        val putResult = runCatching { ksafe.put(DEVICE_ID_KEY, legacy) }
-        if (putResult.isFailure) {
+        val putOk = ksafe.safePut(DEVICE_ID_KEY, legacy)
+        if (!putOk) {
             // Keep legacy intact for next attempt; do not flip marker.
             return
         }

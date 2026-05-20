@@ -101,8 +101,8 @@ fun LinkAppBottomSheet(
                     error = state.linkSearchError,
                     isValidating = state.isValidatingRepo,
                     validationStatus = state.linkValidationStatus,
-                    onSuggestionSelected = { owner, repo ->
-                        onAction(AppsAction.OnLinkSuggestionSelected(owner, repo))
+                    onSuggestionSelected = { owner, repo, sourceHost ->
+                        onAction(AppsAction.OnLinkSuggestionSelected(owner, repo, sourceHost))
                     },
                     onEnterUrlManually = { onAction(AppsAction.OnLinkEnterUrlManually) },
                     onRetry = { onAction(AppsAction.OnRetryLinkSearch) },
@@ -329,7 +329,7 @@ private fun SmartMatchStep(
     error: String?,
     isValidating: Boolean,
     validationStatus: String?,
-    onSuggestionSelected: (owner: String, repo: String) -> Unit,
+    onSuggestionSelected: (owner: String, repo: String, sourceHost: String?) -> Unit,
     onEnterUrlManually: () -> Unit,
     onRetry: () -> Unit,
     onBack: () -> Unit,
@@ -458,11 +458,22 @@ private fun SmartMatchStep(
                 ) {
                     items(
                         items = suggestions,
-                        key = { "${it.owner}/${it.repo}" },
+                        // Lists may now mix GitHub + Forgejo hits for
+                        // the same owner/repo slug across hosts —
+                        // include sourceHost in the key so identical
+                        // slugs on different forges render as distinct
+                        // rows.
+                        key = { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" },
                     ) { suggestion ->
                         SuggestionRow(
                             suggestion = suggestion,
-                            onClick = { onSuggestionSelected(suggestion.owner, suggestion.repo) },
+                            onClick = {
+                                onSuggestionSelected(
+                                    suggestion.owner,
+                                    suggestion.repo,
+                                    suggestion.sourceHost,
+                                )
+                            },
                         )
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
@@ -519,6 +530,9 @@ private fun SuggestionRow(
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Host badge — answers "where is this suggestion from".
+                HostBadge(suggestion.sourceHost)
+                Spacer(Modifier.width(6.dp))
                 MatchSourceChip(suggestion.source)
                 Spacer(Modifier.width(6.dp))
                 Text(
@@ -540,12 +554,55 @@ private fun SuggestionRow(
 }
 
 @Composable
+private fun HostBadge(sourceHost: String?) {
+    val (label, bg, fg) = when {
+        sourceHost == null ->
+            Triple(
+                "GitHub",
+                MaterialTheme.colorScheme.surfaceVariant,
+                MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        sourceHost.equals("codeberg.org", ignoreCase = true) ->
+            Triple(
+                "Codeberg",
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+        else ->
+            Triple(
+                sourceHost,
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+    }
+    Surface(
+        color = bg,
+        shape = RoundedCornerShape(6.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = fg,
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+        )
+    }
+}
+
+@Composable
 private fun MatchSourceChip(source: RepoMatchSource) {
     val label = when (source) {
         RepoMatchSource.MANIFEST -> stringResource(Res.string.match_source_manifest)
         RepoMatchSource.FINGERPRINT -> stringResource(Res.string.match_source_fingerprint)
         RepoMatchSource.SEARCH -> stringResource(Res.string.match_source_search)
         RepoMatchSource.MANUAL -> stringResource(Res.string.match_source_manual)
+        // Reuses the "search" string for now — distinguishing the
+        // forge in the chip would need a new translated label per
+        // locale, which can come later. The underlying source-host
+        // is what actually drives URL building and the row's source
+        // chip on the Details / Apps screen.
+        RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
     }
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
