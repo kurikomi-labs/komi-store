@@ -213,6 +213,27 @@ class TweaksRepositoryImpl(
         if (trimmed.isEmpty()) ksafe.safeDelete(K_YOUDAO_APP_SECRET) else ksafe.safePut(K_YOUDAO_APP_SECRET, trimmed)
     }
 
+    override fun getLibreTranslateBaseUrl(): Flow<String> = gatedGetFlow(K_LIBRE_BASE_URL, "")
+    override suspend fun setLibreTranslateBaseUrl(url: String) {
+        migrationDeferred.await()
+        val trimmed = url.trim()
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_LIBRE_BASE_URL) else ksafe.safePut(K_LIBRE_BASE_URL, trimmed)
+    }
+
+    override fun getLibreTranslateApiKey(): Flow<String> = gatedGetFlow(K_LIBRE_API_KEY, "")
+    override suspend fun setLibreTranslateApiKey(apiKey: String) {
+        migrationDeferred.await()
+        val trimmed = apiKey.trim()
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_LIBRE_API_KEY) else ksafe.safePut(K_LIBRE_API_KEY, trimmed)
+    }
+
+    override fun getDeeplAuthKey(): Flow<String> = gatedGetFlow(K_DEEPL_AUTH_KEY, "")
+    override suspend fun setDeeplAuthKey(authKey: String) {
+        migrationDeferred.await()
+        val trimmed = authKey.trim()
+        if (trimmed.isEmpty()) ksafe.safeDelete(K_DEEPL_AUTH_KEY) else ksafe.safePut(K_DEEPL_AUTH_KEY, trimmed)
+    }
+
     override fun getAppLanguage(): Flow<String?> =
         gatedGetFlow<String?>(K_APP_LANGUAGE, null).map { raw ->
             raw?.trim()?.takeIf { it.isNotEmpty() && AppLanguages.containsTag(it) }
@@ -427,6 +448,9 @@ class TweaksRepositoryImpl(
         private const val K_TRANSLATION_PROVIDER = "translation_provider"
         private const val K_YOUDAO_APP_KEY = "youdao_app_key"
         private const val K_YOUDAO_APP_SECRET = "youdao_app_secret"
+        private const val K_LIBRE_BASE_URL = "libre_translate_base_url"
+        private const val K_LIBRE_API_KEY = "libre_translate_api_key"
+        private const val K_DEEPL_AUTH_KEY = "deepl_auth_key"
         private const val K_APP_LANGUAGE = "app_language"
         private const val K_AUTO_TRANSLATE_ENABLED = "auto_translate_enabled"
         private const val K_AUTO_TRANSLATE_TARGET = "auto_translate_target_lang"

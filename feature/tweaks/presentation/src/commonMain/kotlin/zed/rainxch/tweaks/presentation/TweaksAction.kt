@@ -160,6 +160,26 @@ sealed interface TweaksAction {
 
     data object OnYoudaoCredentialsSave : TweaksAction
 
+    data class OnLibreTranslateBaseUrlChanged(
+        val url: String,
+    ) : TweaksAction
+
+    data class OnLibreTranslateApiKeyChanged(
+        val apiKey: String,
+    ) : TweaksAction
+
+    data object OnLibreTranslateApiKeyVisibilityToggle : TweaksAction
+
+    data object OnLibreTranslateCredentialsSave : TweaksAction
+
+    data class OnDeeplAuthKeyChanged(
+        val authKey: String,
+    ) : TweaksAction
+
+    data object OnDeeplAuthKeyVisibilityToggle : TweaksAction
+
+    data object OnDeeplCredentialsSave : TweaksAction
+
     data class OnAutoTranslateEnabledToggle(
         val enabled: Boolean,
     ) : TweaksAction

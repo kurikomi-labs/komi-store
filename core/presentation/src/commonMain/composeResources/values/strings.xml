@@ -910,6 +910,17 @@
     <string name="translation_youdao_app_secret">App Secret</string>
     <string name="translation_youdao_save">Save credentials</string>
     <string name="translation_youdao_saved">Youdao credentials saved</string>
+    <string name="translation_provider_libre">LibreTranslate</string>
+    <string name="translation_provider_deepl">DeepL</string>
+    <string name="translation_libre_help">Self-hosted = best privacy. Paste your LibreTranslate instance URL. API key is optional for open mirrors.</string>
+    <string name="translation_libre_base_url">Instance URL</string>
+    <string name="translation_libre_api_key">API key (optional)</string>
+    <string name="translation_libre_save">Save settings</string>
+    <string name="translation_libre_saved">LibreTranslate settings saved</string>
+    <string name="translation_deepl_help">Sign up at deepl.com/pro-api. Free tier keys end with :fx and use the free endpoint automatically. Pro tier keeps your text private; Free tier may use submitted text to improve models.</string>
+    <string name="translation_deepl_auth_key">Auth key</string>
+    <string name="translation_deepl_save">Save key</string>
+    <string name="translation_deepl_saved">DeepL key saved</string>
 
     <!-- E1: External import wizard -->
     <string name="external_import_top_bar_title">Import installed apps</string>

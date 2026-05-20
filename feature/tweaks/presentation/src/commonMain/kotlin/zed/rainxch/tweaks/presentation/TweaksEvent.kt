@@ -29,6 +29,10 @@ sealed interface TweaksEvent {
 
     data object OnYoudaoCredentialsSaved : TweaksEvent
 
+    data object OnLibreTranslateCredentialsSaved : TweaksEvent
+
+    data object OnDeeplCredentialsSaved : TweaksEvent
+
     /**
      * Fired on platforms where changing the UI language cannot be
      * applied in-place (currently Desktop — no `Activity.recreate()`

@@ -86,6 +86,18 @@ interface TweaksRepository {
 
     suspend fun setYoudaoAppSecret(appSecret: String)
 
+    fun getLibreTranslateBaseUrl(): Flow<String>
+
+    suspend fun setLibreTranslateBaseUrl(url: String)
+
+    fun getLibreTranslateApiKey(): Flow<String>
+
+    suspend fun setLibreTranslateApiKey(apiKey: String)
+
+    fun getDeeplAuthKey(): Flow<String>
+
+    suspend fun setDeeplAuthKey(authKey: String)
+
     /**
      * Selected UI language as a BCP 47 tag (e.g. `zh-CN`). Emits
      * `null` when the user hasn't picked one — which means "follow

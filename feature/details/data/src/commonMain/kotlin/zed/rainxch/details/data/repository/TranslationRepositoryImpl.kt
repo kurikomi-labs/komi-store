@@ -11,6 +11,8 @@ import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.details.data.translation.GoogleTranslator
 import zed.rainxch.details.data.translation.Translator
+import zed.rainxch.details.data.translation.DeeplTranslator
+import zed.rainxch.details.data.translation.LibreTranslator
 import zed.rainxch.details.data.translation.YoudaoTranslator
 import zed.rainxch.details.domain.model.TranslationResult
 import zed.rainxch.details.domain.repository.TranslationRepository
@@ -212,6 +214,24 @@ class TranslationRepositoryImpl(
                     json = json,
                     appKey = appKey,
                     appSecret = appSecret,
+                )
+            }
+            TranslationProvider.LIBRE_TRANSLATE -> {
+                val baseUrl = tweaksRepository.getLibreTranslateBaseUrl().first()
+                val apiKey = tweaksRepository.getLibreTranslateApiKey().first().takeIf { it.isNotBlank() }
+                LibreTranslator(
+                    httpClient = { httpClient },
+                    json = json,
+                    baseUrl = baseUrl,
+                    apiKey = apiKey,
+                )
+            }
+            TranslationProvider.DEEPL -> {
+                val authKey = tweaksRepository.getDeeplAuthKey().first()
+                DeeplTranslator(
+                    httpClient = { httpClient },
+                    json = json,
+                    authKey = authKey,
                 )
             }
         }

@@ -488,6 +488,21 @@ class TweaksViewModel(
                 _state.update { it.copy(youdaoAppSecret = appSecret) }
             }
         }
+        viewModelScope.launch {
+            tweaksRepository.getLibreTranslateBaseUrl().collect { url ->
+                _state.update { it.copy(libreTranslateBaseUrl = url) }
+            }
+        }
+        viewModelScope.launch {
+            tweaksRepository.getLibreTranslateApiKey().collect { apiKey ->
+                _state.update { it.copy(libreTranslateApiKey = apiKey) }
+            }
+        }
+        viewModelScope.launch {
+            tweaksRepository.getDeeplAuthKey().collect { authKey ->
+                _state.update { it.copy(deeplAuthKey = authKey) }
+            }
+        }
     }
 
     private fun evaluateBatteryOptimizationCard() {
@@ -951,6 +966,36 @@ class TweaksViewModel(
                             }
                         }
                     }
+                    TranslationProvider.LIBRE_TRANSLATE -> {
+                        val current = _state.value
+                        val hasCreds = current.libreTranslateBaseUrl.isNotBlank()
+                        if (hasCreds) {
+                            _state.update { it.copy(draftTranslationProvider = null) }
+                            viewModelScope.launch {
+                                tweaksRepository.setTranslationProvider(action.provider)
+                                _events.send(TweaksEvent.OnTranslationProviderSaved)
+                            }
+                        } else {
+                            _state.update {
+                                it.copy(draftTranslationProvider = TranslationProvider.LIBRE_TRANSLATE)
+                            }
+                        }
+                    }
+                    TranslationProvider.DEEPL -> {
+                        val current = _state.value
+                        val hasCreds = current.deeplAuthKey.isNotBlank()
+                        if (hasCreds) {
+                            _state.update { it.copy(draftTranslationProvider = null) }
+                            viewModelScope.launch {
+                                tweaksRepository.setTranslationProvider(action.provider)
+                                _events.send(TweaksEvent.OnTranslationProviderSaved)
+                            }
+                        } else {
+                            _state.update {
+                                it.copy(draftTranslationProvider = TranslationProvider.DEEPL)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -993,6 +1038,67 @@ class TweaksViewModel(
                     // the user emptied fields and cancelled implicitly.
                     _state.update { it.copy(draftTranslationProvider = null) }
                     _events.send(TweaksEvent.OnYoudaoCredentialsSaved)
+                }
+            }
+
+            is TweaksAction.OnLibreTranslateBaseUrlChanged -> {
+                _state.update { it.copy(libreTranslateBaseUrl = action.url) }
+            }
+
+            is TweaksAction.OnLibreTranslateApiKeyChanged -> {
+                _state.update { it.copy(libreTranslateApiKey = action.apiKey) }
+            }
+
+            TweaksAction.OnLibreTranslateApiKeyVisibilityToggle -> {
+                _state.update {
+                    it.copy(isLibreTranslateApiKeyVisible = !it.isLibreTranslateApiKeyVisible)
+                }
+            }
+
+            TweaksAction.OnLibreTranslateCredentialsSave -> {
+                val current = _state.value
+                viewModelScope.launch {
+                    tweaksRepository.setLibreTranslateBaseUrl(current.libreTranslateBaseUrl)
+                    tweaksRepository.setLibreTranslateApiKey(current.libreTranslateApiKey)
+                    val shouldActivate =
+                        current.libreTranslateBaseUrl.isNotBlank() &&
+                            (
+                                current.translationProvider != TranslationProvider.LIBRE_TRANSLATE ||
+                                    current.draftTranslationProvider == TranslationProvider.LIBRE_TRANSLATE
+                            )
+                    if (shouldActivate) {
+                        tweaksRepository.setTranslationProvider(TranslationProvider.LIBRE_TRANSLATE)
+                    }
+                    _state.update { it.copy(draftTranslationProvider = null) }
+                    _events.send(TweaksEvent.OnLibreTranslateCredentialsSaved)
+                }
+            }
+
+            is TweaksAction.OnDeeplAuthKeyChanged -> {
+                _state.update { it.copy(deeplAuthKey = action.authKey) }
+            }
+
+            TweaksAction.OnDeeplAuthKeyVisibilityToggle -> {
+                _state.update {
+                    it.copy(isDeeplAuthKeyVisible = !it.isDeeplAuthKeyVisible)
+                }
+            }
+
+            TweaksAction.OnDeeplCredentialsSave -> {
+                val current = _state.value
+                viewModelScope.launch {
+                    tweaksRepository.setDeeplAuthKey(current.deeplAuthKey)
+                    val shouldActivate =
+                        current.deeplAuthKey.isNotBlank() &&
+                            (
+                                current.translationProvider != TranslationProvider.DEEPL ||
+                                    current.draftTranslationProvider == TranslationProvider.DEEPL
+                            )
+                    if (shouldActivate) {
+                        tweaksRepository.setTranslationProvider(TranslationProvider.DEEPL)
+                    }
+                    _state.update { it.copy(draftTranslationProvider = null) }
+                    _events.send(TweaksEvent.OnDeeplCredentialsSaved)
                 }
             }
 
