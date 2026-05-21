@@ -115,7 +115,7 @@ fun AppNavigation(
                 ) {
                     composable<GithubStoreGraph.HomeScreen> {
                         HomeRoot(
-                            onNavigateToSearch = {
+                            onNavigateToSearch = { _ ->
                                 navController.navigate(GithubStoreGraph.SearchScreen())
                             },
                             onNavigateToSettings = {
