@@ -25,16 +25,18 @@ fun FreshnessRing(
     modifier: Modifier = Modifier,
     sizeDp: Int = 64,
     strokeDp: Float = if (sizeDp >= 60) 2.5f else 2f,
+    color: Color? = null,
     content: @Composable () -> Unit,
 ) {
     val f = freshnessOf(daysSinceRelease)
+    val ringColor = color ?: f.color
     val ringSize = sizeDp + 14
     Box(
         modifier = modifier.size(ringSize.dp),
         contentAlignment = Alignment.Center,
     ) {
         FreshnessArc(
-            color = f.color,
+            color = ringColor,
             fraction = f.ringFraction,
             strokeDp = strokeDp,
             modifier = Modifier.size(ringSize.dp),

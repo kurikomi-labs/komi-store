@@ -81,4 +81,15 @@ sealed interface GithubStoreGraph {
 
     @Serializable
     data object HostTokensScreen : GithubStoreGraph
+
+    /**
+     * Category-specific list view powering Home's "See all" jumps. `category` is
+     * a free-form string mapped to a [zed.rainxch.home.domain.model.HomeCategory]
+     * at the destination (no enum nav arg — same Desktop nav serializer caveat
+     * as [SearchScreen.initialPlatform]).
+     */
+    @Serializable
+    data class CategoryListScreen(
+        val category: String,
+    ) : GithubStoreGraph
 }

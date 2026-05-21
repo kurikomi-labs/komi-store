@@ -1,6 +1,7 @@
 package zed.rainxch.home.presentation.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +32,9 @@ import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.components.cards.LeadHeroCard
 import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
 import zed.rainxch.core.presentation.vocabulary.FreshnessRing
-import zed.rainxch.core.presentation.vocabulary.Heartbeat
 import zed.rainxch.core.presentation.vocabulary.StarTier
 import zed.rainxch.core.presentation.vocabulary.TopicGlyph
+import zed.rainxch.core.presentation.vocabulary.freshnessOf
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -50,18 +53,20 @@ fun LeadCard(
     )
     val days = daysSinceIso(r.updatedAt)
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(onClick = onClick, onLongClick = onLongClick),
     ) {
+        HotPill(days = days)
+        Spacer(Modifier.height(8.dp))
         LeadHeroCard(accent = accent, isDark = isDark) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                FreshnessRing(daysSinceRelease = days, sizeDp = 80) {
+                FreshnessRing(daysSinceRelease = days, sizeDp = 80, color = accent.c) {
                     GitHubStoreImage(
                         imageModel = { r.owner.avatarUrl },
                         modifier = Modifier.size(80.dp).clip(CircleShape),
@@ -93,7 +98,6 @@ fun LeadCard(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         StarTier(stars = r.stargazersCount)
-                        Heartbeat(daysSinceCommit = days)
                         r.topics.orEmpty().take(3).forEach { topic ->
                             TopicGlyph(topic = topic, sizeDp = 14)
                         }
@@ -127,4 +131,32 @@ internal fun ctaLabel(repo: DiscoveryRepositoryUi): String = when {
     repo.isUpdateAvailable -> "Update"
     repo.isInstalled -> "Open"
     else -> "Get"
+}
+
+@Composable
+private fun HotPill(days: Int) {
+    val freshness = zed.rainxch.core.presentation.vocabulary.freshnessOf(days)
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(freshness.color.copy(alpha = 0.18f))
+            .padding(horizontal = 12.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(freshness.color),
+        )
+        Text(
+            text = "HOT · ${days}d ago",
+            color = freshness.color,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 11.sp,
+            ),
+        )
+    }
 }

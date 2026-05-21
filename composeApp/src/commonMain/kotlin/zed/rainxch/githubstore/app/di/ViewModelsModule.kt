@@ -109,6 +109,12 @@ val viewModelsModule =
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::AnnouncementsViewModel)
         viewModelOf(::OnboardingViewModel)
+        viewModel { params ->
+            zed.rainxch.home.presentation.categorylist.CategoryListViewModel(
+                category = params.get(),
+                homeRepository = get(),
+            )
+        }
         viewModel {
             MirrorPickerViewModel(
                 mirrorRepository = get(),

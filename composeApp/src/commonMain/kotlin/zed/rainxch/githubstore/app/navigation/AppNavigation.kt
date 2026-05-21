@@ -115,7 +115,7 @@ fun AppNavigation(
                 ) {
                     composable<GithubStoreGraph.HomeScreen> {
                         HomeRoot(
-                            onNavigateToSearch = { _ ->
+                            onNavigateToSearch = {
                                 navController.navigate(GithubStoreGraph.SearchScreen())
                             },
                             onNavigateToSettings = {
@@ -126,16 +126,40 @@ fun AppNavigation(
                             },
                             onNavigateToDetails = { repoId ->
                                 navController.navigate(
-                                    GithubStoreGraph.DetailsScreen(
-                                        repositoryId = repoId,
-                                    ),
+                                    GithubStoreGraph.DetailsScreen(repositoryId = repoId),
                                 )
                             },
                             onNavigateToDeveloperProfile = { username ->
                                 navController.navigate(
-                                    GithubStoreGraph.DeveloperProfileScreen(
-                                        username = username,
-                                    ),
+                                    GithubStoreGraph.DeveloperProfileScreen(username = username),
+                                )
+                            },
+                            onNavigateToCategoryList = { category ->
+                                navController.navigate(
+                                    GithubStoreGraph.CategoryListScreen(category.name),
+                                )
+                            },
+                            onNavigateToStarredRepos = {
+                                navController.navigate(GithubStoreGraph.StarredReposScreen)
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.CategoryListScreen> { backStackEntry ->
+                        val args = backStackEntry.toRoute<GithubStoreGraph.CategoryListScreen>()
+                        val category =
+                            runCatching {
+                                zed.rainxch.home.domain.model.HomeCategory
+                                    .valueOf(args.category)
+                            }.getOrDefault(
+                                zed.rainxch.home.domain.model.HomeCategory.HOT_RELEASE,
+                            )
+                        zed.rainxch.home.presentation.categorylist.CategoryListRoot(
+                            category = category,
+                            onNavigateBack = { navController.navigateUp() },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(repositoryId = repoId),
                                 )
                             },
                         )

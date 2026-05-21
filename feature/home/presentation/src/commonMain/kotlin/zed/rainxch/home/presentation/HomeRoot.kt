@@ -67,10 +67,12 @@ import zed.rainxch.home.presentation.components.TrendingRowItem
 @Composable
 fun HomeRoot(
     onNavigateToSettings: () -> Unit,
-    onNavigateToSearch: (category: String?) -> Unit,
+    onNavigateToSearch: () -> Unit,
     onNavigateToApps: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
+    onNavigateToCategoryList: (zed.rainxch.home.domain.model.HomeCategory) -> Unit,
+    onNavigateToStarredRepos: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -95,13 +97,19 @@ fun HomeRoot(
         listState = listState,
         onAction = { action ->
             when (action) {
-                HomeAction.OnSearchClick -> onNavigateToSearch(null)
+                HomeAction.OnSearchClick -> onNavigateToSearch()
                 HomeAction.OnSettingsClick -> onNavigateToSettings()
                 HomeAction.OnAppsClick -> onNavigateToApps()
-                HomeAction.OnSeeAllHot -> onNavigateToSearch("hot")
-                HomeAction.OnSeeAllTrending -> onNavigateToSearch("trending")
-                HomeAction.OnSeeAllPopular -> onNavigateToSearch("popular")
-                HomeAction.OnSeeAllStarred -> onNavigateToSearch("starred")
+                HomeAction.OnSeeAllHot -> onNavigateToCategoryList(
+                    zed.rainxch.home.domain.model.HomeCategory.HOT_RELEASE,
+                )
+                HomeAction.OnSeeAllTrending -> onNavigateToCategoryList(
+                    zed.rainxch.home.domain.model.HomeCategory.TRENDING,
+                )
+                HomeAction.OnSeeAllPopular -> onNavigateToCategoryList(
+                    zed.rainxch.home.domain.model.HomeCategory.MOST_POPULAR,
+                )
+                HomeAction.OnSeeAllStarred -> onNavigateToStarredRepos()
                 is HomeAction.OnRepoClick -> onNavigateToDetails(action.repo.id)
                 is HomeAction.OnDeveloperClick -> onNavigateToDeveloperProfile(action.username)
                 else -> viewModel.onAction(action)
@@ -195,7 +203,14 @@ private fun FeedContent(
     val visibleStarred by visibleReposState(state, state.starred)
 
     val lead = visibleHot.firstOrNull()
-    val hotTail = visibleHot.drop(1)
+    // Limit sections on Home to keep the surface tight — full list lives in
+    // CategoryListScreen via "See all". Pick 6 as a balance between density
+    // and "skim-and-go" Home feel.
+    val homeLimit = 6
+    val hotTail = visibleHot.drop(1).take(homeLimit)
+    val trendingPreview = visibleTrending.take(homeLimit)
+    val popularPreview = visiblePopular.take(homeLimit)
+    val starredPreview = visibleStarred.take(5)
 
     val isScrollbarEnabled = LocalScrollbarEnabled.current
     ScrollbarContainer(
@@ -218,13 +233,6 @@ private fun FeedContent(
                 HomeTopBar(
                     onSearchClick = { onAction(HomeAction.OnSearchClick) },
                     onSettingsClick = { onAction(HomeAction.OnSettingsClick) },
-                    actions = {
-                        PlatformFilterAction(
-                            selectedPlatforms = state.selectedPlatforms,
-                            isPlatformPopupVisible = state.isPlatformPopupVisible,
-                            onAction = onAction,
-                        )
-                    },
                 )
             }
 
@@ -263,16 +271,16 @@ private fun FeedContent(
                 }
             }
 
-            if (visibleTrending.isNotEmpty()) {
+            if (trendingPreview.isNotEmpty()) {
                 item(key = "trending_header") {
                     SectionHeader(
                         title = "Trending now",
-                        subCount = visibleTrending.size.toString(),
+                        subCount = trendingPreview.size.toString(),
                         onSeeAll = { onAction(HomeAction.OnSeeAllTrending) },
                     )
                 }
                 itemsIndexed(
-                    items = visibleTrending,
+                    items = trendingPreview,
                     key = { _, repo -> "trending_${repo.repository.id}" },
                 ) { idx, repo ->
                     TrendingRowItem(
@@ -284,16 +292,16 @@ private fun FeedContent(
                 }
             }
 
-            if (visiblePopular.isNotEmpty()) {
+            if (popularPreview.isNotEmpty()) {
                 item(key = "popular_header") {
                     SectionHeader(
                         title = "Most popular",
-                        subCount = visiblePopular.size.toString(),
+                        subCount = popularPreview.size.toString(),
                         onSeeAll = { onAction(HomeAction.OnSeeAllPopular) },
                     )
                 }
                 itemsIndexed(
-                    items = visiblePopular,
+                    items = popularPreview,
                     key = { _, repo -> "popular_${repo.repository.id}" },
                 ) { idx, repo ->
                     PopularRowItem(
@@ -305,15 +313,15 @@ private fun FeedContent(
                 }
             }
 
-            if (state.isUserSignedIn && visibleStarred.isNotEmpty()) {
+            if (state.isUserSignedIn && starredPreview.isNotEmpty()) {
                 item(key = "starred_header") {
                     SectionHeader(
                         title = "From your stars",
-                        subCount = visibleStarred.size.toString(),
+                        subCount = starredPreview.size.toString(),
                         onSeeAll = { onAction(HomeAction.OnSeeAllStarred) },
                     )
                 }
-                items(items = visibleStarred, key = { "starred_${it.repository.id}" }) { repo ->
+                items(items = starredPreview, key = { "starred_${it.repository.id}" }) { repo ->
                     StarredRowItem(
                         repo = repo,
                         onClick = { onAction(HomeAction.OnRepoClick(repo.repository)) },
