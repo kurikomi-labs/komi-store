@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
 /**
- * Micro-pictogram per supported topic (DESIGN.md §4.2). Monochrome — never carries
- * an accent. Returns `null` (renders nothing) when the topic isn't in the supported
- * set or its alias map.
+ * Micro-pictogram per canonical topic code (DESIGN.md §4.2). Backend now emits a
+ * normalized topic-code set per repo (R12-v2); aliases are no longer resolved
+ * here. Monochrome — never carries the per-app accent. Renders nothing when
+ * [topic] isn't in the supported set ([Tokens.Topics.supported]).
  */
 @Composable
 fun TopicGlyph(
@@ -29,34 +30,197 @@ fun TopicGlyph(
     sizeDp: Int = 14,
     color: Color = LocalContentColor.current,
 ) {
-    val resolved = resolveTopic(topic) ?: return
+    val key = topic.lowercase()
+    if (key !in Tokens.Topics.supported) return
     Canvas(modifier = modifier.size(sizeDp.dp)) {
         val sw = 1.7f.dp.toPx()
         val stroke = Stroke(width = sw, cap = StrokeCap.Round, join = StrokeJoin.Round)
-        when (resolved) {
-            "self-hosted" -> drawSelfHosted(color, stroke)
-            "mobile" -> drawMobile(color, stroke)
-            "photo" -> drawPhoto(color, stroke)
-            "video" -> drawVideo(color, stroke)
-            "book" -> drawBook(color, stroke)
-            "manga" -> drawManga(color, stroke)
-            "key" -> drawKey(color, stroke)
+        when (key) {
+            "security" -> drawSecurity(color, stroke)
+            "networking" -> drawNetworking(color, stroke)
+            "ai" -> drawAi(color, stroke)
+            "notes" -> drawNotes(color, stroke)
             "audio" -> drawAudio(color)
-            "backup" -> drawBackup(color, stroke)
+            "video" -> drawVideo(color, stroke)
+            "photo" -> drawPhoto(color, stroke)
             "reader" -> drawReader(color, stroke)
-            "cross-platform" -> drawCrossPlatform(color, stroke)
-            "cloud" -> drawCloud(color, stroke)
+            "messaging" -> drawMessaging(color, stroke)
+            "browser" -> drawBrowser(color, stroke)
+            "self-hosted" -> drawSelfHosted(color, stroke)
+            "backup" -> drawBackup(color, stroke)
+            "social" -> drawSocial(color, stroke)
+            "launcher" -> drawLauncher(color)
         }
     }
 }
 
-private fun resolveTopic(topic: String): String? {
-    val key = topic.lowercase()
-    if (key in Tokens.Topics.supported) return key
-    return Tokens.Topics.aliases[key]
+private fun DrawScope.scaled(viewBoxValue: Float) = viewBoxValue / 24f * size.minDimension
+
+// ─────────────────────────────────────────────────────────────────────────────
+// New glyphs (7) — canonical R12-v2 topic codes
+// ─────────────────────────────────────────────────────────────────────────────
+
+private fun DrawScope.drawSecurity(c: Color, s: Stroke) {
+    // Padlock — shackle arc on top, body below.
+    val shackle = Path().apply {
+        moveTo(scaled(8f), scaled(11f))
+        lineTo(scaled(8f), scaled(8f))
+        cubicTo(scaled(8f), scaled(4f), scaled(16f), scaled(4f), scaled(16f), scaled(8f))
+        lineTo(scaled(16f), scaled(11f))
+    }
+    drawPath(shackle, c, style = s)
+    drawRoundRect(
+        color = c,
+        topLeft = Offset(scaled(5.5f), scaled(11f)),
+        size = Size(scaled(13f), scaled(9f)),
+        cornerRadius = CornerRadius(scaled(1.5f), scaled(1.5f)),
+        style = s,
+    )
+    // Keyhole dot
+    drawCircle(color = c, radius = scaled(1.3f), center = Offset(scaled(12f), scaled(15f)))
 }
 
-private fun DrawScope.scaled(viewBoxValue: Float) = viewBoxValue / 24f * size.minDimension
+private fun DrawScope.drawNetworking(c: Color, s: Stroke) {
+    // Three ascending WiFi-style arcs + dot
+    drawArc(
+        color = c,
+        startAngle = 215f,
+        sweepAngle = 110f,
+        useCenter = false,
+        topLeft = Offset(scaled(3f), scaled(7f)),
+        size = Size(scaled(18f), scaled(18f)),
+        style = s,
+    )
+    drawArc(
+        color = c,
+        startAngle = 215f,
+        sweepAngle = 110f,
+        useCenter = false,
+        topLeft = Offset(scaled(6f), scaled(10f)),
+        size = Size(scaled(12f), scaled(12f)),
+        style = s,
+    )
+    drawArc(
+        color = c,
+        startAngle = 215f,
+        sweepAngle = 110f,
+        useCenter = false,
+        topLeft = Offset(scaled(9f), scaled(13f)),
+        size = Size(scaled(6f), scaled(6f)),
+        style = s,
+    )
+    drawCircle(color = c, radius = scaled(1f), center = Offset(scaled(12f), scaled(19f)))
+}
+
+private fun DrawScope.drawAi(c: Color, s: Stroke) {
+    // 4-point spark (sparkle) + small companion dot
+    val spark = Path().apply {
+        moveTo(scaled(12f), scaled(3f))
+        lineTo(scaled(14f), scaled(10f))
+        lineTo(scaled(21f), scaled(12f))
+        lineTo(scaled(14f), scaled(14f))
+        lineTo(scaled(12f), scaled(21f))
+        lineTo(scaled(10f), scaled(14f))
+        lineTo(scaled(3f), scaled(12f))
+        lineTo(scaled(10f), scaled(10f))
+        close()
+    }
+    drawPath(spark, c, style = s)
+}
+
+private fun DrawScope.drawNotes(c: Color, s: Stroke) {
+    // Pencil over paper — paper rect + diagonal pencil
+    drawRoundRect(
+        color = c,
+        topLeft = Offset(scaled(4f), scaled(5f)),
+        size = Size(scaled(12f), scaled(16f)),
+        cornerRadius = CornerRadius(scaled(1.5f), scaled(1.5f)),
+        style = s,
+    )
+    val pencil = Path().apply {
+        moveTo(scaled(15f), scaled(8f))
+        lineTo(scaled(21f), scaled(2f))
+        lineTo(scaled(22.5f), scaled(3.5f))
+        lineTo(scaled(16.5f), scaled(9.5f))
+        close()
+    }
+    drawPath(pencil, c, style = s)
+    drawLine(
+        color = c,
+        start = Offset(scaled(7f), scaled(11f)),
+        end = Offset(scaled(13f), scaled(11f)),
+        strokeWidth = s.width,
+        cap = StrokeCap.Round,
+    )
+    drawLine(
+        color = c,
+        start = Offset(scaled(7f), scaled(15f)),
+        end = Offset(scaled(13f), scaled(15f)),
+        strokeWidth = s.width,
+        cap = StrokeCap.Round,
+    )
+}
+
+private fun DrawScope.drawMessaging(c: Color, s: Stroke) {
+    // Speech bubble — rounded rect + tail
+    drawRoundRect(
+        color = c,
+        topLeft = Offset(scaled(3f), scaled(4f)),
+        size = Size(scaled(18f), scaled(13f)),
+        cornerRadius = CornerRadius(scaled(2.5f), scaled(2.5f)),
+        style = s,
+    )
+    val tail = Path().apply {
+        moveTo(scaled(7f), scaled(17f))
+        lineTo(scaled(6f), scaled(21f))
+        lineTo(scaled(11f), scaled(17f))
+        close()
+    }
+    drawPath(tail, c, style = s)
+}
+
+private fun DrawScope.drawBrowser(c: Color, s: Stroke) {
+    // Compass — circle + needle (pointer)
+    drawCircle(color = c, radius = scaled(8f), center = Offset(scaled(12f), scaled(12f)), style = s)
+    val needle = Path().apply {
+        moveTo(scaled(12f), scaled(6f))
+        lineTo(scaled(14.5f), scaled(13f))
+        lineTo(scaled(12f), scaled(11.5f))
+        lineTo(scaled(9.5f), scaled(13f))
+        close()
+    }
+    drawPath(needle, c)
+}
+
+private fun DrawScope.drawSocial(c: Color, s: Stroke) {
+    // Two people — circles + shoulder arcs
+    drawCircle(color = c, radius = scaled(2.4f), center = Offset(scaled(9f), scaled(8f)), style = s)
+    drawCircle(color = c, radius = scaled(2.4f), center = Offset(scaled(16f), scaled(9f)), style = s)
+    val shoulderA = Path().apply {
+        moveTo(scaled(4.5f), scaled(20f))
+        cubicTo(scaled(4.5f), scaled(14f), scaled(13.5f), scaled(14f), scaled(13.5f), scaled(20f))
+    }
+    drawPath(shoulderA, c, style = s)
+    val shoulderB = Path().apply {
+        moveTo(scaled(11.5f), scaled(20f))
+        cubicTo(scaled(11.5f), scaled(15.5f), scaled(20.5f), scaled(15.5f), scaled(20.5f), scaled(20f))
+    }
+    drawPath(shoulderB, c, style = s)
+}
+
+private fun DrawScope.drawLauncher(c: Color) {
+    // 3×3 grid dots
+    val r = scaled(1.5f)
+    listOf(7f, 12f, 17f).forEach { cx ->
+        listOf(7f, 12f, 17f).forEach { cy ->
+            drawCircle(color = c, radius = r, center = Offset(scaled(cx), scaled(cy)))
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Existing glyphs (6) — kept verbatim
+// ─────────────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawSelfHosted(c: Color, s: Stroke) {
     val p = Path().apply {
@@ -68,23 +232,6 @@ private fun DrawScope.drawSelfHosted(c: Color, s: Stroke) {
         close()
     }
     drawPath(p, c, style = s)
-}
-
-private fun DrawScope.drawMobile(c: Color, s: Stroke) {
-    drawRoundRect(
-        color = c,
-        topLeft = Offset(scaled(7f), scaled(3f)),
-        size = Size(scaled(10f), scaled(18f)),
-        cornerRadius = CornerRadius(scaled(2f), scaled(2f)),
-        style = s,
-    )
-    drawLine(
-        color = c,
-        start = Offset(scaled(11f), scaled(18f)),
-        end = Offset(scaled(13f), scaled(18f)),
-        strokeWidth = s.width,
-        cap = StrokeCap.Round,
-    )
 }
 
 private fun DrawScope.drawPhoto(c: Color, s: Stroke) {
@@ -122,38 +269,6 @@ private fun DrawScope.drawVideo(c: Color, s: Stroke) {
     drawPath(triangle, c)
 }
 
-private fun DrawScope.drawBook(c: Color, s: Stroke) {
-    val p = Path().apply {
-        moveTo(scaled(4f), scaled(5f))
-        lineTo(scaled(12f), scaled(7f))
-        lineTo(scaled(20f), scaled(5f))
-        lineTo(scaled(20f), scaled(19f))
-        lineTo(scaled(12f), scaled(21f))
-        lineTo(scaled(4f), scaled(19f))
-        close()
-        moveTo(scaled(12f), scaled(7f))
-        lineTo(scaled(12f), scaled(21f))
-    }
-    drawPath(p, c, style = s)
-}
-
-private fun DrawScope.drawManga(c: Color, s: Stroke) {
-    drawRect(color = c, topLeft = Offset(scaled(4f), scaled(4f)), size = Size(scaled(7f), scaled(16f)), style = s)
-    drawRect(color = c, topLeft = Offset(scaled(13f), scaled(4f)), size = Size(scaled(7f), scaled(16f)), style = s)
-}
-
-private fun DrawScope.drawKey(c: Color, s: Stroke) {
-    drawCircle(color = c, radius = scaled(3.2f), center = Offset(scaled(8f), scaled(12f)), style = s)
-    val teeth = Path().apply {
-        moveTo(scaled(11.2f), scaled(12f))
-        lineTo(scaled(20f), scaled(12f))
-        lineTo(scaled(20f), scaled(16f))
-        moveTo(scaled(17f), scaled(12f))
-        lineTo(scaled(17f), scaled(14.5f))
-    }
-    drawPath(teeth, c, style = s)
-}
-
 private fun DrawScope.drawAudio(c: Color) {
     drawRect(color = c, topLeft = Offset(scaled(4f), scaled(10f)), size = Size(scaled(2.5f), scaled(8f)))
     drawRect(color = c, topLeft = Offset(scaled(10.75f), scaled(6f)), size = Size(scaled(2.5f), scaled(14f)))
@@ -185,33 +300,6 @@ private fun DrawScope.drawReader(c: Color, s: Stroke) {
         lineTo(scaled(18f), scaled(20f))
         lineTo(scaled(12f), scaled(17f))
         lineTo(scaled(6f), scaled(20f))
-        close()
-    }
-    drawPath(p, c, style = s)
-}
-
-private fun DrawScope.drawCrossPlatform(c: Color, s: Stroke) {
-    drawRoundRect(
-        color = c,
-        topLeft = Offset(scaled(3f), scaled(3f)),
-        size = Size(scaled(11f), scaled(11f)),
-        cornerRadius = CornerRadius(scaled(1.5f), scaled(1.5f)),
-        style = s,
-    )
-    drawRoundRect(
-        color = c,
-        topLeft = Offset(scaled(10f), scaled(10f)),
-        size = Size(scaled(11f), scaled(11f)),
-        cornerRadius = CornerRadius(scaled(1.5f), scaled(1.5f)),
-    )
-}
-
-private fun DrawScope.drawCloud(c: Color, s: Stroke) {
-    val p = Path().apply {
-        moveTo(scaled(7f), scaled(17f))
-        cubicTo(scaled(3f), scaled(17f), scaled(3f), scaled(9f), scaled(7f), scaled(9f))
-        cubicTo(scaled(7f), scaled(4f), scaled(17f), scaled(4f), scaled(17f), scaled(10f))
-        cubicTo(scaled(20.5f), scaled(10f), scaled(20.5f), scaled(17f), scaled(17f), scaled(17f))
         close()
     }
     drawPath(p, c, style = s)

@@ -289,21 +289,19 @@ object Tokens {
     }
 
     /**
-     * Topic glyphs supported by [TopicGlyph]. Aliases map non-canonical topic strings
-     * to a supported glyph (e.g. "password-manager" → "key").
+     * Canonical topic codes (14) emitted by the backend topic mapper. Frontend
+     * draws one glyph per code. Backend normalizes raw GitHub topics into this
+     * set — frontend does NOT keep an alias table anymore.
+     *
+     * If backend ships a code we don't have a glyph for yet, [TopicGlyph] silently
+     * renders nothing (graceful degrade until next frontend release).
      */
     object Topics {
         val supported = setOf(
-            "self-hosted", "mobile", "photo", "video", "book", "manga",
-            "key", "audio", "backup", "reader", "cross-platform", "cloud",
-        )
-        val aliases = mapOf(
-            "password-manager" to "key",
-            "podcast" to "audio",
-            "ebook" to "book",
-            "messaging" to "key",
-            "vpn" to "cloud",
-            "note" to "book",
+            "security", "networking", "ai", "notes",
+            "audio", "video", "photo", "reader",
+            "messaging", "browser", "self-hosted", "backup",
+            "social", "launcher",
         )
     }
 
