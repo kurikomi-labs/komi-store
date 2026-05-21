@@ -216,9 +216,6 @@ class TweaksRepositoryImpl(
         ksafe.safePut(K_CONTENT_WIDTH, width.name)
     }
 
-    override fun getTelemetryEnabled(): Flow<Boolean> = gatedGetFlow(K_TELEMETRY_ENABLED, false)
-    override suspend fun setTelemetryEnabled(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_TELEMETRY_ENABLED, enabled) }
-
     override fun getTranslationProvider(): Flow<TranslationProvider> =
         gatedGetFlow(K_TRANSLATION_PROVIDER, "").map { TranslationProvider.fromName(it.ifEmpty { null }) }
 
@@ -416,7 +413,6 @@ class TweaksRepositoryImpl(
         MigrationEntry(booleanPreferencesKey("include_pre_releases"), K_INCLUDE_PRE_RELEASES),
         MigrationEntry(booleanPreferencesKey("hide_seen_enabled"), K_HIDE_SEEN_ENABLED),
         MigrationEntry(booleanPreferencesKey("scrollbar_enabled"), K_SCROLLBAR_ENABLED),
-        MigrationEntry(booleanPreferencesKey("telemetry_enabled"), K_TELEMETRY_ENABLED),
         MigrationEntry(stringPreferencesKey("translation_provider"), K_TRANSLATION_PROVIDER),
         MigrationEntry(stringPreferencesKey("youdao_app_key"), K_YOUDAO_APP_KEY),
         MigrationEntry(stringPreferencesKey("youdao_app_secret"), K_YOUDAO_APP_SECRET),
@@ -486,7 +482,6 @@ class TweaksRepositoryImpl(
         private const val K_INCLUDE_PRE_RELEASES = "include_pre_releases"
         private const val K_HIDE_SEEN_ENABLED = "hide_seen_enabled"
         private const val K_SCROLLBAR_ENABLED = "scrollbar_enabled"
-        private const val K_TELEMETRY_ENABLED = "telemetry_enabled"
         private const val K_TRANSLATION_PROVIDER = "translation_provider"
         private const val K_YOUDAO_APP_KEY = "youdao_app_key"
         private const val K_YOUDAO_APP_SECRET = "youdao_app_secret"

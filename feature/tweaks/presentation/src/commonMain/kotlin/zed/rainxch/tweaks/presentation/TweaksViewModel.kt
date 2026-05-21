@@ -25,10 +25,8 @@ import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.core.domain.network.ProxyTestOutcome
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.network.ProxyTester
-import zed.rainxch.core.domain.repository.DeviceIdentityRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.InstallerStatusProvider
@@ -56,8 +54,6 @@ class TweaksViewModel(
     private val proxyTester: ProxyTester,
     private val updateScheduleManager: UpdateScheduleManager,
     private val seenReposRepository: SeenReposRepository,
-    private val deviceIdentityRepository: DeviceIdentityRepository,
-    private val telemetryRepository: TelemetryRepository,
     private val logger: GitHubStoreLogger,
     private val aggressiveOemDetector: AggressiveOemDetector,
 ) : ViewModel() {
@@ -106,7 +102,6 @@ class TweaksViewModel(
                     loadHideSeenEnabled()
                     loadScrollbarEnabled()
                     loadContentWidth()
-                    loadTelemetryEnabled()
                     loadTranslationSettings()
                     loadAppLanguage()
                     loadAutoTranslate()
@@ -458,16 +453,6 @@ class TweaksViewModel(
         viewModelScope.launch {
             tweaksRepository.getContentWidth().collect { width ->
                 _state.update { it.copy(contentWidth = width) }
-            }
-        }
-    }
-
-    private fun loadTelemetryEnabled() {
-        viewModelScope.launch {
-            tweaksRepository.getTelemetryEnabled().collect { enabled ->
-                _state.update {
-                    it.copy(isTelemetryEnabled = enabled)
-                }
             }
         }
     }
@@ -920,25 +905,6 @@ class TweaksViewModel(
                 _state.update { it.copy(isFeedbackSheetVisible = true) }
             TweaksAction.OnFeedbackDismiss ->
                 _state.update { it.copy(isFeedbackSheetVisible = false) }
-
-            is TweaksAction.OnTelemetryToggled -> {
-                viewModelScope.launch {
-                    tweaksRepository.setTelemetryEnabled(action.enabled)
-                }
-            }
-
-            TweaksAction.OnResetAnalyticsId -> {
-                viewModelScope.launch {
-                    // Clear the telemetry buffer *before* resetting the ID.
-                    // Order matters: any buffered event still carries the
-                    // old device ID in its EventRequest payload, so draining
-                    // them after the reset would leak the old ID to the
-                    // backend attached to "fresh start" identity semantics.
-                    telemetryRepository.clearPending()
-                    deviceIdentityRepository.resetDeviceId()
-                    _events.send(TweaksEvent.OnAnalyticsIdReset)
-                }
-            }
 
             is TweaksAction.OnTranslationProviderSelected -> {
                 when (action.provider) {

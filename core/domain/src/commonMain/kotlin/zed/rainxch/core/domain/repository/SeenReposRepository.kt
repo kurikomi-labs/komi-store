@@ -11,11 +11,6 @@ interface SeenReposRepository {
 
     suspend fun markAsSeen(repo: GithubRepoSummary)
 
-    /**
-     * Primitive-arg overload for surfaces that only hold the UI model
-     * (Home / Search cards) and would otherwise have to reconstitute a
-     * full [GithubRepoSummary] just to mark a repo seen.
-     */
     suspend fun markAsSeen(
         repoId: Long,
         repoName: String,

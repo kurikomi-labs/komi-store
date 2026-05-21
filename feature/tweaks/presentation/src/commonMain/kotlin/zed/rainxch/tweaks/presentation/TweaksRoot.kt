@@ -117,12 +117,6 @@ fun TweaksRoot(
                 }
             }
 
-            TweaksEvent.OnAnalyticsIdReset -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.analytics_id_reset))
-                }
-            }
-
             TweaksEvent.OnTranslationProviderSaved -> {
                 coroutineScope.launch {
                     snackbarState.showSnackbar(getString(Res.string.translation_provider_saved))

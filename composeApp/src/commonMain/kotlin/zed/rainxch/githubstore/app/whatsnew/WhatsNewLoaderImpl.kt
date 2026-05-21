@@ -44,10 +44,6 @@ class WhatsNewLoaderImpl(
         versionCode: Int,
         languageTag: String?,
     ): List<String> {
-        // Explicit tag passed in wins over global Locale lookup —
-        // prevents the race with MainActivity's `setActiveLanguageTag`
-        // when both this VM and MainActivity subscribe to the same
-        // `getAppLanguage()` flow (#526 follow-up).
         val (full, primary) =
             if (!languageTag.isNullOrBlank()) {
                 languageTag to languageTag.substringBefore('-')

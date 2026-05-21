@@ -5,7 +5,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -17,14 +16,14 @@ import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.services.FileLocationsProvider
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.feature.profile.data.BuildKonfig
 import zed.rainxch.profile.data.mappers.toUserProfile
 import zed.rainxch.profile.domain.model.UserProfile
 import zed.rainxch.profile.domain.repository.ProfileRepository
 
 class ProfileRepositoryImpl(
-    private val authenticationState: AuthenticationState,
+    private val userSessionRepository: UserSessionRepository,
     private val tokenStore: TokenStore,
     private val clientProvider: GitHubClientProvider,
     private val cacheManager: CacheManager,
@@ -39,7 +38,7 @@ class ProfileRepositoryImpl(
 
     override val isUserLoggedIn: Flow<Boolean>
         get() =
-            authenticationState
+            userSessionRepository
                 .isUserLoggedIn()
                 .flowOn(Dispatchers.IO)
 

@@ -625,12 +625,6 @@
     <string name="hide_repository">Depoyu gizle</string>
     <string name="repository_hidden">Depo gizlendi</string>
     <string name="undo_hide">Geri al</string>
-    <string name="privacy_section">Gizlilik</string>
-    <string name="telemetry_title">Aramayı iyileştirmeye yardım et</string>
-    <string name="telemetry_description">Sıfırlanabilir bir analiz kimliğiyle ilişkilendirilmiş kullanım verilerini (aramalar, yüklemeler, etkileşimler) paylaş. Hesap ayrıntıları paylaşılmaz.</string>
-    <string name="reset_analytics_id_title">Analitik kimliğini sıfırla</string>
-    <string name="reset_analytics_id_description">Yeni anonim kimlik oluştur, geçmiş telemetri ile bağı kopar.</string>
-    <string name="analytics_id_reset">Analitik kimliği sıfırlandı</string>
 
     <string name="recently_viewed">Son görüntülenenler</string>
     <string name="profile_recently_viewed_description">Ziyaret ettiğiniz depolar</string>

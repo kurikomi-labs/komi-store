@@ -41,7 +41,6 @@ import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.ApkInspector
 import zed.rainxch.core.domain.system.DownloadOrchestrator
@@ -129,10 +128,9 @@ class DetailsViewModel(
     private val installationManager: InstallationManager,
     private val attestationVerifier: AttestationVerifier,
     private val downloadOrchestrator: DownloadOrchestrator,
-    private val telemetryRepository: TelemetryRepository,
     private val externalImportRepository: ExternalImportRepository,
     private val apkInspector: ApkInspector,
-    private val authenticationState: zed.rainxch.core.domain.repository.AuthenticationState,
+    private val userSessionRepository: zed.rainxch.core.domain.repository.UserSessionRepository,
     private val systemInstallSerializer: zed.rainxch.core.domain.system.SystemInstallSerializer,
     private val profileRepository: zed.rainxch.profile.domain.repository.ProfileRepository,
 ) : ViewModel() {
@@ -173,7 +171,6 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 installer.uninstall(installedApp.packageName)
-                _state.value.repository?.id?.let { telemetryRepository.recordUninstalled(it) }
             } catch (e: Exception) {
                 logger.error("Failed to request uninstall for ${installedApp.packageName}: ${e.message}")
                 _events.send(
@@ -199,7 +196,6 @@ class DetailsViewModel(
                     externalImportRepository.unlink(packageName)
                     installedAppsRepository.deleteInstalledApp(packageName)
                 }
-                runCatching { telemetryRepository.importUnlinkedFromDetails() }
                 _events.send(
                     DetailsEvent.OnMessage(
                         getString(Res.string.details_unlink_external_app_success),
@@ -1396,7 +1392,6 @@ class DetailsViewModel(
         val installedApp = _state.value.installedApp ?: return
         val launched = installer.openApp(installedApp.packageName)
         if (launched && platform == Platform.ANDROID) {
-            _state.value.repository?.id?.let { telemetryRepository.recordAppOpenedAfterInstall(it) }
         }
         if (!launched) {
             viewModelScope.launch {
@@ -1485,9 +1480,7 @@ class DetailsViewModel(
                 _state.value = _state.value.copy(isFavourite = newFavoriteState)
 
                 if (newFavoriteState) {
-                    telemetryRepository.recordFavorited(repo.id)
                 } else {
-                    telemetryRepository.recordUnfavorited(repo.id)
                 }
 
                 _events.send(
@@ -1553,7 +1546,6 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 installer.uninstall(installedApp.packageName)
-                _state.value.repository?.id?.let { telemetryRepository.recordUninstalled(it) }
             } catch (e: Exception) {
                 logger.error("Failed to request uninstall for ${installedApp.packageName}: ${e.message}")
                 _events.send(
@@ -1980,8 +1972,6 @@ class DetailsViewModel(
                     if (!telemetryStartFired) {
                         telemetryStartFired = true
                         _state.value.repository?.id?.let { id ->
-                            telemetryRepository.recordReleaseDownloaded(id)
-                            telemetryRepository.recordInstallStarted(id)
                         }
                     }
                 }
@@ -2007,8 +1997,6 @@ class DetailsViewModel(
                     if (!telemetryStartFired) {
                         telemetryStartFired = true
                         _state.value.repository?.id?.let { id ->
-                            telemetryRepository.recordReleaseDownloaded(id)
-                            telemetryRepository.recordInstallStarted(id)
                         }
                     }
                     // Run the existing install dialog flow on the
@@ -2024,7 +2012,6 @@ class DetailsViewModel(
                             sizeBytes = sizeBytes,
                             releaseTag = releaseTag,
                         )
-                        _state.value.repository?.id?.let { telemetryRepository.recordInstallSucceeded(it) }
                         // Successful install — release the entry
                         // from the orchestrator so the apps row
                         // doesn't keep showing "ready to install".
@@ -2045,7 +2032,6 @@ class DetailsViewModel(
                             result = Error(t.message),
                         )
                         _state.value.repository?.id?.let {
-                            telemetryRepository.recordInstallFailed(it, t.message)
                         }
                     }
                 }
@@ -2068,7 +2054,6 @@ class DetailsViewModel(
                     )
                     if (isCompleted) {
                         _state.value.repository?.id?.let {
-                            telemetryRepository.recordInstallSucceeded(it)
                         }
                     }
 
@@ -2145,7 +2130,6 @@ class DetailsViewModel(
                         result = Error(entry.errorMessage),
                     )
                     _state.value.repository?.id?.let {
-                        telemetryRepository.recordInstallFailed(it, entry.errorMessage)
                     }
                     downloadOrchestrator.dismiss(packageKey)
                     return@collect
@@ -2786,7 +2770,6 @@ class DetailsViewModel(
                             insights.latestStableHasInstallableAsset,
                     )
 
-                telemetryRepository.recordRepoViewed(repo.id)
 
                 observeInstalledApp(repo.id)
 
@@ -2797,7 +2780,7 @@ class DetailsViewModel(
             } catch (e: RateLimitException) {
                 logger.error("Rate limited: ${e.message}")
                 val seconds = e.rateLimitInfo.timeUntilReset().inWholeSeconds
-                val signedIn = authenticationState.isCurrentlyUserLoggedIn()
+                val signedIn = userSessionRepository.isCurrentlyUserLoggedIn()
                 val base = if (seconds > 0L) {
                     getString(Res.string.rate_limit_exceeded_retry_in, seconds.toInt())
                 } else {

@@ -38,7 +38,6 @@ data class TweaksState(
     val isHideSeenEnabled: Boolean = false,
     val isScrollbarEnabled: Boolean = false,
     val contentWidth: ContentWidth = ContentWidth.COMPACT,
-    val isTelemetryEnabled: Boolean = false,
     val translationProvider: TranslationProvider = TranslationProvider.Default,
     /**
      * Transient UI-only selection used when the user picks a provider

@@ -793,12 +793,6 @@
     <string name="hidden_repositories_unhide_failure">Could not unhide. Try again.</string>
 
     <!-- Privacy / telemetry -->
-    <string name="privacy_section">Privacy</string>
-    <string name="telemetry_title">Help improve search</string>
-    <string name="telemetry_description">Share usage data (searches, installs, interactions) associated with a resettable analytics ID. No account details are shared.</string>
-    <string name="reset_analytics_id_title">Reset analytics ID</string>
-    <string name="reset_analytics_id_description">Generate a new anonymous ID, severing the link to past telemetry.</string>
-    <string name="analytics_id_reset">Analytics ID reset</string>
 
     <!-- Search history -->
     <string name="recent_searches">Recent searches</string>

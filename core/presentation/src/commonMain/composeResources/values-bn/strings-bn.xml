@@ -627,12 +627,6 @@
     <string name="hide_repository">রিপোজিটরি লুকান</string>
     <string name="repository_hidden">রিপোজিটরি লুকানো হয়েছে</string>
     <string name="undo_hide">পূর্বাবস্থা</string>
-    <string name="privacy_section">গোপনীয়তা</string>
-    <string name="telemetry_title">অনুসন্ধান উন্নত করতে সহায়তা করুন</string>
-    <string name="telemetry_description">পুনরায় সেট করা যায় এমন একটি বিশ্লেষণ আইডির সাথে যুক্ত ব্যবহার ডেটা (অনুসন্ধান, ইনস্টল, ইন্টারঅ্যাকশন) শেয়ার করুন। অ্যাকাউন্ট বিবরণ শেয়ার করা হয় না।</string>
-    <string name="reset_analytics_id_title">বিশ্লেষণ আইডি রিসেট করুন</string>
-    <string name="reset_analytics_id_description">একটি নতুন বেনামী আইডি তৈরি করুন, অতীতের টেলিমেট্রির সাথে সংযোগ বিচ্ছিন্ন করে।</string>
-    <string name="analytics_id_reset">বিশ্লেষণ আইডি রিসেট করা হয়েছে</string>
 
     <string name="recently_viewed">সাম্প্রতিক দেখা</string>
     <string name="profile_recently_viewed_description">আপনি যেসব রিপোজিটরি দেখেছেন</string>

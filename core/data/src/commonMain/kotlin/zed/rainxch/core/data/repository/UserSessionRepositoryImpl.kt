@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.data.data_source.TokenStore
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-class AuthenticationStateImpl(
+class UserSessionRepositoryImpl(
     private val tokenStore: TokenStore,
-) : AuthenticationState {
+) : UserSessionRepository {
     private val _sessionExpiredEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     override val sessionExpiredEvent: SharedFlow<Unit> = _sessionExpiredEvent.asSharedFlow()
 

@@ -28,7 +28,6 @@ import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.DeviceApp
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
 import zed.rainxch.core.domain.system.InstallerKind
@@ -54,7 +53,6 @@ class ExternalImportViewModel(
     private val externalImportRepository: ExternalImportRepository,
     private val appsRepository: AppsRepository,
     private val installedAppsRepository: InstalledAppsRepository,
-    private val telemetry: TelemetryRepository,
     private val logger: GitHubStoreLogger,
     private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
 ) : ViewModel() {
@@ -103,7 +101,6 @@ class ExternalImportViewModel(
 
             ExternalImportAction.OnRequestPermission -> {
                 _state.update { it.copy(phase = ImportPhase.RequestingPermission) }
-                viewModelScope.launch { runCatching { telemetry.importPermissionRequested() } }
             }
 
             is ExternalImportAction.OnPermissionGranted -> {
@@ -436,12 +433,10 @@ class ExternalImportViewModel(
                         ),
                     )
                 }
-                runCatching { telemetry.importSearchOverrideUsed() }
                 return@launch
             }
 
             // Not a URL — backend free-text search.
-            runCatching { telemetry.importSearchOverrideUsed() }
             val result = runCatching { externalImportRepository.searchRepos(query) }
                 .getOrElse { e ->
                     if (e is CancellationException) throw e
@@ -450,7 +445,6 @@ class ExternalImportViewModel(
             result.fold(
                 onSuccess = { suggestions ->
                     if (suggestions.isEmpty()) {
-                        runCatching { telemetry.importSearchOverrideNoResults() }
                     }
                     _state.update {
                         if (it.activeSearchPackage != packageName) it
@@ -521,12 +515,6 @@ class ExternalImportViewModel(
                 return@launch
             }
 
-            runCatching {
-                telemetry.importSkipped(
-                    countBucket = "1-2",
-                    persisted = if (neverAsk) "forever" else "7day",
-                )
-            }
             removeCardFromState(packageName) { it.copy(skipped = it.skipped + 1) }
 
             pendingUndo = PendingUndo(
@@ -589,9 +577,6 @@ class ExternalImportViewModel(
                     ),
                 )
                 return@launch
-            }
-            runCatching {
-                telemetry.importManuallyLinked(countBucket = "1-2", source = source)
             }
             removeCardFromState(packageName) { it.copy(manuallyLinked = it.manuallyLinked + 1) }
 
@@ -779,14 +764,8 @@ class ExternalImportViewModel(
     }
 
     private fun emitPermissionOutcome(granted: Boolean, sdkInt: Int?) {
-        viewModelScope.launch {
-            runCatching {
-                telemetry.importPermissionOutcome(
-                    granted = granted,
-                    sdkIntBucket = bucketSdkInt(sdkInt),
-                )
-            }
-        }
+        // Telemetry removed — kept signature so existing call sites compile;
+        // safe to drop entirely once those are migrated.
     }
 
     private fun bucketSdkInt(sdkInt: Int?): String =
@@ -828,15 +807,6 @@ class ExternalImportViewModel(
                 } catch (e: Exception) {
                     logger.error("Skip-remaining failed for ${card.packageName}: ${e.message}")
                     failures += card.packageName
-                }
-            }
-
-            if (successes.isNotEmpty()) {
-                runCatching {
-                    telemetry.importSkipped(
-                        countBucket = bucketCount(successes.size),
-                        persisted = "7day",
-                    )
                 }
             }
 

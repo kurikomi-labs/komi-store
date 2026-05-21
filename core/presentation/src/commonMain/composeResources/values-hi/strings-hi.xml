@@ -626,12 +626,6 @@
     <string name="hide_repository">रिपॉजिटरी छिपाएं</string>
     <string name="repository_hidden">रिपॉजिटरी छिपाई गई</string>
     <string name="undo_hide">पूर्ववत्</string>
-    <string name="privacy_section">गोपनीयता</string>
-    <string name="telemetry_title">खोज को बेहतर बनाने में मदद करें</string>
-    <string name="telemetry_description">रीसेट करने योग्य एनालिटिक्स आईडी से जुड़े उपयोग डेटा (खोज, इंस्टॉल, इंटरैक्शन) साझा करें। खाता विवरण साझा नहीं किए जाते।</string>
-    <string name="reset_analytics_id_title">एनालिटिक्स आईडी रीसेट करें</string>
-    <string name="reset_analytics_id_description">एक नया अनाम आईडी बनाएं, पिछले टेलीमेट्री से लिंक को तोड़ें।</string>
-    <string name="analytics_id_reset">एनालिटिक्स आईडी रीसेट किया गया</string>
 
     <string name="recently_viewed">हाल ही में देखा गया</string>
     <string name="profile_recently_viewed_description">वे रिपॉजिटरी जिन्हें आपने देखा है</string>

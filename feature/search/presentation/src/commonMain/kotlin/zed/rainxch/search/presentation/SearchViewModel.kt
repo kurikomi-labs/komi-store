@@ -26,10 +26,9 @@ import zed.rainxch.core.domain.model.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.core.domain.repository.SearchHistoryRepository
+import zed.rainxch.domain.repository.SearchHistoryRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ClipboardHelper
@@ -37,7 +36,6 @@ import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.domain.repository.SearchRepository
-import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_share_link
 import zed.rainxch.githubstore.core.presentation.res.link_copied_to_clipboard
@@ -45,7 +43,6 @@ import zed.rainxch.githubstore.core.presentation.res.no_github_link_in_clipboard
 import zed.rainxch.githubstore.core.presentation.res.explore_error
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_retry_in
-import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_signin_hint
 import zed.rainxch.githubstore.core.presentation.res.search_failed
 import zed.rainxch.search.presentation.mappers.toDomain
 import zed.rainxch.search.presentation.model.SearchPlatformUi
@@ -65,7 +62,6 @@ class SearchViewModel(
     private val tweaksRepository: TweaksRepository,
     private val seenReposRepository: SeenReposRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
-    private val telemetryRepository: TelemetryRepository,
     private val profileRepository: ProfileRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val initialPlatform: SearchPlatformUi? = null,
@@ -76,19 +72,11 @@ class SearchViewModel(
     private var explorePage = 1
     private var lastExploreQuery = ""
 
-    // Cached so each pagination/explore mapping doesn't re-hit
-    // ProfileRepository on every result page. observeCurrentUser() keeps
-    // it in sync with login/logout.
     @Volatile private var currentUserLogin: String? = null
 
     private val exploreLog = logger.withTag("SearchExplore")
 
     companion object {
-        // 2 covers common CJK app names that are exactly two characters
-        // (`B站`, `微博`, `抖音`, `美团`, …) which the previous 3-char floor
-        // silently rejected even when the user explicitly tapped the IME
-        // search action (#372). Single-character queries are still gated
-        // because they'd return millions of GitHub results.
         private const val MIN_QUERY_LENGTH = 2
     }
 
@@ -191,10 +179,6 @@ class SearchViewModel(
     private fun observeHiddenRepos() {
         viewModelScope.launch {
             hiddenReposRepository.getAllHiddenRepoIds().collect { ids ->
-                // Track IDs only — `computeVisibleRepos` already filters
-                // hidden at render time. Removing from `repositories`
-                // would break `OnUndoHideRepository`: once the entity is
-                // gone there's nothing to bring back without re-fetching.
                 _state.update { it.copy(hiddenRepoIds = ids) }
             }
         }
@@ -492,12 +476,6 @@ class SearchViewModel(
                     _state.update {
                         it.copy(isLoading = false, isLoadingMore = false)
                     }
-
-                    if (isInitial) {
-                        telemetryRepository.recordSearchPerformed(
-                            resultCount = _state.value.repositories.size,
-                        )
-                    }
                 } catch (e: RateLimitException) {
                     logger.debug("Rate limit exceeded: ${e.message}")
                     val seconds = e.rateLimitInfo.timeUntilReset().inWholeSeconds
@@ -739,7 +717,6 @@ class SearchViewModel(
             }
 
             is SearchAction.OnRepositoryClick -> {
-                telemetryRepository.recordSearchResultClicked(action.repository.id)
                 // Navigation handled in composable
             }
 

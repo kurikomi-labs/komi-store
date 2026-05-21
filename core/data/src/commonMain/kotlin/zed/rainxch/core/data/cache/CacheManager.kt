@@ -24,11 +24,6 @@ class CacheManager(
             encodeDefaults = true
         }
 
-    // Guarded by [memoryCacheMutex]. Multiple repositories read/write
-    // this map from concurrent ViewModel scopes — without the mutex a
-    // structural HashMap mutation can corrupt internal state on rehash.
-    // `@PublishedApi internal` so the inline reified `get` / `put` can
-    // touch them without leaking the map to outside callers.
     @PublishedApi
     internal val memoryCache = HashMap<String, Pair<Long, String>>()
 
@@ -37,9 +32,6 @@ class CacheManager(
 
     init {
         appScope?.launch {
-            // Periodic janitor: in-memory cache grows otherwise unbounded
-            // over a long session. Run once an hour off the critical path;
-            // mutex serialises with foreground reads/writes.
             while (true) {
                 delay(CLEANUP_INTERVAL_MS)
                 runCatching { cleanupExpired() }
@@ -59,11 +51,6 @@ class CacheManager(
                 return try {
                     json.decodeFromString(serializer<T>(), jsonData)
                 } catch (_: Exception) {
-                    // Guarded eviction: only remove if no concurrent
-                    // `put` has replaced our snapshot. Without the
-                    // equality check, a fresh value written between
-                    // the snapshot read and this decode failure would
-                    // be wrongly evicted.
                     memoryCacheMutex.withLock {
                         if (memoryCache[key] == cached) memoryCache.remove(key)
                     }
@@ -85,9 +72,6 @@ class CacheManager(
         return try {
             json.decodeFromString(serializer<T>(), entry.jsonData)
         } catch (_: Exception) {
-            // Same race rationale as the in-memory branch — use the
-            // row's cachedAt as a version stamp so a fresh `put` that
-            // raced in between getValid and now is preserved.
             cacheDao.deleteIfMatches(key, entry.cachedAt)
             memoryCacheMutex.withLock {
                 if (memoryCache[key] == snapshot) memoryCache.remove(key)
@@ -133,14 +117,6 @@ class CacheManager(
         cacheDao.delete(key)
     }
 
-    suspend fun invalidateByPrefix(prefix: String) {
-        memoryCacheMutex.withLock {
-            val keysToRemove = memoryCache.keys.filter { it.startsWith(prefix) }
-            keysToRemove.forEach { memoryCache.remove(it) }
-        }
-        cacheDao.deleteByPrefix(prefix)
-    }
-
     suspend fun clearAll() {
         memoryCacheMutex.withLock { memoryCache.clear() }
         cacheDao.deleteAll()
@@ -159,8 +135,6 @@ class CacheManager(
     }
 
     companion object CacheTtl {
-        // Tuned per E4 perf-pass spec: home grid is browsed often + tolerates
-        // stale data well; longer TTL cuts cold-start network round-trips.
         val HOME_REPOS = 24.hours.inWholeMilliseconds
         val REPO_DETAILS = 6.hours.inWholeMilliseconds
         val RELEASES = 6.hours.inWholeMilliseconds

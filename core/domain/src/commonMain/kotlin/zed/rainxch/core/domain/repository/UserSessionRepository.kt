@@ -3,7 +3,7 @@ package zed.rainxch.core.domain.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-interface AuthenticationState {
+interface UserSessionRepository {
     fun isUserLoggedIn(): Flow<Boolean>
 
     suspend fun isCurrentlyUserLoggedIn(): Boolean

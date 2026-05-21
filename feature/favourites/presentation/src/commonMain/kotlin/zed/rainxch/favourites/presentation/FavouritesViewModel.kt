@@ -18,13 +18,11 @@ import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.favourites.presentation.mappers.toFavouriteRepositoryUi
 import zed.rainxch.favourites.presentation.model.FavouritesSortRule
-import zed.rainxch.profile.domain.repository.ProfileRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class FavouritesViewModel(
     private val favouritesRepository: FavouritesRepository,
-    private val profileRepository: ProfileRepository,
     private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false

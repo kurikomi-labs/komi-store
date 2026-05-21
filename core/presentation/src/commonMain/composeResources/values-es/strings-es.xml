@@ -588,12 +588,6 @@
     <string name="hide_repository">Ocultar repositorio</string>
     <string name="repository_hidden">Repositorio ocultado</string>
     <string name="undo_hide">Deshacer</string>
-    <string name="privacy_section">Privacidad</string>
-    <string name="telemetry_title">Ayudar a mejorar la búsqueda</string>
-    <string name="telemetry_description">Compartir datos de uso (búsquedas, instalaciones, interacciones) asociados a un ID de análisis restablecible. No se comparten detalles de la cuenta.</string>
-    <string name="reset_analytics_id_title">Restablecer ID de análisis</string>
-    <string name="reset_analytics_id_description">Generar un nuevo ID anónimo, cortando el vínculo con la telemetría anterior.</string>
-    <string name="analytics_id_reset">ID de análisis restablecido</string>
 
     <string name="recently_viewed">Vistos recientemente</string>
     <string name="profile_recently_viewed_description">Repositorios que has visitado</string>

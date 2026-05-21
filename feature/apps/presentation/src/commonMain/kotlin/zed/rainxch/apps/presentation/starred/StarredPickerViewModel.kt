@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.apps.domain.repository.AppsRepository
 import zed.rainxch.core.domain.model.RateLimitException
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 
 class StarredPickerViewModel(
-    private val authenticationState: AuthenticationState,
+    private val userSessionRepository: UserSessionRepository,
     private val starredRepository: StarredRepository,
     private val installedAppsRepository: InstalledAppsRepository,
     private val appsRepository: AppsRepository,
@@ -73,7 +73,7 @@ class StarredPickerViewModel(
     private fun bootstrap() {
         scanJob?.cancel()
         scanJob = viewModelScope.launch {
-            val isAuthenticated = authenticationState.isCurrentlyUserLoggedIn()
+            val isAuthenticated = userSessionRepository.isCurrentlyUserLoggedIn()
             _state.update {
                 it.copy(
                     phase = StarredPickerState.Phase.LoadingStars,

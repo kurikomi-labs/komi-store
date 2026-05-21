@@ -13,7 +13,7 @@ val mainModule: Module =
                 installedAppsRepository = get(),
                 rateLimitRepository = get(),
                 syncUseCase = get(),
-                authenticationState = get(),
+                userSessionRepository = get(),
             )
         }
     }

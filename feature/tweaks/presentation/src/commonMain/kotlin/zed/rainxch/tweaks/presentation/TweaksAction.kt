@@ -138,12 +138,6 @@ sealed interface TweaksAction {
 
     data object OnHiddenRepositoriesClick : TweaksAction
 
-    data class OnTelemetryToggled(
-        val enabled: Boolean,
-    ) : TweaksAction
-
-    data object OnResetAnalyticsId : TweaksAction
-
     data class OnTranslationProviderSelected(
         val provider: TranslationProvider,
     ) : TweaksAction

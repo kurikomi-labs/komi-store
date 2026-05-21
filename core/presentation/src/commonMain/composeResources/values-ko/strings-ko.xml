@@ -625,12 +625,6 @@
     <string name="hide_repository">저장소 숨기기</string>
     <string name="repository_hidden">저장소가 숨겨졌습니다</string>
     <string name="undo_hide">실행 취소</string>
-    <string name="privacy_section">개인 정보 보호</string>
-    <string name="telemetry_title">검색 개선에 도움 주기</string>
-    <string name="telemetry_description">재설정 가능한 분석 ID에 연결된 사용 데이터(검색, 설치, 상호작용)를 공유합니다. 계정 정보는 공유되지 않습니다.</string>
-    <string name="reset_analytics_id_title">분석 ID 재설정</string>
-    <string name="reset_analytics_id_description">새 익명 ID를 생성하여 과거 원격 측정과의 연결을 끊습니다.</string>
-    <string name="analytics_id_reset">분석 ID가 재설정되었습니다</string>
 
     <string name="recently_viewed">최근 본 항목</string>
     <string name="profile_recently_viewed_description">방문한 저장소</string>

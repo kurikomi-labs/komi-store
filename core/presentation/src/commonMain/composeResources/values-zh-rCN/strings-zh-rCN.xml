@@ -591,12 +591,6 @@
     <string name="hide_repository">隐藏仓库</string>
     <string name="repository_hidden">仓库已隐藏</string>
     <string name="undo_hide">撤销</string>
-    <string name="privacy_section">隐私</string>
-    <string name="telemetry_title">帮助改进搜索</string>
-    <string name="telemetry_description">分享与可重置分析 ID 关联的使用数据（搜索、安装、交互）。不分享账户详情。</string>
-    <string name="reset_analytics_id_title">重置分析 ID</string>
-    <string name="reset_analytics_id_description">生成新的匿名 ID，切断与过去遥测数据的联系。</string>
-    <string name="analytics_id_reset">分析 ID 已重置</string>
 
     <string name="recently_viewed">最近查看</string>
     <string name="profile_recently_viewed_description">你访问过的仓库</string>

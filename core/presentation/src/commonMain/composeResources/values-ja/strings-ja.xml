@@ -590,12 +590,6 @@
     <string name="hide_repository">リポジトリを非表示</string>
     <string name="repository_hidden">リポジトリを非表示にしました</string>
     <string name="undo_hide">元に戻す</string>
-    <string name="privacy_section">プライバシー</string>
-    <string name="telemetry_title">検索の改善に協力</string>
-    <string name="telemetry_description">リセット可能な分析 ID に関連付けられた使用データ(検索、インストール、操作)を共有します。アカウント情報は共有されません。</string>
-    <string name="reset_analytics_id_title">分析IDをリセット</string>
-    <string name="reset_analytics_id_description">新しい匿名IDを生成し、過去のテレメトリとのリンクを切断します。</string>
-    <string name="analytics_id_reset">分析IDをリセットしました</string>
 
     <string name="recently_viewed">最近閲覧した</string>
     <string name="profile_recently_viewed_description">訪問したリポジトリ</string>

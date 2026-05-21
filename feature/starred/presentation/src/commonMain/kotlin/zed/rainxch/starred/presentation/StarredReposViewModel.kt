@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.model.FavoriteRepo
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
@@ -30,7 +30,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class StarredReposViewModel(
-    private val authenticationState: AuthenticationState,
+    private val userSessionRepository: UserSessionRepository,
     private val starredRepository: StarredRepository,
     private val favouritesRepository: FavouritesRepository,
     private val profileRepository: ProfileRepository,
@@ -54,7 +54,7 @@ class StarredReposViewModel(
 
     private fun checkAuthAndLoad() {
         viewModelScope.launch {
-            val isAuthenticated = authenticationState.isCurrentlyUserLoggedIn()
+            val isAuthenticated = userSessionRepository.isCurrentlyUserLoggedIn()
 
             _state.update { it.copy(isAuthenticated = isAuthenticated) }
 

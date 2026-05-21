@@ -14,6 +14,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import named
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import zed.rainxch.core.data.network.createPlatformHttpClient
@@ -50,15 +51,13 @@ import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.data.network.ProxyManagerSeeding
 import zed.rainxch.core.data.network.ProxyTesterImpl
 import zed.rainxch.core.data.network.TranslationClientProvider
-import zed.rainxch.core.data.repository.AuthenticationStateImpl
+import zed.rainxch.core.data.repository.UserSessionRepositoryImpl
 import zed.rainxch.core.data.repository.ExternalImportRepositoryImpl
 import zed.rainxch.core.data.repository.FavouritesRepositoryImpl
 import zed.rainxch.core.data.repository.InstalledAppsRepositoryImpl
 import zed.rainxch.core.data.repository.ProxyRepositoryImpl
-import zed.rainxch.core.data.repository.DeviceIdentityRepositoryImpl
 import zed.rainxch.core.data.repository.RateLimitRepositoryImpl
 import zed.rainxch.core.data.repository.SearchHistoryRepositoryImpl
-import zed.rainxch.core.data.repository.TelemetryRepositoryImpl
 import zed.rainxch.core.data.repository.HiddenReposRepositoryImpl
 import zed.rainxch.core.data.repository.SeenReposRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
@@ -79,8 +78,7 @@ import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.MultiSourceDownloader
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
-import zed.rainxch.core.domain.repository.AuthenticationState
-import zed.rainxch.core.domain.repository.DeviceIdentityRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -91,7 +89,6 @@ import zed.rainxch.core.domain.repository.SearchHistoryRepository
 import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 
@@ -109,8 +106,8 @@ val coreModule =
             getPlatform()
         }
 
-        single<AuthenticationState> {
-            AuthenticationStateImpl(
+        single<UserSessionRepository> {
+            UserSessionRepositoryImpl(
                 tokenStore = get(),
             )
         }
@@ -152,7 +149,7 @@ val coreModule =
 
         single<TweaksRepository> {
             TweaksRepositoryImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                ksafe = get(qualifier = named("prefs")),
                 legacyDataStore = get(),
             )
         }
@@ -163,8 +160,8 @@ val coreModule =
 
         single<AnnouncementsCacheStore> {
             AnnouncementsCacheStoreImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("announcements_cache")),
-                legacyDataStore = get(qualifier = org.koin.core.qualifier.named("announcements")),
+                ksafe = get(qualifier = named("announcements_cache")),
+                legacyDataStore = get(qualifier = named("announcements")),
             )
         }
 
@@ -187,13 +184,11 @@ val coreModule =
         single<MirrorRepository> {
             val repo =
                 MirrorRepositoryImpl(
-                    ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                    ksafe = get(qualifier = named("prefs")),
                     legacyDataStore = get(),
                     apiClient = get(),
                     appScope = get(),
                 )
-            // Kick off the ProxyManager mirror-template snapshot collector
-            // so the Ktor interceptor can resolve the template synchronously.
             ProxyManager.startMirrorCollector(repo, get())
             repo
         }
@@ -210,15 +205,9 @@ val coreModule =
             )
         }
 
-        single<SearchHistoryRepository> {
-            SearchHistoryRepositoryImpl(
-                searchHistoryDao = get(),
-            )
-        }
-
         single<ProxyRepository> {
             ProxyRepositoryImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                ksafe = get(qualifier = named("prefs")),
                 legacyDataStore = get(),
                 logger = get(),
             )
@@ -238,45 +227,17 @@ val coreModule =
         }
 
         single<CacheManager> {
-            CacheManager(cacheDao = get(), appScope = get())
+            CacheManager(
+                cacheDao = get(),
+                appScope = get()
+            )
         }
 
         single<BackendApiClient> {
-            // Request the seeding sentinel so Koin guarantees ProxyManager
-            // has the user's persisted config loaded before we snapshot
-            // the discovery flow for the initial client build.
             get<ProxyManagerSeeding>()
             BackendApiClient(
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
                 tokenStore = get(),
-            )
-        }
-        // NOTE: the reviewer asked for a Koin onClose hook to call
-        // BackendApiClient.close()/GitHubClientProvider.close()/
-        // TranslationClientProvider.close() at Koin shutdown. Koin 4.x
-        // (4.1.1 on this project) doesn't expose that hook at the
-        // module DSL level — it existed in 3.x and was removed — and
-        // there's no clean replacement short of wrapping each provider
-        // in a Koin scope. On Android/Desktop the process exit
-        // releases these resources anyway, so we intentionally leave
-        // the hooks off rather than fake them with an API that doesn't
-        // fit. Revisit if we upgrade Koin or adopt scope-based DI.
-
-        single<DeviceIdentityRepository> {
-            DeviceIdentityRepositoryImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
-                legacyDataStore = get(),
-            )
-        }
-
-        single<TelemetryRepository> {
-            TelemetryRepositoryImpl(
-                backendApiClient = get(),
-                deviceIdentity = get(),
-                tweaksRepository = get(),
-                platform = get(),
-                appScope = get(),
-                logger = get(),
             )
         }
 
@@ -298,11 +259,10 @@ val coreModule =
                 scanner = get<ExternalAppScanner>(),
                 externalLinkDao = get(),
                 signingFingerprintDao = get(),
-                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                ksafe = get(qualifier = named("prefs")),
                 legacyDataStore = get(),
                 externalMatchApi = get(),
                 backendClient = get(),
-                telemetry = get(),
                 forgejoClientRegistry = get(),
                 tweaksRepository = get(),
             )
@@ -316,14 +276,11 @@ val coreModule =
 
         single<SlowDownloadDetector> {
             SlowDownloadDetectorImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("prefs")),
+                ksafe = get(qualifier = named("prefs")),
                 appScope = get(),
             )
         }
 
-        // Application-scoped download / install orchestrator. Lives
-        // for the process lifetime so downloads survive screen
-        // navigation. ViewModels are observers, never owners.
         single<DownloadOrchestrator> {
             DefaultDownloadOrchestrator(
                 downloader = get(),
@@ -338,12 +295,6 @@ val coreModule =
             )
         }
 
-        // Single-flight gate over `installer.install` calls that
-        // delegate to the system installer dialog. Without this,
-        // sequential update flows fire stacked ACTION_VIEW intents
-        // and OEM PackageInstaller activities (Xiaomi, OPPO, vivo,
-        // Honor, Samsung variants) routinely fail to refresh — the
-        // second dialog keeps showing the first APK.
         single<SystemInstallSerializer> {
             DefaultSystemInstallSerializer()
         }
@@ -351,16 +302,6 @@ val coreModule =
 
 val networkModule =
     module {
-        // Seed [ProxyManager] from persisted per-scope configs *before*
-        // any HTTP client is constructed. Registered as its own
-        // [ProxyManagerSeeding] sentinel so client providers can depend
-        // on it explicitly — without this the seeding would live inside
-        // one provider's factory and silently race with others.
-        //
-        // Reads run in parallel under a single 1.5s budget (was 1.5s × 3
-        // sequential). On timeout / DataStore failure we fall back to the
-        // in-memory defaults — we'd rather the app network with the
-        // System proxy than stall at launch on a slow disk.
         single<ProxyManagerSeeding>(createdAtStart = true) {
             val repository = get<ProxyRepository>()
             runBlocking {
@@ -389,7 +330,7 @@ val networkModule =
             GitHubClientProvider(
                 tokenStore = get(),
                 rateLimitRepository = get(),
-                authenticationState = get(),
+                userSessionRepository = get(),
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
             )
         }
@@ -403,7 +344,7 @@ val networkModule =
 
         single<TokenStore> {
             DefaultTokenStore(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("tokens")),
+                ksafe = get(qualifier = named("tokens")),
                 legacyDataStore = get(),
             )
         }
@@ -414,8 +355,8 @@ val networkModule =
 
         single<zed.rainxch.core.domain.repository.HostTokenRepository> {
             zed.rainxch.core.data.repository.HostTokenRepositoryImpl(
-                ksafe = get(qualifier = org.koin.core.qualifier.named("tokens")),
-                httpClient = get(qualifier = org.koin.core.qualifier.named("test")),
+                ksafe = get(qualifier = named("tokens")),
+                httpClient = get(qualifier = named("test")),
             )
         }
 

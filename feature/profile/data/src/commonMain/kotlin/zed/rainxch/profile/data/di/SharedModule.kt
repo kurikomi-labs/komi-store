@@ -8,7 +8,7 @@ val profileModule =
     module {
         single<ProfileRepository> {
             ProfileRepositoryImpl(
-                authenticationState = get(),
+                userSessionRepository = get(),
                 tokenStore = get(),
                 clientProvider = get(),
                 cacheManager = get(),

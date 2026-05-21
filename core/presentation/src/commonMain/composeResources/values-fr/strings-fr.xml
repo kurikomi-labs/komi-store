@@ -589,12 +589,6 @@
     <string name="hide_repository">Masquer le dépôt</string>
     <string name="repository_hidden">Dépôt masqué</string>
     <string name="undo_hide">Annuler</string>
-    <string name="privacy_section">Confidentialité</string>
-    <string name="telemetry_title">Aider à améliorer la recherche</string>
-    <string name="telemetry_description">Partager des données d'utilisation (recherches, installations, interactions) associées à un identifiant d'analyse réinitialisable. Aucun détail de compte n'est partagé.</string>
-    <string name="reset_analytics_id_title">Réinitialiser l'ID d'analytique</string>
-    <string name="reset_analytics_id_description">Générer un nouvel ID anonyme, coupant le lien avec la télémétrie passée.</string>
-    <string name="analytics_id_reset">ID d'analytique réinitialisé</string>
 
     <string name="recently_viewed">Récemment consultés</string>
     <string name="profile_recently_viewed_description">Dépôts que vous avez visités</string>

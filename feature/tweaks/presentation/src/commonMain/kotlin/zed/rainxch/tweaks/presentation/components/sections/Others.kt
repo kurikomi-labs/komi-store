@@ -142,64 +142,6 @@ fun LazyListScope.othersSection(
             },
         )
 
-        Spacer(Modifier.height(24.dp))
-
-        SectionHeader(
-            text = stringResource(Res.string.privacy_section).uppercase(),
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        ToggleSettingCard(
-            title = stringResource(Res.string.telemetry_title),
-            description = stringResource(Res.string.telemetry_description),
-            checked = state.isTelemetryEnabled,
-            onCheckedChange = { enabled ->
-                onAction(TweaksAction.OnTelemetryToggled(enabled))
-            },
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        ResetAnalyticsIdCard(
-            onClick = {
-                onAction(TweaksAction.OnResetAnalyticsId)
-            },
-        )
-    }
-}
-
-@Composable
-private fun ResetAnalyticsIdCard(onClick: () -> Unit) {
-    ExpressiveCard {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onClick)
-                    .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = stringResource(Res.string.reset_analytics_id_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.SemiBold,
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = stringResource(Res.string.reset_analytics_id_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
     }
 }
 

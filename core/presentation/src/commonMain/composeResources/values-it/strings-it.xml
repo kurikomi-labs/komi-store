@@ -627,12 +627,6 @@
     <string name="hide_repository">Nascondi repository</string>
     <string name="repository_hidden">Repository nascosto</string>
     <string name="undo_hide">Annulla</string>
-    <string name="privacy_section">Privacy</string>
-    <string name="telemetry_title">Aiuta a migliorare la ricerca</string>
-    <string name="telemetry_description">Condividi dati di utilizzo (ricerche, installazioni, interazioni) associati a un ID analitico ripristinabile. Nessun dettaglio dell'account viene condiviso.</string>
-    <string name="reset_analytics_id_title">Reimposta ID analitico</string>
-    <string name="reset_analytics_id_description">Genera un nuovo ID anonimo, interrompendo il collegamento con la telemetria passata.</string>
-    <string name="analytics_id_reset">ID analitico reimpostato</string>
 
     <string name="recently_viewed">Visualizzati di recente</string>
     <string name="profile_recently_viewed_description">Repository che hai visitato</string>

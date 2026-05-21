@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.model.ForgeKind
 import zed.rainxch.core.domain.model.HostNames
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_saved
@@ -26,7 +26,7 @@ import zed.rainxch.githubstore.core.presentation.res.host_tokens_validation_toke
 
 class HostTokensViewModel(
     private val repository: HostTokenRepository,
-    private val authenticationState: AuthenticationState,
+    private val userSessionRepository: UserSessionRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HostTokensState(isLoading = true))
@@ -60,7 +60,7 @@ class HostTokensViewModel(
                 }
         }
         viewModelScope.launch {
-            authenticationState.isUserLoggedIn()
+            userSessionRepository.isUserLoggedIn()
                 .catch { /* swallow — OAuth state is non-critical for this screen */ }
                 .collect { signedIn ->
                     _state.update { it.copy(isOAuthSignedInToGithub = signedIn) }

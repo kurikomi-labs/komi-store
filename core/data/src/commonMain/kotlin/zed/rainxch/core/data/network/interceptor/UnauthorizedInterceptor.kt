@@ -5,13 +5,13 @@ import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.statement.HttpReceivePipeline
 import io.ktor.http.HttpHeaders
 import io.ktor.util.AttributeKey
-import zed.rainxch.core.domain.repository.AuthenticationState
+import zed.rainxch.core.domain.repository.UserSessionRepository
 
 class UnauthorizedInterceptor(
-    private val authenticationState: AuthenticationState,
+    private val userSessionRepository: UserSessionRepository,
 ) {
     class Config {
-        var authenticationState: AuthenticationState? = null
+        var userSessionRepository: UserSessionRepository? = null
     }
 
     companion object Plugin : HttpClientPlugin<Config, UnauthorizedInterceptor> {
@@ -21,8 +21,8 @@ class UnauthorizedInterceptor(
         override fun prepare(block: Config.() -> Unit): UnauthorizedInterceptor {
             val config = Config().apply(block)
             return UnauthorizedInterceptor(
-                authenticationState =
-                    requireNotNull(config.authenticationState) {
+                userSessionRepository =
+                    requireNotNull(config.userSessionRepository) {
                         "AuthenticationState must be provided"
                     },
             )
@@ -35,9 +35,9 @@ class UnauthorizedInterceptor(
             scope.receivePipeline.intercept(HttpReceivePipeline.After) {
                 val tokenKey = extractBearerToken(subject.call.request.headers[HttpHeaders.Authorization])
                 if (subject.status.value == 401) {
-                    plugin.authenticationState.notifySessionExpired(tokenKey)
+                    plugin.userSessionRepository.notifySessionExpired(tokenKey)
                 } else {
-                    plugin.authenticationState.notifyRequestSucceeded(tokenKey)
+                    plugin.userSessionRepository.notifyRequestSucceeded(tokenKey)
                 }
                 proceedWith(subject)
             }

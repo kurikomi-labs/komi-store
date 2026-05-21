@@ -28,7 +28,6 @@ import zed.rainxch.core.data.network.BackendException
 import zed.rainxch.core.data.network.ExternalMatchApi
 import zed.rainxch.core.data.network.RateLimitedException
 import zed.rainxch.core.domain.repository.ExternalImportRepository
-import zed.rainxch.core.domain.repository.TelemetryRepository
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
@@ -48,14 +47,9 @@ class ExternalImportRepositoryImpl(
     private val legacyDataStore: DataStore<Preferences>,
     private val externalMatchApi: ExternalMatchApi,
     private val backendClient: BackendApiClient,
-    private val telemetry: TelemetryRepository,
     private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
     private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
 ) : ExternalImportRepository {
-    // Snapshot cache survives only for the lifetime of the process. Decisions
-    // (linked / skipped / never-ask) are persisted in `external_links`; the
-    // raw candidate metadata (label, fingerprint, hint) is regenerated on the
-    // next scan rather than persisted to keep the schema small.
     private val candidateSnapshot = MutableStateFlow<Map<String, ExternalAppCandidate>>(emptyMap())
 
 
@@ -76,10 +70,6 @@ class ExternalImportRepositoryImpl(
             ksafe.safeGet<Long?>(K_INITIAL_SCAN_AT, null)
         }.getOrNull() == null
         runCatching {
-            if (firstLaunch) {
-                runCatching { telemetry.importScanStarted(trigger = "first_launch") }
-                    .onFailure { Logger.d { "telemetry importScanStarted failed: ${it.message}" } }
-            }
             runFullScan()
         }.onSuccess {
             if (firstLaunch) markInitialScanComplete()
@@ -119,12 +109,6 @@ class ExternalImportRepositoryImpl(
             .onFailure { Logger.d { "prune pending failed: ${it.message}" } }
 
         val durationMs = nowMillis() - started
-        runCatching {
-            telemetry.importScanCompleted(
-                candidateCountBucket = bucketCandidateCount(candidates.size),
-                durationMsBucket = bucketDurationMs(durationMs),
-            )
-        }.onFailure { Logger.d { "telemetry importScanCompleted failed: ${it.message}" } }
 
         return ScanResult(
             totalCandidates = candidates.size,
@@ -232,12 +216,6 @@ class ExternalImportRepositoryImpl(
                     }
                 }.onFailure { error ->
                     Logger.w(error) { "external-match batch failed; continuing" }
-                    runCatching {
-                        telemetry.externalMatchApiFailure(
-                            statusCodeBucket = bucketApiFailure(error),
-                            retried = false,
-                        )
-                    }.onFailure { Logger.d { "telemetry externalMatchApiFailure failed: ${it.message}" } }
                 }
         }
 
@@ -346,19 +324,6 @@ class ExternalImportRepositoryImpl(
                 // only want one row per logical {host, owner, repo}.
                 .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
                 .sortedByDescending { it.confidence }
-
-            // Emit one `import_match_attempted` per strategy that
-            // produced a hit for this candidate. Bucketed confidence
-            // only — never owner/repo/package name.
-            deduped.groupBy { it.source }.forEach { (source, hits) ->
-                val top = hits.maxByOrNull { it.confidence } ?: return@forEach
-                runCatching {
-                    telemetry.importMatchAttempted(
-                        strategy = source.telemetryStrategy(),
-                        confidenceBucket = bucketConfidence(top.confidence),
-                    )
-                }.onFailure { Logger.d { "telemetry importMatchAttempted failed: ${it.message}" } }
-            }
 
             RepoMatchResult(packageName = candidate.packageName, suggestions = deduped)
         }
@@ -551,16 +516,6 @@ class ExternalImportRepositoryImpl(
         } catch (e: Exception) {
             Logger.w(e) { "signing-seeds sync aborted" }
         }
-        emitSeedSyncTelemetry(rowsAdded, nowMillis() - started)
-    }
-
-    private suspend fun emitSeedSyncTelemetry(rowsAdded: Int, durationMs: Long) {
-        runCatching {
-            telemetry.signingSeedSyncCompleted(
-                rowsAddedBucket = bucketSeedRowsAdded(rowsAdded),
-                durationMsBucket = bucketDurationMs(durationMs),
-            )
-        }.onFailure { Logger.d { "telemetry signingSeedSyncCompleted failed: ${it.message}" } }
     }
 
     override suspend fun pruneExpiredSkips() {
@@ -744,15 +699,6 @@ class ExternalImportRepositoryImpl(
             emptyList()
         }
     }
-
-    private fun RepoMatchSource.telemetryStrategy(): String =
-        when (this) {
-            RepoMatchSource.MANIFEST -> "manifest"
-            RepoMatchSource.SEARCH -> "search"
-            RepoMatchSource.FINGERPRINT -> "fingerprint"
-            RepoMatchSource.MANUAL -> "manual"
-            RepoMatchSource.FORGEJO_SEARCH -> "forgejo_search"
-        }
 
     companion object {
         private const val K_INITIAL_SCAN_AT = "external_import_initial_scan_at"

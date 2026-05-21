@@ -36,7 +36,6 @@ import zed.rainxch.core.data.dto.AnnouncementsResponseDto
 import zed.rainxch.core.data.dto.BackendExploreResponse
 import zed.rainxch.core.data.dto.BackendRepoResponse
 import zed.rainxch.core.data.dto.BackendSearchResponse
-import zed.rainxch.core.data.dto.EventRequest
 import zed.rainxch.core.data.dto.ExternalMatchRequest
 import zed.rainxch.core.data.dto.ExternalMatchResponse
 import zed.rainxch.core.data.dto.GithubReadmeResponseDto
@@ -378,22 +377,6 @@ class BackendApiClient(
                 response.status.isSuccess() -> Result.success(response.body())
                 response.status == HttpStatusCode.TooManyRequests -> Result.failure(buildRateLimited(response))
                 else -> Result.failure(BackendException(response.status.value))
-            }
-        }
-
-    suspend fun postEvents(events: List<EventRequest>): Result<Unit> =
-        safeCall {
-            val response = httpClient.post("events") {
-                contentType(ContentType.Application.Json)
-                setBody(events)
-            }
-            when {
-                response.status == HttpStatusCode.NoContent || response.status.isSuccess() ->
-                    Result.success(Unit)
-                response.status == HttpStatusCode.TooManyRequests ->
-                    Result.failure(RateLimitedException())
-                else ->
-                    Result.failure(BackendException(response.status.value))
             }
         }
 

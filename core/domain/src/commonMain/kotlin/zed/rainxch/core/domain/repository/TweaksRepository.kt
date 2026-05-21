@@ -79,10 +79,6 @@ interface TweaksRepository {
 
     suspend fun setContentWidth(width: ContentWidth)
 
-    fun getTelemetryEnabled(): Flow<Boolean>
-
-    suspend fun setTelemetryEnabled(enabled: Boolean)
-
     fun getTranslationProvider(): Flow<TranslationProvider>
 
     suspend fun setTranslationProvider(provider: TranslationProvider)
