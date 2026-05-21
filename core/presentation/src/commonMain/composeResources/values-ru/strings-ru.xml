@@ -125,12 +125,10 @@
     <string name="warning">Внимание!</string>
     <string name="logout_confirmation">Вы уверены, что хотите выйти?</string>
 
-    <string name="theme_dynamic">Динамическая</string>
-    <string name="theme_ocean">Океан</string>
-    <string name="theme_purple">Фиолетовая</string>
     <string name="theme_forest">Лесная</string>
-    <string name="theme_slate">Сланцевая</string>
-    <string name="theme_amber">Янтарная</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <string name="open_repository">Открыть репозиторий</string>
     <string name="cancel_download">Отменить загрузку</string>

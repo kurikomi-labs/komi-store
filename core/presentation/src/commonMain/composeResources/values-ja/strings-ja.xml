@@ -125,12 +125,10 @@
     <string name="warning">警告！</string>
     <string name="logout_confirmation">ログアウトしてもよろしいですか？</string>
 
-    <string name="theme_dynamic">ダイナミック</string>
-    <string name="theme_ocean">オーシャン</string>
-    <string name="theme_purple">パープル</string>
     <string name="theme_forest">フォレスト</string>
-    <string name="theme_slate">スレート</string>
-    <string name="theme_amber">アンバー</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <string name="error_loading_details">詳細の読み込みに失敗しました</string>
     <string name="about_this_app">このアプリについて</string>

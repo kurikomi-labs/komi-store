@@ -149,12 +149,10 @@
     <string name="logout_confirmation">আপনি কি নিশ্চিতভাবে লগআউট করতে চান?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">ডাইনামিক</string>
-    <string name="theme_ocean">সমুদ্র</string>
-    <string name="theme_purple">বেগুনি</string>
     <string name="theme_forest">বন</string>
-    <string name="theme_slate">স্লেট</string>
-    <string name="theme_amber">অ্যাম্বার</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">রিপোজিটরি খুলুন</string>

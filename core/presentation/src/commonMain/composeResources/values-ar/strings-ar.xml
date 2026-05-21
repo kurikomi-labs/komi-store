@@ -187,12 +187,10 @@
     <string name="logout_confirmation">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">ديناميكي</string>
-    <string name="theme_ocean">محيط</string>
-    <string name="theme_purple">بنفسجي</string>
     <string name="theme_forest">غابة</string>
-    <string name="theme_slate">رمادي</string>
-    <string name="theme_amber">كهرماني</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">فتح المستودع</string>

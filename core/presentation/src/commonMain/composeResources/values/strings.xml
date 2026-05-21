@@ -189,12 +189,10 @@
     <string name="logout_confirmation">Are you sure you want to log out?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">Dynamic</string>
-    <string name="theme_ocean">Ocean</string>
-    <string name="theme_purple">Purple</string>
     <string name="theme_forest">Forest</string>
-    <string name="theme_slate">Slate</string>
-    <string name="theme_amber">Amber</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">Open repository</string>

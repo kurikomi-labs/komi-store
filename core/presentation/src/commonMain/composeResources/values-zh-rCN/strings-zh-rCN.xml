@@ -127,12 +127,10 @@
     <string name="warning">警告！</string>
     <string name="logout_confirmation">确定要退出登录吗？</string>
 
-    <string name="theme_dynamic">动态</string>
-    <string name="theme_ocean">海洋</string>
-    <string name="theme_purple">紫色</string>
     <string name="theme_forest">森林</string>
-    <string name="theme_slate">石板</string>
-    <string name="theme_amber">琥珀</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <string name="error_loading_details">加载详情失败</string>
     <string name="about_this_app">关于此应用</string>

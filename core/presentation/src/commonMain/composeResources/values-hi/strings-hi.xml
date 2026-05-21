@@ -149,12 +149,10 @@
     <string name="logout_confirmation">क्या आप लॉग आउट करना चाहते हैं?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">डायनामिक</string>
-    <string name="theme_ocean">ओशन</string>
-    <string name="theme_purple">पर्पल</string>
     <string name="theme_forest">फॉरेस्ट</string>
-    <string name="theme_slate">स्लेट</string>
-    <string name="theme_amber">एम्बर</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">रिपॉजिटरी खोलें</string>

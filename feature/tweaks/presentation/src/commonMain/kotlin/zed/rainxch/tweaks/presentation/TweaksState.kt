@@ -13,7 +13,7 @@ import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 
 data class TweaksState(
-    val selectedThemeColor: AppTheme = AppTheme.OCEAN,
+    val selectedThemeColor: AppTheme = AppTheme.NORD,
     val selectedFontTheme: FontTheme = FontTheme.CUSTOM,
     val isAmoledThemeEnabled: Boolean = false,
     val isDarkTheme: Boolean? = null,

@@ -148,12 +148,10 @@
     <string name="logout_confirmation">Çıkmak istediğinden emin misin?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">Dinamik</string>
-    <string name="theme_ocean">Deniz</string>
-    <string name="theme_purple">Mor</string>
     <string name="theme_forest">Orman</string>
-    <string name="theme_slate">Arduvaz</string>
-    <string name="theme_amber">Amber</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">Repoyu Aç</string>

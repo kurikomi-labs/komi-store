@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +51,6 @@ import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
 import zed.rainxch.core.presentation.utils.displayName
 import zed.rainxch.core.presentation.utils.primaryColor
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -268,14 +266,7 @@ private fun ThemeColorCard(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val availableThemes =
-                    if (isDynamicColorAvailable()) {
-                        AppTheme.entries
-                    } else {
-                        AppTheme.entries.filter { it != AppTheme.DYNAMIC }
-                    }
-
-                items(availableThemes) { theme ->
+                items(AppTheme.entries) { theme ->
                     ThemeColorOption(
                         theme = theme,
                         isSelected = selectedThemeColor == theme,
@@ -320,21 +311,7 @@ private fun ThemeColorOption(
                             CircleShape
                         },
                     ).background(
-                        color = theme.primaryColor ?: MaterialTheme.colorScheme.primary,
-                    ).then(
-                        if (theme == AppTheme.DYNAMIC) {
-                            Modifier.border(
-                                2.dp,
-                                MaterialTheme.colorScheme.outline,
-                                if (isSelected) {
-                                    MaterialShapes.Cookie9Sided.toShape()
-                                } else {
-                                    CircleShape
-                                },
-                            )
-                        } else {
-                            Modifier
-                        },
+                        color = theme.primaryColor,
                     ),
             contentAlignment = Alignment.Center,
         ) {

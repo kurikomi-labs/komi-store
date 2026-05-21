@@ -149,12 +149,10 @@
     <string name="logout_confirmation">Sei sicuro di voler uscire?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">Dinamico</string>
-    <string name="theme_ocean">Oceano</string>
-    <string name="theme_purple">Viola</string>
     <string name="theme_forest">Foresta</string>
-    <string name="theme_slate">Ardesia</string>
-    <string name="theme_amber">Ambra</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">Apri repository</string>

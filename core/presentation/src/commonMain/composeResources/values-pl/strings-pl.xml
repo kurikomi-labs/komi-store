@@ -126,12 +126,10 @@
     <string name="warning">Ostrzeżenie!</string>
     <string name="logout_confirmation">Czy na pewno chcesz się wylogować?</string>
 
-    <string name="theme_dynamic">Dynamiczny</string>
-    <string name="theme_ocean">Ocean</string>
-    <string name="theme_purple">Fioletowy</string>
     <string name="theme_forest">Las</string>
-    <string name="theme_slate">Łupek</string>
-    <string name="theme_amber">Bursztyn</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <string name="open_repository">Otwórz repozytorium</string>
     <string name="open_in_browser">Otwórz w przeglądarce</string>

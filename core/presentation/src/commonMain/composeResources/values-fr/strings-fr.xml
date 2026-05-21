@@ -125,12 +125,10 @@
     <string name="warning">Attention !</string>
     <string name="logout_confirmation">Voulez-vous vraiment vous déconnecter ?</string>
 
-    <string name="theme_dynamic">Dynamique</string>
-    <string name="theme_ocean">Océan</string>
-    <string name="theme_purple">Violet</string>
     <string name="theme_forest">Forêt</string>
-    <string name="theme_slate">Ardoise</string>
-    <string name="theme_amber">Ambre</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <string name="error_loading_details">Erreur de chargement</string>
     <string name="about_this_app">À propos de cette application</string>

@@ -147,12 +147,10 @@
     <string name="logout_confirmation">정말 로그아웃하시겠습니까?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">동적</string>
-    <string name="theme_ocean">오션</string>
-    <string name="theme_purple">퍼플</string>
     <string name="theme_forest">포레스트</string>
-    <string name="theme_slate">슬레이트</string>
-    <string name="theme_amber">앰버</string>
+    <string name="theme_nord">Nord</string>
+    <string name="theme_cream">Cream</string>
+    <string name="theme_plum">Plum</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">저장소 열기</string>
