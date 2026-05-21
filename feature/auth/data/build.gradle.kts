@@ -17,15 +17,5 @@ kotlin {
                 implementation(libs.bundles.koin.common)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }

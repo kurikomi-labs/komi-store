@@ -13,15 +13,5 @@ kotlin {
                 implementation(projects.feature.starred.domain)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }

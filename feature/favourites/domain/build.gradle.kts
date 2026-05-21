@@ -11,15 +11,5 @@ kotlin {
                 implementation(projects.core.domain)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }

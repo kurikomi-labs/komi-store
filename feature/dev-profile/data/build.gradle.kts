@@ -8,24 +8,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
 
                 implementation(projects.core.domain)
                 implementation(projects.core.data)
                 implementation(projects.feature.devProfile.domain)
 
-                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.ktor.common)
                 implementation(libs.bundles.koin.common)
-            }
-        }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
             }
         }
     }

@@ -7,17 +7,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.collections.immutable)
 
                 implementation(projects.core.domain)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.search.domain)
-                implementation(projects.feature.profile.domain)
-
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)
-
-                implementation(libs.kotlinx.collections.immutable)
             }
         }
     }

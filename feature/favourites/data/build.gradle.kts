@@ -13,15 +13,5 @@ kotlin {
                 implementation(projects.feature.favourites.domain)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }

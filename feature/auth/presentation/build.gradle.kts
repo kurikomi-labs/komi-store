@@ -16,15 +16,5 @@ kotlin {
                 implementation(libs.jetbrains.compose.components.resources)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }

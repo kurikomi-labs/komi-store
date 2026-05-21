@@ -7,20 +7,9 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
 
                 implementation(projects.core.domain)
-
-                implementation(libs.kotlinx.coroutines.core)
-            }
-        }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
             }
         }
     }
