@@ -1,6 +1,6 @@
 # Profile Feature
 
-Account-level — GitHub user profile, login/logout, sponsor entry, version info. **Settings live in `feature/tweaks/`** — this module narrow on purpose. Owns account identity + exposes `ProfileRepository.getUser()` to other features (home/search/details/starred/favourites/tweaks/dev-profile consume it for E20 self-owned badge and account-aware flows).
+Account-level — GitHub user profile, login/logout, version info. **Settings live in `feature/tweaks/`** — this module narrow on purpose. Owns account identity + exposes `ProfileRepository.getUser()` to other features (home/search/details/starred/favourites/tweaks/dev-profile consume it for E20 self-owned badge and account-aware flows).
 
 ## Structure
 
@@ -9,7 +9,7 @@ feature/profile/
 ├── domain/        # ProfileRepository, UserProfile
 ├── data/          # ProfileRepositoryImpl, UserProfileMappers
 └── presentation/
-    ├── ProfileViewModel / State / Action / Event / Root, SponsorScreen
+    ├── ProfileViewModel / State / Action / Event / Root
     ├── model/ProxyType (legacy — proxy lives in tweaks now)
     └── components/ LogoutDialog, SectionText, sections/{Account, AccountSection, ProfileSection}
 ```
@@ -29,7 +29,7 @@ interface ProfileRepository {
 
 ## Navigation
 
-`GithubStoreGraph.ProfileScreen`, `SponsorScreen`.
+`GithubStoreGraph.ProfileScreen`.
 
 ## Notes
 

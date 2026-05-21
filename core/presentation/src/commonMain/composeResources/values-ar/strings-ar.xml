@@ -511,44 +511,19 @@
     <string name="current_size">الحجم الحالي:</string>
     <string name="clear">مسح</string>
 
-    <string name="sponsor_title">ادعم GitHub Store</string>
-    <string name="sponsor_button">ادعم المشروع</string>
-    <string name="sponsor_hero_title">مجاني للأبد.\nبدعمكم يستمر.</string>
 
-    <string name="sponsor_hero_subtitle">دعمكم يبقي GitHub Store مجانيًا ومستقلًا ومُحدّثًا باستمرار — بدون إعلانات، بدون تتبع، فقط طريقة أفضل لتثبيت التطبيقات مفتوحة المصدر.</string>
 
-    <string name="sponsor_personal_note">أقوم ببناء وصيانة هذا المشروع بمفردي أثناء إنهاء دراستي. كل مساهمة — كبيرة أو صغيرة — تذهب مباشرة لتغطية تكاليف الخوادم والتطوير وإبقاء التطبيق مجانيًا بدون إعلانات للجميع.</string>
 
-    <string name="sponsor_kodee_title">صوّت لـ GitHub Store!</string>
-    <string name="sponsor_kodee_subtitle">تم ترشيح GitHub Store لجوائز Golden Kodee في KotlinConf 2026.</string>
 
-    <string name="sponsor_kodee_register">1. التسجيل</string>
-    <string name="sponsor_kodee_vote">2. التصويت</string>
 
-    <string name="sponsor_kodee_deadline">ينتهي التصويت في 22 مارس</string>
 
-    <string name="sponsor_kodee_step1">1. سجل في منصة الجوائز (المتابعة عبر Google)</string>
-    <string name="sponsor_kodee_step2">2. اضغط على زر التصويت أدناه</string>
-    <string name="sponsor_kodee_step3">3. ابحث عن Usmon Narzullayev واضغط تصويت</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">شهري أو لمرة واحدة — يموّل التطوير مباشرة</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">مساهمة سريعة لمرة واحدة</string>
 
-    <string name="sponsor_other_ways_title">طرق أخرى للمساعدة</string>
 
-    <string name="sponsor_star_repo">ضع نجمة للمستودع</string>
-    <string name="sponsor_star_repo_desc">يزيد الظهور ويساعد الآخرين على اكتشافه</string>
 
-    <string name="sponsor_report_bugs">الإبلاغ عن الأخطاء</string>
-    <string name="sponsor_report_bugs_desc">كل بلاغ يجعل التطبيق أفضل للجميع</string>
 
-    <string name="sponsor_share">شارك مع الأصدقاء</string>
-    <string name="sponsor_share_desc">الكلمة المنقولة هي أفضل تسويق</string>
 
-    <string name="sponsor_thank_you">كل مساهمة — مالية أو غير ذلك — تُحدث فرقًا حقيقيًا. شكرًا لكونكم جزءًا من هذا.</string>
 
     <!-- Installation method settings -->
     <string name="section_installation">التثبيت</string>

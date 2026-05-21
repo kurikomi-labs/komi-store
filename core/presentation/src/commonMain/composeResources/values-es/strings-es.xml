@@ -475,40 +475,15 @@
     <string name="current_size">Tamaño actual:</string>
     <string name="clear">Borrar</string>
 
-    <string name="sponsor_title">Apoya GitHub Store</string>
-    <string name="sponsor_button">Apoyar el proyecto</string>
-    <string name="sponsor_hero_title">Gratis para siempre.\nFinanciado por ti.</string>
-    <string name="sponsor_hero_subtitle">Tu apoyo mantiene GitHub Store gratuito, independiente y activamente mantenido — sin anuncios, sin rastreo, solo una mejor forma de instalar apps de código abierto.</string>
-    <string name="sponsor_personal_note">Desarrollo y mantengo este proyecto solo mientras termino mis estudios. Cada contribución — grande o pequeña — va directamente a costos de servidor, desarrollo y mantener la app sin anuncios para todos.</string>
 
-    <string name="sponsor_kodee_title">¡Vota por GitHub Store!</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store está nominado a los Golden Kodee Awards en KotlinConf 2026. Tu voto toma solo 2 minutos y significa mucho.</string>
-    <string name="sponsor_kodee_register">1. Registrarse</string>
-    <string name="sponsor_kodee_vote">2. Votar</string>
-    <string name="sponsor_kodee_deadline">La votación cierra el 22 de marzo</string>
 
-    <string name="sponsor_kodee_step1">1. Regístrate en la plataforma de premios (Continuar con Google)</string>
-    <string name="sponsor_kodee_step2">2. Toca Votar abajo para abrir la página</string>
-    <string name="sponsor_kodee_step3">3. Busca a Usmon Narzullayev y pulsa Votar</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">Mensual o puntual — financia directamente el desarrollo</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">Contribución rápida de una sola vez</string>
 
-    <string name="sponsor_other_ways_title">OTRAS FORMAS DE AYUDAR</string>
 
-    <string name="sponsor_star_repo">Dar estrella al repositorio</string>
-    <string name="sponsor_star_repo_desc">Aumenta la visibilidad y ayuda a otros a encontrarlo</string>
 
-    <string name="sponsor_report_bugs">Reportar errores</string>
-    <string name="sponsor_report_bugs_desc">Cada reporte mejora la app para todos</string>
 
-    <string name="sponsor_share">Compartir con amigos</string>
-    <string name="sponsor_share_desc">El boca a boca es el mejor marketing</string>
 
-    <string name="sponsor_thank_you">Cada contribución — financiera o no — marca una diferencia real. Gracias por ser parte de esto.</string>
 
     <!-- Installation method settings -->
     <string name="section_installation">Instalación</string>

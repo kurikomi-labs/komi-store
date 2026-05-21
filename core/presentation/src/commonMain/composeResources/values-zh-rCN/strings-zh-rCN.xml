@@ -476,42 +476,17 @@
     <string name="current_size">当前大小：</string>
     <string name="clear">清除</string>
 
-    <string name="sponsor_title">支持 GitHub Store</string>
-    <string name="sponsor_button">支持项目</string>
-    <string name="sponsor_hero_title">永久免费。\n由你资助。</string>
-    <string name="sponsor_hero_subtitle">你的支持让 GitHub Store 保持免费、独立且持续更新——无广告、无跟踪，只是一种更好的方式来安装开源应用。</string>
 
-    <string name="sponsor_personal_note">我在完成学业的同时独自开发和维护这个项目。每一份贡献——无论大小——都直接用于服务器成本、开发以及让应用对所有人保持免费无广告。</string>
 
-    <string name="sponsor_kodee_title">为 GitHub Store 投票！</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store 已被提名为 KotlinConf 2026 Golden Kodee Awards。</string>
 
-    <string name="sponsor_kodee_register">1. 注册</string>
-    <string name="sponsor_kodee_vote">2. 投票</string>
-    <string name="sponsor_kodee_deadline">投票截止：3月22日</string>
 
-    <string name="sponsor_kodee_step1">1. 在奖项平台注册（使用 Google 登录）</string>
-    <string name="sponsor_kodee_step2">2. 点击下方“投票”</string>
-    <string name="sponsor_kodee_step3">3. 找到 Usmon Narzullayev 并点击投票</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">按月或一次性——直接资助开发</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">快速一次性贡献</string>
 
-    <string name="sponsor_other_ways_title">其他帮助方式</string>
 
-    <string name="sponsor_star_repo">为仓库加星</string>
-    <string name="sponsor_star_repo_desc">提升曝光度，帮助更多人发现它</string>
 
-    <string name="sponsor_report_bugs">报告问题</string>
-    <string name="sponsor_report_bugs_desc">每一个反馈都让应用对所有人更好</string>
 
-    <string name="sponsor_share">分享给朋友</string>
-    <string name="sponsor_share_desc">口碑是最好的推广</string>
 
-    <string name="sponsor_thank_you">每一份贡献——无论是否金钱——都带来真正的改变。感谢你成为其中的一员。</string>
 
     <!-- Installation method settings -->
     <string name="section_installation">安装</string>

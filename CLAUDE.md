@@ -50,7 +50,7 @@ class XViewModel : ViewModel() {
 
 ### Navigation
 
-`@Serializable` sealed interface `GithubStoreGraph` in `composeApp/.../app/navigation/`. Routes: `HomeScreen`, `SearchScreen`, `AuthenticationScreen`, `ProfileScreen`, `TweaksScreen`, `FavouritesScreen`, `StarredReposScreen`, `RecentlyViewedScreen`, `AppsScreen`, `SponsorScreen`, `ExternalImportScreen`, `MirrorPickerScreen`, `StarredPickerScreen`, `SkippedUpdatesScreen`, `HiddenRepositoriesScreen`, `WhatsNewHistoryScreen`, `AnnouncementsScreen`, `HostTokensScreen`, `DetailsScreen(repositoryId, owner, repo, isComingFromUpdate, sourceHost)`, `DeveloperProfileScreen(username)`. `DetailsScreen.sourceHost` is non-null for Codeberg / Forgejo / custom-forge repos — routes all `DetailsRepository` calls through `ForgejoClientRegistry` instead of the GitHub-backed default path.
+`@Serializable` sealed interface `GithubStoreGraph` in `composeApp/.../app/navigation/`. Routes: `HomeScreen`, `SearchScreen`, `AuthenticationScreen`, `ProfileScreen`, `TweaksScreen`, `FavouritesScreen`, `StarredReposScreen`, `RecentlyViewedScreen`, `AppsScreen`, `OnboardingScreen`, `ExternalImportScreen`, `MirrorPickerScreen`, `StarredPickerScreen`, `SkippedUpdatesScreen`, `HiddenRepositoriesScreen`, `WhatsNewHistoryScreen`, `AnnouncementsScreen`, `HostTokensScreen`, `DetailsScreen(repositoryId, owner, repo, isComingFromUpdate, sourceHost)`, `DeveloperProfileScreen(username)`. `DetailsScreen.sourceHost` is non-null for Codeberg / Forgejo / custom-forge repos — routes all `DetailsRepository` calls through `ForgejoClientRegistry` instead of the GitHub-backed default path.
 
 ### DI
 

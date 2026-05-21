@@ -129,10 +129,6 @@ class ProfileViewModel(
                 // Handed in composable
             }
 
-            ProfileAction.OnSponsorClick -> {
-                // Handed in composable
-            }
-
             ProfileAction.OnRecentlyViewedClick -> {
                 // Handed in composable
             }

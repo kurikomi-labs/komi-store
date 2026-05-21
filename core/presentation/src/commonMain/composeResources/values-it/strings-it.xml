@@ -511,42 +511,17 @@
     <string name="current_size">Dimensione attuale:</string>
     <string name="clear">Pulisci</string>
 
-    <string name="sponsor_title">Supporta GitHub Store</string>
-    <string name="sponsor_button">Supporta il progetto</string>
-    <string name="sponsor_hero_title">Gratuito per sempre.\nFinanziato da te.</string>
-    <string name="sponsor_hero_subtitle">Il tuo supporto mantiene GitHub Store gratuito, indipendente e attivamente aggiornato — niente pubblicità, niente tracciamento, solo un modo migliore per installare app open-source.</string>
 
-    <string name="sponsor_personal_note">Sviluppo e mantengo questo progetto da solo mentre finisco gli studi. Ogni contributo — grande o piccolo — va direttamente ai costi del server, allo sviluppo e a mantenere l'app senza pubblicità per tutti.</string>
 
-    <string name="sponsor_kodee_title">Vota GitHub Store!</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store è nominato ai Golden Kodee Awards al KotlinConf 2026.</string>
 
-    <string name="sponsor_kodee_register">1. Registrati</string>
-    <string name="sponsor_kodee_vote">2. Vota</string>
-    <string name="sponsor_kodee_deadline">Le votazioni chiudono il 22 marzo</string>
 
-    <string name="sponsor_kodee_step1">1. Registrati sulla piattaforma (Continua con Google)</string>
-    <string name="sponsor_kodee_step2">2. Tocca Vota qui sotto</string>
-    <string name="sponsor_kodee_step3">3. Trova Usmon Narzullayev e premi Vota</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">Mensile o una tantum — finanzia direttamente lo sviluppo</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">Contributo rapido una tantum</string>
 
-    <string name="sponsor_other_ways_title">ALTRI MODI PER AIUTARE</string>
 
-    <string name="sponsor_star_repo">Metti una stella al repository</string>
-    <string name="sponsor_star_repo_desc">Aumenta la visibilità e aiuta gli altri a trovarlo</string>
 
-    <string name="sponsor_report_bugs">Segnala bug</string>
-    <string name="sponsor_report_bugs_desc">Ogni segnalazione migliora l'app per tutti</string>
 
-    <string name="sponsor_share">Condividi con amici</string>
-    <string name="sponsor_share_desc">Il passaparola è il miglior marketing</string>
 
-    <string name="sponsor_thank_you">Ogni contributo — finanziario o meno — fa davvero la differenza. Grazie per farne parte.</string>
 
 
     <!-- Installation method settings -->

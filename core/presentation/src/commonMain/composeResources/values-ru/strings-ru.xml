@@ -475,42 +475,17 @@
     <string name="current_size">Текущий размер:</string>
     <string name="clear">Очистить</string>
 
-    <string name="sponsor_title">Поддержать GitHub Store</string>
-    <string name="sponsor_button">Поддержать проект</string>
-    <string name="sponsor_hero_title">Бесплатно навсегда.\nБлагодаря вам.</string>
-    <string name="sponsor_hero_subtitle">Ваша поддержка позволяет GitHub Store оставаться бесплатным, независимым и активно развиваемым — без рекламы, без отслеживания, просто лучший способ устанавливать open-source приложения.</string>
 
-    <string name="sponsor_personal_note">Я разрабатываю и поддерживаю этот проект в одиночку, заканчивая учёбу. Каждый вклад — большой или маленький — идёт напрямую на серверные расходы, разработку и поддержание приложения без рекламы для всех.</string>
 
-    <string name="sponsor_kodee_title">Голосуйте за GitHub Store!</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store номинирован на Golden Kodee Awards на KotlinConf 2026.</string>
 
-    <string name="sponsor_kodee_register">1. Зарегистрироваться</string>
-    <string name="sponsor_kodee_vote">2. Проголосовать</string>
-    <string name="sponsor_kodee_deadline">Голосование до 22 марта</string>
 
-    <string name="sponsor_kodee_step1">1. Зарегистрируйтесь на платформе (Войти через Google)</string>
-    <string name="sponsor_kodee_step2">2. Нажмите «Голосовать» ниже</string>
-    <string name="sponsor_kodee_step3">3. Найдите Usmon Narzullayev и нажмите «Голосовать»</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">Ежемесячно или разово — напрямую финансирует разработку</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">Быстрый разовый вклад</string>
 
-    <string name="sponsor_other_ways_title">ДРУГИЕ СПОСОБЫ ПОМОЧЬ</string>
 
-    <string name="sponsor_star_repo">Поставить звезду репозиторию</string>
-    <string name="sponsor_star_repo_desc">Повышает видимость и помогает другим его найти</string>
 
-    <string name="sponsor_report_bugs">Сообщить об ошибке</string>
-    <string name="sponsor_report_bugs_desc">Каждый отчёт делает приложение лучше для всех</string>
 
-    <string name="sponsor_share">Поделиться с друзьями</string>
-    <string name="sponsor_share_desc">Сарафанное радио — лучший маркетинг</string>
 
-    <string name="sponsor_thank_you">Каждый вклад — финансовый или нет — действительно имеет значение. Спасибо, что вы с нами.</string>
 
 
     <!-- Installation method settings -->

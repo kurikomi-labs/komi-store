@@ -508,43 +508,18 @@
     <string name="current_size">현재 크기:</string>
     <string name="clear">지우기</string>
 
-    <string name="sponsor_title">GitHub Store 지원</string>
-    <string name="sponsor_button">프로젝트 지원하기</string>
-    <string name="sponsor_hero_title">영원히 무료.\n여러분이 후원합니다.</string>
 
-    <string name="sponsor_hero_subtitle">여러분의 후원이 GitHub Store를 무료로, 독립적으로, 활발히 유지보수되도록 합니다 — 광고 없음, 추적 없음, 오픈소스 앱을 설치하는 더 나은 방법입니다.</string>
 
-    <string name="sponsor_personal_note">학업을 마치면서 이 프로젝트를 혼자 개발하고 유지하고 있습니다. 모든 기여 — 크든 작든 — 서버 비용, 개발, 그리고 모두를 위해 앱을 광고 없이 유지하는 데 직접 사용됩니다.</string>
 
-    <string name="sponsor_kodee_title">GitHub Store에 투표하세요!</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store가 KotlinConf 2026 Golden Kodee Awards 후보에 올랐습니다.</string>
 
-    <string name="sponsor_kodee_register">1. 등록</string>
-    <string name="sponsor_kodee_vote">2. 투표</string>
-    <string name="sponsor_kodee_deadline">투표 마감: 3월 22일</string>
 
-    <string name="sponsor_kodee_step1">1. 플랫폼에 등록 (Google로 계속)</string>
-    <string name="sponsor_kodee_step2">2. 아래에서 투표 버튼 누르기</string>
-    <string name="sponsor_kodee_step3">3. Usmon Narzullayev를 찾아 투표 클릭</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">월간 또는 일회성 — 개발을 직접 후원</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">간편한 일회성 기여</string>
 
-    <string name="sponsor_other_ways_title">다른 도움 방법</string>
 
-    <string name="sponsor_star_repo">저장소에 스타 주기</string>
-    <string name="sponsor_star_repo_desc">가시성을 높이고 다른 사람들이 찾을 수 있도록 도움</string>
 
-    <string name="sponsor_report_bugs">버그 신고</string>
-    <string name="sponsor_report_bugs_desc">모든 신고가 모두를 위해 앱을 개선합니다</string>
 
-    <string name="sponsor_share">친구와 공유</string>
-    <string name="sponsor_share_desc">입소문이 최고의 마케팅입니다</string>
 
-    <string name="sponsor_thank_you">모든 기여 — 금전적이든 아니든 — 진정한 변화를 만듭니다. 함께해 주셔서 감사합니다.</string>
 
 
     <!-- Installation method settings -->

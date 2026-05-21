@@ -47,7 +47,6 @@ fun ProfileRoot(
     onNavigateToStarredRepos: () -> Unit,
     onNavigateToFavouriteRepos: () -> Unit,
     onNavigateToRecentlyViewed: () -> Unit,
-    onNavigateToSponsor: () -> Unit,
     onNavigateToWhatsNew: () -> Unit,
     onPreviewWhatsNewSheet: () -> Unit,
     onNavigateToAnnouncements: () -> Unit,
@@ -130,10 +129,6 @@ fun ProfileRoot(
 
                 ProfileAction.OnRecentlyViewedClick -> {
                     onNavigateToRecentlyViewed()
-                }
-
-                ProfileAction.OnSponsorClick -> {
-                    onNavigateToSponsor()
                 }
 
                 ProfileAction.OnWhatsNewClick -> {

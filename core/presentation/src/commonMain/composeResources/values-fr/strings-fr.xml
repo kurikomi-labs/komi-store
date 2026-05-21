@@ -475,41 +475,16 @@
     <string name="current_size">Taille actuelle :</string>
     <string name="clear">Vider</string>
 
-    <string name="sponsor_title">Soutenir GitHub Store</string>
-    <string name="sponsor_button">Soutenir le projet</string>
-    <string name="sponsor_hero_title">Gratuit pour toujours.\nFinancé par vous.</string>
-    <string name="sponsor_hero_subtitle">Votre soutien permet de garder GitHub Store gratuit, indépendant et activement maintenu — sans publicité, sans suivi, juste une meilleure façon d’installer des apps open-source.</string>
-    <string name="sponsor_personal_note">Je développe et maintiens ce projet seul tout en finissant mes études. Chaque contribution — grande ou petite — va directement aux coûts de serveur, au développement et au maintien de l’app sans publicité pour tous.</string>
 
-    <string name="sponsor_kodee_title">Votez pour GitHub Store !</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store est nommé aux Golden Kodee Awards de KotlinConf 2026. Votre vote prend seulement 2 minutes.</string>
 
-    <string name="sponsor_kodee_register">1. S’inscrire</string>
-    <string name="sponsor_kodee_vote">2. Voter</string>
-    <string name="sponsor_kodee_deadline">Vote jusqu’au 22 mars</string>
 
-    <string name="sponsor_kodee_step1">1. Inscrivez-vous sur la plateforme (Continuer avec Google)</string>
-    <string name="sponsor_kodee_step2">2. Appuyez sur Voter ci-dessous</string>
-    <string name="sponsor_kodee_step3">3. Trouvez Usmon Narzullayev et cliquez sur Voter</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">Mensuel ou ponctuel — finance directement le développement</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">Contribution rapide en une fois</string>
 
-    <string name="sponsor_other_ways_title">AUTRES FAÇONS D’AIDER</string>
 
-    <string name="sponsor_star_repo">Mettre une étoile au dépôt</string>
-    <string name="sponsor_star_repo_desc">Augmente la visibilité et aide les autres à le trouver</string>
 
-    <string name="sponsor_report_bugs">Signaler des bugs</string>
-    <string name="sponsor_report_bugs_desc">Chaque signalement améliore l’app pour tous</string>
 
-    <string name="sponsor_share">Partager avec des amis</string>
-    <string name="sponsor_share_desc">Le bouche-à-oreille est le meilleur marketing</string>
 
-    <string name="sponsor_thank_you">Chaque contribution — financière ou non — fait une vraie différence. Merci d'en faire partie.</string>
 
     <!-- Installation method settings -->
     <string name="section_installation">Installation</string>

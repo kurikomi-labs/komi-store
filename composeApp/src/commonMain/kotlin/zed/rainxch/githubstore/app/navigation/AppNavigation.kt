@@ -43,7 +43,6 @@ import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.profile.presentation.ProfileRoot
-import zed.rainxch.profile.presentation.SponsorScreen
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
@@ -312,9 +311,6 @@ fun AppNavigation(
                         onNavigateToDevProfile = { username ->
                             navController.navigate(GithubStoreGraph.DeveloperProfileScreen(username))
                         },
-                        onNavigateToSponsor = {
-                            navController.navigate(GithubStoreGraph.SponsorScreen)
-                        },
                         onNavigateToWhatsNew = {
                             navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
                         },
@@ -351,14 +347,6 @@ fun AppNavigation(
                                     username = username,
                                 ),
                             )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.SponsorScreen> {
-                    SponsorScreen(
-                        onNavigateBack = {
-                            navController.navigateUp()
                         },
                     )
                 }

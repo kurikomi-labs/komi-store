@@ -509,44 +509,19 @@
     <string name="current_size">वर्तमान आकार:</string>
     <string name="clear">साफ़ करें</string>
 
-    <string name="sponsor_title">GitHub Store का समर्थन करें</string>
-    <string name="sponsor_button">प्रोजेक्ट को समर्थन दें</string>
-    <string name="sponsor_hero_title">हमेशा मुफ्त।\nआपके सहयोग से चलता है।</string>
 
-    <string name="sponsor_hero_subtitle">आपका सहयोग GitHub Store को मुफ्त, स्वतंत्र और सक्रिय रूप से अपडेट रखता है — कोई विज्ञापन नहीं, कोई ट्रैकिंग नहीं, बस ओपन-सोर्स ऐप्स इंस्टॉल करने का एक बेहतर तरीका।</string>
 
-    <string name="sponsor_personal_note">मैं पढ़ाई पूरी करते हुए अकेले इस प्रोजेक्ट को बनाता और संभालता हूँ। हर योगदान — बड़ा हो या छोटा — सीधे सर्वर लागत, विकास और सबके लिए ऐप को विज्ञापन-मुक्त रखने में जाता है।</string>
 
-    <string name="sponsor_kodee_title">GitHub Store के लिए वोट करें!</string>
-    <string name="sponsor_kodee_subtitle">GitHub Store KotlinConf 2026 Golden Kodee Awards के लिए नामांकित है।</string>
 
-    <string name="sponsor_kodee_register">1. रजिस्टर करें</string>
-    <string name="sponsor_kodee_vote">2. वोट करें</string>
 
-    <string name="sponsor_kodee_deadline">वोटिंग 22 मार्च को बंद होगी</string>
 
-    <string name="sponsor_kodee_step1">1. प्लेटफॉर्म पर रजिस्टर करें (Google से जारी रखें)</string>
-    <string name="sponsor_kodee_step2">2. नीचे वोट बटन दबाएँ</string>
-    <string name="sponsor_kodee_step3">3. Usmon Narzullayev खोजें और वोट करें</string>
 
-    <string name="sponsor_github_sponsors">GitHub Sponsors</string>
-    <string name="sponsor_github_sponsors_desc">मासिक या एक बार — सीधे विकास को वित्तपोषित करता है</string>
 
-    <string name="sponsor_buy_me_coffee">Buy Me a Coffee</string>
-    <string name="sponsor_buy_me_coffee_desc">त्वरित एक बार का योगदान</string>
 
-    <string name="sponsor_other_ways_title">मदद करने के अन्य तरीके</string>
 
-    <string name="sponsor_star_repo">रिपॉजिटरी को स्टार दें</string>
-    <string name="sponsor_star_repo_desc">दृश्यता बढ़ाता है और दूसरों को इसे खोजने में मदद करता है</string>
 
-    <string name="sponsor_report_bugs">बग रिपोर्ट करें</string>
-    <string name="sponsor_report_bugs_desc">हर रिपोर्ट सबके लिए ऐप को बेहतर बनाती है</string>
 
-    <string name="sponsor_share">दोस्तों के साथ साझा करें</string>
-    <string name="sponsor_share_desc">मुँह की बात सबसे अच्छा मार्केटिंग है</string>
 
-    <string name="sponsor_thank_you">हर योगदान — आर्थिक हो या न हो — एक वास्तविक फर्क डालता है। इसका हिस्सा होने के लिए धन्यवाद।</string>
 
     <!-- Installation method settings -->
     <string name="section_installation">इंस्टॉलेशन</string>
