@@ -21,6 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.DownloadForOffline
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +45,7 @@ import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.presentation.components.buttons.OutlineButton
 import zed.rainxch.core.presentation.components.buttons.PrimaryButton
+import zed.rainxch.core.presentation.components.buttons.TintedButton
 import zed.rainxch.core.presentation.theme.fraunces
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -80,6 +86,8 @@ fun OnboardingScreen(
         StepIndicator(total = state.steps.size, currentIndex = state.currentIndex)
         Spacer(Modifier.height(32.dp))
 
+        val permissionsController = rememberOnboardingPermissionsController()
+
         AnimatedContent(
             targetState = state.currentStep,
             transitionSpec = {
@@ -94,7 +102,7 @@ fun OnboardingScreen(
             when (step) {
                 OnboardingStep.PALETTE -> StepPalette(state, onAction)
                 OnboardingStep.SIGN_IN -> StepSignIn(onAction)
-                OnboardingStep.PERMISSIONS -> StepPermissions(onAction)
+                OnboardingStep.PERMISSIONS -> StepPermissions(permissionsController)
             }
         }
 
@@ -296,10 +304,12 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
 }
 
 @Composable
-private fun StepPermissions(onAction: (OnboardingAction) -> Unit) {
+private fun StepPermissions(controller: OnboardingPermissionsController) {
+    val notificationsGranted by controller.notificationsGranted
+    val installSourcesGranted by controller.installSourcesGranted
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = "Two quick prompts",
@@ -314,11 +324,93 @@ private fun StepPermissions(onAction: (OnboardingAction) -> Unit) {
         )
         Squiggle()
         Text(
-            text = "Notifications for update alerts. Install-from-unknown-sources for non-Play APKs. Both optional.",
+            text = "Both optional. You can flip these later in Tweaks.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
+        PermissionRow(
+            icon = Icons.Outlined.Notifications,
+            label = "Notifications",
+            description = "Update alerts and install progress",
+            isGranted = notificationsGranted,
+            onAllowClick = { controller.requestNotifications() },
+        )
+        PermissionRow(
+            icon = Icons.Outlined.DownloadForOffline,
+            label = "Install unknown apps",
+            description = "Required to install APKs outside Play",
+            isGranted = installSourcesGranted,
+            onAllowClick = { controller.requestInstallSources() },
+        )
+    }
+}
+
+@Composable
+private fun PermissionRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    description: String,
+    isGranted: Boolean,
+    onAllowClick: () -> Unit,
+) {
+    val cs = MaterialTheme.colorScheme
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(Radii.card)
+                .background(cs.surfaceContainer)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(if (isGranted) cs.tertiaryContainer else cs.primaryContainer),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (isGranted) cs.tertiary else cs.primary,
+                modifier = Modifier.size(22.dp),
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                color = cs.onSurface,
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+            )
+            Text(
+                text = description,
+                color = cs.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        if (isGranted) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(cs.tertiary),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Granted",
+                    tint = cs.onPrimary,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        } else {
+            TintedButton(onClick = onAllowClick) { Text("Allow") }
+        }
     }
 }
 
