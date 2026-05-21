@@ -318,7 +318,7 @@
 
     <string name="bottom_nav_home_title">ホーム</string>
     <string name="bottom_nav_search_title">検索</string>
-    <string name="bottom_nav_apps_title">アプリ</string>
+    <string name="bottom_nav_apps_title">ライブラリ</string>
     <string name="bottom_nav_profile_title">プロフィール</string>
 
     <string name="forked_repository">フォーク</string>

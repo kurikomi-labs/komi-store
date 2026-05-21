@@ -317,7 +317,7 @@
 
     <string name="bottom_nav_home_title">Inicio</string>
     <string name="bottom_nav_search_title">Buscar</string>
-    <string name="bottom_nav_apps_title">Aplicaciones</string>
+    <string name="bottom_nav_apps_title">Biblioteca</string>
     <string name="bottom_nav_profile_title">Perfil</string>
 
     <string name="forked_repository">Bifurcar</string>

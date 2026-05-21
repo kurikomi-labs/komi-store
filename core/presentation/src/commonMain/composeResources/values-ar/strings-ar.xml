@@ -420,7 +420,7 @@
 
     <string name="bottom_nav_home_title">الرئيسية</string>
     <string name="bottom_nav_search_title">البحث</string>
-    <string name="bottom_nav_apps_title">التطبيقات</string>
+    <string name="bottom_nav_apps_title">المكتبة</string>
     <string name="bottom_nav_profile_title">الملف الشخصي</string>
 
     <string name="forked_repository">نسخة متفرعة</string>

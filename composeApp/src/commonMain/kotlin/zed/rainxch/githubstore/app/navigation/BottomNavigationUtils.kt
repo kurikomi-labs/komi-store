@@ -5,8 +5,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.githubstore.core.presentation.res.*
 
 data class BottomNavigationItem(
@@ -45,10 +43,6 @@ object BottomNavigationUtils {
             ),
         )
 
-    fun allowedScreens(): List<BottomNavigationItem> =
-        items()
-            .filterNot {
-                getPlatform() != Platform.ANDROID &&
-                    it.screen == GithubStoreGraph.AppsScreen
-            }
+    /** Bottom-nav (Android) shows the same items as the Desktop drawer. */
+    fun allowedScreens(): List<BottomNavigationItem> = items()
 }

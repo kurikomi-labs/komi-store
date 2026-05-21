@@ -369,7 +369,7 @@
 
     <string name="bottom_nav_home_title">홈</string>
     <string name="bottom_nav_search_title">검색</string>
-    <string name="bottom_nav_apps_title">앱</string>
+    <string name="bottom_nav_apps_title">라이브러리</string>
     <string name="bottom_nav_profile_title">프로필</string>
 
     <string name="forked_repository">포크</string>

@@ -368,7 +368,7 @@
 
     <string name="bottom_nav_home_title">Ana Sayfa</string>
     <string name="bottom_nav_search_title">Ara</string>
-    <string name="bottom_nav_apps_title">Uygulamalar</string>
+    <string name="bottom_nav_apps_title">Kütüphane</string>
     <string name="bottom_nav_profile_title">Profil</string>
 
     <string name="forked_repository">Çatalla</string>

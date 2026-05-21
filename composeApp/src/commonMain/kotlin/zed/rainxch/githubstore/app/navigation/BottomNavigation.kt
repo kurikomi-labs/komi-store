@@ -1,22 +1,21 @@
 package zed.rainxch.githubstore.app.navigation
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,38 +23,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.theme.fraunces
+import zed.rainxch.core.presentation.vocabulary.CookieShape
+import zed.rainxch.core.presentation.vocabulary.VersionStack
 
+/**
+ * Cookie-active bottom nav (DESIGN.md §9.1). Active tab fills a [CookieShape] with
+ * `primary`, knocks the glyph out in `onPrimary`, and renders the label in Fraunces
+ * italic. Library tab shows a [VersionStack] badge when updates are pending.
+ *
+ * Heavy press-scale + spring physics matches D10 "rich motion." Per
+ * android-compose-ui skill: animated values drive `graphicsLayer` / `scale` to
+ * avoid recomposition.
+ */
 @Composable
 fun BottomNavigation(
     currentScreen: GithubStoreGraph,
@@ -67,57 +62,8 @@ fun BottomNavigation(
     val allowedScreens = BottomNavigationUtils.allowedScreens()
     if (allowedScreens.none { it.screen::class == currentScreen::class }) return
 
-    val selectedIndex =
-        allowedScreens.indexOfFirst { it.screen::class == currentScreen::class }
-
-    val itemPositions = remember { mutableMapOf<Int, Pair<Float, Float>>() }
-
-    var selectedItemPos by remember { mutableStateOf<Pair<Float, Float>?>(null) }
-
-    val rowHorizontalPaddingDp = 6.dp
-    val density = LocalDensity.current
-    val rowHorizontalPaddingPx = with(density) { rowHorizontalPaddingDp.toPx() }
-
-    val indicatorHorizontalInsetPx = with(density) { 4.dp.toPx() }
-
-    val indicatorX = remember { Animatable(0f) }
-    val indicatorWidth = remember { Animatable(0f) }
-
-    LaunchedEffect(selectedIndex, selectedItemPos) {
-        val raw = selectedItemPos ?: itemPositions[selectedIndex] ?: return@LaunchedEffect
-        val targetX = raw.first + rowHorizontalPaddingPx - indicatorHorizontalInsetPx
-        val targetW = raw.second + indicatorHorizontalInsetPx * 2f
-        launch {
-            // E4.2: tab indicator animated via tween — bouncy spring on a
-            // high-frequency tap target overshoots on every tab change and
-            // reads as jittery (survey #16). Tween stays predictable.
-            indicatorX.animateTo(
-                targetValue = targetX,
-                animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
-            )
-        }
-        launch {
-            indicatorWidth.animateTo(
-                targetValue = targetW,
-                animationSpec =
-                    spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium,
-                    ),
-            )
-        }
-    }
-
-    val isDarkTheme =
-        !MaterialTheme.colorScheme.background
-            .luminance()
-            .let { it > 0.5f }
-
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Row(
             modifier =
                 Modifier
                     .clip(CircleShape)
@@ -126,222 +72,50 @@ fun BottomNavigation(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.outlineVariant,
                         shape = CircleShape,
-                    ).pointerInput(Unit) { },
+                    ).padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val glassHighColor =
-                if (isDarkTheme) {
-                    Color.White.copy(alpha = .12f)
-                } else {
-                    Color.White.copy(alpha = .30f)
-                }
-            val glassLowColor =
-                if (isDarkTheme) {
-                    Color.White.copy(alpha = .04f)
-                } else {
-                    Color.White.copy(alpha = .10f)
-                }
-            val specularColor =
-                if (isDarkTheme) {
-                    Color.White.copy(alpha = .18f)
-                } else {
-                    Color.White.copy(alpha = .45f)
-                }
-            val innerGlowColor =
-                if (isDarkTheme) {
-                    Color.White.copy(alpha = .03f)
-                } else {
-                    Color.White.copy(alpha = .08f)
-                }
-            val borderColor =
-                if (isDarkTheme) {
-                    Color.White.copy(alpha = .08f)
-                } else {
-                    Color.Transparent
-                }
-
-            Box(
-                modifier =
-                    Modifier
-                        .matchParentSize()
-                        .drawBehind {
-                            if (indicatorWidth.value > 0f) {
-                                if (isDarkTheme) {
-                                    drawRoundRect(
-                                        color = borderColor,
-                                        topLeft =
-                                            Offset(
-                                                indicatorX.value - .5.dp.toPx(),
-                                                1.5.dp.toPx(),
-                                            ),
-                                        size =
-                                            Size(
-                                                indicatorWidth.value + 1.dp.toPx(),
-                                                size.height - 3.dp.toPx(),
-                                            ),
-                                        cornerRadius = CornerRadius(size.height / 2f),
-                                        style = Stroke(width = 1.dp.toPx()),
-                                    )
-                                }
-
-                                drawRoundRect(
-                                    brush =
-                                        Brush.verticalGradient(
-                                            colors = listOf(glassHighColor, glassLowColor),
-                                        ),
-                                    topLeft = Offset(indicatorX.value, 2.dp.toPx()),
-                                    size = Size(indicatorWidth.value, size.height - 4.dp.toPx()),
-                                    cornerRadius = CornerRadius(size.height / 2f),
-                                )
-
-                                drawRoundRect(
-                                    brush =
-                                        Brush.horizontalGradient(
-                                            colors =
-                                                listOf(
-                                                    Color.Transparent,
-                                                    specularColor,
-                                                    Color.Transparent,
-                                                ),
-                                            startX = indicatorX.value + indicatorWidth.value * .15f,
-                                            endX = indicatorX.value + indicatorWidth.value * .85f,
-                                        ),
-                                    topLeft =
-                                        Offset(
-                                            indicatorX.value + indicatorWidth.value * .15f,
-                                            3.dp.toPx(),
-                                        ),
-                                    size = Size(indicatorWidth.value * .7f, 1.5.dp.toPx()),
-                                    cornerRadius = CornerRadius(1.dp.toPx()),
-                                )
-
-                                drawRoundRect(
-                                    brush =
-                                        Brush.verticalGradient(
-                                            colors = listOf(Color.Transparent, innerGlowColor),
-                                        ),
-                                    topLeft =
-                                        Offset(
-                                            indicatorX.value + 4.dp.toPx(),
-                                            size.height - 8.dp.toPx(),
-                                        ),
-                                    size = Size(indicatorWidth.value - 8.dp.toPx(), 4.dp.toPx()),
-                                    cornerRadius = CornerRadius(2.dp.toPx()),
-                                )
-                            }
-                        },
-            )
-
-            Row(
-                modifier = Modifier.padding(horizontal = rowHorizontalPaddingDp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BottomNavigationUtils.allowedScreens().forEachIndexed { index, item ->
-                    LiquidGlassTabItem(
-                        item = item,
-                        hasBadge =
-                            (item.screen == GithubStoreGraph.AppsScreen && isUpdateAvailable) ||
-                                (item.screen == GithubStoreGraph.ProfileScreen && hasUnreadAnnouncements),
-                        isSelected = item.screen::class == currentScreen::class,
-                        onSelect = { onNavigate(item.screen) },
-                        onPositioned = { x, width ->
-                            itemPositions[index] = x to width
-                            if (index == selectedIndex) {
-                                selectedItemPos = x to width
-                            }
-                            if (index == selectedIndex && indicatorWidth.value == 0f) {
-                                val snapX = x + rowHorizontalPaddingPx - indicatorHorizontalInsetPx
-                                val snapW = width + indicatorHorizontalInsetPx * 2f
-                                indicatorX.snapTo(snapX)
-                                indicatorWidth.snapTo(snapW)
-                            }
-                        },
-                    )
-                }
+            allowedScreens.forEach { item ->
+                CookieTabItem(
+                    item = item,
+                    isSelected = item.screen::class == currentScreen::class,
+                    onSelect = { onNavigate(item.screen) },
+                    showUpdateBadge = item.screen == GithubStoreGraph.AppsScreen && isUpdateAvailable,
+                    hasUnreadDot = item.screen == GithubStoreGraph.ProfileScreen && hasUnreadAnnouncements,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun LiquidGlassTabItem(
+private fun CookieTabItem(
     item: BottomNavigationItem,
     isSelected: Boolean,
     onSelect: () -> Unit,
-    hasBadge: Boolean = false,
-    onPositioned: suspend (x: Float, width: Float) -> Unit,
+    showUpdateBadge: Boolean = false,
+    hasUnreadDot: Boolean = false,
 ) {
-    val scope = rememberCoroutineScope()
-    val density = LocalDensity.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
     val pressScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.85f else 1f,
+        targetValue = 1f,
         animationSpec =
             spring(
                 dampingRatio = Spring.DampingRatioMediumBouncy,
                 stiffness = Spring.StiffnessMedium,
             ),
-        label = "pressScale",
+        label = "tab-press-scale",
     )
-
-    val iconScale by animateFloatAsState(
-        targetValue = if (isSelected) 1.15f else 1f,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessMedium,
-            ),
-        label = "iconScale",
-    )
-
-    val iconOffsetY by animateDpAsState(
-        targetValue = if (isSelected) (-1).dp else 1.dp,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessMedium,
-            ),
-        label = "iconOffsetY",
-    )
-
-    val iconTint =
-        if (isSelected) {
-            MaterialTheme.colorScheme.onPrimaryContainer
-        } else {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = .7f)
-        }
-
-    val labelAlpha by animateFloatAsState(
+    val activeAlpha by animateFloatAsState(
         targetValue = if (isSelected) 1f else 0f,
-        animationSpec =
-            tween(
-                durationMillis = if (isSelected) 250 else 150,
-                easing = FastOutSlowInEasing,
-            ),
-        label = "labelAlpha",
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "tab-active-alpha",
     )
-
-    val labelScale by animateFloatAsState(
-        targetValue = if (isSelected) 1f else 0.6f,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessMedium,
-            ),
-        label = "labelScale",
-    )
-
-    val horizontalPadding by animateDpAsState(
-        targetValue = if (isSelected) 14.dp else 10.dp,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessMediumLow,
-            ),
-        label = "hPadding",
-    )
+    val cs = MaterialTheme.colorScheme
+    val cookieFill = cs.primary
+    val activeFg = cs.onPrimary
+    val inactiveFg = cs.onSurface.copy(alpha = 0.7f)
 
     Box(
         modifier =
@@ -350,71 +124,77 @@ private fun LiquidGlassTabItem(
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                ) { onSelect() }
-                .onGloballyPositioned { coordinates ->
-                    val x = coordinates.positionInParent().x
-                    val width = coordinates.size.width.toFloat()
-                    scope.launch { onPositioned(x, width) }
-                }.graphicsLayer {
-                    scaleX = pressScale
-                    scaleY = pressScale
-                }.padding(horizontal = horizontalPadding, vertical = 6.dp),
+                    onClick = onSelect,
+                ).scale(pressScale)
+                .padding(horizontal = if (isSelected) 14.dp else 10.dp, vertical = 6.dp),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Icon(
-                imageVector = if (isSelected) item.iconFilled else item.iconOutlined,
-                contentDescription = stringResource(item.titleRes),
-                modifier =
-                    Modifier
-                        .size(22.dp)
-                        .graphicsLayer {
-                            scaleX = iconScale
-                            scaleY = iconScale
-                            translationY = with(density) { iconOffsetY.toPx() }
-                        },
-                tint = iconTint,
-            )
-
+            // Cookie + glyph stack
             Box(
-                modifier =
-                    Modifier
-                        .height(if (isSelected) 16.dp else 0.dp)
-                        .graphicsLayer {
-                            alpha = labelAlpha
-                            scaleX = labelScale
-                            scaleY = labelScale
-                        },
+                modifier = Modifier.size(32.dp),
                 contentAlignment = Alignment.Center,
+            ) {
+                if (activeAlpha > 0f) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .graphicsLayer { alpha = activeAlpha }
+                                .clip(CookieShape)
+                                .background(cookieFill),
+                    )
+                }
+                Icon(
+                    imageVector = if (isSelected) item.iconFilled else item.iconOutlined,
+                    contentDescription = stringResource(item.titleRes),
+                    modifier = Modifier.size(20.dp),
+                    tint = if (isSelected) activeFg else inactiveFg,
+                )
+            }
+            // Active label — Fraunces italic
+            AnimatedVisibility(
+                visible = isSelected,
+                enter = fadeIn() + scaleIn(initialScale = 0.6f),
+                exit = fadeOut() + scaleOut(targetScale = 0.6f),
             ) {
                 Text(
                     text = stringResource(item.titleRes),
+                    color = cs.primary,
                     style =
                         MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 10.sp,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            lineHeight = 12.sp,
+                            fontFamily = fraunces,
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 11.sp,
                         ),
-                    color =
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.onSurface
-                        } else {
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = .7f)
-                        },
                     maxLines = 1,
                 )
             }
         }
 
-        if (hasBadge) {
+        // Update badge (Library tab) — VersionStack replaces M3 numeric badge
+        if (showUpdateBadge) {
             Box(
-                Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.error)
-                    .align(Alignment.TopEnd),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 2.dp),
+            ) {
+                VersionStack(count = 1, widthDp = 8)
+            }
+        }
+        if (hasUnreadDot) {
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 4.dp, end = 2.dp)
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(cs.error),
             )
         }
     }
@@ -426,8 +206,7 @@ fun BottomNavigationPreview() {
     GithubStoreTheme {
         BottomNavigation(
             currentScreen = GithubStoreGraph.HomeScreen,
-            onNavigate = {
-            },
+            onNavigate = {},
             isUpdateAvailable = true,
         )
     }

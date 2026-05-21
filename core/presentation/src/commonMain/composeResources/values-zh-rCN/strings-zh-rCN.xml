@@ -319,7 +319,7 @@
 
     <string name="bottom_nav_home_title">首页</string>
     <string name="bottom_nav_search_title">搜索</string>
-    <string name="bottom_nav_apps_title">应用</string>
+    <string name="bottom_nav_apps_title">应用库</string>
     <string name="bottom_nav_profile_title">个人资料</string>
 
     <string name="forked_repository">分叉</string>

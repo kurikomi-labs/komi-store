@@ -336,7 +336,7 @@
 
     <string name="bottom_nav_home_title">Главная</string>
     <string name="bottom_nav_search_title">Поиск</string>
-    <string name="bottom_nav_apps_title">Приложения</string>
+    <string name="bottom_nav_apps_title">Библиотека</string>
     <string name="bottom_nav_profile_title">Профиль</string>
 
     <string name="forked_repository">Форк</string>

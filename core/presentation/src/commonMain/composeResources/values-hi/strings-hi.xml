@@ -359,7 +359,7 @@
 
     <string name="bottom_nav_home_title">होम</string>
     <string name="bottom_nav_search_title">खोज</string>
-    <string name="bottom_nav_apps_title">ऐप्स</string>
+    <string name="bottom_nav_apps_title">लाइब्रेरी</string>
     <string name="bottom_nav_profile_title">प्रोफ़ाइल</string>
 
     <string name="forked_repository">फोर्क</string>

@@ -334,7 +334,7 @@
 
     <string name="bottom_nav_home_title">Strona główna</string>
     <string name="bottom_nav_search_title">Szukaj</string>
-    <string name="bottom_nav_apps_title">Aplikacje</string>
+    <string name="bottom_nav_apps_title">Biblioteka</string>
     <string name="bottom_nav_profile_title">Profil</string>
 
     <string name="forked_repository">Fork</string>

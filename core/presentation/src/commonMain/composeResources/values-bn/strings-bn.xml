@@ -371,7 +371,7 @@
 
     <string name="bottom_nav_home_title">হোম</string>
     <string name="bottom_nav_search_title">অনুসন্ধান</string>
-    <string name="bottom_nav_apps_title">অ্যাপস</string>
+    <string name="bottom_nav_apps_title">লাইব্রেরি</string>
     <string name="bottom_nav_profile_title">প্রোফাইল</string>
 
     <string name="forked_repository">ফর্ক</string>

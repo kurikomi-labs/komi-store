@@ -318,7 +318,7 @@
 
     <string name="bottom_nav_home_title">Accueil</string>
     <string name="bottom_nav_search_title">Rechercher</string>
-    <string name="bottom_nav_apps_title">Applications</string>
+    <string name="bottom_nav_apps_title">Bibliothèque</string>
     <string name="bottom_nav_profile_title">Profil</string>
 
     <string name="forked_repository">Fork</string>

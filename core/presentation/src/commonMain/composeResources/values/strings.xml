@@ -479,7 +479,7 @@
 
     <string name="bottom_nav_home_title">Home</string>
     <string name="bottom_nav_search_title">Search</string>
-    <string name="bottom_nav_apps_title">Apps</string>
+    <string name="bottom_nav_apps_title">Library</string>
     <string name="bottom_nav_profile_title">Profile</string>
     <string name="bottom_nav_profile_tweaks">Tweaks</string>
 

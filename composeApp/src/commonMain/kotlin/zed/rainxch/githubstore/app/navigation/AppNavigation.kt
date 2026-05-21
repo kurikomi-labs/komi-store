@@ -2,6 +2,8 @@ package zed.rainxch.githubstore.app.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -30,7 +32,9 @@ import zed.rainxch.apps.presentation.AppsRoot
 import zed.rainxch.apps.presentation.AppsViewModel
 import zed.rainxch.apps.presentation.import.ExternalImportRoot
 import zed.rainxch.auth.presentation.AuthenticationRoot
+import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.ContentWidth
+import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.components.announcements.AnnouncementsRoot
 import zed.rainxch.core.presentation.components.whatsnew.WhatsNewHistoryScreen
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
@@ -75,471 +79,493 @@ fun AppNavigation(
     val announcementsViewModel = koinViewModel<AnnouncementsViewModel>()
     val announcementsUnreadCount by announcementsViewModel.unreadCount.collectAsStateWithLifecycle()
 
+    val isDesktop = getPlatform() != Platform.ANDROID
+
     CompositionLocalProvider(
         LocalBottomNavigationHeight provides bottomNavigationHeight,
         LocalScrollbarEnabled provides isScrollbarEnabled,
         LocalContentWidth provides contentWidth,
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = GithubStoreGraph.HomeScreen,
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            ) {
-                composable<GithubStoreGraph.HomeScreen> {
-                    HomeRoot(
-                        onNavigateToSearch = {
-                            navController.navigate(GithubStoreGraph.SearchScreen())
-                        },
-                        onNavigateToSettings = {
-                            navController.navigate(GithubStoreGraph.ProfileScreen)
-                        },
-                        onNavigateToApps = {
-                            navController.navigate(GithubStoreGraph.AppsScreen)
-                        },
-                        onNavigateToDetails = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                ),
-                            )
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.SearchScreen> { backStackEntry ->
-                    val args = backStackEntry.toRoute<GithubStoreGraph.SearchScreen>()
-                    val initialPlatform =
-                        args.initialPlatform?.let { name ->
-                            runCatching {
-                                zed.rainxch.search.presentation.model.SearchPlatformUi
-                                    .valueOf(name)
-                            }.getOrNull()
-                        }
-                    SearchRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = { repoId, sourceHost ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                    sourceHost = sourceHost,
-                                ),
-                            )
-                        },
-                        onNavigateToDetailsFromLink = { owner, repo ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    owner = owner,
-                                    repo = repo,
-                                ),
-                            )
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                        viewModel =
-                            koinViewModel {
-                                parametersOf(initialPlatform)
-                            },
-                    )
-                }
-
-                composable<GithubStoreGraph.DetailsScreen> { backStackEntry ->
-                    val args = backStackEntry.toRoute<GithubStoreGraph.DetailsScreen>()
-                    DetailsRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onOpenRepositoryInApp = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                ),
-                            )
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                        onNavigateToSearchByPlatform = { platform ->
-                            navController.navigate(
-                                GithubStoreGraph.SearchScreen(
-                                    initialPlatform = platform.toSearchPlatformUi().name,
-                                ),
-                            )
-                        },
-                        viewModel =
-                            koinViewModel {
-                                parametersOf(
-                                    args.repositoryId,
-                                    args.owner,
-                                    args.repo,
-                                    args.isComingFromUpdate,
-                                    args.sourceHost,
-                                )
-                            },
-                    )
-                }
-
-                composable<GithubStoreGraph.DeveloperProfileScreen> { backStackEntry ->
-                    val args = backStackEntry.toRoute<GithubStoreGraph.DeveloperProfileScreen>()
-                    DeveloperProfileRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                ),
-                            )
-                        },
-                        viewModel =
-                            koinViewModel {
-                                parametersOf(args.username)
-                            },
-                    )
-                }
-
-                composable<GithubStoreGraph.AuthenticationScreen> {
-                    AuthenticationRoot(
-                        onNavigateToHome = {
-                            navController.navigate(GithubStoreGraph.HomeScreen) {
-                                popUpTo(0) {
-                                    inclusive = true
-                                }
-                            }
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.FavouritesScreen> {
-                    FavouritesRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = {
-                            navController.navigate(GithubStoreGraph.DetailsScreen(it))
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.StarredReposScreen> {
-                    StarredReposRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                ),
-                            )
-                        },
-                        onNavigateToAuthentication = {
-                            navController.navigate(
-                                GithubStoreGraph.AuthenticationScreen,
-                            )
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.StarredPickerScreen> {
-                    zed.rainxch.apps.presentation.starred.StarredPickerRoot(
-                        onNavigateBack = { navController.navigateUp() },
-                        onNavigateToDetails = { repoId, owner, repo ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                    owner = owner,
-                                    repo = repo,
-                                ),
-                            )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.ProfileScreen> {
-                    ProfileRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToAuthentication = {
-                            navController.navigate(GithubStoreGraph.AuthenticationScreen)
-                        },
-                        onNavigateToStarredRepos = {
-                            navController.navigate(GithubStoreGraph.StarredReposScreen)
-                        },
-                        onNavigateToFavouriteRepos = {
-                            navController.navigate(GithubStoreGraph.FavouritesScreen)
-                        },
-                        onNavigateToRecentlyViewed = {
-                            navController.navigate(GithubStoreGraph.RecentlyViewedScreen)
-                        },
-                        onNavigateToDevProfile = { username ->
-                            navController.navigate(GithubStoreGraph.DeveloperProfileScreen(username))
-                        },
-                        onNavigateToWhatsNew = {
-                            navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
-                        },
-                        onPreviewWhatsNewSheet = {
-                            whatsNewViewModel.forceShowLatest()
-                            navController.navigateUp()
-                        },
-                        onNavigateToAnnouncements = {
-                            navController.navigate(GithubStoreGraph.AnnouncementsScreen)
-                        },
-                        onPreviewAnnouncements = {
-                            announcementsViewModel.previewSampleAnnouncements()
-                            navController.navigate(GithubStoreGraph.AnnouncementsScreen)
-                        },
-                        hasUnreadAnnouncements = announcementsUnreadCount > 0,
-                    )
-                }
-
-                composable<GithubStoreGraph.RecentlyViewedScreen> {
-                    RecentlyViewedRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                ),
-                            )
-                        },
-                        onNavigateToDeveloperProfile = { username ->
-                            navController.navigate(
-                                GithubStoreGraph.DeveloperProfileScreen(
-                                    username = username,
-                                ),
-                            )
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.MirrorPickerScreen> {
-                    MirrorPickerRoot(
-                        onNavigateBack = { navController.popBackStack() },
-                    )
-                }
-
-                composable<GithubStoreGraph.WhatsNewHistoryScreen> {
-                    val historyEntries by whatsNewViewModel.historyEntries.collectAsStateWithLifecycle()
-                    WhatsNewHistoryScreen(
-                        entries = historyEntries,
-                        onNavigateBack = { navController.navigateUp() },
-                    )
-                }
-
-                composable<GithubStoreGraph.AnnouncementsScreen> {
-                    val feed by announcementsViewModel.feed.collectAsStateWithLifecycle()
-                    val displayed by announcementsViewModel.displayedItems.collectAsStateWithLifecycle()
-                    AnnouncementsRoot(
-                        items = displayed,
-                        acknowledgedIds = feed.acknowledgedIds,
-                        mutedCategories = feed.mutedCategories,
-                        refreshFailed = feed.lastRefreshFailed,
-                        onNavigateBack = { navController.navigateUp() },
-                        onRefresh = { announcementsViewModel.refresh() },
-                        onCtaClick = { announcementsViewModel.openCta(it) },
-                        onDismissClick = { announcementsViewModel.dismiss(it) },
-                        onAcknowledgeClick = { announcementsViewModel.acknowledge(it) },
-                        onToggleMute = { category, muted ->
-                            announcementsViewModel.setMuted(category, muted)
-                        },
-                        onLeavingScreen = { announcementsViewModel.clearPreview() },
-                        onEnteringScreen = { announcementsViewModel.markRoutineItemsSeen() },
-                    )
-                }
-
-                composable<GithubStoreGraph.TweaksScreen> {
-                    TweaksRoot(
-                        onNavigateToMirrorPicker = {
-                            navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
-                                launchSingleTop = true
-                            }
-                        },
-                        onNavigateToSkippedUpdates = {
-                            navController.navigate(GithubStoreGraph.SkippedUpdatesScreen) {
-                                launchSingleTop = true
-                            }
-                        },
-                        onNavigateToHiddenRepositories = {
-                            navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
-                                launchSingleTop = true
-                            }
-                        },
-                        onNavigateToHostTokens = {
-                            navController.navigate(GithubStoreGraph.HostTokensScreen) {
-                                launchSingleTop = true
-                            }
-                        },
-                    )
-                }
-
-                composable<GithubStoreGraph.SkippedUpdatesScreen> {
-                    SkippedUpdatesRoot(
-                        onNavigateBack = { navController.popBackStack() },
-                    )
-                }
-
-                composable<GithubStoreGraph.HiddenRepositoriesScreen> {
-                    HiddenRepositoriesRoot(
-                        onNavigateBack = { navController.popBackStack() },
-                    )
-                }
-
-                composable<GithubStoreGraph.HostTokensScreen> {
-                    HostTokensRoot(
-                        onNavigateBack = { navController.popBackStack() },
-                    )
-                }
-
-                composable<GithubStoreGraph.AppsScreen> { backStackEntry ->
-                    // Pick up the "open link sheet" flag set by ExternalImportRoot's
-                    // "Add manually" path. We consume the flag once on entry so a
-                    // later config change or back-stack rewind doesn't reopen the sheet.
-                    LaunchedEffect(backStackEntry) {
-                        val handle = backStackEntry.savedStateHandle
-                        val openLinkSheet = handle.get<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
-                        if (openLinkSheet == true) {
-                            handle.remove<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
-                            appsViewModel.onAction(zed.rainxch.apps.presentation.AppsAction.OnAddByLinkClick)
-                        }
-                    }
-                    AppsRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToRepo = { repoId, sourceHost, owner, repo ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                    isComingFromUpdate = true,
-                                    sourceHost = sourceHost,
-                                    owner = owner.orEmpty(),
-                                    repo = repo.orEmpty(),
-                                ),
-                            )
-                        },
-                        onNavigateToExternalImport = {
-                            navController.navigate(GithubStoreGraph.ExternalImportScreen)
-                        },
-                        onNavigateToStarredPicker = {
-                            navController.navigate(GithubStoreGraph.StarredPickerScreen)
-                        },
-                        viewModel = appsViewModel,
-                        state = appsState,
-                    )
-                }
-
-                composable<GithubStoreGraph.ExternalImportScreen> {
-                    ExternalImportRoot(
-                        onNavigateBack = {
-                            navController.navigateUp()
-                        },
-                        onNavigateToDetails = { repoId ->
-                            navController.navigate(
-                                GithubStoreGraph.DetailsScreen(
-                                    repositoryId = repoId,
-                                    isComingFromUpdate = true,
-                                ),
-                            )
-                        },
-                        onAddManually = {
-                            navController.previousBackStackEntry
-                                ?.savedStateHandle
-                                ?.set(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY, true)
-                            navController.navigateUp()
-                        },
-                    )
-                }
-            }
-
-            val currentScreen =
+        Row(modifier = Modifier.fillMaxSize()) {
+            val desktopDrawerCurrent =
                 navController.currentBackStackEntryAsState().value.getCurrentScreen()
-
-            currentScreen?.let {
-                BottomNavigation(
-                    currentScreen = currentScreen,
-                    onNavigate = {
-                        navController.navigate(it) {
-                            popUpTo(GithubStoreGraph.HomeScreen) {
-                                saveState = true
-                            }
-
+            if (isDesktop && desktopDrawerCurrent != null) {
+                DesktopDrawer(
+                    currentScreen = desktopDrawerCurrent,
+                    onNavigate = { target ->
+                        navController.navigate(target) {
+                            popUpTo(GithubStoreGraph.HomeScreen) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
                         }
                     },
-                    // Badge fires when either an update is waiting OR pending
-                    // import candidates need review. The badge is a single dot
-                    // — a union of the two conditions is honest "you have
-                    // something to look at on this tab".
                     isUpdateAvailable =
                         appsState.apps.any { it.installedApp.isUpdateAvailable } ||
                             appsState.showImportProposalBanner,
                     hasUnreadAnnouncements = announcementsUnreadCount > 0,
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .padding(bottom = 24.dp)
-                            .onGloballyPositioned { coordinates ->
-                                bottomNavigationHeight =
-                                    with(density) { coordinates.size.height.toDp() }
-                            },
                 )
             }
+            Box(
+                modifier = if (isDesktop) Modifier.weight(1f).fillMaxHeight() else Modifier.fillMaxSize(),
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = GithubStoreGraph.HomeScreen,
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                ) {
+                    composable<GithubStoreGraph.HomeScreen> {
+                        HomeRoot(
+                            onNavigateToSearch = {
+                                navController.navigate(GithubStoreGraph.SearchScreen())
+                            },
+                            onNavigateToSettings = {
+                                navController.navigate(GithubStoreGraph.ProfileScreen)
+                            },
+                            onNavigateToApps = {
+                                navController.navigate(GithubStoreGraph.AppsScreen)
+                            },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                    ),
+                                )
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                        )
+                    }
 
-            val autoSuggestVm: AutoSuggestMirrorViewModel = koinViewModel()
-            val isAutoSuggestVisible by autoSuggestVm.isVisible.collectAsStateWithLifecycle()
-            if (isAutoSuggestVisible) {
-                AutoSuggestMirrorSheet(
-                    onDismiss = autoSuggestVm::dismiss,
-                    onPickOne = {
-                        autoSuggestVm.onPickOneClicked()
-                        navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
-                            launchSingleTop = true
+                    composable<GithubStoreGraph.SearchScreen> { backStackEntry ->
+                        val args = backStackEntry.toRoute<GithubStoreGraph.SearchScreen>()
+                        val initialPlatform =
+                            args.initialPlatform?.let { name ->
+                                runCatching {
+                                    zed.rainxch.search.presentation.model.SearchPlatformUi
+                                        .valueOf(name)
+                                }.getOrNull()
+                            }
+                        SearchRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = { repoId, sourceHost ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                        sourceHost = sourceHost,
+                                    ),
+                                )
+                            },
+                            onNavigateToDetailsFromLink = { owner, repo ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        owner = owner,
+                                        repo = repo,
+                                    ),
+                                )
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                            viewModel =
+                                koinViewModel {
+                                    parametersOf(initialPlatform)
+                                },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.DetailsScreen> { backStackEntry ->
+                        val args = backStackEntry.toRoute<GithubStoreGraph.DetailsScreen>()
+                        DetailsRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onOpenRepositoryInApp = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                    ),
+                                )
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                            onNavigateToSearchByPlatform = { platform ->
+                                navController.navigate(
+                                    GithubStoreGraph.SearchScreen(
+                                        initialPlatform = platform.toSearchPlatformUi().name,
+                                    ),
+                                )
+                            },
+                            viewModel =
+                                koinViewModel {
+                                    parametersOf(
+                                        args.repositoryId,
+                                        args.owner,
+                                        args.repo,
+                                        args.isComingFromUpdate,
+                                        args.sourceHost,
+                                    )
+                                },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.DeveloperProfileScreen> { backStackEntry ->
+                        val args = backStackEntry.toRoute<GithubStoreGraph.DeveloperProfileScreen>()
+                        DeveloperProfileRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                    ),
+                                )
+                            },
+                            viewModel =
+                                koinViewModel {
+                                    parametersOf(args.username)
+                                },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.AuthenticationScreen> {
+                        AuthenticationRoot(
+                            onNavigateToHome = {
+                                navController.navigate(GithubStoreGraph.HomeScreen) {
+                                    popUpTo(0) {
+                                        inclusive = true
+                                    }
+                                }
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.FavouritesScreen> {
+                        FavouritesRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = {
+                                navController.navigate(GithubStoreGraph.DetailsScreen(it))
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.StarredReposScreen> {
+                        StarredReposRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                    ),
+                                )
+                            },
+                            onNavigateToAuthentication = {
+                                navController.navigate(
+                                    GithubStoreGraph.AuthenticationScreen,
+                                )
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.StarredPickerScreen> {
+                        zed.rainxch.apps.presentation.starred.StarredPickerRoot(
+                            onNavigateBack = { navController.navigateUp() },
+                            onNavigateToDetails = { repoId, owner, repo ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                        owner = owner,
+                                        repo = repo,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.ProfileScreen> {
+                        ProfileRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToAuthentication = {
+                                navController.navigate(GithubStoreGraph.AuthenticationScreen)
+                            },
+                            onNavigateToStarredRepos = {
+                                navController.navigate(GithubStoreGraph.StarredReposScreen)
+                            },
+                            onNavigateToFavouriteRepos = {
+                                navController.navigate(GithubStoreGraph.FavouritesScreen)
+                            },
+                            onNavigateToRecentlyViewed = {
+                                navController.navigate(GithubStoreGraph.RecentlyViewedScreen)
+                            },
+                            onNavigateToDevProfile = { username ->
+                                navController.navigate(GithubStoreGraph.DeveloperProfileScreen(username))
+                            },
+                            onNavigateToWhatsNew = {
+                                navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
+                            },
+                            onPreviewWhatsNewSheet = {
+                                whatsNewViewModel.forceShowLatest()
+                                navController.navigateUp()
+                            },
+                            onNavigateToAnnouncements = {
+                                navController.navigate(GithubStoreGraph.AnnouncementsScreen)
+                            },
+                            onPreviewAnnouncements = {
+                                announcementsViewModel.previewSampleAnnouncements()
+                                navController.navigate(GithubStoreGraph.AnnouncementsScreen)
+                            },
+                            hasUnreadAnnouncements = announcementsUnreadCount > 0,
+                        )
+                    }
+
+                    composable<GithubStoreGraph.RecentlyViewedScreen> {
+                        RecentlyViewedRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                    ),
+                                )
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.MirrorPickerScreen> {
+                        MirrorPickerRoot(
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.WhatsNewHistoryScreen> {
+                        val historyEntries by whatsNewViewModel.historyEntries.collectAsStateWithLifecycle()
+                        WhatsNewHistoryScreen(
+                            entries = historyEntries,
+                            onNavigateBack = { navController.navigateUp() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.AnnouncementsScreen> {
+                        val feed by announcementsViewModel.feed.collectAsStateWithLifecycle()
+                        val displayed by announcementsViewModel.displayedItems.collectAsStateWithLifecycle()
+                        AnnouncementsRoot(
+                            items = displayed,
+                            acknowledgedIds = feed.acknowledgedIds,
+                            mutedCategories = feed.mutedCategories,
+                            refreshFailed = feed.lastRefreshFailed,
+                            onNavigateBack = { navController.navigateUp() },
+                            onRefresh = { announcementsViewModel.refresh() },
+                            onCtaClick = { announcementsViewModel.openCta(it) },
+                            onDismissClick = { announcementsViewModel.dismiss(it) },
+                            onAcknowledgeClick = { announcementsViewModel.acknowledge(it) },
+                            onToggleMute = { category, muted ->
+                                announcementsViewModel.setMuted(category, muted)
+                            },
+                            onLeavingScreen = { announcementsViewModel.clearPreview() },
+                            onEnteringScreen = { announcementsViewModel.markRoutineItemsSeen() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksScreen> {
+                        TweaksRoot(
+                            onNavigateToMirrorPicker = {
+                                navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToSkippedUpdates = {
+                                navController.navigate(GithubStoreGraph.SkippedUpdatesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToHiddenRepositories = {
+                                navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToHostTokens = {
+                                navController.navigate(GithubStoreGraph.HostTokensScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.SkippedUpdatesScreen> {
+                        SkippedUpdatesRoot(
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.HiddenRepositoriesScreen> {
+                        HiddenRepositoriesRoot(
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.HostTokensScreen> {
+                        HostTokensRoot(
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.AppsScreen> { backStackEntry ->
+                        // Pick up the "open link sheet" flag set by ExternalImportRoot's
+                        // "Add manually" path. We consume the flag once on entry so a
+                        // later config change or back-stack rewind doesn't reopen the sheet.
+                        LaunchedEffect(backStackEntry) {
+                            val handle = backStackEntry.savedStateHandle
+                            val openLinkSheet = handle.get<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
+                            if (openLinkSheet == true) {
+                                handle.remove<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
+                                appsViewModel.onAction(zed.rainxch.apps.presentation.AppsAction.OnAddByLinkClick)
+                            }
                         }
-                    },
-                    onMaybeLater = autoSuggestVm::onMaybeLater,
-                    onDontAskAgain = autoSuggestVm::onDontAskAgain,
-                )
+                        AppsRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToRepo = { repoId, sourceHost, owner, repo ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                        isComingFromUpdate = true,
+                                        sourceHost = sourceHost,
+                                        owner = owner.orEmpty(),
+                                        repo = repo.orEmpty(),
+                                    ),
+                                )
+                            },
+                            onNavigateToExternalImport = {
+                                navController.navigate(GithubStoreGraph.ExternalImportScreen)
+                            },
+                            onNavigateToStarredPicker = {
+                                navController.navigate(GithubStoreGraph.StarredPickerScreen)
+                            },
+                            viewModel = appsViewModel,
+                            state = appsState,
+                        )
+                    }
+
+                    composable<GithubStoreGraph.ExternalImportScreen> {
+                        ExternalImportRoot(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            },
+                            onNavigateToDetails = { repoId ->
+                                navController.navigate(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId,
+                                        isComingFromUpdate = true,
+                                    ),
+                                )
+                            },
+                            onAddManually = {
+                                navController.previousBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY, true)
+                                navController.navigateUp()
+                            },
+                        )
+                    }
+                }
+
+                val currentScreen =
+                    navController.currentBackStackEntryAsState().value.getCurrentScreen()
+
+                currentScreen?.takeIf { !isDesktop }?.let {
+                    BottomNavigation(
+                        currentScreen = currentScreen,
+                        onNavigate = {
+                            navController.navigate(it) {
+                                popUpTo(GithubStoreGraph.HomeScreen) {
+                                    saveState = true
+                                }
+
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        // Badge fires when either an update is waiting OR pending
+                        // import candidates need review. The badge is a single dot
+                        // — a union of the two conditions is honest "you have
+                        // something to look at on this tab".
+                        isUpdateAvailable =
+                            appsState.apps.any { it.installedApp.isUpdateAvailable } ||
+                                appsState.showImportProposalBanner,
+                        hasUnreadAnnouncements = announcementsUnreadCount > 0,
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
+                                .padding(bottom = 24.dp)
+                                .onGloballyPositioned { coordinates ->
+                                    bottomNavigationHeight =
+                                        with(density) { coordinates.size.height.toDp() }
+                                },
+                    )
+                }
+
+                val autoSuggestVm: AutoSuggestMirrorViewModel = koinViewModel()
+                val isAutoSuggestVisible by autoSuggestVm.isVisible.collectAsStateWithLifecycle()
+                if (isAutoSuggestVisible) {
+                    AutoSuggestMirrorSheet(
+                        onDismiss = autoSuggestVm::dismiss,
+                        onPickOne = {
+                            autoSuggestVm.onPickOneClicked()
+                            navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onMaybeLater = autoSuggestVm::onMaybeLater,
+                        onDontAskAgain = autoSuggestVm::onDontAskAgain,
+                    )
+                }
             }
         }
     }
