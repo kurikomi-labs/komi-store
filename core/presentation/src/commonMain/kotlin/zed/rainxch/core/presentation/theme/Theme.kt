@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.presentation.theme.tokens.Tokens
@@ -14,11 +15,11 @@ import zed.rainxch.core.presentation.utils.toTokenPalette
 /**
  * App-wide theme entry point. Resolves the active [AppTheme] palette + light/dark/amoled
  * mode to a Material 3 [ColorScheme] backed by the design tokens in
- * [zed.rainxch.core.presentation.theme.tokens.Tokens].
+ * [zed.rainxch.core.presentation.theme.tokens.Tokens], plus provides composition locals
+ * that expose richer surfaces (status colors, thresholds, motion, spacing).
  *
- * Composition locals exposing the richer token surface (status colors, thresholds, motion,
- * spacing) are added in the upcoming `GhsTheme` wrapper — kept here as a thin shim for the
- * existing `Main.kt` call site until P6 chrome polish swaps in the new composable.
+ * `Main.kt` is the only call site — kept under the legacy `GithubStoreTheme` name until
+ * P6 chrome polish swaps in the user-facing rename to `GhsTheme`.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -34,12 +35,23 @@ fun GithubStoreTheme(
         isAmoledTheme -> Tokens.Mode.AMOLED
         else -> Tokens.Mode.DARK
     }
-    val scheme = colorSchemeFor(palette = appTheme.toTokenPalette(), mode = mode)
-    MaterialExpressiveTheme(
-        colorScheme = scheme,
-        typography = getAppTypography(fontTheme),
-        motionScheme = MotionScheme.expressive(),
-        shapes = MaterialTheme.shapes,
-        content = content,
-    )
+    val tokenPalette = appTheme.toTokenPalette()
+    val palette = Tokens.palette(tokenPalette, mode)
+    val scheme = colorSchemeFor(palette = tokenPalette, mode = mode)
+
+    CompositionLocalProvider(
+        LocalPalette provides palette,
+        LocalStatusColors provides defaultStatusColors,
+        LocalThresholds provides defaultThresholds,
+        LocalMotion provides defaultMotion,
+        LocalSpacing provides defaultSpacing,
+    ) {
+        MaterialExpressiveTheme(
+            colorScheme = scheme,
+            typography = getAppTypography(fontTheme),
+            motionScheme = MotionScheme.expressive(),
+            shapes = MaterialTheme.shapes,
+            content = content,
+        )
+    }
 }
