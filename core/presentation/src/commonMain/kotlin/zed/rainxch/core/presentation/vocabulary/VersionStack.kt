@@ -9,10 +9,6 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 import kotlin.math.min
 
-/**
- * Stack of bars — one per skipped release. Grows tall with distance from current,
- * capped at 7. Replaces "5 versions behind" prose (DESIGN.md §4.1).
- */
 @Composable
 fun VersionStack(
     count: Int,

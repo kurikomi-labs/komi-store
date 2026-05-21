@@ -49,18 +49,6 @@ object HostNames {
         return noAuth.removeSuffix(".").removePrefix("www.").removePrefix("api.")
     }
 
-    /**
-     * Maps a request URL host to the canonical token storage host.
-     *
-     * GitHub stores the PAT under [GITHUB] (`github.com`), but real API
-     * requests go to `api.github.com` — without this collapse step the
-     * interceptor's `repo.get(request.url.host)` returns null on every
-     * GitHub REST call.
-     *
-     * Forgejo/Codeberg/Gitea instances expose their REST API at
-     * `https://<host>/api/v1/...` (same host as the storage key), so
-     * they need no mapping.
-     */
     fun sanitizePastedToken(raw: String): String {
         return raw.trim()
             .removePrefix("Bearer ")

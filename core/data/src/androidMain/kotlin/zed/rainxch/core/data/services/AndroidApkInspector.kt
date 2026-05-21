@@ -31,20 +31,12 @@ class AndroidApkInspector(
                 Logger.w(TAG) { "inspectFile: PackageManager refused $filePath" }
                 return@withContext null
             }
-            // PM doesn't auto-populate sourceDir for archive-loaded
-            // ApplicationInfo, so loadLabel/loadIcon return generics
-            // unless we patch them here.
+
             info.applicationInfo?.apply {
                 sourceDir = filePath
                 publicSourceDir = filePath
             }
-            // Wide catch by design: PackageManager / Resources reads
-            // can throw a long tail of unchecked exceptions
-            // (DeadObjectException, SecurityException, NPE on exotic
-            // signing layouts, etc.) that are all ultimately the same
-            // outcome from the caller's perspective — "inspection
-            // failed". Letting them escape leaves the sheet stuck on
-            // its loading spinner because the VM never updates state.
+
             try {
                 buildInspection(
                     info = info,
@@ -67,10 +59,7 @@ class AndroidApkInspector(
                 } catch (_: PackageManager.NameNotFoundException) {
                     null
                 } catch (t: Throwable) {
-                    // Wider catch for SecurityException, DeadObjectException
-                    // and other binder-side surprises so the coroutine
-                    // never propagates a PM hiccup; the sheet renders the
-                    // empty state instead of crashing.
+
                     Logger.w(TAG) {
                         "inspectInstalled: PackageManager threw for $packageName: $t"
                     }
@@ -155,8 +144,7 @@ class AndroidApkInspector(
         granted: Boolean?,
         isInstalledPackage: Boolean,
     ): ApkPermission {
-        // PermissionInfo lookup is best-effort — system / OEM
-        // permissions sometimes vanish between OS versions.
+
         val info =
             runCatching { pm.getPermissionInfo(name, 0) }.getOrNull()
         val protection = info?.let { resolveProtectionLevel(it) } ?: ProtectionLevel.UNKNOWN
@@ -165,12 +153,7 @@ class AndroidApkInspector(
                 ?: name.substringAfterLast('.').replace('_', ' ').lowercase()
                     .replaceFirstChar { it.titlecase() }
         val description = info?.loadDescription(pm)?.toString()?.takeIf { it.isNotBlank() }
-        // Normal-protection permissions are auto-granted at install,
-        // so on an installed package treat them as granted=true even
-        // if the requestedPermissionsFlags array didn't surface the
-        // bit (some OEM ROMs omit it for non-dangerous entries). For
-        // file-based inspections there's no grant state yet — report
-        // `null` so the UI can render "to be granted on install".
+
         val resolvedGranted =
             when {
                 granted != null -> granted
@@ -218,9 +201,6 @@ class AndroidApkInspector(
     private companion object {
         const val TAG = "AndroidApkInspector"
 
-        // Minimum flags to populate everything the inspector reports.
-        // GET_SIGNING_CERTIFICATES is what SigningFingerprint reads;
-        // the rest power the counts and labels.
         @Suppress("DEPRECATION")
         val FULL_FLAGS: Int =
             (

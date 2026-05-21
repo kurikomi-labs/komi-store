@@ -45,16 +45,6 @@ interface InstalledAppsRepository {
 
     suspend fun updateApp(app: InstalledApp)
 
-    /**
-     * Atomically writes only the installed-version columns + the
-     * `isUpdateAvailable` flag for [packageName]. Prefer this over
-     * [updateApp] on hot paths where the caller holds a possibly-stale
-     * snapshot and only wants to persist a version change — full-row
-     * updates from stale snapshots can clobber concurrent writes to
-     * sibling columns (download orchestrator, variant pin, favourite
-     * toggle, periodic update check). Introduced for the external
-     * install path (`PackageEventReceiver`).
-     */
     suspend fun updateInstalledVersion(
         packageName: String,
         installedVersion: String,
@@ -78,42 +68,12 @@ interface InstalledAppsRepository {
         enabled: Boolean,
     )
 
-    /**
-     * Persists per-app monorepo settings: an optional regex applied to asset
-     * names and whether the update checker should fall back to older
-     * releases when the latest one has no matching asset.
-     *
-     * Implementations should re-check the app for updates immediately so
-     * the UI reflects the new state without a manual refresh.
-     */
     suspend fun setAssetFilter(
         packageName: String,
         regex: String?,
         fallbackToOlderReleases: Boolean,
     )
 
-    /**
-     * Persists the user's preferred asset variant for [packageName]
-     * along with the full multi-layer fingerprint:
-     *
-     *  - [variant]: legacy substring-tail label, used as the display
-     *    name and as a third-tier match in the resolver
-     *  - [tokens]: serialized token-set fingerprint (primary identity)
-     *  - [glob]: glob-pattern fingerprint (secondary identity)
-     *  - [pickedIndex]: zero-based index of the picked asset in the
-     *    release's installable-asset list (same-position fallback)
-     *  - [siblingCount]: total installable assets in the picked release
-     *
-     * Always clears the `preferredVariantStale` flag in the same write
-     * because the user has just made an explicit choice.
-     *
-     * Pass `null` for all fields except [packageName] to unpin and fall
-     * back to the platform auto-picker — convenient via [clearPreferredVariant].
-     *
-     * Implementations should re-check the app for updates immediately
-     * so the cached `latestAsset*` fields point at the variant the user
-     * just selected, without waiting for the next periodic worker.
-     */
     suspend fun setPreferredVariant(
         packageName: String,
         variant: String?,
@@ -123,53 +83,15 @@ interface InstalledAppsRepository {
         siblingCount: Int? = null,
     )
 
-    /**
-     * Convenience for [setPreferredVariant] that clears every
-     * fingerprint layer for [packageName] in a single call. The
-     * resolver will fall back to the platform auto-picker on the next
-     * update check.
-     */
     suspend fun clearPreferredVariant(packageName: String)
 
-    /**
-     * Marks [tag] as skipped for [packageName] so the periodic update
-     * check stops surfacing it as an available update. Pass `null` for
-     * [tag] to clear an existing skip.
-     *
-     * Implementations also clear the row's `isUpdateAvailable` flag in
-     * the same write when [tag] is non-null so the apps list drops the
-     * badge immediately. The skip auto-clears the moment a strictly
-     * newer release lands; users do not have to unskip manually for a
-     * future bump.
-     */
     suspend fun setSkippedReleaseTag(
         packageName: String,
         tag: String?,
     )
 
-    /**
-     * Live stream of every installed app whose
-     * [InstalledApp.skippedReleaseTag] is non-null. Backs the Tweaks
-     * "Skipped updates" sub-screen; emits `[]` when no app is currently
-     * skipping a release.
-     */
     fun getAppsWithSkippedReleaseTag(): Flow<List<InstalledApp>>
 
-    /**
-     * Sets (or clears) the path + version + asset name of a
-     * downloaded-but-not-yet-installed asset for [packageName].
-     *
-     * Used by `DefaultDownloadOrchestrator` when an
-     * `InstallPolicy.InstallWhileForeground` download completes
-     * after the foreground screen has been destroyed — the file is
-     * parked, these three columns are set, and the apps list shows
-     * a "Ready to install" row. The Details screen also uses
-     * [version] + [assetName] to detect "the parked file matches
-     * the currently-selected release" and skip re-downloading.
-     *
-     * Pass `null` for all three to clear (after a successful install
-     * or after the user dismissed the row).
-     */
     suspend fun setPendingInstallFilePath(
         packageName: String,
         path: String?,
@@ -177,17 +99,6 @@ interface InstalledAppsRepository {
         assetName: String? = null,
     )
 
-    /**
-     * Dry-run helper for the per-app advanced settings sheet. Fetches a
-     * window of releases for [owner]/[repo] (honouring [includePreReleases])
-     * and returns the assets in the most-recent release that match
-     * [regex] — or, if [fallbackToOlderReleases] is true and the latest
-     * release matches nothing, the assets from the next release that does.
-     *
-     * Returns an empty list when no matching release is found in the
-     * window. Never throws — failures resolve to an empty list and are
-     * logged at debug level.
-     */
     suspend fun previewMatchingAssets(
         owner: String,
         repo: String,
@@ -199,10 +110,6 @@ interface InstalledAppsRepository {
     suspend fun <R> executeInTransaction(block: suspend () -> R): R
 }
 
-/**
- * Snapshot returned by [InstalledAppsRepository.previewMatchingAssets] for
- * the per-app advanced settings sheet's live preview.
- */
 data class MatchingPreview(
     val release: GithubRelease?,
     val matchedAssets: List<GithubAsset>,

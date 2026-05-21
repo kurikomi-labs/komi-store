@@ -91,25 +91,6 @@ class DetailsRepositoryImpl(
 
     private val readmeHelper = ReadmeLocalizationHelper(localizationManager)
 
-    /**
-     * Decides whether a backend failure should trigger the direct-to-GitHub
-     * fallback. **Side effect:** rethrows `CancellationException` to preserve
-     * structured concurrency — callers don't need a separate CE check before
-     * invoking this.
-     *
-     * Returns `true` for:
-     *   - Any non-[BackendException] throwable (network errors, timeouts,
-     *     parse failures — all treated as infra)
-     *   - [BackendException] with status in 500..599
-     *
-     * Returns `false` for:
-     *   - [BackendException] with status in 400..499 — backend's answer is
-     *     authoritative (cached 404, 401 auth failure, 429 rate limit, etc.)
-     *     and GitHub-direct would return the same answer. **Note:** this
-     *     includes 429 and 408 — if the backend is rate-limiting us or
-     *     timing out on its own pipeline, retrying via GitHub direct
-     *     doesn't help and only burns more quota.
-     */
     private fun shouldFallbackToGithubOrRethrow(cause: Throwable): Boolean =
         sharedShouldFallback(cause)
 
@@ -179,8 +160,6 @@ class DetailsRepositoryImpl(
             return cached
         }
 
-        // Try backend first. Phase 5.1: backend now lazy-caches unknown
-        // repos, so success rate is high even for non-curated repos.
         val backendResult = backendApiClient.getRepo(owner, name)
         backendResult.fold(
             onSuccess = { backendRepo ->
@@ -191,9 +170,7 @@ class DetailsRepositoryImpl(
             },
             onFailure = { e ->
                 if (!shouldFallbackToGithubOrRethrow(e)) {
-                    // Backend 4xx — GitHub would give the same answer.
-                    // Serve stale if we have it, otherwise propagate the
-                    // error so the VM can show the right state.
+
                     cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for $owner/$name, serving stale cache")
                         return stale
@@ -204,7 +181,6 @@ class DetailsRepositoryImpl(
             },
         )
 
-        // Fallback to GitHub API (only reached on backend 5xx / network error)
         return try {
             val result =
                 httpClient
@@ -329,8 +305,6 @@ class DetailsRepositoryImpl(
             }
         }
 
-        // Backend-first. Phase 5.1 routes /v1/releases via the backend cache
-        // + ETag revalidation, China-reachable via Gcore/api-direct.
         val backendResult = backendApiClient.getReleases(owner, repo)
         backendResult.fold(
             onSuccess = { releases ->
@@ -358,7 +332,6 @@ class DetailsRepositoryImpl(
             },
         )
 
-        // Fallback to GitHub API directly (only reached on backend 5xx / network error)
         return try {
             val releases =
                 httpClient
@@ -386,10 +359,7 @@ class DetailsRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: SerializationException) {
-            // Parse failure signals a DTO/API drift — surface loudly so it's
-            // findable in logs and crash reports. Still prefer returning a
-            // stale cache rather than throwing, so the UI can keep rendering
-            // the last known good data while we figure out the new shape.
+
             logger.error("Failed to parse releases for $owner/$repo: ${e.message}", e)
             cacheManager.getStale<List<GithubRelease>>(cacheKey)?.let { stale ->
                 logger.debug("Serving stale cache for releases $owner/$repo after parse failure")
@@ -427,10 +397,7 @@ class DetailsRepositoryImpl(
         sourceHost: String?,
     ): Triple<String, String?, String>? {
         if (sourceHost != null) return getForgejoReadme(owner, repo, defaultBranch, sourceHost)
-        // v2 — bumped after markdown preprocessor overhaul (alerts,
-        // emoji, details, image-row). Forces re-fetch so users get a
-        // properly-processed readme instead of waiting for the stale
-        // v1 entry to expire.
+
         val cacheKey = "details:readme:v4:$owner/$repo"
 
         cacheManager.get<CachedReadme>(cacheKey)?.let { cached ->
@@ -438,10 +405,6 @@ class DetailsRepositoryImpl(
             return Triple(cached.content, cached.languageCode, cached.path)
         }
 
-        // Backend-first. Phase 5.2: /v1/readme proxies GitHub's contents API,
-        // which returns base64-encoded markdown — different shape from the
-        // raw.githubusercontent.com path below, but the post-processing
-        // pipeline is the same.
         val backendResult = backendApiClient.getReadme(owner, repo)
         backendResult.fold(
             onSuccess = { dto ->
@@ -458,7 +421,7 @@ class DetailsRepositoryImpl(
                     )
                     return processed
                 }
-                // Decode/processing failed — fall through to the raw-URL path
+
                 logger.debug("Backend readme decode failed for $owner/$repo, falling back to raw URL")
             },
             onFailure = { e ->
@@ -467,17 +430,13 @@ class DetailsRepositoryImpl(
                         logger.debug("Backend 4xx for readme $owner/$repo, serving stale cache")
                         return Triple(stale.content, stale.languageCode, stale.path)
                     }
-                    // No stale — no readme exists or user can't access. Treat
-                    // as "no readme" rather than propagating as an error;
-                    // matches how fetchReadmeFromApi returned null.
+
                     return null
                 }
                 logger.debug("Backend infra error for readme $owner/$repo (${e.message}), falling back to raw URL")
             },
         )
 
-        // Fallback to raw.githubusercontent.com (only reached on backend
-        // infra error or on successful backend response that we couldn't decode)
         val result = fetchReadmeFromApi(owner, repo, defaultBranch)
 
         if (result != null) {
@@ -500,10 +459,7 @@ class DetailsRepositoryImpl(
         repo: String,
         defaultBranch: String,
     ): Triple<String, String?, String>? {
-        // GitHub's contents API base64-encodes with embedded newlines; Mime
-        // variant tolerates all whitespace transparently so we don't have
-        // to pre-strip. Narrow catch: only IAE is decode-related, other
-        // throwables (OOM, etc.) propagate.
+
         val rawContent = dto.content ?: return null
         val decoded = try {
             Base64.Mime.decode(rawContent).decodeToString()
@@ -555,9 +511,7 @@ class DetailsRepositoryImpl(
         sourceHost: String?,
     ): RepoStats {
         if (sourceHost != null) return getForgejoRepoStats(owner, repo, sourceHost)
-        // v3 — backend now supplies license. Bumping the key forces re-fetch
-        // so post-upgrade users get a populated license instead of waiting
-        // 6h for the stale v2 entry (license=null) to expire.
+
         val cacheKey = "details:stats:v3:$owner/$repo"
 
         cacheManager.get<RepoStats>(cacheKey)?.let { cached ->
@@ -565,9 +519,6 @@ class DetailsRepositoryImpl(
             return cached
         }
 
-        // Try backend first — provides stars/forks/openIssues/license/downloadCount.
-        // No more direct GitHub enrichment for license (was 1 quota hit per
-        // signed-in user per stats fetch); backend is now authoritative.
         val backendResult = backendApiClient.getRepo(owner, repo)
         backendResult.fold(
             onSuccess = { backendRepo ->
@@ -594,7 +545,6 @@ class DetailsRepositoryImpl(
             },
         )
 
-        // Fallback to GitHub API
         return try {
             logger.debug("Backend miss for stats $owner/$repo, falling back to GitHub API")
             val info =
@@ -633,8 +583,6 @@ class DetailsRepositoryImpl(
             return cached
         }
 
-        // Backend-first. Phase 5.3: /v1/user proxies GitHub's users API with
-        // aggressive edge caching (7-day TTL on Gcore).
         val backendResult = backendApiClient.getUser(username)
         backendResult.fold(
             onSuccess = { user ->
@@ -654,7 +602,6 @@ class DetailsRepositoryImpl(
             },
         )
 
-        // Fallback to GitHub direct (only reached on backend 5xx / network error)
         return try {
             val user =
                 httpClient
@@ -693,14 +640,6 @@ class DetailsRepositoryImpl(
             twitterUsername = twitterUsername,
         )
 
-    // ── Forgejo / Codeberg branch ─────────────────────────────────────
-    //
-    // No backend proxy, no GitHub fallback — all reads go straight to the
-    // forge instance. Cache keys are namespaced by host so the same
-    // `owner/repo` slug on github.com and codeberg.org never collide. Stats
-    // are derived from the repo response (stars / forks / openIssues /
-    // license fields exposed by Gitea/Forgejo API v1).
-
     private suspend fun getForgejoRepository(
         owner: String,
         name: String,
@@ -725,10 +664,7 @@ class DetailsRepositoryImpl(
         repo: String,
         sourceHost: String,
     ): List<GithubRelease> {
-        // v2 — release `body` is now pre-processed (CRLF → LF + relative
-        // URL rewrite to the Forgejo raw endpoint). Previously the raw
-        // CRLF bodies broke GFM table parsing in the markdown renderer
-        // (Gadgetbridge changelog tables rendered as literal pipes).
+
         val cacheKey = "details:releases:forgejo:v2:$sourceHost:$owner/$repo"
         cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { return it }
         val client = forgejoClientRegistry.clientFor(sourceHost)
@@ -757,11 +693,7 @@ class DetailsRepositoryImpl(
         owner: String,
         repo: String,
     ): String {
-        // Forgejo emits CRLF line endings. The intellij-markdown GFM
-        // table parser is line-sensitive — `\r` left in the separator
-        // row makes the table degrade to literal pipes. Normalize first,
-        // then run the same image / URL rewriting used on GitHub
-        // release bodies, but pointed at the Forgejo raw-branch URL.
+
         val normalized = body.replace("\r\n", "\n")
         val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/HEAD/"
         return preprocessMarkdown(markdown = normalized, baseUrl = baseUrl)
@@ -774,20 +706,13 @@ class DetailsRepositoryImpl(
         defaultBranch: String,
         sourceHost: String,
     ): Triple<String, String?, String>? {
-        // v2 — moved off the non-existent `/readme` endpoint (404s on every
-        // Forgejo / Gitea instance) onto `/contents/README.md`.
+
         val cacheKey = "details:readme:forgejo:v2:$sourceHost:$owner/$repo"
         cacheManager.get<CachedReadme>(cacheKey)?.let {
             return Triple(it.content, it.languageCode, it.path)
         }
         val client = forgejoClientRegistry.clientFor(sourceHost)
 
-        // Forgejo / Gitea does NOT implement GitHub's `/repos/{o}/{r}/readme`
-        // convenience endpoint — verified live against codeberg.org. We hit
-        // the contents endpoint directly. Try `README.md` first (covers the
-        // overwhelming majority including Gadgetbridge), and on 404 fall
-        // back to listing the repo root and scanning for any
-        // `^README(\..+)?$` file.
         val dto = client.getContentsFile(owner, repo, "README.md", defaultBranch).getOrNull()
             ?: client.listContentsRoot(owner, repo, defaultBranch).getOrNull()
                 ?.firstOrNull { entry ->
@@ -803,8 +728,6 @@ class DetailsRepositoryImpl(
                 return null
             }
 
-        // Forgejo's contents response is base64 (single continuous line,
-        // no MIME wrapping — Mime variant tolerates both forms transparently).
         val rawContent = dto.content ?: return null
         val decoded = try {
             Base64.Mime.decode(rawContent).decodeToString()
@@ -813,8 +736,7 @@ class DetailsRepositoryImpl(
             return null
         }
         val path = dto.path?.takeIf { it.isNotBlank() } ?: "README.md"
-        // Relative image refs in a Forgejo README need the per-host raw URL
-        // base. Forgejo's raw path shape is `/{o}/{r}/raw/branch/{ref}/`.
+
         val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/$defaultBranch/"
         val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl)
         val detected = readmeHelper.detectReadmeLanguage(processed)
@@ -827,7 +749,7 @@ class DetailsRepositoryImpl(
     }
 
     private companion object {
-        // README, README.md, README.rst, README.adoc, Readme.txt, etc.
+
         private val READMEFileNameRegex = Regex("""^README(\..+)?$""", RegexOption.IGNORE_CASE)
     }
 
@@ -836,17 +758,13 @@ class DetailsRepositoryImpl(
         repo: String,
         sourceHost: String,
     ): RepoStats {
-        // v2 — added license sniffing (from /contents/LICENSE) +
-        // aggregated download count (from release assets), neither of
-        // which Forgejo exposes on the /repos endpoint itself.
+
         val cacheKey = "details:stats:forgejo:v2:$sourceHost:$owner/$repo"
         cacheManager.get<RepoStats>(cacheKey)?.let { return it }
         val client = forgejoClientRegistry.clientFor(sourceHost)
         return try {
             val info = client.getRepository(owner, repo).getOrThrow()
-            // Best-effort license + downloads enrichment. Both can fail
-            // silently — repo stats still render with the core counters
-            // pulled directly from the /repos payload.
+
             val license = detectForgejoLicense(client, owner, repo, info.defaultBranch ?: "main")
             val downloads = sumForgejoReleaseDownloads(sourceHost, owner, repo)
             val result = RepoStats(
@@ -864,14 +782,6 @@ class DetailsRepositoryImpl(
         }
     }
 
-    /**
-     * Forgejo / Gitea does NOT expose a `license` field on
-     * `/repos/{o}/{r}`. The dedicated `/license` endpoint is
-     * GitHub-specific (404 on Forgejo). Best-effort: fetch the LICENSE
-     * file from the repo root and regex-match the first ~200 chars
-     * against canonical license headers. Returns SPDX-style id when
-     * matched, falls back to a short label, returns `null` on miss.
-     */
     @OptIn(ExperimentalEncodingApi::class)
     private suspend fun detectForgejoLicense(
         client: zed.rainxch.core.data.network.ForgejoApiClient,
@@ -879,8 +789,7 @@ class DetailsRepositoryImpl(
         repo: String,
         ref: String,
     ): String? {
-        // Try common LICENSE filenames in priority order. Most repos use
-        // bare `LICENSE`; common alternates covered below.
+
         val candidates = listOf("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
         val dto = candidates.firstNotNullOfOrNull { name ->
             client.getContentsFile(owner, repo, name, ref).getOrNull()
@@ -914,13 +823,6 @@ class DetailsRepositoryImpl(
         }
     }
 
-    /**
-     * Forgejo's `/repos/{o}/{r}` response carries no aggregate download
-     * count. Each release `asset.download_count` is per-asset, and the
-     * stable channel for total downloads is the sum across all release
-     * assets. Reuses the cached releases list when present so we don't
-     * double-fetch when stats + releases load in parallel from the VM.
-     */
     private suspend fun sumForgejoReleaseDownloads(
         sourceHost: String,
         owner: String,

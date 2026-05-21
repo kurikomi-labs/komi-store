@@ -231,11 +231,7 @@ fun HostTokensRoot(
 }
 
 private fun visiblePresetForges(state: HostTokensState): List<ForgeKind> {
-    // Hide the GitHub preset card when the user is already signed in via
-    // the in-app OAuth flow — for those users a PAT for github.com is
-    // redundant. Power users can still reach it via "Other forge".
-    // Always show forges the user already has a stored token for, so the
-    // picker stays consistent with the row list when those rows exist.
+
     val storedHosts = state.tokens.map { it.host }.toSet()
     return ForgeKind.entries.filter { kind ->
         when {

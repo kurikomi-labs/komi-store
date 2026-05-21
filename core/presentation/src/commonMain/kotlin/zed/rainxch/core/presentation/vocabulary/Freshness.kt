@@ -3,7 +3,6 @@ package zed.rainxch.core.presentation.vocabulary
 import androidx.compose.ui.graphics.Color
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
-/** Maintenance / freshness buckets (DESIGN.md §2.3, thresholds in Tokens). */
 enum class FreshnessState { HOT, FRESH, WARM, COOL, DORMANT }
 
 data class Freshness(val state: FreshnessState, val color: Color, val ringFraction: Float)

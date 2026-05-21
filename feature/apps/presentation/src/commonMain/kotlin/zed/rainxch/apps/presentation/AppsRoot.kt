@@ -175,11 +175,6 @@ fun AppsRoot(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    // Re-entry sync: fires the cooldown-gated update check whenever the
-    // user returns to the Apps screen. Catches external installs that
-    // `PackageEventReceiver` missed when GHS was background-killed by
-    // an aggressive OEM ROM. The VM debounces network calls via
-    // `UPDATE_CHECK_COOLDOWN_MS` (30 min) so rapid resumes are cheap.
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer =
@@ -210,10 +205,10 @@ fun AppsRoot(
                 }
             }
 
-            is AppsEvent.AppLinkedSuccessfully -> { // handled by ShowSuccess
+            is AppsEvent.AppLinkedSuccessfully -> {
             }
 
-            is AppsEvent.ImportComplete -> { // handled by ShowSuccess
+            is AppsEvent.ImportComplete -> {
             }
 
             AppsEvent.NavigateToExternalImport -> {
@@ -402,7 +397,6 @@ fun AppsScreen(
         },
     ) { innerPadding ->
 
-        // Link app bottom sheet
         if (state.showLinkSheet) {
             LinkAppBottomSheet(
                 state = state,
@@ -410,7 +404,6 @@ fun AppsScreen(
             )
         }
 
-        // Per-app advanced settings (monorepo filter / fallback)
         if (state.advancedSettingsApp != null) {
             AdvancedAppSettingsBottomSheet(
                 state = state,
@@ -418,7 +411,6 @@ fun AppsScreen(
             )
         }
 
-        // Variant picker dialog (shown for stale variants or explicit picks)
         if (state.variantPickerApp != null) {
             VariantPickerDialog(
                 state = state,
@@ -426,7 +418,6 @@ fun AppsScreen(
             )
         }
 
-        // Import summary sheet
         state.importSummary?.let { summary ->
             zed.rainxch.apps.presentation.components.ImportSummarySheet(
                 summary = summary,
@@ -434,7 +425,6 @@ fun AppsScreen(
             )
         }
 
-        // Uninstall confirmation dialog
         state.appPendingUninstall?.let { app ->
             AlertDialog(
                 onDismissRequest = { onAction(AppsAction.OnDismissUninstallDialog) },
@@ -469,10 +459,6 @@ fun AppsScreen(
             )
         }
 
-        // Discard-pending-install confirmation dialog. Mirrors the
-        // uninstall flow because both branches blow away DB rows the
-        // user might still want — the discard target also deletes the
-        // parked APK from disk, so the prompt is doubly warranted.
         state.appPendingDiscard?.let { app ->
             AlertDialog(
                 onDismissRequest = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
@@ -634,9 +620,6 @@ fun AppsScreen(
                         val listState = rememberLazyListState()
                         val isScrollbarEnabled = LocalScrollbarEnabled.current
 
-                        // Split filteredApps into the "Updates available" group (rich
-                        // rows) and the "Up to date" group (compact rows) — issue #463.
-                        // Sort order is already applied by the ViewModel.
                         val updatesGroup =
                             state.filteredApps.filter {
                                 it.installedApp.isUpdateAvailable && it.installedApp.updateCheckEnabled
@@ -654,10 +637,7 @@ fun AppsScreen(
                             LazyColumn(
                                 state = listState,
                                 modifier = Modifier.fillMaxSize().arrowKeyScroll(listState),
-                                // Bottom inset clears the Add-by-link FAB so
-                                // the last list item isn't hidden under it.
-                                // FAB ≈ 56dp + 16dp scaffold inset + 16dp
-                                // breathing room.
+
                                 contentPadding = PaddingValues(
                                     start = 0.dp,
                                     end = 0.dp,
@@ -1009,9 +989,7 @@ fun AppItemCard(
                     }
 
                     when {
-                        // Highest priority: a download finished while
-                        // the user wasn't watching, the file is on disk
-                        // and ready to be installed with one tap.
+
                         app.pendingInstallFilePath != null -> {
                             Text(
                                 text = stringResource(Res.string.ready_to_install),
@@ -1030,10 +1008,7 @@ fun AppItemCard(
                         }
 
                         app.preferredVariantStale -> {
-                            // Tap-to-fix label: route through the same OnUpdateApp
-                            // intercept that would have opened the picker anyway,
-                            // but also surface a tappable hint here for users
-                            // who notice the warning before tapping Update.
+
                             Text(
                                 text = stringResource(Res.string.variant_stale_hint),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1060,9 +1035,7 @@ fun AppItemCard(
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
-                            // Show the pinned variant tag inline so users can
-                            // see at a glance which APK they'll get when they
-                            // tap Update.
+
                             if (!app.preferredAssetVariant.isNullOrBlank()) {
                                 Text(
                                     text =
@@ -1125,10 +1098,7 @@ fun AppItemCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    // Subtle visual cue when a monorepo filter is active —
-                    // the icon tints to primary, so users can tell at a
-                    // glance which apps have an active filter without
-                    // having to open the sheet.
+
                     val advancedFilterDescription =
                         stringResource(Res.string.advanced_settings_open)
                     val hasFilter =
@@ -1152,10 +1122,6 @@ fun AppItemCard(
                         )
                     }
 
-                    // Always-visible "Pick variant" entry point. Tints to
-                    // primary when a variant is pinned (so users can see
-                    // at a glance whether the app has a sticky pick) and
-                    // to error when the pinned variant has gone stale.
                     val pickVariantDescription =
                         stringResource(Res.string.variant_picker_open)
                     val hasPin = !app.preferredAssetVariant.isNullOrBlank()
@@ -1220,12 +1186,6 @@ fun AppItemCard(
                                 },
                             )
 
-                            // Skip-this-version is only meaningful when an
-                            // update is currently being prompted (we have a
-                            // latestVersion to skip). When the row already
-                            // has a skipped tag stored, surface the unskip
-                            // affordance instead so the user can revert the
-                            // suppression without leaving the row.
                             if (app.skippedReleaseTag != null) {
                                 DropdownMenuItem(
                                     text = { Text(stringResource(Res.string.apps_skip_version_unskip)) },
@@ -1383,9 +1343,7 @@ fun AppItemCard(
 
                     else -> {
                         if (app.pendingInstallFilePath != null) {
-                            // One-tap install for a deferred download.
-                            // Bypasses the download phase entirely —
-                            // the file is already on disk.
+
                             Button(
                                 onClick = onInstallPendingClick,
                                 modifier = Modifier.weight(1f),
@@ -1401,9 +1359,7 @@ fun AppItemCard(
                                     text = stringResource(Res.string.install),
                                 )
                             }
-                            // Quick escape hatch: user cancelled the
-                            // system prompt and doesn't want this app.
-                            // Discard removes the parked file + DB row.
+
                             IconButton(onClick = onDiscardPendingClick) {
                                 Icon(
                                     imageVector = Icons.Default.Cancel,
@@ -1427,12 +1383,7 @@ fun AppItemCard(
                                 )
                             }
                         } else if (app.isPendingInstall) {
-                            // Pending row whose parked file is gone
-                            // (legacy row from before we persisted the
-                            // path, or file deleted out-of-band). The
-                            // app isn't actually installed — Open would
-                            // snackbar an error. Offer Discard so the
-                            // user can clear the row.
+
                             Button(
                                 onClick = onDiscardPendingClick,
                                 modifier = Modifier.weight(1f),

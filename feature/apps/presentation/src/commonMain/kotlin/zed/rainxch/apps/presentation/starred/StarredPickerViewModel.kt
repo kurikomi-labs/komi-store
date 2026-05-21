@@ -88,7 +88,7 @@ class StarredPickerViewModel(
             }
 
             runCatching { starredRepository.syncStarredRepos(forceRefresh = false) }
-                .onFailure { /* fall through to local cache */ }
+                .onFailure {   }
 
             val starred = starredRepository.getAllStarred().first()
             val tracked = installedAppsRepository.getAllInstalledApps().first()

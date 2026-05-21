@@ -10,48 +10,6 @@ import zed.rainxch.core.domain.system.DownloadProgressNotifier
 import zed.rainxch.core.domain.system.DownloadStage
 import zed.rainxch.core.domain.system.OrchestratedDownload
 
-/**
- * Single long-lived subscriber that translates
- * [DownloadOrchestrator.downloads] state transitions into calls on
- * [DownloadProgressNotifier].
- *
- * # Why it's its own class
- *
- * The orchestrator stays platform-agnostic (common code, no Android
- * imports) and doesn't know about notifications. The observer lives on
- * `androidMain` alongside the Android notifier and is only started from
- * [zed.rainxch.githubstore.app.GithubStoreApp], which means the whole
- * feature is Android-only without any platform branches in shared code.
- *
- * # Transition rules
- *
- *  - `Queued`, `Downloading` → post / update progress notification.
- *  - Anything else (`Installing`, `AwaitingInstall`, `Completed`,
- *    `Cancelled`, `Failed`) or entry removal → clear. `AwaitingInstall`
- *    is owned by [zed.rainxch.core.domain.system.PendingInstallNotifier]
- *    which posts its own "ready to install" row.
- *
- * # Throttling
- *
- * The orchestrator emits on every ~8KB chunk (hundreds of emissions
- * per second on a fast link). Android silently drops notification
- * updates posted faster than ~200ms for the same id, and every
- * `NotificationManagerCompat.notify` is a Binder round-trip, so
- * letting every emission through both wastes CPU and produces a stuck
- * progress bar that jumps at the end.
- *
- * We coalesce in-stage ticks to at most one post per
- * [PROGRESS_UPDATE_INTERVAL_MS] per package, but always flush
- * immediately on stage transitions (`Queued → Downloading`,
- * `Downloading → Completed`, etc.) and on 100%-percent emissions so
- * the final frame is never skipped.
- *
- * # Lifecycle
- *
- * Started once from the Application's `onCreate` via [start], collected
- * on the app-scoped coroutine scope (same one Koin provides). No
- * explicit stop — the process going away ends the flow.
- */
 class DownloadNotificationObserver(
     private val orchestrator: DownloadOrchestrator,
     private val notifier: DownloadProgressNotifier,
@@ -71,25 +29,19 @@ class DownloadNotificationObserver(
                         try {
                             reconcile(snapshot)
                         } catch (t: Throwable) {
-                            // Never let a NotificationManager hiccup
-                            // collapse the whole flow — progress
-                            // notifications are best-effort.
+
                             Logger.w(t) { "DownloadNotificationObserver: reconcile failed, continuing" }
                         }
                     }
                 } finally {
-                    // Reset so a subsequent start() on this process
-                    // (e.g. after the caller's scope restarts) can
-                    // resubscribe instead of silently no-op'ing on the
-                    // `job?.isActive == true` guard.
+
                     job = null
                 }
             }
     }
 
     private fun reconcile(snapshot: Map<String, OrchestratedDownload>) {
-        // Clear notifications for entries that vanished from the map
-        // (e.g. dismissed after Completed, or cleared on Cancelled).
+
         val removed = lastStages.keys - snapshot.keys
         for (pkg in removed) {
             clearProgressSafely(pkg)
@@ -150,8 +102,7 @@ class DownloadNotificationObserver(
     }
 
     private companion object {
-        // Comfortably above Android's ~200ms internal drop threshold
-        // while still feeling live to the eye.
+
         const val PROGRESS_UPDATE_INTERVAL_MS = 400L
     }
 }

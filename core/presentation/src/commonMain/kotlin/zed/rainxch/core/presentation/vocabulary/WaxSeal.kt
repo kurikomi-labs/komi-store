@@ -14,15 +14,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 
-/** Signing-fingerprint trust state. */
 enum class WaxSealState { INTACT, CRACKED, OPEN }
 
-/**
- * Wax-stamp glyph for binary trust (DESIGN.md §7.8). INTACT = solid brown circle +
- * inner check; CRACKED = red circle + lightning split (the ONLY aggressive red);
- * OPEN = dashed grey ring (signing-fingerprint unknown). 22dp default; 36-44dp on
- * Detail trust card.
- */
 @Composable
 fun WaxSeal(
     state: WaxSealState,
@@ -49,7 +42,7 @@ fun WaxSeal(
                     center = center,
                     style = Stroke(width = 0.6f.dp.toPx()),
                 )
-                // Inner check mark
+
                 val path = Path().apply {
                     moveTo(size.width * (8.5f / 24f), size.height * (12f / 24f))
                     lineTo(size.width * (11f / 24f), size.height * (14.3f / 24f))

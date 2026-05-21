@@ -27,7 +27,6 @@ sealed interface AuthenticationAction {
 
     data object OnResumed : AuthenticationAction
 
-    // PAT paste flow
     data object OpenPatSheet : AuthenticationAction
 
     data object DismissPatSheet : AuthenticationAction
@@ -40,7 +39,6 @@ sealed interface AuthenticationAction {
 
     data object OpenPatSettingsPage : AuthenticationAction
 
-    // Web OAuth flow (default in 1.8.3). Device flow + PAT remain as fallbacks.
     data object StartWebAuth : AuthenticationAction
 
     data class ConsumeAuthHandoff(

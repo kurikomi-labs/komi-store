@@ -14,13 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/** Banner tint variants per DESIGN.md §7.6. */
 enum class BannerTint { Info, Success, Warning, Danger }
 
-/**
- * Inline banner for clipboard detection, update available, integrity warnings, etc.
- * (DESIGN.md §7.6). Composes glyph + body + optional trailing action via slot APIs.
- */
 @Composable
 fun Banner(
     tint: BannerTint = BannerTint.Info,

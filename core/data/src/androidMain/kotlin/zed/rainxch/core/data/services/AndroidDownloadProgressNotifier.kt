@@ -13,26 +13,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import zed.rainxch.core.domain.system.DownloadProgressNotifier
 
-/**
- * Android implementation of [DownloadProgressNotifier].
- *
- * # Behaviour
- *
- *  - Ongoing notification on channel `app_downloads` (low-importance —
- *    no heads-up, no sound; long downloads shouldn't be noisy).
- *  - `setOnlyAlertOnce(true)` so repeated tick updates don't buzz.
- *  - `setOngoing(true)` prevents swipe-dismiss while downloading;
- *    cleared explicitly on completion / cancellation / failure.
- *  - Indeterminate spinner when the server omitted `Content-Length`.
- *  - "Cancel" action broadcasts [DownloadCancelReceiver.ACTION_CANCEL]
- *    with the package name; the receiver resolves the orchestrator
- *    via Koin and calls `cancel(packageName)`.
- *
- * # Permission gating
- *
- * POST_NOTIFICATIONS on Android 13+. If denied, silently skip — the
- * orchestrator's in-app UI still reflects progress.
- */
 class AndroidDownloadProgressNotifier(
     private val context: Context,
 ) : DownloadProgressNotifier {
@@ -47,12 +27,6 @@ class AndroidDownloadProgressNotifier(
     ) {
         if (!hasNotificationPermission()) return
 
-        // Encode the package in the Intent's data URI so PendingIntent
-        // identity (driven by Intent.filterEquals, which considers `data`
-        // but not extras) is uniquely per-package. Relying on
-        // packageName.hashCode() as requestCode alone risks a collision
-        // that would have FLAG_UPDATE_CURRENT overwrite another
-        // download's cancel extras.
         val cancelIntent =
             Intent(context, DownloadCancelReceiver::class.java).apply {
                 action = DownloadCancelReceiver.ACTION_CANCEL
@@ -108,11 +82,6 @@ class AndroidDownloadProgressNotifier(
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    /**
-     * Stable id in a range disjoint from the pending-install notifier
-     * (2000..2FFFFFF) and worker ids (1001..1005). Hash collisions are
-     * acceptable — worst case, two downloads share a single row.
-     */
     private fun notificationIdFor(packageName: String): Int =
         NOTIFICATION_ID_BASE + (packageName.hashCode() and 0x00FFFFFF)
 
@@ -144,7 +113,6 @@ class AndroidDownloadProgressNotifier(
         const val DOWNLOADS_CHANNEL_ID = "app_downloads"
         const val CANCEL_LABEL = "Cancel"
 
-        // Disjoint from PendingInstall (2000..) and workers (1001..).
         const val NOTIFICATION_ID_BASE = 3000
     }
 }

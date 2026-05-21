@@ -28,10 +28,7 @@ data class ExternalImportState(
     val invisiblePackageCountEstimate: Int = 0,
     val showCompletionToast: Boolean = false,
     val errorMessage: String? = null,
-    // Wall-clock at which the current Scanning / AutoImporting phase
-    // started. Drives the "Skip" affordance that the UI reveals after
-    // [SKIP_REVEAL_DELAY_MS] when the scan is taking too long. Null
-    // outside scan phases.
+
     val scanStartedAtMs: Long? = null,
     val isSkipAvailable: Boolean = false,
 ) {

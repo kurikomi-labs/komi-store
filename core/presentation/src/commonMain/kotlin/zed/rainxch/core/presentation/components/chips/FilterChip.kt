@@ -18,11 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Active/inactive filter chip (DESIGN.md §7.2). Active = tintP bg + primary text +
- * 1dp primary-tinted border. Inactive = transparent + outline border + ink text.
- * Optional `×` chip — caller composes via dismiss arg.
- */
 @Composable
 fun FilterChip(
     label: String,

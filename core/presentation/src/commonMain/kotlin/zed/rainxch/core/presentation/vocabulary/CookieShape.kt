@@ -7,14 +7,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-/**
- * 9-petal Material 3 Expressive flower silhouette. Used at exactly 3 touchpoints
- * (DESIGN.md §4.3 + §5.3): brand "G" mark, user avatar tile, active bottom-nav tab.
- *
- * Path translated from `tokens.json.shape.cookie.path` (viewBox 100×100), rescaled
- * to fill the [Size] passed by Compose. Used via `Modifier.clip(CookieShape)` or as
- * a `Shape` parameter on `Surface`/`Box`.
- */
 object CookieShape : Shape {
     override fun createOutline(
         size: Size,

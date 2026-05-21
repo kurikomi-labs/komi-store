@@ -32,19 +32,12 @@ val viewModelsModule =
         viewModelOf(::ExternalImportViewModel)
         viewModelOf(::AuthenticationViewModel)
         viewModel { params ->
-            // Indexed access because `ownerParam` and `repoParam` are both
-            // Strings — positional `params.get()` would silently pick the
-            // first matching by type and could swap the two if Koin ever
-            // changes its resolution order.
+
             DetailsViewModel(
                 repositoryId = params.get(0),
                 ownerParam = params.get(1),
                 repoParam = params.get(2),
                 isComingFromUpdate = params.get(3),
-                // Indexed access — `getOrNull<String>()` would pick the
-                // first matching String (`ownerParam`) since type-based
-                // resolution doesn't disambiguate against the other
-                // String slots in this factory.
                 sourceHostParam = if (params.size() > 4) params.get<String?>(4) else null,
                 detailsRepository = get(),
                 downloader = get(),

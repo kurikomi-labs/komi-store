@@ -2,13 +2,6 @@ package zed.rainxch.core.domain.util
 
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 
-/**
- * Maps a release asset filename to the OS platform it targets, by
- * extension. Returns `null` for files we can't classify (zip bundles,
- * sources, sig/sha files, etc.) — callers should drop those from the
- * cross-platform picker so the list isn't polluted by non-installable
- * sidecars.
- */
 fun assetPlatformOf(assetName: String): DiscoveryPlatform? {
     val lower = assetName.lowercase()
     return when {

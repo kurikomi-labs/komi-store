@@ -97,7 +97,7 @@ class AndroidShareManager(
             }
             launcher.launch(intent)
         } else {
-            // Fallback: try with ACTION_GET_CONTENT
+
             val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = mimeType
@@ -107,7 +107,7 @@ class AndroidShareManager(
                 context.startActivity(Intent.createChooser(intent, null).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 })
-                // Note: fallback won't deliver result without launcher
+
                 onResult(null)
             } catch (e: Exception) {
                 onResult(null)

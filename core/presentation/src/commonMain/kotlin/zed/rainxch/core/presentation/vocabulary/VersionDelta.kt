@@ -13,14 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 
-/** Patch (single dot) / Minor (two dots) / Major (bar + slash). */
 enum class VersionDeltaKind { PATCH, MINOR, MAJOR }
 
-/**
- * Visual update-risk indicator. Replaces "v2.7.0 → v2.7.5" prose with a primitive
- * (DESIGN.md §4.1). PATCH = green dot, MINOR = two amber dots, MAJOR = filled bar +
- * slash. Pairs with [VersionStack] for "how far behind" magnitude.
- */
 @Composable
 fun VersionDelta(
     delta: VersionDeltaKind,

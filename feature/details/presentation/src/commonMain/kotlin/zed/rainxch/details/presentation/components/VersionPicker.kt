@@ -223,12 +223,7 @@ private fun VersionListItem(
                     }
                 }
                 if (release.isEffectivelyPreRelease()) {
-                    // Prefer the specific marker ("Beta", "RC", "Alpha"…)
-                    // over the generic "Pre-release" pill — a stronger
-                    // signal for users deciding whether to install. Falls
-                    // back to the generic badge only when the API flag
-                    // marks a release as pre-release but no recognised
-                    // marker is in the tag or name.
+
                     val specificLabel = release.preReleaseLabel()
                     Surface(
                         shape = RoundedCornerShape(4.dp),

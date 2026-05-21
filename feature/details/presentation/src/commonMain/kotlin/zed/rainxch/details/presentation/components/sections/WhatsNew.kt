@@ -163,7 +163,6 @@ private fun ExpandableMarkdownContent(
         }
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
-    // Off-main pre-processing — see About.kt for the rationale.
     var fullChunks by remember(raw, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(raw, isDark) {
         val processed = withContext(Dispatchers.Default) {

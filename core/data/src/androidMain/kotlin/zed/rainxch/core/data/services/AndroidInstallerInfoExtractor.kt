@@ -59,11 +59,6 @@ class AndroidInstallerInfoExtractor(
             }
         }
 
-    /**
-     * Tries to parse the APK with full flags first (metadata + signing).
-     * If that fails, retries with minimal flags since some APKs / Android
-     * versions choke on GET_SIGNING_CERTIFICATES combined with other flags.
-     */
     private fun parseApk(
         packageManager: PackageManager,
         filePath: String,
@@ -80,8 +75,6 @@ class AndroidInstallerInfoExtractor(
             "Full-flag parse failed for $filePath, retrying with minimal flags"
         }
 
-        // Retry without signing — the fingerprint will be extracted
-        // separately in extractSigningFingerprint.
         val minimalFlags = PackageManager.GET_META_DATA
         val minimal = getPackageArchiveInfoCompat(packageManager, filePath, minimalFlags)
         if (minimal != null) return minimal
@@ -108,27 +101,20 @@ class AndroidInstallerInfoExtractor(
             packageManager.getPackageArchiveInfo(filePath, flags)
         }
 
-    /**
-     * Extracts the signing fingerprint from an already-parsed PackageInfo
-     * if available, otherwise does a separate lightweight parse with only
-     * the signing flag.
-     */
     private fun extractSigningFingerprint(
         packageManager: PackageManager,
         packageInfo: android.content.pm.PackageInfo,
         filePath: String,
     ): String? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // Try from the already-parsed info first (works when
-            // the full-flag parse succeeded).
+
             val sigInfo = packageInfo.signingInfo
             if (sigInfo != null) {
                 val cert =
                     if (sigInfo.hasMultipleSigners()) {
                         sigInfo.apkContentsSigners?.firstOrNull()
                     } else {
-                        // History is oldest→newest; last entry is the
-                        // current signer after key rotation.
+
                         sigInfo.signingCertificateHistory?.lastOrNull()
                     }
                 cert?.toByteArray()?.let { certBytes ->
@@ -136,8 +122,6 @@ class AndroidInstallerInfoExtractor(
                 }
             }
 
-            // Signing info missing (minimal-flag fallback path) —
-            // do a separate parse with only the signing flag.
             val sigOnly = getPackageArchiveInfoCompat(
                 packageManager,
                 filePath,

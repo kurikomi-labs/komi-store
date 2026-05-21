@@ -34,12 +34,6 @@ enum class InstallerCategory(val sortPriority: Int) {
                 "com.amazon.venezia",
             )
 
-        // Heuristic fallback when the installer is null/unknown — many
-        // OEM-preloaded apps live in /data (so they aren't flagged
-        // FLAG_UPDATED_SYSTEM_APP) and report an installer string we
-        // don't recognize or none at all due to package-visibility
-        // quirks. Falling back to the package-name namespace keeps them
-        // out of the SIDELOADED bucket where they'd drown user content.
         private val VENDOR_PACKAGE_PREFIXES =
             listOf(
                 "com.samsung.",

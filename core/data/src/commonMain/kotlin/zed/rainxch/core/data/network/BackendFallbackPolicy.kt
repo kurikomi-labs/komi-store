@@ -5,12 +5,6 @@ import zed.rainxch.core.domain.model.RateLimitInfo
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
-/**
- * Centralized policy for backend → direct-GitHub fallback. **Side
- * effect:** rethrows `CancellationException` so structured concurrency
- * is preserved, and converts a backend rate-limit into a domain
- * [RateLimitException] so callers can surface retry-after to the user.
- */
 fun shouldFallbackToGithubOrRethrow(cause: Throwable): Boolean =
     when (cause) {
         is CancellationException -> throw cause

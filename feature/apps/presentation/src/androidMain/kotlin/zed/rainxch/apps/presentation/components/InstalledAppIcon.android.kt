@@ -56,12 +56,7 @@ private fun resolveInstalledIcon(
             .toBitmap()
             .asImageBitmap()
     } catch (t: Throwable) {
-        // Wide catch: NameNotFoundException is the common case but
-        // PackageManager can also throw SecurityException on cross-user
-        // reads, plus toBitmap() can throw if the drawable can't be
-        // rasterized (unsupported drawable type, OOM on huge icons).
-        // Composition crash on the Apps screen is the worst-case
-        // outcome — silently fall back to the default icon instead.
+
         Log.w(TAG, "failed to load installed icon for $packageName", t)
         null
     }
@@ -71,10 +66,7 @@ private fun resolveApkIcon(
     apkFilePath: String,
 ): ImageBitmap? =
     try {
-        // PackageManager.getApplicationIcon(applicationInfo) needs sourceDir
-        // to point at the APK so loadIcon() resolves the embedded drawable.
-        // Without setting sourceDir/publicSourceDir loadIcon() returns the
-        // default Android boilerplate icon — useless as a fallback.
+
         val info = getPackageArchiveInfoCompat(packageManager, apkFilePath)
         val appInfo = info?.applicationInfo ?: return null
         appInfo.sourceDir = apkFilePath

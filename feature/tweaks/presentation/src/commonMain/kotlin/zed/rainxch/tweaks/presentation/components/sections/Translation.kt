@@ -279,16 +279,6 @@ private fun providerLabel(provider: TranslationProvider): String =
         TranslationProvider.MICROSOFT -> stringResource(Res.string.translation_provider_microsoft)
     }
 
-/**
- * Dropdown for picking the auto-translate target language.
- *
- * Distinct from [LanguageDropdown]: that one is bound to `AppLanguages` —
- * the 13 locales the app ships UI translations for. Translation targets
- * are a wider set ([SupportedTranslationLanguages.all] — 33 entries
- * spanning everything the translation service can produce, including
- * German, Dutch, Portuguese, Ukrainian, Vietnamese, etc. that the app
- * itself isn't translated into).
- */
 @Composable
 private fun TranslationTargetDropdown(
     selectedTag: String?,
@@ -460,8 +450,7 @@ private fun LibreTranslateCredentialsForm(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
 ) {
-    // Always allow save — empty URL is a valid state (falls back to
-    // the bundled public mirror in the repository layer).
+
     val canSave = true
 
     Column(

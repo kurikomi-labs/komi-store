@@ -21,8 +21,6 @@ data class GithubRepoSummaryUi(
     val isFork: Boolean = false,
     val availablePlatforms: ImmutableList<DiscoveryPlatform> = persistentListOf(),
     val downloadCount: Long = 0,
-    // Non-GitHub forge host (codeberg.org, gitea.com, etc.). null for
-    // canonical GitHub repos. Travels with the model so DetailsScreen
-    // can route through the right API.
+
     val sourceHost: String? = null,
 )

@@ -44,18 +44,12 @@ fun SyntaxHighlightedCode(
         extractFenceContent(model.node, model.content)
     }
 
-    // Highlight tokenization is CPU-heavy on big code blocks. Run it on
-    // Default and render the plain code immediately so the markdown pass
-    // never blocks waiting for highlighting — Main-thread ANR observed
-    // previously with multiple large fences on a single README.
     var highlighted by remember(code, language, isDark) {
         mutableStateOf(AnnotatedString(code))
     }
     LaunchedEffect(code, language, isDark) {
         if (code.isEmpty() || language == SyntaxLanguage.DEFAULT) return@LaunchedEffect
-        // Skip giant code blocks (e.g. embedded JSON dumps, generated YAML).
-        // The Highlights tokenizer is super-linear in input size and the
-        // payoff for plain-eye reading shrinks fast past a few thousand chars.
+
         if (code.length > MAX_HIGHLIGHTABLE_CHARS) return@LaunchedEffect
         val result = withContext(Dispatchers.Default) {
             buildHighlighted(code, language, isDark)
@@ -81,9 +75,7 @@ fun SyntaxHighlightedCode(
 }
 
 private fun extractFenceContent(node: ASTNode, content: String): Pair<SyntaxLanguage, String> {
-    // Code fence node children:
-    //   ``` opener, lang token (FENCE_LANG), eol, CODE_FENCE_CONTENT lines,
-    //   ``` closer. Walk children to extract language hint + raw code body.
+
     var language: SyntaxLanguage = SyntaxLanguage.DEFAULT
     val body = StringBuilder()
     var sawContent = false

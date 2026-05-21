@@ -98,7 +98,6 @@ class SearchRepositoryImpl(
                 return@channelFlow
             }
 
-            // Try backend search first
             val backendResult = tryBackendSearch(query, platform, sortBy, page)
             if (backendResult != null) {
                 cacheManager.put(cacheKey, backendResult, SEARCH_RESULTS)
@@ -106,7 +105,6 @@ class SearchRepositoryImpl(
                 return@channelFlow
             }
 
-            // Fallback to GitHub REST search
             fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey)
         }.flowOn(Dispatchers.IO)
 
@@ -153,8 +151,6 @@ class SearchRepositoryImpl(
         )
     }
 
-    // ── Backend search ────────────────────────────────────────────────
-
     private suspend fun tryBackendSearch(
         query: String,
         platform: DiscoveryPlatform,
@@ -163,9 +159,6 @@ class SearchRepositoryImpl(
     ): PaginatedDiscoveryRepositories? {
         if (query.isBlank()) return null
 
-        // Backend doesn't support forks sorting — fall through to GitHub
-        // REST. RecentlyUpdated and RecentlyReleased route through backend
-        // (sort=updated / sort=releases respectively).
         if (sortBy == SortBy.MostForks) return null
 
         val platformSlug = when (platform) {
@@ -181,7 +174,7 @@ class SearchRepositoryImpl(
             SortBy.BestMatch -> "relevance"
             SortBy.RecentlyUpdated -> "updated"
             SortBy.RecentlyReleased -> "releases"
-            SortBy.MostForks -> null // unreachable, guarded above
+            SortBy.MostForks -> null
         }
 
         val offset = (page - 1) * BACKEND_PAGE_SIZE
@@ -206,20 +199,7 @@ class SearchRepositoryImpl(
                 )
             },
             onFailure = { e ->
-                // Centralized fallback policy. Side effects:
-                //  * 429 → throws domain RateLimitException so the
-                //    caller surfaces a friendly retry-after toast
-                //    (prevents the direct-GitHub /search + per-repo
-                //    /releases verify storm that would otherwise burn
-                //    the user's quota and trip the global rate-limit
-                //    dialog).
-                //  * CancellationException → re-thrown to preserve
-                //    structured concurrency.
-                //  * BackendException 5xx / network → returns true →
-                //    fall through to GitHub REST fallback below.
-                //  * BackendException 4xx (other than 429) → returns
-                //    false → backend's answer is authoritative; do
-                //    NOT silently retry against direct GitHub.
+
                 if (!shouldFallbackToGithubOrRethrow(e)) {
                     throw e
                 }
@@ -227,8 +207,6 @@ class SearchRepositoryImpl(
             },
         )
     }
-
-    // ── Fallback GitHub REST search ───────────────────────────────────
 
     private suspend fun kotlinx.coroutines.channels.ProducerScope<PaginatedDiscoveryRepositories>.fallbackGithubSearch(
         query: String,

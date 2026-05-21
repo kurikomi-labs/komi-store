@@ -20,10 +20,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient {
                 }
 
                 is ProxyConfig.System -> {
-                    // java.net.ProxySelector.getDefault() does not read Android's
-                    // per-network HTTP proxy. Android publishes the active proxy
-                    // through standard system properties instead, which we resolve
-                    // explicitly here so traffic actually flows through it.
+
                     proxy = resolveAndroidSystemProxy()
                 }
 
@@ -81,9 +78,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient {
 }
 
 internal fun resolveAndroidSystemProxy(): Proxy {
-    // System properties are user/OS-supplied, so guard against malformed
-    // values: InetSocketAddress(String, Int) throws IllegalArgumentException
-    // for ports outside 0..65535.
+
     val httpsHost = System.getProperty("https.proxyHost")?.takeIf { it.isNotBlank() }
     val httpsPort = System.getProperty("https.proxyPort")?.toIntOrNull()?.takeIf { it in 1..65535 }
     if (httpsHost != null && httpsPort != null) {

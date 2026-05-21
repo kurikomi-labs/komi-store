@@ -80,14 +80,6 @@ fun LazyListScope.header(
         }
     }
 
-    // Status card replaces the pickers + install button in three cases:
-    //   1. releases fetch failed — show error + Retry
-    //   2. retry in flight — show spinner
-    //   3. repo truly has no releases — show "no releases published" empty state
-    // Initial page load (isLoading) is intentionally excluded — the top-level
-    // loading spinner covers it, no need to double up. Same for repository
-    // not loaded yet: the release-specific states only make sense once we
-    // know the repo exists (matches the VM's retryReleases() guard).
     val releasesStatus: ReleasesStatus? =
         when {
             state.repository == null -> null
@@ -106,7 +98,7 @@ fun LazyListScope.header(
             )
         }
     } else {
-        // versions type list
+
         if (state.allReleases.isNotEmpty()) {
             item {
                 VersionTypePicker(
@@ -117,7 +109,6 @@ fun LazyListScope.header(
             }
         }
 
-        // version and installable release
         if (state.allReleases.isNotEmpty() || state.installableAssets.isNotEmpty()) {
             item {
                 Row(
@@ -125,9 +116,7 @@ fun LazyListScope.header(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    // Memoize the platform-classifiable subset of release
-                    // assets so each Header recompose (scroll, animation,
-                    // unrelated state change) doesn't re-run the filter.
+
                     val crossPlatformAssets =
                         androidx.compose.runtime.remember(state.selectedRelease) {
                             state.selectedRelease
@@ -138,10 +127,7 @@ fun LazyListScope.header(
                                 }
                                 .orEmpty()
                         }
-                    // Refresh pinned label from the currently matched asset
-                    // — stored value may carry a stale qualifier-counter
-                    // prefix (e.g. `beta.24-arm64-v8a`) from when the pin
-                    // was first set. Issue #612.
+
                     val pinnedVariantLabel =
                         state.installedApp?.preferredAssetVariant?.let { stored ->
                             state.primaryAsset?.name?.let { name ->
@@ -171,16 +157,9 @@ fun LazyListScope.header(
         }
 
         item {
-            // Inspect button only surfaces once the package is genuinely
-            // installed on device (`isReallyInstalled()` filters out
-            // pending-install rows whose `installedApp` is non-null but
-            // the system hasn't confirmed the install). This avoids
-            // popping the icon in at the exact frame the system install
-            // prompt appears, which is the user's peak-attention moment.
+
             val canInspectApk = state.installedApp?.isReallyInstalled() == true
-            // Even when visible, the coachmark animation only fires
-            // during a calm moment — never while a download or install
-            // is mid-flight, never with the inspect sheet already open.
+
             val coachmarkActive =
                 state.isApkInspectCoachmarkPending &&
                     canInspectApk &&

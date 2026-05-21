@@ -21,12 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * 2×2 vital-signs grid on Detail pages (DESIGN.md §7.7). Fixed slots:
- * Released · Maintained · Stars · Permissions.
- *
- * Each [VitalTile] takes glyph + value (signal-colored Fraunces italic 13) + label.
- */
 @Composable
 fun VitalSignsGrid(
     released: VitalTile,

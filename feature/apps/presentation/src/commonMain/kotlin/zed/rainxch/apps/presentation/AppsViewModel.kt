@@ -77,15 +77,9 @@ class AppsViewModel(
     private var updateAllJob: Job? = null
     private var lastAutoCheckTimestamp: Long = 0L
 
-    // Synchronous mirror of the persisted dismiss watermark. The persisted
-    // write goes through DataStore async, so the import-banner flow could
-    // re-emit with the OLD watermark and re-flash the banner before the
-    // write completes. This in-memory shadow is set BEFORE the launch and
-    // OR'd into shouldShow so the suppression is immediate.
     @Volatile
     private var localBannerDismissedAtCount: Int = 0
 
-    /** Debounced re-runs of the live preview in the advanced settings sheet. */
     private var advancedPreviewJob: Job? = null
 
     private val _state = MutableStateFlow(AppsState())
@@ -119,10 +113,7 @@ class AppsViewModel(
                     count to dismissedAt
                 }
                 .collect { (count, dismissedAt) ->
-                    // The effective watermark is the max of the persisted value and the
-                    // synchronous local one. The local shadow is set immediately by the
-                    // Review/Dismiss handlers so a flow emission that beats the DataStore
-                    // write still sees a watermark that suppresses the banner.
+
                     val effectiveDismissedAt = maxOf(dismissedAt, localBannerDismissedAtCount)
                     val shouldShow = count >= BANNER_THRESHOLD && count > effectiveDismissedAt
                     _state.update {
@@ -207,12 +198,7 @@ class AppsViewModel(
 
     private fun checkAllForUpdates() {
         viewModelScope.launch {
-            // Stamp the inflight guard at launch start — a second resume
-            // that races the network call finds the cooldown gate already
-            // tripped and exits early. `lastCheckedTimestamp` (the UI
-            // "last checked" indicator) still only advances on success so
-            // a failed check doesn't lie to the user — matches the
-            // `refresh()` semantics.
+
             lastAutoCheckTimestamp = System.currentTimeMillis()
             _state.update { it.copy(isCheckingForUpdates = true) }
             try {
@@ -289,10 +275,7 @@ class AppsViewModel(
             }
 
             is AppsAction.OnUpdateApp -> {
-                // If the app's pinned variant has gone missing in the
-                // latest release we don't know what to download — open
-                // the picker first and resume the update after the user
-                // chooses. Saves them from a wrong-variant install.
+
                 if (action.app.preferredVariantStale) {
                     openVariantPicker(action.app, resumeUpdateAfterPick = true)
                 } else {
@@ -607,10 +590,7 @@ class AppsViewModel(
 
             AppsAction.OnImportProposalReview -> {
                 val current = _state.value.pendingExternalImportCount
-                // Set the local watermark BEFORE the launch so a racing flow
-                // emission can't recompute shouldShow=true on the stale persisted
-                // watermark. observePendingExternalImports OR's this with the
-                // persisted value via maxOf().
+
                 localBannerDismissedAtCount = maxOf(localBannerDismissedAtCount, current)
                 _state.update { it.copy(showImportProposalBanner = false) }
                 viewModelScope.launch {
@@ -629,9 +609,7 @@ class AppsViewModel(
             }
 
             AppsAction.OnRescanForGithubApps -> {
-                // Manual rescan resets the banner watermark so the user sees
-                // everything fresh; the wizard's startScanIfIdle then runs
-                // a full scan + match cycle on entry.
+
                 localBannerDismissedAtCount = 0
                 _state.update { it.copy(showImportProposalBanner = false) }
                 viewModelScope.launch {
@@ -771,11 +749,6 @@ class AppsViewModel(
         if (errorKey == null) schedulePreviewRefresh()
     }
 
-    /**
-     * Debounces preview refresh while the user is typing. We don't want to
-     * issue a fresh GitHub releases call on every keystroke — 350ms after
-     * input stops is plenty responsive without burning rate limit.
-     */
     private fun schedulePreviewRefresh() {
         advancedPreviewJob?.cancel()
         advancedPreviewJob =
@@ -790,8 +763,6 @@ class AppsViewModel(
         val draftFilter = _state.value.advancedFilterDraft
         val draftFallback = _state.value.advancedFallbackDraft
 
-        // Validate locally before hitting the network — invalid regex
-        // shows the error inline and aborts the preview.
         val parseResult = AssetFilter.parse(draftFilter)
         if (parseResult != null && parseResult.isFailure) {
             _state.update {
@@ -853,13 +824,6 @@ class AppsViewModel(
             }
     }
 
-    /**
-     * Opens the variant picker for [app]. Fetches the current latest
-     * matching release (honouring the per-app filter / fallback) so the
-     * dialog can show real, current asset names — not the cached ones
-     * which might be stale or wrong. When [resumeUpdateAfterPick] is
-     * true, dispatch the update flow as soon as the user picks.
-     */
     private fun openVariantPicker(
         app: InstalledAppUi,
         resumeUpdateAfterPick: Boolean,
@@ -884,11 +848,7 @@ class AppsViewModel(
                         includePreReleases = app.includePreReleases,
                         fallbackToOlderReleases = app.fallbackToOlderReleases,
                     )
-                // Only assets whose filename has an extractable, non-empty
-                // variant tag are pinnable: an empty extract or null means
-                // we'd have nothing to remember release-over-release. The
-                // dialog filters its own list so users can't tap a row
-                // that would silently no-op.
+
                 val pinnableAssets =
                     preview.matchedAssets.filter { asset ->
                         AssetVariant.extract(asset.name)?.isNotEmpty() == true
@@ -922,12 +882,6 @@ class AppsViewModel(
         }
     }
 
-    /**
-     * Persists the user's variant pick (or null to reset to auto),
-     * dismisses the dialog, and — if the picker was opened from a "tap
-     * Update on stale variant" flow — kicks the update off automatically
-     * with the freshly-resolved cached fields.
-     */
     private fun saveVariantSelection(variant: String?) {
         val app = _state.value.variantPickerApp ?: return
         val resume = _state.value.variantPickerResumeUpdateAfterPick
@@ -946,7 +900,6 @@ class AppsViewModel(
                 return@launch
             }
 
-            // Dismiss the dialog regardless of whether we resume.
             _state.update {
                 it.copy(
                     variantPickerApp = null,
@@ -959,15 +912,7 @@ class AppsViewModel(
             }
 
             if (resume) {
-                // Read the canonical InstalledApp directly from the
-                // repository rather than the in-memory state. The Flow
-                // that drives `_state.value.apps` propagates DAO writes
-                // asynchronously, so reading state right after
-                // setPreferredVariant — which itself runs an internal
-                // checkForUpdates write — can race and hand us the OLD
-                // pre-pick row, leading to an update with the wrong
-                // asset URL. A direct DAO read is synchronous and never
-                // races against pending Flow emissions.
+
                 val refreshed =
                     runCatching { installedAppsRepository.getAppByPackage(app.packageName) }
                         .getOrNull()
@@ -984,7 +929,6 @@ class AppsViewModel(
         val draftFilter = _state.value.advancedFilterDraft.trim()
         val draftFallback = _state.value.advancedFallbackDraft
 
-        // Final regex validation — if it's broken we refuse to save.
         val parseResult = AssetFilter.parse(draftFilter)
         if (parseResult != null && parseResult.isFailure) {
             _state.update { it.copy(advancedFilterError = "invalid") }
@@ -994,8 +938,7 @@ class AppsViewModel(
         viewModelScope.launch {
             _state.update { it.copy(advancedSavingFilter = true) }
             try {
-                // `setAssetFilter` persists and then re-checks internally,
-                // so the UI badge is refreshed without a second round-trip.
+
                 installedAppsRepository.setAssetFilter(
                     packageName = app.packageName,
                     regex = draftFilter.takeIf { it.isNotEmpty() },
@@ -1112,13 +1055,6 @@ class AppsViewModel(
                         throw IllegalStateException("No installable assets found for this platform")
                     }
 
-                    // Honour the user's pinned variant first; fall back to
-                    // the platform installer's auto-pick if the variant
-                    // isn't present in this release. The auto-pick
-                    // intentionally never throws here — checkForUpdates
-                    // already flipped `preferredVariantStale=true` and the
-                    // earlier intercept (see updateSingleApp entrypoint)
-                    // would have routed us to the picker dialog instead.
                     val variantMatch =
                         AssetVariant.resolvePreferredAsset(
                             assets = installableAssets,
@@ -1166,13 +1102,6 @@ class AppsViewModel(
 
                     updateAppState(app.packageName, UpdateState.Downloading)
 
-                    // Route the download through the orchestrator so
-                    // it survives this VM being torn down (user
-                    // navigating away from the apps tab). Shizuku
-                    // gets AlwaysInstall (silent install regardless
-                    // of foreground state); regular installer gets
-                    // InstallWhileForeground so the existing dialog/
-                    // installer dispatch below stays in charge.
                     val installerType =
                         try {
                             tweaksRepository.getInstallerType().first()
@@ -1254,10 +1183,6 @@ class AppsViewModel(
                         throw e
                     }
 
-                    // Successful install — release the orchestrator
-                    // entry so the apps row stops showing the
-                    // download/install state. The DB sync continues
-                    // via PackageEventReceiver.
                     downloadOrchestrator.dismiss(app.packageName)
                     try {
                         installedAppsRepository.setPendingInstallFilePath(app.packageName, null)
@@ -1471,10 +1396,7 @@ class AppsViewModel(
         packageName: String,
         progress: Int?,
     ) {
-        // Download progress is purely a per-row visual update; it doesn't
-        // affect sort order or search match. Avoid re-running the full
-        // filter+sort pass on every progress tick (which at 50+ apps with
-        // a download in flight ran ~100×/sec). Map both lists in place.
+
         _state.update { currentState ->
             currentState.copy(
                 apps =
@@ -1504,30 +1426,6 @@ class AppsViewModel(
         logger.debug("Marked ${app.packageName} as pending install")
     }
 
-    /**
-     * Subscribes to the orchestrator's entry for [packageName] and
-     * suspends until it reaches a terminal stage. Mirrors progress
-     * via [onProgress] while downloading.
-     *
-     * Returns:
-     *  - The file path when the orchestrator parks the file at
-     *    [OrchestratorStage.AwaitingInstall] (regular installer path)
-     *  - `null` when the orchestrator finishes its own install
-     *    ([OrchestratorStage.Completed], the Shizuku/AlwaysInstall
-     *    path) — the caller has nothing more to do
-     *  - `null` when the entry is cancelled or fails — the caller
-     *    treats this as "abort the local install logic"
-     *
-     * Implementation: forwards progress side-effects via a
-     * `transform` step, then `first { predicate }` finds the first
-     * emission whose stage is terminal. Avoids needing to throw out
-     * of `collect`.
-     */
-    /**
-     * Result type for [waitForOrchestratorReady] so callers can
-     * distinguish "file is ready" from "orchestrator already installed"
-     * from "download failed".
-     */
     private sealed interface OrchestratorResult {
         data class Ready(val filePath: String) : OrchestratorResult
         data object AlreadyInstalled : OrchestratorResult
@@ -1565,16 +1463,6 @@ class AppsViewModel(
         }
     }
 
-    /**
-     * Triggers an install for an app whose download was previously
-     * deferred (the orchestrator parked the file in `AwaitingInstall`
-     * mode after the user navigated away mid-download). Used by the
-     * apps row "Install" button when [InstalledAppUi.pendingInstallFilePath]
-     * is non-null.
-     *
-     * Delegates to [DownloadOrchestrator.installPending] which
-     * handles validation-free install + DB cleanup.
-     */
     private fun installPendingApp(app: InstalledAppUi) {
         if (activeUpdates.containsKey(app.packageName)) {
             logger.debug("Install already in progress for ${app.packageName}")
@@ -1597,13 +1485,6 @@ class AppsViewModel(
         }
     }
 
-    /**
-     * User decided to drop a pending install — they cancelled the
-     * system installer prompt and don't want this app anymore. Cancels
-     * the orchestrator entry (this also nukes the parked APK file via
-     * the downloader's cancel path), removes the DB row, and clears
-     * any leftover pending notification.
-     */
     private fun discardPendingInstall(app: InstalledAppUi) {
         viewModelScope.launch {
             try {
@@ -1613,11 +1494,7 @@ class AppsViewModel(
             } catch (t: Throwable) {
                 logger.warn("discardPendingInstall: orchestrator cancel failed: ${t.message}")
             }
-            // Belt-and-braces: cancel doesn't nuke the file when the
-            // entry was already in AwaitingInstall — the orchestrator
-            // already cleared its in-memory metadata before the user
-            // tapped Discard. Delete the parked file directly so the
-            // bytes don't leak.
+
             app.pendingInstallFilePath?.let { path ->
                 runCatching { File(path).takeIf { it.exists() }?.delete() }
                     .onFailure {
@@ -1631,11 +1508,7 @@ class AppsViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
-                // Mirror uninstallApp's UX: a row-delete failure leaves
-                // the apps list pointing at metadata for an APK that's
-                // already been removed from disk, so the user has to
-                // know it didn't take. Log the cause and surface a
-                // localized error event for the snackbar host.
+
                 logger.error(
                     "discardPendingInstall: row delete failed for ${app.packageName}: ${t.message}",
                 )
@@ -1787,15 +1660,11 @@ class AppsViewModel(
     }
 
     private fun onLinkAssetFilterChanged(value: String) {
-        // Validate the regex on every keystroke so the user gets immediate
-        // feedback. The state's filteredLinkAssets getter falls back to the
-        // unfiltered list when the regex is invalid, so the picker stays
-        // usable even mid-typing.
+
         val parseResult = AssetFilter.parse(value)
         val error =
             parseResult?.exceptionOrNull()?.let { _ ->
-                // Localized message comes from the UI layer; here we just
-                // signal that something is wrong.
+
                 "invalid"
             }
         _state.update {
@@ -1806,22 +1675,6 @@ class AppsViewModel(
         }
     }
 
-    /**
-     * Picks a sensible default for the link-flow filter. Tries, in order:
-     *   1. The trailing segment of the package name (e.g. `io.ente.auth` → `auth`)
-     *   2. A token derived from the device app's display name (e.g.
-     *      `Ente Auth` → `auth`)
-     *   3. [AssetFilter.suggestFromAssetName] on the first asset
-     *
-     * Every candidate is routed through [Regex.escape] before validation
-     * so metacharacters in package names or display words (think
-     * `My App (Beta)` → `(beta)`) are treated literally and never break
-     * regex compilation.
-     *
-     * Returns the first non-blank candidate that actually matches at least
-     * one of the available assets — otherwise null, which leaves the field
-     * empty so we don't pre-fill something useless.
-     */
     private fun suggestFilterForLink(
         deviceAppName: String,
         packageName: String,
@@ -1839,11 +1692,9 @@ class AppsViewModel(
             return if (assets.any { regex.containsMatchIn(it.name) }) escaped else null
         }
 
-        // 1. Last package segment (commonly the most distinctive token).
         val packageTail = packageName.substringAfterLast('.').lowercase()
         tryCandidate(packageTail)?.let { return it }
 
-        // 2. Significant words from the display name.
         deviceAppName
             .split(' ', '-', '_')
             .map { it.lowercase().trim() }
@@ -1851,8 +1702,6 @@ class AppsViewModel(
                 tryCandidate(token)?.let { return it }
             }
 
-        // 3. Heuristic on the first asset name (already escaped + anchored
-        //    by AssetFilter.suggestFromAssetName).
         return firstAssetName?.let { AssetFilter.suggestFromAssetName(it) }
     }
 
@@ -1969,11 +1818,6 @@ class AppsViewModel(
                     return@launch
                 }
 
-                // Seed an auto-suggestion based on the device app's package
-                // name first, then fall back to the first installable asset.
-                // This makes monorepo linking nearly zero-effort: pick "Ente
-                // Auth" → the filter pre-fills with "auth" so the picker
-                // already shows just the relevant APKs.
                 val suggestedFilter =
                     suggestFilterForLink(
                         deviceAppName = selectedApp.appName,
@@ -2024,11 +1868,6 @@ class AppsViewModel(
         val assetFilterRegex = _state.value.linkAssetFilter.takeIf { it.isNotBlank() }
         val fallbackToOlder = _state.value.linkFallbackToOlder
 
-        // The user explicitly picked this asset → trust the choice.
-        // Skip the re-download + signing-key verification dance (which
-        // burned bandwidth and time for nothing the user couldn't already
-        // confirm). The `installSource = MANUAL` field linkAppToRepo
-        // writes is what the Details banner reads to flag manual links.
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -2174,11 +2013,6 @@ class AppsViewModel(
     override fun onCleared() {
         super.onCleared()
 
-        // Cancel local OBSERVERS only — the orchestrator entries
-        // keep running in the application scope. Each in-flight
-        // download is downgraded to DeferUntilUserAction so the
-        // user gets a notification when it's ready, instead of
-        // losing the work.
         updateAllJob?.cancel()
         val packageNames = activeUpdates.keys.toList()
         activeUpdates.values.forEach { it.cancel() }

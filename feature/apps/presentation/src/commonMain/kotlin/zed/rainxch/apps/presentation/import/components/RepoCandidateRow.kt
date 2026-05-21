@@ -86,10 +86,7 @@ fun RepoCandidateRow(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
-                // Source chip: where this suggestion actually lives.
-                // Distinct tonal color so a Codeberg row visibly stands
-                // apart from a GitHub one — answers "why is this here
-                // and where is it from".
+
                 SuggestionHostChip(suggestion.sourceHost)
             }
             if (!suggestion.description.isNullOrBlank()) {

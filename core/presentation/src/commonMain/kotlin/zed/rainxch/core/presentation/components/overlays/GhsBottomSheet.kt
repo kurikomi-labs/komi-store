@@ -19,13 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 
-/**
- * Wonky-top bottom sheet (DESIGN.md §16.1). Wraps Material 3's [ModalBottomSheet]
- * with the project's asymmetric top corners + drag handle.
- *
- * Caller composes title + content + action row via slots. Use right-aligned primary
- * (wonky) + outline Cancel pair in the action row.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GhsBottomSheet(

@@ -13,11 +13,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Michelin-style 1-5 star tier from `stargazersCount`. Log-scale buckets
- * (DESIGN.md §4.1, thresholds in `Tokens.Thresholds.stars`):
- * 1 ★ < 1k, 2 ★ ≥1k, 3 ★ ≥10k, 4 ★ ≥50k, 5 ★ ≥100k. Replaces "62.8k stars".
- */
 @Composable
 fun StarTier(
     stars: Int,

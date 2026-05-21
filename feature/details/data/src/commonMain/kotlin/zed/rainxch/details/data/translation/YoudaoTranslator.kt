@@ -15,19 +15,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import zed.rainxch.details.domain.model.TranslationResult
 
-/**
- * Hits Youdao Translation Open API v3 (`openapi.youdao.com/api`).
- * Directly accessible from mainland China — the reason this provider
- * exists (see issue #429). Requires user-supplied `appKey`/`appSecret`
- * from Youdao's developer portal; missing credentials throw
- * [TranslationProviderNotConfiguredException] up to the UI.
- *
- * Signing: v3 uses
- *     sign = sha256(appKey + input + salt + curtime + appSecret)
- * where `input` is the query truncated to first-10 + length + last-10
- * for strings longer than 20 characters.
- * See https://ai.youdao.com/DOCSIRMA/html/trans/api/wbfy/index.html.
- */
 @OptIn(ExperimentalTime::class, ExperimentalUuidApi::class)
 internal class YoudaoTranslator(
     private val httpClient: () -> HttpClient,
@@ -35,8 +22,7 @@ internal class YoudaoTranslator(
     private val appKey: String,
     private val appSecret: String,
 ) : Translator {
-    // POST body — Youdao accepts up to 5000 chars per call. Leave a
-    // little room for URL-encoding inflation.
+
     override val maxChunkSize: Int = 4500
 
     override suspend fun translate(
@@ -87,8 +73,6 @@ internal class YoudaoTranslator(
                 ?.joinToString("\n") { it.jsonPrimitive.content }
                 .orEmpty()
 
-        // `l` is "<from>2<to>" — e.g. "en2zh-CHS". First half is the
-        // auto-detected source language when `from=auto` was requested.
         val detected =
             root["l"]
                 ?.jsonPrimitive
@@ -104,8 +88,7 @@ internal class YoudaoTranslator(
     }
 
     private fun buildSignInput(q: String): String {
-        // Youdao's documented truncation rule for the signed `input`:
-        // if q.length > 20 use first 10 + q.length + last 10, else use q.
+
         return if (q.length <= 20) {
             q
         } else {
@@ -124,12 +107,6 @@ internal class YoudaoTranslator(
         }
     }
 
-    /**
-     * Translate Google-style BCP-47 codes (the rest of the app uses
-     * these) to Youdao's expected language codes. Anything we don't
-     * know passes through — if it's wrong Youdao will respond with
-     * errorCode 102 and the caller surfaces the error.
-     */
     private fun mapLanguageCode(code: String): String =
         when (code.lowercase()) {
             "auto", "" -> "auto"

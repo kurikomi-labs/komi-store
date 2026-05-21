@@ -49,9 +49,7 @@ class AndroidDownloader(
                     }
 
                     is ProxyConfig.System -> {
-                        // ProxySelector.getDefault() does not honor Android's
-                        // per-network HTTP proxy; resolve it explicitly so
-                        // downloads also flow through the device proxy.
+
                         proxy(resolveAndroidSystemProxy())
                     }
 
@@ -92,9 +90,7 @@ class AndroidDownloader(
         suggestedFileName: String?,
         bypassMirror: Boolean,
     ): Flow<DownloadProgress> =
-        // bypassMirror is a no-op here: this downloader uses OkHttp directly,
-        // not Ktor, so it never traverses MirrorRewriteInterceptor. The caller
-        // (MultiSourceDownloader) already passes the resolved direct/mirror URL.
+
         flow {
             val client = buildClient()
 
@@ -117,11 +113,7 @@ class AndroidDownloader(
             val downloadId = UUID.randomUUID().toString()
 
             val destination = File(dir, safeName)
-            // Each attempt writes to its own temp file so MultiSourceDownloader's
-            // direct/mirror race cannot have two jobs trampling the same path
-            // (see issue: "File not ready after download" with custom mirror).
-            // Temp lives in the same dir so the final rename stays on one FS
-            // and ATOMIC_MOVE works.
+
             val tempFile = File(dir, "$safeName.part-$downloadId")
             if (tempFile.exists()) tempFile.delete()
 
@@ -173,12 +165,7 @@ class AndroidDownloader(
                     emit(DownloadProgress(finalDownloaded, total, finalPercent))
                 }
             } catch (e: kotlin.coroutines.cancellation.CancellationException) {
-                // Cancellation is the normal MultiSourceDownloader race
-                // outcome (loser racer cancelled when winner emits first
-                // progress). Don't log it as an error — that floods
-                // Logcat with confusing red lines that look like real
-                // download failures. Clean up the temp file and rethrow
-                // so structured concurrency stays correct.
+
                 tempFile.delete()
                 throw e
             } catch (e: Exception) {
@@ -203,9 +190,7 @@ class AndroidDownloader(
                 StandardCopyOption.ATOMIC_MOVE,
             )
         } catch (_: AtomicMoveNotSupportedException) {
-            // Fallback for filesystems without atomic-move support — still
-            // safer than writing directly to target because the partial bytes
-            // were never visible at `target` until this step.
+
             Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
     }
@@ -253,9 +238,7 @@ class AndroidDownloader(
 
     override suspend fun cancelDownload(fileName: String): Boolean =
         withContext(Dispatchers.IO) {
-            // Cancel every in-flight download for this fileName — MultiSource
-            // races run direct + mirror in parallel under the same logical
-            // name, so a single-id lookup would leave one of them running.
+
             val ids = idsByName.remove(fileName)?.toList().orEmpty()
             if (ids.isEmpty()) return@withContext false
 
@@ -267,10 +250,7 @@ class AndroidDownloader(
                     cancelled = true
                 }
             }
-            // No destination delete: the flow's catch handles its own temp
-            // file. The final destination is only written via atomic-rename
-            // on success, so it's either a prior valid download (keep) or
-            // doesn't exist yet.
+
             cancelled
         }
 }

@@ -43,6 +43,5 @@ object BottomNavigationUtils {
             ),
         )
 
-    /** Bottom-nav (Android) shows the same items as the Desktop drawer. */
     fun allowedScreens(): List<BottomNavigationItem> = items()
 }

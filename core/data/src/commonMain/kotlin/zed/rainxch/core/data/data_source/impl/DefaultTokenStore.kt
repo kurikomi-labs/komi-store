@@ -70,11 +70,7 @@ class DefaultTokenStore(
 
     override suspend fun clear() {
         migrationDeferred.await()
-        // safeDelete swallows KSafe failures (returns false). Legacy cleanup
-        // runs unconditionally so a sign-out never leaves a stale plaintext
-        // token. If KSafe delete silently failed, the encrypted token row
-        // remains but is unreachable without a re-issued auth — acceptable
-        // trade vs crashing the sign-out flow.
+
         ksafe.safeDelete(tokenKey)
         runCatching { legacyDataStore.edit { it.remove(legacyKey) } }
     }
@@ -100,16 +96,13 @@ class DefaultTokenStore(
         val parsed = runCatching {
             json.decodeFromString(GithubDeviceTokenSuccessDto.serializer(), legacyRaw)
         }.getOrNull() ?: run {
-            // Legacy value present but unparseable — leave it in DataStore
-            // (don't drop the only copy) and bail out without marking
-            // migrated, so a code change that fixes the parse can retry.
+
             return@withLock
         }
 
         val putOk = ksafe.safePut(tokenKey, parsed)
         if (!putOk) {
-            // Never drop the legacy entry if we couldn't persist into KSafe.
-            // The user's token stays readable via the slow path next launch.
+
             return@withLock
         }
         runCatching { legacyDataStore.edit { it.remove(legacyKey) } }

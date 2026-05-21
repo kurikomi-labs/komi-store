@@ -17,15 +17,6 @@ import zed.rainxch.githubstore.core.presentation.res.fraunces_italic
 import zed.rainxch.githubstore.core.presentation.res.inter_tight
 import zed.rainxch.githubstore.core.presentation.res.jetbrains_mono
 
-/**
- * Three font families per DESIGN.md §3.1:
- *   - **Fraunces** (italic, weight 600): repo names, section titles, lead numbers.
- *   - **Inter Tight** (400–700): body text, labels, descriptions, button labels.
- *   - **JetBrains Mono** (500–700): versions, hashes, package names — technical artifacts.
- *
- * Variable .ttf files cover all weights at runtime via Compose's
- * `Font(resource, weight)` variation resolution.
- */
 val fraunces
     @Composable get() = FontFamily(
         Font(Res.font.fraunces, FontWeight.Medium, FontStyle.Normal),
@@ -53,15 +44,6 @@ val jetbrainsMono
 
 private val baseline = Typography()
 
-/**
- * Material 3 [Typography] mapped to GHS voices:
- *   - **display / headline / title** → Fraunces italic (the warm editorial voice).
- *   - **body / label** → Inter Tight (crisp, dense).
- *
- * `JetBrains Mono` is reserved for inline technical text (version tags, hashes) and
- * is not part of the global Typography — components opt-in via the `jetbrainsMono`
- * family directly.
- */
 @Composable
 fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography {
     if (fontTheme == FontTheme.SYSTEM) return baseline
@@ -83,7 +65,7 @@ fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography {
     )
 
     return Typography(
-        // Editorial voice — Fraunces italic
+
         displayLarge = baseline.displayLarge.fraunces(FontWeight.SemiBold).copy(
             letterSpacing = (-0.025).em,
             fontSize = 36.sp,
@@ -96,7 +78,7 @@ fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography {
         titleLarge = baseline.titleLarge.fraunces(FontWeight.SemiBold).copy(fontSize = 18.sp),
         titleMedium = baseline.titleMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 16.sp),
         titleSmall = baseline.titleSmall.fraunces(FontWeight.SemiBold).copy(fontSize = 14.sp),
-        // Body voice — Inter Tight
+
         bodyLarge = baseline.bodyLarge.sans(FontWeight.Normal).copy(fontSize = 14.sp),
         bodyMedium = baseline.bodyMedium.sans(FontWeight.Normal).copy(fontSize = 13.sp),
         bodySmall = baseline.bodySmall.sans(FontWeight.Medium).copy(fontSize = 12.sp),

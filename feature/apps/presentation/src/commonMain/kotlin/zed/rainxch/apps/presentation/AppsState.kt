@@ -27,13 +27,9 @@ data class AppsState(
     val isCheckingForUpdates: Boolean = false,
     val lastCheckedTimestamp: Long? = null,
     val isRefreshing: Boolean = false,
-    /**
-     * Whether the "Up to date" section is expanded. Default expanded so
-     * users with no updates pending still see their apps. Collapses
-     * independently of the (always-expanded) "Updates available" section.
-     */
+
     val isUpToDateSectionExpanded: Boolean = true,
-    // Link app to repo
+
     val showLinkSheet: Boolean = false,
     val linkStep: LinkStep = LinkStep.PickApp,
     val deviceApps: ImmutableList<DeviceAppUi> = persistentListOf(),
@@ -50,13 +46,13 @@ data class AppsState(
     val linkSelectedAsset: GithubAssetUi? = null,
     val linkDownloadProgress: Int? = null,
     val fetchedRepoInfo: GithubRepoInfoUi? = null,
-    /** Filter input on the PickAsset step. Live-narrows [linkInstallableAssets]. */
+
     val linkAssetFilter: String = "",
-    /** Validation message for [linkAssetFilter] (invalid regex syntax). */
+
     val linkAssetFilterError: String? = null,
-    /** Whether linking should also enable fallback-to-older-releases. */
+
     val linkFallbackToOlder: Boolean = false,
-    // Per-app advanced settings (monorepo support)
+
     val advancedSettingsApp: InstalledAppUi? = null,
     val advancedFilterDraft: String = "",
     val advancedFallbackDraft: Boolean = false,
@@ -66,33 +62,27 @@ data class AppsState(
     val advancedPreviewTag: String? = null,
     val advancedPreviewMessage: String? = null,
     val advancedSavingFilter: Boolean = false,
-    // Variant picker dialog (shown when preferredVariantStale, when the
-    // user explicitly opens it from advanced settings, or when they tap
-    // Update on a stale-variant app)
+
     val variantPickerApp: InstalledAppUi? = null,
     val variantPickerLoading: Boolean = false,
     val variantPickerOptions: ImmutableList<GithubAssetUi> = persistentListOf(),
     val variantPickerCurrentVariant: String? = null,
     val variantPickerError: String? = null,
-    /**
-     * Set when the picker is being shown specifically because the user
-     * tapped Update on a stale-variant app — after they pick we should
-     * automatically resume the update flow.
-     */
+
     val variantPickerResumeUpdateAfterPick: Boolean = false,
-    // Export/Import
+
     val isExporting: Boolean = false,
     val isImporting: Boolean = false,
     val importSummary: zed.rainxch.apps.domain.model.ImportResult? = null,
-    // Uninstall confirmation
+
     val appPendingUninstall: InstalledAppUi? = null,
-    // Discard-pending-install confirmation
+
     val appPendingDiscard: InstalledAppUi? = null,
-    // External import banner (E1)
+
     val pendingExternalImportCount: Int = 0,
     val showImportProposalBanner: Boolean = false,
     val isExternalImportInFlight: Boolean = false,
-    // Keep Android Open campaign banner
+
     val showKaoBanner: Boolean = false,
     val linkSourceHost: String? = null,
 ) {
@@ -115,12 +105,6 @@ data class AppsState(
                 ).toImmutableList()
         }
 
-    /**
-     * Live-filtered view of [linkInstallableAssets] for the link sheet's
-     * PickAsset step. When the filter is invalid we keep showing the full
-     * list so the user can still pick something — the error is surfaced via
-     * [linkAssetFilterError].
-     */
     val filteredLinkAssets: ImmutableList<GithubAssetUi>
         get() {
             val raw = linkAssetFilter.trim()

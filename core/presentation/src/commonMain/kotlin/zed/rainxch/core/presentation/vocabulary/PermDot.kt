@@ -9,13 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 
-/** Permission risk classification mapped to a single colored dot. */
 enum class PermLevel { LOW, MODERATE, HIGH }
 
-/**
- * Single-dot heat indicator for permission risk. Replaces "App permissions" wall-of-text
- * (DESIGN.md §4.1). Optional 3px halo ring for emphasis on hero surfaces.
- */
 @Composable
 fun PermDot(
     level: PermLevel,

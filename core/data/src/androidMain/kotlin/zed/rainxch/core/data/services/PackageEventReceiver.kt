@@ -20,15 +20,6 @@ import zed.rainxch.core.domain.system.SystemInstallSerializer
 import zed.rainxch.core.domain.util.VersionVerdict
 import zed.rainxch.core.domain.util.resolveExternalInstallVerdict
 
-/**
- * Listens for package install/replace/remove broadcasts to update tracked app state.
- *
- * Registered both statically (manifest — works when process is dead, e.g. after
- * Shizuku silent install) and dynamically (GithubStoreApp — immediate in-process delivery).
- *
- * Uses [KoinComponent] for the no-arg constructor path (manifest-registered).
- * The constructor with explicit dependencies is used for dynamic registration.
- */
 class PackageEventReceiver() :
     BroadcastReceiver(),
     KoinComponent {
@@ -39,7 +30,6 @@ class PackageEventReceiver() :
     private val externalLinkDaoKoin: ExternalLinkDao by inject()
     private val systemInstallSerializerKoin: SystemInstallSerializer by inject()
 
-    // Explicitly provided dependencies (dynamic registration path)
     private var explicitRepository: InstalledAppsRepository? = null
     private var explicitMonitor: PackageMonitor? = null
     private var explicitExternalImport: ExternalImportRepository? = null
@@ -47,11 +37,6 @@ class PackageEventReceiver() :
     private var explicitAppScope: CoroutineScope? = null
     private var explicitSystemInstallSerializer: SystemInstallSerializer? = null
 
-    // Local fallback scope for the manifest-registered path when
-    // `onReceive` fires but Koin somehow couldn't resolve the shared
-    // app scope (extremely unlikely — the Application installs Koin
-    // synchronously in onCreate). The async backstop below prefers
-    // the Koin scope via `getBackstopScope`.
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     constructor(
@@ -84,18 +69,14 @@ class PackageEventReceiver() :
         explicitSystemInstallSerializer ?: systemInstallSerializerKoin
 
     private fun getBackstopScope(): CoroutineScope =
-        // Koin's app-scoped CoroutineScope outlives a manifest-registered
-        // receiver whose local `scope` would die with the instance. Fall
-        // back to the local scope only if Koin isn't initialized yet
-        // (shouldn't happen post-Application.onCreate, but defensive).
+
         explicitAppScope ?: runCatching { appScopeKoin }.getOrElse { scope }
 
     override fun onReceive(
         context: Context?,
         intent: Intent?,
     ) {
-        // MY_PACKAGE_REPLACED has no data URI — the target is the
-        // receiving app itself. Fall back to the context's package name.
+
         val packageName = intent?.data?.schemeSpecificPart
             ?: if (intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
                 context?.packageName
@@ -124,13 +105,6 @@ class PackageEventReceiver() :
         }
     }
 
-    /**
-     * Wipes the parked-install metadata on the row and deletes the
-     * APK file from disk now that the system holds the real package.
-     * Best-effort throughout — DB write failures are logged but never
-     * thrown so the broadcast handler can continue to do its other work
-     * (delta-scan, etc.). Safe to call when no parked file exists.
-     */
     private suspend fun clearParkedInstall(
         repo: InstalledAppsRepository,
         packageName: String,
@@ -150,9 +124,7 @@ class PackageEventReceiver() :
     }
 
     private suspend fun onPackageInstalled(packageName: String) {
-        // Release the system-install serializer gate so the next queued
-        // install (if any) can fire its ACTION_VIEW intent. Done at the
-        // very top so the gate clears even if downstream DB writes fail.
+
         getSystemInstallSerializer().markCompleted(packageName)
 
         try {
@@ -160,10 +132,6 @@ class PackageEventReceiver() :
             val monitor = getMonitor()
             val app = repo.getAppByPackage(packageName)
 
-            // First-time installs (app == null) skip the tracked-app branches
-            // but MUST still hit the backstop delta-scan launch below — that's
-            // how a freshly-installed GitHub app surfaces as a wizard candidate
-            // when the user installs it after the initial scan.
             if (app != null) {
                 if (app.isPendingInstall) {
                     val systemInfo = monitor.getInstalledPackageInfo(packageName)
@@ -172,11 +140,7 @@ class PackageEventReceiver() :
                         val versionCodeMatchesTarget =
                             expectedVersionCode > 0L &&
                                 systemInfo.versionCode >= expectedVersionCode
-                        // When latestVersionCode is 0 (apkInfo extraction
-                        // failed pre-download) the versionCode comparison
-                        // can't decide. Fall back to versionName so the
-                        // tag still gets written and the apps row stops
-                        // rendering the stale "installed: vOld" subtext.
+
                         val versionNameChanged =
                             !systemInfo.versionName.isNullOrBlank() &&
                                 systemInfo.versionName != app.installedVersionName
@@ -184,15 +148,6 @@ class PackageEventReceiver() :
                             versionCodeMatchesTarget ||
                                 (expectedVersionCode <= 0L && versionNameChanged)
 
-                        // Source-of-truth for the tag the user just
-                        // installed: `pendingInstallVersion` carries the
-                        // exact release tag the orchestrator parked the
-                        // file under (set during download flow). It's
-                        // honest about explicit older-version installs;
-                        // `app.latestVersion` is GHS's cached idea of
-                        // "what GitHub says is latest" and would show
-                        // the wrong tag if the user picked an older
-                        // release from the version picker.
                         val installedTag =
                             app.pendingInstallVersion
                                 ?: app.latestVersion
@@ -210,14 +165,7 @@ class PackageEventReceiver() :
                             repo.updatePendingStatus(packageName, false)
                             Logger.i { "Update confirmed via broadcast: $packageName (v${systemInfo.versionName}, tag=$installedTag)" }
                         } else {
-                            // Even on the "didn't reach target" branch the
-                            // installedVersion tag must move forward when the
-                            // user accepted some install — leaving it pinned
-                            // to the old tag makes the apps row report the
-                            // pre-install version forever. Use the parked
-                            // tag so an explicit older-version install is
-                            // honoured (issue: details + apps screens were
-                            // showing latest when user picked older).
+
                             repo.updateApp(
                                 app.copy(
                                     isPendingInstall = false,
@@ -241,10 +189,7 @@ class PackageEventReceiver() :
                         repo.updatePendingStatus(packageName, false)
                         Logger.i { "Resolved pending install via broadcast (no system info): $packageName" }
                     }
-                    // System has the package now — the parked APK on disk is
-                    // dead weight. Clear the path on the row (otherwise the
-                    // apps screen keeps rendering the "Install" CTA after a
-                    // successful install) and delete the file to free space.
+
                     clearParkedInstall(repo, packageName, app.pendingInstallFilePath)
                 } else {
                     handleExternalInstall(packageName, app, repo, monitor)
@@ -254,11 +199,6 @@ class PackageEventReceiver() :
             Logger.e { "PackageEventReceiver error for $packageName: ${e.message}" }
         }
 
-        // Fire a delta scan for previously-untracked installs so the
-        // import banner can pick up the new candidate. Guarded so we
-        // don't churn on apps the user already linked or asked us to
-        // ignore. Runs on the app scope — independent of the install
-        // path above. Always fires regardless of whether `app` was found.
         getBackstopScope().launch {
             runCatching {
                 val rescan = shouldRescan(packageName)
@@ -271,13 +211,6 @@ class PackageEventReceiver() :
         }
     }
 
-    // Skip re-scanning when (a) we already track the app in
-    // `installed_apps` (the user installed it through the store, or
-    // we already auto-linked it and materialized the row), or (b) the
-    // package is already MATCHED / NEVER_ASK in `external_links`.
-    // PENDING_REVIEW and SKIPPED are intentionally rescanned —
-    // metadata may have changed (label, fingerprint, installer) and
-    // the user hasn't given a permanent answer yet.
     private suspend fun shouldRescan(packageName: String): Boolean {
         val tracked = runCatching { getRepository().getAppByPackage(packageName) }
             .getOrNull()
@@ -288,37 +221,6 @@ class PackageEventReceiver() :
             state != ExternalLinkState.NEVER_ASK.name
     }
 
-    /**
-     * Path taken when the broadcast fires for a tracked app that the
-     * user did NOT install from inside the store (sideload, browser
-     * download, Play Store update, F-Droid update of a shared
-     * package, etc.). The pending-install branch above handles the
-     * in-app install case.
-     *
-     * Strategy (GitHub-Store#378):
-     *
-     *  1. Refresh every version field from PackageManager — this is
-     *     the strictest source of truth for what is actually on
-     *     device right now.
-     *  2. Apply [resolveExternalInstallVerdict] for an immediate
-     *     decision about `isUpdateAvailable`. The resolver uses a
-     *     priority ladder (versionCode → versionName vs
-     *     latestVersionName → versionName vs release tag) and only
-     *     returns [VersionVerdict.UNKNOWN] when none of those
-     *     produce a reliable answer.
-     *  3. Dispatch an async `checkForUpdates(packageName)` on the
-     *     app-scoped coroutine scope. That call re-fetches the
-     *     latest release list from GitHub and applies
-     *     [zed.rainxch.core.domain.util.VersionMath] with the freshly
-     *     updated `installedVersion`, so even an incorrect optimistic
-     *     verdict is corrected within the RTT of a single GitHub
-     *     API hit.
-     *
-     * The async backstop runs on the Koin-provided app scope so it
-     * survives the receiver instance being torn down after
-     * `onReceive` returns — critical for the manifest-registered
-     * path.
-     */
     private suspend fun handleExternalInstall(
         packageName: String,
         app: zed.rainxch.core.domain.model.InstalledApp,
@@ -347,17 +249,10 @@ class PackageEventReceiver() :
             when (verdict) {
                 VersionVerdict.UP_TO_DATE -> false
                 VersionVerdict.UPDATE_AVAILABLE -> true
-                // Preserve the current flag for UNKNOWN — the async
-                // checkForUpdates below is about to overwrite it with
-                // an authoritative answer anyway.
+
                 VersionVerdict.UNKNOWN -> app.isUpdateAvailable
             }
 
-        // Targeted column-only write: avoids clobbering sibling fields
-        // (download orchestrator metadata, variant pin, favourite
-        // toggle, checkForUpdates results…) that may have landed
-        // between `onPackageInstalled`'s initial `getAppByPackage` and
-        // this write. See `InstalledAppsRepository.updateInstalledVersion`.
         repo.updateInstalledVersion(
             packageName = packageName,
             installedVersion = systemInfo.versionName,
@@ -373,8 +268,6 @@ class PackageEventReceiver() :
                 "verdict=$verdict, updateAvailable=$newIsUpdateAvailable"
         }
 
-        // Authoritative re-validation against fresh GitHub release data.
-        // Runs on the app scope so it outlives this broadcast.
         getBackstopScope().launch {
             try {
                 repo.checkForUpdates(packageName)
@@ -390,8 +283,7 @@ class PackageEventReceiver() :
     }
 
     private suspend fun onPackageRemoved(packageName: String) {
-        // Mirror onPackageInstalled — release the install gate so a queued
-        // re-install for the same package isn't held up.
+
         getSystemInstallSerializer().markCompleted(packageName)
 
         try {
@@ -399,23 +291,13 @@ class PackageEventReceiver() :
             runCatching { getExternalImport().unlink(packageName) }
                 .onFailure { initialError ->
                     Logger.w(initialError) { "External link cleanup failed for $packageName; scheduling retry" }
-                    // A failed unlink leaves a stale MATCHED/NEVER_ASK row that
-                    // makes `shouldRescan` return false on a future reinstall —
-                    // i.e., the user reinstalls a previously-tracked app and we
-                    // silently fail to re-link it. Retry once on the app scope
-                    // after a short backoff. If the retry also fails, the next
-                    // periodic worker sweep gets a chance via `runPeriodicExternalDeltaScan`.
+
                     getBackstopScope().launch {
                         kotlinx.coroutines.delay(UNLINK_RETRY_DELAY_MS)
                         runCatching { getExternalImport().unlink(packageName) }
                             .onSuccess {
                                 Logger.i { "External link cleanup retry succeeded for $packageName" }
-                                // Recovery delta scan: a fast reinstall during the
-                                // retry backoff window would have hit shouldRescan
-                                // while the row was still MATCHED → no rescan
-                                // queued. Now that the row is gone, evaluate
-                                // shouldRescan again and fire if the package is
-                                // currently installed.
+
                                 runCatching {
                                     if (shouldRescan(packageName)) {
                                         getExternalImport().runDeltaScan(setOf(packageName))

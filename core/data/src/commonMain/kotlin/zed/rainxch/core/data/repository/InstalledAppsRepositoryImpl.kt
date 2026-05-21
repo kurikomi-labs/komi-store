@@ -42,25 +42,11 @@ class InstalledAppsRepositoryImpl(
     private val backendApiClient: zed.rainxch.core.data.network.BackendApiClient,
     private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
 ) : InstalledAppsRepository {
-    // Reads the current Ktor client at every call site so any proxy
-    // change (ProxyManager rebuilds the client via [clientProvider])
-    // is picked up immediately on the next request without requiring
-    // the repository itself to be reconstructed.
+
     private val httpClient: HttpClient get() = clientProvider.client
 
     private companion object {
-        /**
-         * How many releases the update checker fetches in one request.
-         * Picked to balance:
-         *  - Monorepos that ship multiple sibling apps in close succession
-         *    (need a few releases of headroom to find a match for the
-         *    targeted app via [InstalledApp.fallbackToOlderReleases])
-         *  - Avoiding unnecessary GitHub API quota burn for the common case
-         *    of a single-app repo where 1 release is enough.
-         *
-         * 50 is the GitHub API per_page maximum that doesn't require
-         * pagination, and is enough to cover ~3 months of daily releases.
-         */
+
         const val RELEASE_WINDOW = 50
     }
 
@@ -109,20 +95,6 @@ class InstalledAppsRepositoryImpl(
         installedAppsDao.deleteByPackageName(packageName)
     }
 
-    /**
-     * Fetches up to [RELEASE_WINDOW] releases for [owner]/[repo], filters
-     * out drafts, applies the pre-release policy, and returns them sorted
-     * by `publishedAt` descending. Empty list on failure (logged at error).
-     *
-     * Pre-release policy: a release is filtered out when
-     * `includePreReleases = false` AND either the GitHub `prerelease`
-     * flag is `true` OR the tag/name contains a recognised pre-release
-     * marker (see [GithubRelease.isEffectivelyPreRelease]). The tag
-     * heuristic catches the common maintainer mistake of tagging
-     * `v2.0.0-rc.1` with `prerelease: false`. Whenever the flag and
-     * heuristic disagree we emit a diagnostic so the drift is
-     * traceable in session logs.
-     */
     private suspend fun fetchReleaseWindow(
         owner: String,
         repo: String,
@@ -184,8 +156,7 @@ class InstalledAppsRepositoryImpl(
                 .filter { includePreReleases || !it.isEffectivelyPreRelease() }
                 .toList()
         } catch (e: CancellationException) {
-            // Structured concurrency: cancellation must propagate. Never
-            // silently convert a cancelled fetch into an empty result.
+
             throw e
         } catch (e: Exception) {
             Logger.e { "Failed to fetch releases for $owner/$repo: ${e.message}" }
@@ -193,51 +164,12 @@ class InstalledAppsRepositoryImpl(
         }
     }
 
-    /**
-     * Result of [resolveTrackedRelease] — a candidate release plus the asset
-     * the installer should download for it. `null` when no release in the
-     * window contains a usable asset (after filter + arch matching).
-     *
-     * [variantWasLost] is true when the user has a [InstalledApp.preferredAssetVariant]
-     * set but none of this release's assets matched it. The caller flips
-     * `preferredVariantStale` based on this so the UI can prompt the user
-     * to pick a new variant.
-     */
     private data class ResolvedRelease(
         val release: GithubRelease,
         val primaryAsset: GithubAsset,
         val variantWasLost: Boolean,
     )
 
-    /**
-     * Walks [releases] (already in newest-first order) and returns the first
-     * release whose installable asset list — after applying [filter] — yields
-     * a usable asset. The picker tries, in order:
-     *
-     *   1. **Token-set match** — pinned token fingerprint equals the asset's
-     *   2. **Glob match** — pinned glob pattern equals the asset's
-     *   3. **Tail-string match** — legacy substring-tail equality
-     *   4. **Same-position fallback** — same index, same total count of
-     *      installable assets as when the user originally pinned
-     *   5. **Platform auto-pick** — architecture-aware default
-     *
-     * Layers 1–3 are wrapped behind [AssetVariant.resolvePreferredAsset].
-     * Layer 4 is consulted only when 1–3 all miss but the new release
-     * has exactly the same number of installable assets as the picked
-     * release. Layer 5 keeps updates flowing even when the variant is
-     * completely lost — the caller flips `variantWasLost` so the UI
-     * can surface the discrepancy.
-     *
-     * When [filter] is null, only the first release in the window is
-     * considered: this preserves the pre-existing behaviour for apps that
-     * don't track a monorepo.
-     *
-     * When [filter] is non-null and [fallbackToOlderReleases] is false, the
-     * walker still only inspects the first release. The semantics are:
-     *   "Apply the filter to the latest release, but don't dig further."
-     * This matches Obtainium's defaults and avoids accidental downgrades for
-     * apps where the user just wants a stricter asset picker.
-     */
     private fun resolveTrackedRelease(
         releases: List<GithubRelease>,
         filter: AssetFilter?,
@@ -259,10 +191,6 @@ class InstalledAppsRepositoryImpl(
                 releases.take(1)
             }
 
-        // "Has any pin" tracks whether the user has *something* stored
-        // for variant identity — used to decide whether the
-        // `variantWasLost` flag should flip on. Without this, an app
-        // that's never been pinned would always look "lost".
         val hasAnyPin =
             preferredVariant != null ||
                 preferredTokens.isNotEmpty() ||
@@ -277,7 +205,6 @@ class InstalledAppsRepositoryImpl(
 
             if (installableForApp.isEmpty()) continue
 
-            // Layers 1–3: token set, glob, then legacy tail string.
             val fingerprintMatch =
                 AssetVariant.resolvePreferredAsset(
                     assets = installableForApp,
@@ -286,9 +213,6 @@ class InstalledAppsRepositoryImpl(
                     pinnedGlob = preferredGlob,
                 )
 
-            // Layer 4: same-position fallback. Only consulted when no
-            // fingerprint matched and the user actually pinned
-            // *something* (otherwise the index is meaningless).
             val positionMatch =
                 if (fingerprintMatch == null && hasAnyPin) {
                     AssetVariant.resolveBySamePosition(
@@ -300,26 +224,6 @@ class InstalledAppsRepositoryImpl(
                     null
                 }
 
-            // Layer 5: platform auto-pick (last resort, never null
-            // unless the platform installer can't pick anything).
-            //
-            // Scope the auto-pick input by package flavor: when the
-            // tracked app's package id has no flavor token (e.g. plain
-            // `com.foo.bar`), drop release assets that look like flavor
-            // variants (`-fdroid.apk`, `-foss.apk`) so the picker
-            // doesn't silently swap the user's installed APK for a
-            // sibling artifact that ships under a *different* package
-            // id (`com.foo.bar.fdroid`). The mirror also applies: a
-            // tracked `.fdroid` package keeps fdroid-named assets.
-            // Pinned variants are unaffected — fingerprintMatch /
-            // positionMatch run against the full installable set above.
-            // Stem filter (issue #591): when the tracked app has a known
-            // prior asset name, restrict the auto-pick pool to release
-            // assets that share its base-name stem. Stops sibling apps
-            // shipped from the same repo (`AppA-1.10.apk` vs
-            // `AppB-2.20.apk`) from cross-pollinating: without this,
-            // `choosePrimaryAsset` would pick the highest numeric
-            // version regardless of the filename prefix.
             val installedStem =
                 installedAssetName
                     ?.let { AssetVariant.extractBaseStem(it) }
@@ -335,11 +239,7 @@ class InstalledAppsRepositoryImpl(
                                 pool.filter {
                                     AssetVariant.extractBaseStem(it.name) == installedStem
                                 }
-                            // Only honour the stem filter when it
-                            // actually keeps something; otherwise fall
-                            // back to the broader pool. A maintainer
-                            // legitimately renaming the binary should
-                            // not strand the update check.
+
                             if (matching.isNotEmpty()) matching else pool
                         }
                     }
@@ -348,11 +248,6 @@ class InstalledAppsRepositoryImpl(
                 ?: installer.choosePrimaryAsset(autoPickPool)
                 ?: continue
 
-            // The variant is "lost" when the user had a pin but neither
-            // a fingerprint nor a same-position match recovered it.
-            // Same-position rescues silently (it's a confidence-trick
-            // — the user can't tell anything went wrong) so we don't
-            // flag it as lost; otherwise the UI would nag every check.
             val variantWasLost =
                 hasAnyPin && fingerprintMatch == null && positionMatch == null
 
@@ -379,16 +274,11 @@ class InstalledAppsRepositoryImpl(
                 )
 
             if (releases.isEmpty()) {
-                // The repo has no visible releases (or the fetch failed
-                // softly). Drop any stale update metadata so the badge
-                // doesn't outlive the release that set it.
+
                 installedAppsDao.clearUpdateMetadata(packageName, System.currentTimeMillis())
                 return false
             }
 
-            // Compile the per-app filter once. Invalid regexes are treated as
-            // "no filter" so we don't break the app silently — the user is
-            // told about the syntax error in the advanced settings sheet.
             val compiledFilter =
                 AssetFilter.parse(app.assetFilterRegex)
                     ?.onFailure { error ->
@@ -417,21 +307,13 @@ class InstalledAppsRepositoryImpl(
                     "No matching release found for ${app.appName} in window of ${releases.size}; " +
                         "filter=${app.assetFilterRegex}, fallback=${app.fallbackToOlderReleases}"
                 }
-                // Filter matches nothing in the fetched window — clear
-                // any cached latest-release metadata so the UI doesn't
-                // keep pointing at an asset that no longer matches.
+
                 installedAppsDao.clearUpdateMetadata(packageName, System.currentTimeMillis())
                 return false
             }
 
             val (matchedRelease, primaryAsset, variantWasLost) = resolved
 
-            // Canary: when installedVersionCode and latestVersionCode are
-            // both known and equal, the user already has the matched
-            // release. The tag-string compare below can still flip true
-            // (#515) if `installedVersion` got out of sync — e.g. after
-            // a self-update where the resolver path missed updating the
-            // tag. Trust the version-code parity over the string compare.
             val installedCode = app.installedVersionCode
             val latestCode = app.latestVersionCode
             val codesAlreadyMatch =
@@ -440,10 +322,6 @@ class InstalledAppsRepositoryImpl(
                     latestCode > 0L &&
                     installedCode == latestCode
 
-            // Auto-unskip when a strictly newer release than the one
-            // the user skipped lands. We bias toward re-notifying so a
-            // stale skip can't pin the badge off forever — users can
-            // re-skip the new tag if they don't want it either.
             val skippedTag = app.skippedReleaseTag
             val matchesSkipped =
                 skippedTag != null &&
@@ -490,12 +368,6 @@ class InstalledAppsRepositoryImpl(
                 latestReleasePublishedAt = matchedRelease.publishedAt,
             )
 
-            // Backfill: when codes already match but the row's
-            // `installedVersion` (tag) drifted from the matched release
-            // (typical for rows written before #515 was fixed — e.g.
-            // installedVersion="1.7.0" left over from before a
-            // self-update completed), pin the tag to the matched
-            // release so subsequent checks don't keep re-flagging.
             if (codesAlreadyMatch &&
                 app.installedVersion != matchedRelease.tagName
             ) {
@@ -508,10 +380,6 @@ class InstalledAppsRepositoryImpl(
                 )
             }
 
-            // Sync the staleness flag with what the resolver actually
-            // observed: flip on when the user's pinned variant has
-            // disappeared from the latest matching release, flip off
-            // (and only when previously set) when it's back in business.
             if (variantWasLost != app.preferredVariantStale) {
                 installedAppsDao.updateVariantStaleness(packageName, variantWasLost)
             }
@@ -568,14 +436,6 @@ class InstalledAppsRepositoryImpl(
             ),
         )
 
-        // Recompute `isUpdateAvailable` against the EXISTING upstream
-        // `latestVersion` snapshot, not the freshly installed tag. When
-        // the user explicitly picks an older release (#542 reporter
-        // scenario) `newTag` < `latestVersion`, so the row still has
-        // an upstream update pending and the badge must NOT be cleared.
-        // The previous write stamped `latest* = new*` which then poisoned
-        // the `checkForUpdates` versionCode-parity canary into reporting
-        // "up to date" forever.
         val snapshotLatestVersion = app.latestVersion
         val isUpdateStillAvailable =
             !snapshotLatestVersion.isNullOrBlank() &&
@@ -593,13 +453,7 @@ class InstalledAppsRepositoryImpl(
                 lastUpdatedAt = System.currentTimeMillis(),
                 lastCheckedAt = System.currentTimeMillis(),
                 signingFingerprint = signingFingerprint,
-                // When this update settled (isPendingInstall = false),
-                // wipe any leftover parked-install pointer so the apps
-                // screen stops advertising an Install CTA on a file
-                // the system already swapped under the row. Caller
-                // (DetailsViewModel.saveInstalledAppToDatabase) re-sets
-                // these explicitly via setPendingInstallFilePath
-                // afterwards on the still-pending path.
+
                 pendingInstallFilePath =
                     if (isPendingInstall) app.pendingInstallFilePath else null,
                 pendingInstallVersion =
@@ -677,9 +531,6 @@ class InstalledAppsRepositoryImpl(
             fallback = fallbackToOlderReleases,
         )
 
-        // Persisting is the authoritative operation — if the follow-up
-        // re-check fails (network down, rate limited, cancelled) we still
-        // keep the new filter. The next periodic worker run will catch up.
         try {
             checkForUpdates(packageName)
         } catch (e: CancellationException) {
@@ -712,9 +563,6 @@ class InstalledAppsRepositoryImpl(
             siblingCount = siblingCount?.takeIf { it > 0 },
         )
 
-        // Re-run the update check so cached `latestAsset*` columns point
-        // at the variant the user just chose. Failures here are
-        // non-fatal: persistence is the authoritative step.
         try {
             checkForUpdates(packageName)
         } catch (e: CancellationException) {
@@ -809,11 +657,6 @@ class InstalledAppsRepositoryImpl(
             matchedAssets = emptyList(),
         )
     }
-
-    // Version normalization + comparison lives in
-    // `core.domain.util.VersionMath` so the periodic update check,
-    // the external-install verdict in `PackageEventReceiver`, and any
-    // future surfaces all share one comparator. See #378.
 
     private suspend fun fetchForgejoReleaseWindow(
         host: String,

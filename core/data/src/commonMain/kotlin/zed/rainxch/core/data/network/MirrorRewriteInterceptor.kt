@@ -25,8 +25,6 @@ fun HttpClient.installMirrorRewrite() {
                     if (rewritten != null) {
                         val originalHost = request.url.host
                         request.url.takeFrom(rewritten)
-                        // Host changed — strip the user's GitHub bearer token so we
-                        // never send it to a community mirror.
                         if (rewritten.host != originalHost) {
                             request.headers.remove(HttpHeaders.Authorization)
                         }

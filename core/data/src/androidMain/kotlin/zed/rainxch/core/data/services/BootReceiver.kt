@@ -9,10 +9,6 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.context.GlobalContext
 import zed.rainxch.core.domain.repository.TweaksRepository
 
-/**
- * Reschedules periodic update checks after device reboot.
- * Registered statically in AndroidManifest.xml.
- */
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) return
@@ -35,11 +31,7 @@ class BootReceiver : BroadcastReceiver() {
                 UpdateScheduler.cancel(context)
             }
         } catch (t: Throwable) {
-            // Don't let scheduling failures crash the framework's
-            // broadcast pipeline — propagation triggers a second
-            // `sendFinished` from the platform after our own
-            // `pendingResult.finish()` and surfaces as
-            // `IllegalStateException: Broadcast already finished`.
+
             Logger.e(t) { "BootReceiver: scheduling failed; dropped" }
         } finally {
             pendingResult.finish()

@@ -17,10 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
-/**
- * Outline tertiary action — transparent fill, 1dp outline ring, pill-shaped.
- * Inspect / Refresh / Filter / Cancel (DESIGN.md §7.1).
- */
 @Composable
 fun OutlineButton(
     onClick: () -> Unit,

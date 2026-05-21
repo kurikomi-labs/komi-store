@@ -5,19 +5,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
-/**
- * Shizuku UserService implementation that runs in a privileged process (shell/root).
- * Provides silent package install/uninstall via `pm` shell commands.
- *
- * This class runs in Shizuku's process, NOT in the app's process.
- * It has shell-level (UID 2000) or root-level (UID 0) privileges.
- *
- * Uses `pm install` with stdin pipe for install, `pm uninstall` for uninstall.
- * This is the most reliable approach — avoids fragile reflection on hidden
- * IPackageInstaller/IPackageInstallerSession/IIntentSender APIs.
- *
- * MUST have a default no-arg constructor for Shizuku's UserService framework.
- */
 class ShizukuInstallerServiceImpl() : IShizukuInstallerService.Stub() {
 
     companion object {
@@ -52,7 +39,6 @@ class ShizukuInstallerServiceImpl() : IShizukuInstallerService.Stub() {
 
             val process = Runtime.getRuntime().exec(command)
 
-            // Pipe the APK from the ParcelFileDescriptor to pm's stdin
             val writeThread = Thread {
                 try {
                     ParcelFileDescriptor.AutoCloseInputStream(pfd).use { input ->
@@ -74,7 +60,6 @@ class ShizukuInstallerServiceImpl() : IShizukuInstallerService.Stub() {
             }
             writeThread.start()
 
-            // Read stdout/stderr for result
             val stdout = BufferedReader(InputStreamReader(process.inputStream)).readText().trim()
             val stderr = BufferedReader(InputStreamReader(process.errorStream)).readText().trim()
 

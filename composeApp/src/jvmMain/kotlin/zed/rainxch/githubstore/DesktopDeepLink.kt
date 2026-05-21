@@ -13,12 +13,6 @@ object DesktopDeepLink {
     private const val SCHEME = "githubstore"
     private const val DESKTOP_FILE_NAME = "github-store-deeplink"
 
-    /**
-     * On Windows and Linux, ensure the `githubstore://` protocol is registered.
-     * - Windows: Writes to HKCU registry.
-     * - Linux: Creates a `.desktop` file and registers via `xdg-mime`.
-     * No-op on macOS (handled via Info.plist in the packaged .app).
-     */
     fun registerUriSchemeIfNeeded() {
         when {
             isWindows() -> registerWindows()
@@ -102,11 +96,6 @@ object DesktopDeepLink {
         runCommand("xdg-mime", "default", "$DESKTOP_FILE_NAME.desktop", "x-scheme-handler/$SCHEME")
     }
 
-    /**
-     * Try to forward a deep link URI to an already-running instance.
-     * @return `true` if the URI was forwarded (this instance should exit),
-     *         `false` if no existing instance is running.
-     */
     fun tryForwardToRunningInstance(uri: String): Boolean =
         try {
             Socket("127.0.0.1", SINGLE_INSTANCE_PORT).use { socket ->
@@ -117,10 +106,6 @@ object DesktopDeepLink {
             false
         }
 
-    /**
-     * Start listening for URIs forwarded from new instances.
-     * Calls [onUri] on the main thread when a URI is received.
-     */
     fun startInstanceListener(onUri: (String) -> Unit) {
         val thread =
             Thread({

@@ -24,12 +24,7 @@ class AndroidAggressiveOemDetector(
     }
 
     override fun openBatteryOptimizationSettings(): Boolean =
-        // The targeted intent (`ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`)
-        // bypasses Play Store policy on standalone APKs and lands the user
-        // directly on the system whitelist toggle — but it's gated by the
-        // `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission, which Play
-        // restricts. Fall back to the per-app battery-optimization screen
-        // if the targeted action throws on a packaged build.
+
         runCatching {
             val intent =
                 Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
@@ -58,9 +53,7 @@ class AndroidAggressiveOemDetector(
         }
 
     private companion object {
-        // Substring matches against `Build.BRAND` / `Build.MANUFACTURER` —
-        // covers vendor sub-brands (BBK group: Oppo, OnePlus, Realme,
-        // vivo, iQOO; Xiaomi: Redmi, Poco; Huawei: Honor).
+
         private val AGGRESSIVE_OEMS =
             listOf(
                 "oppo",

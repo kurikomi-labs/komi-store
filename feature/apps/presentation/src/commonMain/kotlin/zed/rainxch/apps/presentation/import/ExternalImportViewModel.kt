@@ -57,19 +57,11 @@ class ExternalImportViewModel(
     private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
 ) : ViewModel() {
     private var candidatesByPackage: Map<String, ExternalAppCandidate> = emptyMap()
-    // Cached so OnAutoSummaryUndoAll can re-build cards for previously
-    // auto-linked packages without round-tripping resolveMatches() (which
-    // would issue another network call and could return different matches).
+
     private var lastResolvedMatches: List<RepoMatchResult> = emptyList()
-    // Mirror of autoLinkedPackages: per-package pre-link snapshot of whether an
-    // installed_apps row already existed. Bulk undo consults this to avoid
-    // wiping rows that pre-existed (e.g., the user had previously linked the
-    // app through some other path before auto-link added an entry to it).
+
     private var autoLinkedHadInstalledRow: Map<String, Boolean> = emptyMap()
-    // Per-package external_links snapshot captured BEFORE auto-link writes the
-    // MATCHED row. Bulk undo restores from these so the DAO actually rolls back
-    // to the pre-link state (typically PENDING_REVIEW). Snapshotting AFTER the
-    // link would just re-apply the linked state — a silent no-op.
+
     private var autoLinkedPreSnapshots: Map<String, ExternalDecisionSnapshot?> = emptyMap()
     private var hasStarted = false
     private var scanJob: Job? = null
@@ -131,10 +123,10 @@ class ExternalImportViewModel(
             is ExternalImportAction.OnToggleCardExpanded -> toggleCardExpanded(action.packageName)
 
             is ExternalImportAction.OnSearchOverrideChanged -> {
-                // Explicit submit only — we never auto-fire on keystrokes.
+
                 _state.update {
                     if (it.activeSearchPackage != action.packageName) {
-                        // Switched cards: drop stale results from the previous card.
+
                         it.copy(
                             activeSearchPackage = action.packageName,
                             searchQuery = action.query,
@@ -182,8 +174,7 @@ class ExternalImportViewModel(
                 } else {
                     current.expandedPackages.toPersistentSet().add(packageName)
                 }
-            // Clear cross-card search results when collapsing the active card so
-            // they don't bleed into the next card the user expands.
+
             val keepSearch = current.activeSearchPackage == packageName && packageName in nextSet
             current.copy(
                 expandedPackages = nextSet,
@@ -201,9 +192,7 @@ class ExternalImportViewModel(
     private fun startScanIfIdle(force: Boolean = false) {
         if (!force && _state.value.phase != ImportPhase.Idle) return
         if (scanJob?.isActive == true) return
-        // Skip affordance: stays hidden while the scan is fast, fades in
-        // after SKIP_REVEAL_DELAY_MS so the user can bail out of a slow
-        // resolveMatches without backgrounding the app.
+
         skipRevealJob?.cancel()
         skipRevealJob = viewModelScope.launch {
             kotlinx.coroutines.delay(SKIP_REVEAL_DELAY_MS)
@@ -249,15 +238,11 @@ class ExternalImportViewModel(
                             buildCard(candidate, match)
                         }.toImmutableList()
 
-                // Cancel the skip-reveal timer — we've exited the
-                // long-running phase, so the Skip button shouldn't
-                // ambiently appear over the next screen.
                 skipRevealJob?.cancel()
                 skipRevealJob = null
 
                 if (autoLinked.isNotEmpty()) {
-                    // Stop on the summary screen so the user sees what auto-linked
-                    // and can undo before we cascade into the review wizard.
+
                     val autoLinkedLabels = autoLinked.mapNotNull { pkg ->
                         candidatesByPackage[pkg]?.appLabel
                     }
@@ -319,13 +304,6 @@ class ExternalImportViewModel(
         }
     }
 
-    /**
-     * Bail out of an in-flight scan / auto-import. Surfaces whatever
-     * candidates the resolver got far enough to expose, so the user can
-     * still review them manually instead of being trapped on a spinner.
-     * If nothing has been resolved yet, drops to an empty Done state —
-     * effectively "no candidates this scan, move on".
-     */
     private fun skipLongScan() {
         val active = scanJob ?: return
         if (!active.isActive) return
@@ -377,11 +355,7 @@ class ExternalImportViewModel(
 
     private fun submitSearchOverride(packageName: String) {
         val current = _state.value
-        // Search submit applies to whichever card was last typed in. If the
-        // active package and the submitted package mismatch, we still honour
-        // the submit using the active query — this only happens if the user
-        // taps the icon in a different card before the keystrokes registered,
-        // which the UI prevents via per-card query binding.
+
         if (current.activeSearchPackage != packageName) return
 
         val query = current.searchQuery.trim()
@@ -397,11 +371,6 @@ class ExternalImportViewModel(
             return
         }
 
-        // Fast-path: a host/owner/repo URL bypasses the search API and
-        // surfaces a single MANUAL suggestion that the user can tap to
-        // link. Accepts GitHub, Codeberg, known Forgejo / Gitea hosts,
-        // and anything the user has added under Tweaks → Network →
-        // Custom forges. Matches Obtainium's "paste a URL" mental model.
         searchJob?.cancel()
         _state.update { it.copy(isSearching = true, searchError = null) }
         searchJob = viewModelScope.launch {
@@ -436,7 +405,6 @@ class ExternalImportViewModel(
                 return@launch
             }
 
-            // Not a URL — backend free-text search.
             val result = runCatching { externalImportRepository.searchRepos(query) }
                 .getOrElse { e ->
                     if (e is CancellationException) throw e
@@ -476,9 +444,7 @@ class ExternalImportViewModel(
     private fun skipPackage(packageName: String, neverAsk: Boolean) {
         val card = _state.value.cards.firstOrNull { it.packageName == packageName } ?: return
         viewModelScope.launch {
-            // Distinguish "no prior row" (success → null) from "couldn't read"
-            // (failure). Treating the latter as null would let undoLast's
-            // fallback unlink wipe a row that should have been preserved.
+
             val snapshotResult = runCatching {
                 externalImportRepository.snapshotDecision(packageName)
             }
@@ -494,9 +460,6 @@ class ExternalImportViewModel(
             val snapshot = snapshotResult.getOrNull()
             val hadInstalledRow = installedAppsRepository.getAppByPackage(packageName) != null
 
-            // Short-circuit on failure: don't remove the card, don't offer undo,
-            // don't fire telemetry — the DAO state is unchanged. Surface an error
-            // so the user knows the action didn't take effect.
             val ok = try {
                 externalImportRepository.skipPackage(packageName, neverAsk = neverAsk)
                 true
@@ -600,9 +563,7 @@ class ExternalImportViewModel(
         if (preselect != null) {
             pickSuggestion(packageName, preselect)
         } else {
-            // No preselection means there's nothing to confidently link to. The
-            // list-mode UI hides the link CTA in this case, but defensively
-            // surface the expand affordance instead of silently dropping.
+
             toggleCardExpanded(packageName)
         }
     }
@@ -612,9 +573,7 @@ class ExternalImportViewModel(
 
         viewModelScope.launch {
             try {
-                // Run rollback DAO ops without swallowing — any failure must
-                // abort and preserve `pendingUndo` so the user can retry from
-                // the snackbar. UI state is mutated only after every op succeeds.
+
                 if (undo.kind == PendingUndo.Kind.Link && !undo.hadInstalledAppRowBefore) {
                     installedAppsRepository.deleteInstalledApp(undo.packageName)
                 }
@@ -625,7 +584,6 @@ class ExternalImportViewModel(
                     externalImportRepository.unlink(undo.packageName)
                 }
 
-                // All DAO ops succeeded — now mutate UI and consume the token.
                 pendingUndo = null
                 _state.update { current ->
                     if (current.cards.any { it.packageName == undo.packageName }) {
@@ -652,7 +610,7 @@ class ExternalImportViewModel(
                 throw e
             } catch (e: Exception) {
                 logger.error("Undo failed for ${undo.packageName}: ${e.message}")
-                // Preserve pendingUndo so the snackbar can offer Undo again.
+
                 _events.send(
                     ExternalImportEvent.ShowError(
                         getString(Res.string.external_import_undo_failed),
@@ -665,8 +623,7 @@ class ExternalImportViewModel(
     private fun autoSummaryContinue() {
         val current = _state.value
         if (current.phase != ImportPhase.AutoImportSummary) return
-        // User accepted the auto-imports; the pre-link metadata is no
-        // longer needed and shouldn't leak into a subsequent wizard run.
+
         autoLinkedHadInstalledRow = emptyMap()
         autoLinkedPreSnapshots = emptyMap()
         if (current.cards.isNotEmpty()) {
@@ -691,20 +648,11 @@ class ExternalImportViewModel(
             return
         }
 
-        // Snapshot the pre-link maps locally so a concurrent reset can't race us.
         val hadInstalledMap = autoLinkedHadInstalledRow
         val preSnapshots = autoLinkedPreSnapshots
 
         viewModelScope.launch {
-            // Roll each auto-linked package back to its PRE-LINK external_links
-            // state using the snapshot captured BEFORE materializeAndMark wrote
-            // the MATCHED row. installed_apps is only deleted for packages whose
-            // row did NOT pre-exist before auto-link — same policy as undoLast.
-            //
-            // Fail-fast: any DAO failure aborts the bulk undo before we touch
-            // UI state or clear the pre-link maps. The user keeps seeing the
-            // AutoImportSummary screen and can retry. Already-rolled-back
-            // packages stay rolled back (idempotent on retry).
+
             try {
                 packages.forEach { pkg ->
                     val preSnapshot = preSnapshots[pkg]
@@ -715,7 +663,7 @@ class ExternalImportViewModel(
                     if (preSnapshot != null) {
                         externalImportRepository.restoreDecision(preSnapshot)
                     } else {
-                        // No pre-link row existed — drop the auto-link row entirely.
+
                         externalImportRepository.unlink(pkg)
                     }
                 }
@@ -731,9 +679,6 @@ class ExternalImportViewModel(
                 return@launch
             }
 
-            // All rollbacks succeeded — invalidate the single-row undo token,
-            // clear the per-package metadata so a subsequent wizard run can't
-            // see stale pre-link snapshots, and rebuild the wizard.
             pendingUndo = null
             autoLinkedHadInstalledRow = emptyMap()
             autoLinkedPreSnapshots = emptyMap()
@@ -764,8 +709,7 @@ class ExternalImportViewModel(
     }
 
     private fun emitPermissionOutcome(granted: Boolean, sdkInt: Int?) {
-        // Telemetry removed — kept signature so existing call sites compile;
-        // safe to drop entirely once those are migrated.
+
     }
 
     private fun bucketSdkInt(sdkInt: Int?): String =
@@ -793,9 +737,7 @@ class ExternalImportViewModel(
         if (remaining.isEmpty()) return
 
         viewModelScope.launch {
-            // Track per-package outcome so a partial failure doesn't claim the
-            // entire wizard cleared and doesn't fire confetti / Done telemetry
-            // on packages whose DAO state is unchanged.
+
             val successes = mutableSetOf<String>()
             val failures = mutableListOf<String>()
             remaining.forEach { card ->
@@ -810,9 +752,6 @@ class ExternalImportViewModel(
                 }
             }
 
-            // Skip-remaining is intentionally not undoable — bulk skip clears
-            // the wizard and triggers the completion screen, and a single
-            // snackbar isn't a sensible affordance for "undo seven things".
             pendingUndo = null
 
             val allSucceeded = failures.isEmpty()
@@ -853,16 +792,6 @@ class ExternalImportViewModel(
             if (top.confidence < AUTO_LINK_THRESHOLD) return@forEach
             val candidate = candidatesByPackage[result.packageName] ?: return@forEach
 
-            // Capture pre-link state BEFORE materializeAndMark writes the
-            // MATCHED row. Bulk undo uses both: the pre-link snapshot to
-            // restore the DAO row to its original state, and the
-            // installed_apps presence flag to decide whether to delete the
-            // installed_apps row (only if auto-link created it).
-            //
-            // Snapshot failure must skip the auto-link entirely — without a
-            // reliable pre-link snapshot, undo would fall back to unlink and
-            // wipe a row that should have been preserved. Push the candidate
-            // through manual review instead.
             val snapshotResult = runCatching {
                 externalImportRepository.snapshotDecision(result.packageName)
             }
@@ -946,8 +875,7 @@ class ExternalImportViewModel(
                 "external_links upsert failed for ${candidate.packageName}: " +
                     "${linkResult.exceptionOrNull()?.message}",
             )
-            // installed_apps row is already written; the audit trail is
-            // ahead but recoverable on the next scan via mergeCandidate.
+
         }
         return true
     }
@@ -965,9 +893,7 @@ class ExternalImportViewModel(
         packageName: String,
         tally: (ExternalImportState) -> ExternalImportState,
     ) {
-        // _state.update may invoke the lambda multiple times under contention;
-        // never assign captured vars from inside it. Read the post-update
-        // state to decide whether to fire the completion event.
+
         _state.update { current ->
             val newCards = current.cards.filterNot { it.packageName == packageName }.toImmutableList()
             val tallied = tally(current).copy(
@@ -1004,10 +930,7 @@ class ExternalImportViewModel(
                     RepoMatchSource.SEARCH -> SuggestionSource.SEARCH
                     RepoMatchSource.FINGERPRINT -> SuggestionSource.FINGERPRINT
                     RepoMatchSource.MANUAL -> SuggestionSource.MANUAL
-                    // Forgejo hits map to the same UI bucket as GitHub
-                    // search hits — both are free-text matches against
-                    // a remote registry; the differentiator is the
-                    // sourceHost field on the suggestion itself.
+
                     RepoMatchSource.FORGEJO_SEARCH -> SuggestionSource.SEARCH
                 },
             stars = stars,
@@ -1016,10 +939,7 @@ class ExternalImportViewModel(
         )
 
     private suspend fun InstallerKind.toUiLabel(): String =
-        // Exhaustive: STORE_PLAY / STORE_AURORA / STORE_GALAXY / STORE_OEM_OTHER /
-        // SYSTEM are filtered out at the scanner today, but the wizard's enum
-        // contract is shared with the scanner — handle every value explicitly so
-        // a future scanner change can't silently mislabel a candidate.
+
         when (this) {
             InstallerKind.STORE_OBTAINIUM -> getString(Res.string.external_import_installer_obtainium)
             InstallerKind.STORE_FDROID -> getString(Res.string.external_import_installer_fdroid)
@@ -1052,10 +972,6 @@ class ExternalImportViewModel(
         private const val PRESELECT_MIN = 0.5
         private const val PRESELECT_MAX = 0.85
 
-        // Skip affordance reveal delay. Below this, scans complete
-        // quickly enough that an escape hatch would just be visual
-        // noise. Past it, the user assumes something is stuck and
-        // wants a way out.
         private const val SKIP_REVEAL_DELAY_MS = 5_000L
     }
 }
@@ -1063,9 +979,7 @@ class ExternalImportViewModel(
 private fun parseGithubRepoUrl(input: String): Pair<String, String>? {
     val trimmed = input.trim().removeSuffix("/")
     if (trimmed.isEmpty()) return null
-    // Accept both bare host references and full https URLs. Anything else
-    // (search keywords, partial slugs without owner) falls through to the
-    // backend search path.
+
     val withoutScheme = trimmed
         .removePrefix("https://")
         .removePrefix("http://")

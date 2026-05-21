@@ -158,8 +158,6 @@ fun LazyListScope.networkSection(
         Spacer(Modifier.height(16.dp))
     }
 
-    // One card per scope. Ordering mirrors the user's mental model:
-    // browsing → downloading → translation (least-common last).
     ProxyScope.entries.forEach { scope ->
         item {
             ProxyScopeCard(
@@ -299,9 +297,7 @@ private fun ProxyDetailsFields(
         portValue.isNotEmpty() &&
             (portValue.toIntOrNull()?.let { it !in 1..65535 } ?: true)
     val hostValue = form.host
-    // Real-time host validation mirrors the port pattern: only flag as
-    // invalid once the user has typed something, so the empty initial
-    // state doesn't shout an error at them.
+
     val isHostInvalid = hostValue.isNotEmpty() && !isLikelyValidProxyHost(hostValue)
     val isFormValid =
         hostValue.isNotEmpty() &&
@@ -406,12 +402,7 @@ private fun ProxyDetailsFields(
         ) {
             ProxyTestButton(
                 isInProgress = form.isTestInProgress,
-                // Keep enabled regardless of form validity so the user
-                // never taps a disabled button by accident on the first
-                // press (the previous `isFormValid` gate raced with
-                // the IME-composition-commit step on some Android
-                // keyboards and silently swallowed taps). VM still
-                // validates and surfaces a clear error event.
+
                 enabled = !form.isTestInProgress,
                 onClick = {
                     keyboardController?.hide()
@@ -422,12 +413,7 @@ private fun ProxyDetailsFields(
 
             FilledTonalButton(
                 onClick = {
-                    // Hide IME first so any pending composition commits
-                    // synchronously before the VM reads form state.
-                    // `clearFocus()` alone isn't enough on Gboard /
-                    // SwiftKey, which keep characters in a composition
-                    // buffer until focus actually transfers — that's
-                    // what made the user have to tap Save twice.
+
                     keyboardController?.hide()
                     focusManager.clearFocus()
                     onAction(TweaksAction.OnProxySave(scope))
@@ -478,13 +464,6 @@ private fun ProxyTestButton(
     }
 }
 
-/**
- * UI-side mirror of `TweaksViewModel.isValidProxyHost`. Drives the
- * real-time `isError` highlight on the host TextField so the user
- * sees a problem before they tap Save — same UX as the port field.
- * Authoritative validation still happens server-side in the VM; this
- * is the optimistic, free-of-cost preview.
- */
 private fun isLikelyValidProxyHost(raw: String): Boolean {
     val host = raw.trim()
     if (host.isBlank()) return false

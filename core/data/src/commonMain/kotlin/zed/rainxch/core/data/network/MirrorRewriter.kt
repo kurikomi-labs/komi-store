@@ -31,17 +31,6 @@ object MirrorRewriter {
             }
         }.getOrNull()
 
-    /**
-     * Two template styles supported:
-     *
-     *  - `{url}` (whole-URL proxy): substituted with the full GitHub URL.
-     *    Used by ghfast.top, gh-proxy.com, etc.
-     *
-     *  - `{owner}/{repo}@{ref}/{path}` (path-decomposed): used by jsDelivr's
-     *    `/gh/` endpoint and similar CDN-style mirrors. Parses the source
-     *    GitHub URL to extract the four placeholders. Returns null if the
-     *    source URL doesn't decompose cleanly.
-     */
     fun applyTemplate(
         template: String,
         githubUrl: String,
@@ -77,7 +66,6 @@ object MirrorRewriter {
         val segments = parsed.encodedPath.trimStart('/').split('/').filter { it.isNotEmpty() }
         return when (host) {
             "raw.githubusercontent.com" -> {
-                // /{owner}/{repo}/{ref}/{path...}
                 if (segments.size < 4) return null
                 Decomposed(
                     owner = segments[0],
@@ -87,7 +75,6 @@ object MirrorRewriter {
                 )
             }
             "github.com" -> {
-                // /{owner}/{repo}/raw/{ref}/{path...} or /{owner}/{repo}/blob/{ref}/{path...}
                 if (segments.size < 5) return null
                 val verb = segments[2]
                 if (verb != "raw" && verb != "blob") return null

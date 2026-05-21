@@ -76,10 +76,7 @@ fun ReleaseAssetsPicker(
     showAllPlatforms: Boolean = false,
     crossPlatformAssets: List<GithubAsset> = emptyList(),
 ) {
-    // Decouple from `showAllPlatforms`: the toggle lives INSIDE the sheet,
-    // so disabling the open-card whenever the current branch is empty
-    // would lock the user out of flipping the setting back. Picker stays
-    // openable whenever either source has anything to show.
+
     val isPickerEnabled by remember(assetsList, crossPlatformAssets) {
         derivedStateOf {
             assetsList.isNotEmpty() || crossPlatformAssets.isNotEmpty()
@@ -198,10 +195,6 @@ private fun ReleaseAssetsItemsPicker(
                 }
             }
 
-            // "Pinned to: …  [Unpin]" hint, only when the user actually
-            // has a pin. Surfaces both the current pin and a one-tap
-            // unpin affordance — the only place in the app where a pin
-            // can be removed without picking a different one.
             if (!pinnedVariant.isNullOrBlank()) {
                 Row(
                     modifier =
@@ -222,10 +215,6 @@ private fun ReleaseAssetsItemsPicker(
                 }
             }
 
-            // Cross-platform toggle. Persisted globally — flipping here
-            // changes every Details screen's picker behaviour for this
-            // user. Off = current-OS assets only; On = grouped sections
-            // for Android / Windows / macOS / Linux.
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -260,9 +249,6 @@ private fun ReleaseAssetsItemsPicker(
                 }
             }
 
-            // Hoisted out of the LazyListScope below: `LazyColumn { … }`
-                // body is not a @Composable context, so `remember` calls have
-                // to live in the enclosing Column instead.
             val groups = remember(crossPlatformAssets) {
                 crossPlatformAssets
                     .groupBy {
@@ -279,16 +265,9 @@ private fun ReleaseAssetsItemsPicker(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                // Grouped path only when the toggle is on AND the release
-                // has platform-classifiable assets. If toggle is on but
-                // `assetPlatformOf` rejected every asset (e.g. release
-                // ships only .zip bundles / extensionless binaries), we
-                // fall through to the OFF-mode `assetsList` render so
-                // the user still sees the current-platform installables
-                // instead of an empty sheet.
+
                 if (showAllPlatforms && groups.isNotEmpty()) {
-                    // Order: current-platform section first (it's the
-                    // primary install target), then the others.
+
                     val sectionOrder =
                         listOf(
                             zed.rainxch.core.domain.model.DiscoveryPlatform.Android to Res.string.platform_section_android,

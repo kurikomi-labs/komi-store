@@ -71,7 +71,6 @@ class ManifestHintExtractor {
             val confidence: Double,
         )
 
-        // declaration order = priority order
         private val URL_KEYS =
             listOf(
                 UrlKey(KEY_FDROID_SOURCE_CODE, ManifestHintSource.META_FDROID_SOURCE_CODE, 0.85),
@@ -83,7 +82,6 @@ class ManifestHintExtractor {
         private val OWNER_REGEX = Regex("^[\\w.-]{1,39}$")
         private val REPO_NAME_REGEX = Regex("^[\\w.-]{1,100}$")
 
-        // Matches https?://github.com/<owner>/<repo>(/...)? — first two path segments only
         private val URL_REGEX =
             Regex(
                 "(?i)^https?://(?:www\\.)?github\\.com/([\\w.-]+)/([\\w.-]+)(?:[/?#].*)?$",

@@ -10,10 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
-/**
- * 36×36 transparent icon button. Back / Share / Favorite / More (DESIGN.md §7.1).
- * Min 48dp touch target preserved via padding inside the click area.
- */
 @Composable
 fun IconButton(
     onClick: () -> Unit,

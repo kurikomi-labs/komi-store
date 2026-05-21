@@ -167,7 +167,7 @@ fun FavouriteRepositoryItem(
             ) {
                 favouriteRepository.primaryLanguage?.let { language ->
                     AssistChip(
-                        onClick = { /* No action */ },
+                        onClick = {   },
                         label = {
                             Text(
                                 text = language,
@@ -194,7 +194,7 @@ fun FavouriteRepositoryItem(
 
                 favouriteRepository.latestRelease?.let { release ->
                     AssistChip(
-                        onClick = { /* No action */ },
+                        onClick = {   },
                         label = {
                             Text(
                                 text = release,
@@ -214,7 +214,7 @@ fun FavouriteRepositoryItem(
                 }
 
                 AssistChip(
-                    onClick = { /* No action */ },
+                    onClick = {   },
                     label = {
                         Text(
                             text = favouriteRepository.addedAtFormatter,

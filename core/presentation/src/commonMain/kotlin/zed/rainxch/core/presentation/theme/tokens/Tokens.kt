@@ -2,14 +2,6 @@ package zed.rainxch.core.presentation.theme.tokens
 
 import androidx.compose.ui.graphics.Color
 
-/**
- * Hand-translated from `~/Downloads/handoff 4/tokens.json` (locked at DESIGN.md v1.0).
- * Source of truth for the design system; do not introduce ad-hoc hex values elsewhere.
- *
- * Layout: palette tokens (Nord / Cream / Forest / Plum) × mode (Light / Dark / Amoled),
- * status colors (palette-independent), thresholds (freshness / maintenance / stars),
- * motion durations, spacing scale.
- */
 object Tokens {
     enum class Palette { NORD, CREAM, FOREST, PLUM }
 
@@ -197,7 +189,6 @@ object Tokens {
         }
     }
 
-    /** Palette-independent status colors. Same hex regardless of theme. */
     object Status {
         object Freshness {
             val hot = Color(0xFFE07856)
@@ -223,7 +214,6 @@ object Tokens {
         }
     }
 
-    /** Bucket thresholds and ring-fraction targets from tokens.json. */
     object Thresholds {
         data class FreshnessBucket(
             val maxDaysInclusive: Int?,
@@ -262,7 +252,6 @@ object Tokens {
         )
     }
 
-    /** Motion (durations in ms; pair with [Motion.heartbeatScaleFrom/To] for the breathing dot). */
     object Motion {
         const val tapHighlightMs = 120
         const val paletteCrossfadeMs = 250
@@ -278,7 +267,6 @@ object Tokens {
         const val heartbeatHaloToAlpha = 0.0f
     }
 
-    /** Spacing scale (Material 3 aligned defaults; expand only if a screen needs it). */
     object Spacing {
         val xs = 4
         val sm = 8
@@ -288,14 +276,6 @@ object Tokens {
         val xxl = 32
     }
 
-    /**
-     * Canonical topic codes (14) emitted by the backend topic mapper. Frontend
-     * draws one glyph per code. Backend normalizes raw GitHub topics into this
-     * set — frontend does NOT keep an alias table anymore.
-     *
-     * If backend ships a code we don't have a glyph for yet, [TopicGlyph] silently
-     * renders nothing (graceful degrade until next frontend release).
-     */
     object Topics {
         val supported = setOf(
             "security", "privacy", "networking", "ai", "notes",
@@ -305,7 +285,6 @@ object Tokens {
         )
     }
 
-    /** SPDX → posture map for [LicensePosture]. */
     object Licenses {
         val copyleft = setOf(
             "AGPL-3.0", "GPL-3.0", "GPL-2.0", "LGPL-3.0", "LGPL-2.1", "MPL-2.0",

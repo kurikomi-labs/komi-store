@@ -16,12 +16,6 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.vocabulary.AppAccent
 
-/**
- * Lead/hero card — full-width, accent-tinted bg, soft radial accent bloom, wonky
- * squircle shape (DESIGN.md §7.3). Used for the top Hot release card on Home and
- * featured items. Bloom uses [accent.c] at low alpha; DESIGN.md §2.5 explicitly
- * permits this as editorial flair.
- */
 @Composable
 fun LeadHeroCard(
     accent: AppAccent,

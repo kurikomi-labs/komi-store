@@ -62,14 +62,6 @@ object GitHubAuthApi {
         }
     }
 
-    /**
-     * Dedicated client for PAT validation — NO retries. Validation is a
-     * user-blocking synchronous step (sheet is spinning while we call
-     * this), so a 30s retry cascade defeats the UX for anyone on a
-     * degraded network. One shot, 10s timeout, done. Falls back to the
-     * "Unreachable" path on any failure, which the caller handles by
-     * saving optimistically.
-     */
     private val validationHttp by lazy {
         HttpClient {
             install(ContentNegotiation) { json(json) }
@@ -284,21 +276,6 @@ object GitHubAuthApi {
         }
     }
 
-    /**
-     * Validates a Personal Access Token by calling GitHub's `/user`
-     * endpoint with it. Three outcomes:
-     *
-     *   [PatValidation.Valid]   → 2xx response, token authenticates cleanly.
-     *   [PatValidation.Rejected] → 401 or 403, token is bad or revoked.
-     *   [PatValidation.Unreachable] → network/timeout, we couldn't ask.
-     *
-     * The `Unreachable` case is deliberately distinct from `Rejected`:
-     * many users paste a PAT precisely because their network can't
-     * reach GitHub reliably (China, corporate firewalls). Treating
-     * unreachable as a rejection would block the whole feature for
-     * exactly the people who need it most. Caller decides whether to
-     * save optimistically on `Unreachable`.
-     */
     suspend fun validatePersonalAccessToken(token: String): PatValidation {
         return try {
             val res = validationHttp.get("https://api.github.com/user") {
@@ -313,9 +290,7 @@ object GitHubAuthApi {
                     PatValidation.Rejected(RejectedKind.BadCredentials)
                 status == HttpStatusCode.Forbidden ->
                     PatValidation.Rejected(RejectedKind.InsufficientScope)
-                // Non-auth 4xx (400, 422, etc.): treat as a definitive reject
-                // rather than "unreachable" — GitHub could answer, it just
-                // said no. Retrying won't help.
+
                 status.value in 400..499 ->
                     PatValidation.Rejected(RejectedKind.Other(status.value))
                 else -> PatValidation.Unreachable("HTTP ${status.value}")

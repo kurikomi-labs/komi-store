@@ -6,10 +6,9 @@ import zed.rainxch.core.domain.model.HostToken
 
 data class HostTokensState(
     val tokens: List<HostToken> = emptyList(),
-    // Inline validate feedback per row. Survives Snackbar dismiss so the
-    // user can re-check it on screen.
+
     val validationByHost: Map<String, ValidationLine> = emptyMap(),
-    // Hosts whose validate request is in flight (row spinner).
+
     val validatingHosts: Set<String> = emptySet(),
 
     val draftMode: DraftMode = DraftMode.Closed,
@@ -29,10 +28,8 @@ data class HostTokensState(
 sealed interface DraftMode {
     data object Closed : DraftMode
 
-    /** Forge picker step — shown on add tap or empty state. */
     data object Picker : DraftMode
 
-    /** Token entry dialog. */
     data class Compose(val replacingExisting: HostToken? = null) : DraftMode
 }
 

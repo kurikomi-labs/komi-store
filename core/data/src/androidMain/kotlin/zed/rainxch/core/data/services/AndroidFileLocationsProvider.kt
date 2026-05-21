@@ -39,9 +39,7 @@ class AndroidFileLocationsProvider(
             }
             Log.w(TAG, "Downloads dir candidate unusable: ${dir.absolutePath}")
         }
-        // Last-resort fallback. context.filesDir always exists for an
-        // installed app; if even this fails the device is in an
-        // unrecoverable state and a thrown exception wouldn't help.
+
         val fallback = File(context.filesDir, "downloads")
         fallback.mkdirs()
         return fallback.absolutePath
@@ -65,7 +63,7 @@ class AndroidFileLocationsProvider(
     }
 
     override fun setExecutableIfNeeded(path: String) {
-        // No-op on Android
+
     }
 
     override fun getCacheSizeBytes(): Long {

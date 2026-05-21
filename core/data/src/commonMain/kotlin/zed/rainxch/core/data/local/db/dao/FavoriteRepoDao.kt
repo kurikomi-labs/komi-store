@@ -33,9 +33,9 @@ interface FavoriteRepoDao {
 
     @Query(
         """
-        UPDATE favorite_repos 
-        SET isInstalled = :installed, 
-            installedPackageName = :packageName 
+        UPDATE favorite_repos
+        SET isInstalled = :installed,
+            installedPackageName = :packageName
         WHERE repoId = :repoId
     """,
     )
@@ -47,7 +47,7 @@ interface FavoriteRepoDao {
 
     @Query(
         """
-        UPDATE favorite_repos 
+        UPDATE favorite_repos
         SET latestVersion = :version,
             latestReleaseUrl = :releaseUrl,
             lastSyncedAt = :timestamp

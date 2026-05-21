@@ -75,9 +75,7 @@ fun ExternalImportRoot(
             }
             ExternalImportEvent.PlayConfetti -> confettiTrigger++
             is ExternalImportEvent.ShowUndoSnackbar -> {
-                // Dismiss any prior snackbar so undo always wins the slot — the
-                // VM tracks one pending undo, and showing a stale message would
-                // let the user mis-target it.
+
                 snackbarHostState.currentSnackbarData?.dismiss()
                 scope.launch {
                     val undoLabel = getString(Res.string.external_import_undo_action)
@@ -263,8 +261,6 @@ fun ExternalImportRoot(
                     }
                 }
 
-                // Confetti is gated on PlayConfetti events: each event bumps the trigger
-                // and remounts the overlay so its LaunchedEffect re-runs the burst.
                 if (state.phase == ImportPhase.Done && confettiTrigger > 0) {
                     androidx.compose.runtime.key(confettiTrigger) {
                         ConfettiOverlay(enabled = true)

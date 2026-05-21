@@ -41,9 +41,6 @@ class GitHubClientProvider(
             .distinctUntilChanged()
             .onEach { proxyConfig ->
                 mutex.withLock {
-                    // Replace-then-close: readers of [client] always see
-                    // a live client. Closing first opens a window where
-                    // an in-flight call could touch a closed engine.
                     val replacement =
                         createGitHubHttpClient(
                             tokenStore = tokenStore,

@@ -80,12 +80,7 @@ fun PermissionRationaleScreen(
                 Button(onClick = {
                     scope.launch {
                         onAction(ExternalImportAction.OnRequestPermission)
-                        // QUERY_ALL_PACKAGES is install-time only on stock Android.
-                        // Either we already have visibility (manifest grant honoured)
-                        // → proceed Granted; or we don't → proceed Denied and let the
-                        // scanner's heuristic-degraded path handle it. We never
-                        // dispatch Granted optimistically — that would lie to
-                        // telemetry and skip the degraded-path UX in EmptyStateScreen.
+
                         val action = if (requester.isGranted()) {
                             ExternalImportAction.OnPermissionGranted(sdkInt)
                         } else {

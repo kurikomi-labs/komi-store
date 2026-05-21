@@ -53,7 +53,6 @@ import zed.rainxch.core.domain.utils.ShareManager
 
 actual val corePlatformModule =
     module {
-        // Core
 
         single<Downloader> {
             AndroidDownloader(
@@ -61,7 +60,6 @@ actual val corePlatformModule =
             )
         }
 
-        // AndroidInstaller — registered by class so the wrapper can inject it
         single {
             AndroidInstaller(
                 context = get(),
@@ -69,30 +67,24 @@ actual val corePlatformModule =
             )
         }
 
-        // ShizukuServiceManager — manages Shizuku lifecycle, permissions, service binding
         single {
             ShizukuServiceManager(
                 context = androidContext(),
             ).also { it.initialize() }
         }
 
-        // DhizukuServiceManager — manages Dhizuku lifecycle, permissions, service binding
         single {
             DhizukuServiceManager(
                 context = androidContext(),
             ).also { it.initialize() }
         }
 
-        // RootServiceManager — detects Magisk/KernelSU/APatch su binaries, probes
-        // for grant status, executes silent installs via `pm install` over `su`.
         single {
             RootServiceManager(
                 scope = get<CoroutineScope>(),
             ).also { it.initialize() }
         }
 
-        // Installer — SilentInstallerDispatcher routes through the user's selected
-        // silent backend (Shizuku, Dhizuku, Root) or falls back to the standard installer.
         single<Installer> {
             SilentInstallerDispatcher(
                 androidContext = androidContext(),
@@ -107,7 +99,6 @@ actual val corePlatformModule =
             }
         }
 
-        // InstallerStatusProvider — exposes Shizuku, Dhizuku, and Root availability to UI
         single<InstallerStatusProvider> {
             AndroidInstallerStatusProvider(
                 shizukuServiceManager = get(),
@@ -169,8 +160,6 @@ actual val corePlatformModule =
             AndroidLocalizationManager()
         }
 
-        // Locals
-
         single<AppDatabase> {
             initDatabase(androidContext())
         }
@@ -203,8 +192,6 @@ actual val corePlatformModule =
                 fileName = "ghs_announcements",
             )
         }
-
-        // Utils
 
         single<BrowserHelper> {
             AndroidBrowserHelper(androidContext())

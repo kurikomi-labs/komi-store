@@ -39,15 +39,7 @@ data class TweaksState(
     val isScrollbarEnabled: Boolean = false,
     val contentWidth: ContentWidth = ContentWidth.COMPACT,
     val translationProvider: TranslationProvider = TranslationProvider.Default,
-    /**
-     * Transient UI-only selection used when the user picks a provider
-     * that needs more configuration before it can be activated (e.g.
-     * Youdao with missing credentials). Rendered as the "selected
-     * chip" when non-null; persisted [translationProvider] is the
-     * source of truth for what the app actually uses for translation.
-     * Cleared once the pending selection is either committed
-     * (credentials saved) or abandoned (another provider picked).
-     */
+
     val draftTranslationProvider: TranslationProvider? = null,
     val youdaoAppKey: String = "",
     val youdaoAppSecret: String = "",
@@ -60,38 +52,22 @@ data class TweaksState(
     val microsoftTranslatorKey: String = "",
     val microsoftTranslatorRegion: String = "",
     val isMicrosoftTranslatorKeyVisible: Boolean = false,
-    /**
-     * User-selected UI language as a BCP 47 tag, or `null` to follow
-     * the system locale. Mirrors the preference observed by
-     * `MainViewModel` — surfaced here so the Tweaks picker can show
-     * which chip is selected.
-     */
+
     val selectedAppLanguage: String? = null,
     val autoTranslateEnabled: Boolean = false,
     val autoTranslateTargetLang: String? = null,
     val isFeedbackSheetVisible: Boolean = false,
-    /**
-     * True only on aggressive-OEM Android devices (Oppo, OnePlus, Realme,
-     * Xiaomi, vivo, Honor) that have NOT yet whitelisted the app from
-     * battery optimization AND the user has not dismissed the prompt.
-     * Drives the "Allow background updates" card in the Updates section.
-     */
+
     val showBatteryOptimizationCard: Boolean = false,
     val customForgeHosts: Set<String> = emptySet(),
     val showCustomForgesDialog: Boolean = false,
     val customForgeDraft: String = "",
     val customForgeError: String? = null,
 ) {
-    /** Effective provider to render as "selected" in the UI — draft
-     *  overrides persisted when a pending selection is in flight. */
+
     val displayedTranslationProvider: TranslationProvider
         get() = draftTranslationProvider ?: translationProvider
 
-    /** Convenience accessor — returns a fresh default if the map is
-     *  missing an entry for [scope]. The constructor seeds all scopes,
-     *  but `copy(proxyForms = …)` call sites could in theory produce an
-     *  incomplete map; the safe default keeps the UI from crashing in
-     *  that case. */
     fun formFor(scope: ProxyScope): ProxyScopeFormState =
         proxyForms[scope] ?: ProxyScopeFormState()
 }

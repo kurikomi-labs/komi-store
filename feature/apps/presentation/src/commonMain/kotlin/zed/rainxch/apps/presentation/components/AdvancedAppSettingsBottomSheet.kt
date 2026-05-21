@@ -51,15 +51,6 @@ import zed.rainxch.apps.presentation.AppsState
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.githubstore.core.presentation.res.*
 
-/**
- * Per-app advanced settings sheet for monorepo support. Shows:
- *  - Asset filter (regex) text field with inline validation
- *  - Fall-back-to-older-releases toggle
- *  - **Live preview** of which assets in the latest matching release the
- *    current draft would resolve to. This is the killer UX touch — users
- *    can iterate on the regex and immediately see the effect without
- *    having to save and run an update check.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedAppSettingsBottomSheet(
@@ -112,7 +103,6 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            // === Asset filter ===
             OutlinedTextField(
                 value = state.advancedFilterDraft,
                 onValueChange = { onAction(AppsAction.OnAdvancedFilterChanged(it)) },
@@ -153,7 +143,6 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(12.dp))
 
-            // === Fallback toggle ===
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -185,17 +174,6 @@ fun AdvancedAppSettingsBottomSheet(
             )
             Spacer(Modifier.height(16.dp))
 
-            // === Preferred variant row ===
-            // Tappable row that opens the variant picker dialog. Shows
-            // the currently-pinned variant tag (or "Auto" when none),
-            // and warns the user when the pin has gone stale.
-            //
-            // Cross-link copy: a one-liner above the row clarifies
-            // the *relationship* between the filter (which assets are
-            // even considered) and the variant pin (which of the
-            // matching assets gets installed) — these are the two
-            // axes a user is actually adjusting when they wonder why
-            // an update grabbed the wrong file.
             Text(
                 text = stringResource(Res.string.advanced_filter_variant_relation),
                 style = MaterialTheme.typography.bodySmall,
@@ -214,7 +192,6 @@ fun AdvancedAppSettingsBottomSheet(
             )
             Spacer(Modifier.height(16.dp))
 
-            // === Live preview ===
             PreviewSection(
                 isLoading = state.advancedPreviewLoading,
                 matchedAssets = state.advancedPreviewMatched,
@@ -225,7 +202,6 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            // === Save / cancel buttons ===
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),

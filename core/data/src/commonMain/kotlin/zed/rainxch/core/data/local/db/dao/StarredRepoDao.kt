@@ -39,9 +39,9 @@ interface StarredRepoDao {
 
     @Query(
         """
-        UPDATE starred_repos 
-        SET isInstalled = :installed, 
-            installedPackageName = :packageName 
+        UPDATE starred_repos
+        SET isInstalled = :installed,
+            installedPackageName = :packageName
         WHERE repoId = :repoId
     """,
     )
@@ -53,7 +53,7 @@ interface StarredRepoDao {
 
     @Query(
         """
-        UPDATE starred_repos 
+        UPDATE starred_repos
         SET latestVersion = :version,
             latestReleaseUrl = :releaseUrl,
             lastSyncedAt = :timestamp

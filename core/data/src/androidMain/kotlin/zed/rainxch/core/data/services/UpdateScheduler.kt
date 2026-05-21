@@ -46,12 +46,6 @@ object UpdateScheduler {
                 request = request,
             )
 
-        // Note: an expedited request CANNOT carry an initial delay —
-        // WorkManager throws `IllegalArgumentException: Expedited jobs
-        // cannot be delayed` at build time. Drop the cold-start backoff
-        // and let the OS scheduler dispatch as soon as the network
-        // constraint is satisfied; on aggressive-OEM ROMs the expedited
-        // tier is what actually gets the work to run.
         val immediateRequest =
             OneTimeWorkRequestBuilder<UpdateCheckWorker>()
                 .setConstraints(constraints)
@@ -116,13 +110,7 @@ object UpdateScheduler {
                     15,
                     TimeUnit.MINUTES,
                 )
-                // Intentionally NOT expedited: AutoUpdateWorker downloads
-                // multiple APKs and installs them sequentially, which can
-                // easily exceed the 10-minute expedited time limit and
-                // get the worker terminated mid-install. The worker
-                // already promotes itself to a foreground service via
-                // setForeground, which gives it the headroom it needs
-                // without the expedited time cap.
+
                 .build()
 
         WorkManager

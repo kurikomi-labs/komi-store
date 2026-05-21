@@ -19,11 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Tinted secondary CTA — `primaryContainer` background, `primary` text. Asymmetric
- * (non-wonky) squircle. Used for Get / Read more / secondary install-panel actions
- * (DESIGN.md §7.1).
- */
 @Composable
 fun TintedButton(
     onClick: () -> Unit,

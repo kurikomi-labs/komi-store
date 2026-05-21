@@ -13,12 +13,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-/**
- * Squircle icon tile wrapped in a freshness ring that drains over time. Replaces
- * "Released N days ago" prose (DESIGN.md §4.1). Ring fraction + color encoded by
- * the bucket from [freshnessOf]. Drop-in for app avatars on Home, Library, and
- * Detail hero.
- */
 @Composable
 fun FreshnessRing(
     daysSinceRelease: Int,
@@ -65,7 +59,7 @@ private fun FreshnessArc(
             (size.height - radius * 2) / 2f,
         )
         val arcSize = Size(radius * 2, radius * 2)
-        // Background track, low opacity
+
         drawArc(
             color = color.copy(alpha = 0.14f),
             startAngle = 0f,
@@ -75,7 +69,7 @@ private fun FreshnessArc(
             size = arcSize,
             style = Stroke(width = sw, cap = StrokeCap.Round),
         )
-        // Foreground drain
+
         drawArc(
             color = color,
             startAngle = -90f,

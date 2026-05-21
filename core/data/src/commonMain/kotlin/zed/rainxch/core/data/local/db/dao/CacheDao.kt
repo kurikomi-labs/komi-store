@@ -29,13 +29,6 @@ interface CacheDao {
     @Query("DELETE FROM cache_entries WHERE `key` = :key")
     suspend fun delete(key: String)
 
-    /**
-     * Conditional delete used by CacheManager when a row decoded as a
-     * malformed payload — guards against evicting a freshly-put row that
-     * raced in between the read and the decode-failure delete. Compares
-     * `cachedAt` because (key, cachedAt) is effectively the row's version
-     * stamp on this schema.
-     */
     @Query("DELETE FROM cache_entries WHERE `key` = :key AND cachedAt = :cachedAt")
     suspend fun deleteIfMatches(key: String, cachedAt: Long)
 

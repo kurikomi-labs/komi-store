@@ -68,11 +68,6 @@ class InstallationManagerImpl(
             val apkInfo = params.apkInfo
             val repo = params.repo
 
-            // Capture the user's variant pick as a fingerprint so the next
-            // update resolves to the same APK flavour. Returns null for
-            // single-asset releases or unparseable filenames — in that case
-            // the pin fields stay null and the resolver falls back to the
-            // platform auto-picker, same as before this fix.
             val fingerprint =
                 AssetVariant.fingerprintFromPickedAsset(
                     pickedAssetName = params.assetName,
@@ -82,11 +77,6 @@ class InstallationManagerImpl(
             val pickedIndex = params.pickedAssetIndex?.takeIf { it >= 0 }
             val siblingCount = params.siblingAssetCount.takeIf { it > 0 }
 
-            // New apps inherit the global "include betas" preference
-            // so users who track betas across the board don't have to
-            // flip the per-app toggle for every install. Existing
-            // rows keep their own value; the global toggle is only
-            // consulted on creation.
             val defaultIncludePreReleases =
                 runCatching { tweaksRepository.getIncludePreReleases().first() }
                     .getOrDefault(false)
@@ -104,11 +94,7 @@ class InstallationManagerImpl(
                     installedVersion = params.releaseTag,
                     installedAssetName = params.assetName,
                     installedAssetUrl = params.assetUrl,
-                    // Leave upstream `latest*` blank on first-install. The
-                    // user may have picked an older release; pre-stamping
-                    // these to the picked tag's metadata would poison the
-                    // `checkForUpdates` versionCode-parity canary (#542).
-                    // The next periodic check resolves them from the feed.
+
                     latestVersion = null,
                     latestAssetName = null,
                     latestAssetUrl = null,

@@ -3,11 +3,6 @@ package zed.rainxch.core.presentation.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
-/**
- * Composition locals exposing the design tokens that Material 3 doesn't natively cover.
- * Provided by `GithubStoreTheme` / `GhsTheme`. Reading any of these outside a theme
- * scope falls back to a sensible default rather than throwing.
- */
 val LocalPalette = staticCompositionLocalOf { Tokens.Nord.light }
 
 val LocalStatusColors = staticCompositionLocalOf<StatusColors> { defaultStatusColors }

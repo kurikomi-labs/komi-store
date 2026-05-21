@@ -166,7 +166,7 @@ class ProxyRepositoryImpl(
             }
             val snapshot = runCatching { legacyDataStore.data.first() }.getOrNull()
             if (snapshot == null) {
-                // Don't mark complete — retry on next launch.
+
                 return
             }
 
@@ -193,7 +193,6 @@ class ProxyRepositoryImpl(
                 val user = snapshot[userLegacyKey] ?: snapshot[stringPreferencesKey("proxy_username")]
                 val pass = snapshot[passLegacyKey] ?: snapshot[stringPreferencesKey("proxy_password")]
 
-                // Per-field tracking — only enqueue legacy delete if KSafe write succeeded.
                 val typeOk = ksafe.safePut(keys.type, type)
                 if (!typeOk) { anyFailure = true; return@forEach }
                 scopeType?.let { keysToClear += typeLegacyKey }
@@ -216,9 +215,6 @@ class ProxyRepositoryImpl(
                 }
             }
 
-            // Drop the unscoped legacy keys only if we actually transferred them
-            // into at least one scope above. We don't know which scope owns them,
-            // but their fallback role is exhausted once any scope is populated.
             val anyScopeTouched = keysToClear.isNotEmpty()
             if (anyScopeTouched) {
                 keysToClear += stringPreferencesKey("proxy_type")

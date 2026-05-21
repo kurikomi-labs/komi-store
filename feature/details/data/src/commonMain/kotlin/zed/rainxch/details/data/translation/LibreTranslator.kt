@@ -48,9 +48,7 @@ internal class LibreTranslator(
 
         val body = response.bodyAsText()
         if (!response.status.isSuccess()) {
-            // Try to parse the JSON error envelope; fall through to raw
-            // body when the upstream returned HTML / plain text (proxy
-            // pages, WAF blocks, misconfigured self-host).
+
             val message = runCatching {
                 json.parseToJsonElement(body).jsonObject["error"]?.jsonPrimitive?.content
             }.getOrNull()

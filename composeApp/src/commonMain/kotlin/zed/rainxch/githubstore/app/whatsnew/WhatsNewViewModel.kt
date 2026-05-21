@@ -35,14 +35,7 @@ class WhatsNewViewModel(
     private var lastLanguageTag: String? = null
 
     init {
-        // Re-load whenever the user's selected app language changes.
-        // The tag is threaded explicitly into the loader so we beat
-        // the race against MainActivity's setActiveLanguageTag — both
-        // collectors fan out from the same flow with no ordering
-        // guarantee, so reading Locale.getDefault() inside the loader
-        // can return the previous language. distinctUntilChanged
-        // guards against the initial replay-emit firing the load
-        // twice.
+
         viewModelScope.launch {
             try {
                 tweaksRepository

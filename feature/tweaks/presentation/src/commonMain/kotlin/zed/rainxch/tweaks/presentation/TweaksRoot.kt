@@ -60,8 +60,7 @@ fun TweaksRoot(
             androidx.lifecycle.LifecycleEventObserver { _, event ->
                 if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
                     viewModel.onAction(TweaksAction.OnRefreshCacheSize)
-                    // Re-eval after returning from system battery-optimization
-                    // settings so the card disappears immediately on grant.
+
                     viewModel.onAction(TweaksAction.OnReevaluateBatteryOptimizationCard)
                 }
             }

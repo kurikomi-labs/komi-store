@@ -3,22 +3,10 @@ package zed.rainxch.core.domain.system
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.SystemArchitecture
 
-/**
- * Result of an [Installer.install] call.
- */
 enum class InstallOutcome {
-    /**
-     * Installation completed synchronously (e.g. Shizuku silent install).
-     * The package is already installed on the system — no need to wait
-     * for a broadcast to confirm.
-     */
+
     COMPLETED,
 
-    /**
-     * Installation was handed off to the system UI or an external process.
-     * The caller should treat the install as pending until a
-     * PACKAGE_ADDED / PACKAGE_REPLACED broadcast confirms it.
-     */
     DELEGATED_TO_SYSTEM,
 }
 

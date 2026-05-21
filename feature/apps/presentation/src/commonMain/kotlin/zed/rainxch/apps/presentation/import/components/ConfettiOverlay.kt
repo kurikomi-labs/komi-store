@@ -50,8 +50,7 @@ fun ConfettiOverlay(
     val particles = remember(palette) {
         val rng = Random(42)
         List(40) { index ->
-            // Use error sparingly — every 7th particle, and primary/secondary/tertiary
-            // for the rest with primaryContainer mixed in for variety.
+
             val color = when {
                 index % 7 == 6 -> palette[4]
                 index % 5 == 0 -> palette[3]
@@ -95,7 +94,7 @@ fun ConfettiOverlay(
         particles.forEach { p ->
             val x = p.xFraction * width
             val y = -40f + travel * p.fallSpeed * progress.value
-            // Stop drawing once a particle has cleared the bottom.
+
             if (y > height + p.radiusPx) return@forEach
 
             val rotation = p.rotationOffset + p.rotationSpeed * progress.value

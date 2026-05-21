@@ -114,39 +114,39 @@ class ProfileViewModel(
             }
 
             ProfileAction.OnLoginClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnFavouriteReposClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnStarredReposClick -> {
-                // Handed in composable
+
             }
 
             is ProfileAction.OnRepositoriesClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnRecentlyViewedClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnWhatsNewClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnWhatsNewLongClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnAnnouncementsClick -> {
-                // Handed in composable
+
             }
 
             ProfileAction.OnAnnouncementsLongClick -> {
-                // Handed in composable
+
             }
         }
     }

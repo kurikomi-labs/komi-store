@@ -533,7 +533,7 @@ class SearchViewModel(
                         it.copy(selectedLanguage = action.language)
                     }
                     currentPage = 1
-    
+
                     performSearch(isInitial = true)
                 }
             }
@@ -616,7 +616,7 @@ class SearchViewModel(
                         it.copy(selectedSortBy = action.sortBy)
                     }
                     currentPage = 1
-    
+
                     performSearch(isInitial = true)
                 }
             }
@@ -627,7 +627,7 @@ class SearchViewModel(
                         it.copy(selectedSortOrder = action.sortOrder)
                     }
                     currentPage = 1
-    
+
                     performSearch(isInitial = true)
                 }
             }

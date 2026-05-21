@@ -27,10 +27,10 @@ data class DetailsState(
     val errorMessage: String? = null,
     val userProfile: GithubUserProfile? = null,
     val repository: GithubRepoSummary? = null,
-    // state for assets
+
     val primaryAsset: GithubAsset? = null,
     val installableAssets: List<GithubAsset> = emptyList(),
-    // state for releases
+
     val selectedRelease: GithubRelease? = null,
     val allReleases: List<GithubRelease> = emptyList(),
     val releasesLoadFailed: Boolean = false,
@@ -57,23 +57,14 @@ data class DetailsState(
     val isAppManagerAvailable: Boolean = false,
     val isAppManagerEnabled: Boolean = false,
     val installedApp: InstalledApp? = null,
-    /**
-     * All apps tracked for this repository. For single-app repos this
-     * contains at most one element (same as [installedApp]). For
-     * monorepos it may contain multiple entries with different package
-     * names. [installedApp] is the "primary" — the one whose asset
-     * filter matches the currently selected asset, or the first.
-     */
+
     val installedApps: List<InstalledApp> = emptyList(),
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
     val isTrackingApp: Boolean = false,
     val isAboutExpanded: Boolean = false,
     val isWhatsNewExpanded: Boolean = false,
-    // Measured intrinsic heights of the rendered markdown blocks, hoisted
-    // out of the composable so LazyColumn item disposal/recompose doesn't
-    // re-trigger the measure → clip → reflow loop that snapped scroll
-    // position to the section start.
+
     val aboutMeasuredHeightPx: Float? = null,
     val whatsNewMeasuredHeightPx: Float? = null,
     val aboutTranslation: TranslationState = TranslationState(),
@@ -89,63 +80,25 @@ data class DetailsState(
     val showUninstallConfirmation: Boolean = false,
     val showUnlinkConfirmation: Boolean = false,
     val attestationStatus: AttestationStatus = AttestationStatus.UNCHECKED,
-    /**
-     * Days since the most recent stable release when the project is
-     * actively shipping pre-releases on top of it. `null` means
-     * either healthy (recent stable) or no applicable signal
-     * (project has no stable releases at all). Set by the ViewModel
-     * from `latestStable.publishedAt` vs `Clock.now()` when releases
-     * load. See release UX #6.
-     */
+
     val stalledStableSinceDays: Int? = null,
-    /**
-     * Concatenated release notes for every release newer than the
-     * user's `installedApp.installedVersion`, most-recent-first.
-     * Populated when the user is tracking the app and at least one
-     * newer release exists. Null when there's no installed version
-     * or no newer releases. See release UX #4.
-     */
+
     val mergedChangelog: String? = null,
-    /**
-     * Release tag for the head of [mergedChangelog] (the version the
-     * user would jump from). Used to title the merged section as
-     * "What's changed since v1.2.3".
-     */
+
     val mergedChangelogBaseTag: String? = null,
-    /**
-     * Whether [latestStableRelease] has at least one asset that the
-     * platform installer can handle. Computed by the ViewModel
-     * whenever `allReleases` changes — we can't compute it here
-     * because the installer's per-platform asset-extension policy
-     * lives outside the data model. Gates [canSwitchToStable] so
-     * the rollback chip never advertises an action that would
-     * silently no-op for releases that ship only source tarballs.
-     */
+
     val latestStableHasInstallableAsset: Boolean = false,
-    /** APK inspection result currently driving the inspect bottom sheet. */
+
     val apkInspection: ApkInspection? = null,
-    /** Whether the inspect bottom sheet is on screen. */
+
     val isApkInspectSheetVisible: Boolean = false,
-    /** Loading state for the inspect sheet — set while the inspector runs. */
+
     val isApkInspectLoading: Boolean = false,
-    /**
-     * One-shot flag from DataStore — `false` until the user has seen
-     * the discoverability coachmark for the inspect button. Drives the
-     * pulse + tooltip animation in the install button row.
-     */
+
     val isApkInspectCoachmarkPending: Boolean = false,
-    /**
-     * One-shot flag — `false` until the user has seen the
-     * release-channel coachmark. Drives the pulse + tooltip on the
-     * `ChannelChip` so users discover the per-app channel toggle.
-     */
+
     val isChannelChipCoachmarkPending: Boolean = false,
-    /**
-     * Mirrors `TweaksRepository.getShowAllPlatforms()`. When true the
-     * release-assets picker lists installers for every OS (grouped by
-     * section); the install button still operates on the current
-     * platform's primary asset.
-     */
+
     val showAllPlatforms: Boolean = false,
 ) {
     val filteredReleases: List<GithubRelease>
@@ -156,26 +109,12 @@ data class DetailsState(
                 ReleaseCategory.ALL -> allReleases
             }
 
-    /**
-     * Most recent non-pre-release release, or `null` when the
-     * project has no stable releases in the current window. Drives
-     * the "Switch to stable vX.Y.Z" rollback action.
-     */
     val latestStableRelease: GithubRelease?
         get() =
             allReleases
                 .filter { !it.isEffectivelyPreRelease() }
                 .maxByOrNull { it.publishedAt }
 
-    /**
-     * True when the install button should expose a "switch to
-     * stable" rollback affordance: the user is tracking this app,
-     * is currently on a release that's effectively a pre-release,
-     * a distinct stable release exists, AND that stable release has
-     * at least one installable asset on the current platform. The
-     * handler (`DetailsAction.SwitchToStable`) selects the stable
-     * release and invokes the normal install path.
-     */
     val canSwitchToStable: Boolean
         get() {
             val app = installedApp ?: return false
@@ -185,21 +124,10 @@ data class DetailsState(
                 allReleases.firstOrNull { VersionMath.isSameVersion(it.tagName, app.installedVersion) }
                     ?.isEffectivelyPreRelease() == true
             if (!installedIsPreRelease) return false
-            // Don't offer the button if the stable release IS the
-            // one the user has already (same version, ignoring tag-prefix
-            // drift like "v" vs "" or "release-" vs "").
+
             return !VersionMath.isSameVersion(stable.tagName, app.installedVersion)
         }
 
-    /**
-     * True when the currently-tracked app has a *parked* install file
-     * that matches the user's current selection (release tag + asset
-     * name). The install button can short-circuit the download phase
-     * and dispatch the dialog/install flow on the parked file directly.
-     *
-     * This is the data-layer match — the VM also re-checks the file
-     * exists on disk before actually using it (in [parkedFilePathIfMatches]).
-     */
     val isPendingInstallReady: Boolean
         get() {
             val app = installedApp ?: return false

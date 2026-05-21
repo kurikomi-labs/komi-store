@@ -38,7 +38,7 @@ object FeedbackComposer {
                 builder.appendSection("Current behaviour", state.currentBehaviour)
                 builder.appendSection("Desired behaviour", state.desiredBehaviour)
             }
-            FeedbackCategory.OTHER -> { /* no extra fields */ }
+            FeedbackCategory.OTHER -> {   }
         }
 
         if (state.attachDiagnostics) {

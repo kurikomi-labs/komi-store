@@ -10,10 +10,6 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.log10
 import kotlin.math.min
 
-/**
- * Log-scale dot inside a fixed-size ring. Radius = `log10(downloads)`. Replaces
- * "62.8k downloads" prose with adoption magnitude (DESIGN.md §4.1).
- */
 @Composable
 fun DownloadWeight(
     downloads: Long,

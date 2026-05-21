@@ -12,11 +12,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-/**
- * Hand-drawn wavy underline. Default ~40×5 dp, 1.6dp stroke, primary color at 60%.
- * One per section heading (DESIGN.md §4.3). Path translated from
- * `tokens.json.shape.squiggle.path` (viewBox 40×5).
- */
 @Composable
 fun Squiggle(
     modifier: Modifier = Modifier,
@@ -27,8 +22,7 @@ fun Squiggle(
         val sy = size.height / 5f
         val path = Path().apply {
             moveTo(1f * sx, 3f * sy)
-            // Initial quadratic + four smooth quadratics with reflected control points
-            // (T command in SVG): C1=(5,0.5), then reflect through each end-point.
+
             quadraticTo(5f * sx, 0.5f * sy, 9f * sx, 3f * sy)
             smoothQuadTo(17f * sx, 3f * sy, prevControl = Offset(5f * sx, 0.5f * sy), prevEnd = Offset(9f * sx, 3f * sy))
             smoothQuadTo(25f * sx, 3f * sy, prevControl = Offset(13f * sx, 5.5f * sy), prevEnd = Offset(17f * sx, 3f * sy))

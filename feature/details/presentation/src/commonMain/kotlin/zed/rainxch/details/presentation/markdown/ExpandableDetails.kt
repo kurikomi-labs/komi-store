@@ -129,12 +129,7 @@ private fun decodeDetailsSummary(encoded: String): String {
 }
 
 private fun extractFenceBody(model: MarkdownComponentModel): String {
-    // Slice the original source between the first and last
-    // CODE_FENCE_CONTENT child. Iterating child-by-child and
-    // re-inserting newlines double-counts (prepend on content + EOL
-    // token), producing a blank line between every body line — which
-    // breaks GFM tables, lists, and any block that needs contiguous
-    // source lines.
+
     val content = model.content
     val contentNodes = model.node.children.filter { it.type == MarkdownTokenTypes.CODE_FENCE_CONTENT }
     if (contentNodes.isEmpty()) return ""

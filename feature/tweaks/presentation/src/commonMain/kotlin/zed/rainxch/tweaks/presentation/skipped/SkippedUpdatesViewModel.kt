@@ -52,8 +52,7 @@ class SkippedUpdatesViewModel(
     }
 
     private fun unskip(packageName: String) {
-        // Snapshot the row's display name BEFORE the flow emits without it,
-        // so the success snackbar can name the app the user just acted on.
+
         val appName = _state.value.items.firstOrNull { it.packageName == packageName }?.appName
         viewModelScope.launch {
             try {

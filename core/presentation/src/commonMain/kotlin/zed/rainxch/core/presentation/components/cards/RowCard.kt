@@ -14,11 +14,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Dense list row — surface bg + squircle radius. Used by Library, Most Popular,
- * Search results (DESIGN.md §7.4). 10–12dp padding, 11dp gap. Caller supplies
- * row content via slot.
- */
 @Composable
 fun RowCard(
     modifier: Modifier = Modifier,

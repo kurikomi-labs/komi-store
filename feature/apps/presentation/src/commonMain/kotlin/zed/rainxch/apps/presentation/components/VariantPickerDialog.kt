@@ -41,18 +41,6 @@ import zed.rainxch.apps.presentation.AppsState
 import zed.rainxch.core.domain.util.AssetVariant
 import zed.rainxch.githubstore.core.presentation.res.*
 
-/**
- * Dialog for picking the preferred APK variant when an app's release
- * has multiple installable assets. Opened from:
- *  - The advanced settings sheet (explicit user action)
- *  - Tapping Update on an app whose `preferredVariantStale` is true
- *    (the picker takes over so the user resolves the ambiguity before
- *    the wrong APK gets downloaded)
- *
- * Each option corresponds to a stable variant tag derived from the
- * filename. There's also a "Reset to auto" entry that clears the
- * preference and lets the platform installer's auto-picker do its job.
- */
 @Composable
 fun VariantPickerDialog(
     state: AppsState,
@@ -155,11 +143,7 @@ fun VariantPickerDialog(
             }
         },
         confirmButton = {
-            // Cross-link: jump to the asset filter sheet for this app.
-            // The two are conceptually adjacent — filter decides which
-            // assets are *considered*, the variant picker decides which
-            // of the matching assets gets installed. Users debugging
-            // "wrong file installed" need both within reach.
+
             TextButton(
                 onClick = {
                     onAction(AppsAction.OnDismissVariantPicker)
@@ -227,7 +211,7 @@ private fun VariantOptionList(
             .heightIn(min = 0.dp, max = 280.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        // Reset-to-auto entry — placed at the top so it's always discoverable.
+
         item {
             VariantRow(
                 isSelected = current == null,
@@ -242,10 +226,7 @@ private fun VariantOptionList(
         }
 
         items(state.variantPickerOptions, key = { it.id }) { asset ->
-            // The ViewModel guarantees every asset reaching this list has
-            // a non-null, non-empty extract — see openVariantPicker's
-            // pinnableAssets filter. Treat null as a defensive fallback
-            // and skip the row to keep the dialog tappable everywhere.
+
             val variant = AssetVariant.extract(asset.name)
             if (variant.isNullOrEmpty()) return@items
             val isCurrent = variant.equals(current, ignoreCase = true)

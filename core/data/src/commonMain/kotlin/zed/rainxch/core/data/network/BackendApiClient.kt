@@ -47,12 +47,6 @@ import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.domain.model.ProxyConfig
 import kotlin.coroutines.cancellation.CancellationException
 
-/**
- * Client for GitHub Store's own backend (trending/popular/search).
- * Treated as *discovery* traffic — routes through the discovery-scope
- * proxy so users configuring a proxy for GitHub browsing also have
- * their backend discovery requests proxied consistently.
- */
 class BackendApiClient(
     proxyConfigFlow: StateFlow<ProxyConfig>,
     private val tokenStore: TokenStore,
@@ -223,7 +217,6 @@ class BackendApiClient(
                 parameter("page", page)
                 parameter("per_page", perPage)
                 if (token != null) header(X_GITHUB_TOKEN_HEADER, token)
-                // Cold path: backend goes to GitHub + paginates. 15s covers p99.
                 timeout {
                     requestTimeoutMillis = 15_000
                     socketTimeoutMillis = 15_000
@@ -270,29 +263,6 @@ class BackendApiClient(
                 parameter("per_page", perPage)
                 if (sort != null) parameter("sort", sort)
                 if (type != null) parameter("type", type)
-                if (token != null) header(X_GITHUB_TOKEN_HEADER, token)
-                timeout {
-                    requestTimeoutMillis = 15_000
-                    socketTimeoutMillis = 15_000
-                }
-            }
-            when {
-                response.status.isSuccess() -> Result.success(response.body())
-                response.status == HttpStatusCode.TooManyRequests -> Result.failure(buildRateLimited(response))
-                else -> Result.failure(BackendException(response.status.value))
-            }
-        }
-
-    suspend fun getUserStarred(
-        username: String,
-        page: Int = 1,
-        perPage: Int = 30,
-    ): Result<List<GithubRepoNetworkModel>> =
-        safeCall {
-            val token = currentUserGithubToken()
-            val response = httpClient.get("users/$username/starred") {
-                parameter("page", page)
-                parameter("per_page", perPage)
                 if (token != null) header(X_GITHUB_TOKEN_HEADER, token)
                 timeout {
                     requestTimeoutMillis = 15_000

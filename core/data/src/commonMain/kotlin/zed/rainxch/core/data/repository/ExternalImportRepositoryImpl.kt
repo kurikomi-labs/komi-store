@@ -24,9 +24,8 @@ import zed.rainxch.core.data.local.db.entities.SigningFingerprintEntity
 import zed.rainxch.core.data.mappers.toRepoMatchResults
 import zed.rainxch.core.data.mappers.toRequestItem
 import zed.rainxch.core.data.network.BackendApiClient
-import zed.rainxch.core.data.network.BackendException
 import zed.rainxch.core.data.network.ExternalMatchApi
-import zed.rainxch.core.data.network.RateLimitedException
+import zed.rainxch.core.data.network.ForgejoClientRegistry
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalAppScanner
@@ -38,6 +37,8 @@ import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.core.domain.system.ScanResult
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safePut
+import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.system.InstallerKind
 
 class ExternalImportRepositoryImpl(
     private val scanner: ExternalAppScanner,
@@ -47,11 +48,10 @@ class ExternalImportRepositoryImpl(
     private val legacyDataStore: DataStore<Preferences>,
     private val externalMatchApi: ExternalMatchApi,
     private val backendClient: BackendApiClient,
-    private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
-    private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
+    private val forgejoClientRegistry: ForgejoClientRegistry,
+    private val tweaksRepository: TweaksRepository,
 ) : ExternalImportRepository {
     private val candidateSnapshot = MutableStateFlow<Map<String, ExternalAppCandidate>>(emptyMap())
-
 
     override fun pendingCandidatesFlow(): Flow<List<ExternalAppCandidate>> =
         combine(
@@ -133,7 +133,6 @@ class ExternalImportRepositoryImpl(
             val existing = externalLinkDao.get(pkg)
 
             if (rawCandidate == null) {
-                // Package is genuinely gone (uninstalled). Hard-delete the row.
                 if (existing != null) {
                     externalLinkDao.deleteByPackageName(pkg)
                 }
@@ -141,21 +140,14 @@ class ExternalImportRepositoryImpl(
             }
 
             if (!hasPositiveEvidence(rawCandidate)) {
-                // Package exists but currently has no positive evidence. Only
-                // drop PENDING_REVIEW rows here — preserved decisions
-                // (MATCHED / NEVER_ASK / SKIPPED) must survive a transient
-                // evidence miss (e.g., F-Droid seed not yet synced, manifest
-                // hint changed across reinstall). Deleting them on a single
-                // transient miss would silently wipe the user's decisions.
                 if (existing?.state == ExternalLinkState.PENDING_REVIEW.name) {
                     externalLinkDao.deleteByPackageName(pkg)
                 }
                 return@forEach
             }
 
-            val candidate = rawCandidate
-            deltaCandidates += candidate
-            val updated = mergeCandidate(existing, candidate, now)
+            deltaCandidates += rawCandidate
+            val updated = mergeCandidate(existing, rawCandidate, now)
             if (existing == null) newCandidates++
             if (updated.state == ExternalLinkState.PENDING_REVIEW.name) pendingReview++
             externalLinkDao.upsert(updated)
@@ -182,9 +174,6 @@ class ExternalImportRepositoryImpl(
     override suspend fun resolveMatches(candidates: List<ExternalAppCandidate>): List<RepoMatchResult> {
         if (candidates.isEmpty()) return emptyList()
 
-        // Strategy 3: signing-fingerprint lookup against the local seed
-        // table. Hits are the strongest non-manifest signal we have —
-        // signature equality is cryptographic, no string fuzzing.
         val fingerprintHits = mutableMapOf<String, RepoMatchSuggestion>()
         candidates.forEach { candidate ->
             val fp = candidate.signingFingerprint ?: return@forEach
@@ -219,36 +208,13 @@ class ExternalImportRepositoryImpl(
                 }
         }
 
-        // Strategy 4: query each configured Forgejo / Codeberg host using
-        // the app label as a free-text search term. Strict bounds:
-        //
-        //   * Only run for candidates with no high-confidence existing
-        //     hit (manifest / fingerprint / backend ≥ 0.7). Most installed
-        //     apps either match by fingerprint or have nothing useful to
-        //     match against; running a 5-host fanout per candidate
-        //     blew up scan time from seconds to minutes for users with
-        //     larger installed-app lists.
-        //   * Cap the total number of candidates that trigger a Forgejo
-        //     search per scan invocation, so even worst-case unmatched
-        //     populations don't burn through Codeberg's rate limit
-        //     (2000 req / 300s per IP).
-        //   * The pricier `resolveMatches` callers (full scan) are
-        //     already off the main thread; smart-match's single-
-        //     candidate variant skips the cap.
         val forgejoHits = mutableMapOf<String, MutableList<RepoMatchSuggestion>>()
         val forgejoHostList = forgejoSearchHosts()
-        // When the user has explicitly added custom forges, they care
-        // about forge results enough to warrant a wider sweep — double
-        // the budget so more apps actually get cross-checked against
-        // the user's hosts before we cap out.
         val hasUserHosts = runCatching {
             tweaksRepository.getCustomForgeHosts().first().isNotEmpty()
         }.getOrDefault(false)
         if (forgejoHostList.isNotEmpty()) {
             val totalBudget = if (hasUserHosts) FORGEJO_SEARCH_CANDIDATE_BUDGET * 2 else FORGEJO_SEARCH_CANDIDATE_BUDGET
-            // Build the list of (candidate, query) pairs eligible for
-            // Forgejo search, applying the skip-threshold filter and
-            // candidate budget *before* we issue any HTTP.
             val eligible = candidates.asSequence()
                 .filter { candidate ->
                     val existing = listOfNotNull(
@@ -265,12 +231,6 @@ class ExternalImportRepositoryImpl(
                 .take(totalBudget)
                 .toList()
 
-            // Cross-product (eligibleCandidate × host) flattened into a
-            // single list, then fanned out in parallel using a bounded
-            // semaphore so we don't open more than N concurrent HTTP
-            // sockets at once. Per-call timeout caps tail latency from
-            // a slow host so a single dead instance can't drag the
-            // whole scan past the user's patience threshold.
             data class SearchTask(
                 val packageName: String,
                 val host: String,
@@ -319,9 +279,6 @@ class ExternalImportRepositoryImpl(
             backendResults[candidate.packageName]?.let { suggestions += it }
             forgejoHits[candidate.packageName]?.let { suggestions += it }
             val deduped = suggestions
-                // Dedup across hosts too — a repo can legitimately exist
-                // on both Codeberg and a mirror, but for suggestions we
-                // only want one row per logical {host, owner, repo}.
                 .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
                 .sortedByDescending { it.confidence }
 
@@ -461,9 +418,6 @@ class ExternalImportRepositoryImpl(
                     RepoMatchSuggestion(
                         owner = item.owner.login,
                         repo = item.name,
-                        // Search is the user-driven override path. The
-                        // 0.5 confidence is a placeholder — UX is "I'll
-                        // pick this myself", not a confidence bet.
                         confidence = SEARCH_OVERRIDE_CONFIDENCE,
                         source = RepoMatchSource.SEARCH,
                         stars = item.stargazersCount,
@@ -474,7 +428,6 @@ class ExternalImportRepositoryImpl(
     }
 
     override suspend fun syncSigningFingerprintSeed() {
-        val started = nowMillis()
         var rowsAdded = 0
         try {
             val lastObservedAt = runCatching { signingFingerprintDao.lastSyncTimestamp() }
@@ -556,7 +509,6 @@ class ExternalImportRepositoryImpl(
         if (existing != null && shouldPreserveDecision(existing, now)) {
             return existing.copy(
                 signingFingerprint = candidate.signingFingerprint ?: existing.signingFingerprint,
-                // installerKind is authoritative per-scan from PackageManager; signingFingerprint may briefly be null on extraction failure, so we hold the previous value.
                 installerKind = candidate.installerKind.name,
             )
         }
@@ -590,69 +542,7 @@ class ExternalImportRepositoryImpl(
 
     private fun nowMillis(): Long = Clock.System.now().toEpochMilliseconds()
 
-    private fun bucketCount(n: Int): String =
-        when {
-            n <= 0 -> "0"
-            n <= 2 -> "1-2"
-            n <= 9 -> "3-9"
-            n <= 49 -> "10-49"
-            else -> "50+"
-        }
-
-    private fun bucketCandidateCount(n: Int): String =
-        when {
-            n <= 0 -> "0"
-            n <= 9 -> "1-9"
-            n <= 49 -> "10-49"
-            n <= 199 -> "50-199"
-            else -> "200+"
-        }
-
-    private fun bucketDurationMs(ms: Long): String =
-        when {
-            ms < 500L -> "<500"
-            ms < 2_000L -> "500-2000"
-            ms < 5_000L -> "2000-5000"
-            else -> ">5000"
-        }
-
-    private fun bucketConfidence(c: Double): String =
-        when {
-            c < 0.5 -> "<0.5"
-            c < 0.85 -> "0.5-0.85"
-            else -> ">=0.85"
-        }
-
-    private fun bucketSeedRowsAdded(n: Int): String =
-        when {
-            n <= 0 -> "0"
-            n <= 99 -> "1-99"
-            n <= 999 -> "100-999"
-            else -> "1000+"
-        }
-
-    private fun bucketApiFailure(error: Throwable): String =
-        when (error) {
-            is BackendException -> {
-                val code = error.statusCode
-                if (code in 400..499) "4xx" else "5xx"
-            }
-            is RateLimitedException -> "4xx"
-            else -> "network"
-        }
-
-    /**
-     * Canonical Forgejo hosts we always probe (Codeberg + the public
-     * Gitea/Forgejo demo instances) merged with whatever the user added
-     * under Tweaks → Network → Custom forges. We cap the merged set at
-     * 5 hosts to bound concurrent fanout per match attempt — extra
-     * hosts are dropped silently rather than queued.
-     */
     private suspend fun forgejoSearchHosts(): List<String> {
-        // Mirror the known-Forgejo set in RepositoryUrlParser so the
-        // URL-parse path and the smart-match path stay aligned — a URL
-        // we accept as a Forgejo link is also a host we'll proactively
-        // search during auto-import.
         val canonical = listOf("codeberg.org", "gitea.com", "git.disroot.org")
         val user = runCatching { tweaksRepository.getCustomForgeHosts().first() }
             .getOrNull()
@@ -672,14 +562,8 @@ class ExternalImportRepositoryImpl(
                 limit = FORGEJO_SEARCH_LIMIT,
             ).getOrNull() ?: return emptyList()
             response.data
-                .orEmpty()
                 .take(FORGEJO_SEARCH_LIMIT)
                 .mapIndexed { index, repo ->
-                    // Confidence falls off with rank so the top hit on
-                    // a given host outranks lower hits — but stays
-                    // below the high-confidence GitHub strategies so
-                    // manifest / fingerprint / backend matches still
-                    // sort above when present.
                     val confidence = FORGEJO_SEARCH_BASE_CONFIDENCE -
                         (index * FORGEJO_SEARCH_RANK_DECAY)
                     RepoMatchSuggestion(
@@ -704,42 +588,17 @@ class ExternalImportRepositoryImpl(
         private const val K_INITIAL_SCAN_AT = "external_import_initial_scan_at"
         private const val SKIP_TTL_MILLIS: Long = 7L * 24 * 60 * 60 * 1000
 
-        // Bounds the per-match fanout so a user with many custom forges
-        // doesn't trigger a many-way HTTP burst on every smart-match.
         private const val FORGEJO_SEARCH_MAX_HOSTS = 5
         private const val FORGEJO_SEARCH_LIMIT = 5
 
-        // Hard cap on how many candidates trigger a Forgejo fanout per
-        // resolveMatches call. Smart-match always sends a single
-        // candidate so this only matters for the import-scan path with
-        // dozens to hundreds of installed apps. 12 unmatched candidates
-        // × 5 hosts = at most 60 HTTP calls per scan — well under
-        // Codeberg's rate limit and finishes in seconds.
         private const val FORGEJO_SEARCH_CANDIDATE_BUDGET = 12
 
-        // Confidence threshold above which we DON'T bother running the
-        // Forgejo search — the GitHub-side hit will dominate the
-        // suggestion list and a remote search would be pure waste. 0.7
-        // matches the backend's "confident" bucket.
         private const val FORGEJO_SEARCH_SKIP_THRESHOLD = 0.7
 
-        // Concurrency cap for the parallel fanout — each permit holds
-        // one open HTTP socket. 8 keeps us well below mobile network
-        // stacks' typical 10–16 socket cap and the per-host Forgejo
-        // rate limit (2000 / 300s) at 26 req/s burst headroom even if
-        // every permit hits the same host (which they won't, since
-        // tasks alternate hosts in interleaved order).
         private const val FORGEJO_SEARCH_CONCURRENCY = 8
 
-        // Hard per-call timeout. The shared HttpClient still has a 60s
-        // request timeout for the install path; this is a tighter
-        // wrapper just for smart-match so a single slow / dead host
-        // doesn't drag the scan latency to the floor.
         private const val FORGEJO_SEARCH_PER_CALL_TIMEOUT_MS = 4_000L
 
-        // Sits below the high-confidence GitHub strategies (manifest /
-        // fingerprint / backend) but above zero so Forgejo hits still
-        // surface when nothing else matched.
         private const val FORGEJO_SEARCH_BASE_CONFIDENCE = 0.55
         private const val FORGEJO_SEARCH_RANK_DECAY = 0.08
         private const val MATCH_BATCH_SIZE = 25
@@ -750,12 +609,10 @@ class ExternalImportRepositoryImpl(
         private const val MAX_SEED_PAGES = 50
         private const val SEED_SOURCE_BACKEND = "backend_seed"
 
-        // Stores whose entire catalog is sourced from GitHub releases — apps installed
-        // through them are surfaced even without a manifest hint or fingerprint match.
         private val TRUSTED_GITHUB_INSTALLERS =
             setOf(
-                zed.rainxch.core.domain.system.InstallerKind.STORE_OBTAINIUM,
-                zed.rainxch.core.domain.system.InstallerKind.STORE_FDROID,
+                InstallerKind.STORE_OBTAINIUM,
+                InstallerKind.STORE_FDROID,
             )
     }
 }

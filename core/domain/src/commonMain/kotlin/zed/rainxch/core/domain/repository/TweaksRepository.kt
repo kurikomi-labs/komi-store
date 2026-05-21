@@ -111,31 +111,14 @@ interface TweaksRepository {
 
     suspend fun setMicrosoftTranslatorRegion(region: String)
 
-    /**
-     * Selected UI language as a BCP 47 tag (e.g. `zh-CN`). Emits
-     * `null` when the user hasn't picked one — which means "follow
-     * whatever the JVM/Android locale is" at app start. `null` is
-     * distinct from `""`: the former is the unset state, the latter
-     * would be a malformed user choice we don't support.
-     */
     fun getAppLanguage(): Flow<String?>
 
     suspend fun setAppLanguage(tag: String?)
 
-    /**
-     * When `true`, Details kicks off a translation of the README and
-     * release notes immediately on load, using
-     * [getAutoTranslateTargetLang] as the target. Default `false`.
-     */
     fun getAutoTranslateEnabled(): Flow<Boolean>
 
     suspend fun setAutoTranslateEnabled(enabled: Boolean)
 
-    /**
-     * BCP 47 tag of the language Details auto-translates into when
-     * [getAutoTranslateEnabled] is `true`. `null` falls back to the
-     * UI language ([getAppLanguage]) at translate time.
-     */
     fun getAutoTranslateTargetLang(): Flow<String?>
 
     suspend fun setAutoTranslateTargetLang(tag: String?)
@@ -152,50 +135,22 @@ interface TweaksRepository {
 
     suspend fun setExternalImportBannerDismissedAtCount(count: Int)
 
-    /**
-     * Permanent dismissal flag for the Keep Android Open campaign banner on
-     * Apps. False until user taps the close button; flips to true forever
-     * once dismissed.
-     */
     fun getKaoBannerDismissed(): Flow<Boolean>
 
     suspend fun setKaoBannerDismissed(dismissed: Boolean)
 
-    /**
-     * One-shot flag for the APK Inspect coachmark next to the install
-     * button on the details screen. `false` until the user has seen the
-     * coachmark at least once; flips permanently to `true` thereafter.
-     */
     fun getApkInspectCoachmarkShown(): Flow<Boolean>
 
     suspend fun setApkInspectCoachmarkShown(shown: Boolean)
 
-    /**
-     * One-shot flag for the release-channel coachmark on the Details
-     * screen. Survey signal — users don't realise the per-app channel
-     * chip toggles betas. `false` until shown at least once; permanent
-     * `true` after dismissal.
-     */
     fun getChannelChipCoachmarkShown(): Flow<Boolean>
 
     suspend fun setChannelChipCoachmarkShown(shown: Boolean)
 
-    /**
-     * When true, the release-assets picker on Details shows installers
-     * for every OS (grouped by platform section). When false (default),
-     * only assets installable on the current platform are listed.
-     */
     fun getShowAllPlatforms(): Flow<Boolean>
 
     suspend fun setShowAllPlatforms(enabled: Boolean)
 
-    /**
-     * One-shot watermark for the battery-optimization prompt on
-     * aggressive-OEM ROMs (Oppo / OnePlus / Realme / Xiaomi / vivo /
-     * Honor). `false` until the user has either granted the exemption
-     * or explicitly dismissed the prompt; flips to `true` afterwards
-     * and is never re-shown.
-     */
     fun getBatteryOptimizationPromptDismissed(): Flow<Boolean>
 
     suspend fun setBatteryOptimizationPromptDismissed(dismissed: Boolean)

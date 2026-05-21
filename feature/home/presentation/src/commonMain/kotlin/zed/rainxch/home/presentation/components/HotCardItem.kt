@@ -133,7 +133,7 @@ fun HotCardItem(
             }
         }
     }
-    // Suppress unused dark-mode for now; reserved for future accent-bloom tweak.
+
     @Suppress("UNUSED_EXPRESSION") isDark
 }
 

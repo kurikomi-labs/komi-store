@@ -32,14 +32,6 @@ import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.system.SystemInstallSerializer
 
-/**
- * Background worker that automatically downloads and silently installs
- * available updates via Shizuku.
- *
- * Only runs when auto-update is enabled AND Shizuku installer is selected and READY.
- * Falls back gracefully: if Shizuku becomes unavailable mid-update, remaining apps
- * are skipped and a notification is shown for manual update.
- */
 class AutoUpdateWorker(
     context: Context,
     params: WorkerParameters,
@@ -165,7 +157,7 @@ class AutoUpdateWorker(
         }
 
         Logger.d { "AutoUpdateWorker: Downloading $assetName for ${app.appName}" }
-        downloader.download(assetUrl, assetName).collect { /* consume flow to completion */ }
+        downloader.download(assetUrl, assetName).collect {   }
 
         val filePath =
             downloader.getDownloadedFilePath(assetName)
@@ -174,7 +166,6 @@ class AutoUpdateWorker(
         val apkInfo =
             installer.getApkInfoExtractor().extractPackageInfo(filePath)
 
-        // Validate package name matches (only when extraction succeeded)
         if (apkInfo != null && apkInfo.packageName != app.packageName) {
             Logger.e {
                 "AutoUpdateWorker: Package name mismatch for ${app.appName}! " +

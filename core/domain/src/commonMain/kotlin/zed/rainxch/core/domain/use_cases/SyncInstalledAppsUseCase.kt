@@ -9,18 +9,6 @@ import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.PackageMonitor
 
-/**
- * Use case for synchronizing installed apps state with the system package manager.
- *
- * Responsibilities:
- * 1. Remove apps from DB that are no longer installed on the system
- * 2. Migrate legacy apps missing versionName/versionCode fields
- * 3. Resolve pending installs once they appear in the system package manager
- * 4. Clean up stale pending installs (older than 24 hours)
- * 5. Detect external version changes (downgrades on rooted devices, sideloads, etc.)
- *
- * This should be called before loading or refreshing app data to ensure consistency.
- */
 class SyncInstalledAppsUseCase(
     private val packageMonitor: PackageMonitor,
     private val installedAppsRepository: InstalledAppsRepository,
@@ -28,7 +16,7 @@ class SyncInstalledAppsUseCase(
     private val logger: GitHubStoreLogger,
 ) {
     companion object {
-        private const val PENDING_TIMEOUT_MS = 24 * 60 * 60 * 1000L // 24 hours
+        private const val PENDING_TIMEOUT_MS = 24 * 60 * 60 * 1000L
     }
 
     suspend operator fun invoke(): Result<Unit> =
@@ -43,13 +31,7 @@ class SyncInstalledAppsUseCase(
                 val toResolvePending = mutableListOf<InstalledApp>()
                 val toDeleteStalePending = mutableListOf<String>()
                 val toSyncVersions = mutableListOf<InstalledApp>()
-                // Rows that are confirmed-installed but still carry a
-                // stale `pendingInstallFilePath`. Happens when the user
-                // installed a parked file but the broadcast handler
-                // missed the cleanup (process killed mid-install,
-                // legacy rows from before the cleanup was wired in,
-                // etc.). Without this sweep the apps screen keeps
-                // rendering an "Install" CTA forever.
+
                 val toClearStaleParkedFile = mutableListOf<InstalledApp>()
 
                 appsInDb.forEach { app ->
@@ -72,7 +54,6 @@ class SyncInstalledAppsUseCase(
                             toMigrate.add(app.packageName to migrationResult)
                         }
 
-                        // Detect external version changes (downgrades on rooted devices, sideloads, etc.)
                         isOnSystem && platform == Platform.ANDROID -> {
                             toSyncVersions.add(app)
                         }
@@ -106,12 +87,7 @@ class SyncInstalledAppsUseCase(
                             val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
                             if (systemInfo != null) {
                                 val latestVersionCode = app.latestVersionCode ?: 0L
-                                // Also pin `installedVersion` (tag) to the
-                                // intended new release. Skipping it leaves
-                                // checkForUpdates re-flagging the row as
-                                // updatable on every sweep because the
-                                // tag-string compare keeps seeing the old
-                                // version (#515).
+
                                 val resolvedTag = app.latestVersion ?: systemInfo.versionName
                                 installedAppsRepository.updateApp(
                                     app.copy(
@@ -129,11 +105,7 @@ class SyncInstalledAppsUseCase(
                                 installedAppsRepository.updatePendingStatus(app.packageName, false)
                                 logger.info("Resolved pending install (no system info): ${app.packageName}")
                             }
-                            // Resolution implies the system holds the
-                            // package — drop the parked-file metadata
-                            // so the apps row stops advertising an
-                            // Install CTA on a file the user already
-                            // installed.
+
                             installedAppsRepository.setPendingInstallFilePath(
                                 packageName = app.packageName,
                                 path = null,

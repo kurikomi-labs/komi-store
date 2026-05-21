@@ -60,22 +60,14 @@ class TweaksViewModel(
     private companion object {
         private const val BATTERY_OPT_PREF_READ_TIMEOUT_MS: Long = 1_000
 
-        // IPv4 dotted-quad, each octet 0..255.
         private val IPV4_PATTERN =
             Regex(
                 "^(25[0-5]|2[0-4]\\d|[01]?\\d?\\d)" +
                     "(\\.(25[0-5]|2[0-4]\\d|[01]?\\d?\\d)){3}$",
             )
 
-        // IPv6 literal — character-level only (hex groups + colons,
-        // optional `::` shortcut). Permissive on canonical form because
-        // proxy clients normalize it; we only need to reject "looks
-        // wrong" inputs like `not a url`.
         private val IPV6_PATTERN = Regex("^[0-9A-Fa-f:]+$")
 
-        // RFC 1123 hostname: labels of 1..63 alphanumeric / hyphen,
-        // must start and end with alphanumeric, separated by dots.
-        // Total length capped at 253 by the caller.
         private val HOSTNAME_PATTERN =
             Regex(
                 "^(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)" +
@@ -114,10 +106,7 @@ class TweaksViewModel(
                     hasLoadedInitialData = true
                 }
                 refreshCacheSize()
-                // Re-evaluate on every Tweaks (re-)entry: the user may
-                // have whitelisted the app from system Settings since
-                // the last evaluation, in which case the card should
-                // disappear without requiring an explicit dismiss.
+
                 evaluateBatteryOptimizationCard()
             }.stateIn(
                 scope = viewModelScope,
@@ -215,17 +204,7 @@ class TweaksViewModel(
     }
 
     private fun loadProxyConfig() {
-        // Start one collector per scope. Each updates its slot in the
-        // [TweaksState.proxyForms] map — scopes are independent so the
-        // flows intentionally don't share state.
-        //
-        // If the user has an in-progress edit on a scope (isDraftDirty)
-        // we skip hydration for that scope until they commit (save) or
-        // reset (switch type via OnProxyTypeSelected for None/System).
-        // DataStore emits on *any* preference change — without this
-        // guard, toggling any unrelated setting while the user is mid-
-        // typing in the host field would snap the form back to persisted
-        // values.
+
         ProxyScope.entries.forEach { scope ->
             viewModelScope.launch {
                 proxyRepository.getProxyConfig(scope).collect { config ->
@@ -269,8 +248,6 @@ class TweaksViewModel(
         }
     }
 
-    /** User-triggered form edit — marks the scope dirty so the
-     *  preferences flow won't clobber the edit on an unrelated emit. */
     private fun mutateForm(
         scope: ProxyScope,
         block: (ProxyScopeFormState) -> ProxyScopeFormState,
@@ -283,11 +260,6 @@ class TweaksViewModel(
         }
     }
 
-    /** Transient UI-state mutation (password visibility, test-in-
-     *  progress) — does *not* mark the scope dirty, so toggling the eye
-     *  icon or running a test doesn't block preference hydration. Only
-     *  use for flags that don't represent a real config change the user
-     *  expects to save. */
     private fun mutateFormUi(
         scope: ProxyScope,
         block: (ProxyScopeFormState) -> ProxyScopeFormState,
@@ -299,9 +271,6 @@ class TweaksViewModel(
         }
     }
 
-    /** Clears the dirty flag — call after a successful save or an
-     *  explicit reset so the next preferences emission can re-hydrate
-     *  the form. */
     private fun clearDirty(scope: ProxyScope) {
         _state.update { state ->
             val form = state.formFor(scope)
@@ -604,10 +573,7 @@ class TweaksViewModel(
 
             is TweaksAction.OnProxyTypeSelected -> {
                 mutateForm(action.scope) { it.copy(type = action.type) }
-                // NONE / SYSTEM have no form fields — persist immediately
-                // since there's nothing left for the user to fill in. For
-                // HTTP / SOCKS, wait for an explicit Save so validation
-                // can run against a completed form.
+
                 if (action.type == ProxyType.NONE || action.type == ProxyType.SYSTEM) {
                     val config =
                         if (action.type == ProxyType.NONE) {
@@ -619,8 +585,7 @@ class TweaksViewModel(
                         runCatching {
                             proxyRepository.setProxyConfig(action.scope, config)
                         }.onSuccess {
-                            // Committed — allow preferences-flow hydration
-                            // to resume for this scope.
+
                             clearDirty(action.scope)
                             _events.send(TweaksEvent.OnProxySaved)
                         }.onFailure { error ->
@@ -658,11 +623,7 @@ class TweaksViewModel(
 
             is TweaksAction.OnProxySave -> {
                 val form = _state.value.formFor(action.scope)
-                // Only HTTP/SOCKS need host+port — validate for those
-                // only. NONE/SYSTEM carry no form fields and would
-                // otherwise be rejected with "host required" for no
-                // reason if something ever triggered Save for them
-                // (today the UI doesn't, but defense in depth).
+
                 val config: ProxyConfig =
                     when (form.type) {
                         ProxyType.NONE -> ProxyConfig.None
@@ -733,7 +694,7 @@ class TweaksViewModel(
                         try {
                             proxyTester.test(config)
                         } catch (e: CancellationException) {
-                            // Preserve structured concurrency — never swallow.
+
                             throw e
                         } catch (e: Exception) {
                             ProxyTestOutcome.Failure.Unknown(e.message)
@@ -909,8 +870,7 @@ class TweaksViewModel(
             is TweaksAction.OnTranslationProviderSelected -> {
                 when (action.provider) {
                     TranslationProvider.GOOGLE -> {
-                        // No credentials required — persist immediately
-                        // and clear any pending draft selection.
+
                         _state.update { it.copy(draftTranslationProvider = null) }
                         viewModelScope.launch {
                             tweaksRepository.setTranslationProvider(action.provider)
@@ -929,24 +889,14 @@ class TweaksViewModel(
                                 _events.send(TweaksEvent.OnTranslationProviderSaved)
                             }
                         } else {
-                            // No credentials yet — expose the selection as
-                            // a draft so the UI expands the credentials
-                            // form, but don't commit to storage. If we
-                            // persisted here the next translation attempt
-                            // would fail with "not configured" and any
-                            // other repository that observes the flow
-                            // would snap back on the next re-emission.
-                            // Committed later from [OnYoudaoCredentialsSave].
+
                             _state.update {
                                 it.copy(draftTranslationProvider = TranslationProvider.YOUDAO)
                             }
                         }
                     }
                     TranslationProvider.LIBRE_TRANSLATE -> {
-                        // No gating — repository falls back to the
-                        // public Disroot mirror when no URL configured,
-                        // so first-tap "just works" without going
-                        // through a config dialog.
+
                         _state.update { it.copy(draftTranslationProvider = null) }
                         viewModelScope.launch {
                             tweaksRepository.setTranslationProvider(action.provider)
@@ -1005,12 +955,7 @@ class TweaksViewModel(
                 viewModelScope.launch {
                     tweaksRepository.setYoudaoAppKey(current.youdaoAppKey)
                     tweaksRepository.setYoudaoAppSecret(current.youdaoAppSecret)
-                    // Auto-switch to YOUDAO when the user explicitly saves
-                    // credentials — saves them an extra tap and matches
-                    // the implicit intent ("I just configured this, use
-                    // it"). Also covers the "draft" case where the chip
-                    // was picked but not yet persisted because creds
-                    // were missing.
+
                     val shouldActivate =
                         current.youdaoAppKey.isNotBlank() &&
                             current.youdaoAppSecret.isNotBlank() &&
@@ -1021,8 +966,7 @@ class TweaksViewModel(
                     if (shouldActivate) {
                         tweaksRepository.setTranslationProvider(TranslationProvider.YOUDAO)
                     }
-                    // Drop any draft — either we committed it above or
-                    // the user emptied fields and cancelled implicitly.
+
                     _state.update { it.copy(draftTranslationProvider = null) }
                     _events.send(TweaksEvent.OnYoudaoCredentialsSaved)
                 }
@@ -1205,9 +1149,7 @@ class TweaksViewModel(
                     if (result.isSuccess) {
                         _state.update { it.copy(customForgeDraft = "", customForgeError = null) }
                     } else {
-                        // Surface persistence failure (KSafe write
-                        // rejected by hardware-backed Keystore, etc.)
-                        // instead of silently clearing the draft.
+
                         _state.update {
                             it.copy(
                                 customForgeError = result.exceptionOrNull()?.message
@@ -1234,12 +1176,6 @@ class TweaksViewModel(
         }
     }
 
-    /**
-     * Builds the [ProxyConfig] to test from the current form state for [scope].
-     * For [ProxyType.HTTP] / [ProxyType.SOCKS] this requires a valid host and
-     * port — if either is missing the user is told via an error event and
-     * `null` is returned, mirroring the validation in [TweaksAction.OnProxySave].
-     */
     private fun buildProxyConfigForTest(scope: ProxyScope): ProxyConfig? {
         val form = _state.value.formFor(scope)
         return when (form.type) {
@@ -1286,19 +1222,6 @@ class TweaksViewModel(
         }
     }
 
-    /**
-     * Light-but-real proxy host validator. Accepts:
-     *  - IPv4 dotted-quad (`192.168.1.1`) with octet range 0..255
-     *  - IPv6 literal, with or without surrounding brackets (`::1`,
-     *    `[2001:db8::1]`) — character-level only, doesn't validate
-     *    canonical form
-     *  - RFC 1123 hostname — labels of 1..63 alphanumeric / hyphen
-     *    characters separated by dots, must start/end with alphanumeric
-     *
-     * Rejects: garbage strings (`not a url`), schemes (`http://...`),
-     * paths (`example.com/api`), spaces, control characters. Mirrors the
-     * port validator's "reject and show clear error" contract.
-     */
     private fun isValidProxyHost(raw: String): Boolean {
         val host = raw.trim()
         if (host.isBlank()) return false
@@ -1338,10 +1261,7 @@ class TweaksViewModel(
                 )
 
             is ProxyTestOutcome.Failure.Unknown ->
-                // Raw exception messages are platform-specific, untranslated,
-                // and may leak internal detail — always show the localized
-                // fallback to the user. The original `message` is intentionally
-                // dropped here; surface it via logging if diagnostics are needed.
+
                 TweaksEvent.OnProxyTestError(getString(Res.string.proxy_test_error_unknown))
         }
 }

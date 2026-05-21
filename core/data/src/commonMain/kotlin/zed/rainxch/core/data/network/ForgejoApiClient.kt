@@ -23,8 +23,8 @@ import zed.rainxch.core.domain.model.ProxyConfig
 import java.io.IOException
 
 class ForgejoApiClient(
-    private val host: String,
-    private val proxyConfig: ProxyConfig = ProxyConfig.System,
+    host: String,
+    proxyConfig: ProxyConfig = ProxyConfig.System,
 ) {
     private val baseUrl: String = "https://$host/api/v1"
 
@@ -92,20 +92,6 @@ class ForgejoApiClient(
             }
         }
 
-    /**
-     * Forgejo does **not** expose GitHub's `/readme` convenience
-     * endpoint (verified live against codeberg.org — 404 across every
-     * repo). Use the `/contents/{filepath}` route, which returns the
-     * exact same `{name, path, content, encoding}` shape that the
-     * GitHub readme decoder already handles. The README filename has
-     * to be supplied explicitly; callers typically try `README.md`
-     * first and fall back to listing `/contents/` for `^README(\..+)?$`
-     * matches when that 404s.
-     *
-     * `ref` defaults to the repo's default branch when omitted, but we
-     * pass it explicitly so newly-created repos with a non-`main` HEAD
-     * resolve correctly.
-     */
     suspend fun getContentsFile(
         owner: String,
         repo: String,
@@ -129,13 +115,6 @@ class ForgejoApiClient(
             }
         }
 
-    /**
-     * Release the underlying Ktor HttpClient + its engine. Called by
-     * [ForgejoClientRegistry] when the registry shuts down OR when the
-     * cached client is invalidated (proxy config change). Without this
-     * the engine's connection pool + dispatcher stay alive for the rest
-     * of the process.
-     */
     fun close() {
         runCatching { client.close() }
     }

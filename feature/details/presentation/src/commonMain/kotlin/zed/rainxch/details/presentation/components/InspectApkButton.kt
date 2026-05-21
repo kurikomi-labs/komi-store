@@ -48,15 +48,6 @@ import zed.rainxch.githubstore.core.presentation.res.apk_inspect_coachmark_body
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_coachmark_dismiss
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_coachmark_title
 
-/**
- * Discoverable entry point for the APK Inspect sheet.
- *
- * Renders a 52dp circular icon button next to the install button. When
- * [showCoachmark] is true, the button does a slow pulse + tilt and a
- * tooltip-style coachmark renders above the icon, anchored with an
- * arrow. The coachmark is one-shot per user — tapping it (or the
- * button) dismisses and persists via [onCoachmarkDismiss].
- */
 @Composable
 fun InspectApkButton(
     showCoachmark: Boolean,
@@ -122,7 +113,7 @@ private fun rememberTilt(active: Boolean) =
 private fun Coachmark(onDismiss: () -> Unit) {
     Popup(
         alignment = Alignment.TopEnd,
-        // Render above the button. Negative Y offset moves the popup up.
+
         offset = androidx.compose.ui.unit.IntOffset(x = 0, y = -260),
         properties = PopupProperties(
             focusable = false,
@@ -178,7 +169,7 @@ private fun Coachmark(onDismiss: () -> Unit) {
                     }
                 }
             }
-            // Triangle arrow pointing down at the icon button.
+
             Box(
                 modifier = Modifier
                     .padding(end = 24.dp)

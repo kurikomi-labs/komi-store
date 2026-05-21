@@ -34,15 +34,6 @@ import zed.rainxch.githubstore.core.presentation.res.apps_section_expand
 import zed.rainxch.githubstore.core.presentation.res.apps_section_state_collapsed
 import zed.rainxch.githubstore.core.presentation.res.apps_section_state_expanded
 
-/**
- * Section header shown above each grouped app list. Honours WCAG: the row
- * carries `Role.Button` + `heading()` semantics, announces expanded /
- * collapsed state via `stateDescription`, and includes the item count in
- * the visible label so it's read as part of the heading.
- *
- * Pass [collapsible] = false to render a static heading (e.g. for the
- * always-expanded "Updates available" group).
- */
 @Composable
 fun AppsSectionHeader(
     title: String,

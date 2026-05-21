@@ -43,15 +43,10 @@ class HostTokenRepositoryImpl(
     private val json = Json { ignoreUnknownKeys = true }
 
     init {
-        // Kick off the initial KSafe read so the first collector of
-        // `observeAll()` already sees the persisted list rather than an
-        // empty value emitted from a fresh `MutableStateFlow`.
+
         initScope.launch { runCatching { ensureLoaded() } }
     }
 
-    // `onStart` guarantees the load runs before the first emission, so
-    // collectors that subscribe before `init { … }` lands still get the
-    // persisted list as their initial value.
     override fun observeAll(): Flow<List<HostToken>> =
         cache.asStateFlow().onStart { ensureLoaded() }
 
@@ -148,10 +143,6 @@ class HostTokenRepositoryImpl(
         loaded = true
     }
 
-    // Persists then promotes the in-memory cache. If KSafe write fails,
-    // the in-memory value is rolled back and the exception is thrown so
-    // the caller can surface the failure to the UI instead of pretending
-    // the save succeeded.
     private suspend fun persistOrThrow(list: List<HostToken>) {
         val previous = cache.value
         val encoded = json.encodeToString(ListSerializer(HostToken.serializer()), list)

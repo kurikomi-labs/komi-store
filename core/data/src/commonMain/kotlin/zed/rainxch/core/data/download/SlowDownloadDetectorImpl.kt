@@ -70,10 +70,6 @@ class SlowDownloadDetectorImpl(
         val active = ProxyManager.currentMirror()
         if (active != null && TrafficKind.RELEASE_ASSET in active.trafficKinds) return
 
-        // Mirror's KSafe migration runs on init in MirrorRepositoryImpl. Until
-        // it flips this marker, K_SUGGEST_* read as defaults — which would
-        // re-prompt users who'd already dismissed permanently. Bail out
-        // silently until migration is observed complete.
         val migrationDone = runCatching { ksafe.safeGet(MIRROR_MIGRATION_MARKER, false) }.getOrDefault(false)
         if (!migrationDone) return
 
@@ -87,8 +83,6 @@ class SlowDownloadDetectorImpl(
     }
 
     private companion object {
-        // Same keys MirrorRepositoryImpl writes — shared across both files
-        // to avoid coupling on a constants object that no longer exists.
         const val K_SUGGEST_DISMISSED = "mirror_auto_suggest_dismissed"
         const val K_SUGGEST_SNOOZE = "mirror_auto_suggest_snooze_until"
         const val MIRROR_MIGRATION_MARKER = "__migrated_mirror_v1__"

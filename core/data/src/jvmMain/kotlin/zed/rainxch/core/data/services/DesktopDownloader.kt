@@ -82,9 +82,7 @@ class DesktopDownloader(
         suggestedFileName: String?,
         bypassMirror: Boolean,
     ): Flow<DownloadProgress> =
-        // bypassMirror is a no-op here: this downloader uses OkHttp directly,
-        // not Ktor, so it never traverses MirrorRewriteInterceptor. The caller
-        // (MultiSourceDownloader) already passes the resolved direct/mirror URL.
+
         flow {
             val client = buildClient()
 
@@ -106,8 +104,7 @@ class DesktopDownloader(
             val downloadId = UUID.randomUUID().toString()
 
             val destination = File(dir, safeName)
-            // Each attempt writes to its own temp file so MultiSourceDownloader's
-            // direct/mirror race cannot have two jobs trampling the same path.
+
             val tempFile = File(dir, "$safeName.part-$downloadId")
             if (tempFile.exists()) tempFile.delete()
 
@@ -220,9 +217,7 @@ class DesktopDownloader(
 
     override suspend fun cancelDownload(fileName: String): Boolean =
         withContext(Dispatchers.IO) {
-            // Cancel every in-flight download for this fileName — MultiSource
-            // races run direct + mirror in parallel under the same logical
-            // name, so a single-id lookup would leave one of them running.
+
             val ids = idsByName.remove(fileName)?.toList().orEmpty()
             if (ids.isEmpty()) return@withContext false
 

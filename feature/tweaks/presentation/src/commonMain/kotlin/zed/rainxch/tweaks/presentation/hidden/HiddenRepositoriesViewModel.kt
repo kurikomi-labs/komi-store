@@ -51,8 +51,7 @@ class HiddenRepositoriesViewModel(
     }
 
     private fun unhide(repoId: Long) {
-        // Snapshot the row name BEFORE the flow re-emits without it, so the
-        // success snackbar can name what the user just acted on.
+
         val fullName =
             _state.value.items.firstOrNull { it.repoId == repoId }?.fullName.orEmpty()
         viewModelScope.launch {

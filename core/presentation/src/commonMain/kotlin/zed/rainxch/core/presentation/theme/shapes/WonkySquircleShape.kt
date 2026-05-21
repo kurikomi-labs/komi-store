@@ -11,23 +11,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
-/**
- * Hand-shaped asymmetric corner with elliptical (x ≠ y) radii — the "wonky squircle"
- * from DESIGN.md §5.2 / §7.7 / §16.x. Compose's `RoundedCornerShape` cannot express
- * elliptical corners (it's circular only), so this `Shape` builds a [Path] manually
- * using `arcTo` with rectangular bounds whose width and height are independent.
- *
- * Each corner takes `(rxDp, ryDp)` — the horizontal and vertical sweep of that corner's
- * ellipse arc. The CSS notation `border-radius: 20 14 22 16 / 16 22 14 20` translates to:
- *   topStart  = (20, 16)
- *   topEnd    = (14, 22)
- *   bottomEnd = (22, 14)
- *   bottomStart = (16, 20)
- *
- * Three preset constants ([CtaPrimary], [CtaAlt], [Search]) match the tokens.json
- * `shape.wonkySquircle` block. For ad-hoc corners (sheets / dialogs / toasts), use
- * the [WonkySquircleShape] constructor directly.
- */
 class WonkySquircleShape(
     private val topStart: CornerRadii,
     private val topEnd: CornerRadii,
@@ -51,9 +34,9 @@ class WonkySquircleShape(
             val bsY = bottomStart.ry.toPx().coerceAtMost(size.height / 2f)
 
             val path = Path().apply {
-                // Start at top-start corner end-point (after sweeping in)
+
                 moveTo(tsX, 0f)
-                // Top edge → top-end corner
+
                 lineTo(size.width - teX, 0f)
                 arcToCorner(
                     cornerCenter = Offset(size.width - teX, teY),
@@ -62,7 +45,7 @@ class WonkySquircleShape(
                     startAngle = 270f,
                     sweep = 90f,
                 )
-                // Right edge → bottom-end corner
+
                 lineTo(size.width, size.height - beY)
                 arcToCorner(
                     cornerCenter = Offset(size.width - beX, size.height - beY),
@@ -71,7 +54,7 @@ class WonkySquircleShape(
                     startAngle = 0f,
                     sweep = 90f,
                 )
-                // Bottom edge → bottom-start corner
+
                 lineTo(bsX, size.height)
                 arcToCorner(
                     cornerCenter = Offset(bsX, size.height - bsY),
@@ -80,7 +63,7 @@ class WonkySquircleShape(
                     startAngle = 90f,
                     sweep = 90f,
                 )
-                // Left edge → top-start corner
+
                 lineTo(0f, tsY)
                 arcToCorner(
                     cornerCenter = Offset(tsX, tsY),
@@ -96,7 +79,7 @@ class WonkySquircleShape(
     }
 
     companion object {
-        /** `tokens.json.shape.wonkySquircle.css`: 20 14 22 16 / 16 22 14 20 */
+
         val CtaPrimary = WonkySquircleShape(
             topStart = CornerRadii(20.dp, 16.dp),
             topEnd = CornerRadii(14.dp, 22.dp),
@@ -104,7 +87,6 @@ class WonkySquircleShape(
             bottomStart = CornerRadii(16.dp, 20.dp),
         )
 
-        /** `tokens.json.shape.wonkySquircle.alt`: 22 16 24 18 / 18 24 16 22 */
         val CtaAlt = WonkySquircleShape(
             topStart = CornerRadii(22.dp, 18.dp),
             topEnd = CornerRadii(16.dp, 24.dp),
@@ -112,7 +94,6 @@ class WonkySquircleShape(
             bottomStart = CornerRadii(18.dp, 22.dp),
         )
 
-        /** `tokens.json.shape.wonkySquircle.search`: 24 18 26 20 / 18 24 20 26 */
         val Search = WonkySquircleShape(
             topStart = CornerRadii(24.dp, 18.dp),
             topEnd = CornerRadii(18.dp, 24.dp),
@@ -120,7 +101,6 @@ class WonkySquircleShape(
             bottomStart = CornerRadii(20.dp, 26.dp),
         )
 
-        /** Sheet — square bottom corners (flush to screen edge). */
         val Sheet = WonkySquircleShape(
             topStart = CornerRadii(24.dp, 18.dp),
             topEnd = CornerRadii(18.dp, 24.dp),
@@ -128,7 +108,6 @@ class WonkySquircleShape(
             bottomStart = CornerRadii(0.dp, 0.dp),
         )
 
-        /** Dialog — symmetric-ish wonky. */
         val Dialog = WonkySquircleShape(
             topStart = CornerRadii(28.dp, 22.dp),
             topEnd = CornerRadii(22.dp, 28.dp),
@@ -136,7 +115,6 @@ class WonkySquircleShape(
             bottomStart = CornerRadii(24.dp, 26.dp),
         )
 
-        /** Toast — compact wonky. */
         val Toast = WonkySquircleShape(
             topStart = CornerRadii(18.dp, 14.dp),
             topEnd = CornerRadii(14.dp, 22.dp),

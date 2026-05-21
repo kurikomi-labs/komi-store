@@ -37,7 +37,7 @@ fun CriticalAnnouncementModal(
     onOpenDetails: () -> Unit,
 ) {
     AlertDialog(
-        onDismissRequest = { /* non-dismissible */ },
+        onDismissRequest = {   },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Security,

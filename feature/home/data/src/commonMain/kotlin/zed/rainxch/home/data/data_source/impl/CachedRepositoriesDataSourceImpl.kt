@@ -83,7 +83,6 @@ class CachedRepositoriesDataSourceImpl(
             }
         }
 
-        // Try backend first
         val backendResult = fetchTopicFromBackend(topic, platform)
         if (backendResult != null) {
             cacheMutex.withLock {
@@ -93,7 +92,6 @@ class CachedRepositoriesDataSourceImpl(
             return backendResult
         }
 
-        // Fallback to raw GitHub JSON
         logger.debug("Backend failed for topic $topicCacheKey, falling back to GitHub raw JSON")
         return fetchTopicFromFallback(topic, platform, topicCacheKey)
     }
@@ -115,7 +113,6 @@ class CachedRepositoriesDataSourceImpl(
             }
         }
 
-        // Try backend first
         val backendResult = fetchCategoryFromBackend(category, platform)
         if (backendResult != null) {
             cacheMutex.withLock {
@@ -125,12 +122,9 @@ class CachedRepositoriesDataSourceImpl(
             return backendResult
         }
 
-        // Fallback to raw GitHub JSON
         logger.debug("Backend failed for $cacheKey, falling back to GitHub raw JSON")
         return fetchCategoryFromFallback(category, platform, cacheKey)
     }
-
-    // ── Backend fetchers ──────────────────────────────────────────────
 
     private suspend fun fetchCategoryFromBackend(
         category: HomeCategory,
@@ -185,7 +179,6 @@ class CachedRepositoriesDataSourceImpl(
             }.awaitAll().filterNotNull()
         }
 
-        // Only use backend result if all 4 platforms succeeded (mirrors fallback behavior)
         if (responses.isEmpty() || responses.size < platforms.size) return@withContext null
 
         val merged = responses
@@ -267,7 +260,6 @@ class CachedRepositoriesDataSourceImpl(
             }.awaitAll().filterNotNull()
         }
 
-        // Only use backend result if all 4 platforms succeeded (mirrors fallback behavior)
         if (responses.isEmpty() || responses.size < platforms.size) return@withContext null
 
         val merged = responses
@@ -295,8 +287,6 @@ class CachedRepositoriesDataSourceImpl(
             repositories = merged,
         )
     }
-
-    // ── Fallback fetchers (existing raw GitHub JSON) ──────────────────
 
     private suspend fun fetchCategoryFromFallback(
         category: HomeCategory,
@@ -481,8 +471,6 @@ class CachedRepositoriesDataSourceImpl(
             null
         }
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────
 
     private fun DiscoveryPlatform.toApiSlug(): String? = when (this) {
         DiscoveryPlatform.Android -> "android"

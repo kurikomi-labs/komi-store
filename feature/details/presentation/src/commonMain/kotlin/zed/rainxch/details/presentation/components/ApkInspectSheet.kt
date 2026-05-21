@@ -293,17 +293,6 @@ private fun PermissionsSection(permissions: List<ApkPermission>) {
             return@InspectSection
         }
 
-        // Per-group expand/collapse state lives in the sheet itself —
-        // not worth a VM round-trip. NORMAL / UNKNOWN buckets start
-        // collapsed because they're the long, low-signal lists; the
-        // spicy DANGEROUS / PRIVILEGED / SIGNATURE groups are open.
-        //
-        // Keyed on the permissions reference so opening the sheet for a
-        // different APK rebuilds the map with that APK's defaults
-        // (otherwise a previous app's "expanded NORMAL" choice would
-        // leak forward — fine right now because the sheet is
-        // recreated per visibility toggle, but cheap insurance against
-        // a future change that keeps the sheet alive across inspections).
         val expanded =
             remember(permissions) {
                 mutableStateMapOf<ProtectionLevel, Boolean>().apply {
@@ -435,9 +424,7 @@ private fun PermissionRow(permission: ApkPermission) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            // Demoted to a footnote — small, lower-opacity, monospace.
-            // The technical name is useful for search and bug reports
-            // but it shouldn't compete with the human-readable label.
+
             Text(
                 text = permission.name,
                 style = MaterialTheme.typography.labelSmall,

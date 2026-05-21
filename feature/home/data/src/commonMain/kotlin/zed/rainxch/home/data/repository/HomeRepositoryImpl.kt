@@ -70,9 +70,6 @@ class HomeRepositoryImpl(
         return "home:$category:$token:page$page"
     }
 
-    // Mirror cache only ships per-platform snapshots and a merged "all" file.
-    // For 2-3 platform selections we pull the merged set and filter by
-    // intersection on the client side rather than fetching N snapshots.
     private suspend fun loadCachedReposForSet(
         platforms: Set<DiscoveryPlatform>,
         fetchSingle: suspend (DiscoveryPlatform) -> CachedRepoResponse?,
@@ -547,8 +544,7 @@ class HomeRepositoryImpl(
         return when {
             topics.isEmpty() -> baseQuery
             topics.size == 1 -> "$baseQuery topic:${topics.first()}"
-            // Classic REST search doesn't support parenthesized qualifier grouping.
-            // Repeat the full base query per topic joined with OR.
+
             else -> topics.joinToString(separator = " OR ") { "($baseQuery topic:$it)" }
         }
     }
@@ -562,7 +558,6 @@ class HomeRepositoryImpl(
             DiscoveryPlatform.Linux -> "linux"
         }
 
-    /** Treat `All` and a fully-covering set as "no filter" (empty set). */
     private fun Set<DiscoveryPlatform>.normalize(): Set<DiscoveryPlatform> {
         if (contains(DiscoveryPlatform.All)) return emptySet()
         val real = filter { it != DiscoveryPlatform.All }.toSet()

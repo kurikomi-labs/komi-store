@@ -116,11 +116,7 @@ internal fun LanguageDropdown(
         }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        // Anchor row — tappable area that shows the current value and
-        // toggles the menu. Uses a `surface`-tinted background so it
-        // reads as a pickable control against the parent card's
-        // `surfaceContainer`; the plain clickable row otherwise
-        // blends into the card.
+
         Row(
             modifier =
                 Modifier
@@ -154,15 +150,10 @@ internal fun LanguageDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = RoundedCornerShape(20.dp),
-            // Default menu container is `surfaceContainer`, the same
-            // tone the parent `ElevatedCard` uses — the menu would
-            // visually dissolve into the card. Step up to
-            // `surfaceContainerHigh` so it reads as a distinct popup
-            // layer with the correct elevation contrast.
+
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
-            // Follow-system first — it's the default and users
-            // escaping a wrong-language lock-in look for this first.
+
             DropdownMenuItem(
                 text = { DropdownItemText(stringResource(Res.string.language_follow_system)) },
                 onClick = {
@@ -183,9 +174,7 @@ internal fun LanguageDropdown(
             AppLanguages.ALL.forEach { language ->
                 DropdownMenuItem(
                     text = {
-                        // Native-script label so a user stuck in the
-                        // wrong language can still recognise their
-                        // own and escape.
+
                         DropdownItemText(language.displayName)
                     },
                     onClick = {

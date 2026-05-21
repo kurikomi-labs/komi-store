@@ -26,12 +26,6 @@ import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_updates
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_pinned
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_stale
 
-/**
- * Per-app state flags that the compact row encodes visually. Each flag uses
- * BOTH a unique [DotShape] AND a tinted color so that the cluster passes
- * WCAG 1.4.1 (no information by color alone). Screen readers see the
- * cluster's merged contentDescription via the parent row's semantics.
- */
 data class CompactStatusFlags(
     val filterActive: Boolean = false,
     val variantPinned: Boolean = false,
@@ -42,11 +36,6 @@ data class CompactStatusFlags(
     val updatesIgnored: Boolean = false,
 )
 
-/**
- * Computes the visible status flags for an [AppItem]. Memoised on its
- * inputs so that the row's recomposition doesn't re-allocate the data
- * class on every download-progress tick.
- */
 @Composable
 fun rememberCompactStatusFlags(appItem: AppItem): CompactStatusFlags {
     val app = appItem.installedApp
@@ -72,12 +61,6 @@ fun rememberCompactStatusFlags(appItem: AppItem): CompactStatusFlags {
     }
 }
 
-/**
- * Renders the active flags as a compact row of 8dp shapes. Each flag has a
- * dedicated shape (circle / square / triangle / diamond / ring / chevron) so
- * shape-only viewers (deuteranopia, monochrome themes, low contrast) still
- * tell the flags apart.
- */
 @Composable
 fun StatusDotCluster(
     flags: CompactStatusFlags,
@@ -172,11 +155,6 @@ private fun DrawScope.drawShape(shape: DotShape, color: Color) {
     }
 }
 
-/**
- * Builds the merged accessible name for the row. The name template is
- * read once per row recomposition; the dot cluster itself carries no
- * semantics (decorative).
- */
 @Composable
 fun buildCompactRowSemantics(
     appName: String,

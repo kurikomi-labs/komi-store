@@ -17,10 +17,6 @@ import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.jetbrainsMono
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
-/**
- * Filled © tile (copyleft) or dashed · tile (permissive). Replaces SPDX text label
- * (DESIGN.md §4.1). Uses [Tokens.Licenses] SPDX → posture map.
- */
 @Composable
 fun LicensePosture(
     spdx: String?,

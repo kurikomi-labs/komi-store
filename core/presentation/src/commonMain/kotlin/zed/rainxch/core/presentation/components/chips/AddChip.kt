@@ -21,10 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Dashed "+ Add filter" affordance (DESIGN.md §7.2). Same dimensions as [FilterChip]
- * but with a dashed outline instead of solid.
- */
 @Composable
 fun AddChip(
     label: String,

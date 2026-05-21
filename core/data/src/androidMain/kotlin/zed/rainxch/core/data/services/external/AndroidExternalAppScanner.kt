@@ -22,14 +22,10 @@ class AndroidExternalAppScanner(
 
     override suspend fun isPermissionGranted(): Boolean =
         withContext(Dispatchers.IO) {
-            // Android 11+: getInstalledPackages without QUERY_ALL_PACKAGES returns
-            // only the self-visible subset. We treat "saw something other than self
-            // and the declared <queries> packages" as a proxy for grant.
-            // On API < 30 the permission is not enforced — always granted.
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return@withContext true
             val pkgs = listInstalledPackages(includeMeta = false)
-            // Heuristic: a typical device has 50+ visible packages. With QUERY_ALL_PACKAGES
-            // denied + our <queries> block, we usually see ~5-10. Treat >= 30 visible as granted.
+
             pkgs.size >= GRANT_THRESHOLD
         }
 
@@ -41,8 +37,7 @@ class AndroidExternalAppScanner(
                 if (granted) {
                     0
                 } else {
-                    // soft "we probably can't see ~150 more" estimate; the scanner UI
-                    // marks this as approximate.
+
                     INVISIBLE_GUESS
                 }
             VisiblePackageEstimate(
@@ -76,8 +71,7 @@ class AndroidExternalAppScanner(
     private fun listInstalledPackages(includeMeta: Boolean): List<PackageInfo> {
         val baseFlags =
             if (includeMeta) PackageManager.GET_META_DATA.toLong() else 0L
-        // We deliberately do NOT request signing certificates here — we compute
-        // the fingerprint per-package on demand to keep the bulk listing cheap.
+
         return runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getInstalledPackages(PackageManager.PackageInfoFlags.of(baseFlags))

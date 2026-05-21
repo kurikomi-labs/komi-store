@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ThemeMode
 
-/** Onboarding step enum. Android shows all three; Desktop skips Permissions. */
 enum class OnboardingStep { PALETTE, SIGN_IN, PERMISSIONS }
 
 @Stable

@@ -106,7 +106,6 @@ fun LanguagePicker(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            // Device language shortcut — only shown when not searching
             if (searchQuery.isBlank() && deviceLanguage != null) {
                 Row(
                     modifier =

@@ -4,15 +4,6 @@ import android.content.pm.PackageInfo
 import android.os.Build
 import java.security.MessageDigest
 
-/**
- * Pulls the SHA-256 signing fingerprint out of a [PackageInfo],
- * regardless of whether it was parsed with `GET_SIGNING_CERTIFICATES`
- * (Android P+) or the legacy `GET_SIGNATURES` flag. Returns `null`
- * when no signature data is reachable.
- *
- * Format: hex bytes joined with `:` separators, uppercase — same shape
- * as `keytool -printcert` so users can paste-compare.
- */
 internal object SigningFingerprint {
     fun fromPackageInfo(info: PackageInfo): String? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -21,8 +12,7 @@ internal object SigningFingerprint {
                 if (sigInfo.hasMultipleSigners()) {
                     sigInfo.apkContentsSigners?.firstOrNull()
                 } else {
-                    // signingCertificateHistory is oldest → newest; the
-                    // last entry is the active signer after rotation.
+
                     sigInfo.signingCertificateHistory?.lastOrNull()
                 }
             return cert?.toByteArray()?.let(::sha256)

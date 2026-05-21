@@ -30,9 +30,6 @@ actual class OnboardingPermissionsController internal constructor(
     actual val installSourcesGranted: State<Boolean> = installSources
 
     actual fun requestNotifications() {
-        // POST_NOTIFICATIONS only requestable runtime on Android 13+. On older
-        // releases the permission was install-time, so callers should already
-        // see `granted = true` and never hit this branch.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             launchNotifications()
         } else {
@@ -41,9 +38,6 @@ actual class OnboardingPermissionsController internal constructor(
     }
 
     actual fun requestInstallSources() {
-        // REQUEST_INSTALL_PACKAGES is a Settings toggle, not a runtime prompt.
-        // Deep-link to the per-app screen; the on-resume observer below re-reads
-        // `canRequestPackageInstalls()` once the user returns.
         val intent =
             Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
                 data = Uri.parse("package:${context.packageName}")
@@ -83,8 +77,6 @@ actual fun rememberOnboardingPermissionsController(): OnboardingPermissionsContr
             )
         }
 
-    // Re-read on resume so the install-sources Settings toggle reflects back
-    // when the user returns from the OS Settings screen.
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer =
@@ -106,8 +98,4 @@ private fun readNotificationsGranted(context: android.content.Context): Boolean 
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-private fun readInstallSourcesGranted(context: android.content.Context): Boolean {
-    // canRequestPackageInstalls() exists since API 26 (Oreo). GHS minSdk is 26
-    // (per top CLAUDE.md), so we don't need to gate on Build.VERSION_CODES.O.
-    return context.packageManager.canRequestPackageInstalls()
-}
+private fun readInstallSourcesGranted(context: android.content.Context): Boolean = context.packageManager.canRequestPackageInstalls()

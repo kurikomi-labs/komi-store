@@ -161,23 +161,10 @@ fun ExpandableMarkdownContent(
     val colors = rememberMarkdownColors()
     val typography = rememberMarkdownTypography()
 
-    // Pre-process markdown off the main thread. The theme-aware image rewrite
-    // is regex-heavy; running it inside `remember { ... }` happened on the
-    // composition thread (typically Main) and contributed to the visible
-    // freeze on first render and theme toggle. We launch it on Default and
-    // gate rendering on completion via `fullChunks` being non-null.
-    //
-    // We split the full body into ~4 000-char chunks (kept whole around
-    // code fences). Chunk 0 doubles as the collapsed preview; subsequent
-    // chunks stream in one frame at a time once the user taps Expand.
-    // Crucially, chunk 0 stays mounted across collapse → expand, so the
-    // transition is a height grow rather than a content swap — no flicker.
     var fullChunks by remember(rawMarkdown, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(rawMarkdown, isDark) {
         val processed = withContext(Dispatchers.Default) {
-            // Theme-aware image substitution first, then split adjacent
-            // image-link rows into their own paragraphs so badge stacks
-            // render as block-level images (no inline-overlap).
+
             val themed = applyThemeAwareImages(rawMarkdown, isDark)
             zed.rainxch.core.domain.util.separateAdjacentImageLinks(themed)
         }
@@ -187,9 +174,6 @@ fun ExpandableMarkdownContent(
         fullChunks = chunks
     }
 
-    // Parser + flavour are heavy to construct and identical across recompositions;
-    // hoist them once so they survive content / theme / scroll churn. The Markdown
-    // lib parses lazily on Dispatchers.Default once handed a fresh MarkdownState.
     val flavour = remember { GFMFlavourDescriptor() }
     val parser = remember(flavour) { MarkdownParser(flavour) }
     val components = remember(isDark, imageTransformer) {
@@ -281,21 +265,6 @@ fun ExpandableMarkdownContent(
     }
 }
 
-/**
- * Renders chunked markdown progressively. Chunk 0 is always mounted
- * (used as the collapsed-state preview, clipped by the parent's
- * `Modifier.height(collapsedHeight)` modifier). When `isExpanded` flips
- * true, subsequent chunks stream in one frame at a time without
- * unmounting / remounting chunk 0 — that stable identity is what kills
- * the previous expand-time flicker.
- *
- * Each chunk is its own `Markdown(...)` composable with its own
- * `MarkdownState` (parser runs on `Dispatchers.Default` per the
- * mikepenz lib). The "one per frame" cadence keeps composition cost
- * predictable instead of dropping the entire body's compose pass on
- * Main in a single 4-second hit (observed Davey on a kubernetes-sized
- * README before this change).
- */
 @Composable
 internal fun ProgressiveMarkdown(
     isExpanded: Boolean,
@@ -325,15 +294,11 @@ internal fun ProgressiveMarkdown(
         return
     }
 
-    // Counter starts at 1 so chunk 0 (the natural preview) renders
-    // immediately for the collapsed view. Once the user expands, the
-    // remaining chunks stream in one frame at a time.
     var renderedCount by remember(rawKey) { mutableStateOf(1) }
     LaunchedEffect(rawKey, isExpanded, chunks.size) {
         if (!isExpanded) return@LaunchedEffect
         while (renderedCount < chunks.size) {
-            // Yield to the frame so the previously-added chunk has a chance
-            // to compose + layout + draw before the next chunk arrives.
+
             kotlinx.coroutines.yield()
             renderedCount++
         }

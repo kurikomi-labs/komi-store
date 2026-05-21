@@ -45,10 +45,7 @@ object SigningFingerprintComputer {
     private fun certBytes(info: PackageInfo): ByteArray? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val sigInfo = info.signingInfo ?: return null
-            // Prefer the active signer set. signingCertificateHistory is ordered with
-            // the original cert at index 0 and the current cert at the last index, so
-            // .firstOrNull() would return the pre-rotation cert for v3-rotated apps
-            // and break fingerprint matching against signed binaries.
+
             val current = sigInfo.apkContentsSigners?.firstOrNull()
             val fallback = sigInfo.signingCertificateHistory?.lastOrNull()
             (current ?: fallback)?.toByteArray()

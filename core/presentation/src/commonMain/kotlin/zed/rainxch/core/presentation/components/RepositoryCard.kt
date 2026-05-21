@@ -414,8 +414,7 @@ private fun RepositoryActionsBottomSheet(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
-            // Context header so the user can verify which repo they're
-            // acting on without the card behind the sheet.
+
             Row(
                 modifier =
                     Modifier

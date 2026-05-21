@@ -14,15 +14,11 @@ import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 private fun parseIsoInstantLenient(isoInstant: String): Instant? {
-    // Trim up front so `Instant.parse` doesn't choke on surrounding
-    // whitespace (which it treats as invalid) while `isBlank()` was
-    // already masking the empty-after-trim case.
+
     val trimmed = isoInstant.trim()
     if (trimmed.isEmpty()) return null
     runCatching { return Instant.parse(trimmed) }
 
-    // Backend occasionally returns timestamps without seconds (e.g. "2024-10-16T17:00Z").
-    // Retry after inserting ":00" before the timezone designator.
     val normalized = runCatching {
         val tzStart = trimmed.indexOfAny(charArrayOf('Z', '+', '-'), startIndex = 11)
         if (tzStart < 0) return@runCatching null

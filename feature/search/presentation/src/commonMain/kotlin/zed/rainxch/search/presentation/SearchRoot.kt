@@ -229,11 +229,6 @@ fun SearchScreen(
         }
     }
 
-    // Auto-paginate while every loaded repo is filtered out by the global
-    // "Hide seen" tweak. The grid is empty → scroll-based shouldLoadMore can
-    // never fire (totalItemsCount == 0), so without this the user is stranded
-    // on a blank screen with no way to reach page 2+ where unseen repos may
-    // live. Stops once hasMorePages flips false; the banner then takes over.
     LaunchedEffect(
         state.repositories.size,
         state.visibleRepos.size,
@@ -330,7 +325,7 @@ fun SearchScreen(
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp),
         ) {
-            // Clipboard banner
+
             AnimatedVisibility(
                 visible = state.isClipboardBannerVisible && state.clipboardLinks.isNotEmpty(),
                 enter = slideInVertically() + fadeIn(),
@@ -347,7 +342,6 @@ fun SearchScreen(
                 )
             }
 
-            // Detected links from search query
             AnimatedVisibility(
                 visible = state.detectedLinks.isNotEmpty(),
                 enter = slideInVertically() + fadeIn(),
@@ -527,7 +521,6 @@ fun SearchScreen(
                 )
             }
 
-            // Show search history when query is empty
             if (state.query.isBlank() &&
                 state.repositories.isEmpty() &&
                 state.recentSearches.isNotEmpty() &&
@@ -593,10 +586,6 @@ fun SearchScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = stringResource(Res.string.no_repositories_found))
 
-                            // Backend already did its own passthrough and still found
-                            // nothing — don't tease a manual explore that would just
-                            // redo the same work. Any other case (false / null for
-                            // older backends) keeps the CTA.
                             if (state.passthroughAttempted != true) {
                                 Spacer(Modifier.height(8.dp))
                                 ExploreFromGithubButton(
@@ -608,12 +597,6 @@ fun SearchScreen(
                     }
                 }
 
-                // Auto-paginate is fetching the next page in the background
-                // because every loaded repo is filtered out. Without an
-                // explicit indicator the content area is blank: the top-level
-                // spinner only renders while repositories.isEmpty(), and the
-                // in-grid load-more spinner is unreachable because the grid
-                // itself only renders when visibleRepos is non-empty.
                 if (state.repositories.isNotEmpty() &&
                     state.visibleRepos.isEmpty() &&
                     state.isHideSeenEnabled &&
@@ -637,16 +620,6 @@ fun SearchScreen(
                     }
                 }
 
-                // All currently loaded API hits filtered out by the global
-                // "Hide seen" tweak AND no further pages remain — results
-                // counter still shows the raw total, so without this banner
-                // the user sees "N results found" above an empty grid and
-                // assumes the app is broken (issue #574). `hasMorePages` is
-                // required because the scroll-based pagination above stalls
-                // when totalItemsCount == 0, so we surface the banner only
-                // when there is genuinely nothing more to fetch. While
-                // hasMorePages is true, the auto-paginate effect below pulls
-                // the next page in the background.
                 if (state.repositories.isNotEmpty() &&
                     state.visibleRepos.isEmpty() &&
                     state.isHideSeenEnabled &&
@@ -685,9 +658,7 @@ fun SearchScreen(
                             columns = StaggeredGridCells.Adaptive(350.dp),
                             verticalItemSpacing = 12.dp,
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            // Bottom clearance = nav pill + FAB (~56dp standard M3
-                            // FAB, positioned at bottomNavHeight + 16.dp) + breathing
-                            // room so the last card scrolls fully above both.
+
                             contentPadding =
                                 PaddingValues(
                                     start = 8.dp,
@@ -745,7 +716,6 @@ fun SearchScreen(
                                 }
                             }
 
-                            // "Fetch more from GitHub" explore button
                             if (!state.isLoading && !state.isLoadingMore && state.query.isNotBlank()) {
                                 item {
                                     ExploreFromGithubButton(

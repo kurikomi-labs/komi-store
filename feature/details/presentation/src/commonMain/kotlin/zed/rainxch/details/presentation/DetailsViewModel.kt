@@ -105,9 +105,7 @@ class DetailsViewModel(
     private val repositoryId: Long,
     private val ownerParam: String,
     private val repoParam: String,
-    // Non-null for Forgejo / Codeberg / custom-forge repos. Routes all
-    // DetailsRepository calls through the Forgejo API client instead of
-    // the GitHub-backed default path.
+
     private val sourceHostParam: String?,
     private val detailsRepository: DetailsRepository,
     private val downloader: Downloader,
@@ -189,9 +187,7 @@ class DetailsViewModel(
         logger.debug("Unlinking externally-imported app: $packageName")
         viewModelScope.launch {
             try {
-                // installed_apps + external_links must move together so the
-                // next scan re-proposes a match instead of treating the row
-                // as a healthy tracked app on a stale link.
+
                 installedAppsRepository.executeInTransaction {
                     externalImportRepository.unlink(packageName)
                     installedAppsRepository.deleteInstalledApp(packageName)
@@ -484,9 +480,7 @@ class DetailsViewModel(
             }
 
             DetailsAction.ToggleIncludeBetas -> {
-                // Tapping the chip is the strongest possible signal that
-                // the user has discovered the toggle. No need to keep
-                // pulsing it after that.
+
                 acknowledgeChannelChipCoachmark()
                 toggleIncludeBetas()
             }
@@ -526,11 +520,7 @@ class DetailsViewModel(
             }
 
             is DetailsAction.OnDownloadForTransfer -> {
-                // Cross-platform assets land here when the user picks an
-                // installer for a different OS. Browser handles the
-                // actual save-to-Downloads — keeps install plumbing
-                // unchanged and matches existing "open external link"
-                // flows on Details.
+
                 helper.openUrl(action.assetUrl) { err ->
                     logger.warn("Open transfer download failed: $err")
                 }
@@ -538,14 +528,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Resolves the right APK source and runs [ApkInspector]. Installed
-     * package wins over a parked file when both exist — a successful
-     * install means the manifest on the system is the authoritative
-     * description of what's actually running, even if the bytes that
-     * produced it are still parked. Falls back to the parked file path
-     * for pre-install inspections.
-     */
     private fun openApkInspectSheet() {
         val installed = _state.value.installedApp
         val parkedPath = installed?.pendingInstallFilePath
@@ -581,9 +563,7 @@ class DetailsViewModel(
                     apkInspection = inspection,
                 )
             }
-            // Opening the sheet implicitly satisfies the discoverability
-            // coachmark — no need to keep nudging the user about a
-            // feature they've now used.
+
             acknowledgeApkInspectCoachmark()
         }
     }
@@ -600,12 +580,7 @@ class DetailsViewModel(
     }
 
     private fun acknowledgeChannelChipCoachmark() {
-        // Persist unconditionally — `state.update` with the same value is a
-        // no-op, and `setChannelChipCoachmarkShown(true)` is idempotent.
-        // Skipping persistence when in-memory `pending` is already false
-        // (e.g., toggle + dismiss race) leaves the DataStore flag at false
-        // if the very first persist failed, so the coachmark would
-        // re-appear on next launch.
+
         _state.update { it.copy(isChannelChipCoachmarkPending = false) }
         viewModelScope.launch {
             runCatching { tweaksRepository.setChannelChipCoachmarkShown(true) }
@@ -615,12 +590,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Derived signals surfaced in the Details UX for pre-release
-     * handling (release UX #4 and #6). Computed once per release-list
-     * load and re-used across the two call sites that update state
-     * with a fresh `allReleases`.
-     */
     private data class ReleaseInsights(
         val stalledStableSinceDays: Int?,
         val mergedChangelog: String?,
@@ -633,11 +602,7 @@ class DetailsViewModel(
         allReleases: List<GithubRelease>,
         installedApp: InstalledApp?,
     ): ReleaseInsights {
-        // Merged "What's changed since v…": concatenate release notes
-        // for every release strictly newer than the installed tag,
-        // most-recent-first. Mirrors what app stores do when the user
-        // skips versions between updates — they deserve to see every
-        // intermediate changelog, not just the head one.
+
         val (merged, mergedBase) =
             if (installedApp != null && allReleases.size > 1) {
                 val installedTag = installedApp.installedVersion
@@ -665,11 +630,6 @@ class DetailsViewModel(
                 .filter { !it.isEffectivelyPreRelease() }
                 .maxByOrNull { it.publishedAt }
 
-        // Stalled-project warning: the project has at least one stable
-        // release, has shipped pre-releases on top of it, and the last
-        // stable is older than [STALLED_STABLE_THRESHOLD_DAYS]. That's
-        // the "beta spiral with no stabilisation" signal that warrants
-        // a heads-up before the user opts into betas.
         val stalledDays: Int? =
             run {
                 val stable = latestStable ?: return@run null
@@ -707,13 +667,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Flips the per-app `includePreReleases` flag via
-     * [InstalledAppsRepository.setIncludePreReleases]. Kicks off a
-     * fresh `checkForUpdates` so the new channel takes effect
-     * immediately on-screen instead of waiting for the next
-     * periodic cycle.
-     */
     private fun toggleIncludeBetas() {
         val app = _state.value.installedApp ?: return
         val newValue = !app.includePreReleases
@@ -723,9 +676,7 @@ class DetailsViewModel(
                     packageName = app.packageName,
                     enabled = newValue,
                 )
-                // Re-validate against the new channel immediately so
-                // the user sees the result of the toggle in the next
-                // frame (the DB observer will also refresh state).
+
                 installedAppsRepository.checkForUpdates(app.packageName)
             } catch (e: CancellationException) {
                 throw e
@@ -735,22 +686,9 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Switches the currently-tracked app to the latest stable
-     * release: selects it as the picked release, and triggers the
-     * normal install flow. Reuses the existing `InstallPrimary`
-     * path so downgrade warnings, signing-key checks, and asset
-     * picking all kick in exactly as they do for a manual version
-     * selection.
-     */
     private fun switchToStable() {
         val stable = _state.value.latestStableRelease ?: return
-        // Defence in depth: the chip should already be hidden when the
-        // stable release ships nothing the platform installer can
-        // handle, but a stale state could still drive us here. Resolve
-        // the primary asset up front and bail before the dispatch chain
-        // would otherwise reach `install()` with `primaryAsset = null`
-        // and silently no-op.
+
         val (_, primary) = recomputeAssetsForRelease(stable, _state.value.installedApp)
         if (primary == null) {
             logger.warn(
@@ -762,20 +700,6 @@ class DetailsViewModel(
         onAction(DetailsAction.InstallPrimary)
     }
 
-    /**
-     * Persists the multi-layer fingerprint of [picked] when:
-     *  - the app is already tracked (otherwise there's no row to update —
-     *    the link flow will derive the fingerprint at install time)
-     *  - the picked asset has a non-null fingerprint (single-asset releases
-     *    and unparseable filenames return null)
-     *  - the new fingerprint differs from what's currently stored, OR the
-     *    stale flag is set (re-picking the same variant after a stale event
-     *    must clear the flag)
-     *
-     * Emits a one-time "remembered" toast when the app had no fingerprint
-     * before this pick — that's the user's first time pinning, and the
-     * implicit behaviour deserves to be made explicit.
-     */
     private fun persistPreferredVariantOnPick(picked: GithubAsset) {
         val installedApp = _state.value.installedApp ?: return
         val installable = _state.value.installableAssets
@@ -805,10 +729,6 @@ class DetailsViewModel(
                 pickedIndex == installedApp.pickedAssetIndex &&
                 newSiblingCount == installedApp.pickedAssetSiblingCount
 
-        // Treat the app as "previously unpinned" only when *all* identity
-        // layers are blank — otherwise we'd nag every time the user
-        // re-picked the same variant after the resolver populated the
-        // legacy tail field.
         val isFirstPin =
             currentVariant.isNullOrBlank() &&
                 currentTokens.isNullOrBlank() &&
@@ -869,17 +789,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * One-shot eligibility check for the APK Inspect coachmark. The
-     * coachmark may *only* fire if the user opened this Details screen
-     * with the app already genuinely installed — never as a side effect
-     * of an install completing during the current session. Otherwise
-     * the pulse would render at the exact moment the system install
-     * prompt is up, which is the user's peak-attention frame.
-     */
-    // Reactively flips `isCurrentUserOwner` whenever either the signed-in
-    // user changes (login/logout/switch-account) or the loaded repository
-    // owner login arrives. Avoids touching every repo-assignment site.
     private fun observeCurrentUserForBadge() {
         viewModelScope.launch {
             combine(
@@ -902,13 +811,7 @@ class DetailsViewModel(
                 runCatching { tweaksRepository.getApkInspectCoachmarkShown().first() }
                     .getOrDefault(true)
             if (alreadyShown) return@launch
-            // Wait for `loadInitial` to settle. The first non-loading
-            // emission carries the authoritative `installedApp` for the
-            // app the user is viewing. If it's null (or pending) at
-            // that frame, this screen instance is not eligible — we
-            // never enable the coachmark for the rest of the session,
-            // even if an install completes here. The user will see it
-            // on their next visit instead.
+
             val firstStable = _state.first { !it.isLoading }
             val installedAtOpen =
                 firstStable.installedApp?.isReallyInstalled() == true
@@ -931,10 +834,7 @@ class DetailsViewModel(
                 runCatching { tweaksRepository.getChannelChipCoachmarkShown().first() }
                     .getOrDefault(true)
             if (alreadyShown) return@launch
-            // ChannelChip only renders when the app is tracked
-            // (`installedApp != null` in `ReleaseChannel.releaseChannel`).
-            // No point pulsing a non-existent chip — defer to a future
-            // visit where the user actually has the app installed.
+
             val firstStable = _state.first { !it.isLoading }
             if (firstStable.installedApp == null) return@launch
             _state.update { it.copy(isChannelChipCoachmarkPending = true) }
@@ -955,11 +855,7 @@ class DetailsViewModel(
                         defaultBranch = repo.defaultBranch,
                         sourceHost = sourceHostParam,
                     )
-                // Prefer a release that matches the user's previous category.
-                // Only fall back to the generic "first stable, else first" rule
-                // when no release exists in that category — in which case reset
-                // the category too so the UI doesn't end up with a category
-                // selected but no matching release.
+
                 val byPrevCategory = when (prevCategory) {
                     ReleaseCategory.STABLE -> releases.firstOrNull { !it.isEffectivelyPreRelease() }
                     ReleaseCategory.PRE_RELEASE -> releases.firstOrNull { it.isEffectivelyPreRelease() }
@@ -968,11 +864,7 @@ class DetailsViewModel(
                 val selected = byPrevCategory
                     ?: releases.firstOrNull { !it.isEffectivelyPreRelease() }
                     ?: releases.firstOrNull()
-                // When the previous category yields nothing, derive the
-                // category from the actually-selected release so the
-                // filter matches what's on screen — otherwise a
-                // pre-release-only project leaves the user with category
-                // STABLE and an empty filtered list.
+
                 val resolvedCategory = when {
                     byPrevCategory != null -> prevCategory
                     selected?.isEffectivelyPreRelease() == true -> ReleaseCategory.PRE_RELEASE
@@ -1004,12 +896,7 @@ class DetailsViewModel(
                     it.copy(isRetryingReleases = false, releasesLoadFailed = true)
                 }
             } catch (t: Throwable) {
-                // The detailed cause ("HTTP 403", network error, parse
-                // failure) only matters for telemetry — for the user,
-                // "the release list isn't available right now, try
-                // again in a bit" is the entire signal. Surface the
-                // friendly message via snackbar; keep the raw cause in
-                // logs so support / bug reports can still trace it.
+
                 logger.warn("Retry failed to load releases: ${t.message}")
                 viewModelScope.launch {
                     _events.send(
@@ -1058,22 +945,6 @@ class DetailsViewModel(
         return installable to primary
     }
 
-    /**
-     * Pick the "primary" installed app for a repo when multiple
-     * variants are tracked (e.g. generic + Play-flavored APKs of the
-     * same project). Earlier code picked `apps.firstOrNull()`, which
-     * for OSS-DocumentScanner-style multi-flavor repos could pick the
-     * outdated variant and surface a misleading "Update" CTA even
-     * when the variant the user is actually running is current.
-     * Issue #638.
-     *
-     * Preference order:
-     *   1. Variant whose `assetFilterRegex` matches the current
-     *      primaryAsset name — strongest signal that this row owns
-     *      the selected release asset.
-     *   2. Variant that is up-to-date (`isUpdateAvailable == false`).
-     *   3. First app — preserves prior behavior for single-variant repos.
-     */
     private fun pickPrimaryInstalledApp(
         apps: List<InstalledApp>,
         primaryAssetName: String?,
@@ -1097,21 +968,12 @@ class DetailsViewModel(
                 .getAppsByRepoIdAsFlow(repoId)
                 .distinctUntilChanged()
                 .collect { apps ->
-                    // See [pickPrimaryInstalledApp]. Picks the variant
-                    // that already matches the latest release first,
-                    // so multi-variant projects (e.g. an app shipped
-                    // as both a generic + Play-store-flavored APK)
-                    // don't surface a false "Update" CTA when only one
-                    // of the variants is current. Issue #638.
+
                     val primary = pickPrimaryInstalledApp(
                         apps = apps,
                         primaryAssetName = _state.value.primaryAsset?.name,
                     )
 
-                    // Recompute merged changelog + stalled signals
-                    // against the new installed version — if the
-                    // user just updated externally, the installed
-                    // tag flips and what they've "missed" changes.
                     val insights = computeReleaseInsights(_state.value.allReleases, primary)
                     _state.update {
                         it.copy(
@@ -1609,9 +1471,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 val ext = warning.pendingAssetName.substringAfterLast('.', "").lowercase()
-                // Same Android-only serialization rationale as the primary
-                // install path (`installRelease`): non-Android installers
-                // never receive the broadcast that releases the gate.
+
                 val gatePackageName =
                     if (platform == Platform.ANDROID) warning.pendingApkInfo.packageName else null
                 if (gatePackageName != null) {
@@ -1667,29 +1527,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Entry point for "download + install" from the install button.
-     *
-     * Hands the actual download off to [downloadOrchestrator] (so it
-     * survives this screen being destroyed) and then observes the
-     * orchestrator's state to mirror progress into [DetailsState] and
-     * to dispatch the install dialog flow when bytes are on disk.
-     *
-     * Install policy is decided by installer type:
-     *  - **Shizuku**: [InstallPolicy.AlwaysInstall] — orchestrator
-     *    runs the install in its own scope. The user gets a silent
-     *    install whether they stay on this screen or not. The
-     *    PackageEventReceiver picks up `PACKAGE_REPLACED` and the
-     *    installed-apps DB syncs without further work from the VM.
-     *  - **Regular installer**: [InstallPolicy.InstallWhileForeground]
-     *    — orchestrator parks the file at `AwaitingInstall` and the
-     *    foreground VM (this one) runs the existing dialog flow
-     *    (validation → fingerprint check → installer.install → DB
-     *    save). If the screen leaves before bytes are done, the
-     *    VM's `onCleared` calls [DownloadOrchestrator.downgradeToDeferred],
-     *    the orchestrator notifies the user, and the apps row picks
-     *    up the deferred install.
-     */
     private fun installAsset(
         downloadUrl: String,
         assetName: String,
@@ -1697,11 +1534,7 @@ class DetailsViewModel(
         releaseTag: String,
         isUpdate: Boolean = false,
     ) {
-        // Cancel the existing observation job (if any) — but not the
-        // orchestrator entry itself. A user re-tapping install for a
-        // different asset should preempt the *previous* observer, not
-        // the in-flight download (the orchestrator dedupes by
-        // package name).
+
         currentDownloadJob?.cancel()
         val packageKey = orchestratorKey()
         val asset = _state.value.primaryAsset
@@ -1712,16 +1545,6 @@ class DetailsViewModel(
         }
         currentAssetName = assetName
 
-        // ────────────────────────────────────────────────────────
-        // SHORT-CIRCUIT: parked file matches what the user picked
-        // ────────────────────────────────────────────────────────
-        // If the user already deferred a download for this exact
-        // (releaseTag, assetName) pair (e.g. they navigated away
-        // from Details mid-download, the file got parked, and now
-        // they're back), skip the orchestrator entirely and
-        // dispatch the existing install dialog flow on the parked
-        // file directly. Saves the network round-trip and the
-        // disk space of a duplicate download.
         val parkedFilePath = parkedFilePathIfMatches(releaseTag, assetName)
         if (parkedFilePath != null) {
             logger.debug("Reusing parked file for $releaseTag / $assetName")
@@ -1846,19 +1669,6 @@ class DetailsViewModel(
             }
     }
 
-    /**
-     * Returns the path of a parked install file iff the currently-tracked
-     * app has one AND it represents *this exact* (releaseTag, assetName)
-     * pair AND the file still exists on disk.
-     *
-     * Used as the short-circuit gate in [installAsset] to skip the
-     * orchestrator round-trip when the bytes are already on disk.
-     * Returns `null` (= "do a fresh download") in any of these cases:
-     *  - app not tracked
-     *  - no parked file
-     *  - parked file represents a different version or asset
-     *  - parked file no longer exists (manually deleted, etc.)
-     */
     private fun parkedFilePathIfMatches(
         releaseTag: String,
         assetName: String,
@@ -1869,10 +1679,7 @@ class DetailsViewModel(
         val parkedAsset = installedApp.pendingInstallAssetName ?: return null
         if (parkedVersion != releaseTag) return null
         if (parkedAsset != assetName) return null
-        // Verify the file still exists. If a user manually cleared
-        // their downloads dir between parking and re-opening Details,
-        // the column points at a stale path and we'd hand the
-        // installer a missing file.
+
         return try {
             val file = File(parkedPath)
             if (file.exists() && file.length() > 0) parkedPath else null
@@ -1882,18 +1689,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * Stable orchestrator key for the currently-displayed app.
-     *
-     * Tracked apps key by `packageName` so the apps list and the
-     * details screen point at the same orchestrator entry. Untracked
-     * apps (fresh installs) key by `owner/repo` synthetic — real
-     * package names never contain `/`, so there's no collision risk.
-     *
-     * After a fresh install completes, the InstalledApp row is created
-     * with the real package name; subsequent updates use the real
-     * key. The synthetic key is one-shot and short-lived.
-     */
     private fun orchestratorKey(): String {
         val packageName = _state.value.installedApp?.packageName
         if (packageName != null) return packageName
@@ -1902,19 +1697,6 @@ class DetailsViewModel(
         return "$owner/$name"
     }
 
-    /**
-     * Subscribes to the orchestrator's entry for [packageKey] and
-     * mirrors its state into [DetailsState]. When the entry reaches
-     * [OrchestratorStage.AwaitingInstall] *and* the install policy is
-     * [InstallPolicy.InstallWhileForeground] (i.e. not the Shizuku
-     * silent path), kicks off the existing install dialog flow on
-     * the file path.
-     *
-     * Suspends until the entry reaches a terminal state (`Completed`,
-     * `Cancelled`, `Failed`, or removed from the map). Cancellation
-     * of the *observer* doesn't cancel the orchestrator — that's the
-     * whole point.
-     */
     private suspend fun observeOrchestratorEntry(
         packageKey: String,
         downloadUrl: String,
@@ -1927,9 +1709,7 @@ class DetailsViewModel(
         var telemetryStartFired = false
         downloadOrchestrator.observe(packageKey).collect { entry ->
             if (entry == null) {
-                // Orchestrator dropped the entry (cancelled or
-                // dismissed elsewhere). Tear down our local UI state
-                // and exit the observer.
+
                 if (_state.value.downloadStage != DownloadStage.IDLE) {
                     _state.value =
                         _state.value.copy(
@@ -1941,11 +1721,6 @@ class DetailsViewModel(
                 return@collect
             }
 
-            // Mirror progress into local state for the UI. Update
-            // bytes too — the live byte counter is what users see
-            // when content-length is small enough that the percent
-            // doesn't tick smoothly. The orchestrator emits both on
-            // every chunk so the UI gets a continuous update.
             _state.value =
                 _state.value.copy(
                     downloadProgressPercent = entry.progressPercent,
@@ -1955,7 +1730,7 @@ class DetailsViewModel(
 
             when (entry.stage) {
                 OrchestratorStage.Queued -> {
-                    // Nothing UI-visible — same as DOWNLOADING placeholder
+
                     _state.value = _state.value.copy(downloadStage = DownloadStage.DOWNLOADING)
                 }
 
@@ -1964,9 +1739,7 @@ class DetailsViewModel(
                 }
 
                 OrchestratorStage.Installing -> {
-                    // Either the orchestrator's bare-install path
-                    // (Shizuku) or our own install fired below. Either
-                    // way, surface the INSTALLING stage.
+
                     _state.value = _state.value.copy(downloadStage = DownloadStage.INSTALLING)
 
                     if (!telemetryStartFired) {
@@ -1977,12 +1750,7 @@ class DetailsViewModel(
                 }
 
                 OrchestratorStage.AwaitingInstall -> {
-                    // Bytes are on disk. For the foreground path
-                    // (regular installer), this is our cue to run
-                    // the existing dialog/validation/install flow.
-                    // For the Shizuku path the orchestrator already
-                    // moved past Installing → Completed before we
-                    // ever see AwaitingInstall (it doesn't park).
+
                     if (installFired) return@collect
                     installFired = true
                     val filePath = entry.filePath ?: return@collect
@@ -1999,10 +1767,7 @@ class DetailsViewModel(
                         _state.value.repository?.id?.let { id ->
                         }
                     }
-                    // Run the existing install dialog flow on the
-                    // downloaded file. This is the unchanged
-                    // validation + fingerprint + installer + DB save
-                    // path that the VM has always owned.
+
                     try {
                         installAsset(
                             isUpdate = isUpdate,
@@ -2012,9 +1777,7 @@ class DetailsViewModel(
                             sizeBytes = sizeBytes,
                             releaseTag = releaseTag,
                         )
-                        // Successful install — release the entry
-                        // from the orchestrator so the apps row
-                        // doesn't keep showing "ready to install".
+
                         downloadOrchestrator.dismiss(packageKey)
                     } catch (e: kotlinx.coroutines.CancellationException) {
                         throw e
@@ -2162,9 +1925,7 @@ class DetailsViewModel(
 
             when (validationResult) {
                 is ApkValidationResult.ExtractionFailed -> {
-                    // Don't block installation — proceed without
-                    // validation (same as the Shizuku path).
-                    // PackageEventReceiver will sync the DB post-install.
+
                     logger.warn(
                         "Could not extract APK info for $assetName, " +
                             "proceeding with unvalidated install",
@@ -2231,9 +1992,6 @@ class DetailsViewModel(
             }
         }
 
-        // Serialize Android system installer dialogs only — desktop
-        // installers don't fire the broadcast that releases the gate, so
-        // gating there would block the next install for the full timeout.
         val gatePackageName =
             if (platform == Platform.ANDROID) validatedApkInfo?.packageName else null
         if (gatePackageName != null) {
@@ -2249,7 +2007,6 @@ class DetailsViewModel(
                 throw e
             }
 
-        // Launch attestation check asynchronously (non-blocking)
         launchAttestationCheck(filePath)
 
         if (platform == Platform.ANDROID && validatedApkInfo != null) {
@@ -2317,8 +2074,7 @@ class DetailsViewModel(
     ) {
         val repo = _state.value.repository ?: return
         val isPending = installOutcome != InstallOutcome.COMPLETED
-        // Only carry the parked path through when the row is actually
-        // pending — a completed install must not store a stale pointer.
+
         val pendingPath = parkedFilePath?.takeIf { isPending }
 
         if (isUpdate) {
@@ -2331,9 +2087,7 @@ class DetailsViewModel(
                     isPendingInstall = isPending,
                 ),
             )
-            // For pending updates, also park the file path on the row
-            // so the apps list can resume the install in one tap if
-            // the user dismissed the system prompt.
+
             if (pendingPath != null) {
                 runCatching {
                     installedAppsRepository.setPendingInstallFilePath(
@@ -2347,10 +2101,7 @@ class DetailsViewModel(
                 }
             }
         } else {
-            // Snapshot the installable list as the user saw it at install
-            // time — this is the reference the variant fingerprint is
-            // relative to (pinning "the same kind of APK" means the same
-            // choice among these specific siblings).
+
             val installable = _state.value.installableAssets
             val pickedIndex = installable
                 .indexOfFirst { it.name == assetName }
@@ -2375,14 +2126,6 @@ class DetailsViewModel(
         }
     }
 
-    /**
-     * "Download only" entry point — used by the action that
-     * downloads an asset without auto-installing it (e.g. for users
-     * who want to side-load via a different installer). Routes
-     * through the orchestrator with [InstallPolicy.DeferUntilUserAction]
-     * so the file is parked at AwaitingInstall and the user can pick
-     * it up from the apps row whenever they're ready.
-     */
     private fun downloadAsset(
         downloadUrl: String,
         assetName: String,
@@ -2392,7 +2135,7 @@ class DetailsViewModel(
         currentDownloadJob?.cancel()
         val packageKey = orchestratorKey()
         val repository = _state.value.repository ?: return
-        // Use the exact asset the user tapped, not the auto-picked primary.
+
         val asset = _state.value.selectedRelease?.assets
             ?.find { it.downloadUrl == downloadUrl }
             ?: _state.value.primaryAsset
@@ -2496,20 +2239,9 @@ class DetailsViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        // Cancel the orchestrator OBSERVER (not the orchestrator
-        // entry itself). The download keeps running in the
-        // application-scoped orchestrator scope.
+
         currentDownloadJob?.cancel()
 
-        // Tell the orchestrator that the foreground watcher is gone:
-        // any in-flight download with policy InstallWhileForeground
-        // should switch to DeferUntilUserAction so the file gets
-        // parked + the user gets a notification when bytes are done.
-        // Race-safe — the orchestrator handles "already past park
-        // time" by retroactively notifying.
-        //
-        // NonCancellable so the call runs to completion even though
-        // viewModelScope is being torn down around us.
         val packageKey = orchestratorKey()
         viewModelScope.launch(NonCancellable) {
             try {
@@ -2535,10 +2267,7 @@ class DetailsViewModel(
 
                 val repo =
                     when {
-                        // Forgejo / Codeberg path — repoId is a synthetic
-                        // foreign id (see RepoIdCodec), so the GitHub
-                        // `/repositories/{id}` endpoint can't resolve it.
-                        // Owner+name must be supplied by the caller.
+
                         sourceHostParam != null -> {
                             if (ownerParam.isBlank() || repoParam.isBlank()) {
                                 error("Foreign-source Details opened without owner/repo for host=$sourceHostParam")
@@ -2559,10 +2288,6 @@ class DetailsViewModel(
                     }
                 launch { seenReposRepository.markAsSeen(repo) }
 
-                // Launch both checks in parallel before awaiting either —
-                // previously `isFavoriteDeferred.await()` ran before
-                // `isStarredDeferred` was even started, serialising two
-                // independent reads on the Details screen cold path.
                 val isFavoriteDeferred =
                     async {
                         try {
@@ -2653,10 +2378,7 @@ class DetailsViewModel(
 
                 val userProfileDeferred =
                     async {
-                        // GitHub user profile lookup is GitHub-only — skip
-                        // for Forgejo / Codeberg repos to avoid hitting the
-                        // wrong API + leaking a 404 toast. Author card just
-                        // hides when null.
+
                         if (sourceHostParam != null) return@async null
                         try {
                             detailsRepository.getUserProfile(owner)
@@ -2674,7 +2396,6 @@ class DetailsViewModel(
                         try {
                             val dbApps = installedAppsRepository.getAppsByRepoId(repo.id)
 
-                            // Reconcile pending-install status for each tracked app
                             dbApps.map { dbApp ->
                                 if (dbApp.isPendingInstall &&
                                     packageMonitor.isPackageInstalled(dbApp.packageName)
@@ -2712,12 +2433,7 @@ class DetailsViewModel(
                 )
 
                 if (rateLimited.get()) {
-                    // Any deferred tripping the rate-limit flag leaves the UI
-                    // in an incomplete state. Flag the releases section as
-                    // failed so it renders its FAILED card with a Retry
-                    // affordance instead of the misleading EMPTY card ("no
-                    // releases published yet") — the default would be EMPTY
-                    // because allReleases stays at its initial empty list.
+
                     _state.value = _state.value.copy(
                         isLoading = false,
                         errorMessage = null,
@@ -2769,7 +2485,6 @@ class DetailsViewModel(
                         latestStableHasInstallableAsset =
                             insights.latestStableHasInstallableAsset,
                     )
-
 
                 observeInstalledApp(repo.id)
 
@@ -2832,9 +2547,7 @@ class DetailsViewModel(
         _state.update { it.copy(isRefreshing = true) }
         viewModelScope.launch {
             try {
-                // Refresh is GitHub-backend-only. For Forgejo repos there's
-                // no backend mediator; we just re-fetch via the Forgejo APIs
-                // directly using the same load path.
+
                 val refreshed = if (sourceHostParam != null) {
                     detailsRepository.getRepositoryByOwnerAndName(
                         owner = owner,
@@ -2966,9 +2679,7 @@ class DetailsViewModel(
                 tweaksRepository.getAutoTranslateEnabled().first()
             }.getOrDefault(false)
             if (!enabled) return@launch
-            // Treat blank explicit target as "unset" so fallback chain can
-            // run — `explicit = ""` would otherwise short-circuit the
-            // `?:` operator and disable auto-translate.
+
             val explicit = runCatching {
                 tweaksRepository.getAutoTranslateTargetLang().first()
             }.getOrNull()?.takeIf { it.isNotBlank() }
@@ -2991,12 +2702,7 @@ class DetailsViewModel(
                     getCurrentState = { _state.value.aboutTranslation },
                 )
             }
-            // Source-language guard mirrors the README branch — if the
-            // release-notes source language already matches the target,
-            // skip the translation round-trip. The release model carries
-            // no language hint, so we fall back to `readmeLanguage` as the
-            // best available signal for repositories that consistently
-            // author release notes in the repo's primary language.
+
             val releaseSourceLang = currentReadmeLang
             if (!releaseDescription.isNullOrBlank() &&
                 _state.value.whatsNewTranslation.translatedText == null &&

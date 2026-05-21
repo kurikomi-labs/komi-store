@@ -68,7 +68,7 @@ class AnnouncementsCacheStoreImpl(
         if (!legacy.isNullOrEmpty()) {
             val putOk = ksafe.safePut(K_CACHED_PAYLOAD, legacy)
             if (!putOk) {
-                // Don't drop the only copy if write failed; retry next launch.
+
                 return
             }
             runCatching {

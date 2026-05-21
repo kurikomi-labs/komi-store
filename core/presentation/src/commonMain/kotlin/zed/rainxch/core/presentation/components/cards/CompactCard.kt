@@ -12,11 +12,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Compact card archetype — surface bg, dashed-border footer (composed by caller),
- * card-sized asymmetric squircle (DESIGN.md §7.3). Used by Hot release cards,
- * Trending cards, etc. Caller supplies internal layout via slot.
- */
 @Composable
 fun CompactCard(
     modifier: Modifier = Modifier,

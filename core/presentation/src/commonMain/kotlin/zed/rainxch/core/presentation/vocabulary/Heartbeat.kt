@@ -22,15 +22,6 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalMotion
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 
-/**
- * Pulsing dot that animates per maintenance state. Periods (DESIGN.md §6.1):
- * active 1.4s / recent 2.4s / quiet 4.2s / dormant = static grey (no animation).
- *
- * Per the android-compose-ui skill, animation drives a `graphicsLayer` to avoid
- * recomposition; the surrounding [Box] hosts the layout. Don't pair with
- * [FreshnessRing] in dense list rows — they compete for the same "is this alive"
- * attention (DESIGN.md §6.1 closing rule).
- */
 @Composable
 fun Heartbeat(
     daysSinceCommit: Int,
@@ -43,7 +34,7 @@ fun Heartbeat(
     val color = heartbeatColor(daysSinceCommit, status)
 
     if (periodMs == null) {
-        // Dormant — static muted dot
+
         Box(
             modifier = modifier
                 .size(sizeDp.dp)
@@ -85,7 +76,7 @@ fun Heartbeat(
         modifier = modifier.size(sizeDp.dp),
         contentAlignment = Alignment.Center,
     ) {
-        // Halo via drawBehind to avoid recomposition
+
         Box(
             modifier = Modifier
                 .size(sizeDp.dp)
@@ -98,7 +89,7 @@ fun Heartbeat(
                     )
                 },
         )
-        // Dot scales via graphicsLayer (no recomposition)
+
         Box(
             modifier = Modifier
                 .size(sizeDp.dp)

@@ -42,10 +42,6 @@ fun preprocessMarkdown(
             (lower.contains("/badge") && isSvgUrl(lower))
     }
 
-    // SVGs are no longer skipped wholesale — Coil's SVG decoder now
-    // handles them (registered in the App composable). Only known badge
-    // / shields services stay skipped because they're noise even when
-    // rendered correctly (status badges = clutter on small screens).
     fun shouldSkipImage(url: String): Boolean = isBadgeUrl(url)
 
     fun resolveUrl(path: String): String {
@@ -83,13 +79,6 @@ fun preprocessMarkdown(
         }
     }
 
-    // ========================================================================
-    // Phase 0: Handle reference-style markdown definitions and usages
-    // ========================================================================
-    // Reference definitions: [ref-name]: https://example.com/image.svg
-    // Reference usages: ![alt][ref-name] or [![img-ref]][link-ref]
-
-    // 0a. Parse all reference definitions
     val refDefinitionRegex =
         Regex(
             """^\[([^\]]+)\]:\s*(\S+).*$""",
@@ -102,14 +91,12 @@ fun preprocessMarkdown(
         referenceMap[refName] = url
     }
 
-    // 0b. Identify which references point to SVGs/badges
     val skipRefNames =
         referenceMap
             .filter { (_, url) ->
                 shouldSkipImage(resolveUrl(url))
             }.keys
 
-    // 0c. Remove reference-style image usages that point to SVGs: ![alt][svg-ref]
     if (skipRefNames.isNotEmpty()) {
         processed =
             processed.replace(
@@ -125,7 +112,6 @@ fun preprocessMarkdown(
             }
     }
 
-    // 0d. Resolve remaining reference-style images to inline format: ![alt][ref] → ![alt](url)
     processed =
         processed.replace(
             Regex("""!\[([^\]]*)\]\[([^\]]+)\]"""),
@@ -141,8 +127,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 0e. Handle nested badge-as-link patterns: [![badge-ref]][link-ref]
-    // After 0c strips the inner image, this can leave [**text**][link-ref] or [][link-ref]
     processed =
         processed.replace(
             Regex("""\[(\*\*[^*]*\*\*)\]\[([^\]]+)\]"""),
@@ -156,14 +140,13 @@ fun preprocessMarkdown(
                 boldText
             }
         }
-    // Clean empty bracket patterns left from stripped badge images: [][ref]
+
     processed =
         processed.replace(
             Regex("""\[\s*\]\[([^\]]+)\]"""),
             "",
         )
 
-    // 0f. Handle reference-style links: [text][ref] → [text](url)
     processed =
         processed.replace(
             Regex("""\[([^\]]+)\]\[([^\]]+)\]"""),
@@ -171,7 +154,7 @@ fun preprocessMarkdown(
             val text = match.groupValues[1]
             val refName = match.groupValues[2].lowercase()
             val url = referenceMap[refName]
-            // Don't convert if text looks like it was already an image (starts with !)
+
             if (url != null && !text.startsWith("!")) {
                 "[$text](${resolveUrl(url)})"
             } else {
@@ -179,7 +162,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 0g. Remove all reference definitions that were resolved
     processed =
         processed.replace(
             Regex("""^\[([^\]]+)\]:\s*\S+.*$""", RegexOption.MULTILINE),
@@ -188,14 +170,6 @@ fun preprocessMarkdown(
             if (refName in referenceMap) "" else match.value
         }
 
-    // ========================================================================
-    // Phase 0.5: <details>/<summary> normalisation
-    // ========================================================================
-    // Must run BEFORE Phase 1 — once `<br>` → `\n` and `<div>` → `\n\n`
-    // pass over a table cell, the row gets split and our context check
-    // (`linePrefix.contains('|')`) below would no longer see the pipe.
-    // Inline / table-cell details flatten to one line; standalone block
-    // details emit a fenced `ghs-details` block for ExpandableDetails.
     processed =
         processed.replace(
             Regex(
@@ -212,9 +186,7 @@ fun preprocessMarkdown(
             val mustFlatten = isInline || isInTableCell
 
             if (mustFlatten) {
-                // Collapse any whitespace (incl. embedded HTML tags
-                // that would otherwise expand to newlines) to single
-                // spaces so the result stays on one source line.
+
                 val flatBody = body
                     .replace(Regex("""<br\s*/?>""", RegexOption.IGNORE_CASE), " ")
                     .replace(Regex("""\s+"""), " ")
@@ -227,21 +199,13 @@ fun preprocessMarkdown(
                 }
             } else {
                 val encodedSummary = encodeDetailsSummary(summary)
-                // Body may contain its own ```fenced``` code blocks. Pick a
-                // fence delimiter at least one backtick longer than the
-                // longest run inside the body so nested fences don't
-                // terminate our wrapper early.
+
                 val longestRun = longestBacktickRun(body)
                 val fence = "`".repeat(maxOf(4, longestRun + 1))
                 "\n\n${fence}ghs-details|$encodedSummary\n$body\n$fence\n\n"
             }
         }
 
-    // ========================================================================
-    // Phase 1: HTML → Markdown conversions
-    // ========================================================================
-
-    // 1. Unwrap <picture> elements → keep only the <img> fallback
     processed =
         processed.replace(
             Regex(
@@ -251,14 +215,13 @@ fun preprocessMarkdown(
         ) { match ->
             match.groupValues[1]
         }
-    // Also strip orphaned <source> tags (outside <picture>)
+
     processed =
         processed.replace(
             Regex("""<source\s[^>]*?/?>""", RegexOption.IGNORE_CASE),
             "",
         )
 
-    // 2. Unwrap <a> tags that wrap <img> tags — keep the <img> for step 3
     processed =
         processed.replace(
             Regex(
@@ -269,7 +232,6 @@ fun preprocessMarkdown(
             match.groupValues[1]
         }
 
-    // 3. Convert <img> tags → markdown images (handles multiline img tags)
     processed =
         processed.replace(
             Regex(
@@ -298,7 +260,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 4. Normalize markdown image URLs (resolve relative, normalize GitHub blob)
     processed =
         processed.replace(
             Regex("""!\[([^\]]*)\]\(([^)]+)\)"""),
@@ -314,7 +275,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 5. Handle <video> tags → markdown link or remove
     processed =
         processed.replace(
             Regex(
@@ -325,7 +285,7 @@ fun preprocessMarkdown(
             val src = match.groupValues[2]
             "[Video](${resolveUrl(src)})"
         }
-    // Video with <source> inside
+
     processed =
         processed.replace(
             Regex(
@@ -337,7 +297,6 @@ fun preprocessMarkdown(
             "[Video](${resolveUrl(src)})"
         }
 
-    // 6. Convert HTML headings <h1>–<h6> → markdown headings
     for (level in 1..6) {
         val hashes = "#".repeat(level)
         processed =
@@ -352,7 +311,6 @@ fun preprocessMarkdown(
             }
     }
 
-    // 7. Convert <br> and <hr> tags
     processed =
         processed.replace(
             Regex("""<br\s*/?>""", RegexOption.IGNORE_CASE),
@@ -364,8 +322,6 @@ fun preprocessMarkdown(
             "\n---\n",
         )
 
-    // 8. Convert inline formatting tags
-    // <b> / <strong> → **text**
     processed =
         processed.replace(
             Regex(
@@ -375,7 +331,7 @@ fun preprocessMarkdown(
         ) { match ->
             "**${match.groupValues[2]}**"
         }
-    // <i> / <em> → *text*
+
     processed =
         processed.replace(
             Regex(
@@ -385,9 +341,7 @@ fun preprocessMarkdown(
         ) { match ->
             "*${match.groupValues[2]}*"
         }
-    // <pre><code class="language-XYZ"> → ``` fence with language hint.
-    // Must run BEFORE the single-line <code> rule below — that one would
-    // otherwise grab the inner <code> and lose the language attribute.
+
     processed =
         processed.replace(
             Regex(
@@ -399,7 +353,7 @@ fun preprocessMarkdown(
             val code = match.groupValues[2]
             "\n```$lang\n$code\n```\n"
         }
-    // <code> → `text` (single-line only, not <pre><code>)
+
     processed =
         processed.replace(
             Regex(
@@ -409,7 +363,7 @@ fun preprocessMarkdown(
         ) { match ->
             "`${match.groupValues[1]}`"
         }
-    // <blockquote>X</blockquote> → markdown `> ` lines.
+
     processed =
         processed.replace(
             Regex(
@@ -420,7 +374,7 @@ fun preprocessMarkdown(
             val body = match.groupValues[1].trim()
             body.lineSequence().joinToString("\n") { "> $it" }
         }
-    // <s> / <del> / <strike> → ~~text~~
+
     processed =
         processed.replace(
             Regex(
@@ -431,7 +385,6 @@ fun preprocessMarkdown(
             "~~${match.groupValues[2]}~~"
         }
 
-    // 9. Convert <a href="url">text</a> → [text](url) (non-image links)
     processed =
         processed.replace(
             Regex(
@@ -449,7 +402,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 10. <kbd> → `text`
     processed =
         processed.replace(
             Regex(
@@ -460,8 +412,6 @@ fun preprocessMarkdown(
             "`${match.groupValues[1]}`"
         }
 
-    // 11. Strip remaining wrapper tags (keep content)
-    // <div> tags
     processed =
         processed.replace(
             Regex("""<div[^>]*?>\s*""", RegexOption.IGNORE_CASE),
@@ -472,7 +422,7 @@ fun preprocessMarkdown(
             Regex("""</div>\s*""", RegexOption.IGNORE_CASE),
             "\n\n",
         )
-    // <p> / </p>
+
     processed =
         processed.replace(
             Regex("""<p[^>]*?>""", RegexOption.IGNORE_CASE),
@@ -483,8 +433,7 @@ fun preprocessMarkdown(
             Regex("""</p>""", RegexOption.IGNORE_CASE),
             "\n",
         )
-    // Handle bare/stripped <details> without inner <summary> — keep
-    // contents as plain markdown.
+
     processed =
         processed.replace(
             Regex("""</?details[^>]*?>""", RegexOption.IGNORE_CASE),
@@ -499,11 +448,7 @@ fun preprocessMarkdown(
         ) { match ->
             "**${match.groupValues[1].trim()}**\n"
         }
-    // <sup>X</sup> / <sub>X</sub> → Unicode superscript/subscript chars
-    // where mappable (digits + operators + a few letters). Falls back
-    // to the literal char when no Unicode codepoint exists — markdown
-    // lib doesn't expose inline BaselineShift, so this is the best we
-    // can do without a custom text span.
+
     processed =
         processed.replace(
             Regex("""<sup[^>]*>(.*?)</sup>""", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)),
@@ -516,13 +461,13 @@ fun preprocessMarkdown(
         ) { match ->
             match.groupValues[1].map { SUBSCRIPTS[it] ?: it }.joinToString("")
         }
-    // <span> — strip tags, keep content
+
     processed =
         processed.replace(
             Regex("""</?span[^>]*?>""", RegexOption.IGNORE_CASE),
             "",
         )
-    // Strip other common straggler HTML tags
+
     processed =
         processed.replace(
             Regex(
@@ -532,11 +477,8 @@ fun preprocessMarkdown(
             "\n",
         )
 
-    // 12. Decode HTML entities. Named entity table covers the long tail
-    //     of READMEs (©, ™, ‘curly quotes’, em/en-dash, ellipsis,
-    //     French/Spanish quotation marks, currency symbols).
     HTML_ENTITIES.forEach { (entity, char) -> processed = processed.replace(entity, char) }
-    // Numeric HTML entities (decimal): &#NNN; → char.
+
     processed =
         processed.replace(Regex("""&#(\d+);""")) { match ->
             val code = match.groupValues[1].toIntOrNull()
@@ -546,7 +488,7 @@ fun preprocessMarkdown(
                 match.value
             }
         }
-    // Numeric HTML entities (hex): &#xHHHH; → char.
+
     processed =
         processed.replace(Regex("""&#x([0-9A-Fa-f]+);""")) { match ->
             val code = match.groupValues[1].toIntOrNull(16)
@@ -557,7 +499,6 @@ fun preprocessMarkdown(
             }
         }
 
-    // 13. Clean up empty <p> tags and excess newlines
     processed =
         processed.replace(
             Regex("""<p[^>]*?>\s*</p>""", RegexOption.IGNORE_CASE),
@@ -569,21 +510,14 @@ fun preprocessMarkdown(
             "\n\n",
         )
 
-    // 14. Clean up orphaned markdown link fragments
     processed =
         processed.replace(
             Regex("""^\]\([^)]+\)""", RegexOption.MULTILINE),
             "",
         )
 
-    // 15. Replace GitHub emoji shortcodes (:rocket: → 🚀). Skips fenced
-    //     code blocks; inline `:foo:` patterns inside `` `code` `` are
-    //     rare enough not to warrant deeper tokenisation.
     processed = zed.rainxch.core.domain.util.EmojiShortcodes.render(processed)
 
-    // 16. Join consecutive image-only lines into a single paragraph so
-    //     badge galleries (Play Store + GitHub buttons etc.) render
-    //     in a row instead of stacking one per line.
     processed = joinAdjacentImageLines(processed)
 
     return processed.trim()
@@ -604,8 +538,7 @@ private fun longestBacktickRun(text: String): Int {
 }
 
 private fun encodeDetailsSummary(text: String): String {
-    // URL-encode special chars to keep summary on one line inside the
-    // fence info string. Decoder mirror lives in the codeFence slot.
+
     val safe = StringBuilder()
     text.forEach { c ->
         when (c) {
@@ -628,7 +561,7 @@ private fun joinAdjacentImageLines(content: String): String {
     while (i < lines.size) {
         val line = lines[i]
         if (imageOnlyLine.matches(line)) {
-            // Greedily collect adjacent image-only lines.
+
             val group = StringBuilder(line.trim())
             var j = i + 1
             while (j < lines.size && imageOnlyLine.matches(lines[j])) {
@@ -647,25 +580,20 @@ private fun joinAdjacentImageLines(content: String): String {
     return out.toString()
 }
 
-// ============================================================================
-// Lookup tables for HTML entity decoding + sub/sup Unicode mapping.
-// ============================================================================
-
 private val HTML_ENTITIES: Map<String, String> = mapOf(
-    // Core 5 (must come first; processor relies on them being decoded
-    // before any subsequent regex that operates on raw `<`/`>`).
+
     "&amp;" to "&",
     "&lt;" to "<",
     "&gt;" to ">",
     "&quot;" to "\"",
     "&apos;" to "'",
     "&#39;" to "'",
-    // Whitespace
+
     "&nbsp;" to " ",
     "&ensp;" to " ",
     "&emsp;" to " ",
     "&thinsp;" to " ",
-    // Punctuation / typography
+
     "&hellip;" to "…",
     "&mdash;" to "—",
     "&ndash;" to "–",
@@ -681,7 +609,7 @@ private val HTML_ENTITIES: Map<String, String> = mapOf(
     "&middot;" to "·",
     "&sect;" to "§",
     "&para;" to "¶",
-    // Math / arrows
+
     "&times;" to "×",
     "&divide;" to "÷",
     "&plusmn;" to "±",
@@ -700,11 +628,11 @@ private val HTML_ENTITIES: Map<String, String> = mapOf(
     "&harr;" to "↔",
     "&lArr;" to "⇐",
     "&rArr;" to "⇒",
-    // Legal / brand
+
     "&copy;" to "©",
     "&reg;" to "®",
     "&trade;" to "™",
-    // Currency
+
     "&euro;" to "€",
     "&pound;" to "£",
     "&yen;" to "¥",

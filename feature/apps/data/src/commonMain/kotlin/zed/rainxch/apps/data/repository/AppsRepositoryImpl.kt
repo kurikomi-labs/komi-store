@@ -255,20 +255,13 @@ class AppsRepositoryImpl(
         val now = Clock.System.now().toEpochMilliseconds()
         val globalPreRelease = tweaksRepository.getIncludePreReleases().first()
         val normalizedFilter = assetFilterRegex?.trim()?.takeIf { it.isNotEmpty() }
-        // Pre-derived fingerprint (from import) wins over re-deriving
-        // from the picked filename. Falls through to deriving fresh
-        // from the picked asset when there's nothing pre-computed.
+
         val derivedVariant =
             preferredAssetVariant?.trim()?.takeIf { it.isNotEmpty() }
                 ?: pickedAssetName?.let {
                     AssetVariant.deriveFromPickedAsset(it, pickedAssetSiblingCount)
                 }
 
-        // Multi-layer fingerprint: when coming from import, we already
-        // have these stored from the prior install. When coming from
-        // the link sheet picker, derive them fresh from the picked
-        // asset's filename so all three identity layers are populated
-        // atomically with the rest of the row.
         val freshFingerprint =
             if (preferredAssetTokens == null && assetGlobPattern == null && pickedAssetName != null) {
                 AssetVariant.fingerprintFromPickedAsset(pickedAssetName, pickedAssetSiblingCount)
@@ -573,10 +566,7 @@ class AppsRepositoryImpl(
                 .filter { it.draft != true }
                 .map { it.toDomain() }
                 .filter {
-                    // Use the same tag-aware pre-release filter as the
-                    // GitHub path (`InstalledAppsRepositoryImpl`) so a
-                    // `v2.0.0-rc1` release with a `prerelease: false`
-                    // flag is still correctly excluded.
+
                     includePreReleases || !it.isEffectivelyPreRelease()
                 }
                 .maxByOrNull { it.publishedAt }

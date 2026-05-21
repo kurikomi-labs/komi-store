@@ -51,7 +51,7 @@ class MirrorPickerViewModel(
 
     fun onAction(action: MirrorPickerAction) {
         when (action) {
-            MirrorPickerAction.OnNavigateBack -> { /* host handles via callback */ }
+            MirrorPickerAction.OnNavigateBack -> {   }
             is MirrorPickerAction.OnSelectMirror -> selectMirror(action.mirror)
             MirrorPickerAction.OnCustomMirrorClicked ->
                 _state.update { it.copy(isCustomDialogVisible = true, customDraft = "", customDraftError = null) }

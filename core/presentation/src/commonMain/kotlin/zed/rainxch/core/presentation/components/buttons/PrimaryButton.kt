@@ -28,11 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 
-/**
- * Primary CTA — wonky asymmetric squircle filled with `primary`. Reserved for the
- * single most important action on a surface (DESIGN.md §7.1): Install / Update /
- * Open / Get / Sign in. Spring-physics press feedback per D10.
- */
 @Composable
 fun PrimaryButton(
     onClick: () -> Unit,

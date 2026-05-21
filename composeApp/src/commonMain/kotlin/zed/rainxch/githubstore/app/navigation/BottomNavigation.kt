@@ -42,15 +42,6 @@ import zed.rainxch.core.presentation.theme.fraunces
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.VersionStack
 
-/**
- * Cookie-active bottom nav (DESIGN.md §9.1). Active tab fills a [CookieShape] with
- * `primary`, knocks the glyph out in `onPrimary`, and renders the label in Fraunces
- * italic. Library tab shows a [VersionStack] badge when updates are pending.
- *
- * Heavy press-scale + spring physics matches D10 "rich motion." Per
- * android-compose-ui skill: animated values drive `graphicsLayer` / `scale` to
- * avoid recomposition.
- */
 @Composable
 fun BottomNavigation(
     currentScreen: GithubStoreGraph,
@@ -132,7 +123,6 @@ private fun CookieTabItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            // Cookie + glyph stack
             Box(
                 modifier = Modifier.size(32.dp),
                 contentAlignment = Alignment.Center,
@@ -154,7 +144,7 @@ private fun CookieTabItem(
                     tint = if (isSelected) activeFg else inactiveFg,
                 )
             }
-            // Active label — Fraunces italic
+
             AnimatedVisibility(
                 visible = isSelected,
                 enter = fadeIn() + scaleIn(initialScale = 0.6f),
@@ -175,7 +165,6 @@ private fun CookieTabItem(
             }
         }
 
-        // Update badge (Library tab) — VersionStack replaces M3 numeric badge
         if (showUpdateBadge) {
             Box(
                 modifier =

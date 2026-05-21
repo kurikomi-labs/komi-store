@@ -95,7 +95,6 @@ fun LazyListScope.installationSection(
             },
         )
 
-        // Auto-update toggle — shown when a silent installer is selected and ready
         val silentReady = (
             state.installerType == InstallerType.SHIZUKU &&
                 state.shizukuAvailability == ShizukuAvailability.READY
@@ -284,11 +283,6 @@ private fun AttributionRadioRow(
     }
 }
 
-/**
- * Updates section — always visible on Android (not gated on Shizuku).
- * Shows the update check interval picker so all users can configure
- * how often background update checks run.
- */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.updatesSection(
     state: TweaksState,

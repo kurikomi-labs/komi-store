@@ -9,25 +9,11 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import zed.rainxch.details.domain.model.TranslationResult
 
-/**
- * Hits Google's undocumented `translate_a/single` endpoint. Works
- * everywhere Google does, no credentials. May rate-limit or break
- * without notice; Youdao is the escape hatch.
- *
- * Uses POST (form-encoded body) instead of GET: the repository chunks
- * on `String.length`, but URL encoding a non-ASCII character — CJK,
- * Arabic, etc. — expands ~3× for UTF-8 and ×3 again for percent
- * encoding (roughly 9×). A 4500-char CJK chunk would produce a ~40 KB
- * URL, well past most HTTP stacks' ~8 KB cap. POST bodies have no
- * such limit.
- */
 internal class GoogleTranslator(
     private val httpClient: () -> HttpClient,
     private val json: Json,
 ) : Translator {
-    // POST body — bounded by server-side payload limits, not URL
-    // length. 4500 chars stays well within Google's accepted payload
-    // even for maximum-expansion CJK text.
+
     override val maxChunkSize: Int = 4500
 
     override suspend fun translate(

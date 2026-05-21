@@ -129,11 +129,6 @@ fun FeedbackBottomSheet(
                 onAction = viewModel::onAction,
             )
 
-            // Channel for the diagnostics preview is informational only —
-            // the actual channel is decided when the user picks Send. We
-            // pass GITHUB so the preview shows the username if present
-            // (most permissive view); the composer still strips it for
-            // the email send.
             DiagnosticsPreview(
                 diagnostics = state.diagnostics,
                 channel = FeedbackChannel.GITHUB,

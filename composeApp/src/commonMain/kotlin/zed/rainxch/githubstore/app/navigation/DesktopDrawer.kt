@@ -32,14 +32,6 @@ import zed.rainxch.core.presentation.vocabulary.VersionStack
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_name
 
-/**
- * Desktop sidebar drawer (DESIGN.md §8.1) — 240dp wide, persistent navigation.
- * Cookie brand mark at top, nav items in middle, user card at bottom. Active item:
- * `tintP` background + `primary` foreground.
- *
- * Wired by [AppNavigation] when the platform is non-Android. The Android path
- * keeps the [BottomNavigation] capsule.
- */
 @Composable
 fun DesktopDrawer(
     currentScreen: GithubStoreGraph?,
@@ -49,9 +41,7 @@ fun DesktopDrawer(
     modifier: Modifier = Modifier,
 ) {
     val cs = MaterialTheme.colorScheme
-    // Library (AppsScreen) is Android-only: Installer + PackageMonitor + Shizuku
-    // don't exist on Desktop, so the screen has nothing to manage. Filter it out
-    // of the drawer entirely rather than show an empty stub.
+
     val items = BottomNavigationUtils.items().filterNot { it.screen == GithubStoreGraph.AppsScreen }
     Column(
         modifier =
@@ -62,7 +52,6 @@ fun DesktopDrawer(
                 .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-        // Brand: Cookie + name
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),

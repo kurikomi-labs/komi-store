@@ -83,9 +83,7 @@ class FeedbackViewModel(
                     _events.send(FeedbackEvent.OnSendError(error))
                 }
             }
-            // Hold the disabled state briefly so the user sees the
-            // buttons disable and can't double-tap; long enough to
-            // also let any synchronous onFailure invocation arrive.
+
             delay(250)
             _state.update { it.copy(isSending = false) }
             if (!failed) {
@@ -96,8 +94,7 @@ class FeedbackViewModel(
     }
 
     private fun resetForm() {
-        // Preserve already-collected diagnostics so we don't re-query
-        // repositories when the sheet reopens.
+
         _state.update { previous ->
             FeedbackState(diagnostics = previous.diagnostics)
         }

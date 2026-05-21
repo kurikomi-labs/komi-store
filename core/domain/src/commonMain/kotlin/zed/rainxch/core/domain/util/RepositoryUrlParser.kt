@@ -44,14 +44,7 @@ object RepositoryUrlParser {
 
     private fun looksLikeForgejoHost(host: String): Boolean {
         val lower = host.lowercase()
-        // Conservative heuristic: only match hosts whose name literally
-        // contains a forge brand or starts with `git.` (the de-facto
-        // self-hosted convention). Previously `code.*` and `source.*`
-        // were also matched and produced false positives for
-        // `code.visualstudio.com`, `source.android.com`,
-        // `source.unsplash.com`, and similar non-forge services. Users
-        // with idiosyncratic hostnames should add them via
-        // Tweaks → Custom forges instead.
+
         return lower.contains("forgejo") ||
             lower.contains("gitea") ||
             lower.startsWith("git.")

@@ -70,17 +70,6 @@ import zed.rainxch.githubstore.core.presentation.res.discard_pending_install
 import zed.rainxch.githubstore.core.presentation.res.variant_picker_open
 import kotlin.time.ExperimentalTime
 
-/**
- * 64dp single-line row used in the "Up to date" section. Drops the verbose
- * controls of [zed.rainxch.apps.presentation.AppItemCard] (filter / variant /
- * pre-release / inline status text). Per-app configuration moves into the
- * trailing overflow menu, which routes to the existing bottom sheet.
- *
- * Accessibility: the entire row carries a single merged semantic name that
- * surfaces every "hidden" flag (filter active / variant pinned / pre-release
- * on / variant stale / pending install / ready to install) so screen-reader
- * users don't lose context that the dot cluster encodes visually.
- */
 @Composable
 fun CompactAppRow(
     appItem: AppItem,
@@ -159,9 +148,7 @@ fun CompactAppRow(
         }
 
         if (app.pendingInstallFilePath != null) {
-            // One-tap path for a parked download — surface the install
-            // primary CTA even in compact mode because the file is on disk
-            // and finishing the install is the user's expected action.
+
             Button(
                 onClick = onInstallPendingClick,
                 enabled = !isBusy,
@@ -181,13 +168,9 @@ fun CompactAppRow(
             }
             Spacer(Modifier.width(4.dp))
         } else if (app.isPendingInstall) {
-            // Pending row whose file isn't (or is no longer) on disk.
-            // The app isn't installed; suppress the Open shortcut so we
-            // don't dead-end on a launch failure. Discard is reachable
-            // from the overflow.
+
         } else if (!isBusy) {
-            // Subtle Open shortcut keeps the most-frequent action one tap
-            // away even though the row itself opens the repo on tap.
+
             IconButton(
                 onClick = onOpenClick,
                 modifier = Modifier.size(40.dp),
@@ -348,7 +331,6 @@ private fun CompactRowOverflow(
             }
         }
     }
-    // Suppress unused-parameter warning; isUpdateAvailable reserved for
-    // future Update CTA in compact mode if we ever want it.
+
     @Suppress("UNUSED_EXPRESSION") isUpdateAvailable
 }

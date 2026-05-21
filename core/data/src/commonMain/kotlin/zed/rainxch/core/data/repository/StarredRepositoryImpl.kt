@@ -44,7 +44,7 @@ class StarredRepositoryImpl(
     private val httpClient: HttpClient get() = clientProvider.client
 
     companion object {
-        private const val SYNC_THRESHOLD_MS = 24 * 60 * 60 * 1000L // 24 hours
+        private const val SYNC_THRESHOLD_MS = 24 * 60 * 60 * 1000L
     }
 
     override fun getAllStarred(): Flow<List<zed.rainxch.core.domain.model.StarredRepository>> =

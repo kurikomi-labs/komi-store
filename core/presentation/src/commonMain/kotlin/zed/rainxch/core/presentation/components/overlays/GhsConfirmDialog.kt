@@ -25,11 +25,6 @@ import zed.rainxch.core.presentation.components.buttons.PrimaryButton
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 
-/**
- * Modal confirm dialog (DESIGN.md §16.2). Cancel-left, Confirm-right convention.
- * Destructive confirms pass `destructive = true` to swap the primary fill to
- * danger color.
- */
 @Composable
 fun GhsConfirmDialog(
     title: String,

@@ -750,11 +750,7 @@ private fun PatSignInSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
-        // Veto the visual Hidden transition while a submission is in
-        // flight, so a swipe-down/scrim-tap can't cosmetically dismiss
-        // the sheet before `onDismissRequest`'s guard runs. Pairs with
-        // the existing `!isSubmitting` check in `onDismissRequest` to
-        // fully gate dismissal during save.
+
         confirmValueChange = { newValue ->
             !(isSubmitting && newValue == SheetValue.Hidden)
         },

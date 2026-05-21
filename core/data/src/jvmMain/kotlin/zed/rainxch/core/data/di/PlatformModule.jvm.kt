@@ -42,7 +42,7 @@ import zed.rainxch.core.domain.utils.ClipboardHelper
 import zed.rainxch.core.domain.utils.ShareManager
 
 actual val corePlatformModule = module {
-    // Core
+
     single<Downloader> {
         DesktopDownloader(
             files = get(),
@@ -82,8 +82,6 @@ actual val corePlatformModule = module {
         DesktopLocalizationManager()
     }
 
-    // Locals
-
     single<AppDatabase> {
         initDatabase()
     }
@@ -107,9 +105,6 @@ actual val corePlatformModule = module {
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
         eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_announcements")
     }
-
-
-    // Utils
 
     single<BrowserHelper> {
         DesktopBrowserHelper()

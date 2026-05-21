@@ -17,12 +17,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
-/**
- * Micro-pictogram per canonical topic code (DESIGN.md §4.2). Backend now emits a
- * normalized topic-code set per repo (R12-v2); aliases are no longer resolved
- * here. Monochrome — never carries the per-app accent. Renders nothing when
- * [topic] isn't in the supported set ([Tokens.Topics.supported]).
- */
 @Composable
 fun TopicGlyph(
     topic: String,
@@ -57,12 +51,8 @@ fun TopicGlyph(
 
 private fun DrawScope.scaled(viewBoxValue: Float) = viewBoxValue / 24f * size.minDimension
 
-// ─────────────────────────────────────────────────────────────────────────────
-// New glyphs (7) — canonical R12-v2 topic codes
-// ─────────────────────────────────────────────────────────────────────────────
-
 private fun DrawScope.drawSecurity(c: Color, s: Stroke) {
-    // Padlock — shackle arc on top, body below.
+
     val shackle = Path().apply {
         moveTo(scaled(8f), scaled(11f))
         lineTo(scaled(8f), scaled(8f))
@@ -77,12 +67,12 @@ private fun DrawScope.drawSecurity(c: Color, s: Stroke) {
         cornerRadius = CornerRadius(scaled(1.5f), scaled(1.5f)),
         style = s,
     )
-    // Keyhole dot
+
     drawCircle(color = c, radius = scaled(1.3f), center = Offset(scaled(12f), scaled(15f)))
 }
 
 private fun DrawScope.drawPrivacy(c: Color, s: Stroke) {
-    // Eye outline (almond) + pupil + diagonal strikethrough.
+
     val eye = Path().apply {
         moveTo(scaled(3f), scaled(12f))
         quadraticTo(scaled(12f), scaled(4.5f), scaled(21f), scaled(12f))
@@ -101,7 +91,7 @@ private fun DrawScope.drawPrivacy(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawNetworking(c: Color, s: Stroke) {
-    // Three ascending WiFi-style arcs + dot
+
     drawArc(
         color = c,
         startAngle = 215f,
@@ -133,7 +123,7 @@ private fun DrawScope.drawNetworking(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawAi(c: Color, s: Stroke) {
-    // 4-point spark (sparkle) + small companion dot
+
     val spark = Path().apply {
         moveTo(scaled(12f), scaled(3f))
         lineTo(scaled(14f), scaled(10f))
@@ -149,7 +139,7 @@ private fun DrawScope.drawAi(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawNotes(c: Color, s: Stroke) {
-    // Pencil over paper — paper rect + diagonal pencil
+
     drawRoundRect(
         color = c,
         topLeft = Offset(scaled(4f), scaled(5f)),
@@ -182,7 +172,7 @@ private fun DrawScope.drawNotes(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawMessaging(c: Color, s: Stroke) {
-    // Speech bubble — rounded rect + tail
+
     drawRoundRect(
         color = c,
         topLeft = Offset(scaled(3f), scaled(4f)),
@@ -200,7 +190,7 @@ private fun DrawScope.drawMessaging(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawBrowser(c: Color, s: Stroke) {
-    // Compass — circle + needle (pointer)
+
     drawCircle(color = c, radius = scaled(8f), center = Offset(scaled(12f), scaled(12f)), style = s)
     val needle = Path().apply {
         moveTo(scaled(12f), scaled(6f))
@@ -213,7 +203,7 @@ private fun DrawScope.drawBrowser(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawSocial(c: Color, s: Stroke) {
-    // Two people — circles + shoulder arcs
+
     drawCircle(color = c, radius = scaled(2.4f), center = Offset(scaled(9f), scaled(8f)), style = s)
     drawCircle(color = c, radius = scaled(2.4f), center = Offset(scaled(16f), scaled(9f)), style = s)
     val shoulderA = Path().apply {
@@ -229,7 +219,7 @@ private fun DrawScope.drawSocial(c: Color, s: Stroke) {
 }
 
 private fun DrawScope.drawLauncher(c: Color) {
-    // 3×3 grid dots
+
     val r = scaled(1.5f)
     listOf(7f, 12f, 17f).forEach { cx ->
         listOf(7f, 12f, 17f).forEach { cy ->
@@ -237,10 +227,6 @@ private fun DrawScope.drawLauncher(c: Color) {
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Existing glyphs (6) — kept verbatim
-// ─────────────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawSelfHosted(c: Color, s: Stroke) {
     val p = Path().apply {

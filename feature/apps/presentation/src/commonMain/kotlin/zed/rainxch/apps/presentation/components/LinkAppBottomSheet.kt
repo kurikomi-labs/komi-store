@@ -458,11 +458,7 @@ private fun SmartMatchStep(
                 ) {
                     items(
                         items = suggestions,
-                        // Lists may now mix GitHub + Forgejo hits for
-                        // the same owner/repo slug across hosts —
-                        // include sourceHost in the key so identical
-                        // slugs on different forges render as distinct
-                        // rows.
+
                         key = { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" },
                     ) { suggestion ->
                         SuggestionRow(
@@ -530,7 +526,7 @@ private fun SuggestionRow(
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Host badge — answers "where is this suggestion from".
+
                 HostBadge(suggestion.sourceHost)
                 Spacer(Modifier.width(6.dp))
                 MatchSourceChip(suggestion.source)
@@ -597,11 +593,7 @@ private fun MatchSourceChip(source: RepoMatchSource) {
         RepoMatchSource.FINGERPRINT -> stringResource(Res.string.match_source_fingerprint)
         RepoMatchSource.SEARCH -> stringResource(Res.string.match_source_search)
         RepoMatchSource.MANUAL -> stringResource(Res.string.match_source_manual)
-        // Reuses the "search" string for now — distinguishing the
-        // forge in the chip would need a new translated label per
-        // locale, which can come later. The underlying source-host
-        // is what actually drives URL building and the row's source
-        // chip on the Details / Apps screen.
+
         RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
     }
     Surface(
@@ -655,7 +647,6 @@ private fun EnterUrlStep(
 
         Spacer(Modifier.height(16.dp))
 
-        // Selected app info
         if (selectedApp != null) {
             Row(
                 modifier = Modifier
@@ -790,9 +781,6 @@ private fun PickAssetStep(
 
         Spacer(Modifier.height(12.dp))
 
-        // Asset filter — for monorepos that ship multiple apps from the
-        // same repo. Live-narrows the visible list and is persisted with
-        // the link, so the update checker only ever resolves matching APKs.
         OutlinedTextField(
             value = filterValue,
             onValueChange = onFilterChanged,
@@ -815,10 +803,7 @@ private fun PickAssetStep(
                             visibleAssets.isEmpty() && filterValue.isNotBlank() ->
                                 stringResource(Res.string.asset_filter_no_match)
                             filterValue.isNotBlank() ->
-                                // Pass the total asset count as the plural
-                                // quantity so Polish/Russian inflection picks
-                                // the right form based on the *collection*
-                                // size, and supply both counts as format args.
+
                                 pluralStringResource(
                                     Res.plurals.asset_filter_visible_count,
                                     allAssets.size,
@@ -841,9 +826,6 @@ private fun PickAssetStep(
 
         Spacer(Modifier.height(8.dp))
 
-        // Fall-back-to-older-releases toggle. Only meaningful when a filter
-        // is set; in monorepos, the latest release is often for the wrong
-        // app, so the checker needs to walk back to find this app's APK.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -938,12 +920,7 @@ private fun PickAssetStep(
 
             if (visibleAssets.isEmpty()) {
                 item {
-                    // Three distinct empty states:
-                    //  - No installable assets at all in the repo release
-                    //    (defensive: validateAndLinkRepo short-circuits
-                    //    this today, but guard in case flows change)
-                    //  - Filter regex is invalid (shown in error color)
-                    //  - Filter is valid but matched nothing
+
                     val (message, isError) = when {
                         allAssets.isEmpty() ->
                             stringResource(Res.string.asset_none_available) to false

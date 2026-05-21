@@ -72,9 +72,6 @@ internal class DeeplTranslator(
             )
         }
 
-        // Surface `message` whenever it's present alongside a missing /
-        // empty translations array — DeepL sometimes returns
-        // `{"translations":[], "message":"..."}` instead of an HTTP error.
         val translations = root["translations"]?.jsonArray
         val errorMessage = root["message"]?.jsonPrimitive?.content
         if (translations.isNullOrEmpty()) {

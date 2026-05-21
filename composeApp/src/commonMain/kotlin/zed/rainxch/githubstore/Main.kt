@@ -103,7 +103,6 @@ fun App(deepLinkUri: String? = null) {
                 }
 
                 DeepLinkDestination.None -> {
-                    // ignore unrecognized deep links
                 }
             }
         }
@@ -134,12 +133,6 @@ fun App(deepLinkUri: String? = null) {
     ) {
         ApplyAndroidSystemBars(state.isDarkTheme)
 
-        // Suppress the rate-limit dialog while the user is on the auth
-        // screen. They already accepted the prompt and are mid-sign-in;
-        // re-emitting the same dialog over the auth UI is noise that
-        // also blocks them from finishing the device-flow steps. Also
-        // flush any pending flag set by background API calls during
-        // auth, so it doesn't ghost back when the user returns home.
         val onAuthScreen = currentScreen is GithubStoreGraph.AuthenticationScreen
         LaunchedEffect(onAuthScreen, state.showRateLimitDialog) {
             if (onAuthScreen && state.showRateLimitDialog) {

@@ -25,10 +25,6 @@ class ForgejoClientRegistry(
             .drop(1)
             .distinctUntilChanged()
             .onEach { _ ->
-                // Invalidate cached clients so the next clientFor()
-                // rebuilds them against the new proxy config. Close
-                // each before dropping the reference — otherwise their
-                // engines, dispatchers, and connection pools leak.
                 mutex.withLock {
                     clients.values.forEach { it.close() }
                     clients.clear()

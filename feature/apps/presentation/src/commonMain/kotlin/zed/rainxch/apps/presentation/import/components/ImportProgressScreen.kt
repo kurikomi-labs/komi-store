@@ -82,10 +82,6 @@ fun ImportProgressScreen(
                 textAlign = TextAlign.Center,
             )
 
-            // Skip affordance fades in once the scan crosses the
-            // long-running threshold (the VM flips `canSkip` after
-            // SKIP_REVEAL_DELAY_MS). Hidden during a fast scan so it
-            // doesn't add a flicker the user has no time to notice.
             AnimatedVisibility(
                 visible = canSkip,
                 enter = fadeIn(),

@@ -14,20 +14,11 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient =
     HttpClient(OkHttp) {
         engine {
             config {
-                // Trust OS-installed root certificates in addition to the
-                // JVM cacerts bundle. Lets users behind TLS-intercepting
-                // tools (Watt Toolkit, Fiddler, corporate MITM) keep using
-                // the app without manually injecting certs into the JDK.
-                // Silently skipped on platforms where no OS keystore is
-                // available — default trust still applies.
+
                 buildOsTrustChainOrNull()?.let { chain ->
                     sslSocketFactory(chain.socketFactory, chain.trustManager)
                 }
 
-                // Reset any inherited global SOCKS authenticator before
-                // deciding what this client needs — prevents a stale
-                // Authenticator from a previous [ProxyConfig.Socks] client
-                // leaking into a subsequently-built plain client.
                 Authenticator.setDefault(null)
 
                 when (proxyConfig) {
@@ -62,14 +53,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient =
                         val proxyHost = proxyConfig.host
                         val proxyPort = proxyConfig.port
                         if (!username.isNullOrEmpty() && !password.isNullOrEmpty()) {
-                            // SOCKS5 username/password auth goes through
-                            // java.net.Authenticator (OkHttp has no
-                            // dedicated SOCKS auth hook). Scope the
-                            // credentials to the configured proxy host
-                            // and port — `Authenticator.setDefault` is
-                            // process-wide, so an unconditional responder
-                            // would leak these creds to any other auth
-                            // challenge the JVM sees.
+
                             Authenticator.setDefault(
                                 object : Authenticator() {
                                     override fun getPasswordAuthentication(): PasswordAuthentication? {

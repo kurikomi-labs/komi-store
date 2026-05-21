@@ -16,14 +16,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-/** Supported platforms in the silent vocabulary. */
 enum class PlatformKind { ANDROID, WINDOWS, MACOS, LINUX }
 
-/**
- * Filled silhouette when supported, dashed outline at 32% alpha when not. Replaces
- * "Android · Windows · Linux" prose (DESIGN.md §4.1). Always monochrome — never
- * carries the per-app accent.
- */
 @Composable
 fun PlatformGlyph(
     kind: PlatformKind,

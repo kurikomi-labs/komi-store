@@ -49,8 +49,8 @@ interface InstalledAppDao {
 
     @Query(
         """
-    UPDATE installed_apps 
-    SET isUpdateAvailable = :available, 
+    UPDATE installed_apps
+    SET isUpdateAvailable = :available,
         latestVersion = :version,
         latestAssetName = :assetName,
         latestAssetUrl = :assetUrl,
@@ -97,16 +97,6 @@ interface InstalledAppDao {
         fallback: Boolean,
     )
 
-    /**
-     * Sets the user's preferred asset variant along with its multi-layer
-     * fingerprint (token set, glob pattern, same-position metadata).
-     * Always clears the "stale" flag in the same write because the user
-     * has just made an explicit choice — whatever was stored before is
-     * no longer stale, even if the new variant is the same value.
-     *
-     * Pass `null` for [variant] (and the other fingerprint fields) to
-     * unpin and fall back to the platform auto-picker.
-     */
     @Query(
         """
         UPDATE installed_apps
@@ -128,11 +118,6 @@ interface InstalledAppDao {
         siblingCount: Int?,
     )
 
-    /**
-     * Sets `preferredVariantStale` for [packageName]. Used by
-     * `checkForUpdates` when the persisted variant cannot be matched
-     * against the assets in a fresh release.
-     */
     @Query(
         """
         UPDATE installed_apps
@@ -151,17 +136,6 @@ interface InstalledAppDao {
         timestamp: Long,
     )
 
-    /**
-     * Sets (or clears) [InstalledAppEntity.skippedReleaseTag] for
-     * [packageName]. Pair-writes `isUpdateAvailable = 0` when [tag] is
-     * non-null so the apps list drops the badge atomically with the
-     * skip — without the second column the UI would still show "Update"
-     * for a frame until the next periodic check ran.
-     *
-     * Pass `null` for [tag] to unskip; the row's update badge stays
-     * untouched in that branch and the next `checkForUpdates` will
-     * recompute it normally.
-     */
     @Query(
         """
         UPDATE installed_apps
@@ -184,14 +158,6 @@ interface InstalledAppDao {
     )
     fun getAppsWithSkippedReleaseTag(): Flow<List<InstalledAppEntity>>
 
-    /**
-     * Atomically writes the installed-version columns and the
-     * `isUpdateAvailable` flag for [packageName]. Used by the external
-     * install / sideload path (`PackageEventReceiver.handleExternalInstall`)
-     * where a stale snapshot + full-row update could otherwise clobber
-     * concurrent writes to sibling columns (download orchestrator,
-     * variant pin, favourite toggle, `checkForUpdates`, etc.).
-     */
     @Query(
         """
         UPDATE installed_apps
@@ -210,15 +176,6 @@ interface InstalledAppDao {
         isUpdateAvailable: Boolean,
     )
 
-    /**
-     * Sets the path + version + asset name of a
-     * downloaded-but-not-yet-installed asset. Pass all `null` to
-     * clear (e.g. after the user installs the file).
-     *
-     * The version + asset name pair is what the Details screen uses
-     * to detect "the parked file matches the currently-selected
-     * release" and skip the redundant re-download.
-     */
     @Query(
         """
         UPDATE installed_apps
@@ -235,14 +192,6 @@ interface InstalledAppDao {
         assetName: String?,
     )
 
-    /**
-     * Atomically clears the "update available" badge and any cached
-     * latest-release metadata for [packageName], while bumping
-     * `lastCheckedAt`. Used by `checkForUpdates` whenever the current
-     * filter / release window yields no match: without this, a user who
-     * tightens their asset filter would keep the stale badge and the
-     * download button would point at an asset that no longer matches.
-     */
     @Query(
         """
         UPDATE installed_apps

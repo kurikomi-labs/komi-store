@@ -91,10 +91,6 @@ fun CandidateCard(
 
             PreselectedRow(suggestion = candidate.preselectedSuggestion)
 
-            // Collapsed footer: primary Link CTA (or hint) + expand affordance.
-            // The whole card is clickable to expand, but a dedicated control
-            // gives the disclosure a clear screen-reader role and a tap target
-            // that doesn't fight the underlying CTA buttons in expanded mode.
             if (!expanded) {
                 CollapsedActions(
                     canLink = candidate.preselectedSuggestion != null,

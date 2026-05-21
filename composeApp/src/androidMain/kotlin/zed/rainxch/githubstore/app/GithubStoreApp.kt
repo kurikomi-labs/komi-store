@@ -32,24 +32,10 @@ class GithubStoreApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Synchronous: Koin must be ready before the first composition can
-        // resolve any singleton; everything else can run on the app scope.
         initKoin {
             androidContext(this@GithubStoreApp)
         }
 
-        // Deferred to the app scope so they don't block the first frame.
-        // Each step gets its own launch + runCatching so a failure in one
-        // (NotificationManager hiccup, broadcast-registration race, etc.)
-        // doesn't abort the others — matches the pattern used by the
-        // other startup blocks below.
-        //  - notification channels are only consumed when a worker posts
-        //    a notification (minutes later at the earliest)
-        //  - dynamic PackageEventReceiver is the in-process fast path; the
-        //    manifest-registered receiver still catches broadcasts during
-        //    the millisecond gap until the dynamic registration lands
-        //  - the download notification observer has nothing to observe
-        //    until the user starts a download
         appScope.launch {
             runCatching { createNotificationChannels() }
                 .onFailure { Logger.w(it) { "Notification-channel creation failed" } }
@@ -179,20 +165,9 @@ class GithubStoreApp : Application() {
                 val existing = repo.getAppByPackage(selfPackageName)
 
                 if (existing != null) {
-                    // After a self-update the old process is killed before
-                    // ACTION_PACKAGE_REPLACED can be delivered to our own
-                    // receiver, so isPendingInstall stays true. Resolve it
-                    // here at the earliest startup opportunity.
                     if (existing.isPendingInstall) {
                         resolveSelfPendingInstall(existing, repo)
                     } else {
-                        // Backfill for #515: pre-fix releases left rows
-                        // with `installedVersion` (tag) pinned to the
-                        // pre-update tag even though the system already
-                        // holds the new APK. Detect the drift on cold
-                        // start and normalize so checkForUpdates stops
-                        // re-flagging the row as updatable on every
-                        // periodic sweep.
                         normalizeSelfInstalledVersion(existing, repo)
                     }
                     return@launch
@@ -250,27 +225,6 @@ class GithubStoreApp : Application() {
         }
     }
 
-    /**
-     * Resolves a stale `isPendingInstall` flag for the app's own
-     * database row. Called on every cold start when the row exists
-     * and still has the flag set — the typical scenario after a
-     * successful self-update where the broadcast path missed.
-     */
-
-    /**
-     * Self-heal stale `installedVersion` tags on the self-row carried
-     * over from before #515 was fixed. Only fires when:
-     *   - The row exists and is not pending an install.
-     *   - The system's package versionCode matches the row's
-     *     `installedVersionCode` (so the user's *system* says the
-     *     install is finished).
-     *   - The row's tag (`installedVersion`) doesn't match
-     *     `latestVersion` (which the pre-install update worker wrote
-     *     to the intended new tag).
-     * Sets `installedVersion = latestVersion` and clears
-     * `isUpdateAvailable`. Cheap, idempotent, side-effect-free
-     * otherwise.
-     */
     private suspend fun normalizeSelfInstalledVersion(
         existing: InstalledApp,
         repo: InstalledAppsRepository,
@@ -302,11 +256,7 @@ class GithubStoreApp : Application() {
             val systemInfo = packageMonitor.getInstalledPackageInfo(packageName)
             if (systemInfo != null) {
                 val latestVersionCode = existing.latestVersionCode ?: 0L
-                // Also pin `installedVersion` (the tag string) to the
-                // intended new release. Otherwise `checkForUpdates`
-                // compares the freshly-fetched matched-release tag to
-                // the *previous* tag still in the row and re-flags
-                // isUpdateAvailable on every periodic sweep (#515).
+
                 val resolvedTag = existing.latestVersion ?: systemInfo.versionName
                 repo.updateApp(
                     existing.copy(

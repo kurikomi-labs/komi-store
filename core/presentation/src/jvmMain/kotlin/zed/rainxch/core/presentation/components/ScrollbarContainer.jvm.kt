@@ -86,10 +86,6 @@ actual fun ScrollbarContainer(
     }
 }
 
-/**
- * Custom [ScrollbarAdapter] for [LazyStaggeredGridState] since Compose Desktop
- * does not provide a built-in [rememberScrollbarAdapter] overload for staggered grids.
- */
 private class StaggeredGridScrollbarAdapter(
     private val gridState: LazyStaggeredGridState,
 ) : ScrollbarAdapter {

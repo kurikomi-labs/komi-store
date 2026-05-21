@@ -17,11 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.components.buttons.IconButton
 
-/**
- * Full-screen sheet for multi-step flows (DESIGN.md §16.5) — OAuth device-flow,
- * PAT entry, ExternalImport wizard. Back-arrow header, no title text (the big
- * identity mark serves as the title). Caller composes body via slot.
- */
 @Composable
 fun GhsFullScreenSheet(
     onBack: () -> Unit,

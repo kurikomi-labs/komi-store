@@ -26,15 +26,6 @@ import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 
-/**
- * Periodic background worker that checks all tracked installed apps for available updates.
- *
- * Runs via WorkManager on a configurable schedule (default: every 6 hours).
- * First syncs app state with the system package manager, then checks each
- * tracked app's GitHub repository for new releases.
- * Shows a notification when updates are found, or triggers auto-update
- * if Shizuku silent install is enabled and auto-update preference is on.
- */
 class UpdateCheckWorker(
     context: Context,
     params: WorkerParameters,
@@ -51,22 +42,19 @@ class UpdateCheckWorker(
         try {
             Logger.i { "UpdateCheckWorker: Starting periodic update check" }
 
-            // Run as foreground service to prevent OS from killing the worker
             setForeground(createForegroundInfo("Checking for updates..."))
 
-            // First sync installed apps state with system
             val syncResult = syncInstalledAppsUseCase()
             if (syncResult.isFailure) {
                 Logger.w { "UpdateCheckWorker: Sync had issues: ${syncResult.exceptionOrNull()?.message}" }
             }
 
-            // Check all tracked apps for updates
             installedAppsRepository.checkAllForUpdates()
 
             val appsWithUpdates = installedAppsRepository.getAppsWithUpdates().first()
 
             if (appsWithUpdates.isNotEmpty()) {
-                // Check if auto-update via Shizuku is enabled
+
                 val autoUpdateEnabled = tweaksRepository.getAutoUpdateEnabled().first()
                 val installerType = tweaksRepository.getInstallerType().first()
 
@@ -77,7 +65,7 @@ class UpdateCheckWorker(
                     }
                     UpdateScheduler.scheduleAutoUpdate(applicationContext)
                 } else {
-                    // Show notification for manual update
+
                     showUpdateNotification(appsWithUpdates)
                 }
             } else {
@@ -97,9 +85,6 @@ class UpdateCheckWorker(
             }
         }
 
-    // Periodic best-effort: catch packages whose ACTION_PACKAGE_ADDED
-    // broadcast we missed (process killed, OEM app-standby, etc.).
-    // Cap at 50 so a 200-package device doesn't drag the worker.
     private suspend fun runPeriodicExternalDeltaScan() {
         try {
             val installed = packageMonitor.getAllInstalledPackageNames()
@@ -151,9 +136,9 @@ class UpdateCheckWorker(
         }
     }
 
-    @SuppressLint("MissingPermission") // Permission checked at runtime before notify()
+    @SuppressLint("MissingPermission")
     private suspend fun showUpdateNotification(appsWithUpdates: List<zed.rainxch.core.domain.model.InstalledApp>) {
-        // Check notification permission for API 33+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted =
                 ContextCompat.checkSelfPermission(

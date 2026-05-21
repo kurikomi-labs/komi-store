@@ -11,10 +11,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.LocalStatusColors
 
-/**
- * 4 ascending bars — WiFi-style mirror / connection strength. Replaces "62 ms latency"
- * prose (DESIGN.md §4.1). `level` in 0..4; bars above `level` use outline color.
- */
 @Composable
 fun SignalBars(
     level: Int,

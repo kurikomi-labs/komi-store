@@ -15,14 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 
-/** Toast tint variants (DESIGN.md §16.3). */
 enum class ToastTint { Default, Success, Error, Info }
 
-/**
- * Wonky-squircle toast (DESIGN.md §16.3). Pure visual layer — caller wires
- * `SnackbarHost` / `SnackbarHostState` for lifecycle. Use [Default] for surface
- * neutral, [Success] / [Error] for tinted, [Info] for primary tint.
- */
 @Composable
 fun GhsToast(
     modifier: Modifier = Modifier,

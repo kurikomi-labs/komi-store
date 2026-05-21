@@ -43,7 +43,7 @@ enum class GithubAlertKind(val token: String) {
     ;
 
     companion object {
-        // [!KIND] on its own line, allowing trailing spaces.
+
         private val PATTERN = Regex("""^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)]\s*$""")
 
         fun parse(blockquoteText: String): Match? {

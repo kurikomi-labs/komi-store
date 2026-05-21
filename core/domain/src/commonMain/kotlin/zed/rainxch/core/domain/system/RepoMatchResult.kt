@@ -7,10 +7,7 @@ data class RepoMatchSuggestion(
     val source: RepoMatchSource,
     val stars: Int? = null,
     val description: String? = null,
-    // Non-null when the suggestion lives on a non-GitHub forge
-    // (Codeberg / Forgejo / custom). Drives the URL builder in the
-    // "select suggestion" path so we don't navigate to github.com for
-    // a Forgejo repo.
+
     val sourceHost: String? = null,
 )
 

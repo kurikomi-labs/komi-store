@@ -24,9 +24,6 @@ class MultiSourceDownloaderImpl(
         suggestedFileName: String?,
     ): Flow<DownloadProgress> {
         val active = ProxyManager.currentMirror()
-        // The multi-source race targets release-asset downloads. A mirror that
-        // doesn't list RELEASE_ASSET (e.g. jsDelivr, raw-files only) can't
-        // serve these URLs — fall through to a Direct download.
         if (active == null || TrafficKind.RELEASE_ASSET !in active.trafficKinds) {
             return downloader.download(githubUrl, suggestedFileName)
         }

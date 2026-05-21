@@ -34,12 +34,7 @@ class DhizukuServiceManager(
         private set
 
     fun initialize() {
-        // Eagerly call `Dhizuku.init(context)` here so the underlying binder
-        // is warmed up before the first install attempt. Without this,
-        // `refreshStatus()` racing the install dispatch can observe a
-        // not-yet-connected binder and report NOT_RUNNING, making the
-        // dispatcher fall back to the system installer dialog even though
-        // Dhizuku is set up and ready.
+
         runCatching { Dhizuku.init(context) }
             .onFailure { Logger.w(TAG) { "warm-up Dhizuku.init() threw: ${it.message}" } }
         refreshStatus()

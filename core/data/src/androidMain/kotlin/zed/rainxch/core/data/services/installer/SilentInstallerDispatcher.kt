@@ -141,11 +141,7 @@ class SilentInstallerDispatcher(
                 withContext(Dispatchers.IO) {
                     runInstall(file, backend, installerAttribution, expectedPkg, expectedVc)
                 }
-            // Android 14+ may reject a session that carries a non-matching
-            // installerPackageName with STATUS_PENDING_USER_ACTION even when
-            // USER_ACTION_NOT_REQUIRED is set (update-ownership enforcement).
-            // Retry once without attribution — the install stays silent, the
-            // app just loses its "installed by Play Store / F-Droid" label.
+
             val resolved =
                 if (
                     backend == Backend.DHIZUKU &&
@@ -197,14 +193,10 @@ class SilentInstallerDispatcher(
                     service.installPackage(pfd, file.length(), expectedPkg, expectedVc, installerAttribution)
                 }
             Backend.ROOT ->
-                // Root path streams the APK directly into `pm install`'s
-                // stdin from the app's own process, so no ParcelFileDescriptor
-                // dance is needed — the file lives on app-private storage and
-                // we read it back via the standard FileInputStream.
+
                 rootServiceManager.installPackage(file, installerAttribution)
             Backend.DEFAULT -> null
         }
-
 
     private fun readApkIdentity(filePath: String): Pair<String?, Long> {
         val info = try {
@@ -256,13 +248,7 @@ class SilentInstallerDispatcher(
             if (dhizukuServiceManager.status.value == DhizukuStatus.READY) Backend.DHIZUKU else Backend.DEFAULT
         }
         InstallerType.ROOT -> {
-            // Root grants are sticky once accepted by Magisk/KernelSU/APatch,
-            // so a READY cached status is trustworthy on the hot path. When
-            // the user is still on PERMISSION_NEEDED, re-probe (async) so a
-            // fresh grant since app start can flip the status without forcing
-            // them back to Tweaks. The probe shells out and is slow; gating
-            // it on `!= READY` keeps install latency unaffected once root has
-            // been granted once.
+
             if (rootServiceManager.status.value != RootStatus.READY) {
                 rootServiceManager.refreshStatus()
             }

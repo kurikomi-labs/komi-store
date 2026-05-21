@@ -20,11 +20,7 @@ class DhizukuInstallerServiceImpl() : IDhizukuInstallerService.Stub() {
 
         private const val STATUS_SUCCESS = 0
         private const val STATUS_FAILURE = -1
-        // Surfaced to the AIDL caller (SilentInstallerDispatcher) so it can
-        // distinguish "Android 14+ update-ownership demanded user confirm"
-        // from a generic failure — the dispatcher uses this to retry the
-        // install without installerAttribution before falling back to the
-        // system installer dialog.
+
         const val STATUS_PENDING_USER_ACTION_REQUIRED = -2
         private const val INSTALL_TIMEOUT_SECONDS = 120L
         private const val UNINSTALL_TIMEOUT_SECONDS = 30L
@@ -100,13 +96,7 @@ class DhizukuInstallerServiceImpl() : IDhizukuInstallerService.Stub() {
                     when (status) {
                         PackageInstaller.STATUS_SUCCESS -> resultRef.set(STATUS_SUCCESS)
                         PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                            // Android 14+ update-ownership enforcement: even
-                            // with USER_ACTION_NOT_REQUIRED + DPC privilege,
-                            // setting `installerPackageName` to a value that
-                            // doesn't match the existing installer of record
-                            // makes the platform demand user confirmation.
-                            // Surface as a distinct error so the dispatcher
-                            // can retry without attribution or fall back.
+
                             logW("install requires user action (Android 14+ update-ownership gate) — installerAttribution=$installerPackageName")
                             resultRef.set(STATUS_PENDING_USER_ACTION_REQUIRED)
                         }

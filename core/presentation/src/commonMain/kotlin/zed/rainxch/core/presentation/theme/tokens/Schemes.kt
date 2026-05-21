@@ -5,25 +5,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-/**
- * Maps a [Tokens.PaletteColors] to a Material 3 [ColorScheme] so existing M3 components
- * (Button, Card, TextField, ...) keep working unchanged. Tokens not natively expressed
- * in M3 (status colors, custom motion, shape radii) are exposed via the composition
- * locals provided by GhsTheme — this mapper only covers M3 slots.
- *
- * Mapping rules:
- *   bg       → background
- *   surface  → surface / surfaceContainerLow / surfaceBright
- *   surface2 → surfaceVariant / surfaceContainer / surfaceContainerHigh
- *   ink      → onBackground / onSurface
- *   ink2     → onSurfaceVariant
- *   outline  → outline / outlineVariant
- *   primary  → primary (foreground = bg in light, ink in dark for contrast)
- *   tintP    → primaryContainer
- *   danger   → error
- *   dangerT  → errorContainer
- *   success* → exposed via LocalStatusColors only (M3 has no success slot)
- */
 fun toLightColorScheme(p: Tokens.PaletteColors): ColorScheme = lightColorScheme(
     primary = p.primary,
     onPrimary = Color.White,
@@ -102,7 +83,6 @@ fun toDarkColorScheme(p: Tokens.PaletteColors): ColorScheme = darkColorScheme(
     surfaceContainerHighest = p.surface2,
 )
 
-/** Resolves a [Tokens.Palette] + [Tokens.Mode] to its M3 [ColorScheme]. */
 fun colorSchemeFor(palette: Tokens.Palette, mode: Tokens.Mode): ColorScheme {
     val tokens = Tokens.palette(palette, mode)
     return if (mode == Tokens.Mode.LIGHT) toLightColorScheme(tokens) else toDarkColorScheme(tokens)

@@ -88,24 +88,11 @@ fun SmartInstallButton(
     val isUpdateAvailable =
         installedApp?.isUpdateAvailable == true && !installedApp.isPendingInstall
 
-    // VersionMath.isExactSameVersion gates the CTA: it requires both
-    // sides to be present and compares post-prefix-strip strings literally,
-    // so build-metadata variants (`1.0.0+build.1` vs `1.0.0+build.2`) are
-    // correctly treated as different versions even though semver-style
-    // ordering would consider them equal. Reuse the trimmed selected tag
-    // downstream so the "Install version X" label can never render empty.
     val normInstalled =
         installedApp?.installedVersion?.trim()?.takeIf { it.isNotBlank() }
     val normSelected =
         state.selectedRelease?.tagName?.trim()?.takeIf { it.isNotBlank() }
 
-    // Some maintainers tag releases with path-style strings such as
-    // `com.akylas.documentscanner/android/github/1.21.0/152`. Using the raw
-    // tag in "Install version X" wraps the CTA across two lines and looks
-    // broken. `VersionMath.normalizeVersion` already extracts the
-    // dotted-digit core for these cases (`1.21.0`), so reuse it for the
-    // *display* tag while leaving the actual install pipeline on the raw
-    // tag (which has to match GitHub exactly).
     val displaySelected =
         normSelected?.let { tag ->
             VersionMath.normalizeVersion(tag).takeIf { it.isNotBlank() } ?: tag
@@ -124,14 +111,13 @@ fun SmartInstallButton(
 
     val isActiveDownload = state.isDownloading || state.downloadStage != DownloadStage.IDLE
 
-    // When same version is installed, show Open button
     if (isSameVersionInstalled && !isActiveDownload) {
         Column(modifier = modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // Uninstall button
+
                 ElevatedCard(
                     onClick = { onAction(DetailsAction.OnRequestUninstall) },
                     modifier =
@@ -174,7 +160,6 @@ fun SmartInstallButton(
                     }
                 }
 
-                // Open button
                 ElevatedCard(
                     modifier =
                         Modifier
@@ -225,7 +210,6 @@ fun SmartInstallButton(
         return
     }
 
-    // Regular install/update button for all other cases
     val buttonColor =
         when {
             !enabled && !isActiveDownload -> MaterialTheme.colorScheme.surfaceContainer
@@ -240,11 +224,6 @@ fun SmartInstallButton(
                 stringResource(Res.string.not_available)
             }
 
-            // Highest priority: a previously-deferred download is
-            // already on disk and matches the current selection.
-            // Tell the user they can install in one tap, no
-            // re-download. The actual short-circuit lives in
-            // DetailsViewModel.installAsset.
             state.isPendingInstallReady -> {
                 stringResource(Res.string.install_ready)
             }
@@ -263,13 +242,6 @@ fun SmartInstallButton(
                 stringResource(Res.string.install_version, displaySelected ?: normSelected)
             }
 
-            // Not installed yet, but the user reached for the release picker
-            // and chose something other than the newest available release —
-            // the CTA should reflect *which* version will install instead of
-            // misleading them with "Install latest". The latest tag comes
-            // from the head of `allReleases` (GitHub returns newest-first
-            // by `published_at`); fall through to "Install latest" only when
-            // we genuinely can't tell, or the user is already on the head.
             normSelected != null &&
                 state.allReleases.firstOrNull()?.tagName?.let { latestTag ->
                     !VersionMath.isExactSameVersion(latestTag, normSelected)

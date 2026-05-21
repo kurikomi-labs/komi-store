@@ -2,33 +2,15 @@ package zed.rainxch.core.presentation.vocabulary
 
 import androidx.compose.ui.graphics.Color
 
-/**
- * Per-app accent triple (DESIGN.md §2.4). The accent travels with the repo across
- * surfaces (lead card bg tint, freshness ring outer, install panel bloom).
- *
- *   - `c`   — saturated accent (the brand color)
- *   - `lt`  — light tint (used in all light palettes as a 18–22% bg)
- *   - `dtAlpha` — alpha applied to `c` over the dark surface (22% per themes.md)
- */
 data class AppAccent(val c: Color, val lt: Color, val dtAlpha: Float = 0.22f) {
     fun tintFor(isDark: Boolean): Color = if (isDark) c.copy(alpha = dtAlpha) else lt
 }
 
-/**
- * Resolves a per-app accent from (in order):
- *   1. Backend-supplied hex (when [backendHex] is non-null and parseable)
- *   2. Topic-derived (first match in [TOPIC_ACCENTS])
- *   3. Language-derived ([LANGUAGE_ACCENTS])
- *   4. Blue fallback (Nord primary)
- *
- * Source-of-truth tables in UI-SPEC.md §6.1 / §6.2. Deterministic — same repo
- * resolves to the same accent across launches and devices.
- */
 object AppAccentResolver {
     private val FALLBACK = AppAccent(c = Color(0xFF5E81AC), lt = Color(0xFFD8E1EC))
 
     private val TOPIC_ACCENTS: Map<String, AppAccent> = buildMap {
-        // Each pair is (canonical topic name → accent). Aliases listed inline.
+
         val photo = AppAccent(Color(0xFF5E81AC), Color(0xFFD8E1EC))
         listOf("photo", "photos", "gallery").forEach { put(it, photo) }
 
@@ -85,15 +67,15 @@ object AppAccentResolver {
         topics: List<String> = emptyList(),
         primaryLanguage: String? = null,
     ): AppAccent {
-        // 1. Backend
+
         backendHex?.let { parseHexAccent(it) }?.let { return it }
-        // 2. Topic
+
         topics.forEach { t ->
             TOPIC_ACCENTS[t.lowercase()]?.let { return it }
         }
-        // 3. Language
+
         primaryLanguage?.let { LANGUAGE_ACCENTS[it] }?.let { return it }
-        // 4. Fallback
+
         return FALLBACK
     }
 
@@ -105,7 +87,7 @@ object AppAccentResolver {
             if (cleaned.length == 6) (0xFF000000 or intVal).toULong() else intVal.toULong()
         }.getOrNull() ?: return null
         val c = Color(rgb.toLong())
-        // Synthetic light tint = c blended toward white at 78%
+
         val lt = blendTowardWhite(c, 0.78f)
         return AppAccent(c, lt)
     }

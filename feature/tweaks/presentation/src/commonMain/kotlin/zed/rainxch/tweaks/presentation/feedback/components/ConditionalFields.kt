@@ -67,7 +67,7 @@ fun ConditionalFields(
                     onValueChange = { onAction(FeedbackAction.OnDesiredBehaviourChange(it)) },
                 )
             }
-            FeedbackCategory.OTHER -> { /* no extras */ }
+            FeedbackCategory.OTHER -> {   }
         }
     }
 }

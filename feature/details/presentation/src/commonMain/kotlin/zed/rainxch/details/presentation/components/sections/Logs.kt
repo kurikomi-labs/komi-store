@@ -29,11 +29,6 @@ fun LazyListScope.logs(state: DetailsState) {
         )
     }
 
-    // `timeIso` is second-precision, so the same APK installed twice in
-    // one second would collide on a (timeIso + assetName) composite key.
-    // Including the list index makes the key unconditionally unique while
-    // still cheaper than no-key (kept stable across recompositions of the
-    // same list shape).
     itemsIndexed(
         items = state.installLogs,
         key = { index, log -> "$index|${log.timeIso}|${log.assetName}" },

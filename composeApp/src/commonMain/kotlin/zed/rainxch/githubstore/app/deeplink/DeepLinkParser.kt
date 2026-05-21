@@ -6,11 +6,6 @@ sealed interface DeepLinkDestination {
         val repo: String,
     ) : DeepLinkDestination
 
-    /**
-     * Deep link to the apps tab. Used by the pending-install
-     * notification to bring the user back to the row where they can
-     * complete a deferred install.
-     */
     data object Apps : DeepLinkDestination
 
     data class AuthHandoff(
@@ -71,10 +66,6 @@ object DeepLinkParser {
 
     fun parse(uri: String): DeepLinkDestination {
         return when {
-            // Pending-install notification opens the apps tab. No path
-            // segments — the deferred install is keyed by package name
-            // on the row itself, so the link only needs to bring the
-            // user to the right tab.
             uri == "githubstore://apps" || uri == "githubstore://apps/" || uri.startsWith("githubstore://apps?") -> {
                 DeepLinkDestination.Apps
             }
@@ -121,10 +112,6 @@ object DeepLinkParser {
         }
     }
 
-    /**
-     * URL-decode a string, handling percent-encoded characters.
-     * Returns the original string if decoding fails.
-     */
     private fun urlDecode(value: String): String =
         try {
             val result = StringBuilder()
@@ -176,17 +163,6 @@ object DeepLinkParser {
         }
     }
 
-    /**
-     * Strictly validate owner and repo names to prevent injection attacks.
-     * Rejects:
-     * - Empty strings
-     * - Special characters that could be used for injection
-     * - Path traversal patterns
-     * - Control characters and whitespace
-     * - Excluded GitHub paths (like 'about', 'settings', etc.)
-     * - Names that exceed GitHub's length limits
-     * - Names that don't start with alphanumeric characters
-     */
     private fun isStrictlyValidOwnerRepo(
         owner: String,
         repo: String,

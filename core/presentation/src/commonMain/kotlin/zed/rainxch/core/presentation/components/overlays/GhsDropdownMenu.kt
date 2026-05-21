@@ -16,10 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
-/**
- * Floating dropdown panel (DESIGN.md §16.7). Surface bg, wonky-soft squircle, 1dp
- * outline, soft shadow. Items composed by caller using [GhsDropdownItem].
- */
 @Composable
 fun GhsDropdownMenu(
     expanded: Boolean,

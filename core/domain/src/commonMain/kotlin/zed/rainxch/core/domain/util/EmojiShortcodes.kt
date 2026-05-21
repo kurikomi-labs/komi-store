@@ -1,14 +1,10 @@
 package zed.rainxch.core.domain.util
 
 object EmojiShortcodes {
-    // Subset of github/gemoji that covers the long tail of READMEs.
-    // ~250 entries — picked from gemoji download stats + common usage in
-    // README/CHANGELOG headers. Not exhaustive on purpose; missing
-    // shortcodes survive as literal text rather than ballooning the
-    // bundle with a 1500-entry table we mostly don't need.
+
     private val TABLE: Map<String, String> =
         mapOf(
-            // Frequently used in README hero / status sections
+
             "rocket" to "🚀",
             "sparkles" to "✨",
             "tada" to "🎉",
@@ -36,7 +32,7 @@ object EmojiShortcodes {
             "point_left" to "👈",
             "point_up" to "☝️",
             "point_down" to "👇",
-            // Status / signals
+
             "warning" to "⚠️",
             "white_check_mark" to "✅",
             "heavy_check_mark" to "✔️",
@@ -54,7 +50,7 @@ object EmojiShortcodes {
             "grey_question" to "❔",
             "grey_exclamation" to "❕",
             "information_source" to "ℹ️",
-            // Hearts
+
             "heart" to "❤️",
             "yellow_heart" to "💛",
             "green_heart" to "💚",
@@ -67,7 +63,7 @@ object EmojiShortcodes {
             "broken_heart" to "💔",
             "heart_eyes" to "😍",
             "hearts" to "♥️",
-            // Faces
+
             "smile" to "😄",
             "smiley" to "😃",
             "grin" to "😁",
@@ -106,7 +102,7 @@ object EmojiShortcodes {
             "poop" to "💩",
             "hankey" to "💩",
             "shit" to "💩",
-            // Dev / engineer
+
             "computer" to "💻",
             "iphone" to "📱",
             "watch" to "⌚",
@@ -140,7 +136,7 @@ object EmojiShortcodes {
             "mute" to "🔇",
             "mega" to "📣",
             "loudspeaker" to "📢",
-            // Tools / build
+
             "hammer" to "🔨",
             "wrench" to "🔧",
             "screwdriver" to "🪛",
@@ -159,7 +155,7 @@ object EmojiShortcodes {
             "magnet" to "🧲",
             "balance_scale" to "⚖️",
             "scales" to "⚖️",
-            // Symbols
+
             "bug" to "🐛",
             "ant" to "🐜",
             "bulb" to "💡",
@@ -208,7 +204,7 @@ object EmojiShortcodes {
             "earth_africa" to "🌍",
             "earth_asia" to "🌏",
             "globe_with_meridians" to "🌐",
-            // Animals frequently in READMEs
+
             "octocat" to "🐙",
             "cat" to "🐱",
             "dog" to "🐶",
@@ -234,7 +230,7 @@ object EmojiShortcodes {
             "see_no_evil" to "🙈",
             "hear_no_evil" to "🙉",
             "speak_no_evil" to "🙊",
-            // Food / coffee
+
             "coffee" to "☕",
             "tea" to "🍵",
             "beer" to "🍺",
@@ -299,7 +295,7 @@ object EmojiShortcodes {
             "wilted_flower" to "🥀",
             "bouquet" to "💐",
             "cherry_blossom" to "🌸",
-            // Travel / weather
+
             "airplane" to "✈️",
             "rocket_ship" to "🚀",
             "car" to "🚗",
@@ -330,10 +326,6 @@ object EmojiShortcodes {
             "tornado" to "🌪️",
         )
 
-    // [a-z0-9_+\-] is a superset of github shortcode chars. The
-    // bookend `:` markers must be tight against the token (no spaces),
-    // and the shortcode itself must not embed `:` (so URL like
-    // `https://example.com:8080` doesn't grab `8080` as a code).
     private val PATTERN = Regex(""":([a-z0-9_+\-]{1,40}):""")
 
     fun render(input: String): String {
@@ -350,11 +342,6 @@ object EmojiShortcodes {
             TABLE[key] ?: match.value
         }
 
-    // Split the markdown body into alternating (text, code) regions
-    // anchored on triple-backtick fences. Single-backtick inline code
-    // is left in the text regions on purpose — losing rare emoji
-    // collisions in inline code is fine; properly tokenising inline
-    // spans isn't worth the parser complexity.
     private data class Chunk(val content: String, val isCode: Boolean)
 
     private fun splitOutCodeRegions(input: String): List<Chunk> {
@@ -369,10 +356,7 @@ object EmojiShortcodes {
                 out += Chunk(input.substring(i), isCode = inCode)
                 break
             }
-            // Take everything up to and including the fence into the
-            // current region — the fence itself is part of the code
-            // block when we're transitioning out, so always include
-            // 3 chars in the "code" side.
+
             if (inCode) {
                 out += Chunk(input.substring(i, next + fence.length), isCode = true)
             } else {

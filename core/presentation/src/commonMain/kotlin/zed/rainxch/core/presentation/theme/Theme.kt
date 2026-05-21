@@ -12,15 +12,6 @@ import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
 import zed.rainxch.core.presentation.utils.toTokenPalette
 
-/**
- * App-wide theme entry point. Resolves the active [AppTheme] palette + light/dark/amoled
- * mode to a Material 3 [ColorScheme] backed by the design tokens in
- * [zed.rainxch.core.presentation.theme.tokens.Tokens], plus provides composition locals
- * that expose richer surfaces (status colors, thresholds, motion, spacing).
- *
- * `Main.kt` is the only call site — kept under the legacy `GithubStoreTheme` name until
- * P6 chrome polish swaps in the user-facing rename to `GhsTheme`.
- */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GithubStoreTheme(

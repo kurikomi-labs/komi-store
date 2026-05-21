@@ -15,18 +15,6 @@ internal fun daysSinceIso(isoInstant: String): Int {
     return (diffMs / 86_400_000L).toInt()
 }
 
-/**
- * Sub-day-aware relative label. Falls back to "Nd" once gap ≥ 24h. Inputs:
- *   - <1m → "now"
- *   - <1h → "Nm"
- *   - <24h → "Nh"
- *   - <30d → "Nd"
- *   - <12mo → "Nmo"
- *   - else → "Ny"
- *
- * Used by the Hot card corner pill + Lead card "HOT · X ago" so a fresh release
- * 4 hours old shows "4h" instead of "0d".
- */
 @OptIn(ExperimentalTime::class)
 internal fun relativeAgo(isoInstant: String): String {
     val trimmed = isoInstant.trim()

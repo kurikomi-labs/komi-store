@@ -8,7 +8,6 @@ import zed.rainxch.core.data.dto.ExternalMatchResponse
 import zed.rainxch.core.domain.repository.TweaksRepository
 
 interface ExternalMatchApi {
-    // NOTE: chunking lives in the repo; impls receive whatever the repo passes
     suspend fun match(request: ExternalMatchRequest): Result<ExternalMatchResponse>
 }
 
@@ -54,10 +53,12 @@ class ExternalMatchApiSelector(
     tweaks: TweaksRepository,
     scope: CoroutineScope,
 ) : ExternalMatchApi {
-    // Cache the flag in a hot StateFlow so `match()` can read it
-    // synchronously instead of round-tripping DataStore on every call.
     private val flagState = tweaks.getExternalMatchSearchEnabled()
-        .stateIn(scope, SharingStarted.Eagerly, initialValue = false)
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
 
     override suspend fun match(request: ExternalMatchRequest): Result<ExternalMatchResponse> =
         if (flagState.value) {

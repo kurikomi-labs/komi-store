@@ -21,12 +21,6 @@ import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.WaxSeal
 import zed.rainxch.core.presentation.vocabulary.WaxSealState
 
-/**
- * Trust card anchored to the install panel (DESIGN.md §7.8). Wax-seal glyph +
- * Fraunces italic state label + JetBrains Mono fingerprint detail. Backgrounds
- * follow the seal state — successT tint for intact, dangerT for cracked, surface
- * for open. The cracked state is the ONLY place red is aggressive in the UI.
- */
 @Composable
 fun WaxSealTrustCard(
     state: WaxSealState,

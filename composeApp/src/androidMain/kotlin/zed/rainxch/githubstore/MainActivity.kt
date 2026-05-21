@@ -45,15 +45,8 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
 
-        // Register activity result launcher for file picker (must be before STARTED)
         (shareManager as? AndroidShareManager)?.registerActivityResultLauncher(this)
 
-        // Apply the persisted language override BEFORE Compose kicks off
-        // so the very first frame resolves strings against the user's
-        // choice. `runBlocking` is acceptable here — DataStore reads are
-        // cheap and we only block once per Activity creation (including
-        // the post-language-swap recreate() path below). Without this,
-        // recreate() would briefly flash the old locale before settling.
         runBlocking {
             val tag =
                 try {
@@ -70,15 +63,6 @@ class MainActivity : ComponentActivity() {
 
         handleIncomingIntent(intent)
 
-        // Watch for runtime language changes from the Tweaks picker.
-        // Drop the initial emission (already applied above) and
-        // recreate() on any subsequent change — Android preserves
-        // `rememberSaveable` / ViewModel state through recreate, so
-        // scroll offsets, nav stack, and form fields all survive while
-        // every string re-resolves against the new locale. `key()` in
-        // the composition can't pull off the same trick: it changes
-        // the composite-key hash under it, which breaks
-        // `rememberSaveable` lookups and snaps LazyColumns back to 0.
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 tweaksRepository

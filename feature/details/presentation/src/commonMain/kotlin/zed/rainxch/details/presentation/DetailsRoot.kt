@@ -275,7 +275,6 @@ fun DetailsRoot(
         )
     }
 
-    // Signing key changed warning dialog
     state.signingKeyWarning?.let { warning ->
         AlertDialog(
             onDismissRequest = {
@@ -322,7 +321,6 @@ fun DetailsRoot(
         )
     }
 
-    // Uninstall confirmation dialog
     if (state.showUninstallConfirmation) {
         val appName = state.installedApp?.appName ?: ""
         AlertDialog(
@@ -523,13 +521,6 @@ fun DetailsScreen(
             }
             val pullEnabled = remember { isPullToRefreshSupported() }
 
-            // Gutter scroll forwarding is a desktop-only UX polish
-            // (mouse-wheel-in-side-margins → scrolls content column).
-            // On Android the outer scrollable fought the inner
-            // LazyColumn's own scroll handler — both pointing at the
-            // same `listState` doubled-up gesture handling and the
-            // touch scroll froze. Issue tracked under content-width
-            // PR follow-up. Keep enabled = isDesktop.
             val isDesktop = remember { getPlatform() != Platform.ANDROID }
             Box(
                 modifier = Modifier
@@ -537,23 +528,12 @@ fun DetailsScreen(
                     .scrollable(
                         state = listState,
                         orientation = Orientation.Vertical,
-                        // LazyColumn's internal scrollable uses
-                        // reverseDirection=true (vertical, default
-                        // layout direction). Matching that here makes
-                        // the wheel-direction sign convention agree
-                        // — otherwise wheel-up at the top jumps to
-                        // the bottom and vice versa, because parent
-                        // and child interpret the same pointer delta
-                        // with opposite signs.
+
                         reverseDirection = true,
                         enabled = isDesktop,
                     )
                     .onSizeChanged { size ->
-                        // Layout-phase write; cheaper than BoxWithConstraints
-                        // which subcomposes during the measure pass. Setting
-                        // a state var here recomposes only the consumers that
-                        // read it (the about/whatsNew sections), not the
-                        // entire Scaffold subtree.
+
                         val newHeight = with(density) { size.height.toDp() }
                         if (newHeight != containerHeightDp) containerHeightDp = newHeight
                     },
