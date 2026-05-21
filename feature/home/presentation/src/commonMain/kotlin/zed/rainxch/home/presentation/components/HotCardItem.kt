@@ -94,7 +94,7 @@ fun HotCardItem(
                     Spacer(Modifier.height(2.dp))
                     StarTier(stars = r.stargazersCount)
                 }
-                DaysAgoPill(days = days, color = freshness.color)
+                DaysAgoPill(label = relativeAgo(r.updatedAt), color = freshness.color)
             }
             Spacer(Modifier.height(8.dp))
             Text(
@@ -138,7 +138,7 @@ fun HotCardItem(
 }
 
 @Composable
-private fun DaysAgoPill(days: Int, color: androidx.compose.ui.graphics.Color) {
+private fun DaysAgoPill(label: String, color: androidx.compose.ui.graphics.Color) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
@@ -151,7 +151,7 @@ private fun DaysAgoPill(days: Int, color: androidx.compose.ui.graphics.Color) {
             modifier = Modifier.size(5.dp).clip(CircleShape).background(color),
         )
         Text(
-            text = "${days}d",
+            text = label,
             color = color,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.SemiBold,

@@ -58,7 +58,7 @@ fun LeadCard(
             .fillMaxWidth()
             .combinedClickable(onClick = onClick, onLongClick = onLongClick),
     ) {
-        HotPill(days = days)
+        HotPill(days = days, ago = relativeAgo(r.updatedAt))
         Spacer(Modifier.height(8.dp))
         LeadHeroCard(accent = accent, isDark = isDark) {
             Row(
@@ -134,8 +134,8 @@ internal fun ctaLabel(repo: DiscoveryRepositoryUi): String = when {
 }
 
 @Composable
-private fun HotPill(days: Int) {
-    val freshness = zed.rainxch.core.presentation.vocabulary.freshnessOf(days)
+private fun HotPill(days: Int, ago: String) {
+    val freshness = freshnessOf(days)
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
@@ -151,7 +151,7 @@ private fun HotPill(days: Int) {
                 .background(freshness.color),
         )
         Text(
-            text = "HOT · ${days}d ago",
+            text = "HOT · $ago ago",
             color = freshness.color,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.SemiBold,
