@@ -7,6 +7,7 @@ import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.domain.model.TranslationProvider
 
 interface TweaksRepository {
@@ -21,6 +22,16 @@ interface TweaksRepository {
     fun getAmoledTheme(): Flow<Boolean>
 
     suspend fun setAmoledTheme(enabled: Boolean)
+
+    /**
+     * Unified two-axis theme mode (LIGHT / DARK / AMOLED / SYSTEM) derived from
+     * the underlying [getIsDarkTheme] (null = SYSTEM, false = LIGHT, true = DARK)
+     * and [getAmoledTheme] (true only when DARK, lifts to AMOLED). Setter splits
+     * the value back into the two boolean keys — no schema migration required.
+     */
+    fun getThemeMode(): Flow<ThemeMode>
+
+    suspend fun setThemeMode(mode: ThemeMode)
 
     fun getFontTheme(): Flow<FontTheme>
 

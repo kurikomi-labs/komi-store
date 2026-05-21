@@ -28,8 +28,10 @@ import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
+import kotlinx.coroutines.flow.combine
 import zed.rainxch.core.data.secure.safeDelete
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safeGetFlow
@@ -81,6 +83,25 @@ class TweaksRepositoryImpl(
 
     override fun getAmoledTheme(): Flow<Boolean> = gatedGetFlow(K_AMOLED, false)
     override suspend fun setAmoledTheme(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_AMOLED, enabled) }
+
+    override fun getThemeMode(): Flow<ThemeMode> =
+        combine(getIsDarkTheme(), getAmoledTheme()) { isDark, amoled ->
+            when {
+                isDark == null -> ThemeMode.SYSTEM
+                !isDark -> ThemeMode.LIGHT
+                amoled -> ThemeMode.AMOLED
+                else -> ThemeMode.DARK
+            }
+        }
+
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        when (mode) {
+            ThemeMode.SYSTEM -> setDarkTheme(null)
+            ThemeMode.LIGHT -> { setDarkTheme(false); setAmoledTheme(false) }
+            ThemeMode.DARK -> { setDarkTheme(true); setAmoledTheme(false) }
+            ThemeMode.AMOLED -> { setDarkTheme(true); setAmoledTheme(true) }
+        }
+    }
 
     override fun getFontTheme(): Flow<FontTheme> =
         gatedGetFlow(K_FONT, "").map { FontTheme.fromName(it.ifEmpty { null }) }
