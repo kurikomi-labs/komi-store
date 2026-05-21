@@ -37,6 +37,7 @@ fun TopicGlyph(
         val stroke = Stroke(width = sw, cap = StrokeCap.Round, join = StrokeJoin.Round)
         when (key) {
             "security" -> drawSecurity(color, stroke)
+            "privacy" -> drawPrivacy(color, stroke)
             "networking" -> drawNetworking(color, stroke)
             "ai" -> drawAi(color, stroke)
             "notes" -> drawNotes(color, stroke)
@@ -78,6 +79,25 @@ private fun DrawScope.drawSecurity(c: Color, s: Stroke) {
     )
     // Keyhole dot
     drawCircle(color = c, radius = scaled(1.3f), center = Offset(scaled(12f), scaled(15f)))
+}
+
+private fun DrawScope.drawPrivacy(c: Color, s: Stroke) {
+    // Eye outline (almond) + pupil + diagonal strikethrough.
+    val eye = Path().apply {
+        moveTo(scaled(3f), scaled(12f))
+        quadraticTo(scaled(12f), scaled(4.5f), scaled(21f), scaled(12f))
+        quadraticTo(scaled(12f), scaled(19.5f), scaled(3f), scaled(12f))
+        close()
+    }
+    drawPath(eye, c, style = s)
+    drawCircle(color = c, radius = scaled(2.2f), center = Offset(scaled(12f), scaled(12f)))
+    drawLine(
+        color = c,
+        start = Offset(scaled(4f), scaled(20f)),
+        end = Offset(scaled(20f), scaled(4f)),
+        strokeWidth = s.width * 1.4f,
+        cap = StrokeCap.Round,
+    )
 }
 
 private fun DrawScope.drawNetworking(c: Color, s: Stroke) {

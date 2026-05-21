@@ -298,7 +298,7 @@ object Tokens {
      */
     object Topics {
         val supported = setOf(
-            "security", "networking", "ai", "notes",
+            "security", "privacy", "networking", "ai", "notes",
             "audio", "video", "photo", "reader",
             "messaging", "browser", "self-hosted", "backup",
             "social", "launcher",
