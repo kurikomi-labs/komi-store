@@ -8,12 +8,6 @@ import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import zed.rainxch.core.data.network.createPlatformHttpClient
@@ -47,7 +41,6 @@ import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.MirrorApiClient
 import zed.rainxch.core.data.network.MockExternalMatchApi
 import zed.rainxch.core.data.network.ProxyManager
-import zed.rainxch.core.data.network.ProxyManagerSeeding
 import zed.rainxch.core.data.network.ProxyTesterImpl
 import zed.rainxch.core.data.network.TranslationClientProvider
 import zed.rainxch.core.data.repository.UserSessionRepositoryImpl
@@ -61,6 +54,8 @@ import zed.rainxch.core.data.repository.SeenReposRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
 import zed.rainxch.core.data.repository.AnnouncementsCacheStoreImpl
 import zed.rainxch.core.data.repository.AnnouncementsRepositoryImpl
+import zed.rainxch.core.data.repository.CacheRepositoryImpl
+import zed.rainxch.core.data.repository.HostTokenRepositoryImpl
 import zed.rainxch.core.data.repository.TweaksRepositoryImpl
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
@@ -76,6 +71,7 @@ import zed.rainxch.core.domain.system.ExternalAppScanner
 import zed.rainxch.core.domain.system.MultiSourceDownloader
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
+import zed.rainxch.core.domain.repository.CacheRepository
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -84,6 +80,7 @@ import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import zed.rainxch.core.domain.repository.HiddenReposRepository
+import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
@@ -106,6 +103,9 @@ val coreModule =
         single<UserSessionRepository> {
             UserSessionRepositoryImpl(
                 tokenStore = get(),
+                cacheManager = get(),
+                clientProvider = get(),
+                logger = get(),
             )
         }
 
@@ -116,9 +116,17 @@ val coreModule =
             )
         }
 
-        single {
+        single<ForgejoClientRegistry> {
             ForgejoClientRegistry(
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
+            )
+        }
+
+        single<CacheRepository> {
+            CacheRepositoryImpl(
+                logger = get(),
+                fileLocationsProvider = get(),
+                cacheManager = get()
             )
         }
 
@@ -186,7 +194,10 @@ val coreModule =
                     apiClient = get(),
                     appScope = get(),
                 )
-            ProxyManager.startMirrorCollector(repo, get())
+            ProxyManager.startMirrorCollector(
+                repository = repo,
+                scope = get()
+            )
             repo
         }
 
@@ -231,7 +242,6 @@ val coreModule =
         }
 
         single<BackendApiClient> {
-            get<ProxyManagerSeeding>()
             BackendApiClient(
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.DISCOVERY),
                 tokenStore = get(),
@@ -299,31 +309,7 @@ val coreModule =
 
 val networkModule =
     module {
-        single<ProxyManagerSeeding>(createdAtStart = true) {
-            val repository = get<ProxyRepository>()
-            runBlocking {
-                runCatching {
-                    withTimeout(1_500L) {
-                        coroutineScope {
-                            ProxyScope.entries
-                                .map { scope ->
-                                    async {
-                                        scope to repository.getProxyConfig(scope).first()
-                                    }
-                                }.awaitAll()
-                        }
-                    }
-                }.onSuccess { results ->
-                    results.forEach { (scope, config) ->
-                        ProxyManager.setConfig(scope, config)
-                    }
-                }
-            }
-            ProxyManagerSeeding()
-        }
-
-        single<GitHubClientProvider>(createdAtStart = true) {
-            get<ProxyManagerSeeding>()
+        single<GitHubClientProvider> {
             GitHubClientProvider(
                 tokenStore = get(),
                 rateLimitRepository = get(),
@@ -332,8 +318,7 @@ val networkModule =
             )
         }
 
-        single<TranslationClientProvider>(createdAtStart = true) {
-            get<ProxyManagerSeeding>()
+        single<TranslationClientProvider> {
             TranslationClientProvider(
                 proxyConfigFlow = ProxyManager.configFlow(ProxyScope.TRANSLATION),
             )
@@ -350,8 +335,8 @@ val networkModule =
             RateLimitRepositoryImpl()
         }
 
-        single<zed.rainxch.core.domain.repository.HostTokenRepository> {
-            zed.rainxch.core.data.repository.HostTokenRepositoryImpl(
+        single<HostTokenRepository> {
+            HostTokenRepositoryImpl(
                 ksafe = get(qualifier = named("tokens")),
                 httpClient = get(qualifier = named("test")),
             )

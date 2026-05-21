@@ -22,7 +22,6 @@ import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.githubstore.core.presentation.res.*
-import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.starred.presentation.mappers.toStarredRepositoryUi
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
 import zed.rainxch.starred.presentation.model.StarredSortRule
@@ -33,7 +32,6 @@ class StarredReposViewModel(
     private val userSessionRepository: UserSessionRepository,
     private val starredRepository: StarredRepository,
     private val favouritesRepository: FavouritesRepository,
-    private val profileRepository: ProfileRepository,
     private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
@@ -70,7 +68,7 @@ class StarredReposViewModel(
             combine(
                 starredRepository.getAllStarred(),
                 favouritesRepository.getAllFavorites(),
-                profileRepository.getUser(),
+                userSessionRepository.getUser(),
                 tweaksRepository.getStarredSortRule(),
             ) { starred, favorites, user, sortStored ->
                 val sortRule = StarredSortRule.fromName(sortStored)

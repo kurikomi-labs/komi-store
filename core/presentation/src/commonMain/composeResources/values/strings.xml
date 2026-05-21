@@ -792,8 +792,6 @@
     <string name="hidden_repositories_unhidden_all_snackbar">All repositories unhidden</string>
     <string name="hidden_repositories_unhide_failure">Could not unhide. Try again.</string>
 
-    <!-- Privacy / telemetry -->
-
     <!-- Search history -->
     <string name="recent_searches">Recent searches</string>
     <string name="clear_all_history">Clear all</string>

@@ -25,8 +25,8 @@ import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import zed.rainxch.core.domain.model.HostNames
 import zed.rainxch.core.domain.model.HostToken
+import zed.rainxch.core.domain.model.TokenValidation
 import zed.rainxch.core.domain.repository.HostTokenRepository
-import zed.rainxch.core.domain.repository.TokenValidation
 
 class HostTokenRepositoryImpl(
     private val ksafe: KSafe,

@@ -8,12 +8,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.domain.model.MirrorPreference
 import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.ProxyScope
 import zed.rainxch.core.domain.model.TrafficKind
 import zed.rainxch.core.domain.repository.MirrorRepository
+import zed.rainxch.core.domain.repository.ProxyRepository
 
 data class MirrorActive(
     val template: String,
@@ -27,7 +31,37 @@ object ProxyManager {
     private val mirror = AtomicReference<MirrorActive?>(null)
     private var mirrorCollectorJob: Job? = null
 
+    private val seedMutex = Mutex()
+    @Volatile private var seedJob: Job? = null
+
     fun configFlow(scope: ProxyScope): StateFlow<ProxyConfig> = flows.getValue(scope).asStateFlow()
+
+    /**
+     * Idempotent async seed. First call kicks off a background read of every
+     * [ProxyScope]'s persisted config and pushes it into the flows. Subsequent
+     * calls no-op (cheap volatile check + Mutex). Flows start at
+     * [ProxyConfig.System] until the seed completes — typical bootstrap is
+     * sub-200ms, well before any HTTP traffic.
+     *
+     * Replaces the previous `runBlocking` factory in DI. Call once from
+     * `initKoin()` after `startKoin` returns, fire-and-forget.
+     */
+    fun bootstrap(repository: ProxyRepository, appScope: CoroutineScope) {
+        if (seedJob != null) return
+        appScope.launch {
+            seedMutex.withLock {
+                if (seedJob != null) return@withLock
+                seedJob = launch {
+                    ProxyScope.entries.forEach { scope ->
+                        runCatching {
+                            val cfg = repository.getProxyConfig(scope).first()
+                            flows.getValue(scope).value = cfg
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun currentConfig(scope: ProxyScope): ProxyConfig = flows.getValue(scope).value
 

@@ -14,9 +14,9 @@ import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.Announcement
 import zed.rainxch.core.domain.model.AnnouncementCategory
+import zed.rainxch.core.domain.model.AnnouncementsFeedSnapshot
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
-import zed.rainxch.core.domain.repository.AnnouncementsFeedSnapshot
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.AppVersionInfo

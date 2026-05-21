@@ -34,13 +34,13 @@ import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.home.domain.repository.HomeRepository
-import zed.rainxch.profile.domain.repository.ProfileRepository
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
@@ -48,12 +48,12 @@ class HomeViewModel(
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
-    private val logger: GitHubStoreLogger,
-    private val shareManager: ShareManager,
     private val tweaksRepository: TweaksRepository,
     private val seenReposRepository: SeenReposRepository,
     private val hiddenReposRepository: HiddenReposRepository,
-    private val profileRepository: ProfileRepository,
+    private val userSessionRepository: UserSessionRepository,
+    private val logger: GitHubStoreLogger,
+    private val shareManager: ShareManager,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var loadJob: Job? = null
@@ -405,7 +405,7 @@ class HomeViewModel(
 
     private fun observeCurrentUser() {
         viewModelScope.launch {
-            profileRepository.getUser().collect { user ->
+            userSessionRepository.getUser().collect { user ->
                 currentUserLogin = user?.username
                 val signedIn = user != null
                 val previouslySignedIn = _state.value.isUserSignedIn

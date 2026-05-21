@@ -17,8 +17,9 @@ import zed.rainxch.core.domain.getSystemLocaleTag
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
+import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.utils.BrowserHelper
-import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.tweaks.presentation.feedback.model.DiagnosticsInfo
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 import zed.rainxch.tweaks.presentation.feedback.util.FeedbackComposer
@@ -26,7 +27,8 @@ import zed.rainxch.tweaks.presentation.feedback.util.FeedbackComposer
 class FeedbackViewModel(
     private val browserHelper: BrowserHelper,
     private val tweaksRepository: TweaksRepository,
-    private val profileRepository: ProfileRepository,
+    private val userSessionRepository: UserSessionRepository,
+    private val appVersionInfo: AppVersionInfo,
 ) : ViewModel() {
     private val _state = MutableStateFlow(FeedbackState())
     val state = _state.asStateFlow()
@@ -114,10 +116,10 @@ class FeedbackViewModel(
             } else {
                 null
             }
-        val user = profileRepository.getUser().firstOrNull()
+        val user = userSessionRepository.getUser().firstOrNull()
         val appLanguage = tweaksRepository.getAppLanguage().firstOrNull()
         return DiagnosticsInfo(
-            appVersion = profileRepository.getVersionName(),
+            appVersion = appVersionInfo.versionName,
             platform = platform.displayName(),
             osVersion = getOsVersion(),
             locale = appLanguage ?: getSystemLocaleTag(),

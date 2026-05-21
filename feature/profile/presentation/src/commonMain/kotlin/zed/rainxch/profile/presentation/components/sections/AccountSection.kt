@@ -36,7 +36,7 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.core.presentation.res.*
-import zed.rainxch.profile.domain.model.UserProfile
+import zed.rainxch.core.domain.model.UserProfile
 import zed.rainxch.profile.presentation.ProfileAction
 import zed.rainxch.profile.presentation.ProfileState
 

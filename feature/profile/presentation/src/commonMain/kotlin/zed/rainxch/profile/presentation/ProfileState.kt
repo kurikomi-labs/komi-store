@@ -1,6 +1,6 @@
 package zed.rainxch.profile.presentation
 
-import zed.rainxch.profile.domain.model.UserProfile
+import zed.rainxch.core.domain.model.UserProfile
 
 data class ProfileState(
     val userProfile: UserProfile? = null,

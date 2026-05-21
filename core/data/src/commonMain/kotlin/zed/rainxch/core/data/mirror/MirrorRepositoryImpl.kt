@@ -3,7 +3,6 @@ package zed.rainxch.core.data.mirror
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import eu.anifantakis.lib.ksafe.KSafe
@@ -33,12 +32,12 @@ import zed.rainxch.core.domain.model.MirrorPreference
 import zed.rainxch.core.domain.model.MirrorStatus
 import zed.rainxch.core.domain.model.MirrorType
 import zed.rainxch.core.domain.model.TrafficKind
-import zed.rainxch.core.domain.repository.MirrorRemoved
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.data.secure.safeDelete
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safeGetFlow
 import zed.rainxch.core.data.secure.safePut
+import zed.rainxch.core.domain.model.MirrorRemoved
 
 class MirrorRepositoryImpl(
     private val ksafe: KSafe,

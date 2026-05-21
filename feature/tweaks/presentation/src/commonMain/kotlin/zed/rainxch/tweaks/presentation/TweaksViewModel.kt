@@ -29,6 +29,7 @@ import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.AggressiveOemDetector
+import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.UpdateScheduleManager
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
@@ -43,12 +44,11 @@ import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_status
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_timeout
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_unknown
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_unreachable
-import zed.rainxch.profile.domain.repository.ProfileRepository
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 class TweaksViewModel(
     private val tweaksRepository: TweaksRepository,
-    private val profileRepository: ProfileRepository,
+    private val appVersionInfo: AppVersionInfo,
     private val installerStatusProvider: InstallerStatusProvider,
     private val proxyRepository: ProxyRepository,
     private val proxyTester: ProxyTester,
@@ -146,13 +146,7 @@ class TweaksViewModel(
     }
 
     private fun loadVersionName() {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    versionName = profileRepository.getVersionName(),
-                )
-            }
-        }
+        _state.update { it.copy(versionName = appVersionInfo.versionName) }
     }
 
     private fun loadCurrentTheme() {

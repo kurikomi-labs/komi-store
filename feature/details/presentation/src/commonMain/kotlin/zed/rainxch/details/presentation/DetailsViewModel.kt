@@ -50,6 +50,7 @@ import zed.rainxch.core.domain.system.InstallOutcome
 import zed.rainxch.core.domain.system.InstallPolicy
 import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.util.AssetVariant
@@ -100,12 +101,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class DetailsViewModel(
     private val repositoryId: Long,
     private val ownerParam: String,
     private val repoParam: String,
-
     private val sourceHostParam: String?,
     private val detailsRepository: DetailsRepository,
     private val downloader: Downloader,
@@ -128,9 +129,8 @@ class DetailsViewModel(
     private val downloadOrchestrator: DownloadOrchestrator,
     private val externalImportRepository: ExternalImportRepository,
     private val apkInspector: ApkInspector,
-    private val userSessionRepository: zed.rainxch.core.domain.repository.UserSessionRepository,
     private val systemInstallSerializer: zed.rainxch.core.domain.system.SystemInstallSerializer,
-    private val profileRepository: zed.rainxch.profile.domain.repository.ProfileRepository,
+    private val userSessionRepository: UserSessionRepository
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentDownloadJob: Job? = null
@@ -597,7 +597,7 @@ class DetailsViewModel(
         val latestStableHasInstallableAsset: Boolean,
     )
 
-    @OptIn(kotlin.time.ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class)
     private fun computeReleaseInsights(
         allReleases: List<GithubRelease>,
         installedApp: InstalledApp?,
@@ -636,7 +636,7 @@ class DetailsViewModel(
                 val preReleasesAfter =
                     allReleases.any { release ->
                         release.isEffectivelyPreRelease() &&
-                            VersionMath.isVersionNewer(release.tagName, stable.tagName)
+                                VersionMath.isVersionNewer(release.tagName, stable.tagName)
                     }
                 if (!preReleasesAfter) return@run null
                 val days = daysSinceIso(stable.publishedAt) ?: return@run null
@@ -654,15 +654,15 @@ class DetailsViewModel(
         )
     }
 
-    @OptIn(kotlin.time.ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class)
     private fun daysSinceIso(isoTimestamp: String?): Int? {
         if (isoTimestamp.isNullOrBlank()) return null
         return try {
-            val published = kotlin.time.Instant.parse(isoTimestamp)
+            val published = Instant.parse(isoTimestamp)
             val now = System.now()
             val diffMs = now.toEpochMilliseconds() - published.toEpochMilliseconds()
             if (diffMs < 0) null else (diffMs / MILLIS_PER_DAY).toInt()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -724,15 +724,15 @@ class DetailsViewModel(
             }
         val isSameFingerprint =
             sameVariant &&
-                serializedTokens == currentTokens &&
-                fingerprint.glob == currentGlob &&
-                pickedIndex == installedApp.pickedAssetIndex &&
-                newSiblingCount == installedApp.pickedAssetSiblingCount
+                    serializedTokens == currentTokens &&
+                    fingerprint.glob == currentGlob &&
+                    pickedIndex == installedApp.pickedAssetIndex &&
+                    newSiblingCount == installedApp.pickedAssetSiblingCount
 
         val isFirstPin =
             currentVariant.isNullOrBlank() &&
-                currentTokens.isNullOrBlank() &&
-                currentGlob.isNullOrBlank()
+                    currentTokens.isNullOrBlank() &&
+                    currentGlob.isNullOrBlank()
 
         val shouldSave = !isSameFingerprint || installedApp.preferredVariantStale
         if (!shouldSave) return
@@ -764,7 +764,7 @@ class DetailsViewModel(
             } catch (e: Exception) {
                 logger.error(
                     "Failed to persist preferred variant for " +
-                        "${installedApp.packageName}: ${e.message}",
+                            "${installedApp.packageName}: ${e.message}",
                 )
             }
         }
@@ -783,7 +783,7 @@ class DetailsViewModel(
             } catch (e: Exception) {
                 logger.error(
                     "Failed to clear preferred variant for " +
-                        "${installedApp.packageName}: ${e.message}",
+                            "${installedApp.packageName}: ${e.message}",
                 )
             }
         }
@@ -792,7 +792,7 @@ class DetailsViewModel(
     private fun observeCurrentUserForBadge() {
         viewModelScope.launch {
             combine(
-                profileRepository.getUser(),
+                userSessionRepository.getUser(),
                 _state
                     .map { it.repository?.owner?.login }
                     .distinctUntilChanged(),
@@ -923,20 +923,18 @@ class DetailsViewModel(
                     installer.isAssetInstallable(asset.name)
                 }.orEmpty()
 
-        val trackedApp = installedAppOverride
-        val variantMatch =
-            AssetVariant.resolvePreferredAsset(
-                assets = installable,
-                pinnedVariant = trackedApp?.preferredAssetVariant,
-                pinnedTokens = AssetVariant.deserializeTokens(trackedApp?.preferredAssetTokens),
-                pinnedGlob = trackedApp?.assetGlobPattern,
-            )
+        val variantMatch = AssetVariant.resolvePreferredAsset(
+            assets = installable,
+            pinnedVariant = installedAppOverride?.preferredAssetVariant,
+            pinnedTokens = AssetVariant.deserializeTokens(installedAppOverride?.preferredAssetTokens),
+            pinnedGlob = installedAppOverride?.assetGlobPattern,
+        )
         val samePositionMatch =
             if (variantMatch == null) {
                 AssetVariant.resolveBySamePosition(
                     assets = installable,
-                    originalIndex = trackedApp?.pickedAssetIndex,
-                    siblingCountAtPickTime = trackedApp?.pickedAssetSiblingCount,
+                    originalIndex = installedAppOverride?.pickedAssetIndex,
+                    siblingCountAtPickTime = installedAppOverride?.pickedAssetSiblingCount,
                 )
             } else {
                 null
@@ -1253,8 +1251,6 @@ class DetailsViewModel(
     private fun openApp() {
         val installedApp = _state.value.installedApp ?: return
         val launched = installer.openApp(installedApp.packageName)
-        if (launched && platform == Platform.ANDROID) {
-        }
         if (!launched) {
             viewModelScope.launch {
                 _events.send(
@@ -1340,10 +1336,6 @@ class DetailsViewModel(
 
                 val newFavoriteState = favouritesRepository.isFavoriteSync(repo.id)
                 _state.value = _state.value.copy(isFavourite = newFavoriteState)
-
-                if (newFavoriteState) {
-                } else {
-                }
 
                 _events.send(
                     element =
@@ -1606,7 +1598,7 @@ class DetailsViewModel(
                             tweaksRepository.getInstallerType().first()
                         } catch (e: kotlinx.coroutines.CancellationException) {
                             throw e
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             InstallerType.DEFAULT
                         }
                     val policy =
@@ -1706,7 +1698,6 @@ class DetailsViewModel(
         isUpdate: Boolean,
     ) {
         var installFired = false
-        var telemetryStartFired = false
         downloadOrchestrator.observe(packageKey).collect { entry ->
             if (entry == null) {
 
@@ -1739,14 +1730,7 @@ class DetailsViewModel(
                 }
 
                 OrchestratorStage.Installing -> {
-
                     _state.value = _state.value.copy(downloadStage = DownloadStage.INSTALLING)
-
-                    if (!telemetryStartFired) {
-                        telemetryStartFired = true
-                        _state.value.repository?.id?.let { id ->
-                        }
-                    }
                 }
 
                 OrchestratorStage.AwaitingInstall -> {
@@ -1762,11 +1746,6 @@ class DetailsViewModel(
                         tag = releaseTag,
                         result = LogResult.Downloaded,
                     )
-                    if (!telemetryStartFired) {
-                        telemetryStartFired = true
-                        _state.value.repository?.id?.let { id ->
-                        }
-                    }
 
                     try {
                         installAsset(
@@ -1794,8 +1773,6 @@ class DetailsViewModel(
                             tag = releaseTag,
                             result = Error(t.message),
                         )
-                        _state.value.repository?.id?.let {
-                        }
                     }
                 }
 
@@ -1815,10 +1792,6 @@ class DetailsViewModel(
                             else -> LogResult.Installed
                         },
                     )
-                    if (isCompleted) {
-                        _state.value.repository?.id?.let {
-                        }
-                    }
 
                     if (platform == Platform.ANDROID) {
                         val filePath = entry.filePath
@@ -1843,7 +1816,7 @@ class DetailsViewModel(
                                 } else {
                                     logger.warn(
                                         "Orchestrator install settled (outcome=$resolvedOutcome) " +
-                                            "but APK validation failed: $validation",
+                                                "but APK validation failed: $validation",
                                     )
                                 }
                             }.onFailure { t ->
@@ -1852,7 +1825,7 @@ class DetailsViewModel(
                         } else {
                             logger.warn(
                                 "Orchestrator install settled (outcome=$resolvedOutcome) " +
-                                    "but filePath is null; DB not updated",
+                                        "but filePath is null; DB not updated",
                             )
                         }
                     }
@@ -1928,15 +1901,15 @@ class DetailsViewModel(
 
                     logger.warn(
                         "Could not extract APK info for $assetName, " +
-                            "proceeding with unvalidated install",
+                                "proceeding with unvalidated install",
                     )
                 }
 
                 is ApkValidationResult.PackageMismatch -> {
                     logger.error(
                         "Package name mismatch on update: " +
-                            "APK=${validationResult.apkPackageName}, " +
-                            "installed=${validationResult.installedPackageName}",
+                                "APK=${validationResult.apkPackageName}, " +
+                                "installed=${validationResult.installedPackageName}",
                     )
                     _state.value =
                         _state.value.copy(
@@ -2191,7 +2164,7 @@ class DetailsViewModel(
                         assetName = assetName,
                         size = sizeBytes,
                         tag = releaseTag,
-                        result = LogResult.Error(t.message),
+                        result = Error(t.message),
                     )
                 }
             }
@@ -2278,12 +2251,14 @@ class DetailsViewModel(
                                 sourceHost = sourceHostParam,
                             )
                         }
+
                         ownerParam.isNotEmpty() && repoParam.isNotEmpty() ->
                             detailsRepository.getRepositoryByOwnerAndName(
                                 owner = ownerParam,
                                 name = repoParam,
                                 sourceHost = null,
                             )
+
                         else -> detailsRepository.getRepositoryById(repositoryId)
                     }
                 launch { seenReposRepository.markAsSeen(repo) }
@@ -2446,7 +2421,10 @@ class DetailsViewModel(
                     allReleases.firstOrNull { !it.isEffectivelyPreRelease() }
                         ?: allReleases.firstOrNull()
 
-                val (installable, primary) = recomputeAssetsForRelease(selectedRelease, installedApp)
+                val (installable, primary) = recomputeAssetsForRelease(
+                    selectedRelease,
+                    installedApp
+                )
 
                 val isObtainiumAvailable = installer.isObtainiumInstalled()
                 val isAppManagerAvailable = installer.isAppManagerInstalled()
@@ -2703,10 +2681,9 @@ class DetailsViewModel(
                 )
             }
 
-            val releaseSourceLang = currentReadmeLang
             if (!releaseDescription.isNullOrBlank() &&
                 _state.value.whatsNewTranslation.translatedText == null &&
-                releaseSourceLang?.equals(target, ignoreCase = true) != true
+                currentReadmeLang?.equals(target, ignoreCase = true) != true
             ) {
                 whatsNewTranslationJob?.cancel()
                 whatsNewTranslationJob = translateContent(

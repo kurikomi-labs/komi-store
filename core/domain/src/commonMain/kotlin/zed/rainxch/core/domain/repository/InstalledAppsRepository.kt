@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.MatchingPreview
 
 interface InstalledAppsRepository {
     fun getAllInstalledApps(): Flow<List<InstalledApp>>
@@ -109,9 +110,3 @@ interface InstalledAppsRepository {
 
     suspend fun <R> executeInTransaction(block: suspend () -> R): R
 }
-
-data class MatchingPreview(
-    val release: GithubRelease?,
-    val matchedAssets: List<GithubAsset>,
-    val regexError: String? = null,
-)

@@ -30,6 +30,7 @@ import zed.rainxch.domain.repository.SearchHistoryRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ClipboardHelper
 import zed.rainxch.core.domain.utils.ShareManager
@@ -62,7 +63,7 @@ class SearchViewModel(
     private val tweaksRepository: TweaksRepository,
     private val seenReposRepository: SeenReposRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
-    private val profileRepository: ProfileRepository,
+    private val userSessionRepository: UserSessionRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val initialPlatform: SearchPlatformUi? = null,
 ) : ViewModel() {
@@ -72,7 +73,8 @@ class SearchViewModel(
     private var explorePage = 1
     private var lastExploreQuery = ""
 
-    @Volatile private var currentUserLogin: String? = null
+    @Volatile
+    private var currentUserLogin: String? = null
 
     private val exploreLog = logger.withTag("SearchExplore")
 
@@ -120,7 +122,7 @@ class SearchViewModel(
         return state.repositories
             .filter { repo ->
                 repo.repository.id !in hidden &&
-                    (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
+                        (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
             }
             .toImmutableList()
     }
@@ -161,14 +163,15 @@ class SearchViewModel(
                     .filter { it.isNotBlank() && !it.equals("codeberg.org", ignoreCase = true) }
                     .sorted()
                     .map { zed.rainxch.search.presentation.model.SearchSourceUi.CustomForge(it) }
-                val all = kotlinx.collections.immutable.persistentListOf<zed.rainxch.search.presentation.model.SearchSourceUi>()
-                    .addAll(base + extra)
+                val all =
+                    kotlinx.collections.immutable.persistentListOf<zed.rainxch.search.presentation.model.SearchSourceUi>()
+                        .addAll(base + extra)
                 _state.update { current ->
-                    val current_sel = current.selectedSource
-                    val stillValid = all.contains(current_sel)
+                    val currentSel = current.selectedSource
+                    val stillValid = all.contains(currentSel)
                     current.copy(
                         availableSources = all,
-                        selectedSource = if (stillValid) current_sel
+                        selectedSource = if (stillValid) currentSel
                         else zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
                     )
                 }
@@ -186,7 +189,7 @@ class SearchViewModel(
 
     private fun observeCurrentUser() {
         viewModelScope.launch {
-            profileRepository.getUser().collect { user ->
+            userSessionRepository.getUser().collect { user ->
                 currentUserLogin = user?.username
                 val login = user?.username
                 _state.update { current ->
@@ -195,11 +198,14 @@ class SearchViewModel(
                             current.repositories
                                 .map { repo ->
                                     repo.copy(
-                                        isCurrentUserOwner =
-                                            login != null &&
-                                                repo.repository.owner.login.equals(login, ignoreCase = true),
+                                        isCurrentUserOwner = login != null &&
+                                                repo.repository.owner.login.equals(
+                                                    login,
+                                                    ignoreCase = true
+                                                ),
                                     )
-                                }.toImmutableList(),
+                                }
+                                .toImmutableList(),
                     )
                 }
             }
@@ -432,7 +438,10 @@ class SearchViewModel(
                                         isSeen = repo.id in seenIds,
                                         isCurrentUserOwner =
                                             currentLogin != null &&
-                                                repo.owner.login.equals(currentLogin, ignoreCase = true),
+                                                    repo.owner.login.equals(
+                                                        currentLogin,
+                                                        ignoreCase = true
+                                                    ),
                                         isUpdateAvailable = apps.any { it.hasActualUpdate() },
                                         repository = repo.toUi(),
                                     )
@@ -835,7 +844,7 @@ class SearchViewModel(
 
         exploreLog.debug(
             "click: query='$query' platform=$platformUi " +
-                "page=$explorePage lastQuery='$lastExploreQuery' status=$prevStatus",
+                    "page=$explorePage lastQuery='$lastExploreQuery' status=$prevStatus",
         )
 
         if (query.isBlank()) {
@@ -867,8 +876,8 @@ class SearchViewModel(
                 val existingCount = _state.value.repositories.size
                 exploreLog.debug(
                     "response: items=${exploreResult.repos.size} " +
-                        "returnedPage=${exploreResult.page} hasMore=${exploreResult.hasMore} " +
-                        "existingVisible=$existingCount",
+                            "returnedPage=${exploreResult.page} hasMore=${exploreResult.hasMore} " +
+                            "existingVisible=$existingCount",
                 )
 
                 val before = _state.value.repositories.size
@@ -887,7 +896,7 @@ class SearchViewModel(
                 } else {
                     exploreLog.debug(
                         "-> EXHAUSTED: appended=$added dupes=$dupes " +
-                            "rawItems=${exploreResult.repos.size}",
+                                "rawItems=${exploreResult.repos.size}",
                     )
                     _state.update { it.copy(exploreStatus = SearchState.ExploreStatus.EXHAUSTED) }
                 }
@@ -904,7 +913,8 @@ class SearchViewModel(
     private suspend fun appendExploreResults(
         newRepos: List<zed.rainxch.core.domain.model.GithubRepoSummary>,
     ) {
-        val installedMap = installedAppsRepository.getAllInstalledApps().first().groupBy { it.repoId }
+        val installedMap =
+            installedAppsRepository.getAllInstalledApps().first().groupBy { it.repoId }
         val favoritesMap = favouritesRepository.getAllFavorites().first().associateBy { it.repoId }
         val starredMap = starredRepository.getAllStarred().first().associateBy { it.repoId }
         val seenIds = _state.value.seenRepoIds
@@ -923,7 +933,7 @@ class SearchViewModel(
                     isSeen = repo.id in seenIds,
                     isCurrentUserOwner =
                         currentLogin != null &&
-                            repo.owner.login.equals(currentLogin, ignoreCase = true),
+                                repo.owner.login.equals(currentLogin, ignoreCase = true),
                     isUpdateAvailable = apps.any { it.hasActualUpdate() },
                     repository = repo.toUi(),
                 )

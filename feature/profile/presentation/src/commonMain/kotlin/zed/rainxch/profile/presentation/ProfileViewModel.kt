@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import zed.rainxch.profile.domain.repository.ProfileRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
 
 class ProfileViewModel(
-    private val profileRepository: ProfileRepository,
+    private val userSessionRepository: UserSessionRepository
 ) : ViewModel() {
     private var userProfileJob: Job? = null
 
@@ -56,7 +56,7 @@ class ProfileViewModel(
 
     private fun observeLoggedInStatus() {
         viewModelScope.launch {
-            profileRepository.isUserLoggedIn
+            userSessionRepository.isUserLoggedIn()
                 .collect { isLoggedIn ->
                     _state.update { it.copy(isUserLoggedIn = isLoggedIn) }
                     if (isLoggedIn) {
@@ -73,7 +73,7 @@ class ProfileViewModel(
 
         userProfileJob =
             viewModelScope.launch {
-                profileRepository.getUser().collect { profile ->
+                userSessionRepository.getUser().collect { profile ->
                     _state.update { it.copy(userProfile = profile) }
                 }
             }
@@ -92,7 +92,7 @@ class ProfileViewModel(
             ProfileAction.OnLogoutConfirmClick -> {
                 viewModelScope.launch {
                     runCatching {
-                        profileRepository.logout()
+                        userSessionRepository.logout()
                     }.onSuccess {
                         _state.update { it.copy(isLogoutDialogVisible = false, userProfile = null) }
                         _events.send(ProfileEvent.OnLogoutSuccessful)

@@ -12,22 +12,11 @@ kotlin {
                 implementation(projects.core.domain)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.starred.domain)
-                implementation(projects.feature.profile.domain)
 
                 implementation(libs.bundles.landscapist)
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)
-            }
-        }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
             }
         }
     }

@@ -1,4 +1,4 @@
-package zed.rainxch.profile.domain.model
+package zed.rainxch.core.domain.model
 
 import kotlinx.serialization.Serializable
 
