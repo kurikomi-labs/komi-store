@@ -30,6 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import zed.rainxch.apps.presentation.AppsRoot
 import zed.rainxch.apps.presentation.AppsViewModel
+import zed.rainxch.apps.presentation.import.EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY
 import zed.rainxch.apps.presentation.import.ExternalImportRoot
 import zed.rainxch.auth.presentation.AuthenticationRoot
 import zed.rainxch.core.domain.getPlatform
@@ -54,14 +55,8 @@ import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
-import zed.rainxch.tweaks.presentation.mirror.AutoSuggestMirrorViewModel
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
-import zed.rainxch.tweaks.presentation.mirror.components.AutoSuggestMirrorSheet
 import zed.rainxch.tweaks.presentation.skipped.SkippedUpdatesRoot
-
-// Cross-screen "return result" key: set by the external-import wizard's
-// "Add manually" path before navigateUp(), read once by the Apps screen.
-private const val EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY = "external_import_open_link_sheet"
 
 @Composable
 fun AppNavigation(
@@ -88,25 +83,39 @@ fun AppNavigation(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             val desktopDrawerCurrent =
-                navController.currentBackStackEntryAsState().value.getCurrentScreen()
+                navController
+                    .currentBackStackEntryAsState()
+                    .value
+                    .getCurrentScreen()
             if (isDesktop && desktopDrawerCurrent != null) {
                 DesktopDrawer(
                     currentScreen = desktopDrawerCurrent,
                     onNavigate = { target ->
                         navController.navigate(target) {
-                            popUpTo(GithubStoreGraph.HomeScreen) { saveState = true }
+                            popUpTo(GithubStoreGraph.HomeScreen) {
+                                saveState = true
+                            }
                             launchSingleTop = true
                             restoreState = true
                         }
                     },
                     isUpdateAvailable =
-                        appsState.apps.any { it.installedApp.isUpdateAvailable } ||
-                            appsState.showImportProposalBanner,
+                        appsState.apps.any {
+                            it.installedApp.isUpdateAvailable
+                        } || appsState.showImportProposalBanner,
                     hasUnreadAnnouncements = announcementsUnreadCount > 0,
                 )
             }
+
             Box(
-                modifier = if (isDesktop) Modifier.weight(1f).fillMaxHeight() else Modifier.fillMaxSize(),
+                modifier =
+                    if (isDesktop) {
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    } else {
+                        Modifier.fillMaxSize()
+                    },
             ) {
                 NavHost(
                     navController = navController,
@@ -371,7 +380,11 @@ fun AppNavigation(
                                 navController.navigate(GithubStoreGraph.RecentlyViewedScreen)
                             },
                             onNavigateToDevProfile = { username ->
-                                navController.navigate(GithubStoreGraph.DeveloperProfileScreen(username))
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username,
+                                    ),
+                                )
                             },
                             onNavigateToWhatsNew = {
                                 navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
@@ -492,12 +505,10 @@ fun AppNavigation(
                     }
 
                     composable<GithubStoreGraph.AppsScreen> { backStackEntry ->
-                        // Pick up the "open link sheet" flag set by ExternalImportRoot's
-                        // "Add manually" path. We consume the flag once on entry so a
-                        // later config change or back-stack rewind doesn't reopen the sheet.
                         LaunchedEffect(backStackEntry) {
                             val handle = backStackEntry.savedStateHandle
-                            val openLinkSheet = handle.get<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
+                            val openLinkSheet =
+                                handle.get<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
                             if (openLinkSheet == true) {
                                 handle.remove<Boolean>(EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY)
                                 appsViewModel.onAction(zed.rainxch.apps.presentation.AppsAction.OnAddByLinkClick)
@@ -568,10 +579,6 @@ fun AppNavigation(
                                 restoreState = true
                             }
                         },
-                        // Badge fires when either an update is waiting OR pending
-                        // import candidates need review. The badge is a single dot
-                        // — a union of the two conditions is honest "you have
-                        // something to look at on this tab".
                         isUpdateAvailable =
                             appsState.apps.any { it.installedApp.isUpdateAvailable } ||
                                 appsState.showImportProposalBanner,
@@ -585,22 +592,6 @@ fun AppNavigation(
                                     bottomNavigationHeight =
                                         with(density) { coordinates.size.height.toDp() }
                                 },
-                    )
-                }
-
-                val autoSuggestVm: AutoSuggestMirrorViewModel = koinViewModel()
-                val isAutoSuggestVisible by autoSuggestVm.isVisible.collectAsStateWithLifecycle()
-                if (isAutoSuggestVisible) {
-                    AutoSuggestMirrorSheet(
-                        onDismiss = autoSuggestVm::dismiss,
-                        onPickOne = {
-                            autoSuggestVm.onPickOneClicked()
-                            navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
-                                launchSingleTop = true
-                            }
-                        },
-                        onMaybeLater = autoSuggestVm::onMaybeLater,
-                        onDontAskAgain = autoSuggestVm::onDontAskAgain,
                     )
                 }
             }

@@ -18,16 +18,6 @@ sealed interface HomeAction {
 
     data object OnPlatformPopupDismiss : HomeAction
 
-    data object OnSelectAllPlatforms : HomeAction
-
-    data class OnPlatformToggle(
-        val platform: DiscoveryPlatform,
-    ) : HomeAction
-
-    data class OnPlatformsSelected(
-        val platforms: Set<DiscoveryPlatform>,
-    ) : HomeAction
-
     data class OnRepoClick(
         val repo: GithubRepoSummaryUi,
     ) : HomeAction

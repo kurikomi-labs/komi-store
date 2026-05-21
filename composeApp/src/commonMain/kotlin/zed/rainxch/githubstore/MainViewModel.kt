@@ -76,13 +76,6 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            // One-shot read of the persisted onboarding flag. Collecting the
-            // full flow causes a race on Desktop (and any platform whose KSafe
-            // backend emits the `false` default before the persisted `true`
-            // lands): the App.kt redirect fires on the default emission and
-            // pushes the user into onboarding every launch. `.first()` blocks
-            // until the gated flow yields the actual disk value, then we
-            // update state exactly once.
             val complete = tweaksRepository.getOnboardingComplete().first()
             _state.update { it.copy(onboardingComplete = complete) }
         }

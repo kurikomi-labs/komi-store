@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.AuthDeepLinkBus
@@ -33,11 +35,8 @@ import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 
 @Composable
 fun App(deepLinkUri: String? = null) {
-    // Wire Coil's singleton ImageLoader with the SVG decoder so README
-    // images that point to .svg URLs (shields.io badges, diagrams,
-    // hero images) render natively instead of failing silently.
-    coil3.compose.setSingletonImageLoaderFactory { context ->
-        coil3.ImageLoader
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader
             .Builder(context)
             .components { add(coil3.svg.SvgDecoder.Factory()) }
             .build()
@@ -49,9 +48,6 @@ fun App(deepLinkUri: String? = null) {
     val navController = rememberNavController()
     val currentScreen = navController.currentBackStackEntryAsState().value.getCurrentScreen()
 
-    // First-launch redirect to Onboarding (D17 / D6.5). Fires once when the
-    // persistence layer reports `onboardingComplete = false`. `null` means the
-    // flow hasn't emitted yet — wait, don't redirect into a flash of Home.
     LaunchedEffect(state.onboardingComplete) {
         if (state.onboardingComplete == false &&
             currentScreen !is GithubStoreGraph.OnboardingScreen
@@ -75,9 +71,6 @@ fun App(deepLinkUri: String? = null) {
                 }
 
                 DeepLinkDestination.Apps -> {
-                    // Pending-install notification dropped us here.
-                    // Navigate to the apps tab so the user can finish
-                    // the deferred install from the row.
                     navController.navigate(GithubStoreGraph.AppsScreen) {
                         popUpTo(GithubStoreGraph.HomeScreen) {
                             saveState = true
@@ -182,8 +175,6 @@ fun App(deepLinkUri: String? = null) {
 
         AppNavigation(
             navController = navController,
-            isScrollbarEnabled = state.isScrollbarEnabled,
-            contentWidth = state.contentWidth,
         )
 
         val whatsNewViewModel: WhatsNewViewModel = koinViewModel()

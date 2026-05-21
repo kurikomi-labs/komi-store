@@ -2,10 +2,13 @@ package zed.rainxch.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +20,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.GithubUser
+import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.Platform
-import zed.rainxch.core.domain.model.StarredRepository as StarredRepositoryModel
 import zed.rainxch.core.domain.model.hasActualUpdate
 import zed.rainxch.core.domain.model.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -35,6 +38,7 @@ import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.toUi
+import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.home.domain.repository.HomeRepository
 import zed.rainxch.profile.domain.repository.ProfileRepository
@@ -42,7 +46,6 @@ import zed.rainxch.profile.domain.repository.ProfileRepository
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val installedAppsRepository: InstalledAppsRepository,
-    private val platform: Platform,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
@@ -52,6 +55,7 @@ class HomeViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val profileRepository: ProfileRepository,
+    private val detailsRepository: DetailsRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var loadJob: Job? = null
@@ -66,7 +70,6 @@ class HomeViewModel(
                     observeCurrentUser()
                     syncSystemState()
 
-                    loadPlatform()
                     refreshAllSections(isInitial = true)
                     observeInstalledApps()
                     observeFavourites()
@@ -106,22 +109,6 @@ class HomeViewModel(
                 _state.update { it.copy(isPlatformPopupVisible = false) }
             }
 
-            is HomeAction.OnPlatformToggle -> {
-                val target = _state.value.selectedPlatforms.toggle(action.platform)
-                applyPlatformSelection(target)
-            }
-
-            is HomeAction.OnPlatformsSelected -> {
-                applyPlatformSelection(action.platforms)
-            }
-
-            HomeAction.OnSelectAllPlatforms -> {
-                val current = _state.value.selectedPlatforms
-                val target =
-                    if (current.isEmpty()) setOf(devicePlatformAsDiscovery()) else emptySet()
-                applyPlatformSelection(target)
-            }
-
             is HomeAction.OnRepoLongClick -> {
                 _state.update { it.copy(actionSheetRepoId = action.repoId) }
             }
@@ -139,7 +126,7 @@ class HomeViewModel(
                         _events.send(HomeEvent.OnMessage(getString(Res.string.failed_to_share_link)))
                         return@launch
                     }
-                    if (platform != Platform.ANDROID) {
+                    if (getPlatform() != Platform.ANDROID) {
                         _events.send(HomeEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
                     }
                 }
@@ -217,16 +204,6 @@ class HomeViewModel(
             HomeAction.OnSeeAllTrending,
             HomeAction.OnSeeAllPopular,
             HomeAction.OnSeeAllStarred -> Unit // Handled in composable
-        }
-    }
-
-    private fun applyPlatformSelection(target: Set<DiscoveryPlatform>) {
-        if (target == _state.value.selectedPlatforms) return
-        viewModelScope.launch {
-            tweaksRepository.setDiscoveryPlatforms(target)
-            _state.update { it.copy(selectedPlatforms = target, isPlatformPopupVisible = false) }
-            refreshAllSections(isInitial = true)
-            _events.send(HomeEvent.OnScrollToListTop)
         }
     }
 
@@ -326,13 +303,29 @@ class HomeViewModel(
         }
         try {
             runCatching { starredRepository.syncStarredRepos(forceRefresh = false) }
-            val top = starredRepository
+            val topIds = starredRepository
                 .getAllStarred()
                 .first()
                 .sortedByDescending { it.stargazersCount }
                 .take(5)
-                .map { it.toSummary() }
-            val mapped = mapReposToUi(top)
+                .map { it.repoId }
+
+            // Fetch the full GithubRepoSummary per starred id from backend in parallel.
+            // The local StarredRepository row is a thin cache (no topics, updatedAt,
+            // availablePlatforms) so building UI from it would render half-empty cards
+            // and break TopicGlyph + FreshnessRing + PlatformGlyph. Failures per id are
+            // swallowed — the surface for that one repo just drops out.
+            val fetched = coroutineScope {
+                topIds
+                    .map { id ->
+                        async {
+                            runCatching { detailsRepository.getRepositoryById(id) }.getOrNull()
+                        }
+                    }
+                    .awaitAll()
+                    .filterNotNull()
+            }
+            val mapped = mapReposToUi(fetched)
             _state.update {
                 it.copy(
                     starred = mapped.toImmutableList(),
@@ -357,12 +350,6 @@ class HomeViewModel(
             } catch (e: Exception) {
                 logger.error("Initial sync failed: ${e.message}")
             }
-        }
-    }
-
-    private fun loadPlatform() {
-        _state.update {
-            it.copy(isAppsSectionVisible = platform == Platform.ANDROID)
         }
     }
 
@@ -509,33 +496,14 @@ class HomeViewModel(
         }
     }
 
-    private fun Set<DiscoveryPlatform>.toggle(platform: DiscoveryPlatform): Set<DiscoveryPlatform> {
-        if (platform == DiscoveryPlatform.All) return emptySet()
-        if (isEmpty()) return setOf(platform)
-        val mutated = if (platform in this) this - platform else this + platform
-        return when {
-            mutated.size == DiscoveryPlatform.selectablePlatforms.size -> emptySet()
-            mutated.isEmpty() -> setOf(devicePlatformAsDiscovery())
-            else -> mutated
-        }
-    }
-
-    private fun devicePlatformAsDiscovery(): DiscoveryPlatform =
-        when (platform) {
-            Platform.ANDROID -> DiscoveryPlatform.Android
-            Platform.WINDOWS -> DiscoveryPlatform.Windows
-            Platform.MACOS -> DiscoveryPlatform.Macos
-            Platform.LINUX -> DiscoveryPlatform.Linux
-        }
-
     override fun onCleared() {
         super.onCleared()
         loadJob?.cancel()
     }
 }
 
-private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.restamp(
-    installedMap: Map<Long, List<zed.rainxch.core.domain.model.InstalledApp>>,
+private fun ImmutableList<DiscoveryRepositoryUi>.restamp(
+    installedMap: Map<Long, List<InstalledApp>>,
 ) = map { repo ->
     val apps = installedMap[repo.repository.id].orEmpty()
     repo.copy(
@@ -544,19 +512,19 @@ private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.r
     )
 }.toImmutableList()
 
-private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.restampSeen(
+private fun ImmutableList<DiscoveryRepositoryUi>.restampSeen(
     ids: Set<Long>,
 ) = map { it.copy(isSeen = it.repository.id in ids) }.toImmutableList()
 
-private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.restampFavourite(
+private fun ImmutableList<DiscoveryRepositoryUi>.restampFavourite(
     ids: Set<Long>,
 ) = map { it.copy(isFavourite = it.repository.id in ids) }.toImmutableList()
 
-private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.restampStarred(
+private fun ImmutableList<DiscoveryRepositoryUi>.restampStarred(
     ids: Set<Long>,
 ) = map { it.copy(isStarred = it.repository.id in ids) }.toImmutableList()
 
-private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.restampOwner(
+private fun ImmutableList<DiscoveryRepositoryUi>.restampOwner(
     login: String?,
 ) = map { repo ->
     repo.copy(
@@ -565,28 +533,3 @@ private fun kotlinx.collections.immutable.ImmutableList<DiscoveryRepositoryUi>.r
     )
 }.toImmutableList()
 
-private fun StarredRepositoryModel.toSummary(): GithubRepoSummary =
-    GithubRepoSummary(
-        id = repoId,
-        name = repoName,
-        fullName = "$repoOwner/$repoName",
-        owner = GithubUser(
-            id = 0L,
-            login = repoOwner,
-            avatarUrl = repoOwnerAvatarUrl,
-            htmlUrl = "https://github.com/$repoOwner",
-        ),
-        description = repoDescription,
-        defaultBranch = "main",
-        htmlUrl = repoUrl,
-        stargazersCount = stargazersCount,
-        forksCount = forksCount,
-        language = primaryLanguage,
-        topics = emptyList(),
-        releasesUrl = "$repoUrl/releases",
-        updatedAt = "",
-        isFork = false,
-        availablePlatforms = emptyList(),
-        downloadCount = 0,
-        sourceHost = null,
-    )

@@ -9,11 +9,6 @@ sealed interface GithubStoreGraph {
 
     @Serializable
     data class SearchScreen(
-        // String over enum: Compose Navigation's Desktop (`nonAndroid.kt`)
-        // serializer needs an explicit NavType for non-primitive nav args,
-        // which enums don't have out of the box. Enum-as-name string keeps
-        // the contract type-safe at the caller / VM boundary while letting
-        // the route serialize on every target with no typeMap.
         val initialPlatform: String? = null,
     ) : GithubStoreGraph
 
@@ -26,9 +21,6 @@ sealed interface GithubStoreGraph {
         val owner: String = "",
         val repo: String = "",
         val isComingFromUpdate: Boolean = false,
-        // Non-null when the repo lives on a non-GitHub forge (Codeberg /
-        // Forgejo / Gitea / custom). Drives the foreign-source branch in
-        // DetailsViewModel so we hit the Forgejo API instead of GitHub.
         val sourceHost: String? = null,
     ) : GithubStoreGraph
 
@@ -82,12 +74,6 @@ sealed interface GithubStoreGraph {
     @Serializable
     data object HostTokensScreen : GithubStoreGraph
 
-    /**
-     * Category-specific list view powering Home's "See all" jumps. `category` is
-     * a free-form string mapped to a [zed.rainxch.home.domain.model.HomeCategory]
-     * at the destination (no enum nav arg — same Desktop nav serializer caveat
-     * as [SearchScreen.initialPlatform]).
-     */
     @Serializable
     data class CategoryListScreen(
         val category: String,

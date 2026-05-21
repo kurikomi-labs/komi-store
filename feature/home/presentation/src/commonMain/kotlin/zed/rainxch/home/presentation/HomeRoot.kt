@@ -55,6 +55,7 @@ import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.toIcons
 import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.components.HomeTopBar
 import zed.rainxch.home.presentation.components.HotCardItem
 import zed.rainxch.home.presentation.components.LeadCard
@@ -71,7 +72,7 @@ fun HomeRoot(
     onNavigateToApps: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
-    onNavigateToCategoryList: (zed.rainxch.home.domain.model.HomeCategory) -> Unit,
+    onNavigateToCategoryList: (HomeCategory) -> Unit,
     onNavigateToStarredRepos: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -101,13 +102,13 @@ fun HomeRoot(
                 HomeAction.OnSettingsClick -> onNavigateToSettings()
                 HomeAction.OnAppsClick -> onNavigateToApps()
                 HomeAction.OnSeeAllHot -> onNavigateToCategoryList(
-                    zed.rainxch.home.domain.model.HomeCategory.HOT_RELEASE,
+                    HomeCategory.HOT_RELEASE,
                 )
                 HomeAction.OnSeeAllTrending -> onNavigateToCategoryList(
-                    zed.rainxch.home.domain.model.HomeCategory.TRENDING,
+                    HomeCategory.TRENDING,
                 )
                 HomeAction.OnSeeAllPopular -> onNavigateToCategoryList(
-                    zed.rainxch.home.domain.model.HomeCategory.MOST_POPULAR,
+                    HomeCategory.MOST_POPULAR,
                 )
                 HomeAction.OnSeeAllStarred -> onNavigateToStarredRepos()
                 is HomeAction.OnRepoClick -> onNavigateToDetails(action.repo.id)
@@ -203,9 +204,6 @@ private fun FeedContent(
     val visibleStarred by visibleReposState(state, state.starred)
 
     val lead = visibleHot.firstOrNull()
-    // Limit sections on Home to keep the surface tight — full list lives in
-    // CategoryListScreen via "See all". Pick 6 as a balance between density
-    // and "skim-and-go" Home feel.
     val homeLimit = 6
     val hotTail = visibleHot.drop(1).take(homeLimit)
     val trendingPreview = visibleTrending.take(homeLimit)
@@ -230,10 +228,7 @@ private fun FeedContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item(key = "top_bar") {
-                HomeTopBar(
-                    onSearchClick = { onAction(HomeAction.OnSearchClick) },
-                    onSettingsClick = { onAction(HomeAction.OnSettingsClick) },
-                )
+                HomeTopBar()
             }
 
             if (lead != null) {
@@ -331,53 +326,6 @@ private fun FeedContent(
             }
         }
     }
-}
-
-@Composable
-private fun PlatformFilterAction(
-    selectedPlatforms: Set<DiscoveryPlatform>,
-    isPlatformPopupVisible: Boolean,
-    onAction: (HomeAction) -> Unit,
-) {
-    Box {
-        val icons = selectedPlatformsIcons(selectedPlatforms)
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(14.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .clickable { onAction(HomeAction.OnPlatformPopupOpen) }
-                .padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            icons.forEach { icon ->
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        }
-        PlatformFilterMenu(
-            expanded = isPlatformPopupVisible,
-            selectedPlatforms = selectedPlatforms,
-            onDismiss = { onAction(HomeAction.OnPlatformPopupDismiss) },
-            onSelectAll = { onAction(HomeAction.OnSelectAllPlatforms) },
-            onToggle = { onAction(HomeAction.OnPlatformToggle(it)) },
-        )
-    }
-}
-
-@Composable
-private fun selectedPlatformsIcons(
-    selectedPlatforms: Set<DiscoveryPlatform>,
-) = if (selectedPlatforms.isEmpty()) {
-    DiscoveryPlatform.All.toIcons()
-} else {
-    DiscoveryPlatform.selectablePlatforms
-        .filter { it in selectedPlatforms }
-        .flatMap { it.toIcons() }
 }
 
 @Composable

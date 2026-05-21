@@ -16,10 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 
-/**
- * Section header with leading glyph + Fraunces italic title + optional sub-count +
- * Squiggle underline + optional "See all ›" affordance (DESIGN.md §7.5).
- */
 @Composable
 fun SectionHeader(
     title: String,
@@ -38,6 +34,7 @@ fun SectionHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             leading?.invoke()
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge.copy(
@@ -47,6 +44,7 @@ fun SectionHeader(
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
             )
+
             if (subCount != null) {
                 Text(
                     text = "· $subCount",
@@ -54,6 +52,7 @@ fun SectionHeader(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
+
             if (onSeeAll != null) {
                 Text(
                     text = "See all ›",

@@ -23,17 +23,10 @@ interface TweaksRepository {
 
     suspend fun setAmoledTheme(enabled: Boolean)
 
-    /**
-     * Unified two-axis theme mode (LIGHT / DARK / AMOLED / SYSTEM) derived from
-     * the underlying [getIsDarkTheme] (null = SYSTEM, false = LIGHT, true = DARK)
-     * and [getAmoledTheme] (true only when DARK, lifts to AMOLED). Setter splits
-     * the value back into the two boolean keys — no schema migration required.
-     */
     fun getThemeMode(): Flow<ThemeMode>
 
     suspend fun setThemeMode(mode: ThemeMode)
 
-    /** One-shot first-launch onboarding completion flag (D17). */
     fun getOnboardingComplete(): Flow<Boolean>
 
     suspend fun setOnboardingComplete(complete: Boolean)

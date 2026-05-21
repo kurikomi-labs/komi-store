@@ -274,3 +274,5 @@ fun ExternalImportRoot(
         }
     }
 }
+
+const val EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY = "external_import_open_link_sheet"
