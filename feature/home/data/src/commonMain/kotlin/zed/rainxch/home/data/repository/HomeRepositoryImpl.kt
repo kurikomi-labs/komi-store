@@ -27,6 +27,8 @@ import zed.rainxch.core.data.cache.CacheManager
 import zed.rainxch.core.data.cache.CacheManager.CacheTtl.HOME_REPOS
 import zed.rainxch.core.data.dto.GithubRepoNetworkModel
 import zed.rainxch.core.data.dto.GithubRepoSearchResponse
+import zed.rainxch.core.data.dto.RepoByIdNetwork
+import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.core.data.mappers.toSummary
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
@@ -668,5 +670,48 @@ class HomeRepositoryImpl(
     @Serializable
     private data class AssetNetworkModel(
         val name: String,
+    )
+
+    override suspend fun getRepositoryById(id: Long): GithubRepoSummary? {
+        val cacheKey = "home:repo_id:$id"
+        cacheManager.get<GithubRepoSummary>(cacheKey)?.let { return it }
+        return try {
+            val result = httpClient
+                .executeRequest<RepoByIdNetwork> {
+                    get("/repositories/$id") {
+                        header("Accept", "application/vnd.github+json")
+                    }
+                }.getOrThrow()
+                .toSummary()
+            cacheManager.put(cacheKey, result, HOME_REPOS)
+            result
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { return it }
+            logger.warn("getRepositoryById($id) failed: ${e.message}")
+            null
+        }
+    }
+
+    private fun RepoByIdNetwork.toSummary(): GithubRepoSummary = GithubRepoSummary(
+        id = id,
+        name = name,
+        fullName = fullName,
+        owner = GithubUser(
+            id = owner.id,
+            login = owner.login,
+            avatarUrl = owner.avatarUrl,
+            htmlUrl = owner.htmlUrl,
+        ),
+        description = description,
+        defaultBranch = defaultBranch,
+        htmlUrl = htmlUrl,
+        stargazersCount = stars,
+        forksCount = forks,
+        language = language,
+        topics = topics.orEmpty(),
+        releasesUrl = "https://api.github.com/repos/$fullName/releases{/id}",
+        updatedAt = updatedAt,
     )
 }

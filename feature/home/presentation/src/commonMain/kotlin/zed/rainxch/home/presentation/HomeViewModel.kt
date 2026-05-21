@@ -38,7 +38,6 @@ import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.toUi
-import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.home.domain.repository.HomeRepository
 import zed.rainxch.profile.domain.repository.ProfileRepository
@@ -55,7 +54,6 @@ class HomeViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val profileRepository: ProfileRepository,
-    private val detailsRepository: DetailsRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var loadJob: Job? = null
@@ -310,16 +308,11 @@ class HomeViewModel(
                 .take(5)
                 .map { it.repoId }
 
-            // Fetch the full GithubRepoSummary per starred id from backend in parallel.
-            // The local StarredRepository row is a thin cache (no topics, updatedAt,
-            // availablePlatforms) so building UI from it would render half-empty cards
-            // and break TopicGlyph + FreshnessRing + PlatformGlyph. Failures per id are
-            // swallowed — the surface for that one repo just drops out.
             val fetched = coroutineScope {
                 topIds
                     .map { id ->
                         async {
-                            runCatching { detailsRepository.getRepositoryById(id) }.getOrNull()
+                            runCatching { homeRepository.getRepositoryById(id) }.getOrNull()
                         }
                     }
                     .awaitAll()

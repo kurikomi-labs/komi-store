@@ -12,23 +12,12 @@ kotlin {
                 implementation(projects.core.presentation)
                 implementation(projects.feature.home.domain)
                 implementation(projects.feature.profile.domain)
-                implementation(projects.feature.details.domain)
 
                 implementation(libs.kotlinx.collections.immutable)
 
                 implementation(libs.jetbrains.compose.components.resources)
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
-            }
-        }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
             }
         }
     }

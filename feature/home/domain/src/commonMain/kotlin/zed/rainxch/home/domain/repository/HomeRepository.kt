@@ -31,4 +31,12 @@ interface HomeRepository {
         topic: TopicCategory,
         platforms: Set<DiscoveryPlatform>,
     ): Flow<PaginatedDiscoveryRepositories>
+
+    /**
+     * Fetch a single repo summary by id. Used by the Home starred section to
+     * hydrate stale local cache rows with fresh topics / updatedAt / platforms.
+     * Returns `null` on failure (network / 404) so callers can drop that one
+     * item without failing the whole section.
+     */
+    suspend fun getRepositoryById(id: Long): zed.rainxch.core.domain.model.GithubRepoSummary?
 }

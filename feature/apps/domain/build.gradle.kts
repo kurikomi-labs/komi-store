@@ -12,15 +12,5 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
-
-        androidMain {
-            dependencies {
-            }
-        }
-
-        jvmMain {
-            dependencies {
-            }
-        }
     }
 }
