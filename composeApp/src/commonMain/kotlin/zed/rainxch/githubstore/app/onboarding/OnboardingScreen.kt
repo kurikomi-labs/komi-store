@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,6 +73,7 @@ fun OnboardingScreen(
             Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .systemBarsPadding()
                 .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.AuthenticationState
@@ -75,11 +76,15 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            tweaksRepository
-                .getOnboardingComplete()
-                .collect { complete ->
-                    _state.update { it.copy(onboardingComplete = complete) }
-                }
+            // One-shot read of the persisted onboarding flag. Collecting the
+            // full flow causes a race on Desktop (and any platform whose KSafe
+            // backend emits the `false` default before the persisted `true`
+            // lands): the App.kt redirect fires on the default emission and
+            // pushes the user into onboarding every launch. `.first()` blocks
+            // until the gated flow yields the actual disk value, then we
+            // update state exactly once.
+            val complete = tweaksRepository.getOnboardingComplete().first()
+            _state.update { it.copy(onboardingComplete = complete) }
         }
 
         viewModelScope.launch {
