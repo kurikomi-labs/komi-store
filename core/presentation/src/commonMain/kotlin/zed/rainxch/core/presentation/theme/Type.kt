@@ -2,59 +2,106 @@ package zed.rainxch.core.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.fraunces
+import zed.rainxch.githubstore.core.presentation.res.fraunces_italic
+import zed.rainxch.githubstore.core.presentation.res.inter_tight
+import zed.rainxch.githubstore.core.presentation.res.jetbrains_mono
 
-val jetbrainsMonoFontFamily
-    @Composable get() =
-        FontFamily(
-            Font(Res.font.jetbrains_mono_light, FontWeight.Light),
-            Font(Res.font.jetbrains_mono_regular, FontWeight.Normal),
-            Font(Res.font.jetbrains_mono_medium, FontWeight.Medium),
-            Font(Res.font.jetbrains_mono_semi_bold, FontWeight.SemiBold),
-            Font(Res.font.jetbrains_mono_bold, FontWeight.Bold),
-        )
+/**
+ * Three font families per DESIGN.md §3.1:
+ *   - **Fraunces** (italic, weight 600): repo names, section titles, lead numbers.
+ *   - **Inter Tight** (400–700): body text, labels, descriptions, button labels.
+ *   - **JetBrains Mono** (500–700): versions, hashes, package names — technical artifacts.
+ *
+ * Variable .ttf files cover all weights at runtime via Compose's
+ * `Font(resource, weight)` variation resolution.
+ */
+val fraunces
+    @Composable get() = FontFamily(
+        Font(Res.font.fraunces, FontWeight.Medium, FontStyle.Normal),
+        Font(Res.font.fraunces, FontWeight.SemiBold, FontStyle.Normal),
+        Font(Res.font.fraunces, FontWeight.Bold, FontStyle.Normal),
+        Font(Res.font.fraunces_italic, FontWeight.Medium, FontStyle.Italic),
+        Font(Res.font.fraunces_italic, FontWeight.SemiBold, FontStyle.Italic),
+        Font(Res.font.fraunces_italic, FontWeight.Bold, FontStyle.Italic),
+    )
 
-val interFontFamily
-    @Composable get() =
-        FontFamily(
-            Font(Res.font.inter_light, FontWeight.Light),
-            Font(Res.font.inter_regular, FontWeight.Normal),
-            Font(Res.font.inter_medium, FontWeight.Medium),
-            Font(Res.font.inter_semi_bold, FontWeight.SemiBold),
-            Font(Res.font.inter_bold, FontWeight.Bold),
-            Font(Res.font.inter_black, FontWeight.Black),
-        )
+val interTight
+    @Composable get() = FontFamily(
+        Font(Res.font.inter_tight, FontWeight.Normal),
+        Font(Res.font.inter_tight, FontWeight.Medium),
+        Font(Res.font.inter_tight, FontWeight.SemiBold),
+        Font(Res.font.inter_tight, FontWeight.Bold),
+    )
 
-val baseline = Typography()
+val jetbrainsMono
+    @Composable get() = FontFamily(
+        Font(Res.font.jetbrains_mono, FontWeight.Normal),
+        Font(Res.font.jetbrains_mono, FontWeight.Medium),
+        Font(Res.font.jetbrains_mono, FontWeight.Bold),
+    )
 
+private val baseline = Typography()
+
+/**
+ * Material 3 [Typography] mapped to GHS voices:
+ *   - **display / headline / title** → Fraunces italic (the warm editorial voice).
+ *   - **body / label** → Inter Tight (crisp, dense).
+ *
+ * `JetBrains Mono` is reserved for inline technical text (version tags, hashes) and
+ * is not part of the global Typography — components opt-in via the `jetbrainsMono`
+ * family directly.
+ */
 @Composable
-fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography =
-    when (fontTheme) {
-        FontTheme.SYSTEM -> {
-            baseline
-        }
+fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography {
+    if (fontTheme == FontTheme.SYSTEM) return baseline
 
-        FontTheme.CUSTOM -> {
-            Typography(
-                displayLarge = baseline.displayLarge.copy(fontFamily = jetbrainsMonoFontFamily),
-                displayMedium = baseline.displayMedium.copy(fontFamily = jetbrainsMonoFontFamily),
-                displaySmall = baseline.displaySmall.copy(fontFamily = jetbrainsMonoFontFamily),
-                headlineLarge = baseline.headlineLarge.copy(fontFamily = jetbrainsMonoFontFamily),
-                headlineMedium = baseline.headlineMedium.copy(fontFamily = jetbrainsMonoFontFamily),
-                headlineSmall = baseline.headlineSmall.copy(fontFamily = jetbrainsMonoFontFamily),
-                titleLarge = baseline.titleLarge.copy(fontFamily = jetbrainsMonoFontFamily),
-                titleMedium = baseline.titleMedium.copy(fontFamily = jetbrainsMonoFontFamily),
-                titleSmall = baseline.titleSmall.copy(fontFamily = jetbrainsMonoFontFamily),
-                bodyLarge = baseline.bodyLarge.copy(fontFamily = interFontFamily),
-                bodyMedium = baseline.bodyMedium.copy(fontFamily = interFontFamily),
-                bodySmall = baseline.bodySmall.copy(fontFamily = interFontFamily),
-                labelLarge = baseline.labelLarge.copy(fontFamily = interFontFamily),
-                labelMedium = baseline.labelMedium.copy(fontFamily = interFontFamily),
-                labelSmall = baseline.labelSmall.copy(fontFamily = interFontFamily),
-            )
-        }
-    }
+    val serif = fraunces
+    val sans = interTight
+
+    fun TextStyle.fraunces(weight: FontWeight) = copy(
+        fontFamily = serif,
+        fontWeight = weight,
+        fontStyle = FontStyle.Italic,
+        letterSpacing = (-0.02).em,
+    )
+
+    fun TextStyle.sans(weight: FontWeight) = copy(
+        fontFamily = sans,
+        fontWeight = weight,
+        textDecoration = TextDecoration.None,
+    )
+
+    return Typography(
+        // Editorial voice — Fraunces italic
+        displayLarge = baseline.displayLarge.fraunces(FontWeight.SemiBold).copy(
+            letterSpacing = (-0.025).em,
+            fontSize = 36.sp,
+        ),
+        displayMedium = baseline.displayMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 32.sp),
+        displaySmall = baseline.displaySmall.fraunces(FontWeight.SemiBold).copy(fontSize = 28.sp),
+        headlineLarge = baseline.headlineLarge.fraunces(FontWeight.SemiBold).copy(fontSize = 26.sp),
+        headlineMedium = baseline.headlineMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 22.sp),
+        headlineSmall = baseline.headlineSmall.fraunces(FontWeight.SemiBold).copy(fontSize = 20.sp),
+        titleLarge = baseline.titleLarge.fraunces(FontWeight.SemiBold).copy(fontSize = 18.sp),
+        titleMedium = baseline.titleMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 16.sp),
+        titleSmall = baseline.titleSmall.fraunces(FontWeight.SemiBold).copy(fontSize = 14.sp),
+        // Body voice — Inter Tight
+        bodyLarge = baseline.bodyLarge.sans(FontWeight.Normal).copy(fontSize = 14.sp),
+        bodyMedium = baseline.bodyMedium.sans(FontWeight.Normal).copy(fontSize = 13.sp),
+        bodySmall = baseline.bodySmall.sans(FontWeight.Medium).copy(fontSize = 12.sp),
+        labelLarge = baseline.labelLarge.sans(FontWeight.SemiBold),
+        labelMedium = baseline.labelMedium.sans(FontWeight.SemiBold),
+        labelSmall = baseline.labelSmall.sans(FontWeight.SemiBold),
+    )
+}
