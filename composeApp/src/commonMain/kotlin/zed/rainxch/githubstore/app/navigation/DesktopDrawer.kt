@@ -49,7 +49,10 @@ fun DesktopDrawer(
     modifier: Modifier = Modifier,
 ) {
     val cs = MaterialTheme.colorScheme
-    val items = BottomNavigationUtils.items()
+    // Library (AppsScreen) is Android-only: Installer + PackageMonitor + Shizuku
+    // don't exist on Desktop, so the screen has nothing to manage. Filter it out
+    // of the drawer entirely rather than show an empty stub.
+    val items = BottomNavigationUtils.items().filterNot { it.screen == GithubStoreGraph.AppsScreen }
     Column(
         modifier =
             modifier

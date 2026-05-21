@@ -11,6 +11,7 @@ import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
 import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
+import zed.rainxch.githubstore.app.onboarding.OnboardingViewModel
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.home.presentation.HomeViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
@@ -107,6 +108,7 @@ val viewModelsModule =
         viewModelOf(::HostTokensViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::AnnouncementsViewModel)
+        viewModelOf(::OnboardingViewModel)
         viewModel {
             MirrorPickerViewModel(
                 mirrorRepository = get(),

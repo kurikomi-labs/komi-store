@@ -103,6 +103,13 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getOnboardingComplete(): Flow<Boolean> = gatedGetFlow(K_ONBOARDING_COMPLETE, false)
+
+    override suspend fun setOnboardingComplete(complete: Boolean) {
+        migrationDeferred.await()
+        ksafe.safePut(K_ONBOARDING_COMPLETE, complete)
+    }
+
     override fun getFontTheme(): Flow<FontTheme> =
         gatedGetFlow(K_FONT, "").map { FontTheme.fromName(it.ifEmpty { null }) }
 
@@ -500,6 +507,7 @@ class TweaksRepositoryImpl(
         private const val K_SHOW_ALL_PLATFORMS = "show_all_platforms"
         private const val K_BATTERY_OPT_PROMPT_DISMISSED = "battery_opt_prompt_dismissed"
         private const val K_LAST_SEEN_WHATS_NEW_VERSION_CODE = "last_seen_whats_new_version_code"
+        private const val K_ONBOARDING_COMPLETE = "onboarding_complete"
         private const val K_ANNOUNCEMENTS_DISMISSED_IDS = "announcements_dismissed_ids"
         private const val K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS = "announcements_acknowledged_ids"
         private const val K_ANNOUNCEMENTS_MUTED_CATEGORIES = "announcements_muted_categories"

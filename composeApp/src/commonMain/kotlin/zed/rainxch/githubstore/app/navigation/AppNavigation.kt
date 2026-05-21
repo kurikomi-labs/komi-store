@@ -256,6 +256,19 @@ fun AppNavigation(
                         )
                     }
 
+                    composable<GithubStoreGraph.OnboardingScreen> {
+                        zed.rainxch.githubstore.app.onboarding.OnboardingRoot(
+                            onNavigateToSignIn = {
+                                navController.navigate(GithubStoreGraph.AuthenticationScreen)
+                            },
+                            onNavigateToHome = {
+                                navController.navigate(GithubStoreGraph.HomeScreen) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            },
+                        )
+                    }
+
                     composable<GithubStoreGraph.FavouritesScreen> {
                         FavouritesRoot(
                             onNavigateBack = {

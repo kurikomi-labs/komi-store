@@ -33,6 +33,11 @@ interface TweaksRepository {
 
     suspend fun setThemeMode(mode: ThemeMode)
 
+    /** One-shot first-launch onboarding completion flag (D17). */
+    fun getOnboardingComplete(): Flow<Boolean>
+
+    suspend fun setOnboardingComplete(complete: Boolean)
+
     fun getFontTheme(): Flow<FontTheme>
 
     suspend fun setFontTheme(fontTheme: FontTheme)

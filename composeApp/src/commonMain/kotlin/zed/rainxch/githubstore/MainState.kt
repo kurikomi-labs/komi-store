@@ -16,4 +16,6 @@ data class MainState(
     val currentFontTheme: FontTheme = FontTheme.CUSTOM,
     val isScrollbarEnabled: Boolean = false,
     val contentWidth: ContentWidth = ContentWidth.COMPACT,
+    /** First-launch onboarding state. `null` while the flow is still loading. */
+    val onboardingComplete: Boolean? = null,
 )

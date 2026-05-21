@@ -75,6 +75,14 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
+            tweaksRepository
+                .getOnboardingComplete()
+                .collect { complete ->
+                    _state.update { it.copy(onboardingComplete = complete) }
+                }
+        }
+
+        viewModelScope.launch {
             tweaksRepository.getScrollbarEnabled().collect { enabled ->
                 _state.update { it.copy(isScrollbarEnabled = enabled) }
             }

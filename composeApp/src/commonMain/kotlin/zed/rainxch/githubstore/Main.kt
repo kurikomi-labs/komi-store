@@ -49,6 +49,19 @@ fun App(deepLinkUri: String? = null) {
     val navController = rememberNavController()
     val currentScreen = navController.currentBackStackEntryAsState().value.getCurrentScreen()
 
+    // First-launch redirect to Onboarding (D17 / D6.5). Fires once when the
+    // persistence layer reports `onboardingComplete = false`. `null` means the
+    // flow hasn't emitted yet — wait, don't redirect into a flash of Home.
+    LaunchedEffect(state.onboardingComplete) {
+        if (state.onboardingComplete == false &&
+            currentScreen !is GithubStoreGraph.OnboardingScreen
+        ) {
+            navController.navigate(GithubStoreGraph.OnboardingScreen) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+
     LaunchedEffect(deepLinkUri) {
         deepLinkUri?.let { uri ->
             when (val destination = DeepLinkParser.parse(uri)) {
