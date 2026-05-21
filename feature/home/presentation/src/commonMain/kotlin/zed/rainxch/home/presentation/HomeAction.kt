@@ -2,15 +2,11 @@ package zed.rainxch.home.presentation
 
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
-import zed.rainxch.home.domain.model.HomeCategory
-import zed.rainxch.home.domain.model.TopicCategory
 
 sealed interface HomeAction {
-    data object Refresh : HomeAction
+    data object OnRefreshClick : HomeAction
 
-    data object Retry : HomeAction
-
-    data object LoadMore : HomeAction
+    data object OnRetry : HomeAction
 
     data object OnSearchClick : HomeAction
 
@@ -18,32 +14,36 @@ sealed interface HomeAction {
 
     data object OnAppsClick : HomeAction
 
-    data object OnTogglePlatformPopup : HomeAction
+    data object OnPlatformPopupOpen : HomeAction
+
+    data object OnPlatformPopupDismiss : HomeAction
 
     data object OnSelectAllPlatforms : HomeAction
 
-    data class OnShareClick(
-        val repo: GithubRepoSummaryUi,
-    ) : HomeAction
-
-    data class SwitchCategory(
-        val category: HomeCategory,
-    ) : HomeAction
-
-    data class SwitchTopic(
-        val topic: TopicCategory,
-    ) : HomeAction
-
-    data class TogglePlatform(
+    data class OnPlatformToggle(
         val platform: DiscoveryPlatform,
     ) : HomeAction
 
-    data class OnRepositoryClick(
+    data class OnPlatformsSelected(
+        val platforms: Set<DiscoveryPlatform>,
+    ) : HomeAction
+
+    data class OnRepoClick(
         val repo: GithubRepoSummaryUi,
     ) : HomeAction
 
-    data class OnRepositoryDeveloperClick(
+    data class OnRepoLongClick(
+        val repoId: Long,
+    ) : HomeAction
+
+    data object OnActionSheetDismiss : HomeAction
+
+    data class OnDeveloperClick(
         val username: String,
+    ) : HomeAction
+
+    data class OnShareClick(
+        val repo: GithubRepoSummaryUi,
     ) : HomeAction
 
     data class OnHideRepository(
@@ -61,4 +61,12 @@ sealed interface HomeAction {
     data class OnMarkAsUnseen(
         val repoId: Long,
     ) : HomeAction
+
+    data object OnSeeAllHot : HomeAction
+
+    data object OnSeeAllTrending : HomeAction
+
+    data object OnSeeAllPopular : HomeAction
+
+    data object OnSeeAllStarred : HomeAction
 }
