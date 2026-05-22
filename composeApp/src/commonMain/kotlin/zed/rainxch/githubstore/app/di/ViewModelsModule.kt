@@ -2,6 +2,7 @@ package zed.rainxch.githubstore.app.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import zed.rainxch.apps.presentation.AppsViewModel
 import zed.rainxch.apps.presentation.import.ExternalImportViewModel
@@ -14,6 +15,7 @@ import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
 import zed.rainxch.githubstore.app.onboarding.OnboardingViewModel
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.home.presentation.HomeViewModel
+import zed.rainxch.home.presentation.categorylist.CategoryListViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
 import zed.rainxch.search.presentation.SearchViewModel
@@ -34,11 +36,11 @@ val viewModelsModule =
         viewModel { params ->
 
             DetailsViewModel(
-                repositoryId = params.get(0),
-                ownerParam = params.get(1),
-                repoParam = params.get(2),
-                isComingFromUpdate = params.get(3),
-                sourceHostParam = if (params.size() > 4) params.get<String?>(4) else null,
+                repositoryId = params[0],
+                ownerParam = params[1],
+                repoParam = params[2],
+                isComingFromUpdate = params[3],
+                sourceHostParam = if (params.size() > 4) params[4] else null,
                 detailsRepository = get(),
                 downloader = get(),
                 installer = get(),
@@ -61,7 +63,6 @@ val viewModelsModule =
                 apkInspector = get(),
                 userSessionRepository = get(),
                 systemInstallSerializer = get(),
-                profileRepository = get(),
             )
         }
         viewModelOf(::DeveloperProfileViewModel)
@@ -82,9 +83,9 @@ val viewModelsModule =
                 tweaksRepository = get(),
                 seenReposRepository = get(),
                 searchHistoryRepository = get(),
-                profileRepository = get(),
                 hiddenReposRepository = get(),
-                initialPlatform = params.getOrNull<SearchPlatformUi>(),
+                userSessionRepository = get(),
+                initialPlatform = get(),
             )
         }
         viewModelOf(::ProfileViewModel)
@@ -99,7 +100,7 @@ val viewModelsModule =
         viewModelOf(::AnnouncementsViewModel)
         viewModelOf(::OnboardingViewModel)
         viewModel { params ->
-            zed.rainxch.home.presentation.categorylist.CategoryListViewModel(
+            CategoryListViewModel(
                 category = params.get(),
                 homeRepository = get(),
             )
@@ -110,8 +111,7 @@ val viewModelsModule =
                 testHttpClient =
                     get(
                         qualifier =
-                            org.koin.core.qualifier
-                                .named("test"),
+                            named("test"),
                     ),
             )
         }

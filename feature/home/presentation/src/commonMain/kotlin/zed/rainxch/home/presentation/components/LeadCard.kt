@@ -28,53 +28,77 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.PrimaryButton
-import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.components.cards.LeadHeroCard
-import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.vocabulary.AppAccent
 import zed.rainxch.core.presentation.vocabulary.FreshnessRing
 import zed.rainxch.core.presentation.vocabulary.StarTier
 import zed.rainxch.core.presentation.vocabulary.TopicGlyph
-import zed.rainxch.core.presentation.vocabulary.freshnessOf
+import zed.rainxch.home.presentation.model.HomeRepoCardUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LeadCard(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val r = repo.repository
     val isDark = isSystemInDarkTheme()
-    val accent = AppAccentResolver.resolve(
-        backendHex = null,
-        topics = r.topics.orEmpty(),
-        primaryLanguage = r.language,
-    )
-    val days = daysSinceIso(r.updatedAt)
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-    ) {
-        HotPill(days = days, ago = relativeAgo(r.updatedAt))
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(card.freshnessColor.copy(alpha = 0.18f))
+                .padding(horizontal = 12.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(card.freshnessColor),
+            )
+            Text(
+                text = "HOT · ${card.relativeAgoLabel} ago",
+                color = card.freshnessColor,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 11.sp,
+                ),
+            )
+        }
         Spacer(Modifier.height(8.dp))
-        LeadHeroCard(accent = accent, isDark = isDark) {
+        LeadHeroCard(
+            accent = AppAccent(
+                c = card.accentSaturated,
+                lt = card.accentLightTint,
+                dtAlpha = card.accentDarkAlpha,
+            ),
+            isDark = isDark,
+            modifier = Modifier
+                .clip(WonkySquircleShape.CtaPrimary)
+                .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                FreshnessRing(daysSinceRelease = days, sizeDp = 80, color = accent.c) {
+                FreshnessRing(
+                    sizeDp = 80,
+                    color = card.accentSaturated,
+                    daysSinceRelease = card.daysSinceUpdate,
+                ) {
                     GitHubStoreImage(
-                        imageModel = { r.owner.avatarUrl },
+                        imageModel = { card.ownerAvatarUrl },
                         modifier = Modifier.size(80.dp).clip(CircleShape),
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = r.name,
+                        text = card.name,
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.SemiBold,
@@ -86,7 +110,7 @@ fun LeadCard(
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        text = r.owner.login,
+                        text = card.ownerLogin,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -97,17 +121,17 @@ fun LeadCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        StarTier(stars = r.stargazersCount)
-                        r.topics.orEmpty().take(3).forEach { topic ->
+                        StarTier(stars = card.starsCount)
+                        card.topics.take(3).forEach { topic ->
                             TopicGlyph(topic = topic, sizeDp = 14)
                         }
                     }
                 }
             }
             Spacer(Modifier.height(14.dp))
-            if (!r.description.isNullOrBlank()) {
+            if (card.description.isNotBlank()) {
                 Text(
-                    text = r.description!!,
+                    text = card.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
@@ -120,43 +144,15 @@ fun LeadCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 PrimaryButton(onClick = onClick) {
-                    Text(text = ctaLabel(repo))
+                    Text(
+                        text = when {
+                            card.isUpdateAvailable -> "Update"
+                            card.isInstalled -> "Open"
+                            else -> "Get"
+                        },
+                    )
                 }
             }
         }
-    }
-}
-
-internal fun ctaLabel(repo: DiscoveryRepositoryUi): String = when {
-    repo.isUpdateAvailable -> "Update"
-    repo.isInstalled -> "Open"
-    else -> "Get"
-}
-
-@Composable
-private fun HotPill(days: Int, ago: String) {
-    val freshness = freshnessOf(days)
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(freshness.color.copy(alpha = 0.18f))
-            .padding(horizontal = 12.dp, vertical = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(6.dp)
-                .clip(CircleShape)
-                .background(freshness.color),
-        )
-        Text(
-            text = "HOT · $ago ago",
-            color = freshness.color,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
-            ),
-        )
     }
 }

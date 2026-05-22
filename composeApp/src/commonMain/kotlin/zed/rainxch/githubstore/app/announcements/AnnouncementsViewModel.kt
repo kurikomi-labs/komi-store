@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package zed.rainxch.githubstore.app.announcements
 
 import androidx.lifecycle.ViewModel
@@ -15,9 +17,10 @@ import zed.rainxch.core.domain.model.Announcement
 import zed.rainxch.core.domain.model.AnnouncementCategory
 import zed.rainxch.core.domain.model.AnnouncementIconHint
 import zed.rainxch.core.domain.model.AnnouncementSeverity
-import zed.rainxch.core.domain.repository.AnnouncementsFeedSnapshot
+import zed.rainxch.core.domain.model.AnnouncementsFeedSnapshot
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
 import zed.rainxch.core.domain.utils.BrowserHelper
+import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 class AnnouncementsViewModel(

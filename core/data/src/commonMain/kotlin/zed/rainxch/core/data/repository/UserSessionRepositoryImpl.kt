@@ -20,7 +20,6 @@ import zed.rainxch.core.data.cache.CacheManager.CacheTtl.USER_PROFILE
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.data.mappers.toUserProfile
-import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.UserProfile
@@ -32,10 +31,10 @@ import kotlin.time.ExperimentalTime
 class UserSessionRepositoryImpl(
     private val tokenStore: TokenStore,
     private val cacheManager: CacheManager,
-    private val clientProvider: GitHubClientProvider,
+    private val httpClientProvider: () -> HttpClient,
     private val logger: GitHubStoreLogger
 ) : UserSessionRepository {
-    private val httpClient: HttpClient get() = clientProvider.client
+    private val httpClient: HttpClient get() = httpClientProvider()
 
     private val _sessionExpiredEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     override val sessionExpiredEvent: SharedFlow<Unit> = _sessionExpiredEvent.asSharedFlow()

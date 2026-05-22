@@ -104,7 +104,7 @@ val coreModule =
             UserSessionRepositoryImpl(
                 tokenStore = get(),
                 cacheManager = get(),
-                clientProvider = get(),
+                httpClientProvider = { get<GitHubClientProvider>().client },
                 logger = get(),
             )
         }

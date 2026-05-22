@@ -25,8 +25,8 @@ import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.MatchingPreview
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.core.domain.repository.MatchingPreview
 import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.model.isEffectivelyPreRelease
 import zed.rainxch.core.domain.util.AssetFilter

@@ -14,7 +14,6 @@ import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.details.data.di.detailsModule
 import zed.rainxch.devprofile.data.di.devProfileModule
 import zed.rainxch.home.data.di.homeModule
-import zed.rainxch.profile.data.di.profileModule
 import zed.rainxch.search.data.di.searchModule
 
 fun initKoin(config: KoinAppDeclaration? = null) {
@@ -35,7 +34,6 @@ fun initKoin(config: KoinAppDeclaration? = null) {
                 devProfileModule,
                 homeModule,
                 searchModule,
-                profileModule,
             )
         }
     val koin = app.koin

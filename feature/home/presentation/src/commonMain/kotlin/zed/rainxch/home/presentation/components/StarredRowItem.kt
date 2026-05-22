@@ -27,20 +27,19 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.OutlineButton
 import zed.rainxch.core.presentation.components.cards.RowCard
-import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.vocabulary.StarTier
+import zed.rainxch.home.presentation.model.HomeRepoCardUi
+
+private val StarredTint = Color(0xFFC49652)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StarredRowItem(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val r = repo.repository
-    val starTint = Color(0xFFC49652)
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -51,17 +50,17 @@ fun StarredRowItem(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(starTint.copy(alpha = 0.18f)),
+                    .background(StarredTint.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center,
             ) {
                 GitHubStoreImage(
-                    imageModel = { r.owner.avatarUrl },
+                    imageModel = { card.ownerAvatarUrl },
                     modifier = Modifier.size(36.dp).clip(CircleShape),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = r.name,
+                    text = card.name,
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.SemiBold,
@@ -77,14 +76,20 @@ fun StarredRowItem(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = starTint,
+                        tint = StarredTint,
                         modifier = Modifier.size(12.dp),
                     )
-                    StarTier(stars = r.stargazersCount, size = 10)
+                    StarTier(stars = card.starsCount, size = 10)
                 }
             }
             OutlineButton(onClick = onClick) {
-                Text(text = ctaLabel(repo))
+                Text(
+                    text = when {
+                        card.isUpdateAvailable -> "Update"
+                        card.isInstalled -> "Open"
+                        else -> "Get"
+                    },
+                )
             }
         }
     }

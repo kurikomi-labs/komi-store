@@ -36,16 +36,6 @@ object ProxyManager {
 
     fun configFlow(scope: ProxyScope): StateFlow<ProxyConfig> = flows.getValue(scope).asStateFlow()
 
-    /**
-     * Idempotent async seed. First call kicks off a background read of every
-     * [ProxyScope]'s persisted config and pushes it into the flows. Subsequent
-     * calls no-op (cheap volatile check + Mutex). Flows start at
-     * [ProxyConfig.System] until the seed completes — typical bootstrap is
-     * sub-200ms, well before any HTTP traffic.
-     *
-     * Replaces the previous `runBlocking` factory in DI. Call once from
-     * `initKoin()` after `startKoin` returns, fire-and-forget.
-     */
     fun bootstrap(repository: ProxyRepository, appScope: CoroutineScope) {
         if (seedJob != null) return
         appScope.launch {

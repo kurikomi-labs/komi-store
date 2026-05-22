@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.domain.repository.HomeRepository
+import zed.rainxch.home.presentation.model.toHomeRepoCardUi
 
 class CategoryListViewModel(
     private val category: HomeCategory,
@@ -40,7 +40,7 @@ class CategoryListViewModel(
                 nextPage = 1
                 _state.update {
                     it.copy(
-                        repos = persistentListOf(),
+                        cards = persistentListOf(),
                         hasMorePages = true,
                         errorMessage = null,
                     )
@@ -76,24 +76,24 @@ class CategoryListViewModel(
                         }
                         return@onSuccess
                     }
-                    val existing: List<zed.rainxch.core.presentation.model.DiscoveryRepositoryUi> = _state.value.repos
+                    val existing = _state.value.cards
                     val incoming = paginated.repos.map { repo ->
-                        zed.rainxch.core.presentation.model.DiscoveryRepositoryUi(
+                        toHomeRepoCardUi(
+                            repo = repo,
                             isInstalled = false,
                             isUpdateAvailable = false,
                             isFavourite = false,
                             isStarred = false,
                             isSeen = false,
                             isCurrentUserOwner = false,
-                            repository = repo.toUi(),
                         )
                     }
-                    val seenIds = existing.map { it.repository.id }.toHashSet()
-                    val merged = (existing + incoming.filter { it.repository.id !in seenIds }).toImmutableList()
+                    val existingIds = existing.map { it.id }.toHashSet()
+                    val merged = (existing + incoming.filter { it.id !in existingIds }).toImmutableList()
                     nextPage += 1
                     _state.update {
                         it.copy(
-                            repos = merged,
+                            cards = merged,
                             isLoading = false,
                             isLoadingMore = false,
                             hasMorePages = incoming.isNotEmpty(),

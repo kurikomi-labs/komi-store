@@ -88,7 +88,7 @@ fun CategoryListScreen(
             .systemBarsPadding(),
     ) {
         CategoryListTopBar(state.category, onBack)
-        if (state.isLoading && state.repos.isEmpty()) {
+        if (state.isLoading && state.cards.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -103,19 +103,19 @@ fun CategoryListScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            items(items = state.repos, key = { it.repository.id }) { repo ->
-                val rank = state.repos.indexOf(repo) + 1
+            items(items = state.cards, key = { it.id }) { card ->
+                val rank = state.cards.indexOf(card) + 1
                 when (state.category) {
                     HomeCategory.MOST_POPULAR -> PopularRowItem(
                         rank = rank,
-                        repo = repo,
-                        onClick = { onAction(CategoryListAction.OnRepoClick(repo.repository.id)) },
+                        card = card,
+                        onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
                         onLongClick = { },
                     )
                     else -> TrendingRowItem(
                         rank = rank,
-                        repo = repo,
-                        onClick = { onAction(CategoryListAction.OnRepoClick(repo.repository.id)) },
+                        card = card,
+                        onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
                         onLongClick = { },
                     )
                 }

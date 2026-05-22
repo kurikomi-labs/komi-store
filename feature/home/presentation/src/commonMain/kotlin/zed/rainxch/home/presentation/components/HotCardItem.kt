@@ -3,7 +3,6 @@ package zed.rainxch.home.presentation.components
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,61 +27,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.cards.CompactCard
-import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
-import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.FreshnessRing
 import zed.rainxch.core.presentation.vocabulary.PlatformGlyph
-import zed.rainxch.core.presentation.vocabulary.PlatformKind
 import zed.rainxch.core.presentation.vocabulary.StarTier
 import zed.rainxch.core.presentation.vocabulary.TopicGlyph
-import zed.rainxch.core.presentation.vocabulary.freshnessOf
+import zed.rainxch.home.presentation.model.HomeRepoCardUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HotCardItem(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val r = repo.repository
-    val days = daysSinceIso(r.updatedAt)
-    val isDark = isSystemInDarkTheme()
-    val accent = AppAccentResolver.resolve(
-        backendHex = null,
-        topics = r.topics.orEmpty(),
-        primaryLanguage = r.language,
-    )
-    val freshness = freshnessOf(days)
-
     Box(
         modifier = modifier
             .width(260.dp)
-            .height(220.dp)
+            .height(200.dp)
+            .clip(Radii.card)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick),
     ) {
-        CompactCard {
+        CompactCard(modifier = Modifier.height(200.dp)) {
             Row(
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 FreshnessRing(
-                    daysSinceRelease = days,
+                    daysSinceRelease = card.daysSinceUpdate,
                     sizeDp = 44,
-                    color = accent.c,
+                    color = card.accentSaturated,
                 ) {
                     GitHubStoreImage(
-                        imageModel = { r.owner.avatarUrl },
+                        imageModel = { card.ownerAvatarUrl },
                         modifier = Modifier.size(44.dp).clip(CircleShape),
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = r.name,
+                        text = card.name,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.SemiBold,
@@ -92,13 +79,30 @@ fun HotCardItem(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(Modifier.height(2.dp))
-                    StarTier(stars = r.stargazersCount)
+                    StarTier(stars = card.starsCount)
                 }
-                DaysAgoPill(label = relativeAgo(r.updatedAt), color = freshness.color)
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(card.freshnessColor.copy(alpha = 0.18f))
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(modifier = Modifier.size(5.dp).clip(CircleShape).background(card.freshnessColor))
+                    Text(
+                        text = card.relativeAgoLabel,
+                        color = card.freshnessColor,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 11.sp,
+                        ),
+                    )
+                }
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                text = r.description.orEmpty(),
+                text = card.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
@@ -116,47 +120,14 @@ fun HotCardItem(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                r.topics.orEmpty().take(2).forEach { topic ->
+                card.topics.take(2).forEach { topic ->
                     TopicGlyph(topic = topic, sizeDp = 14)
                 }
                 Box(Modifier.weight(1f))
-                listOf(
-                    DiscoveryPlatform.Android to PlatformKind.ANDROID,
-                    DiscoveryPlatform.Windows to PlatformKind.WINDOWS,
-                    DiscoveryPlatform.Macos to PlatformKind.MACOS,
-                    DiscoveryPlatform.Linux to PlatformKind.LINUX,
-                ).forEach { (plat, kind) ->
-                    if (plat in r.availablePlatforms) {
-                        PlatformGlyph(kind = kind, supported = true, sizeDp = 14)
-                    }
+                card.platforms.forEach { kind ->
+                    PlatformGlyph(kind = kind, supported = true, sizeDp = 14)
                 }
             }
         }
-    }
-
-    @Suppress("UNUSED_EXPRESSION") isDark
-}
-
-@Composable
-private fun DaysAgoPill(label: String, color: androidx.compose.ui.graphics.Color) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(color.copy(alpha = 0.18f))
-            .padding(horizontal = 8.dp, vertical = 3.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier.size(5.dp).clip(CircleShape).background(color),
-        )
-        Text(
-            text = label,
-            color = color,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
-            ),
-        )
     }
 }

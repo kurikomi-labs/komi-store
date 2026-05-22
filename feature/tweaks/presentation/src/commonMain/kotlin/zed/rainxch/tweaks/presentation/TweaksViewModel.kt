@@ -25,9 +25,11 @@ import zed.rainxch.core.domain.model.TranslationProvider
 import zed.rainxch.core.domain.network.ProxyTestOutcome
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.network.ProxyTester
+import zed.rainxch.core.domain.repository.CacheRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.system.InstallerStatusProvider
@@ -56,6 +58,7 @@ class TweaksViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val logger: GitHubStoreLogger,
     private val aggressiveOemDetector: AggressiveOemDetector,
+    private val cacheRepository: CacheRepository,
 ) : ViewModel() {
     private companion object {
         private const val BATTERY_OPT_PREF_READ_TIMEOUT_MS: Long = 1_000
@@ -121,7 +124,7 @@ class TweaksViewModel(
         if (cacheSizeJob?.isActive == true) return
         cacheSizeJob =
             viewModelScope.launch {
-                profileRepository.observeCacheSize().collect { sizeBytes ->
+                cacheRepository.observeCacheSize().collect { sizeBytes ->
                     _state.update {
                         it.copy(cacheSize = formatCacheSize(sizeBytes))
                     }
@@ -832,7 +835,7 @@ class TweaksViewModel(
                 _state.update { it.copy(isClearDownloadsDialogVisible = false) }
                 viewModelScope.launch {
                     runCatching {
-                        profileRepository.clearCache()
+                        cacheRepository.clearCache()
                     }.onSuccess {
                         cacheSizeJob?.cancel()
                         cacheSizeJob = null

@@ -22,26 +22,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.OutlineButton
 import zed.rainxch.core.presentation.components.cards.RowCard
-import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.vocabulary.PlatformGlyph
-import zed.rainxch.core.presentation.vocabulary.PlatformKind
 import zed.rainxch.core.presentation.vocabulary.StarTier
+import zed.rainxch.home.presentation.model.HomeRepoCardUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TrendingRowItem(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     rank: Int,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     RankRowItem(
-        repo = repo,
+        card = card,
         rank = rank,
         rankColor = MaterialTheme.colorScheme.primary,
         onClick = onClick,
@@ -53,14 +51,14 @@ fun TrendingRowItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PopularRowItem(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     rank: Int,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     RankRowItem(
-        repo = repo,
+        card = card,
         rank = rank,
         rankColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
         onClick = onClick,
@@ -72,15 +70,13 @@ fun PopularRowItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RankRowItem(
-    repo: DiscoveryRepositoryUi,
+    card: HomeRepoCardUi,
     rank: Int,
     rankColor: Color,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val r = repo.repository
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -98,12 +94,12 @@ private fun RankRowItem(
                 modifier = Modifier.width(38.dp),
             )
             GitHubStoreImage(
-                imageModel = { r.owner.avatarUrl },
+                imageModel = { card.ownerAvatarUrl },
                 modifier = Modifier.size(36.dp).clip(CircleShape),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = r.name,
+                    text = card.name,
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.SemiBold,
@@ -116,9 +112,9 @@ private fun RankRowItem(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    StarTier(stars = r.stargazersCount, size = 10)
+                    StarTier(stars = card.starsCount, size = 10)
                     Text(
-                        text = r.owner.login,
+                        text = card.ownerLogin,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -130,21 +126,19 @@ private fun RankRowItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                listOf(
-                    DiscoveryPlatform.Android to PlatformKind.ANDROID,
-                    DiscoveryPlatform.Windows to PlatformKind.WINDOWS,
-                    DiscoveryPlatform.Macos to PlatformKind.MACOS,
-                    DiscoveryPlatform.Linux to PlatformKind.LINUX,
-                ).forEach { (plat, kind) ->
-                    if (plat in r.availablePlatforms) {
-                        PlatformGlyph(kind = kind, supported = true, sizeDp = 12)
-                    }
+                card.platforms.forEach { kind ->
+                    PlatformGlyph(kind = kind, supported = true, sizeDp = 12)
                 }
             }
             OutlineButton(onClick = onClick) {
-                Text(text = ctaLabel(repo))
+                Text(
+                    text = when {
+                        card.isUpdateAvailable -> "Update"
+                        card.isInstalled -> "Open"
+                        else -> "Get"
+                    },
+                )
             }
         }
     }
 }
-

@@ -7,13 +7,15 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -37,10 +39,45 @@ import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.ShareManager
-import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
-import zed.rainxch.core.presentation.utils.toUi
-import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.failed_to_share_link
+import zed.rainxch.githubstore.core.presentation.res.home_failed_to_load_repositories
+import zed.rainxch.githubstore.core.presentation.res.link_copied_to_clipboard
 import zed.rainxch.home.domain.repository.HomeRepository
+import zed.rainxch.home.presentation.model.HomeRepoCardUi
+import zed.rainxch.home.presentation.model.toHomeRepoCardUi
+
+private data class RawRepo(
+    val raw: GithubRepoSummary,
+    val isInstalled: Boolean,
+    val isUpdateAvailable: Boolean,
+    val isFavourite: Boolean,
+    val isStarred: Boolean,
+)
+
+private data class RawHomeState(
+    val hot: List<RawRepo> = emptyList(),
+    val trending: List<RawRepo> = emptyList(),
+    val popular: List<RawRepo> = emptyList(),
+    val starred: List<RawRepo> = emptyList(),
+    val installedById: Map<Long, List<InstalledApp>> = emptyMap(),
+    val favouriteIds: Set<Long> = emptySet(),
+    val starredIds: Set<Long> = emptySet(),
+    val seenIds: Set<Long> = emptySet(),
+    val hiddenIds: Set<Long> = emptySet(),
+    val isHideSeenEnabled: Boolean = false,
+    val isHotLoading: Boolean = false,
+    val isTrendingLoading: Boolean = false,
+    val isPopularLoading: Boolean = false,
+    val isStarredLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val selectedPlatforms: Set<DiscoveryPlatform> = emptySet(),
+    val isPlatformPopupVisible: Boolean = false,
+    val isUpdateAvailable: Boolean = false,
+    val isUserSignedIn: Boolean = false,
+    val currentUserLogin: String? = null,
+    val actionSheetRepoId: Long? = null,
+)
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
@@ -55,141 +92,124 @@ class HomeViewModel(
     private val logger: GitHubStoreLogger,
     private val shareManager: ShareManager,
 ) : ViewModel() {
+
     private var hasLoadedInitialData = false
     private var loadJob: Job? = null
 
-    @Volatile private var currentUserLogin: String? = null
+    private val rawState = MutableStateFlow(RawHomeState())
 
-    private val _state = MutableStateFlow(HomeState())
-    val state =
-        _state
-            .onStart {
-                if (!hasLoadedInitialData) {
-                    observeCurrentUser()
-                    syncSystemState()
-
-                    refreshAllSections(isInitial = true)
-                    observeInstalledApps()
-                    observeFavourites()
-                    observeStarredRepos()
-                    observeSeenRepos()
-                    observeHiddenRepos()
-                    observeDiscoveryPlatforms()
-                    observeHideSeenEnabled()
-
-                    hasLoadedInitialData = true
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = HomeState(),
-            )
+    val state: StateFlow<HomeState> = rawState
+        .onStart {
+            if (!hasLoadedInitialData) {
+                observeCurrentUser()
+                syncSystemState()
+                refreshAllSections(isInitial = true)
+                observeInstalledApps()
+                observeFavourites()
+                observeStarredRepos()
+                observeSeenRepos()
+                observeHiddenRepos()
+                observeDiscoveryPlatforms()
+                observeHideSeenEnabled()
+                hasLoadedInitialData = true
+            }
+        }
+        .map { it.toView() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = HomeState(),
+        )
 
     private val _events = Channel<HomeEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     fun onAction(action: HomeAction) {
         when (action) {
-            HomeAction.OnRefreshClick -> {
-                viewModelScope.launch {
-                    syncInstalledAppsUseCase()
-                    refreshAllSections(isInitial = false)
-                }
+            HomeAction.OnRefreshClick -> viewModelScope.launch {
+                syncInstalledAppsUseCase()
+                refreshAllSections(isInitial = false)
             }
 
             HomeAction.OnRetry -> refreshAllSections(isInitial = true)
 
-            HomeAction.OnPlatformPopupOpen -> {
-                _state.update { it.copy(isPlatformPopupVisible = true) }
-            }
+            HomeAction.OnPlatformPopupOpen ->
+                rawState.update { it.copy(isPlatformPopupVisible = true) }
 
-            HomeAction.OnPlatformPopupDismiss -> {
-                _state.update { it.copy(isPlatformPopupVisible = false) }
-            }
+            HomeAction.OnPlatformPopupDismiss ->
+                rawState.update { it.copy(isPlatformPopupVisible = false) }
 
-            is HomeAction.OnRepoLongClick -> {
-                _state.update { it.copy(actionSheetRepoId = action.repoId) }
-            }
+            is HomeAction.OnRepoLongClick ->
+                rawState.update { it.copy(actionSheetRepoId = action.repoId) }
 
-            HomeAction.OnActionSheetDismiss -> {
-                _state.update { it.copy(actionSheetRepoId = null) }
-            }
+            HomeAction.OnActionSheetDismiss ->
+                rawState.update { it.copy(actionSheetRepoId = null) }
 
-            is HomeAction.OnShareClick -> {
-                viewModelScope.launch {
-                    runCatching {
-                        shareManager.shareText("https://github-store.org/app?repo=${action.repo.fullName}")
-                    }.onFailure { t ->
-                        logger.error("Failed to share link: ${t.message}")
-                        _events.send(HomeEvent.OnMessage(getString(Res.string.failed_to_share_link)))
-                        return@launch
-                    }
-                    if (getPlatform() != Platform.ANDROID) {
-                        _events.send(HomeEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
-                    }
+            is HomeAction.OnShareClick -> viewModelScope.launch {
+                runCatching {
+                    shareManager.shareText("https://github-store.org/app?repo=${action.repo.fullName}")
+                }.onFailure { t ->
+                    logger.error("Failed to share link: ${t.message}")
+                    _events.send(HomeEvent.OnMessage(getString(Res.string.failed_to_share_link)))
+                    return@launch
+                }
+                if (getPlatform() != Platform.ANDROID) {
+                    _events.send(HomeEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
                 }
             }
 
-            is HomeAction.OnHideRepository -> {
+            is HomeAction.OnHideRepository -> viewModelScope.launch {
                 val repo = action.repo
-                viewModelScope.launch {
-                    try {
-                        hiddenReposRepository.hide(
-                            repoId = repo.id,
-                            repoName = repo.name,
-                            repoOwner = repo.owner.login,
-                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
-                        )
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Throwable) {
-                        logger.warn("Hide repository failed for ${repo.id}: ${e.message}")
-                    }
+                try {
+                    hiddenReposRepository.hide(
+                        repoId = repo.id,
+                        repoName = repo.name,
+                        repoOwner = repo.owner.login,
+                        repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    logger.warn("Hide repository failed for ${repo.id}: ${e.message}")
                 }
             }
 
-            is HomeAction.OnUndoHideRepository -> {
-                viewModelScope.launch {
-                    try {
-                        hiddenReposRepository.unhide(action.repoId)
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Throwable) {
-                        logger.warn("Unhide repository failed for ${action.repoId}: ${e.message}")
-                    }
+            is HomeAction.OnUndoHideRepository -> viewModelScope.launch {
+                try {
+                    hiddenReposRepository.unhide(action.repoId)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    logger.warn("Unhide repository failed for ${action.repoId}: ${e.message}")
                 }
             }
 
-            is HomeAction.OnMarkAsSeen -> {
+            is HomeAction.OnMarkAsSeen -> viewModelScope.launch {
                 val repo = action.repo
-                viewModelScope.launch {
-                    try {
-                        seenReposRepository.markAsSeen(
-                            repoId = repo.id,
-                            repoName = repo.name,
-                            repoOwner = repo.owner.login,
-                            repoOwnerAvatarUrl = repo.owner.avatarUrl,
-                            repoDescription = repo.description,
-                            primaryLanguage = repo.language,
-                            repoUrl = repo.htmlUrl,
-                        )
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Throwable) {
-                        logger.warn("Mark as seen failed for ${repo.id}: ${e.message}")
-                    }
+                try {
+                    seenReposRepository.markAsSeen(
+                        repoId = repo.id,
+                        repoName = repo.name,
+                        repoOwner = repo.owner.login,
+                        repoOwnerAvatarUrl = repo.owner.avatarUrl,
+                        repoDescription = repo.description,
+                        primaryLanguage = repo.language,
+                        repoUrl = repo.htmlUrl,
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    logger.warn("Mark as seen failed for ${repo.id}: ${e.message}")
                 }
             }
 
-            is HomeAction.OnMarkAsUnseen -> {
-                viewModelScope.launch {
-                    try {
-                        seenReposRepository.removeFromHistory(action.repoId)
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Throwable) {
-                        logger.warn("Mark as unseen failed for ${action.repoId}: ${e.message}")
-                    }
+            is HomeAction.OnMarkAsUnseen -> viewModelScope.launch {
+                try {
+                    seenReposRepository.removeFromHistory(action.repoId)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    logger.warn("Mark as unseen failed for ${action.repoId}: ${e.message}")
                 }
             }
 
@@ -207,48 +227,41 @@ class HomeViewModel(
 
     private fun refreshAllSections(isInitial: Boolean) {
         loadJob?.cancel()
-        loadJob =
-            viewModelScope.launch {
-                val platforms = tweaksRepository.getDiscoveryPlatforms().first()
-                _state.update {
-                    it.copy(
-                        selectedPlatforms = platforms,
-                        isHotLoading = true,
-                        isTrendingLoading = true,
-                        isPopularLoading = true,
-                        isStarredLoading = _state.value.isUserSignedIn,
-                        errorMessage = null,
-                        hot = if (isInitial) persistentListOf() else _state.value.hot,
-                        trending = if (isInitial) persistentListOf() else _state.value.trending,
-                        popular = if (isInitial) persistentListOf() else _state.value.popular,
-                        starred = if (isInitial) persistentListOf() else _state.value.starred,
-                    )
-                }
-
-                coroutineScope {
-                    launch { loadHot(platforms) }
-                    launch { loadTrending(platforms) }
-                    launch { loadPopular(platforms) }
-                    launch { loadStarred() }
-                }
+        loadJob = viewModelScope.launch {
+            val platforms = tweaksRepository.getDiscoveryPlatforms().first()
+            rawState.update {
+                it.copy(
+                    selectedPlatforms = platforms,
+                    isHotLoading = true,
+                    isTrendingLoading = true,
+                    isPopularLoading = true,
+                    isStarredLoading = it.isUserSignedIn,
+                    errorMessage = null,
+                    hot = if (isInitial) emptyList() else it.hot,
+                    trending = if (isInitial) emptyList() else it.trending,
+                    popular = if (isInitial) emptyList() else it.popular,
+                    starred = if (isInitial) emptyList() else it.starred,
+                )
             }
+            coroutineScope {
+                launch { loadHot(platforms) }
+                launch { loadTrending(platforms) }
+                launch { loadPopular(platforms) }
+                launch { loadStarred() }
+            }
+        }
     }
 
     private suspend fun loadHot(platforms: Set<DiscoveryPlatform>) {
         try {
             val page = homeRepository.getHotReleaseRepositories(platforms, page = 1).first()
-            val mapped = mapReposToUi(page.repos)
-            _state.update {
-                it.copy(
-                    hot = mapped.toImmutableList(),
-                    isHotLoading = false,
-                )
-            }
+            val mapped = wrapAll(page.repos)
+            rawState.update { it.copy(hot = mapped, isHotLoading = false) }
         } catch (t: CancellationException) {
             throw t
         } catch (t: Throwable) {
             logger.error("Hot section load failed: ${t.message}")
-            _state.update {
+            rawState.update {
                 it.copy(
                     isHotLoading = false,
                     errorMessage = it.errorMessage ?: t.message
@@ -261,42 +274,30 @@ class HomeViewModel(
     private suspend fun loadTrending(platforms: Set<DiscoveryPlatform>) {
         try {
             val page = homeRepository.getTrendingRepositories(platforms, page = 1).first()
-            val mapped = mapReposToUi(page.repos)
-            _state.update {
-                it.copy(
-                    trending = mapped.toImmutableList(),
-                    isTrendingLoading = false,
-                )
-            }
+            rawState.update { it.copy(trending = wrapAll(page.repos), isTrendingLoading = false) }
         } catch (t: CancellationException) {
             throw t
         } catch (t: Throwable) {
             logger.error("Trending section load failed: ${t.message}")
-            _state.update { it.copy(isTrendingLoading = false) }
+            rawState.update { it.copy(isTrendingLoading = false) }
         }
     }
 
     private suspend fun loadPopular(platforms: Set<DiscoveryPlatform>) {
         try {
             val page = homeRepository.getMostPopular(platforms, page = 1).first()
-            val mapped = mapReposToUi(page.repos)
-            _state.update {
-                it.copy(
-                    popular = mapped.toImmutableList(),
-                    isPopularLoading = false,
-                )
-            }
+            rawState.update { it.copy(popular = wrapAll(page.repos), isPopularLoading = false) }
         } catch (t: CancellationException) {
             throw t
         } catch (t: Throwable) {
             logger.error("Popular section load failed: ${t.message}")
-            _state.update { it.copy(isPopularLoading = false) }
+            rawState.update { it.copy(isPopularLoading = false) }
         }
     }
 
     private suspend fun loadStarred() {
-        if (!_state.value.isUserSignedIn) {
-            _state.update { it.copy(starred = persistentListOf(), isStarredLoading = false) }
+        if (!rawState.value.isUserSignedIn) {
+            rawState.update { it.copy(starred = emptyList(), isStarredLoading = false) }
             return
         }
         try {
@@ -307,29 +308,40 @@ class HomeViewModel(
                 .sortedByDescending { it.stargazersCount }
                 .take(5)
                 .map { it.repoId }
-
             val fetched = coroutineScope {
-                topIds
-                    .map { id ->
-                        async {
-                            runCatching { homeRepository.getRepositoryById(id) }.getOrNull()
-                        }
-                    }
-                    .awaitAll()
-                    .filterNotNull()
+                topIds.map { id ->
+                    async { runCatching { homeRepository.getRepositoryById(id) }.getOrNull() }
+                }.awaitAll().filterNotNull()
             }
-            val mapped = mapReposToUi(fetched)
-            _state.update {
-                it.copy(
-                    starred = mapped.toImmutableList(),
-                    isStarredLoading = false,
-                )
-            }
+            rawState.update { it.copy(starred = wrapAll(fetched), isStarredLoading = false) }
         } catch (t: CancellationException) {
             throw t
         } catch (t: Throwable) {
             logger.error("Starred section load failed: ${t.message}")
-            _state.update { it.copy(isStarredLoading = false) }
+            rawState.update { it.copy(isStarredLoading = false) }
+        }
+    }
+
+    private suspend fun wrapAll(repos: List<GithubRepoSummary>): List<RawRepo> {
+        val installed = installedAppsRepository.getAllInstalledApps().first().groupBy { it.repoId }
+        val favourites = favouritesRepository.getAllFavorites().first().map { it.repoId }.toSet()
+        val starred = starredRepository.getAllStarred().first().map { it.repoId }.toSet()
+        rawState.update {
+            it.copy(
+                installedById = installed,
+                favouriteIds = favourites,
+                starredIds = starred,
+            )
+        }
+        return repos.map { repo ->
+            val apps = installed[repo.id].orEmpty()
+            RawRepo(
+                raw = repo,
+                isInstalled = apps.any { it.isReallyInstalled() },
+                isUpdateAvailable = apps.any { it.hasActualUpdate() },
+                isFavourite = repo.id in favourites,
+                isStarred = repo.id in starred,
+            )
         }
     }
 
@@ -348,15 +360,16 @@ class HomeViewModel(
 
     private fun observeInstalledApps() {
         viewModelScope.launch {
-            installedAppsRepository.getAllInstalledApps().collect { installedApps ->
-                val installedMap = installedApps.groupBy { it.repoId }
-                _state.update { current ->
-                    current.copy(
-                        hot = current.hot.restamp(installedMap),
-                        trending = current.trending.restamp(installedMap),
-                        popular = current.popular.restamp(installedMap),
-                        starred = current.starred.restamp(installedMap),
-                        isUpdateAvailable = installedMap.values.flatten().any { it.hasActualUpdate() },
+            installedAppsRepository.getAllInstalledApps().collect { apps ->
+                val byRepo = apps.groupBy { it.repoId }
+                rawState.update { snapshot ->
+                    snapshot.copy(
+                        installedById = byRepo,
+                        isUpdateAvailable = apps.any { it.hasActualUpdate() },
+                        hot = snapshot.hot.restampInstall(byRepo),
+                        trending = snapshot.trending.restampInstall(byRepo),
+                        popular = snapshot.popular.restampInstall(byRepo),
+                        starred = snapshot.starred.restampInstall(byRepo),
                     )
                 }
             }
@@ -366,7 +379,7 @@ class HomeViewModel(
     private fun observeDiscoveryPlatforms() {
         viewModelScope.launch {
             tweaksRepository.getDiscoveryPlatforms().collect { platforms ->
-                _state.update { it.copy(selectedPlatforms = platforms) }
+                rawState.update { it.copy(selectedPlatforms = platforms) }
             }
         }
     }
@@ -374,15 +387,7 @@ class HomeViewModel(
     private fun observeSeenRepos() {
         viewModelScope.launch {
             seenReposRepository.getAllSeenRepoIds().collect { ids ->
-                _state.update { current ->
-                    current.copy(
-                        seenRepoIds = ids,
-                        hot = current.hot.restampSeen(ids),
-                        trending = current.trending.restampSeen(ids),
-                        popular = current.popular.restampSeen(ids),
-                        starred = current.starred.restampSeen(ids),
-                    )
-                }
+                rawState.update { it.copy(seenIds = ids) }
             }
         }
     }
@@ -390,7 +395,7 @@ class HomeViewModel(
     private fun observeHiddenRepos() {
         viewModelScope.launch {
             hiddenReposRepository.getAllHiddenRepoIds().collect { ids ->
-                _state.update { it.copy(hiddenRepoIds = ids) }
+                rawState.update { it.copy(hiddenIds = ids) }
             }
         }
     }
@@ -398,7 +403,7 @@ class HomeViewModel(
     private fun observeHideSeenEnabled() {
         viewModelScope.launch {
             tweaksRepository.getHideSeenEnabled().collect { enabled ->
-                _state.update { it.copy(isHideSeenEnabled = enabled) }
+                rawState.update { it.copy(isHideSeenEnabled = enabled) }
             }
         }
     }
@@ -406,22 +411,17 @@ class HomeViewModel(
     private fun observeCurrentUser() {
         viewModelScope.launch {
             userSessionRepository.getUser().collect { user ->
-                currentUserLogin = user?.username
                 val signedIn = user != null
-                val previouslySignedIn = _state.value.isUserSignedIn
-                val login = user?.username
-                _state.update { current ->
-                    current.copy(
+                val previouslySignedIn = rawState.value.isUserSignedIn
+                rawState.update {
+                    it.copy(
                         isUserSignedIn = signedIn,
-                        hot = current.hot.restampOwner(login),
-                        trending = current.trending.restampOwner(login),
-                        popular = current.popular.restampOwner(login),
-                        starred = current.starred.restampOwner(login),
+                        currentUserLogin = user?.username,
                     )
                 }
                 if (signedIn != previouslySignedIn) {
-                    if (signedIn) loadStarred() else _state.update {
-                        it.copy(starred = persistentListOf(), isStarredLoading = false)
+                    if (signedIn) loadStarred() else rawState.update {
+                        it.copy(starred = emptyList(), isStarredLoading = false)
                     }
                 }
             }
@@ -431,13 +431,14 @@ class HomeViewModel(
     private fun observeFavourites() {
         viewModelScope.launch {
             favouritesRepository.getAllFavorites().collect { favourites ->
-                val keys = favourites.map { it.repoId }.toSet()
-                _state.update { current ->
-                    current.copy(
-                        hot = current.hot.restampFavourite(keys),
-                        trending = current.trending.restampFavourite(keys),
-                        popular = current.popular.restampFavourite(keys),
-                        starred = current.starred.restampFavourite(keys),
+                val ids = favourites.map { it.repoId }.toSet()
+                rawState.update { snapshot ->
+                    snapshot.copy(
+                        favouriteIds = ids,
+                        hot = snapshot.hot.restampFavourite(ids),
+                        trending = snapshot.trending.restampFavourite(ids),
+                        popular = snapshot.popular.restampFavourite(ids),
+                        starred = snapshot.starred.restampFavourite(ids),
                     )
                 }
             }
@@ -447,45 +448,17 @@ class HomeViewModel(
     private fun observeStarredRepos() {
         viewModelScope.launch {
             starredRepository.getAllStarred().collect { starredRepos ->
-                val keys = starredRepos.map { it.repoId }.toSet()
-                _state.update { current ->
-                    current.copy(
-                        hot = current.hot.restampStarred(keys),
-                        trending = current.trending.restampStarred(keys),
-                        popular = current.popular.restampStarred(keys),
-                        starred = current.starred.restampStarred(keys),
+                val ids = starredRepos.map { it.repoId }.toSet()
+                rawState.update { snapshot ->
+                    snapshot.copy(
+                        starredIds = ids,
+                        hot = snapshot.hot.restampStarred(ids),
+                        trending = snapshot.trending.restampStarred(ids),
+                        popular = snapshot.popular.restampStarred(ids),
+                        starred = snapshot.starred.restampStarred(ids),
                     )
                 }
             }
-        }
-    }
-
-    private suspend fun mapReposToUi(repos: List<GithubRepoSummary>): List<DiscoveryRepositoryUi> {
-        val installedAppsMap =
-            installedAppsRepository.getAllInstalledApps().first().groupBy { it.repoId }
-        val favoritesMap =
-            favouritesRepository.getAllFavorites().first().associateBy { it.repoId }
-        val starredReposMap =
-            starredRepository.getAllStarred().first().associateBy { it.repoId }
-        val seenIds = _state.value.seenRepoIds
-        val currentLogin = currentUserLogin
-
-        return repos.map { repo ->
-            val apps = installedAppsMap[repo.id].orEmpty()
-            val favourite = favoritesMap[repo.id]
-            val starred = starredReposMap[repo.id]
-
-            DiscoveryRepositoryUi(
-                isInstalled = apps.any { it.isReallyInstalled() },
-                isFavourite = favourite != null,
-                isStarred = starred != null,
-                isSeen = repo.id in seenIds,
-                isCurrentUserOwner =
-                    currentLogin != null &&
-                        repo.owner.login.equals(currentLogin, ignoreCase = true),
-                isUpdateAvailable = apps.any { it.hasActualUpdate() },
-                repository = repo.toUi(),
-            )
         }
     }
 
@@ -495,34 +468,72 @@ class HomeViewModel(
     }
 }
 
-private fun ImmutableList<DiscoveryRepositoryUi>.restamp(
-    installedMap: Map<Long, List<InstalledApp>>,
-) = map { repo ->
-    val apps = installedMap[repo.repository.id].orEmpty()
-    repo.copy(
+private fun List<RawRepo>.restampInstall(byRepo: Map<Long, List<InstalledApp>>) = map { item ->
+    val apps = byRepo[item.raw.id].orEmpty()
+    item.copy(
         isInstalled = apps.any { it.isReallyInstalled() },
         isUpdateAvailable = apps.any { it.hasActualUpdate() },
     )
-}.toImmutableList()
+}
 
-private fun ImmutableList<DiscoveryRepositoryUi>.restampSeen(
-    ids: Set<Long>,
-) = map { it.copy(isSeen = it.repository.id in ids) }.toImmutableList()
+private fun List<RawRepo>.restampFavourite(ids: Set<Long>) = map {
+    it.copy(isFavourite = it.raw.id in ids)
+}
 
-private fun ImmutableList<DiscoveryRepositoryUi>.restampFavourite(
-    ids: Set<Long>,
-) = map { it.copy(isFavourite = it.repository.id in ids) }.toImmutableList()
+private fun List<RawRepo>.restampStarred(ids: Set<Long>) = map {
+    it.copy(isStarred = it.raw.id in ids)
+}
 
-private fun ImmutableList<DiscoveryRepositoryUi>.restampStarred(
-    ids: Set<Long>,
-) = map { it.copy(isStarred = it.repository.id in ids) }.toImmutableList()
-
-private fun ImmutableList<DiscoveryRepositoryUi>.restampOwner(
-    login: String?,
-) = map { repo ->
-    repo.copy(
-        isCurrentUserOwner =
-            login != null && repo.repository.owner.login.equals(login, ignoreCase = true),
+private fun RawHomeState.toView(): HomeState {
+    val hotVisible = hot.filterVisible(hiddenIds, seenIds, isHideSeenEnabled)
+    val leadRaw = hotVisible.firstOrNull()
+    val leadCard = leadRaw?.toCard(currentUserLogin, seenIds)
+    val hotCards = hotVisible.drop(1).take(6).map { it.toCard(currentUserLogin, seenIds) }.toImmutableList()
+    val trendingCards = trending.filterVisible(hiddenIds, seenIds, isHideSeenEnabled).take(6)
+        .map { it.toCard(currentUserLogin, seenIds) }.toImmutableList()
+    val popularCards = popular.filterVisible(hiddenIds, seenIds, isHideSeenEnabled).take(6)
+        .map { it.toCard(currentUserLogin, seenIds) }.toImmutableList()
+    val starredCards = starred.filterVisible(hiddenIds, seenIds, isHideSeenEnabled).take(5)
+        .map { it.toCard(currentUserLogin, seenIds) }.toImmutableList()
+    val actionSheetCard = actionSheetRepoId?.let { id ->
+        (hot + trending + popular + starred).firstOrNull { it.raw.id == id }?.toCard(currentUserLogin, seenIds)
+    }
+    return HomeState(
+        lead = leadCard,
+        hot = hotCards,
+        trending = trendingCards,
+        popular = popularCards,
+        starred = starredCards,
+        isHotLoading = isHotLoading,
+        isTrendingLoading = isTrendingLoading,
+        isPopularLoading = isPopularLoading,
+        isStarredLoading = isStarredLoading,
+        errorMessage = errorMessage,
+        selectedPlatforms = selectedPlatforms,
+        isPlatformPopupVisible = isPlatformPopupVisible,
+        isUpdateAvailable = isUpdateAvailable,
+        isHideSeenEnabled = isHideSeenEnabled,
+        isUserSignedIn = isUserSignedIn,
+        actionSheetCard = actionSheetCard,
     )
-}.toImmutableList()
+}
 
+private fun List<RawRepo>.filterVisible(
+    hiddenIds: Set<Long>,
+    seenIds: Set<Long>,
+    hideSeenEnabled: Boolean,
+): List<RawRepo> = filter { item ->
+    item.raw.id !in hiddenIds && (!hideSeenEnabled || item.raw.id !in seenIds)
+}
+
+private fun RawRepo.toCard(currentUserLogin: String?, seenIds: Set<Long>): HomeRepoCardUi =
+    toHomeRepoCardUi(
+        repo = raw,
+        isInstalled = isInstalled,
+        isUpdateAvailable = isUpdateAvailable,
+        isFavourite = isFavourite,
+        isStarred = isStarred,
+        isSeen = raw.id in seenIds,
+        isCurrentUserOwner = currentUserLogin != null &&
+            raw.owner.login.equals(currentUserLogin, ignoreCase = true),
+    )
