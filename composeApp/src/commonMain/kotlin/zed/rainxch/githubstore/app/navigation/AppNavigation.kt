@@ -774,11 +774,6 @@ fun AppNavigation(
                                     launchSingleTop = true
                                 }
                             },
-                            onNavigateToHiddenRepositories = {
-                                navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
-                                    launchSingleTop = true
-                                }
-                            },
                         )
                     }
 
@@ -791,6 +786,11 @@ fun AppNavigation(
                     composable<GithubStoreGraph.TweaksPrivacyScreen> {
                         TweaksPrivacyRoot(
                             onNavigateBack = { navController.popBackStack() },
+                            onNavigateToHiddenRepositories = {
+                                navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
                         )
                     }
 

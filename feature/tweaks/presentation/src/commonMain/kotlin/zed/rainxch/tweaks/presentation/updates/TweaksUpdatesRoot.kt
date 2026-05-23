@@ -18,7 +18,6 @@ import zed.rainxch.tweaks.presentation.components.sections.updatesSection
 fun TweaksUpdatesRoot(
     onNavigateBack: () -> Unit,
     onNavigateToSkippedUpdates: () -> Unit,
-    onNavigateToHiddenRepositories: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -38,7 +37,6 @@ fun TweaksUpdatesRoot(
             onAction = { action ->
                 when (action) {
                     TweaksAction.OnSkippedUpdatesClick -> onNavigateToSkippedUpdates()
-                    TweaksAction.OnHiddenRepositoriesClick -> onNavigateToHiddenRepositories()
                     else -> viewModel.onAction(action)
                 }
             },

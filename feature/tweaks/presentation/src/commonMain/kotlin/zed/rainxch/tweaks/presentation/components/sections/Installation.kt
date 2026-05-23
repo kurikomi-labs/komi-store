@@ -326,12 +326,6 @@ fun LazyListScope.updatesSection(
         SkippedUpdatesEntryCard(
             onClick = { onAction(TweaksAction.OnSkippedUpdatesClick) },
         )
-
-        Spacer(Modifier.height(12.dp))
-
-        HiddenRepositoriesEntryCard(
-            onClick = { onAction(TweaksAction.OnHiddenRepositoriesClick) },
-        )
     }
 }
 

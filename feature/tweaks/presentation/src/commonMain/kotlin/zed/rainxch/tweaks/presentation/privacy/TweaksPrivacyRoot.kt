@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 @Composable
 fun TweaksPrivacyRoot(
     onNavigateBack: () -> Unit,
+    onNavigateToHiddenRepositories: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -104,6 +106,15 @@ fun TweaksPrivacyRoot(
                 title = "Clear viewed history",
                 subtitle = "Forget which repos you've already opened.",
                 onClick = { viewModel.onAction(TweaksAction.OnClearSeenHistoryRequest) },
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+
+        item(key = "hidden_repos_row") {
+            DrillRow(
+                title = "Hidden repositories",
+                subtitle = "Repos you've muted from feeds and search.",
+                onClick = onNavigateToHiddenRepositories,
             )
         }
     }
@@ -264,6 +275,54 @@ private fun ToggleCard(
             Switch(
                 checked = checked,
                 onCheckedChange = null,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DrillRow(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Radii.row)
+            .clickable(onClick = onClick),
+        shape = Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
