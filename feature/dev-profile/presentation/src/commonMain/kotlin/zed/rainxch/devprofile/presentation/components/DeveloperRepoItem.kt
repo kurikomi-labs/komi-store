@@ -331,7 +331,6 @@ private fun PreviewDeveloperRepoItem() {
                     isFavorite = false,
                     latestVersion = "v1.5.2",
                     updatedAt = Clock.System.now().toString(),
-                    pushedAt = null,
                 ),
             onItemClick = {},
             onToggleFavorite = {},

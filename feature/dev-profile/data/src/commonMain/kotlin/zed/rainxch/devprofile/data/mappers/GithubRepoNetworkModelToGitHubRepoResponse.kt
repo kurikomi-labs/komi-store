@@ -15,7 +15,6 @@ fun GithubRepoNetworkModel.toGitHubRepoResponse(): GitHubRepoResponse =
         openIssuesCount = openIssuesCount,
         language = language,
         updatedAt = updatedAt,
-        pushedAt = pushedAt,
         hasDownloads = hasDownloads,
         archived = archived,
         fork = fork,

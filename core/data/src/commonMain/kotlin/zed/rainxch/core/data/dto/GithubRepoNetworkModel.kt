@@ -21,6 +21,5 @@ data class GithubRepoNetworkModel(
     @SerialName("fork") val fork: Boolean = false,
     @SerialName("archived") val archived: Boolean = false,
     @SerialName("open_issues_count") val openIssuesCount: Int = 0,
-    @SerialName("pushed_at") val pushedAt: String? = null,
     @SerialName("has_downloads") val hasDownloads: Boolean = false,
 )

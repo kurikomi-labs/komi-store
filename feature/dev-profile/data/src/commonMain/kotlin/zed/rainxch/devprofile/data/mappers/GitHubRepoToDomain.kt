@@ -25,5 +25,4 @@ fun GitHubRepoResponse.toDomain(
     isFavorite = isFavorite,
     latestVersion = latestVersion,
     updatedAt = updatedAt,
-    pushedAt = pushedAt,
 )

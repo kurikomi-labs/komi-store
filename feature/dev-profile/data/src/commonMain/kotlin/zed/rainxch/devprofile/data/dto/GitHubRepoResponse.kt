@@ -15,7 +15,6 @@ data class GitHubRepoResponse(
     @SerialName("open_issues_count") val openIssuesCount: Int,
     val language: String? = null,
     @SerialName("updated_at") val updatedAt: String,
-    @SerialName("pushed_at") val pushedAt: String? = null,
     @SerialName("has_downloads") val hasDownloads: Boolean = false,
     val archived: Boolean = false,
     val fork: Boolean = false,
