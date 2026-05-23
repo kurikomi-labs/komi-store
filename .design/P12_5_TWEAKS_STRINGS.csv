@@ -1,0 +1,158 @@
+Resource key,Old English,New English
+tweaks_title,Tweaks,Tweaks
+section_appearance,Appearance,Appearance
+theme_color,Theme color,Palette
+theme_light,Light,Light
+theme_dark,Dark,Dark
+theme_system,System,Follow system
+amoled_black_theme,AMOLED black,True black (AMOLED)
+amoled_black_description,Use pure black for OLED screens.,Pure-black background — saves power on OLED screens.
+system_font,System font,Use system font
+system_font_description,Use the system font for the app.,Use your device's default typeface instead of Geist.
+scrollbar_option_title,Show scrollbar,Show scrollbar
+scrollbar_option_description,Show scrollbar on the right side.,Always show the scrollbar on long pages.
+content_width_title,Content width,Content width
+content_width_description,Adjust max content width.,How wide content should stretch on big windows.
+section_language,Language,Language
+language_intro,Choose your app language.,Pick the language used across the app.
+language_picker_title,App language,App language
+language_picker_description,Restart required after change.,The app restarts when you switch language.
+language_follow_system,Follow system,Follow system
+language_follow_system_subtitle,(new),Follow system · %1$s
+section_network,Network,(retired)
+section_connectivity,(new),Connectivity
+section_privacy_and_data,(new),Privacy & data
+section_app_block,(new),App
+section_installs_and_updates,(new),Installs & updates
+connection_entry_title,(new),Connection
+connection_entry_subtitle_no_proxy,(new),No proxy
+connection_entry_subtitle_system,(new),System proxy
+connection_entry_subtitle_proxy_with_overrides,(new),%1$s · %2$d override / %1$s · %2$d overrides
+sources_entry_title,(new),Sources
+proxy_scope_intro,Configure proxies per scope.,(retired)
+proxy_scope_discovery_title,Discovery proxy,Search & metadata
+proxy_scope_download_title,Download proxy,Downloads
+proxy_scope_translation_title,Translation proxy,Translation
+proxy_scope_discovery_description,Used for API and search.,"GitHub API, search results, repo details."
+proxy_scope_download_description,Used for APK downloads.,APK and asset downloads.
+proxy_scope_translation_description,Used for translation providers.,"DeepL, Microsoft, LibreTranslate calls."
+proxy_none,None,No proxy
+proxy_none_description,No proxy used.,The app connects to the internet without a proxy.
+proxy_system,System,System
+proxy_system_description,Use system proxy.,Use the proxy configured in your OS.
+proxy_http,HTTP,HTTP/HTTPS
+proxy_http_caption,(new),Most corporate proxies.
+proxy_socks,SOCKS,SOCKS5
+proxy_socks_caption,(new),"Tor, SSH tunnels."
+proxy_test,Test,(retired)
+proxy_test_main,(new),Test main connection
+proxy_test_scope,(new),Test for %1$s
+proxy_save,Save,Save
+proxy_test_success,Proxy reachable (%d ms),Connected in %1$d ms
+proxy_test_main_success,(new),Search ✓ %1$d ms · Downloads ✓ %2$d ms · Translation ✓ %3$d ms
+proxy_use_main,(new),Use main
+proxy_use_custom,(new),Custom…
+proxy_using_main_pill,(new),Using main
+proxy_paste_full_url,(new),Paste full URL
+proxy_paste_url_placeholder,(new),scheme://user:pass@host:port
+proxy_paste_url_error,(new),Couldn't read that URL.
+connection_intro_title,(new),How the app reaches the internet
+connection_intro_body,(new),Pick a connection mode below. Most people leave this on No proxy.
+connection_inline_helper,(new),Applies to all traffic unless overridden below.
+connection_overrides_body,(new),Each scope uses the main connection by default. Choose 'Custom' to give a scope its own settings.
+mirror_tweaks_entry_label,Mirror,GitHub mirror
+custom_forges_entry_label,Custom forges,Custom forges
+custom_forges_entry_subtitle,Add your own Forgejo/Gitea hosts.,Add a Forgejo or Gitea host
+custom_forges_count (plural),%d hosts,%d host / %d hosts
+section_translation,Translation,Translation
+translation_intro,Configure translation provider and auto-translate.,Pick the engine the app uses to translate READMEs.
+translation_provider_title,Provider,Provider
+translation_provider_description,Pick a translation engine.,(retired)
+translation_auto_title,Auto-translate,Translate READMEs automatically
+translation_auto_subtitle,Translate READMEs when opening repos.,"When opening a repo, translate the README into your target language."
+section_installation,INSTALLATION,Install method
+install_method_android_only_badge,(new),Android only
+install_method_desktop_empty_title,(new),Install method is Android-only
+install_method_desktop_empty_body,(new),Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager.
+installer_type_default,Default,System installer
+installer_type_default_description,Uses Android's default installer.,Asks each time. Works on every device.
+installer_type_shizuku,Shizuku,Shizuku
+installer_type_shizuku_description,Silent install via Shizuku.,Silent install. Needs Shizuku app running.
+installer_type_dhizuku,Dhizuku,Dhizuku
+installer_type_dhizuku_description,Silent install via Dhizuku.,Silent install. No root needed.
+installer_type_root,Root,Root
+installer_type_root_description,Silent install with root.,Silent install via root. Power-user only.
+installer_attribution_title,Installer attribution,Pretend the installer is…
+installer_attribution_description,Some apps reject silent installs unless installer claims to be Google Play.,Some apps reject silent installs unless the installer claims to be Google Play. This setting controls what we claim.
+section_updates,UPDATES,Update behavior
+auto_update_title,Auto-update,Install updates in the background
+auto_update_description,Apply downloaded updates automatically.,Apply downloaded updates without notifying you each time.
+update_check_enabled_title,Background update check,Check automatically
+update_check_enabled_description,Periodically check for new releases.,Look for new releases on a schedule.
+update_check_interval_title,Check interval,Check every
+update_check_interval_description,How often to check for updates.,(retired)
+update_interval_6h,(new),Every 6 hours
+update_interval_12h,(new),Every 12 hours
+update_interval_24h,(new),Daily
+update_interval_manual,(new),Manual only
+update_desktop_check_on_launch_title,(new),Check on launch
+update_desktop_check_on_launch_subtitle,(new),Check for updates each time the app starts.
+include_pre_releases_title,Include pre-releases,Include pre-releases
+include_pre_releases_description,Treat alpha/beta as available updates.,Show alpha and beta tags as available updates.
+skipped_updates_entry_title,Skipped updates,Skipped updates
+skipped_updates_count (plural),(new),%d app / %d apps
+skipped_updates_empty_subtitle,(new),Nothing skipped
+hidden_repositories_title,Hidden repositories,Hidden repositories
+hidden_repositories_count (plural),(new),%d repo / %d repos
+hidden_repositories_empty_subtitle,(new),No hidden repos
+storage,Storage,Storage
+downloaded_packages,Downloaded packages,Downloaded APKs
+downloaded_packages_description,Installer files kept for resumed updates.,We keep installers around so updates resume fast.
+current_size,Current size:,Using:
+section_privacy_screen_title,(new),Privacy
+privacy_entry_subtitle,(new),Compact dynamic state — see §3.9
+privacy_usage_data_subheader,(new),Usage data
+privacy_telemetry_title,(new),Share anonymous usage data
+privacy_telemetry_subtitle,(new),Help us understand which features get used.
+privacy_telemetry_collect_expand,(new),What we collect
+privacy_telemetry_collect_body,(new),App version. OS and platform. Feature usage counts. No repo names. No tokens. No identifiers.
+privacy_telemetry_on_snackbar,(new),Sharing usage data starting next launch.
+privacy_telemetry_off_snackbar,(new),Usage data sharing stopped. Existing data is dropped.
+auto_detect_clipboard_links,Auto-detect clipboard links,Detect repo links in clipboard
+auto_detect_clipboard_description,Detect copied repo URLs and offer to open them.,"When you copy a github.com or codeberg.org link, we'll prompt to open it."
+privacy_history_subheader,(new),Browsing history
+hide_seen_title,Hide seen,Hide repos I've already viewed
+hide_seen_description,Skip already-viewed repos in feeds.,Skip seen repos in feeds and search.
+clear_seen_history,Clear seen history,Clear viewed history
+clear_seen_history_description,Reset the seen-repo list.,Forget which repos you've already opened.
+clear_seen_history_confirm,(new),Clear all viewed history? This won't unstar or unfavorite anything.
+host_tokens_count (plural),(new),%d token / %d tokens
+host_tokens_empty_subtitle,(new),No tokens yet
+section_about,About,App info
+app_info_tagline,(new),"Cross-platform app store for GitHub, Codeberg, and Forgejo releases."
+app_info_action_whats_new,(new),What's new
+app_info_action_whats_new_subtitle,(new),Past release notes.
+app_info_action_licenses,(new),Open source licenses
+app_info_action_licenses_subtitle,(new),Libraries used in the app.
+app_info_action_privacy_policy,(new),Privacy policy
+app_info_action_privacy_policy_subtitle,(new),View on github-store.org.
+app_info_action_source_code,(new),Source code on GitHub
+app_info_action_source_code_subtitle,(new),View this app's source.
+app_info_version_copied,(new),Version copied.
+version,Version,Version
+feedback_send,Send feedback,Send feedback
+feedback_hub_subtitle,(new),We read every report.
+tweaks_search_placeholder,(new),Search settings
+tweaks_search_empty,(new),No settings match '%1$s'.
+restart_banner_body,(new),Some changes need a restart to apply.
+restart_banner_reasons_prefix,(new),Affected: %1$s
+restart_banner_reason_language,(new),language
+restart_banner_reason_theme,(new),theme
+restart_banner_reason_telemetry,(new),usage data
+restart_banner_restart_now,(new),Restart now
+restart_banner_later,(new),Later
+menubar_help_menu,(new),Help
+menubar_help_about,(new),About GitHub Store
+menubar_help_feedback,(new),Send feedback…
+menubar_help_licenses,(new),Open source licenses
+menubar_help_privacy,(new),Privacy policy
