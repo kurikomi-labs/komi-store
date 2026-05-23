@@ -80,31 +80,21 @@ fun LazyListScope.whatsNew(
     item {
         Spacer(Modifier.height(20.dp))
 
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    text = stringResource(Res.string.whats_new),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 22.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                Squiggle()
-            }
-
-            TranslationControls(
-                translationState = translationState,
-                onTranslateClick = onTranslateClick,
-                onLanguagePickerClick = onLanguagePickerClick,
-                onToggleTranslation = onToggleTranslation,
+            Text(
+                text = stringResource(Res.string.whats_new),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
+            Squiggle()
         }
 
         Spacer(Modifier.height(10.dp))

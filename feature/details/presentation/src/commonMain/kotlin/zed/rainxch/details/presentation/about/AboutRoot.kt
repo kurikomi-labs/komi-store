@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mikepenz.markdown.compose.Markdown
-import com.mikepenz.markdown.compose.elements.MarkdownText
 import io.ktor.client.HttpClient
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -38,6 +37,8 @@ import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import zed.rainxch.core.presentation.components.buttons.IconButton
 import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.details.presentation.components.LanguagePicker
+import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
@@ -62,6 +63,11 @@ fun AboutRoot(
         state = state,
         onBack = onNavigateBack,
         onRetry = viewModel::retry,
+        onTranslate = viewModel::translate,
+        onToggleTranslation = viewModel::toggleTranslation,
+        onPickLanguage = viewModel::showLanguagePicker,
+        onDismissLanguagePicker = viewModel::dismissLanguagePicker,
+        onClearTranslation = viewModel::clearTranslation,
     )
 }
 
@@ -70,6 +76,11 @@ private fun AboutScreen(
     state: DetailsAboutState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    onTranslate: (String) -> Unit,
+    onToggleTranslation: () -> Unit,
+    onPickLanguage: () -> Unit,
+    onDismissLanguagePicker: () -> Unit,
+    onClearTranslation: () -> Unit,
 ) {
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
     val probeClient = koinInject<HttpClient>(qualifier = named("test"))
@@ -78,6 +89,14 @@ private fun AboutScreen(
     val typography = rememberMarkdownTypography()
     val components = remember(isDark, imageTransformer) {
         githubStoreMarkdownComponents(imageTransformer, isDark)
+    }
+
+    val displayedMarkdown = if (
+        state.translation.isShowingTranslation && state.translation.translatedText != null
+    ) {
+        state.translation.translatedText
+    } else {
+        state.readmeMarkdown
     }
 
     Column(
@@ -119,7 +138,7 @@ private fun AboutScreen(
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item(key = "header") {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -142,9 +161,21 @@ private fun AboutScreen(
                         }
                     }
                 }
+                item(key = "translation_card") {
+                    Spacer(Modifier.height(4.dp))
+                    TranslationCard(
+                        state = state.translation,
+                        deviceLanguageCode = state.deviceLanguageCode,
+                        onPickLanguage = onPickLanguage,
+                        onTranslate = onTranslate,
+                        onToggle = onToggleTranslation,
+                        onCancel = onClearTranslation,
+                    )
+                }
                 item(key = "markdown") {
+                    Spacer(Modifier.height(4.dp))
                     Markdown(
-                        content = state.readmeMarkdown,
+                        content = displayedMarkdown,
                         colors = colors,
                         typography = typography,
                         imageTransformer = imageTransformer,
@@ -155,6 +186,17 @@ private fun AboutScreen(
             }
         }
     }
+
+    LanguagePicker(
+        isVisible = state.isLanguagePickerVisible,
+        selectedLanguageCode = state.translation.targetLanguageCode ?: state.deviceLanguageCode,
+        deviceLanguageCode = state.deviceLanguageCode,
+        onLanguageSelected = { lang ->
+            onDismissLanguagePicker()
+            onTranslate(lang.code)
+        },
+        onDismiss = onDismissLanguagePicker,
+    )
 }
 
 @Composable

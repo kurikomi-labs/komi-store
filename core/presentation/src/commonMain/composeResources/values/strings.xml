@@ -1169,6 +1169,20 @@
     <string name="apps_two_pane_advanced_settings">Advanced settings</string>
     <string name="adaptive_pick_repo_title">Pick a repository</string>
     <string name="adaptive_pick_repo_subtitle">Tap any card on the left to view its details here.</string>
+    <string name="translation_card_title">Translate</string>
+    <string name="translation_card_subtitle_idle">Render this page in another language.</string>
+    <string name="translation_card_subtitle_translating">Translating…</string>
+    <string name="translation_card_subtitle_translated">Translated to %1$s</string>
+    <string name="translation_card_subtitle_original">Showing original</string>
+    <string name="translation_card_target_label">Target language</string>
+    <string name="translation_card_translate_to">Translate to %1$s</string>
+    <string name="translation_card_translate_generic">Translate</string>
+    <string name="translation_card_show_original">Show original</string>
+    <string name="translation_card_show_translation">Show translation</string>
+    <string name="translation_card_cancel">Cancel</string>
+    <string name="translation_card_retry">Retry</string>
+    <string name="translation_card_detected_source">Detected source: %1$s</string>
+    <string name="translation_card_change_language">Change language</string>
 
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>

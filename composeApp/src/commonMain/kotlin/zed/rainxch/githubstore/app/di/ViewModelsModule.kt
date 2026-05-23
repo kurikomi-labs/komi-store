@@ -74,6 +74,7 @@ val viewModelsModule =
                 repo = params[2],
                 sourceHost = if (params.size() > 3) params[3] else null,
                 detailsRepository = get(),
+                translationRepository = get(),
             )
         }
         viewModel { params ->
@@ -83,6 +84,7 @@ val viewModelsModule =
                 repo = params[2],
                 sourceHost = if (params.size() > 3) params[3] else null,
                 detailsRepository = get(),
+                translationRepository = get(),
             )
         }
         viewModelOf(::DeveloperProfileViewModel)

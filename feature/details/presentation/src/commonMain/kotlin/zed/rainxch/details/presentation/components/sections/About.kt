@@ -84,43 +84,33 @@ fun LazyListScope.about(
     item {
         Spacer(Modifier.height(20.dp))
 
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.about_this_app),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp,
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                readmeLanguage?.let {
                     Text(
-                        text = stringResource(Res.string.about_this_app),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 22.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
+                        text = it,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline,
                     )
-                    readmeLanguage?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.outline,
-                        )
-                    }
                 }
-                Squiggle()
             }
-
-            TranslationControls(
-                translationState = translationState,
-                onTranslateClick = onTranslateClick,
-                onLanguagePickerClick = onLanguagePickerClick,
-                onToggleTranslation = onToggleTranslation,
-            )
+            Squiggle()
         }
         Spacer(Modifier.height(8.dp))
     }

@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,6 +42,8 @@ import org.koin.core.qualifier.named
 import zed.rainxch.core.presentation.components.buttons.IconButton
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.details.presentation.components.LanguagePicker
+import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
@@ -65,6 +68,11 @@ fun WhatsNewRoot(
     WhatsNewScreen(
         state = state,
         onBack = onNavigateBack,
+        onTranslate = viewModel::translate,
+        onToggleTranslation = viewModel::toggleTranslation,
+        onPickLanguage = viewModel::showLanguagePicker,
+        onDismissLanguagePicker = viewModel::dismissLanguagePicker,
+        onClearTranslation = viewModel::clearTranslation,
     )
 }
 
@@ -72,6 +80,11 @@ fun WhatsNewRoot(
 private fun WhatsNewScreen(
     state: DetailsWhatsNewState,
     onBack: () -> Unit,
+    onTranslate: (String) -> Unit,
+    onToggleTranslation: () -> Unit,
+    onPickLanguage: () -> Unit,
+    onDismissLanguagePicker: () -> Unit,
+    onClearTranslation: () -> Unit,
 ) {
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
     val probeClient = koinInject<HttpClient>(qualifier = named("test"))
@@ -148,7 +161,18 @@ private fun WhatsNewScreen(
                     }
                 }
 
-                items(items = state.releases, key = { it.id }) { release ->
+                item(key = "translation_card") {
+                    TranslationCard(
+                        state = state.translation,
+                        deviceLanguageCode = state.deviceLanguageCode,
+                        onPickLanguage = onPickLanguage,
+                        onTranslate = onTranslate,
+                        onToggle = onToggleTranslation,
+                        onCancel = onClearTranslation,
+                    )
+                }
+
+                itemsIndexed(items = state.releases, key = { _, item -> item.id }) { index, release ->
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
                             modifier = Modifier
@@ -161,7 +185,7 @@ private fun WhatsNewScreen(
                                 )
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(horizontal = 14.dp, vertical = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
@@ -170,16 +194,29 @@ private fun WhatsNewScreen(
                                     fontWeight = FontWeight.Bold,
                                 ),
                                 color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f),
                             )
                             Text(
                                 text = release.publishedAt.take(10),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                softWrap = false,
                             )
                         }
                         Spacer(Modifier.height(6.dp))
-                        val body = release.description?.takeIf { it.isNotBlank() }
-                            ?: stringResource(Res.string.no_release_notes)
+                        val isLatest = index == 0
+                        val useTranslated = isLatest &&
+                            state.translation.isShowingTranslation &&
+                            state.translation.translatedText != null
+                        val body = if (useTranslated) {
+                            state.translation.translatedText!!
+                        } else {
+                            release.description?.takeIf { it.isNotBlank() }
+                                ?: stringResource(Res.string.no_release_notes)
+                        }
                         Markdown(
                             content = body,
                             colors = colors,
@@ -193,4 +230,15 @@ private fun WhatsNewScreen(
             }
         }
     }
+
+    LanguagePicker(
+        isVisible = state.isLanguagePickerVisible,
+        selectedLanguageCode = state.translation.targetLanguageCode ?: state.deviceLanguageCode,
+        deviceLanguageCode = state.deviceLanguageCode,
+        onLanguageSelected = { lang ->
+            onDismissLanguagePicker()
+            onTranslate(lang.code)
+        },
+        onDismiss = onDismissLanguagePicker,
+    )
 }
