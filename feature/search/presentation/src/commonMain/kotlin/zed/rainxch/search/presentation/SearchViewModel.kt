@@ -587,6 +587,12 @@ class SearchViewModel(
                 }
             }
 
+            SearchAction.OnToggleFiltersSheet -> {
+                _state.update {
+                    it.copy(isFiltersSheetVisible = !it.isFiltersSheetVisible)
+                }
+            }
+
             SearchAction.OnSearchImeClick -> {
                 if (_state.value.detectedLinks.isNotEmpty() && isEntirelyGithubUrls(_state.value.query)) {
                     val link = _state.value.detectedLinks.first()

@@ -1183,6 +1183,16 @@
     <string name="translation_card_retry">Retry</string>
     <string name="translation_card_detected_source">Detected source: %1$s</string>
     <string name="translation_card_change_language">Change language</string>
+    <string name="search_filters_button">Filters</string>
+    <string name="search_filters_title">Filter results</string>
+    <string name="search_filters_section_source">Source</string>
+    <string name="search_filters_section_platform">Platform</string>
+    <string name="search_filters_section_language">Language</string>
+    <string name="search_filters_section_sort">Sort by</string>
+    <string name="search_filters_reset">Reset all</string>
+    <string name="search_filters_apply">Done</string>
+    <string name="search_active_filters_label">Active</string>
+    <string name="search_clear_filter_cd">Remove filter</string>
 
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>

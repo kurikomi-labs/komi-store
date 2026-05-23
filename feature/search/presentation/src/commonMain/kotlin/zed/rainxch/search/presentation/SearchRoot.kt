@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,7 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -99,6 +102,7 @@ import zed.rainxch.search.presentation.components.SortByBottomSheet
 import zed.rainxch.search.presentation.model.ParsedGithubLink
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
+import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.label
 
@@ -152,6 +156,34 @@ fun SearchRoot(
             }
         },
     )
+
+    if (state.isFiltersSheetVisible) {
+        zed.rainxch.search.presentation.components.SearchFiltersSheet(
+            selectedSource = state.selectedSource,
+            availableSources = state.availableSources,
+            selectedPlatform = state.selectedSearchPlatform,
+            selectedLanguage = state.selectedLanguage,
+            selectedSortBy = state.selectedSortBy,
+            onSourceSelected = { viewModel.onAction(SearchAction.OnSourceSelected(it)) },
+            onPlatformSelected = { viewModel.onAction(SearchAction.OnPlatformTypeSelected(it)) },
+            onOpenLanguagePicker = {
+                viewModel.onAction(SearchAction.OnToggleFiltersSheet)
+                viewModel.onAction(SearchAction.OnToggleLanguageSheetVisibility)
+            },
+            onOpenSortPicker = {
+                viewModel.onAction(SearchAction.OnToggleFiltersSheet)
+                viewModel.onAction(SearchAction.OnToggleSortByDialogVisibility)
+            },
+            onReset = {
+                viewModel.onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All))
+                viewModel.onAction(SearchAction.OnPlatformTypeSelected(SearchPlatformUi.All))
+                viewModel.onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch))
+            },
+            onDismiss = {
+                viewModel.onAction(SearchAction.OnToggleFiltersSheet)
+            },
+        )
+    }
 
     if (state.isLanguageSheetVisible) {
         LanguageFilterBottomSheet(
@@ -355,153 +387,7 @@ fun SearchScreen(
                 )
             }
 
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items(state.availableSources) { source ->
-                    FilterChip(
-                        selected = state.selectedSource == source,
-                        label = {
-                            Text(
-                                text = source.label,
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                        },
-                        onClick = {
-                            onAction(SearchAction.OnSourceSelected(source))
-                        },
-                    )
-                }
-            }
-
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items(SearchPlatformUi.entries) { sortBy ->
-                    FilterChip(
-                        selected = state.selectedSearchPlatform == sortBy,
-                        label = {
-                            Text(
-                                text = sortBy.name.lowercase().replaceFirstChar { it.uppercase() },
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                        },
-                        onClick = {
-                            onAction(SearchAction.OnPlatformTypeSelected(sortBy))
-                        },
-                    )
-                }
-            }
-
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(Res.string.language_label),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium,
-                    )
-
-                    FilterChip(
-                        selected = state.selectedLanguage != ProgrammingLanguageUi.All,
-                        onClick = {
-                            onAction(SearchAction.OnToggleLanguageSheetVisibility)
-                        },
-                        label = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            ) {
-                                Text(
-                                    text = stringResource(state.selectedLanguage.label()),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium,
-                                )
-                                Icon(
-                                    imageVector = Icons.Outlined.KeyboardArrowDown,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-                        },
-                    )
-
-                    if (state.selectedLanguage != ProgrammingLanguageUi.All) {
-                        IconButton(
-                            onClick = {
-                                onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All))
-                            },
-                            modifier = Modifier.size(32.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(Res.string.sort_label),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium,
-                    )
-
-                    FilterChip(
-                        selected = state.selectedSortBy != SortByUi.BestMatch,
-                        onClick = {
-                            onAction(SearchAction.OnToggleSortByDialogVisibility)
-                        },
-                        label = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Text(
-                                    text = stringResource(state.selectedSortBy.label()),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium,
-                                )
-                                Icon(
-                                    imageVector = Icons.Outlined.KeyboardArrowDown,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-                        },
-                    )
-                }
-            }
+            ActiveFiltersStrip(state = state, onAction = onAction)
 
             Spacer(Modifier.height(6.dp))
 
@@ -877,6 +763,7 @@ private fun SearchTopbar(
     state: SearchState,
     focusRequester: FocusRequester,
 ) {
+    val activeFilterCount = activeFilterCount(state)
     Row(
         modifier =
             Modifier
@@ -956,6 +843,151 @@ private fun SearchTopbar(
                 Modifier
                     .weight(1f)
                     .focusRequester(focusRequester),
+        )
+
+        FiltersPillButton(
+            activeCount = activeFilterCount,
+            onClick = { onAction(SearchAction.OnToggleFiltersSheet) },
+        )
+    }
+}
+
+private fun activeFilterCount(state: SearchState): Int {
+    var count = 0
+    if (state.selectedSource != SearchSourceUi.GitHub) count++
+    if (state.selectedSearchPlatform != SearchPlatformUi.All) count++
+    if (state.selectedLanguage != ProgrammingLanguageUi.All) count++
+    if (state.selectedSortBy != SortByUi.BestMatch) count++
+    return count
+}
+
+@Composable
+private fun FiltersPillButton(
+    activeCount: Int,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(50)
+    val container =
+        if (activeCount > 0) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.surfaceContainerLow
+    val content =
+        if (activeCount > 0) MaterialTheme.colorScheme.onPrimary
+        else MaterialTheme.colorScheme.onSurface
+    Row(
+        modifier = Modifier
+            .height(48.dp)
+            .clip(shape)
+            .background(container, shape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Default.FilterList,
+            contentDescription = stringResource(Res.string.search_filters_button),
+            modifier = Modifier.size(18.dp),
+            tint = content,
+        )
+        if (activeCount > 0) {
+            Text(
+                text = activeCount.toString(),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = content,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActiveFiltersStrip(
+    state: SearchState,
+    onAction: (SearchAction) -> Unit,
+) {
+    val items = buildList<Triple<String, () -> Unit, androidx.compose.ui.graphics.vector.ImageVector?>> {
+        if (state.selectedSource != SearchSourceUi.GitHub) {
+            add(Triple(state.selectedSource.label, { onAction(SearchAction.OnSourceSelected(SearchSourceUi.GitHub)) }, null))
+        }
+        if (state.selectedSearchPlatform != SearchPlatformUi.All) {
+            add(
+                Triple(
+                    state.selectedSearchPlatform.name.lowercase().replaceFirstChar { it.uppercase() },
+                    { onAction(SearchAction.OnPlatformTypeSelected(SearchPlatformUi.All)) },
+                    null,
+                ),
+            )
+        }
+        if (state.selectedLanguage != ProgrammingLanguageUi.All) {
+            add(
+                Triple(
+                    "${state.selectedLanguage}",
+                    { onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All)) },
+                    Icons.Outlined.KeyboardArrowDown,
+                ),
+            )
+        }
+        if (state.selectedSortBy != SortByUi.BestMatch) {
+            add(
+                Triple(
+                    "${state.selectedSortBy}",
+                    { onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch)) },
+                    Icons.AutoMirrored.Filled.Sort,
+                ),
+            )
+        }
+    }
+    if (items.isEmpty()) return
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items.forEach { (label, onRemove, leading) ->
+            ActiveFilterChip(label = label, leadingIcon = leading, onRemove = onRemove)
+        }
+    }
+}
+
+@Composable
+private fun ActiveFilterChip(
+    label: String,
+    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector?,
+    onRemove: () -> Unit,
+) {
+    val shape = RoundedCornerShape(50)
+    Row(
+        modifier = Modifier
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), shape)
+            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), shape)
+            .clickable(onClick = onRemove)
+            .padding(start = 12.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        if (leadingIcon != null) {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = stringResource(Res.string.search_clear_filter_cd),
+            modifier = Modifier.size(14.dp),
+            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }

@@ -65,6 +65,8 @@ sealed interface SearchAction {
 
     data object OnFabClick : SearchAction
 
+    data object OnToggleFiltersSheet : SearchAction
+
     data object DismissClipboardBanner : SearchAction
 
     data class OnHistoryItemClick(
