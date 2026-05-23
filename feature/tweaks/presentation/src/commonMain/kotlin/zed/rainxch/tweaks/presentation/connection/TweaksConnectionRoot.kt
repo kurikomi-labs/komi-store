@@ -20,12 +20,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,10 +43,11 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -204,44 +201,22 @@ private fun MainConnectionCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        OutlinedButton(
+                        GhsButton(
                             onClick = { onAction(TweaksAction.OnMasterProxyTest) },
-                            shape = Radii.chip,
-                            modifier = Modifier.weight(1f),
+                            label = "Test",
+                            variant = GhsButtonVariant.Outline,
+                            leadingIcon = Icons.Default.NetworkCheck,
                             enabled = !form.isTestInProgress,
-                        ) {
-                            if (form.isTestInProgress) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp,
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Default.NetworkCheck,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-                            Spacer(Modifier.size(6.dp))
-                            Text(text = "Test")
-                        }
-                        FilledTonalButton(
-                            onClick = { onAction(TweaksAction.OnMasterProxySave) },
-                            shape = WonkySquircleShape.CtaPrimary,
+                            loading = form.isTestInProgress,
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                            ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                            )
-                            Spacer(Modifier.size(6.dp))
-                            Text(text = stringResource(Res.string.proxy_save))
-                        }
+                        )
+                        GhsButton(
+                            onClick = { onAction(TweaksAction.OnMasterProxySave) },
+                            label = stringResource(Res.string.proxy_save),
+                            variant = GhsButtonVariant.Primary,
+                            leadingIcon = Icons.Default.Save,
+                            modifier = Modifier.weight(1f),
+                        )
                     }
                 }
             }
@@ -249,23 +224,13 @@ private fun MainConnectionCard(
             AnimatedVisibility(visible = form.type == ProxyType.NONE || form.type == ProxyType.SYSTEM) {
                 Column {
                     Spacer(Modifier.height(12.dp))
-                    FilledTonalButton(
+                    GhsButton(
                         onClick = { onAction(TweaksAction.OnMasterProxySave) },
-                        shape = WonkySquircleShape.CtaPrimary,
+                        label = stringResource(Res.string.proxy_save),
+                        variant = GhsButtonVariant.Primary,
+                        leadingIcon = Icons.Default.Save,
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Save,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.size(6.dp))
-                        Text(text = stringResource(Res.string.proxy_save))
-                    }
+                    )
                 }
             }
         }
@@ -509,44 +474,22 @@ private fun ScopeOverrideRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                OutlinedButton(
+                                GhsButton(
                                     onClick = { onAction(TweaksAction.OnProxyTest(scope)) },
-                                    shape = Radii.chip,
-                                    modifier = Modifier.weight(1f),
+                                    label = "Test",
+                                    variant = GhsButtonVariant.Outline,
+                                    leadingIcon = Icons.Default.NetworkCheck,
                                     enabled = !scopeForm.isTestInProgress,
-                                ) {
-                                    if (scopeForm.isTestInProgress) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(16.dp),
-                                            strokeWidth = 2.dp,
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.Default.NetworkCheck,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(18.dp),
-                                        )
-                                    }
-                                    Spacer(Modifier.size(6.dp))
-                                    Text(text = "Test")
-                                }
-                                FilledTonalButton(
-                                    onClick = { onAction(TweaksAction.OnProxySave(scope)) },
-                                    shape = RoundedCornerShape(50),
+                                    loading = scopeForm.isTestInProgress,
                                     modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    ),
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Save,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                    Spacer(Modifier.size(6.dp))
-                                    Text(text = stringResource(Res.string.proxy_save))
-                                }
+                                )
+                                GhsButton(
+                                    onClick = { onAction(TweaksAction.OnProxySave(scope)) },
+                                    label = stringResource(Res.string.proxy_save),
+                                    variant = GhsButtonVariant.Tonal,
+                                    leadingIcon = Icons.Default.Save,
+                                    modifier = Modifier.weight(1f),
+                                )
                             }
                         }
                     }
@@ -557,23 +500,13 @@ private fun ScopeOverrideRow(
                     ) {
                         Column {
                             Spacer(Modifier.height(12.dp))
-                            FilledTonalButton(
+                            GhsButton(
                                 onClick = { onAction(TweaksAction.OnProxySave(scope)) },
-                                shape = WonkySquircleShape.CtaPrimary,
+                                label = stringResource(Res.string.proxy_save),
+                                variant = GhsButtonVariant.Tonal,
+                                leadingIcon = Icons.Default.Save,
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                                ),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Save,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Spacer(Modifier.size(6.dp))
-                                Text(text = stringResource(Res.string.proxy_save))
-                            }
+                            )
                         }
                     }
                 }
