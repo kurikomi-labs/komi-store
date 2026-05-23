@@ -10,6 +10,7 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.flow.first
@@ -26,8 +27,16 @@ import zed.rainxch.githubstore.app.di.initKoin
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.app_name
+import zed.rainxch.githubstore.core.presentation.res.menubar_help_about
+import zed.rainxch.githubstore.core.presentation.res.menubar_help_feedback
+import zed.rainxch.githubstore.core.presentation.res.menubar_help_licenses
+import zed.rainxch.githubstore.core.presentation.res.menubar_help_menu
+import zed.rainxch.githubstore.core.presentation.res.menubar_help_privacy
 import java.awt.Desktop
+import java.net.URI
 import kotlin.system.exitProcess
+
+private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy"
 
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
@@ -82,6 +91,13 @@ fun main(args: Array<String>) {
                         deepLinkUri = event.uri.toString()
                     }
                 }
+                if (desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+                    runCatching {
+                        desktop.setAboutHandler {
+                            deepLinkUri = "githubstore://tweaks/app-info"
+                        }
+                    }
+                }
             }
         }
 
@@ -102,6 +118,34 @@ fun main(args: Array<String>) {
                 }
             },
         ) {
+            MenuBar {
+                Menu(text = stringResource(Res.string.menubar_help_menu)) {
+                    Item(
+                        text = stringResource(Res.string.menubar_help_about),
+                        onClick = { deepLinkUri = "githubstore://tweaks/app-info" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.menubar_help_feedback),
+                        onClick = { deepLinkUri = "githubstore://tweaks" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.menubar_help_licenses),
+                        onClick = { deepLinkUri = "githubstore://tweaks/licenses" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.menubar_help_privacy),
+                        onClick = {
+                            runCatching {
+                                if (Desktop.isDesktopSupported() &&
+                                    Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
+                                ) {
+                                    Desktop.getDesktop().browse(URI(PRIVACY_POLICY_URL))
+                                }
+                            }
+                        },
+                    )
+                }
+            }
             App(deepLinkUri = deepLinkUri)
         }
     }
