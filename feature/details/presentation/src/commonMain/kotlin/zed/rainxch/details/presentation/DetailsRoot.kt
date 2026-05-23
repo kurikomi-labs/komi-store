@@ -803,9 +803,7 @@ private fun DetailsTopbar(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         FloatingPill(
-            modifier = Modifier.clickable {
-                onAction(DetailsAction.OnNavigateBackClick)
-            },
+            onClick = { onAction(DetailsAction.OnNavigateBackClick) },
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -828,12 +826,13 @@ private fun DetailsTopbar(
             ) {
                 Box(
                     modifier = Modifier
-                        .clickable { onAction(DetailsAction.OnShareClick) }
+                        .clip(RoundedCornerShape(50))
+                        .clickable { onAction(DetailsAction.OpenRepoInBrowser) }
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(Res.string.share_repository),
+                        imageVector = Icons.Default.OpenInBrowser,
+                        contentDescription = stringResource(Res.string.open_repository),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(18.dp),
                     )
@@ -882,6 +881,7 @@ private fun DetailsOverflowMenu(
     Box {
         Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(50))
                 .clickable { menuOpen = true }
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center,
@@ -945,17 +945,17 @@ private fun DetailsOverflowMenu(
             )
             state.repository?.htmlUrl?.let {
                 GhsDropdownMenuItem(
-                    text = stringResource(Res.string.open_repository),
+                    text = stringResource(Res.string.share_repository),
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.OpenInBrowser,
+                            imageVector = Icons.Default.Share,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
                         )
                     },
                     onClick = {
                         menuOpen = false
-                        onAction(DetailsAction.OpenRepoInBrowser)
+                        onAction(DetailsAction.OnShareClick)
                     },
                 )
             }

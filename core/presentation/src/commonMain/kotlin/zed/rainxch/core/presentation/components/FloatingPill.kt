@@ -2,6 +2,7 @@ package zed.rainxch.core.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,19 +17,22 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FloatingPill(
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 10.dp,
     content: @Composable () -> Unit,
 ) {
+    val shape = RoundedCornerShape(50)
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(50))
+            .clip(shape)
             .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(50),
+                shape = shape,
             )
+            .let { if (onClick != null) it.clickable(onClick = onClick) else it }
             .padding(horizontal = horizontalPadding, vertical = verticalPadding),
         contentAlignment = Alignment.Center,
     ) {
