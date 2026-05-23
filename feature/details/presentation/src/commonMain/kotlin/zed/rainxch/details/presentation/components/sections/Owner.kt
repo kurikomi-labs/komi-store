@@ -107,16 +107,38 @@ fun LazyListScope.author(
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
-                author?.login?.let {
-                    Text(
+                val displayName = author?.name?.takeIf { it.isNotBlank() } ?: author?.login
+                val handle = author?.login?.takeIf { it != author.name }
+                displayName?.let {
+                    androidx.compose.foundation.text.BasicText(
                         text = it,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 17.sp,
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Black,
+                            fontSize = 22.sp,
+                            letterSpacing = (-0.3).sp,
+                            color = MaterialTheme.colorScheme.onSurface,
                         ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        softWrap = false,
+                        autoSize = androidx.compose.foundation.text.TextAutoSize.StepBased(
+                            minFontSize = 15.sp,
+                            maxFontSize = 22.sp,
+                            stepSize = 1.sp,
+                        ),
+                    )
+                }
+                handle?.let { login ->
+                    Text(
+                        text = "@$login",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 author?.bio?.let { bio ->
