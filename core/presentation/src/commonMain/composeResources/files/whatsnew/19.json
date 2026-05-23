@@ -1,0 +1,24 @@
+{
+  "versionCode": 19,
+  "versionName": "1.9.0",
+  "releaseDate": "2026-05-23",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Design overhaul — new Geist typography, hero app header on Details, redesigned Home cards with platform glyphs, Apple-style menus, and a refreshed Library with an updates banner and a 'Ready to install' section.",
+        "Tablet two-pane layout — Home, Search, and Library keep the list on the left and open the repo on the right; drag the divider to resize.",
+        "Inner Details pages — About and What's New now slide in as dedicated screens with their own back action, and stay inside the right pane on tablet.",
+        "Real Apple and Tux icons for the macOS and Linux platform indicators across cards and lists."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Discovery cards now show every platform a repo ships installers for, not just the one whose endpoint listed it.",
+        "What's New tag row no longer wraps long release tags into a one-character-wide vertical date column."
+      ]
+    }
+  ]
+}
