@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -225,7 +227,7 @@ private fun MainConnectionCard(
                                 )
                             }
                             Spacer(Modifier.size(6.dp))
-                            Text(text = "Test main connection")
+                            Text(text = "Test")
                         }
                         FilledTonalButton(
                             onClick = { onAction(TweaksAction.OnMasterProxySave) },
@@ -351,6 +353,7 @@ private fun ProxyFormFields(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ModePillSegment(
     selected: ProxyType,
@@ -363,21 +366,18 @@ private fun ModePillSegment(
         ProxyType.SOCKS to ("SOCKS5" to "Tor, SSH tunnels."),
     )
 
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             items.forEach { (type, labels) ->
                 val isSelected = type == selected
                 val container = if (isSelected) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    Color.Transparent
+                    MaterialTheme.colorScheme.surfaceContainerLow
                 }
                 val content = if (isSelected) {
                     MaterialTheme.colorScheme.onPrimary
@@ -386,11 +386,10 @@ private fun ModePillSegment(
                 }
                 Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(50))
                         .background(container)
-                        .clickable { onSelected(type) },
+                        .clickable { onSelected(type) }
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -399,6 +398,7 @@ private fun ModePillSegment(
                             fontWeight = FontWeight.SemiBold,
                         ),
                         color = content,
+                        maxLines = 1,
                     )
                 }
             }
@@ -409,7 +409,7 @@ private fun ModePillSegment(
                 text = caption,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = 4.dp),
             )
         }
     }
@@ -559,15 +559,15 @@ private fun ScopeOverrideRow(
                                         )
                                     }
                                     Spacer(Modifier.size(6.dp))
-                                    Text(text = "Test ${title.lowercase()}")
+                                    Text(text = "Test")
                                 }
                                 FilledTonalButton(
                                     onClick = { onAction(TweaksAction.OnProxySave(scope)) },
-                                    shape = WonkySquircleShape.CtaPrimary,
+                                    shape = RoundedCornerShape(50),
                                     modifier = Modifier.weight(1f),
                                     colors = ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                                     ),
                                 ) {
                                     Icon(

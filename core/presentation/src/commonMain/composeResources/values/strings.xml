@@ -153,7 +153,7 @@
     <string name="proxy_port">Port</string>
     <string name="proxy_username">Username (optional)</string>
     <string name="proxy_password">Password (optional)</string>
-    <string name="proxy_save">Save Proxy</string>
+    <string name="proxy_save">Save</string>
     <string name="proxy_saved">Proxy settings saved</string>
     <string name="proxy_system_description">Uses your device's proxy settings</string>
     <string name="proxy_port_error">Port must be 1–65535</string>
