@@ -14,9 +14,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -45,23 +45,14 @@ fun RepoSearchOverride(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box {
-            // TODO(ghs-text-field): needs keyboardActions support
-            OutlinedTextField(
+            GhsTextField(
                 value = query,
                 onValueChange = onQueryChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 isError = !searchError.isNullOrBlank(),
-                supportingText = {
-                    if (!searchError.isNullOrBlank()) {
-                        Text(text = searchError)
-                    }
-                },
-                placeholder = {
-                    Text(
-                        text = stringResource(Res.string.external_import_search_placeholder_url),
-                    )
-                },
+                supportingText = searchError?.takeIf { it.isNotBlank() },
+                placeholder = stringResource(Res.string.external_import_search_placeholder_url),
                 trailingIcon = {
                     IconButton(onClick = onSubmit) {
                         Icon(

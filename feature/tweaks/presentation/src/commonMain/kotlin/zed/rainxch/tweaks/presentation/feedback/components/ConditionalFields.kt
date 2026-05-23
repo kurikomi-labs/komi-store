@@ -3,9 +3,8 @@ package zed.rainxch.tweaks.presentation.feedback.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -72,18 +71,18 @@ fun ConditionalFields(
     }
 }
 
-// TODO(ghs-text-field): needs minLines support
 @Composable
 private fun MultilineField(
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
 ) {
-    OutlinedTextField(
+    GhsTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(),
+        label = label,
+        singleLine = false,
         minLines = 3,
+        modifier = Modifier.fillMaxWidth(),
     )
 }

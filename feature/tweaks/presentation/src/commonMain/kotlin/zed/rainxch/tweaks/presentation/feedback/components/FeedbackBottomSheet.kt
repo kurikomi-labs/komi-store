@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -117,11 +116,11 @@ fun FeedbackBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            // TODO(ghs-text-field): needs minLines support
-            OutlinedTextField(
+            GhsTextField(
                 value = state.description,
                 onValueChange = { viewModel.onAction(FeedbackAction.OnDescriptionChange(it)) },
-                label = { Text(stringResource(Res.string.feedback_field_description) + " *") },
+                label = stringResource(Res.string.feedback_field_description) + " *",
+                singleLine = false,
                 minLines = 4,
                 modifier = Modifier.fillMaxWidth(),
             )
