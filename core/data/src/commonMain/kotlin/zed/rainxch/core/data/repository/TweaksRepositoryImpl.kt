@@ -488,6 +488,14 @@ class TweaksRepositoryImpl(
         }
     }
 
+    override fun getTelemetryEnabled(): Flow<Boolean> =
+        gatedGetFlow(K_TELEMETRY_ENABLED, false)
+
+    override suspend fun setTelemetryEnabled(enabled: Boolean) {
+        migrationDeferred.await()
+        ksafe.safePut(K_TELEMETRY_ENABLED, enabled)
+    }
+
     companion object {
         private const val DEFAULT_UPDATE_CHECK_INTERVAL_HOURS = 6L
         private const val MIGRATION_MARKER = "__migrated_from_datastore_v1__"
@@ -537,5 +545,6 @@ class TweaksRepositoryImpl(
         private const val K_CONTENT_WIDTH = "content_width"
         private const val K_CUSTOM_FORGE_HOSTS = "custom_forge_hosts"
         private const val K_RESTART_REASONS = "needs_restart_reasons"
+        private const val K_TELEMETRY_ENABLED = "telemetry_enabled"
     }
 }

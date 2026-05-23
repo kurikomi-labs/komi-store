@@ -199,4 +199,8 @@ interface TweaksRepository {
     suspend fun addRestartReason(reason: RestartReason)
 
     suspend fun clearRestartReasons()
+
+    fun getTelemetryEnabled(): Flow<Boolean>
+
+    suspend fun setTelemetryEnabled(enabled: Boolean)
 }
