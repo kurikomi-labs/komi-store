@@ -70,6 +70,21 @@ class ProxyRepositoryImpl(
         )
     }
 
+    private object MasterKeys {
+        const val TYPE = "master_proxy_type"
+        const val HOST = "master_proxy_host"
+        const val PORT = "master_proxy_port"
+        const val USERNAME = "master_proxy_username"
+        const val PASSWORD = "master_proxy_password"
+    }
+
+    private fun useMasterKeyFor(scope: ProxyScope): String =
+        when (scope) {
+            ProxyScope.DISCOVERY -> "discovery_proxy_use_master"
+            ProxyScope.DOWNLOAD -> "download_proxy_use_master"
+            ProxyScope.TRANSLATION -> "translation_proxy_use_master"
+        }
+
     override fun getProxyConfig(scope: ProxyScope): Flow<ProxyConfig> = flow {
         migrationDeferred.await()
         val keys = keysFor(scope)
@@ -153,6 +168,61 @@ class ProxyRepositoryImpl(
 
     private suspend fun writeOrClear(key: String, value: String?) {
         if (value != null) ksafe.safePut(key, value) else ksafe.safeDelete(key)
+    }
+
+    override fun getMasterProxyConfig(): Flow<ProxyConfig?> = flow {
+        migrationDeferred.await()
+        emitAll(
+            combine(
+                ksafe.safeGetFlow<String?>(MasterKeys.TYPE, null),
+                ksafe.safeGetFlow<String?>(MasterKeys.HOST, null),
+                ksafe.safeGetFlow<Int?>(MasterKeys.PORT, null),
+                ksafe.safeGetFlow<String?>(MasterKeys.USERNAME, null),
+                ksafe.safeGetFlow<String?>(MasterKeys.PASSWORD, null),
+            ) { type, host, port, user, pass ->
+                if (type == null) null else parseConfig(type, host, port, user, pass)
+            },
+        )
+    }
+
+    override suspend fun setMasterProxyConfig(config: ProxyConfig) {
+        migrationDeferred.await()
+        when (config) {
+            is ProxyConfig.None -> {
+                ksafe.safePut(MasterKeys.TYPE, "none")
+                ksafe.safeDelete(MasterKeys.HOST); ksafe.safeDelete(MasterKeys.PORT)
+                ksafe.safeDelete(MasterKeys.USERNAME); ksafe.safeDelete(MasterKeys.PASSWORD)
+            }
+            is ProxyConfig.System -> {
+                ksafe.safePut(MasterKeys.TYPE, "system")
+                ksafe.safeDelete(MasterKeys.HOST); ksafe.safeDelete(MasterKeys.PORT)
+                ksafe.safeDelete(MasterKeys.USERNAME); ksafe.safeDelete(MasterKeys.PASSWORD)
+            }
+            is ProxyConfig.Http -> {
+                ksafe.safePut(MasterKeys.TYPE, "http")
+                ksafe.safePut(MasterKeys.HOST, config.host)
+                ksafe.safePut(MasterKeys.PORT, config.port)
+                writeOrClear(MasterKeys.USERNAME, config.username)
+                writeOrClear(MasterKeys.PASSWORD, config.password)
+            }
+            is ProxyConfig.Socks -> {
+                ksafe.safePut(MasterKeys.TYPE, "socks")
+                ksafe.safePut(MasterKeys.HOST, config.host)
+                ksafe.safePut(MasterKeys.PORT, config.port)
+                writeOrClear(MasterKeys.USERNAME, config.username)
+                writeOrClear(MasterKeys.PASSWORD, config.password)
+            }
+        }
+    }
+
+    override fun getUseMaster(scope: ProxyScope): Flow<Boolean> = flow {
+        migrationDeferred.await()
+        emitAll(ksafe.safeGetFlow(useMasterKeyFor(scope), false))
+    }
+
+    override suspend fun setUseMaster(scope: ProxyScope, useMaster: Boolean) {
+        migrationDeferred.await()
+        ksafe.safePut(useMasterKeyFor(scope), useMaster)
     }
 
     private suspend fun migrateIfNeeded() {

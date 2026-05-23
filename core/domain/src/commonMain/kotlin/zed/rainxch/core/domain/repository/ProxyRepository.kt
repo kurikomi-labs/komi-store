@@ -11,4 +11,12 @@ interface ProxyRepository {
         scope: ProxyScope,
         config: ProxyConfig,
     )
+
+    fun getMasterProxyConfig(): Flow<ProxyConfig?>
+
+    suspend fun setMasterProxyConfig(config: ProxyConfig)
+
+    fun getUseMaster(scope: ProxyScope): Flow<Boolean>
+
+    suspend fun setUseMaster(scope: ProxyScope, useMaster: Boolean)
 }
