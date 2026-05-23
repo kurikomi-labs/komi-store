@@ -14,6 +14,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.common_see_all
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 
 @Composable
@@ -38,7 +41,6 @@ fun SectionHeader(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge.copy(
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
                 ),
@@ -55,7 +57,7 @@ fun SectionHeader(
 
             if (onSeeAll != null) {
                 Text(
-                    text = "See all ›",
+                    text = stringResource(Res.string.common_see_all),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.SemiBold,

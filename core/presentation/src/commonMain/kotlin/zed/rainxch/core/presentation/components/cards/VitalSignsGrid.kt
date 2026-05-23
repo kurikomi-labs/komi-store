@@ -74,7 +74,6 @@ private fun VitalTileBox(tile: VitalTile, modifier: Modifier = Modifier) {
         Text(
             text = tile.value,
             style = MaterialTheme.typography.bodyLarge.copy(
-                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 13.sp,
             ),

@@ -48,7 +48,6 @@ fun WaxSealTrustCard(
             Text(
                 text = stateLabel,
                 style = MaterialTheme.typography.titleMedium.copy(
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 17.sp,
                 ),

@@ -11,3 +11,11 @@ fun formatCount(count: Int): String =
         count >= 1000 -> stringResource(Res.string.count_thousands, count / 1000)
         else -> count.toString()
     }
+
+@Composable
+fun formatCount(count: Long): String =
+    when {
+        count >= 1_000_000L -> stringResource(Res.string.count_millions, (count / 1_000_000L).toInt())
+        count >= 1000L -> stringResource(Res.string.count_thousands, (count / 1000L).toInt())
+        else -> count.toString()
+    }

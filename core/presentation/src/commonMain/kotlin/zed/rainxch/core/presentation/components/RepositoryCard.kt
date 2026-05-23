@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.CallSplit
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Verified
@@ -523,10 +524,15 @@ fun PlatformChip(
     onClick: (() -> Unit)? = null,
 ) {
     Surface(
-        modifier =
-            if (onClick != null) modifier.clickable(onClick = onClick) else modifier,
+        modifier = if (onClick != null) modifier.clickable(onClick = onClick) else modifier,
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
+        border = if (onClick != null) {
+            androidx.compose.foundation.BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+            )
+        } else null,
     ) {
         FlowRow(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
@@ -549,6 +555,14 @@ fun PlatformChip(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
             )
+            if (onClick != null) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(14.dp).padding(end = 4.dp),
+                )
+            }
         }
     }
 }
