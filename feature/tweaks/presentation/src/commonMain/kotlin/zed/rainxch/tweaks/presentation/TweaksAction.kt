@@ -212,4 +212,15 @@ sealed interface TweaksAction {
 
     data object OnRestartNowClick : TweaksAction
     data object OnRestartLaterClick : TweaksAction
+
+    data class OnMasterProxyTypeSelected(val type: ProxyType) : TweaksAction
+    data class OnMasterProxyHostChanged(val host: String) : TweaksAction
+    data class OnMasterProxyPortChanged(val port: String) : TweaksAction
+    data class OnMasterProxyUsernameChanged(val username: String) : TweaksAction
+    data class OnMasterProxyPasswordChanged(val password: String) : TweaksAction
+    data object OnMasterProxyPasswordVisibilityToggle : TweaksAction
+    data object OnMasterProxySave : TweaksAction
+    data object OnMasterProxyTest : TweaksAction
+
+    data class OnScopeUseMainToggled(val scope: ProxyScope, val useMain: Boolean) : TweaksAction
 }

@@ -106,6 +106,8 @@ class TweaksViewModel(
                     observeRootStatus()
                     observeInstallerAttribution()
                     observeNeedsRestartReasons()
+                    observeMasterProxyConfig()
+                    observeUseMasterFlags()
 
                     hasLoadedInitialData = true
                 }
@@ -1187,6 +1189,132 @@ class TweaksViewModel(
             TweaksAction.OnRestartLaterClick -> {
                 _state.update { it.copy(restartBannerSessionDismissed = true) }
             }
+
+            is TweaksAction.OnMasterProxyTypeSelected -> {
+                mutateMasterForm { it.copy(type = action.type) }
+            }
+
+            is TweaksAction.OnMasterProxyHostChanged -> {
+                mutateMasterForm { it.copy(host = action.host) }
+            }
+
+            is TweaksAction.OnMasterProxyPortChanged -> {
+                mutateMasterForm { it.copy(port = action.port) }
+            }
+
+            is TweaksAction.OnMasterProxyUsernameChanged -> {
+                mutateMasterForm { it.copy(username = action.username) }
+            }
+
+            is TweaksAction.OnMasterProxyPasswordChanged -> {
+                mutateMasterForm { it.copy(password = action.password) }
+            }
+
+            TweaksAction.OnMasterProxyPasswordVisibilityToggle -> {
+                mutateMasterForm { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+            }
+
+            TweaksAction.OnMasterProxySave -> {
+                val config = buildMasterProxyConfig() ?: return
+                viewModelScope.launch {
+                    runCatching {
+                        proxyRepository.setMasterProxyConfig(config)
+                        ProxyScope.entries.forEach { scope ->
+                            if (_state.value.useMain(scope)) {
+                                proxyRepository.setProxyConfig(scope, config)
+                            }
+                        }
+                    }.onSuccess {
+                        _state.update {
+                            it.copy(
+                                masterProxyForm = it.masterProxyForm.copy(isDraftDirty = false),
+                            )
+                        }
+                        _events.send(TweaksEvent.OnProxySaved)
+                    }.onFailure { error ->
+                        _events.send(
+                            TweaksEvent.OnProxySaveError(
+                                error.message
+                                    ?: getString(Res.string.failed_to_save_proxy_settings),
+                            ),
+                        )
+                    }
+                }
+            }
+
+            TweaksAction.OnMasterProxyTest -> {
+                val form = _state.value.masterProxyForm
+                if (form.isTestInProgress) return
+                val config = buildMasterProxyConfigForTest() ?: return
+                _state.update {
+                    it.copy(masterProxyForm = it.masterProxyForm.copy(isTestInProgress = true))
+                }
+                viewModelScope.launch {
+                    val outcome: ProxyTestOutcome = try {
+                        proxyTester.test(config)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        ProxyTestOutcome.Failure.Unknown(e.message)
+                    } finally {
+                        _state.update {
+                            it.copy(
+                                masterProxyForm = it.masterProxyForm.copy(isTestInProgress = false),
+                            )
+                        }
+                    }
+                    _events.send(outcome.toEvent())
+                }
+            }
+
+            is TweaksAction.OnScopeUseMainToggled -> {
+                viewModelScope.launch {
+                    runCatching {
+                        proxyRepository.setUseMaster(action.scope, action.useMain)
+                        if (action.useMain) {
+                            val master = proxyRepository.getMasterProxyConfig().first()
+                            if (master != null) {
+                                proxyRepository.setProxyConfig(action.scope, master)
+                            }
+                        }
+                    }.onFailure { error ->
+                        _events.send(
+                            TweaksEvent.OnProxySaveError(
+                                error.message
+                                    ?: getString(Res.string.failed_to_save_proxy_settings),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun buildMasterProxyConfigForTest(): ProxyConfig? {
+        val form = _state.value.masterProxyForm
+        return when (form.type) {
+            ProxyType.NONE -> ProxyConfig.None
+            ProxyType.SYSTEM -> ProxyConfig.System
+            ProxyType.HTTP -> {
+                val host = form.host.trim().takeIf { it.isNotEmpty() } ?: return null
+                val port = form.port.toIntOrNull() ?: return null
+                ProxyConfig.Http(
+                    host,
+                    port,
+                    form.username.takeIf { it.isNotBlank() },
+                    form.password.takeIf { it.isNotBlank() },
+                )
+            }
+            ProxyType.SOCKS -> {
+                val host = form.host.trim().takeIf { it.isNotEmpty() } ?: return null
+                val port = form.port.toIntOrNull() ?: return null
+                ProxyConfig.Socks(
+                    host,
+                    port,
+                    form.username.takeIf { it.isNotBlank() },
+                    form.password.takeIf { it.isNotBlank() },
+                )
+            }
         }
     }
 
@@ -1194,6 +1322,101 @@ class TweaksViewModel(
         viewModelScope.launch {
             tweaksRepository.getNeedsRestartReasons().collect { reasons ->
                 _state.update { it.copy(needsRestartReasons = reasons) }
+            }
+        }
+    }
+
+    private fun observeMasterProxyConfig() {
+        viewModelScope.launch {
+            proxyRepository.getMasterProxyConfig().collect { config ->
+                _state.update { state ->
+                    if (state.masterProxyForm.isDraftDirty) return@update state
+                    val existing = state.masterProxyForm
+                    val populated = when (config) {
+                        null -> existing.copy(type = ProxyType.NONE)
+                        is ProxyConfig.None -> existing.copy(
+                            type = ProxyType.NONE,
+                        )
+                        is ProxyConfig.System -> existing.copy(
+                            type = ProxyType.SYSTEM,
+                        )
+                        is ProxyConfig.Http -> existing.copy(
+                            type = ProxyType.HTTP,
+                            host = config.host,
+                            port = config.port.toString(),
+                            username = config.username.orEmpty(),
+                            password = config.password.orEmpty(),
+                        )
+                        is ProxyConfig.Socks -> existing.copy(
+                            type = ProxyType.SOCKS,
+                            host = config.host,
+                            port = config.port.toString(),
+                            username = config.username.orEmpty(),
+                            password = config.password.orEmpty(),
+                        )
+                    }
+                    state.copy(masterProxyForm = populated)
+                }
+            }
+        }
+    }
+
+    private fun observeUseMasterFlags() {
+        ProxyScope.entries.forEach { scope ->
+            viewModelScope.launch {
+                proxyRepository.getUseMaster(scope).collect { useMaster ->
+                    _state.update { state ->
+                        state.copy(
+                            useMasterByScope = state.useMasterByScope + (scope to useMaster),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun mutateMasterForm(block: (ProxyScopeFormState) -> ProxyScopeFormState) {
+        _state.update { state ->
+            val updated = block(state.masterProxyForm).copy(isDraftDirty = true)
+            state.copy(masterProxyForm = updated)
+        }
+    }
+
+    private fun buildMasterProxyConfig(): ProxyConfig? {
+        val form = _state.value.masterProxyForm
+        return when (form.type) {
+            ProxyType.NONE -> ProxyConfig.None
+            ProxyType.SYSTEM -> ProxyConfig.System
+            ProxyType.HTTP, ProxyType.SOCKS -> {
+                val port = form.port.toIntOrNull()?.takeIf { it in 1..65535 } ?: run {
+                    viewModelScope.launch {
+                        _events.send(
+                            TweaksEvent.OnProxySaveError(
+                                getString(Res.string.invalid_proxy_port),
+                            ),
+                        )
+                    }
+                    return null
+                }
+                val host = form.host.trim().takeIf { isValidProxyHost(it) } ?: run {
+                    val isBlank = form.host.isBlank()
+                    viewModelScope.launch {
+                        val msg = if (isBlank) {
+                            getString(Res.string.proxy_host_required)
+                        } else {
+                            getString(Res.string.proxy_host_invalid)
+                        }
+                        _events.send(TweaksEvent.OnProxySaveError(msg))
+                    }
+                    return null
+                }
+                val username = form.username.takeIf { it.isNotBlank() }
+                val password = form.password.takeIf { it.isNotBlank() }
+                if (form.type == ProxyType.HTTP) {
+                    ProxyConfig.Http(host, port, username, password)
+                } else {
+                    ProxyConfig.Socks(host, port, username, password)
+                }
             }
         }
     }

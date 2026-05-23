@@ -66,10 +66,15 @@ data class TweaksState(
     val customForgeError: String? = null,
     val needsRestartReasons: Set<RestartReason> = emptySet(),
     val restartBannerSessionDismissed: Boolean = false,
+    val masterProxyForm: ProxyScopeFormState = ProxyScopeFormState(),
+    val useMasterByScope: Map<ProxyScope, Boolean> =
+        ProxyScope.entries.associateWith { false },
 ) {
 
     val restartBannerVisible: Boolean
         get() = needsRestartReasons.isNotEmpty() && !restartBannerSessionDismissed
+
+    fun useMain(scope: ProxyScope): Boolean = useMasterByScope[scope] ?: false
 
 
     val displayedTranslationProvider: TranslationProvider
