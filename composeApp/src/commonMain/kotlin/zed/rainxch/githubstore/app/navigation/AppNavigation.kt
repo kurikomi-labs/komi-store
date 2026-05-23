@@ -55,6 +55,16 @@ import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_subtitle
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_appearance
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_connection
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_install_method
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_language
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_privacy
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_sources
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_storage
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_translation
+import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_updates
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.profile.presentation.ProfileRoot
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
@@ -63,6 +73,7 @@ import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
+import zed.rainxch.tweaks.presentation.components.TweaksStubScreen
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
@@ -644,18 +655,49 @@ fun AppNavigation(
 
                     composable<GithubStoreGraph.TweaksScreen> {
                         TweaksRoot(
-                            onNavigateToMirrorPicker = {
-                                navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
+                            onNavigateBack = { navController.popBackStack() },
+                            onNavigateToAppearance = {
+                                navController.navigate(GithubStoreGraph.TweaksAppearanceScreen) {
                                     launchSingleTop = true
                                 }
                             },
-                            onNavigateToSkippedUpdates = {
-                                navController.navigate(GithubStoreGraph.SkippedUpdatesScreen) {
+                            onNavigateToLanguage = {
+                                navController.navigate(GithubStoreGraph.TweaksLanguageScreen) {
                                     launchSingleTop = true
                                 }
                             },
-                            onNavigateToHiddenRepositories = {
-                                navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
+                            onNavigateToConnection = {
+                                navController.navigate(GithubStoreGraph.TweaksConnectionScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToSources = {
+                                navController.navigate(GithubStoreGraph.TweaksSourcesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToTranslation = {
+                                navController.navigate(GithubStoreGraph.TweaksTranslationScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToInstallMethod = {
+                                navController.navigate(GithubStoreGraph.TweaksInstallScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToUpdates = {
+                                navController.navigate(GithubStoreGraph.TweaksUpdatesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToStorage = {
+                                navController.navigate(GithubStoreGraph.TweaksStorageScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToPrivacy = {
+                                navController.navigate(GithubStoreGraph.TweaksPrivacyScreen) {
                                     launchSingleTop = true
                                 }
                             },
@@ -664,6 +706,81 @@ fun AppNavigation(
                                     launchSingleTop = true
                                 }
                             },
+                            onNavigateToAppInfo = {
+                                navController.navigate(GithubStoreGraph.TweaksAppInfoScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksAppearanceScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_appearance),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksLanguageScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_language),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksConnectionScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_connection),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksSourcesScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_sources),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksTranslationScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_translation),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksInstallScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_install_method),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksUpdatesScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_updates),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksStorageScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_storage),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksPrivacyScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_privacy),
+                            onNavigateBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.TweaksAppInfoScreen> {
+                        TweaksStubScreen(
+                            title = stringResource(Res.string.tweaks_entry_app_info),
+                            onNavigateBack = { navController.popBackStack() },
                         )
                     }
 

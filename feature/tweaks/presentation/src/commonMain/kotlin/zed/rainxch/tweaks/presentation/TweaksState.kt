@@ -7,6 +7,7 @@ import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerAttribution
 import zed.rainxch.core.domain.model.InstallerType
 import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.domain.model.RestartReason
 import zed.rainxch.core.domain.model.RootAvailability
 import zed.rainxch.core.domain.model.ShizukuAvailability
 import zed.rainxch.core.domain.model.TranslationProvider
@@ -63,7 +64,13 @@ data class TweaksState(
     val showCustomForgesDialog: Boolean = false,
     val customForgeDraft: String = "",
     val customForgeError: String? = null,
+    val needsRestartReasons: Set<RestartReason> = emptySet(),
+    val restartBannerSessionDismissed: Boolean = false,
 ) {
+
+    val restartBannerVisible: Boolean
+        get() = needsRestartReasons.isNotEmpty() && !restartBannerSessionDismissed
+
 
     val displayedTranslationProvider: TranslationProvider
         get() = draftTranslationProvider ?: translationProvider

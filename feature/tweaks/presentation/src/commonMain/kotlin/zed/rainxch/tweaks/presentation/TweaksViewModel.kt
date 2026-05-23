@@ -105,6 +105,7 @@ class TweaksViewModel(
                     observeDhizukuStatus()
                     observeRootStatus()
                     observeInstallerAttribution()
+                    observeNeedsRestartReasons()
 
                     hasLoadedInitialData = true
                 }
@@ -1067,6 +1068,11 @@ class TweaksViewModel(
                 if (action.tag == _state.value.selectedAppLanguage) return
                 viewModelScope.launch {
                     tweaksRepository.setAppLanguage(action.tag)
+                    runCatching {
+                        tweaksRepository.addRestartReason(
+                            zed.rainxch.core.domain.model.RestartReason.LANGUAGE,
+                        )
+                    }
                     if (getPlatform() != Platform.ANDROID) {
                         _events.send(TweaksEvent.OnAppLanguageChangeRequiresRestart)
                     }
@@ -1169,6 +1175,25 @@ class TweaksViewModel(
                         }
                     }
                 }
+            }
+
+            TweaksAction.OnRestartNowClick -> {
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.clearRestartReasons() }
+                    restartAppAfterLanguageChange()
+                }
+            }
+
+            TweaksAction.OnRestartLaterClick -> {
+                _state.update { it.copy(restartBannerSessionDismissed = true) }
+            }
+        }
+    }
+
+    private fun observeNeedsRestartReasons() {
+        viewModelScope.launch {
+            tweaksRepository.getNeedsRestartReasons().collect { reasons ->
+                _state.update { it.copy(needsRestartReasons = reasons) }
             }
         }
     }

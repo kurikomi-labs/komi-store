@@ -209,4 +209,7 @@ sealed interface TweaksAction {
     data class OnCustomForgeDraftChanged(val draft: String) : TweaksAction
     data object OnAddCustomForge : TweaksAction
     data class OnRemoveCustomForge(val host: String) : TweaksAction
+
+    data object OnRestartNowClick : TweaksAction
+    data object OnRestartLaterClick : TweaksAction
 }

@@ -1,13 +1,33 @@
 package zed.rainxch.tweaks.presentation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Feedback
+import androidx.compose.material.icons.outlined.GTranslate
+import androidx.compose.material.icons.outlined.Hub
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.InstallMobile
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.PrivacyTip
+import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material.icons.outlined.Translate
+import androidx.compose.material.icons.outlined.Update
+import androidx.compose.material.icons.outlined.VpnKey
+import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -18,10 +38,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -35,24 +61,33 @@ import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
-import zed.rainxch.tweaks.presentation.components.ClearDownloadsDialog
-import zed.rainxch.tweaks.presentation.components.sections.about
-import zed.rainxch.tweaks.presentation.components.sections.othersSection
-import zed.rainxch.tweaks.presentation.components.sections.settings
+import zed.rainxch.tweaks.presentation.components.RestartBanner
+import zed.rainxch.tweaks.presentation.components.SectionHeader
+import zed.rainxch.tweaks.presentation.components.TweaksEntryRow
+import zed.rainxch.tweaks.presentation.components.TweaksSearchField
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 
 @Composable
 fun TweaksRoot(
-    onNavigateToMirrorPicker: () -> Unit,
-    onNavigateToSkippedUpdates: () -> Unit,
-    onNavigateToHiddenRepositories: () -> Unit,
-    onNavigateToHostTokens: () -> Unit = {},
+    onNavigateBack: () -> Unit,
+    onNavigateToAppearance: () -> Unit,
+    onNavigateToLanguage: () -> Unit,
+    onNavigateToConnection: () -> Unit,
+    onNavigateToSources: () -> Unit,
+    onNavigateToTranslation: () -> Unit,
+    onNavigateToInstallMethod: () -> Unit,
+    onNavigateToUpdates: () -> Unit,
+    onNavigateToStorage: () -> Unit,
+    onNavigateToPrivacy: () -> Unit,
+    onNavigateToHostTokens: () -> Unit,
+    onNavigateToAppInfo: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var feedbackSheetOpen by rememberSaveable { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -60,7 +95,6 @@ fun TweaksRoot(
             androidx.lifecycle.LifecycleEventObserver { _, event ->
                 if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
                     viewModel.onAction(TweaksAction.OnRefreshCacheSize)
-
                     viewModel.onAction(TweaksAction.OnReevaluateBatteryOptimizationCard)
                 }
             }
@@ -72,145 +106,52 @@ fun TweaksRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            TweaksEvent.OnProxySaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.proxy_saved))
-                }
-            }
-
-            is TweaksEvent.OnProxySaveError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
-            }
-
-            is TweaksEvent.OnProxyTestSuccess -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(
-                        getString(Res.string.proxy_test_success, event.latencyMs),
-                    )
-                }
-            }
-
-            is TweaksEvent.OnProxyTestError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
-            }
-
-            TweaksEvent.OnCacheCleared -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.downloads_cleared))
-                }
-            }
-
-            is TweaksEvent.OnCacheClearError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
-            }
-
-            TweaksEvent.OnSeenHistoryCleared -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.seen_history_cleared))
-                }
-            }
-
-            TweaksEvent.OnTranslationProviderSaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.translation_provider_saved))
-                }
-            }
-
-            TweaksEvent.OnYoudaoCredentialsSaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.translation_youdao_saved))
-                }
-            }
-
-            TweaksEvent.OnLibreTranslateCredentialsSaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.translation_libre_saved))
-                }
-            }
-
-            TweaksEvent.OnDeeplCredentialsSaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.translation_deepl_saved))
-                }
-            }
-
-            TweaksEvent.OnMicrosoftTranslatorCredentialsSaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.translation_microsoft_saved))
-                }
-            }
-
             TweaksEvent.OnAppLanguageChangeRequiresRestart -> {
                 coroutineScope.launch {
-                    val result =
-                        snackbarState.showSnackbar(
-                            message = getString(Res.string.language_restart_required),
-                            actionLabel = getString(Res.string.language_restart_action),
-                            withDismissAction = true,
-                        )
+                    val result = snackbarState.showSnackbar(
+                        message = getString(Res.string.language_restart_required),
+                        actionLabel = getString(Res.string.language_restart_action),
+                        withDismissAction = true,
+                    )
                     if (result == SnackbarResult.ActionPerformed) {
                         restartAppAfterLanguageChange()
                     }
                 }
             }
+            else -> Unit
         }
     }
 
-    TweaksScreen(
+    TweaksHubScreen(
         state = state,
-        onAction = { action ->
-            when (action) {
-                TweaksAction.OnMirrorPickerClick -> onNavigateToMirrorPicker()
-                TweaksAction.OnSkippedUpdatesClick -> onNavigateToSkippedUpdates()
-
-                TweaksAction.OnHiddenRepositoriesClick -> onNavigateToHiddenRepositories()
-                else -> viewModel.onAction(action)
-            }
-        },
-        snackbarState = snackbarState,
+        onNavigateBack = onNavigateBack,
+        onNavigateToAppearance = onNavigateToAppearance,
+        onNavigateToLanguage = onNavigateToLanguage,
+        onNavigateToConnection = onNavigateToConnection,
+        onNavigateToSources = onNavigateToSources,
+        onNavigateToTranslation = onNavigateToTranslation,
+        onNavigateToInstallMethod = onNavigateToInstallMethod,
+        onNavigateToUpdates = onNavigateToUpdates,
+        onNavigateToStorage = onNavigateToStorage,
+        onNavigateToPrivacy = onNavigateToPrivacy,
         onNavigateToHostTokens = onNavigateToHostTokens,
+        onNavigateToAppInfo = onNavigateToAppInfo,
+        onSendFeedbackClick = { feedbackSheetOpen = true },
+        onRestartNow = { viewModel.onAction(TweaksAction.OnRestartNowClick) },
+        onRestartLater = { viewModel.onAction(TweaksAction.OnRestartLaterClick) },
+        snackbarState = snackbarState,
     )
 
-    if (state.isClearDownloadsDialogVisible) {
-        ClearDownloadsDialog(
-            cacheSize = state.cacheSize,
-            onDismissRequest = {
-                viewModel.onAction(TweaksAction.OnClearDownloadsDismiss)
-            },
-            onConfirm = {
-                viewModel.onAction(TweaksAction.OnClearDownloadsConfirm)
-            },
-        )
-    }
-
-    if (state.showCustomForgesDialog) {
-        zed.rainxch.tweaks.presentation.components.CustomForgesDialog(
-            state = state,
-            onAction = { viewModel.onAction(it) },
-        )
-    }
-
-    if (state.isFeedbackSheetVisible) {
+    if (feedbackSheetOpen) {
         FeedbackBottomSheet(
-            onDismiss = {
-                viewModel.onAction(TweaksAction.OnFeedbackDismiss)
-            },
+            onDismiss = { feedbackSheetOpen = false },
             onSent = { channel ->
-                viewModel.onAction(TweaksAction.OnFeedbackDismiss)
+                feedbackSheetOpen = false
                 coroutineScope.launch {
-                    val msg =
-                        when (channel) {
-                            FeedbackChannel.EMAIL ->
-                                getString(Res.string.feedback_send_success_email)
-                            FeedbackChannel.GITHUB ->
-                                getString(Res.string.feedback_send_success_github)
-                        }
+                    val msg = when (channel) {
+                        FeedbackChannel.EMAIL -> getString(Res.string.feedback_send_success_email)
+                        FeedbackChannel.GITHUB -> getString(Res.string.feedback_send_success_github)
+                    }
                     snackbarState.showSnackbar(msg)
                 }
             },
@@ -225,15 +166,160 @@ fun TweaksRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+private data class TweaksHubEntry(
+    val title: String,
+    val subtitle: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit,
+)
+
+private data class TweaksHubBlock(
+    val title: String,
+    val entries: List<TweaksHubEntry>,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TweaksScreen(
+fun TweaksHubScreen(
     state: TweaksState,
-    onAction: (TweaksAction) -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateToAppearance: () -> Unit,
+    onNavigateToLanguage: () -> Unit,
+    onNavigateToConnection: () -> Unit,
+    onNavigateToSources: () -> Unit,
+    onNavigateToTranslation: () -> Unit,
+    onNavigateToInstallMethod: () -> Unit,
+    onNavigateToUpdates: () -> Unit,
+    onNavigateToStorage: () -> Unit,
+    onNavigateToPrivacy: () -> Unit,
+    onNavigateToHostTokens: () -> Unit,
+    onNavigateToAppInfo: () -> Unit,
+    onSendFeedbackClick: () -> Unit,
+    onRestartNow: () -> Unit,
+    onRestartLater: () -> Unit,
     snackbarState: SnackbarHostState,
-    onNavigateToHostTokens: () -> Unit = {},
 ) {
     val bottomNavHeight = LocalBottomNavigationHeight.current
+    var query by rememberSaveable { mutableStateOf("") }
+
+    val tapToManage = stringResource(Res.string.tweaks_entry_subtitle_tap)
+
+    val blocks = listOf(
+        TweaksHubBlock(
+            title = stringResource(Res.string.section_look_and_feel),
+            entries = listOf(
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_appearance),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.Palette,
+                    onClick = onNavigateToAppearance,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_language),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.Translate,
+                    onClick = onNavigateToLanguage,
+                ),
+            ),
+        ),
+        TweaksHubBlock(
+            title = stringResource(Res.string.section_connectivity),
+            entries = listOf(
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_connection),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.Wifi,
+                    onClick = onNavigateToConnection,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_sources),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.Hub,
+                    onClick = onNavigateToSources,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_translation),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.GTranslate,
+                    onClick = onNavigateToTranslation,
+                ),
+            ),
+        ),
+        TweaksHubBlock(
+            title = stringResource(Res.string.section_installs_and_updates),
+            entries = listOf(
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_install_method),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.InstallMobile,
+                    onClick = onNavigateToInstallMethod,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_updates),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.Update,
+                    onClick = onNavigateToUpdates,
+                ),
+            ),
+        ),
+        TweaksHubBlock(
+            title = stringResource(Res.string.section_privacy_and_data),
+            entries = listOf(
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_storage),
+                    subtitle = state.cacheSize.ifBlank { tapToManage },
+                    icon = Icons.Outlined.Inventory2,
+                    onClick = onNavigateToStorage,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_privacy),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.PrivacyTip,
+                    onClick = onNavigateToPrivacy,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_access_tokens),
+                    subtitle = tapToManage,
+                    icon = Icons.Outlined.VpnKey,
+                    onClick = onNavigateToHostTokens,
+                ),
+            ),
+        ),
+        TweaksHubBlock(
+            title = stringResource(Res.string.section_app_block),
+            entries = listOf(
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_app_info),
+                    subtitle = state.versionName.ifBlank { "—" },
+                    icon = Icons.Outlined.Info,
+                    onClick = onNavigateToAppInfo,
+                ),
+                TweaksHubEntry(
+                    title = stringResource(Res.string.tweaks_entry_feedback),
+                    subtitle = stringResource(Res.string.feedback_hub_subtitle),
+                    icon = Icons.Outlined.Feedback,
+                    onClick = onSendFeedbackClick,
+                ),
+            ),
+        ),
+    )
+
+    val filteredBlocks = remember(query, blocks) {
+        if (query.isBlank()) {
+            blocks
+        } else {
+            val q = query.trim()
+            blocks.map { block ->
+                block.copy(
+                    entries = block.entries.filter { entry ->
+                        entry.title.contains(q, ignoreCase = true) ||
+                            entry.subtitle.contains(q, ignoreCase = true)
+                    },
+                )
+            }.filter { it.entries.isNotEmpty() }
+        }
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -242,78 +328,152 @@ fun TweaksScreen(
             )
         },
         topBar = {
-            TopAppBar()
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(Res.string.tweaks_title),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.back_cd),
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                },
+            )
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val listState = rememberLazyListState()
         LazyColumn(
             state = listState,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp)
-                    .arrowKeyScroll(listState, autoFocus = true),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .arrowKeyScroll(listState, autoFocus = true),
         ) {
-            settings(
-                state = state,
-                onAction = onAction,
-            )
+            if (state.restartBannerVisible) {
+                item(key = "restart_banner") {
+                    Spacer(Modifier.height(8.dp))
+                    RestartBanner(
+                        reasons = state.needsRestartReasons,
+                        onRestartNow = onRestartNow,
+                        onLater = onRestartLater,
+                    )
+                }
+            }
 
-            item {
-                Spacer(Modifier.height(16.dp))
-                zed.rainxch.tweaks.presentation.hosttokens.HostTokensEntryCard(
-                    onClick = onNavigateToHostTokens,
+            item(key = "search_field") {
+                Spacer(Modifier.height(12.dp))
+                TweaksSearchField(
+                    query = query,
+                    onQueryChange = { query = it },
+                    onClear = { query = "" },
                 )
                 Spacer(Modifier.height(16.dp))
             }
 
-            othersSection(
-                state = state,
-                onAction = onAction,
-            )
-
-            item {
-                Spacer(Modifier.height(32.dp))
+            if (filteredBlocks.isEmpty()) {
+                item(key = "search_empty") {
+                    EmptySearchResult(query = query)
+                    Spacer(Modifier.height(32.dp))
+                }
+            } else if (query.isBlank()) {
+                blocks.forEachIndexed { idx, block ->
+                    item(key = "block_header_${block.title}") {
+                        if (idx > 0) Spacer(Modifier.height(24.dp))
+                        SectionHeader(text = block.title)
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    block.entries.forEach { entry ->
+                        item(key = "entry_${block.title}_${entry.title}") {
+                            TweaksEntryRow(
+                                title = entry.title,
+                                subtitle = entry.subtitle,
+                                icon = entry.icon,
+                                onClick = entry.onClick,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
+                    }
+                }
+            } else {
+                filteredBlocks.flatMap { it.entries }.forEach { entry ->
+                    item(key = "search_entry_${entry.title}") {
+                        TweaksEntryRow(
+                            title = entry.title,
+                            subtitle = entry.subtitle,
+                            icon = entry.icon,
+                            onClick = entry.onClick,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
+                }
             }
 
-            about(
-                versionName = state.versionName,
-                onAction = onAction,
-            )
-
-            item {
+            item(key = "bottom_spacer") {
                 Spacer(Modifier.height(bottomNavHeight + 32.dp))
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun TopAppBar() {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(Res.string.tweaks_title),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = androidx.compose.ui.unit.TextUnit(22f, androidx.compose.ui.unit.TextUnitType.Sp),
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+private fun EmptySearchResult(query: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.SearchOff,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-        },
-    )
+            Text(
+                text = stringResource(Res.string.tweaks_search_empty, query),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun Preview() {
     GithubStoreTheme {
-        TweaksScreen(
+        TweaksHubScreen(
             state = TweaksState(),
-            onAction = {},
+            onNavigateBack = {},
+            onNavigateToAppearance = {},
+            onNavigateToLanguage = {},
+            onNavigateToConnection = {},
+            onNavigateToSources = {},
+            onNavigateToTranslation = {},
+            onNavigateToInstallMethod = {},
+            onNavigateToUpdates = {},
+            onNavigateToStorage = {},
+            onNavigateToPrivacy = {},
+            onNavigateToHostTokens = {},
+            onNavigateToAppInfo = {},
+            onSendFeedbackClick = {},
+            onRestartNow = {},
+            onRestartLater = {},
             snackbarState = SnackbarHostState(),
         )
     }

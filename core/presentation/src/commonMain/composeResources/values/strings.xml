@@ -1195,6 +1195,42 @@
     <string name="search_clear_filter_cd">Remove filter</string>
     <string name="profile_tweaks_description">App settings, theme, network, translation, advanced options.</string>
 
+    <!-- Tweaks redesign (P12.5) -->
+    <string name="section_connectivity">Connectivity</string>
+    <string name="section_privacy_and_data">Privacy &amp; data</string>
+    <string name="section_app_block">App</string>
+    <string name="section_installs_and_updates">Installs &amp; updates</string>
+    <string name="section_look_and_feel">Look &amp; feel</string>
+    <string name="tweaks_entry_appearance">Appearance</string>
+    <string name="tweaks_entry_language">Language</string>
+    <string name="tweaks_entry_connection">Connection</string>
+    <string name="tweaks_entry_sources">Sources</string>
+    <string name="tweaks_entry_translation">Translation</string>
+    <string name="tweaks_entry_install_method">Install method</string>
+    <string name="tweaks_entry_updates">Update behavior</string>
+    <string name="tweaks_entry_storage">Storage</string>
+    <string name="tweaks_entry_privacy">Privacy</string>
+    <string name="tweaks_entry_access_tokens">Access tokens</string>
+    <string name="tweaks_entry_app_info">App info</string>
+    <string name="tweaks_entry_feedback">Send feedback</string>
+    <string name="tweaks_entry_subtitle_tap">Tap to manage</string>
+    <string name="tweaks_search_placeholder">Search settings</string>
+    <string name="tweaks_search_empty">No settings match \'%1$s\'.</string>
+    <string name="feedback_hub_subtitle">We read every report.</string>
+    <string name="restart_banner_body">Some changes need a restart to apply.</string>
+    <string name="restart_banner_reasons_prefix">Affected: %1$s</string>
+    <string name="restart_banner_reason_language">language</string>
+    <string name="restart_banner_reason_theme">theme</string>
+    <string name="restart_banner_reason_telemetry">usage data</string>
+    <string name="restart_banner_restart_now">Restart now</string>
+    <string name="restart_banner_later">Later</string>
+    <string name="tweaks_install_method_android_only_badge">Android only</string>
+    <string name="tweaks_install_method_desktop_empty_title">Install method is Android-only</string>
+    <string name="tweaks_install_method_desktop_empty_body">Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager.</string>
+    <string name="tweaks_stub_coming_soon_title">Coming in a follow-up</string>
+    <string name="tweaks_stub_coming_soon_body">This screen is part of the in-progress redesign. The settings still work — they\'re just being moved here from the old layout.</string>
+    <string name="back_cd">Back</string>
+
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>
     <string name="apk_inspect_button_label">Inspect APK</string>
