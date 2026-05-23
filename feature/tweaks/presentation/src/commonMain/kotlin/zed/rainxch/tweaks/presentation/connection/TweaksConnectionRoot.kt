@@ -20,17 +20,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,8 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -54,6 +47,9 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -285,71 +281,44 @@ private fun ProxyFormFields(
     onPassChange: (String) -> Unit,
     onPassVisibility: () -> Unit,
 ) {
-    val colors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = MaterialTheme.colorScheme.outline,
-        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-    )
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        OutlinedTextField(
+        GhsTextField(
             value = form.host,
             onValueChange = onHostChange,
             modifier = Modifier.weight(2f),
-            label = { Text(text = stringResource(Res.string.proxy_host)) },
-            singleLine = true,
-            shape = Radii.chip,
-            colors = colors,
+            label = stringResource(Res.string.proxy_host),
         )
-        OutlinedTextField(
+        GhsTextField(
             value = form.port,
             onValueChange = onPortChange,
             modifier = Modifier.weight(1f),
-            label = { Text(text = stringResource(Res.string.proxy_port)) },
-            singleLine = true,
-            shape = Radii.chip,
+            label = stringResource(Res.string.proxy_port),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = colors,
         )
     }
     Spacer(Modifier.height(8.dp))
-    OutlinedTextField(
+    GhsTextField(
         value = form.username,
         onValueChange = onUserChange,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = stringResource(Res.string.proxy_username)) },
-        singleLine = true,
-        shape = Radii.chip,
-        colors = colors,
+        label = stringResource(Res.string.proxy_username),
     )
     Spacer(Modifier.height(8.dp))
-    OutlinedTextField(
+    GhsTextField(
         value = form.password,
         onValueChange = onPassChange,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = stringResource(Res.string.proxy_password)) },
-        singleLine = true,
-        visualTransformation = if (form.isPasswordVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation()
-        },
+        label = stringResource(Res.string.proxy_password),
+        visualTransformation = passwordVisualTransformation(form.isPasswordVisible),
         trailingIcon = {
-            IconButton(onClick = onPassVisibility) {
-                Icon(
-                    imageVector = if (form.isPasswordVisible) {
-                        Icons.Filled.VisibilityOff
-                    } else {
-                        Icons.Filled.Visibility
-                    },
-                    contentDescription = null,
-                )
-            }
+            GhsPasswordVisibilityIcon(
+                visible = form.isPasswordVisible,
+                onToggle = onPassVisibility,
+            )
         },
-        shape = Radii.chip,
-        colors = colors,
     )
 }
 
