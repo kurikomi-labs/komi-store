@@ -35,6 +35,7 @@ fun CustomForgesDialog(
 ) {
     AlertDialog(
         onDismissRequest = { onAction(TweaksAction.OnDismissCustomForgesDialog) },
+        shape = zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog,
         title = { Text(stringResource(Res.string.custom_forges_dialog_title)) },
         text = {
             Column {

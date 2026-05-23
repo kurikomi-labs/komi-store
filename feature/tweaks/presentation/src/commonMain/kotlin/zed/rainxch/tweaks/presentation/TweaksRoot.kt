@@ -297,9 +297,11 @@ private fun TopAppBar() {
         title = {
             Text(
                 text = stringResource(Res.string.tweaks_title),
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = androidx.compose.ui.unit.TextUnit(22f, androidx.compose.ui.unit.TextUnitType.Sp),
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
         },
     )

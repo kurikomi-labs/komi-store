@@ -42,9 +42,9 @@ fun ClearDownloadsDialog(
         modifier =
             modifier
                 .padding(16.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(16.dp),
+                .clip(zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(20.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
