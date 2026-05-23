@@ -67,9 +67,10 @@ fun LeadCard(
     val isDark = isSystemInDarkTheme()
     val surface = MaterialTheme.colorScheme.surface
     val borderColor = if (isDark) EmberPalette.Hot.copy(alpha = 0.42f) else EmberPalette.Deep.copy(alpha = 0.5f)
-    val ownerAlpha = if (isDark) 0.7f else 0.85f
-    val descAlpha = if (isDark) 0.78f else 0.92f
-    val statAlpha = if (isDark) 0.88f else 1f
+    val inkColor = if (isDark) MaterialTheme.colorScheme.onSurface else EmberPalette.Ash
+    val ownerAlpha = if (isDark) 0.7f else 0.78f
+    val descAlpha = if (isDark) 0.78f else 0.9f
+    val statAlpha = if (isDark) 0.88f else 0.95f
 
     Box(
         modifier = modifier
@@ -133,7 +134,7 @@ fun LeadCard(
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontSize = 12.sp,
                             ),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ownerAlpha),
+                            color = inkColor.copy(alpha = ownerAlpha),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f),
@@ -178,7 +179,7 @@ fun LeadCard(
                             fontSize = 28.sp,
                             letterSpacing = (-0.3).sp,
                         ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = inkColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -189,7 +190,7 @@ fun LeadCard(
                 Text(
                     text = card.description,
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = descAlpha),
+                    color = inkColor.copy(alpha = descAlpha),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -207,7 +208,7 @@ fun LeadCard(
                     Icon(
                         imageVector = Icons.Outlined.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
+                        tint = inkColor.copy(alpha = statAlpha),
                         modifier = Modifier.size(15.dp),
                     )
                     Text(
@@ -216,7 +217,7 @@ fun LeadCard(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 13.sp,
                         ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
+                        color = inkColor.copy(alpha = statAlpha),
                     )
                 }
                 if (card.downloadsCount > 0) {
@@ -227,7 +228,7 @@ fun LeadCard(
                         Icon(
                             imageVector = Icons.Default.Download,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
+                            tint = inkColor.copy(alpha = statAlpha),
                             modifier = Modifier.size(15.dp),
                         )
                         Text(
@@ -236,7 +237,7 @@ fun LeadCard(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 13.sp,
                             ),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
+                            color = inkColor.copy(alpha = statAlpha),
                         )
                     }
                 }
