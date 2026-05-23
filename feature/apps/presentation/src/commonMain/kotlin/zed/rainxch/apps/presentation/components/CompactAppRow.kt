@@ -24,8 +24,9 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -156,23 +157,14 @@ fun CompactAppRow(
 
         if (app.pendingInstallFilePath != null) {
 
-            Button(
+            GhsButton(
                 onClick = onInstallPendingClick,
+                label = stringResource(Res.string.install),
+                variant = GhsButtonVariant.Primary,
+                size = GhsButtonSize.Sm,
                 enabled = !isBusy,
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                modifier = Modifier.height(40.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Update,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = stringResource(Res.string.install),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
+                leadingIcon = Icons.Default.Update,
+            )
             Spacer(Modifier.width(4.dp))
         } else if (app.isPendingInstall) {
 

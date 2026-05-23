@@ -25,7 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -189,13 +191,12 @@ private fun ExpandableBody(body: String) {
             },
         )
         if (!expanded && isOverflowing) {
-            TextButton(onClick = { expanded = true }) {
-                Text(
-                    text = stringResource(Res.string.announcements_read_more),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+            GhsButton(
+                onClick = { expanded = true },
+                label = stringResource(Res.string.announcements_read_more),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         }
     }
 }
@@ -214,27 +215,31 @@ private fun ActionRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!announcement.ctaUrl.isNullOrBlank()) {
-            TextButton(onClick = onCtaClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(4.dp))
-                val resolvedLabel = announcement.ctaLabel?.takeIf { it.isNotBlank() }
-                    ?: stringResource(Res.string.announcements_read_more)
-                Text(text = resolvedLabel)
-            }
+            val resolvedLabel = announcement.ctaLabel?.takeIf { it.isNotBlank() }
+                ?: stringResource(Res.string.announcements_read_more)
+            GhsButton(
+                onClick = onCtaClick,
+                label = resolvedLabel,
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+                leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
+            )
         }
         Spacer(Modifier.weight(1f))
         if (announcement.requiresAcknowledgment && !isAcknowledged) {
-            TextButton(onClick = onAcknowledgeClick) {
-                Text(text = stringResource(Res.string.announcements_acknowledge))
-            }
+            GhsButton(
+                onClick = onAcknowledgeClick,
+                label = stringResource(Res.string.announcements_acknowledge),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         } else if (announcement.dismissible) {
-            TextButton(onClick = onDismissClick) {
-                Text(text = stringResource(Res.string.dismiss))
-            }
+            GhsButton(
+                onClick = onDismissClick,
+                label = stringResource(Res.string.dismiss),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         }
     }
 }

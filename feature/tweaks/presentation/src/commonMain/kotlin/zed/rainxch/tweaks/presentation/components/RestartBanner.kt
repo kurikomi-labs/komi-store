@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.RestartReason
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_body
@@ -86,23 +85,19 @@ fun RestartBanner(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onLater) {
-                    Text(
-                        text = stringResource(Res.string.restart_banner_later),
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    )
-                }
+                GhsButton(
+                    onClick = onLater,
+                    label = stringResource(Res.string.restart_banner_later),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
                 Spacer(Modifier.height(0.dp))
-                FilledTonalButton(
+                GhsButton(
                     onClick = onRestartNow,
-                    shape = WonkySquircleShape.CtaPrimary,
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                ) {
-                    Text(text = stringResource(Res.string.restart_banner_restart_now))
-                }
+                    label = stringResource(Res.string.restart_banner_restart_now),
+                    variant = GhsButtonVariant.Primary,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
     }

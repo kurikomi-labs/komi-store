@@ -18,13 +18,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.details_linked_repo_banner_body
 import zed.rainxch.githubstore.core.presentation.res.details_linked_repo_banner_title
@@ -75,15 +77,13 @@ fun LinkedRepoBanner(
 
             Spacer(Modifier.width(8.dp))
 
-            TextButton(onClick = onUnlink) {
-                Icon(
-                    imageVector = Icons.Default.LinkOff,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(text = stringResource(Res.string.details_unlink_external_app_dialog_confirm))
-            }
+            GhsButton(
+                onClick = onUnlink,
+                label = stringResource(Res.string.details_unlink_external_app_dialog_confirm),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+                leadingIcon = Icons.Default.LinkOff,
+            )
         }
     }
 }

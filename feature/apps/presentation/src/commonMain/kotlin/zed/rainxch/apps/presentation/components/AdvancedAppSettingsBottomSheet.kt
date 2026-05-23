@@ -25,17 +25,17 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -114,9 +114,12 @@ fun AdvancedAppSettingsBottomSheet(
                 leadingIcon = Icons.Default.FilterAlt,
                 trailingIcon = {
                     if (state.advancedFilterDraft.isNotEmpty()) {
-                        TextButton(onClick = { onAction(AppsAction.OnAdvancedClearFilter) }) {
-                            Text(stringResource(Res.string.clear))
-                        }
+                        GhsButton(
+                            onClick = { onAction(AppsAction.OnAdvancedClearFilter) },
+                            label = stringResource(Res.string.clear),
+                            variant = GhsButtonVariant.Text,
+                            size = GhsButtonSize.Sm,
+                        )
                     }
                 },
                 singleLine = true,
@@ -190,32 +193,21 @@ fun AdvancedAppSettingsBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                OutlinedButton(
+                GhsButton(
                     onClick = { onAction(AppsAction.OnDismissAdvancedSettings) },
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Outline,
                     enabled = !state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Text(stringResource(Res.string.cancel))
-                }
-                FilledTonalButton(
+                )
+                GhsButton(
                     onClick = { onAction(AppsAction.OnAdvancedSaveFilter) },
+                    label = stringResource(Res.string.advanced_save),
+                    variant = GhsButtonVariant.Tonal,
                     enabled = !state.advancedSavingFilter && state.advancedFilterError == null,
+                    loading = state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    if (state.advancedSavingFilter) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    Text(
-                        text = stringResource(Res.string.advanced_save),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                )
             }
         }
     }

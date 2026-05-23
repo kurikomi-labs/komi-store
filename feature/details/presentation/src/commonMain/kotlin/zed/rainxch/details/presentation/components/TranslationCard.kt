@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,12 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -230,72 +227,39 @@ private fun ActionRow(
 ) {
     when {
         state.isTranslating -> {
-            OutlinedButton(
+            GhsButton(
                 onClick = onCancel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp),
-                shape = RoundedCornerShape(50),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp,
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(stringResource(Res.string.translation_card_cancel), fontWeight = FontWeight.SemiBold)
-            }
+                label = stringResource(Res.string.translation_card_cancel),
+                variant = GhsButtonVariant.Outline,
+                loading = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
 
         state.translatedText != null -> {
-            OutlinedButton(
+            GhsButton(
                 onClick = onToggle,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp),
-                shape = RoundedCornerShape(50),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                Text(
-                    text = if (state.isShowingTranslation) {
-                        stringResource(Res.string.translation_card_show_original)
-                    } else {
-                        stringResource(Res.string.translation_card_show_translation)
-                    },
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+                label = if (state.isShowingTranslation) {
+                    stringResource(Res.string.translation_card_show_original)
+                } else {
+                    stringResource(Res.string.translation_card_show_translation)
+                },
+                variant = GhsButtonVariant.Outline,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
 
         else -> {
-            Button(
+            GhsButton(
                 onClick = { onTranslate(effectiveTargetCode) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp),
-                shape = RoundedCornerShape(50),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                label = stringResource(
+                    Res.string.translation_card_translate_to,
+                    effectiveTargetName,
                 ),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Translate,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = stringResource(
-                        Res.string.translation_card_translate_to,
-                        effectiveTargetName,
-                    ),
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+                variant = GhsButtonVariant.Primary,
+                leadingIcon = Icons.Outlined.Translate,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,6 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_close
@@ -105,31 +106,28 @@ fun RateLimitDialog(
         },
         confirmButton = {
             if (!isAuthenticated) {
-                Button(onClick = onSignIn) {
-                    Text(
-                        text = stringResource(Res.string.rate_limit_sign_in),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
+                GhsButton(
+                    onClick = onSignIn,
+                    label = stringResource(Res.string.rate_limit_sign_in),
+                    variant = GhsButtonVariant.Primary,
+                    size = GhsButtonSize.Sm,
+                )
             } else {
-                Button(onClick = onDismiss) {
-                    Text(
-                        text = stringResource(Res.string.rate_limit_ok),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
+                GhsButton(
+                    onClick = onDismiss,
+                    label = stringResource(Res.string.rate_limit_ok),
+                    variant = GhsButtonVariant.Primary,
+                    size = GhsButtonSize.Sm,
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(Res.string.rate_limit_close),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            GhsButton(
+                onClick = onDismiss,
+                label = stringResource(Res.string.rate_limit_close),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
     )
 }

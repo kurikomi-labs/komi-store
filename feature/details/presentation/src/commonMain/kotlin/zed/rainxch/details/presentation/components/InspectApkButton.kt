@@ -164,6 +164,7 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
+                        // TODO(ghs-button): needs onPrimary text color in coachmark popup
                         TextButton(onClick = onDismiss) {
                             Text(
                                 text = stringResource(Res.string.apk_inspect_coachmark_dismiss),

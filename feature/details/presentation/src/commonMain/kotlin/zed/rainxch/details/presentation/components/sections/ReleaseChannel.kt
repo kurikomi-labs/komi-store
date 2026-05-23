@@ -327,6 +327,7 @@ private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
+                    // TODO(ghs-button): needs onPrimary text color in coachmark popup, not standard primary
                     TextButton(onClick = onDismiss) {
                         Text(
                             text = stringResource(Res.string.channel_chip_coachmark_dismiss),

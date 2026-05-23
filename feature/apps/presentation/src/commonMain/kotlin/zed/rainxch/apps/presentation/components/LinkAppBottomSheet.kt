@@ -28,11 +28,12 @@ import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import androidx.compose.material3.Surface
@@ -415,13 +416,12 @@ private fun SmartMatchStep(
                     color = MaterialTheme.colorScheme.error,
                 )
                 Spacer(Modifier.height(8.dp))
-                FilledTonalButton(
+                GhsButton(
                     onClick = onRetry,
+                    label = stringResource(Res.string.retry),
+                    variant = GhsButtonVariant.Tonal,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Text(stringResource(Res.string.retry))
-                }
+                )
             }
 
             suggestions.isEmpty() -> {
@@ -463,14 +463,13 @@ private fun SmartMatchStep(
 
         Spacer(Modifier.height(12.dp))
 
-        FilledTonalButton(
+        GhsButton(
             onClick = onEnterUrlManually,
-            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(Res.string.link_smart_search_enter_manually),
+            variant = GhsButtonVariant.Tonal,
             enabled = !isValidating,
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text(stringResource(Res.string.link_smart_search_enter_manually))
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -674,27 +673,18 @@ private fun EnterUrlStep(
 
         Spacer(Modifier.height(20.dp))
 
-        FilledTonalButton(
+        GhsButton(
             onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = repoUrl.isNotBlank() && !isValidating,
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            if (isValidating) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    strokeWidth = 2.dp,
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(Res.string.validating_repo))
+            label = if (isValidating) {
+                stringResource(Res.string.validating_repo)
             } else {
-                Text(
-                    text = stringResource(Res.string.link_and_track),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        }
+                stringResource(Res.string.link_and_track)
+            },
+            variant = GhsButtonVariant.Tonal,
+            enabled = repoUrl.isNotBlank() && !isValidating,
+            loading = isValidating,
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         if (isValidating && validationStatus != null) {
             Spacer(Modifier.height(8.dp))

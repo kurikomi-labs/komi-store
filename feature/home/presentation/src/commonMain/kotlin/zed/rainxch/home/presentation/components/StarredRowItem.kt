@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,7 +29,8 @@ import zed.rainxch.githubstore.core.presentation.res.home_action_get
 import zed.rainxch.githubstore.core.presentation.res.open
 import zed.rainxch.githubstore.core.presentation.res.update
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.buttons.OutlineButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.cards.RowCard
 import zed.rainxch.core.presentation.vocabulary.PlatformGlyph
 import zed.rainxch.core.presentation.vocabulary.StarTier
@@ -97,17 +97,17 @@ fun StarredRowItem(
                     }
                 }
             }
-            OutlineButton(onClick = onClick) {
-                Text(
-                    text = stringResource(
-                        when {
-                            card.isUpdateAvailable -> Res.string.update
-                            card.isInstalled -> Res.string.open
-                            else -> Res.string.home_action_get
-                        },
-                    ),
-                )
-            }
+            GhsButton(
+                onClick = onClick,
+                label = stringResource(
+                    when {
+                        card.isUpdateAvailable -> Res.string.update
+                        card.isInstalled -> Res.string.open
+                        else -> Res.string.home_action_get
+                    },
+                ),
+                variant = GhsButtonVariant.Outline,
+            )
         }
     }
 }

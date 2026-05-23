@@ -29,7 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -211,15 +213,14 @@ fun DeveloperProfileScreen(
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                     action = {
-                        TextButton(
+                        GhsButton(
                             onClick = {
                                 onAction(DeveloperProfileAction.OnRetry)
                             },
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.retry),
-                            )
-                        }
+                            label = stringResource(Res.string.retry),
+                            variant = GhsButtonVariant.Text,
+                            size = GhsButtonSize.Sm,
+                        )
                     },
                     dismissAction = {
                         IconButton(

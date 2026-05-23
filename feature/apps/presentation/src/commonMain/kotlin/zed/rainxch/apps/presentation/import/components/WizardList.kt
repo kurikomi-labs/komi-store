@@ -15,7 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -91,22 +92,13 @@ fun WizardList(
 
 @Composable
 private fun AddManuallyFooter(onClick: () -> Unit) {
-    TextButton(
+    GhsButton(
         onClick = onClick,
+        label = stringResource(Res.string.external_import_list_add_manually),
+        variant = GhsButtonVariant.Text,
+        trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
         modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = stringResource(Res.string.external_import_list_add_manually),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-            contentDescription = null,
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .size(16.dp),
-        )
-    }
+    )
 }
 
 @Composable

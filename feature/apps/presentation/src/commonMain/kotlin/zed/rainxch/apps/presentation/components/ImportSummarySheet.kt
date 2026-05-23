@@ -20,12 +20,13 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -159,19 +160,14 @@ fun ImportSummarySheet(
                 )
             }
 
-            Button(
+            GhsButton(
                 onClick = onDismiss,
+                label = stringResource(Res.string.import_summary_close),
+                variant = GhsButtonVariant.Primary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                contentPadding = PaddingValues(vertical = 12.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.import_summary_close),
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            )
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -225,17 +221,12 @@ private fun UnknownFormatSheet(
                     )
                 }
             }
-            Button(
+            GhsButton(
                 onClick = onDismiss,
+                label = stringResource(Res.string.import_summary_close),
+                variant = GhsButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                contentPadding = PaddingValues(vertical = 12.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.import_summary_close),
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            )
             Spacer(Modifier.height(8.dp))
         }
     }

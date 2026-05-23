@@ -43,9 +43,8 @@ import androidx.compose.ui.unit.sp
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ThemeMode
-import zed.rainxch.core.presentation.components.buttons.OutlineButton
-import zed.rainxch.core.presentation.components.buttons.PrimaryButton
-import zed.rainxch.core.presentation.components.buttons.TintedButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.theme.fraunces
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -294,9 +293,11 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        PrimaryButton(onClick = { onAction(OnboardingAction.OnSignInClick) }) {
-            Text("Sign in")
-        }
+        GhsButton(
+            onClick = { onAction(OnboardingAction.OnSignInClick) },
+            label = "Sign in",
+            variant = GhsButtonVariant.Primary,
+        )
     }
 }
 
@@ -405,7 +406,11 @@ private fun PermissionRow(
                 )
             }
         } else {
-            TintedButton(onClick = onAllowClick) { Text("Allow") }
+            GhsButton(
+                onClick = onAllowClick,
+                label = "Allow",
+                variant = GhsButtonVariant.Tonal,
+            )
         }
     }
 }
@@ -421,14 +426,18 @@ private fun ActionRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (state.currentStep == OnboardingStep.SIGN_IN || state.currentStep == OnboardingStep.PERMISSIONS) {
-            OutlineButton(onClick = { onAction(OnboardingAction.OnSkipStepClick) }) {
-                Text("Skip")
-            }
+            GhsButton(
+                onClick = { onAction(OnboardingAction.OnSkipStepClick) },
+                label = "Skip",
+                variant = GhsButtonVariant.Outline,
+            )
         } else {
             Spacer(Modifier.size(80.dp))
         }
-        PrimaryButton(onClick = { onAction(OnboardingAction.OnNextClick) }) {
-            Text(if (state.isLast) "Get started" else "Next")
-        }
+        GhsButton(
+            onClick = { onAction(OnboardingAction.OnNextClick) },
+            label = if (state.isLast) "Get started" else "Next",
+            variant = GhsButtonVariant.Primary,
+        )
     }
 }

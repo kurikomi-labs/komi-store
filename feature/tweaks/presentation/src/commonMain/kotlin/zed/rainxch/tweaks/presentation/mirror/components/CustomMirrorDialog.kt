@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cancel
@@ -48,17 +50,21 @@ fun CustomMirrorDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            GhsButton(
                 onClick = onConfirm,
+                label = stringResource(Res.string.mirror_custom_save),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
                 enabled = draft.isNotBlank() && error == null,
-            ) {
-                Text(stringResource(Res.string.mirror_custom_save))
-            }
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.cancel))
-            }
+            GhsButton(
+                onClick = onDismiss,
+                label = stringResource(Res.string.cancel),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
     )
 }

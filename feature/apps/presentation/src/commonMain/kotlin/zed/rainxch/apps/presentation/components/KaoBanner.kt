@@ -17,7 +17,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,9 +89,12 @@ fun KaoBanner(
                 modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
                 horizontalArrangement = Arrangement.End,
             ) {
-                TextButton(onClick = onLearnMore) {
-                    Text(text = stringResource(Res.string.kao_banner_cta))
-                }
+                GhsButton(
+                    onClick = onLearnMore,
+                    label = stringResource(Res.string.kao_banner_cta),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
     }

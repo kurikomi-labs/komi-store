@@ -58,6 +58,9 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.core.domain.util.AssetVariant
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.theme.tokens.Radii
@@ -219,9 +222,12 @@ private fun ReleaseAssetsItemsPicker(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
-                    androidx.compose.material3.TextButton(onClick = onUnpin) {
-                        Text(stringResource(Res.string.variant_picker_unpin))
-                    }
+                    GhsButton(
+                        onClick = onUnpin,
+                        label = stringResource(Res.string.variant_picker_unpin),
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                    )
                 }
             }
 

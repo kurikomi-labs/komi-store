@@ -16,7 +16,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,11 +81,12 @@ fun ImportProposalBanner(
 
             Spacer(Modifier.width(8.dp))
 
-            TextButton(onClick = onReview) {
-                Text(
-                    text = stringResource(Res.string.external_import_proposal_banner_review),
-                )
-            }
+            GhsButton(
+                onClick = onReview,
+                label = stringResource(Res.string.external_import_proposal_banner_review),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
 
             IconButton(onClick = onDismiss) {
                 Icon(

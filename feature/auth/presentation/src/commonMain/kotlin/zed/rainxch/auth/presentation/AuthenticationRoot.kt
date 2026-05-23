@@ -57,7 +57,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -86,6 +85,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
@@ -272,49 +274,36 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 
         Spacer(Modifier.height(10.dp))
 
-        TextButton(onClick = { onAction(AuthenticationAction.SkipLogin) }) {
-            Text(
-                text = stringResource(Res.string.continue_as_guest),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        GhsButton(
+            onClick = { onAction(AuthenticationAction.SkipLogin) },
+            label = stringResource(Res.string.continue_as_guest),
+            variant = GhsButtonVariant.Text,
+            size = GhsButtonSize.Sm,
+        )
 
-        TextButton(onClick = { showMoreOptions = !showMoreOptions }) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = if (showMoreOptions) "Hide options" else "More sign-in options",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .graphicsLayer { rotationZ = if (showMoreOptions) 180f else 0f },
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        GhsButton(
+            onClick = { showMoreOptions = !showMoreOptions },
+            label = if (showMoreOptions) "Hide options" else "More sign-in options",
+            variant = GhsButtonVariant.Text,
+            size = GhsButtonSize.Sm,
+            trailingIcon = Icons.Default.ExpandMore,
+        )
 
         AnimatedVisibility(visible = showMoreOptions) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(Modifier.height(4.dp))
-                TextButton(onClick = { onAction(AuthenticationAction.OpenPatSheet) }) {
-                    Text(
-                        text = stringResource(Res.string.pat_use_token_instead),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-                TextButton(onClick = { onAction(AuthenticationAction.StartLogin) }) {
-                    Text(
-                        text = stringResource(Res.string.auth_use_device_code_instead),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                GhsButton(
+                    onClick = { onAction(AuthenticationAction.OpenPatSheet) },
+                    label = stringResource(Res.string.pat_use_token_instead),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
+                GhsButton(
+                    onClick = { onAction(AuthenticationAction.StartLogin) },
+                    label = stringResource(Res.string.auth_use_device_code_instead),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
 
@@ -669,17 +658,17 @@ private fun StateError(
             onClick = { onAction(AuthenticationAction.StartLogin) },
         )
         Spacer(Modifier.height(6.dp))
-        TextButton(onClick = { onAction(AuthenticationAction.SkipLogin) }) {
-            Text(
-                text = stringResource(Res.string.continue_as_guest),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        GhsButton(
+            onClick = { onAction(AuthenticationAction.SkipLogin) },
+            label = stringResource(Res.string.continue_as_guest),
+            variant = GhsButtonVariant.Text,
+            size = GhsButtonSize.Sm,
+        )
         Spacer(Modifier.weight(2f))
     }
 }
 
+// TODO(ghs-button): PrimaryPillButton wraps Button with composite Row(icon + text) content.
 @Composable
 private fun PrimaryPillButton(
     text: String,
@@ -855,6 +844,7 @@ private fun PatSignInSheet(
                     }
                 }
 
+                // TODO(ghs-button): composite content (CircularProgressIndicator + Text), needs custom width/height match
                 Button(
                     onClick = { onAction(AuthenticationAction.SubmitPat) },
                     enabled = !isSubmitting && input.isNotBlank(),

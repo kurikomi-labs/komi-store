@@ -11,14 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,24 +70,20 @@ fun WhatsNewSheet(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Button(
+                    GhsButton(
                         onClick = onDismiss,
+                        label = stringResource(Res.string.whats_new_cta_dismiss),
+                        variant = GhsButtonVariant.Primary,
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                        ),
-                    ) {
-                        Text(text = stringResource(Res.string.whats_new_cta_dismiss))
-                    }
+                    )
 
                     if (showHistoryAction) {
-                        TextButton(
+                        GhsButton(
                             onClick = onViewHistory,
+                            label = stringResource(Res.string.whats_new_cta_history),
+                            variant = GhsButtonVariant.Text,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(text = stringResource(Res.string.whats_new_cta_history))
-                        }
+                        )
                     }
                 }
             }

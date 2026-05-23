@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -62,12 +61,16 @@ fun EmptyStateScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                 )
-                Button(onClick = onExit) {
-                    Text(stringResource(Res.string.external_import_empty_done))
-                }
-                TextButton(onClick = onAddManually) {
-                    Text(stringResource(Res.string.external_import_empty_add_manually))
-                }
+                GhsButton(
+                    onClick = onExit,
+                    label = stringResource(Res.string.external_import_empty_done),
+                    variant = GhsButtonVariant.Primary,
+                )
+                GhsButton(
+                    onClick = onAddManually,
+                    label = stringResource(Res.string.external_import_empty_add_manually),
+                    variant = GhsButtonVariant.Text,
+                )
             } else {
                 Icon(
                     imageVector = Icons.Outlined.Search,
@@ -89,16 +92,22 @@ fun EmptyStateScreen(
                     textAlign = TextAlign.Center,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = onExit) {
-                        Text(stringResource(Res.string.external_import_empty_ok))
-                    }
-                    Button(onClick = onRequestPermission) {
-                        Text(stringResource(Res.string.external_import_empty_grant_permission))
-                    }
+                    GhsButton(
+                        onClick = onExit,
+                        label = stringResource(Res.string.external_import_empty_ok),
+                        variant = GhsButtonVariant.Outline,
+                    )
+                    GhsButton(
+                        onClick = onRequestPermission,
+                        label = stringResource(Res.string.external_import_empty_grant_permission),
+                        variant = GhsButtonVariant.Primary,
+                    )
                 }
-                TextButton(onClick = onAddManually) {
-                    Text(stringResource(Res.string.external_import_empty_add_manually))
-                }
+                GhsButton(
+                    onClick = onAddManually,
+                    label = stringResource(Res.string.external_import_empty_add_manually),
+                    variant = GhsButtonVariant.Text,
+                )
             }
         }
     }

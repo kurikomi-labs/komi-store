@@ -51,7 +51,6 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -90,6 +89,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
@@ -1007,26 +1008,22 @@ private fun ExploreFromGithubButton(
     ) {
         when (status) {
             SearchState.ExploreStatus.IDLE -> {
-                OutlinedButton(onClick = onExplore) {
-                    Icon(
-                        imageVector = Icons.Outlined.TravelExplore,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(text = stringResource(Res.string.fetch_more_from_github))
-                }
+                GhsButton(
+                    onClick = onExplore,
+                    label = stringResource(Res.string.fetch_more_from_github),
+                    variant = GhsButtonVariant.Outline,
+                    leadingIcon = Icons.Outlined.TravelExplore,
+                )
             }
 
             SearchState.ExploreStatus.LOADING -> {
-                OutlinedButton(onClick = {}, enabled = false) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(text = stringResource(Res.string.fetching_from_github))
-                }
+                GhsButton(
+                    onClick = {},
+                    label = stringResource(Res.string.fetching_from_github),
+                    variant = GhsButtonVariant.Outline,
+                    enabled = false,
+                    loading = true,
+                )
             }
 
             SearchState.ExploreStatus.EXHAUSTED -> {

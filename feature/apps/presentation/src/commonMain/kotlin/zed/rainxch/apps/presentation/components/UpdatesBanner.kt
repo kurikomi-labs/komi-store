@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -39,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_hide
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_show
@@ -144,28 +145,15 @@ fun UpdatesBanner(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Button(
+                    GhsButton(
                         onClick = onUpdateAll,
+                        label = stringResource(Res.string.update_all),
+                        variant = GhsButtonVariant.Primary,
                         enabled = updateAllEnabled,
-                        modifier = Modifier.weight(1f).height(44.dp),
-                        shape = RoundedCornerShape(50),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Update,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(Res.string.update_all),
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
+                        leadingIcon = Icons.Default.Update,
+                        modifier = Modifier.weight(1f),
+                    )
+                    // TODO(ghs-button): needs onPrimaryContainer border/ink to match banner context
                     OutlinedButton(
                         onClick = onToggleExpanded,
                         modifier = Modifier.height(44.dp),
@@ -223,6 +211,7 @@ private fun UpdateAllInlineProgress(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+            // TODO(ghs-button): needs onPrimaryContainer border/ink to match banner context
             OutlinedButton(
                 onClick = onCancel,
                 modifier = Modifier.height(38.dp),

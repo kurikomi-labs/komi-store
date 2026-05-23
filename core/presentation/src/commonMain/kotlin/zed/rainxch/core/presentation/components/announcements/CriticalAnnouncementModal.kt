@@ -10,12 +10,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,30 +64,24 @@ fun CriticalAnnouncementModal(
             }
         },
         confirmButton = {
-            Button(
+            GhsButton(
                 onClick = onAcknowledge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
-                ),
+                label = stringResource(Res.string.announcements_acknowledge),
+                variant = GhsButtonVariant.Destructive,
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = stringResource(Res.string.announcements_acknowledge))
-            }
+            )
         },
         dismissButton = if (!announcement.ctaUrl.isNullOrBlank()) {
             {
-                TextButton(
+                GhsButton(
                     onClick = onOpenDetails,
+                    label = announcement.ctaLabel
+                        ?: stringResource(Res.string.announcements_view_details),
+                    variant = GhsButtonVariant.Text,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                ) {
-                    Text(
-                        text = announcement.ctaLabel
-                            ?: stringResource(Res.string.announcements_view_details),
-                    )
-                }
+                )
             }
         } else {
             null

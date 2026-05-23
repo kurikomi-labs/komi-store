@@ -27,7 +27,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -120,13 +122,14 @@ fun HiddenRepositoriesRoot(
                 },
                 actions = {
                     if (state.items.isNotEmpty()) {
-                        TextButton(
+                        GhsButton(
                             onClick = {
                                 viewModel.onAction(HiddenRepositoriesAction.OnUnhideAll)
                             },
-                        ) {
-                            Text(stringResource(Res.string.hidden_repositories_unhide_all))
-                        }
+                            label = stringResource(Res.string.hidden_repositories_unhide_all),
+                            variant = GhsButtonVariant.Text,
+                            size = GhsButtonSize.Sm,
+                        )
                     }
                 },
             )
@@ -230,9 +233,12 @@ private fun HiddenRepoRow(
                 )
             }
 
-            TextButton(onClick = onUnhide) {
-                Text(stringResource(Res.string.hidden_repositories_unhide_action))
-            }
+            GhsButton(
+                onClick = onUnhide,
+                label = stringResource(Res.string.hidden_repositories_unhide_action),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         }
     }
 }

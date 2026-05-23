@@ -3,7 +3,6 @@ package zed.rainxch.home.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -15,18 +14,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.color.avatarColorFor
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.buttons.PrimaryButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.cards.RepoStripeCard
 import zed.rainxch.core.presentation.components.chips.PlatformsChip
 import zed.rainxch.core.presentation.components.chips.StatChip
@@ -161,31 +159,18 @@ private fun RankRowItem(
         },
         languagePill = null,
         cta = {
-            PrimaryButton(
+            GhsButton(
                 onClick = onClick,
-                backgroundColor = MaterialTheme.colorScheme.onSurface,
-                contentColor = MaterialTheme.colorScheme.surface,
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(
-                            when {
-                                card.isUpdateAvailable -> Res.string.update
-                                card.isInstalled -> Res.string.open
-                                else -> Res.string.home_action_get
-                            },
-                        ),
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
-            }
+                label = stringResource(
+                    when {
+                        card.isUpdateAvailable -> Res.string.update
+                        card.isInstalled -> Res.string.open
+                        else -> Res.string.home_action_get
+                    },
+                ),
+                variant = GhsButtonVariant.Primary,
+                trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+            )
         },
     )
 }

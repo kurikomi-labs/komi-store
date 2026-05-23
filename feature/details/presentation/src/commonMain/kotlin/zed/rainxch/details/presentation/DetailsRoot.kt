@@ -52,7 +52,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -93,6 +92,9 @@ import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.presentation.components.FloatingPill
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
@@ -284,28 +286,25 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
                         viewModel.onAction(DetailsAction.UninstallApp)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.uninstall_first),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
+                    label = stringResource(Res.string.uninstall_first),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
             dismissButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.cancel),
-                    )
-                }
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
         )
     }
@@ -335,27 +334,24 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnOverrideSigningKeyWarning)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.install_anyway),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
+                    label = stringResource(Res.string.install_anyway),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
             dismissButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissSigningKeyWarning)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.cancel),
-                    )
-                }
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
         )
     }
@@ -381,25 +377,24 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnConfirmUninstall)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.uninstall),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
+                    label = stringResource(Res.string.uninstall),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
             dismissButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissUninstallConfirmation)
                     },
-                ) {
-                    Text(text = stringResource(Res.string.cancel))
-                }
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
         )
     }
@@ -425,25 +420,24 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnConfirmUnlinkExternalApp)
                     },
-                ) {
-                    Text(
-                        text = stringResource(Res.string.details_unlink_external_app_dialog_confirm),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
+                    label = stringResource(Res.string.details_unlink_external_app_dialog_confirm),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
             dismissButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissUnlinkConfirmation)
                     },
-                ) {
-                    Text(text = stringResource(Res.string.cancel))
-                }
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
         )
     }
@@ -466,22 +460,24 @@ fun DetailsRoot(
                 Text(text = stringResource(Res.string.install_permission_blocked_message))
             },
             confirmButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OpenWithExternalInstaller)
                     },
-                ) {
-                    Text(text = stringResource(Res.string.open_with_external_installer))
-                }
+                    label = stringResource(Res.string.open_with_external_installer),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
             dismissButton = {
-                TextButton(
+                GhsButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.DismissExternalInstallerPrompt)
                     },
-                ) {
-                    Text(text = stringResource(Res.string.dismiss))
-                }
+                    label = stringResource(Res.string.dismiss),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             },
         )
     }

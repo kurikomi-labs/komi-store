@@ -5,15 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -56,22 +57,20 @@ fun SessionExpiredDialog(
             }
         },
         confirmButton = {
-            Button(onClick = onSignIn) {
-                Text(
-                    text = stringResource(Res.string.sign_in_again),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
+            GhsButton(
+                onClick = onSignIn,
+                label = stringResource(Res.string.sign_in_again),
+                variant = GhsButtonVariant.Primary,
+                size = GhsButtonSize.Sm,
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(Res.string.continue_as_guest),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            GhsButton(
+                onClick = onDismiss,
+                label = stringResource(Res.string.continue_as_guest),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
     )
 }

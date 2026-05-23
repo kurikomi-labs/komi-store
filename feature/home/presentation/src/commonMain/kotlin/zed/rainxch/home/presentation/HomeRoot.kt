@@ -33,7 +33,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.OutlineButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.section.SectionHeader
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
@@ -154,9 +155,11 @@ private fun HomeScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
-                        OutlineButton(onClick = { onAction(HomeAction.OnRetry) }) {
-                            Text(text = stringResource(Res.string.home_retry))
-                        }
+                        GhsButton(
+                            onClick = { onAction(HomeAction.OnRetry) },
+                            label = stringResource(Res.string.home_retry),
+                            variant = GhsButtonVariant.Outline,
+                        )
                     }
                 }
 

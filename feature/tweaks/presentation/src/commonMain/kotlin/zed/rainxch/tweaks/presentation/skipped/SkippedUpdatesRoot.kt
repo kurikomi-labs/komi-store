@@ -25,7 +25,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -212,9 +214,12 @@ private fun SkippedAppRow(
                 }
             }
 
-            TextButton(onClick = onUnskip) {
-                Text(stringResource(Res.string.skipped_updates_unskip_action))
-            }
+            GhsButton(
+                onClick = onUnskip,
+                label = stringResource(Res.string.skipped_updates_unskip_action),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         }
     }
 }

@@ -41,7 +41,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,6 +61,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.ForgeKind
 import zed.rainxch.core.domain.model.HostToken
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -358,18 +360,19 @@ private fun PresetForgeCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                TextButton(onClick = onOpenTokenCreationPage) {
-                    Icon(
-                        Icons.Default.OpenInBrowser,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(stringResource(Res.string.host_tokens_picker_open_page))
-                }
-                TextButton(onClick = onPick) {
-                    Text(stringResource(Res.string.host_tokens_picker_paste))
-                }
+                GhsButton(
+                    onClick = onOpenTokenCreationPage,
+                    label = stringResource(Res.string.host_tokens_picker_open_page),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                    leadingIcon = Icons.Default.OpenInBrowser,
+                )
+                GhsButton(
+                    onClick = onPick,
+                    label = stringResource(Res.string.host_tokens_picker_paste),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
     }
@@ -433,9 +436,12 @@ private fun PickerDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.host_tokens_action_cancel))
-            }
+            GhsButton(
+                onClick = onDismiss,
+                label = stringResource(Res.string.host_tokens_action_cancel),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
     )
 }
@@ -613,14 +619,20 @@ private fun AddTokenDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onAction(HostTokensAction.OnAddConfirm) }) {
-                Text(stringResource(Res.string.host_tokens_action_save))
-            }
+            GhsButton(
+                onClick = { onAction(HostTokensAction.OnAddConfirm) },
+                label = stringResource(Res.string.host_tokens_action_save),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
         dismissButton = {
-            TextButton(onClick = { onAction(HostTokensAction.OnAddDismiss) }) {
-                Text(stringResource(Res.string.host_tokens_action_cancel))
-            }
+            GhsButton(
+                onClick = { onAction(HostTokensAction.OnAddDismiss) },
+                label = stringResource(Res.string.host_tokens_action_cancel),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
     )
 }

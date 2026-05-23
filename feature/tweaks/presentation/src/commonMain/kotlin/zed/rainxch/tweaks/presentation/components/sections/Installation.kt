@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -55,6 +54,9 @@ import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RootAvailability
 import zed.rainxch.core.domain.model.ShizukuAvailability
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -226,16 +228,12 @@ private fun CustomInstallerEditor(
             isError = state.installerAttributionCustomError != null,
             supportingText = customSupporting,
         )
-        FilledTonalButton(
+        GhsButton(
             onClick = { onAction(TweaksAction.OnInstallerAttributionCustomSave) },
+            label = stringResource(Res.string.installer_attribution_custom_apply),
+            variant = GhsButtonVariant.Tonal,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text(
-                text = stringResource(Res.string.installer_attribution_custom_apply),
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
+        )
     }
 }
 
@@ -537,17 +535,12 @@ private fun RootStatusActions(
 ) {
     when (availability) {
         RootAvailability.PERMISSION_NEEDED -> {
-            FilledTonalButton(
+            GhsButton(
                 onClick = onRequestPermission,
+                label = stringResource(Res.string.root_grant_permission),
+                variant = GhsButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.root_grant_permission),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+            )
         }
         RootAvailability.UNAVAILABLE -> {
             HintText(text = stringResource(Res.string.root_unavailable_hint))
@@ -584,17 +577,12 @@ private fun ShizukuStatusActions(
 ) {
     when (availability) {
         ShizukuAvailability.PERMISSION_NEEDED -> {
-            FilledTonalButton(
+            GhsButton(
                 onClick = onRequestPermission,
+                label = stringResource(Res.string.shizuku_grant_permission),
+                variant = GhsButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(Res.string.shizuku_grant_permission),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            )
         }
         ShizukuAvailability.UNAVAILABLE -> {
             HintText(text = stringResource(Res.string.shizuku_install_hint))
@@ -614,17 +602,12 @@ private fun DhizukuStatusActions(
 ) {
     when (availability) {
         DhizukuAvailability.PERMISSION_NEEDED -> {
-            FilledTonalButton(
+            GhsButton(
                 onClick = onRequestPermission,
+                label = stringResource(Res.string.dhizuku_grant_permission),
+                variant = GhsButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(Res.string.dhizuku_grant_permission),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            )
         }
         DhizukuAvailability.UNAVAILABLE -> {
             HintText(text = stringResource(Res.string.dhizuku_install_hint))
@@ -1006,12 +989,18 @@ private fun BatteryOptimizationCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
-                androidx.compose.material3.TextButton(onClick = onDismiss) {
-                    Text(stringResource(Res.string.battery_optimization_card_dismiss))
-                }
-                FilledTonalButton(onClick = onOpenSettings) {
-                    Text(stringResource(Res.string.battery_optimization_card_open))
-                }
+                GhsButton(
+                    onClick = onDismiss,
+                    label = stringResource(Res.string.battery_optimization_card_dismiss),
+                    variant = GhsButtonVariant.Text,
+                    size = GhsButtonSize.Sm,
+                )
+                GhsButton(
+                    onClick = onOpenSettings,
+                    label = stringResource(Res.string.battery_optimization_card_open),
+                    variant = GhsButtonVariant.Tonal,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
     }

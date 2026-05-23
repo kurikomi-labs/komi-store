@@ -16,13 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -133,19 +132,18 @@ fun CandidateCard(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        OutlinedButton(
+                        GhsButton(
                             onClick = onSkip,
+                            label = stringResource(Res.string.external_import_card_action_skip),
+                            variant = GhsButtonVariant.Outline,
                             modifier = Modifier.weight(1f),
-                        ) {
-                            Text(stringResource(Res.string.external_import_card_action_skip))
-                        }
-                        TextButton(onClick = onToggleExpanded) {
-                            Text(stringResource(Res.string.external_import_card_action_less))
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = null,
-                            )
-                        }
+                        )
+                        GhsButton(
+                            onClick = onToggleExpanded,
+                            label = stringResource(Res.string.external_import_card_action_less),
+                            variant = GhsButtonVariant.Text,
+                            trailingIcon = Icons.Default.KeyboardArrowUp,
+                        )
                     }
                 }
             }
@@ -165,23 +163,20 @@ private fun CollapsedActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (canLink) {
-            Button(
+            GhsButton(
                 onClick = onLink,
+                label = stringResource(Res.string.external_import_card_action_link),
+                variant = GhsButtonVariant.Primary,
                 modifier = Modifier.weight(1f),
-            ) {
-                Text(stringResource(Res.string.external_import_card_action_link))
-            }
-        }
-        TextButton(
-            onClick = onExpand,
-            modifier = if (canLink) Modifier else Modifier.weight(1f),
-        ) {
-            Text(stringResource(Res.string.external_import_card_action_more))
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
             )
         }
+        GhsButton(
+            onClick = onExpand,
+            label = stringResource(Res.string.external_import_card_action_more),
+            variant = GhsButtonVariant.Text,
+            trailingIcon = Icons.Default.KeyboardArrowDown,
+            modifier = if (canLink) Modifier else Modifier.weight(1f),
+        )
     }
 }
 

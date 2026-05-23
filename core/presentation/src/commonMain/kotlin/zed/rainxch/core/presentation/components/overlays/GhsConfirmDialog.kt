@@ -14,14 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import zed.rainxch.core.presentation.components.buttons.OutlineButton
-import zed.rainxch.core.presentation.components.buttons.PrimaryButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 
@@ -71,11 +71,18 @@ fun GhsConfirmDialog(
                 horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlineButton(onClick = onDismiss) { Text(cancelLabel) }
-                PrimaryButton(
+                GhsButton(
+                    onClick = onDismiss,
+                    label = cancelLabel,
+                    variant = GhsButtonVariant.Outline,
+                    size = GhsButtonSize.Sm,
+                )
+                GhsButton(
                     onClick = onConfirm,
-                    backgroundColor = if (destructive) cs.error else cs.primary,
-                ) { Text(confirmLabel) }
+                    label = confirmLabel,
+                    variant = if (destructive) GhsButtonVariant.Destructive else GhsButtonVariant.Primary,
+                    size = GhsButtonSize.Sm,
+                )
             }
         }
     }

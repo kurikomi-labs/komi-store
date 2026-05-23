@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +19,9 @@ import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material.icons.outlined.SentimentDissatisfied
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.error_state_go_back
@@ -109,28 +107,18 @@ fun ErrorState(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    TextButton(
+                    GhsButton(
                         onClick = { onAction(DetailsAction.OnNavigateBackClick) },
+                        label = stringResource(Res.string.error_state_go_back),
+                        variant = GhsButtonVariant.Text,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.error_state_go_back),
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-                    Button(
+                    )
+                    GhsButton(
                         onClick = { onAction(DetailsAction.Retry) },
+                        label = stringResource(Res.string.retry),
+                        variant = GhsButtonVariant.Primary,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp),
-                        contentPadding = PaddingValues(vertical = 12.dp),
-                        colors = ButtonDefaults.buttonColors(),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.retry),
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
+                    )
                 }
             }
         }

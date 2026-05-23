@@ -28,7 +28,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +49,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.SupportedTranslationLanguages
 import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
@@ -402,18 +404,13 @@ private fun YoudaoCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilledTonalButton(
+            GhsButton(
                 onClick = { onAction(TweaksAction.OnYoudaoCredentialsSave) },
+                label = stringResource(Res.string.translation_youdao_save),
+                variant = GhsButtonVariant.Tonal,
                 enabled = canSave,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.translation_youdao_save))
-            }
+                leadingIcon = Icons.Default.Save,
+            )
         }
     }
 }
@@ -466,18 +463,13 @@ private fun LibreTranslateCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilledTonalButton(
+            GhsButton(
                 onClick = { onAction(TweaksAction.OnLibreTranslateCredentialsSave) },
+                label = stringResource(Res.string.translation_libre_save),
+                variant = GhsButtonVariant.Tonal,
                 enabled = canSave,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.translation_libre_save))
-            }
+                leadingIcon = Icons.Default.Save,
+            )
         }
     }
 }
@@ -500,12 +492,13 @@ private fun DeeplCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        androidx.compose.material3.TextButton(
+        GhsButton(
             onClick = { runCatching { uriHandler.openUri("https://www.deepl.com/pro-api") } },
+            label = stringResource(Res.string.translation_deepl_get_free_key),
+            variant = GhsButtonVariant.Text,
+            size = GhsButtonSize.Sm,
             modifier = Modifier.align(Alignment.Start),
-        ) {
-            Text(stringResource(Res.string.translation_deepl_get_free_key))
-        }
+        )
 
         GhsTextField(
             value = state.deeplAuthKey,
@@ -527,18 +520,13 @@ private fun DeeplCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilledTonalButton(
+            GhsButton(
                 onClick = { onAction(TweaksAction.OnDeeplCredentialsSave) },
+                label = stringResource(Res.string.translation_deepl_save),
+                variant = GhsButtonVariant.Tonal,
                 enabled = canSave,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.translation_deepl_save))
-            }
+                leadingIcon = Icons.Default.Save,
+            )
         }
     }
 }
@@ -561,12 +549,13 @@ private fun MicrosoftCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        androidx.compose.material3.TextButton(
+        GhsButton(
             onClick = { runCatching { uriHandler.openUri("https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation") } },
+            label = stringResource(Res.string.translation_microsoft_get_free_key),
+            variant = GhsButtonVariant.Text,
+            size = GhsButtonSize.Sm,
             modifier = Modifier.align(Alignment.Start),
-        ) {
-            Text(stringResource(Res.string.translation_microsoft_get_free_key))
-        }
+        )
 
         GhsTextField(
             value = state.microsoftTranslatorKey,
@@ -597,18 +586,13 @@ private fun MicrosoftCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilledTonalButton(
+            GhsButton(
                 onClick = { onAction(TweaksAction.OnMicrosoftTranslatorCredentialsSave) },
+                label = stringResource(Res.string.translation_microsoft_save),
+                variant = GhsButtonVariant.Tonal,
                 enabled = canSave,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.translation_microsoft_save))
-            }
+                leadingIcon = Icons.Default.Save,
+            )
         }
     }
 }

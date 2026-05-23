@@ -44,8 +44,6 @@ import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -62,7 +60,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -107,6 +104,9 @@ import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
@@ -486,21 +486,20 @@ fun AppsScreen(
                     )
                 },
                 confirmButton = {
-                    TextButton(
+                    GhsButton(
                         onClick = { onAction(AppsAction.OnUninstallConfirmed(app)) },
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.uninstall),
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
+                        label = stringResource(Res.string.uninstall),
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                    )
                 },
                 dismissButton = {
-                    TextButton(
+                    GhsButton(
                         onClick = { onAction(AppsAction.OnDismissUninstallDialog) },
-                    ) {
-                        Text(text = stringResource(Res.string.cancel))
-                    }
+                        label = stringResource(Res.string.cancel),
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                    )
                 },
             )
         }
@@ -523,21 +522,20 @@ fun AppsScreen(
                     )
                 },
                 confirmButton = {
-                    TextButton(
+                    GhsButton(
                         onClick = { onAction(AppsAction.OnConfirmDiscardPendingInstall(app)) },
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.discard_pending_install),
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
+                        label = stringResource(Res.string.discard_pending_install),
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                    )
                 },
                 dismissButton = {
-                    TextButton(
+                    GhsButton(
                         onClick = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
-                    ) {
-                        Text(text = stringResource(Res.string.cancel))
-                    }
+                        label = stringResource(Res.string.cancel),
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                    )
                 },
             )
         }
@@ -1339,47 +1337,26 @@ fun AppItemCard(
 
                 when (appItem.updateState) {
                     is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                        Button(
+                        GhsButton(
                             onClick = onCancelClick,
+                            label = stringResource(Res.string.cancel),
+                            variant = GhsButtonVariant.Destructive,
+                            leadingIcon = Icons.Default.Cancel,
                             modifier = Modifier.weight(1f),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Cancel,
-                                contentDescription = stringResource(Res.string.cancel),
-                                modifier = Modifier.size(18.dp),
-                            )
-
-                            Spacer(Modifier.width(4.dp))
-
-                            Text(
-                                text = stringResource(Res.string.cancel),
-                            )
-                        }
+                        )
                     }
 
                     else -> {
                         if (app.pendingInstallFilePath != null) {
 
-                            Button(
+                            GhsButton(
                                 onClick = onInstallPendingClick,
-                                modifier = Modifier.weight(1f),
+                                label = stringResource(Res.string.install),
+                                variant = GhsButtonVariant.Primary,
+                                leadingIcon = Icons.Default.Update,
                                 enabled = !isBusy,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Update,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(Res.string.install),
-                                )
-                            }
+                                modifier = Modifier.weight(1f),
+                            )
 
                             IconButton(onClick = onDiscardPendingClick) {
                                 Icon(
@@ -1389,58 +1366,31 @@ fun AppItemCard(
                                 )
                             }
                         } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                            Button(
+                            GhsButton(
                                 onClick = onUpdateClick,
+                                label = stringResource(Res.string.update),
+                                variant = GhsButtonVariant.Primary,
+                                leadingIcon = Icons.Default.Update,
                                 modifier = Modifier.weight(1f),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Update,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(Res.string.update),
-                                )
-                            }
+                            )
                         } else if (app.isPendingInstall) {
 
-                            Button(
+                            GhsButton(
                                 onClick = onDiscardPendingClick,
+                                label = stringResource(Res.string.discard_pending_install),
+                                variant = GhsButtonVariant.Destructive,
+                                leadingIcon = Icons.Default.Cancel,
                                 modifier = Modifier.weight(1f),
-                                colors =
-                                    ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                                    ),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(Res.string.discard_pending_install),
-                                )
-                            }
+                            )
                         } else {
-                            Button(
-                                shapes = ButtonDefaults.shapes(),
+                            GhsButton(
                                 onClick = onOpenClick,
-                                modifier = Modifier.weight(1f),
+                                label = stringResource(Res.string.open),
+                                variant = GhsButtonVariant.Primary,
+                                leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
                                 enabled = !isBusy,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(Res.string.open),
-                                )
-                            }
+                                modifier = Modifier.weight(1f),
+                            )
                         }
                     }
                 }

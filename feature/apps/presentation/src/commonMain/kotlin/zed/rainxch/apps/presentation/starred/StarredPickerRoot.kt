@@ -18,8 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -41,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.starred.components.StarredCandidateRow
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -267,13 +268,12 @@ private fun RateLimitedBanner(onResume: () -> Unit) {
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f),
         )
-        Button(
+        GhsButton(
             onClick = onResume,
-            colors = ButtonDefaults.buttonColors(),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text(stringResource(Res.string.starred_picker_resume))
-        }
+            label = stringResource(Res.string.starred_picker_resume),
+            variant = GhsButtonVariant.Primary,
+            size = GhsButtonSize.Sm,
+        )
     }
 }
 

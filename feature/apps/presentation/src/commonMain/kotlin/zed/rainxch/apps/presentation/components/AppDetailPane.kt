@@ -27,13 +27,10 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -48,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.UpdateState
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pending_install
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pre_release_on
@@ -133,37 +132,20 @@ fun AppDetailPane(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            OutlinedButton(
+            GhsButton(
                 onClick = onOpenRepo,
-                modifier = Modifier.weight(1f).height(44.dp),
-                shape = RoundedCornerShape(50),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.width(6.dp))
-                Text(stringResource(Res.string.apps_two_pane_open_repo))
-            }
-            OutlinedButton(
+                label = stringResource(Res.string.apps_two_pane_open_repo),
+                variant = GhsButtonVariant.Outline,
+                leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
+                modifier = Modifier.weight(1f),
+            )
+            GhsButton(
                 onClick = onUninstall,
+                label = stringResource(Res.string.uninstall),
+                variant = GhsButtonVariant.Destructive,
                 enabled = !isBusy,
-                modifier = Modifier.height(44.dp),
-                shape = RoundedCornerShape(50),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.55f)),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error,
-                ),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.DeleteOutline,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.width(6.dp))
-                Text(stringResource(Res.string.uninstall))
-            }
+                leadingIcon = Icons.Outlined.DeleteOutline,
+            )
         }
 
         Spacer(Modifier.height(20.dp))
@@ -389,77 +371,46 @@ private fun PrimaryActionsRow(
     ) {
         when (appItem.updateState) {
             is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                Button(
+                GhsButton(
                     onClick = onCancelUpdate,
-                    modifier = Modifier.weight(1f).height(48.dp),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    ),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(Res.string.cancel), fontWeight = FontWeight.SemiBold)
-                }
+                    label = stringResource(Res.string.cancel),
+                    variant = GhsButtonVariant.Destructive,
+                    leadingIcon = Icons.Default.Cancel,
+                    modifier = Modifier.weight(1f),
+                )
             }
             else -> {
                 if (app.pendingInstallFilePath != null) {
-                    Button(
+                    GhsButton(
                         onClick = onInstallPending,
+                        label = stringResource(Res.string.install),
+                        variant = GhsButtonVariant.Primary,
                         enabled = !isBusy,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(50),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Update,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(stringResource(Res.string.install), fontWeight = FontWeight.SemiBold)
-                    }
-                    OutlinedButton(
+                        leadingIcon = Icons.Default.Update,
+                        modifier = Modifier.weight(1f),
+                    )
+                    GhsButton(
                         onClick = onDiscardPending,
-                        modifier = Modifier.height(48.dp),
-                        shape = RoundedCornerShape(50),
-                        contentPadding = PaddingValues(horizontal = 18.dp),
-                    ) {
-                        Text(stringResource(Res.string.discard_pending_install))
-                    }
+                        label = stringResource(Res.string.discard_pending_install),
+                        variant = GhsButtonVariant.Outline,
+                    )
                 } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                    Button(
+                    GhsButton(
                         onClick = onUpdateApp,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(50),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Update,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(stringResource(Res.string.update), fontWeight = FontWeight.SemiBold)
-                    }
+                        label = stringResource(Res.string.update),
+                        variant = GhsButtonVariant.Primary,
+                        leadingIcon = Icons.Default.Update,
+                        modifier = Modifier.weight(1f),
+                    )
                 } else {
-                    Button(
+                    GhsButton(
                         onClick = onOpenApp,
+                        label = stringResource(Res.string.open),
+                        variant = GhsButtonVariant.Primary,
                         enabled = !isBusy,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(50),
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(stringResource(Res.string.open), fontWeight = FontWeight.SemiBold)
-                    }
+                        leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }

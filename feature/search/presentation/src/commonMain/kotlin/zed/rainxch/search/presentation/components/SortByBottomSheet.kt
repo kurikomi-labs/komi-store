@@ -13,6 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,9 +40,12 @@ fun SortByBottomSheet(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(Res.string.close))
-            }
+            GhsButton(
+                onClick = onDismissRequest,
+                label = stringResource(Res.string.close),
+                variant = GhsButtonVariant.Text,
+                size = GhsButtonSize.Sm,
+            )
         },
         title = {
             Text(
@@ -54,6 +60,7 @@ fun SortByBottomSheet(
             ) {
                 SortByUi.entries.forEach { option ->
                     val isSelected = option == selectedSortBy
+                    // TODO(ghs-button): needs per-item color (primary when selected, onSurface otherwise)
                     TextButton(
                         onClick = {
                             onSortBySelected(option)
