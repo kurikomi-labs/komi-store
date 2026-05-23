@@ -1,9 +1,6 @@
 package zed.rainxch.search.presentation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -196,26 +193,6 @@ fun SearchScreen(
     val listState = rememberLazyStaggeredGridState()
     val bottomNavHeight = LocalBottomNavigationHeight.current
 
-    var showTopbar by remember { mutableStateOf(true) }
-    LaunchedEffect(listState) {
-        var prevIndex = 0
-        var prevOffset = 0
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            val scrolledDown = index > prevIndex || (index == prevIndex && offset > prevOffset + 4)
-            val scrolledUp = index < prevIndex || (index == prevIndex && offset < prevOffset - 4)
-            showTopbar = when {
-                index == 0 && offset == 0 -> true
-                scrolledDown -> false
-                scrolledUp -> true
-                else -> showTopbar
-            }
-            prevIndex = index
-            prevOffset = offset
-        }
-    }
-
     val shouldLoadMore by remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
@@ -301,17 +278,11 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            AnimatedVisibility(
-                visible = showTopbar,
-                enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
-                exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
-            ) {
-                SearchTopbar(
-                    onAction = onAction,
-                    state = state,
-                    focusRequester = focusRequester,
-                )
-            }
+            SearchTopbar(
+                onAction = onAction,
+                state = state,
+                focusRequester = focusRequester,
+            )
         },
         snackbarHost = {
             SnackbarHost(
@@ -767,23 +738,18 @@ private fun ClipboardBanner(
     onOpenLink: (ParsedGithubLink) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    Card(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-        shape = RoundedCornerShape(12.dp),
+    androidx.compose.material3.Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+        ),
     ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-        ) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -792,47 +758,43 @@ private fun ClipboardBanner(
                 Text(
                     text = stringResource(Res.string.clipboard_link_detected),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold,
                 )
-
                 IconButton(
                     onClick = onDismiss,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(28.dp).clip(CircleShape),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(Res.string.dismiss),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
-
             Spacer(Modifier.height(4.dp))
-
             links.forEach { link ->
                 Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable { onOpenLink(link) }
-                            .padding(vertical = 6.dp, horizontal = 4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable { onOpenLink(link) }
+                        .padding(vertical = 8.dp, horizontal = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = "${link.owner}/${link.repo}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),
                     )
                     Icon(
@@ -853,58 +815,55 @@ private fun DetectedLinksSection(
     onOpenLink: (ParsedGithubLink) -> Unit,
 ) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
     ) {
         Text(
             text = stringResource(Res.string.detected_links),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 4.dp),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(bottom = 6.dp),
         )
-
         links.forEach { link ->
-            Card(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 2.dp),
+            androidx.compose.material3.Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 3.dp),
                 onClick = { onOpenLink(link) },
-                colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    ),
-                shape = RoundedCornerShape(8.dp),
+                shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                border = androidx.compose.foundation.BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                ),
             ) {
                 Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = "${link.owner}/${link.repo}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = stringResource(Res.string.open_in_app),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }
@@ -923,9 +882,9 @@ private fun SearchTopbar(
             Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(horizontal = 8.dp, vertical = 8.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         TextField(
             value = state.query,
@@ -937,28 +896,30 @@ private fun SearchTopbar(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        onAction(SearchAction.OnClearClick)
-                    },
-                    modifier =
-                        Modifier
-                            .size(24.dp)
+            trailingIcon = if (state.query.isNotEmpty()) {
+                {
+                    IconButton(
+                        onClick = { onAction(SearchAction.OnClearClick) },
+                        modifier = Modifier
+                            .size(28.dp)
                             .clip(CircleShape),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = null,
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(Res.string.dismiss),
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
-            },
+            } else null,
             placeholder = {
                 Text(
                     text = stringResource(Res.string.search_repositories_hint),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     softWrap = false,
                     maxLines = 1,
@@ -966,7 +927,7 @@ private fun SearchTopbar(
                 )
             },
             textStyle =
-                MaterialTheme.typography.bodyLarge.copy(
+                MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                 ),
             keyboardOptions =
@@ -987,10 +948,10 @@ private fun SearchTopbar(
                 TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 ),
-            shape = CircleShape,
+            shape = RoundedCornerShape(50),
             modifier =
                 Modifier
                     .weight(1f)
