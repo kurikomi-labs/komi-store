@@ -64,25 +64,23 @@ fun LeadCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isDark = isSystemInDarkTheme()
-    val surface = MaterialTheme.colorScheme.surface
-    val borderColor = if (isDark) EmberPalette.Hot.copy(alpha = 0.42f) else EmberPalette.Deep.copy(alpha = 0.5f)
-    val inkColor = if (isDark) MaterialTheme.colorScheme.onSurface else EmberPalette.Ash
-    val ownerAlpha = if (isDark) 0.7f else 0.78f
-    val descAlpha = if (isDark) 0.78f else 0.9f
-    val statAlpha = if (isDark) 0.88f else 0.95f
+    val borderColor = EmberPalette.Hot.copy(alpha = 0.55f)
+    val inkColor = Color.White
+    val ownerAlpha = 0.78f
+    val descAlpha = 0.92f
+    val statAlpha = 0.95f
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(248.dp)
             .clip(LeadShape)
-            .background(if (isDark) EmberPalette.Ash else surface)
+            .background(EmberPalette.Ash)
             .drawBehind {
                 val warmth = Brush.linearGradient(
                     colorStops = arrayOf(
-                        0f to EmberPalette.Hot.copy(alpha = if (isDark) 0.32f else 0.22f),
-                        0.6f to EmberPalette.Warm.copy(alpha = if (isDark) 0.18f else 0.13f),
+                        0f to EmberPalette.Hot.copy(alpha = 0.55f),
+                        0.6f to EmberPalette.Warm.copy(alpha = 0.28f),
                         1f to Color.Transparent,
                     ),
                     start = Offset(0f, 0f),
@@ -91,7 +89,7 @@ fun LeadCard(
                 drawRect(brush = warmth)
                 val sun = Brush.radialGradient(
                     colors = listOf(
-                        EmberPalette.Amber.copy(alpha = if (isDark) 0.18f else 0.17f),
+                        EmberPalette.Amber.copy(alpha = 0.22f),
                         Color.Transparent,
                     ),
                     center = Offset(size.width * 0.18f, size.height * 0.25f),
@@ -113,7 +111,7 @@ fun LeadCard(
                     modifier = Modifier
                         .size(76.dp)
                         .clip(CircleShape)
-                        .background(if (isDark) EmberPalette.Ash else surface)
+                        .background(EmberPalette.Ash)
                         .border(2.5.dp, EmberPalette.Deep, CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
