@@ -1230,6 +1230,11 @@
     <string name="tweaks_stub_coming_soon_title">Coming in a follow-up</string>
     <string name="tweaks_stub_coming_soon_body">This screen is part of the in-progress redesign. The settings still work — they\'re just being moved here from the old layout.</string>
     <string name="back_cd">Back</string>
+    <string name="menubar_help_menu">Help</string>
+    <string name="menubar_help_about">About GitHub Store</string>
+    <string name="menubar_help_feedback">Send feedback…</string>
+    <string name="menubar_help_licenses">Open source licenses</string>
+    <string name="menubar_help_privacy">Privacy policy</string>
 
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>

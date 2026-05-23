@@ -102,6 +102,24 @@ fun App(deepLinkUri: String? = null) {
                     }
                 }
 
+                DeepLinkDestination.Tweaks -> {
+                    navController.navigate(GithubStoreGraph.TweaksScreen) {
+                        launchSingleTop = true
+                    }
+                }
+
+                DeepLinkDestination.TweaksAppInfo -> {
+                    navController.navigate(GithubStoreGraph.TweaksAppInfoScreen) {
+                        launchSingleTop = true
+                    }
+                }
+
+                DeepLinkDestination.TweaksLicenses -> {
+                    navController.navigate(GithubStoreGraph.LicensesScreen) {
+                        launchSingleTop = true
+                    }
+                }
+
                 DeepLinkDestination.None -> {
                 }
             }

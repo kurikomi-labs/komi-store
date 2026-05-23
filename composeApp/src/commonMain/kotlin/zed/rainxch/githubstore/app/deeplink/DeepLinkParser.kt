@@ -18,6 +18,12 @@ sealed interface DeepLinkDestination {
         val state: String,
     ) : DeepLinkDestination
 
+    data object Tweaks : DeepLinkDestination
+
+    data object TweaksAppInfo : DeepLinkDestination
+
+    data object TweaksLicenses : DeepLinkDestination
+
     data object None : DeepLinkDestination
 }
 
@@ -97,6 +103,18 @@ object DeepLinkParser {
                     }
                 }
                 DeepLinkDestination.None
+            }
+
+            uri == "githubstore://tweaks" || uri == "githubstore://tweaks/" -> {
+                DeepLinkDestination.Tweaks
+            }
+
+            uri == "githubstore://tweaks/app-info" -> {
+                DeepLinkDestination.TweaksAppInfo
+            }
+
+            uri == "githubstore://tweaks/licenses" -> {
+                DeepLinkDestination.TweaksLicenses
             }
 
             uri.startsWith("https://github-store.org/app/") -> {
