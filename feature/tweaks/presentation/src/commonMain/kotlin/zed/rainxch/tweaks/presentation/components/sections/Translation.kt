@@ -66,8 +66,6 @@ fun LazyListScope.translationSection(
     onAction: (TweaksAction) -> Unit,
 ) {
     item {
-        SectionHeader(text = stringResource(Res.string.section_translation))
-        Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.translation_intro),
             style = MaterialTheme.typography.bodySmall,

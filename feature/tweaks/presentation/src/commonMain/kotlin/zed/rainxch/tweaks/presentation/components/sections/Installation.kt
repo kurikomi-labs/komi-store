@@ -68,14 +68,6 @@ fun LazyListScope.installationSection(
     if (getPlatform() != Platform.ANDROID) return
 
     item {
-        Spacer(Modifier.height(32.dp))
-
-        SectionHeader(
-            text = stringResource(Res.string.section_installation).uppercase()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
         InstallerTypeCard(
             selectedType = state.installerType,
             shizukuAvailability = state.shizukuAvailability,
@@ -291,14 +283,6 @@ fun LazyListScope.updatesSection(
     if (getPlatform() != Platform.ANDROID) return
 
     item {
-        Spacer(Modifier.height(32.dp))
-
-        SectionHeader(
-            text = stringResource(Res.string.section_updates).uppercase()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
         if (state.showBatteryOptimizationCard) {
             BatteryOptimizationCard(
                 onOpenSettings = {

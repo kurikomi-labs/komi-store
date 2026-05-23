@@ -69,9 +69,6 @@ fun LazyListScope.appearanceSection(
     onAction: (TweaksAction) -> Unit,
 ) {
     item {
-        SectionHeader(text = stringResource(Res.string.section_appearance))
-        Spacer(Modifier.height(8.dp))
-
         ThemePickerCard(
             isDarkTheme = state.isDarkTheme,
             selectedPalette = state.selectedThemeColor,
