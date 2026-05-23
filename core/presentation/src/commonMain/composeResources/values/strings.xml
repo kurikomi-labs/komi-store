@@ -1193,6 +1193,7 @@
     <string name="search_filters_apply">Done</string>
     <string name="search_active_filters_label">Active</string>
     <string name="search_clear_filter_cd">Remove filter</string>
+    <string name="profile_tweaks_description">App settings, theme, network, translation, advanced options.</string>
 
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>

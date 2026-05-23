@@ -53,6 +53,7 @@ fun ProfileRoot(
     onPreviewWhatsNewSheet: () -> Unit,
     onNavigateToAnnouncements: () -> Unit,
     onPreviewAnnouncements: () -> Unit,
+    onNavigateToTweaks: () -> Unit,
     hasUnreadAnnouncements: Boolean,
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
@@ -149,6 +150,10 @@ fun ProfileRoot(
                     onPreviewAnnouncements()
                 }
 
+                ProfileAction.OnTweaksClick -> {
+                    onNavigateToTweaks()
+                }
+
                 else -> {
                     viewModel.onAction(action)
                 }
@@ -230,9 +235,10 @@ private fun TopAppBar() {
         title = {
             Text(
                 text = stringResource(Res.string.profile_title),
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
         },
     )

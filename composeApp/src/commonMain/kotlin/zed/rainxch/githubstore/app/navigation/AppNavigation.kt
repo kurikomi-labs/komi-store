@@ -578,6 +578,9 @@ fun AppNavigation(
                                 announcementsViewModel.previewSampleAnnouncements()
                                 navController.navigate(GithubStoreGraph.AnnouncementsScreen)
                             },
+                            onNavigateToTweaks = {
+                                navController.navigate(GithubStoreGraph.TweaksScreen)
+                            },
                             hasUnreadAnnouncements = announcementsUnreadCount > 0,
                         )
                     }

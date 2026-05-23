@@ -148,6 +148,10 @@ class ProfileViewModel(
             ProfileAction.OnAnnouncementsLongClick -> {
 
             }
+
+            ProfileAction.OnTweaksClick -> {
+
+            }
         }
     }
 }
