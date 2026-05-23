@@ -208,15 +208,11 @@ private fun WhatsNewScreen(
                         }
                         Spacer(Modifier.height(6.dp))
                         val isLatest = index == 0
-                        val useTranslated = isLatest &&
-                            state.translation.isShowingTranslation &&
-                            state.translation.translatedText != null
-                        val body = if (useTranslated) {
-                            state.translation.translatedText!!
-                        } else {
-                            release.description?.takeIf { it.isNotBlank() }
-                                ?: stringResource(Res.string.no_release_notes)
-                        }
+                        val translated = state.translation.translatedText
+                            ?.takeIf { isLatest && state.translation.isShowingTranslation }
+                        val body = translated
+                            ?: release.description?.takeIf { it.isNotBlank() }
+                            ?: stringResource(Res.string.no_release_notes)
                         Markdown(
                             content = body,
                             colors = colors,
