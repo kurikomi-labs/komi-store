@@ -53,7 +53,6 @@ fun GhsConfirmDialog(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge.copy(
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                 ),
