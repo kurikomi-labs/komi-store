@@ -398,8 +398,10 @@ fun SearchScreen(
                             Res.string.results_found,
                             state.totalCount,
                         ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier =
                         Modifier
                             .fillMaxWidth()

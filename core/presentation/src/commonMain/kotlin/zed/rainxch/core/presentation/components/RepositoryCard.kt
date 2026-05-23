@@ -1,6 +1,7 @@
 package zed.rainxch.core.presentation.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,6 +89,7 @@ import zed.rainxch.githubstore.core.presentation.res.update_available
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalLayoutApi::class,
     ExperimentalMaterial3Api::class,
+    androidx.compose.foundation.ExperimentalFoundationApi::class,
 )
 @Composable
 fun RepositoryCard(
@@ -100,7 +102,6 @@ fun RepositoryCard(
     onToggleSeen: (() -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
-
     val contentAlpha by animateFloatAsState(
         targetValue = if (discoveryRepositoryUi.isSeen) 0.55f else 1f,
         animationSpec = tween(durationMillis = 300),
@@ -109,260 +110,176 @@ fun RepositoryCard(
 
     var showActionsSheet by remember { mutableStateOf(false) }
     val sheetEnabled = onHideClick != null
+    val repo = discoveryRepositoryUi.repository
 
-    ExpressiveCard(
-        onClick = onClick,
-        onLongClick = if (sheetEnabled) {
-            { showActionsSheet = true }
-        } else {
-            null
-        },
-        modifier = modifier,
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .alpha(contentAlpha),
+        shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
+        ),
     ) {
-        Box(modifier = Modifier.alpha(contentAlpha)) {
-            if (discoveryRepositoryUi.isFavourite) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                    modifier =
-                        Modifier
-                            .size(120.dp)
-                            .align(Alignment.BottomStart)
-                            .offset(x = (-32).dp, y = 32.dp),
+        Column(
+            modifier = Modifier
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = if (sheetEnabled) {
+                        { showActionsSheet = true }
+                    } else null,
                 )
-            }
-
-            if (discoveryRepositoryUi.isStarred) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-                    modifier =
-                        Modifier
-                            .size(120.dp)
-                            .align(Alignment.TopEnd)
-                            .offset(x = 32.dp, y = (-32).dp),
-                )
-            }
-
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                .padding(14.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
+                GitHubStoreImage(
+                    imageModel = { repo.owner.avatarUrl },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable { onDeveloperClick(repo.owner.login) },
+                    extractDominantFor = repo.owner.avatarUrl,
+                )
+                Column(modifier = Modifier.weight(1f)) {
                     Row(
-                        modifier =
-                            Modifier
-                                .clip(CircleShape)
-                                .clickable(onClick = {
-                                    onDeveloperClick(discoveryRepositoryUi.repository.owner.login)
-                                })
-                                .padding(horizontal = 4.dp, vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        GitHubStoreImage(
-                            imageModel = { discoveryRepositoryUi.repository.owner.avatarUrl },
-                            modifier =
-                                Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape),
-                        )
-
                         Text(
-                            text = discoveryRepositoryUi.repository.owner.login,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.outline,
+                            text = repo.name,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
-                            softWrap = false,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f, fill = false),
                         )
-
-                        if (discoveryRepositoryUi.isCurrentUserOwner) {
-                            OfficialBadge()
-                        }
+                        if (discoveryRepositoryUi.isCurrentUserOwner) OfficialBadge()
+                        if (repo.isFork) ForkBadge()
                     }
-
-                    Text(
-                        text = "/",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.outline,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        text = discoveryRepositoryUi.repository.name,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false),
-                    )
-
-                    if (discoveryRepositoryUi.repository.isFork) {
-                        ForkBadge()
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                discoveryRepositoryUi.repository.description?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge,
-                        softWrap = true,
-                    )
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                ) {
-                    InfoChip(
-                        icon = Icons.Outlined.StarOutline,
-                        text = formatCount(discoveryRepositoryUi.repository.stargazersCount.toLong()),
-                    )
-
-                    InfoChip(
-                        icon = Icons.AutoMirrored.Outlined.CallSplit,
-                        text = formatCount(discoveryRepositoryUi.repository.forksCount.toLong()),
-                    )
-
-                    if (discoveryRepositoryUi.repository.downloadCount > 0) {
-                        InfoChip(
-                            icon = Icons.Outlined.Download,
-                            text = formatCount(discoveryRepositoryUi.repository.downloadCount),
-                        )
-                    }
-
-                    discoveryRepositoryUi.repository.language?.let {
-                        InfoChip(
-                            icon = Icons.Outlined.Code,
-                            text = it,
-                        )
-                    }
-                }
-
-                if (discoveryRepositoryUi.isInstalled || discoveryRepositoryUi.isSeen) {
-                    Spacer(Modifier.height(12.dp))
-
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        if (discoveryRepositoryUi.isInstalled) {
-                            InstallStatusBadge(
-                                isUpdateAvailable = discoveryRepositoryUi.isUpdateAvailable,
-                            )
-                        }
-
-                        if (discoveryRepositoryUi.isSeen) {
-                            SeenBadge()
-                        }
+                        Text(
+                            text = repo.owner.login,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable { onDeveloperClick(repo.owner.login) }
+                                .padding(vertical = 2.dp, horizontal = 2.dp)
+                                .weight(1f, fill = false),
+                        )
+                        Text(
+                            text = "  ·  ${formatReleasedAt(repo.updatedAt)}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
+            }
 
-                if (discoveryRepositoryUi.repository.availablePlatforms.isNotEmpty()) {
-                    Spacer(Modifier.height(12.dp))
-
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        discoveryRepositoryUi.repository.availablePlatforms.forEach { platform ->
-                            PlatformChip(platform = platform)
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                val releasedAtText =
-                    buildAnnotatedString {
-                        if (hasWeekNotPassed(discoveryRepositoryUi.repository.updatedAt)) {
-                            append("🔥 ")
-                        }
-
-                        append(formatReleasedAt(discoveryRepositoryUi.repository.updatedAt))
-                    }
-
+            repo.description?.takeIf { it.isNotBlank() }?.let { desc ->
+                Spacer(Modifier.height(10.dp))
                 Text(
-                    text = releasedAtText,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.outline,
-                    maxLines = 1,
-                    softWrap = false,
+                    text = desc,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodySmall,
                 )
+            }
 
-                Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    GithubStoreButton(
-                        text = stringResource(Res.string.home_view_details),
-                        onClick = onClick,
-                        modifier = Modifier.weight(1f),
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                if (repo.stargazersCount > 0) {
+                    zed.rainxch.core.presentation.components.chips.StatChip(
+                        label = formatCount(repo.stargazersCount.toLong()),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Outlined.StarOutline,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
                     )
+                }
+                if (repo.forksCount > 0) {
+                    zed.rainxch.core.presentation.components.chips.StatChip(
+                        label = formatCount(repo.forksCount.toLong()),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.CallSplit,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                    )
+                }
+                if (repo.downloadCount > 0) {
+                    zed.rainxch.core.presentation.components.chips.StatChip(
+                        label = formatCount(repo.downloadCount),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Outlined.Download,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                    )
+                }
+                val platformKinds = repo.availablePlatforms
+                    .mapNotNull { platform ->
+                        when (platform) {
+                            DiscoveryPlatform.Android -> zed.rainxch.core.presentation.vocabulary.PlatformKind.ANDROID
+                            DiscoveryPlatform.Windows -> zed.rainxch.core.presentation.vocabulary.PlatformKind.WINDOWS
+                            DiscoveryPlatform.Macos -> zed.rainxch.core.presentation.vocabulary.PlatformKind.MACOS
+                            DiscoveryPlatform.Linux -> zed.rainxch.core.presentation.vocabulary.PlatformKind.LINUX
+                            else -> null
+                        }
+                    }
+                if (platformKinds.isNotEmpty()) {
+                    zed.rainxch.core.presentation.components.chips.PlatformsChip(
+                        platforms = platformKinds.let {
+                            kotlinx.collections.immutable.persistentListOf<zed.rainxch.core.presentation.vocabulary.PlatformKind>()
+                                .addAll(it)
+                        },
+                    )
+                }
+            }
 
-                    IconButton(
-                        onClick = onShareClick,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
-                        shapes = IconButtonDefaults.shapes(),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(Res.string.share_repository),
+            if (discoveryRepositoryUi.isInstalled || discoveryRepositoryUi.isSeen) {
+                Spacer(Modifier.height(10.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (discoveryRepositoryUi.isInstalled) {
+                        InstallStatusBadge(
+                            isUpdateAvailable = discoveryRepositoryUi.isUpdateAvailable,
                         )
                     }
-
-                    IconButton(
-                        onClick = {
-                            uriHandler.openUri(discoveryRepositoryUi.repository.htmlUrl)
-                        },
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
-                        shapes = IconButtonDefaults.shapes(),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.OpenInBrowser,
-                            contentDescription = stringResource(Res.string.open_in_browser),
-                        )
+                    if (discoveryRepositoryUi.isSeen) {
+                        SeenBadge()
                     }
                 }
             }
