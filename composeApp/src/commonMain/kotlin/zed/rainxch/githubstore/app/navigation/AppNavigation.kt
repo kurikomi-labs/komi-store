@@ -76,6 +76,7 @@ import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.appearance.TweaksAppearanceRoot
 import zed.rainxch.tweaks.presentation.appinfo.TweaksAppInfoRoot
 import zed.rainxch.tweaks.presentation.components.TweaksStubScreen
+import zed.rainxch.tweaks.presentation.connection.TweaksConnectionRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
 import zed.rainxch.tweaks.presentation.language.TweaksLanguageRoot
@@ -732,8 +733,7 @@ fun AppNavigation(
                     }
 
                     composable<GithubStoreGraph.TweaksConnectionScreen> {
-                        TweaksStubScreen(
-                            title = stringResource(Res.string.tweaks_entry_connection),
+                        TweaksConnectionRoot(
                             onNavigateBack = { navController.popBackStack() },
                         )
                     }
