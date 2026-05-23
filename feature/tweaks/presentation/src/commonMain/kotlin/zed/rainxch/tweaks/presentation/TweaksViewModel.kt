@@ -108,6 +108,7 @@ class TweaksViewModel(
                     observeNeedsRestartReasons()
                     observeMasterProxyConfig()
                     observeUseMasterFlags()
+                    observeTelemetryEnabled()
 
                     hasLoadedInitialData = true
                 }
@@ -1267,6 +1268,34 @@ class TweaksViewModel(
                 }
             }
 
+            is TweaksAction.OnTelemetryToggled -> {
+                viewModelScope.launch {
+                    runCatching { tweaksRepository.setTelemetryEnabled(action.enabled) }
+                    runCatching {
+                        tweaksRepository.addRestartReason(
+                            zed.rainxch.core.domain.model.RestartReason.TELEMETRY_TOGGLE,
+                        )
+                    }
+                }
+            }
+
+            TweaksAction.OnTelemetryExpandToggle -> {
+                _state.update { it.copy(telemetryExpanded = !it.telemetryExpanded) }
+            }
+
+            TweaksAction.OnClearSeenHistoryRequest -> {
+                _state.update { it.copy(isClearSeenHistoryDialogVisible = true) }
+            }
+
+            TweaksAction.OnClearSeenHistoryDismiss -> {
+                _state.update { it.copy(isClearSeenHistoryDialogVisible = false) }
+            }
+
+            TweaksAction.OnClearSeenHistoryConfirm -> {
+                _state.update { it.copy(isClearSeenHistoryDialogVisible = false) }
+                onAction(TweaksAction.OnClearSeenRepos)
+            }
+
             is TweaksAction.OnScopeUseMainToggled -> {
                 viewModelScope.launch {
                     runCatching {
@@ -1371,6 +1400,14 @@ class TweaksViewModel(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeTelemetryEnabled() {
+        viewModelScope.launch {
+            tweaksRepository.getTelemetryEnabled().collect { enabled ->
+                _state.update { it.copy(telemetryEnabled = enabled) }
             }
         }
     }

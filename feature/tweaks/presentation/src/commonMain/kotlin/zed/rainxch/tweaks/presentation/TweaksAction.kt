@@ -223,4 +223,10 @@ sealed interface TweaksAction {
     data object OnMasterProxyTest : TweaksAction
 
     data class OnScopeUseMainToggled(val scope: ProxyScope, val useMain: Boolean) : TweaksAction
+
+    data class OnTelemetryToggled(val enabled: Boolean) : TweaksAction
+    data object OnTelemetryExpandToggle : TweaksAction
+    data object OnClearSeenHistoryRequest : TweaksAction
+    data object OnClearSeenHistoryDismiss : TweaksAction
+    data object OnClearSeenHistoryConfirm : TweaksAction
 }
