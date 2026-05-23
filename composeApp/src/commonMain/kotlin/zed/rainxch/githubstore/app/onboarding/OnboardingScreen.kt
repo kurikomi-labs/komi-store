@@ -149,7 +149,6 @@ private fun StepPalette(
             style =
                 MaterialTheme.typography.displaySmall.copy(
                     fontFamily = fraunces,
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
@@ -274,7 +273,6 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
                 text = "G",
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = fraunces,
-                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Bold,
                 fontSize = 48.sp,
             )
@@ -284,7 +282,6 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             style =
                 MaterialTheme.typography.headlineSmall.copy(
                     fontFamily = fraunces,
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
@@ -316,7 +313,6 @@ private fun StepPermissions(controller: OnboardingPermissionsController) {
             style =
                 MaterialTheme.typography.headlineSmall.copy(
                     fontFamily = fraunces,
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,

@@ -156,7 +156,6 @@ private fun CookieTabItem(
                     style =
                         MaterialTheme.typography.labelSmall.copy(
                             fontFamily = fraunces,
-                            fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 11.sp,
                         ),
