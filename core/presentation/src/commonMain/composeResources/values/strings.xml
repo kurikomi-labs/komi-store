@@ -119,21 +119,21 @@
     <string name="profile_title">Profile</string>
 
     <!-- Sections -->
-    <string name="section_appearance">APPEARANCE</string>
-    <string name="section_language">LANGUAGE</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="section_language">Language</string>
     <string name="language_intro">Override the app's UI language.</string>
     <string name="language_picker_title">App language</string>
     <string name="language_picker_description">Changes menus, buttons, and messages throughout the app. Does not change content coming from GitHub.</string>
     <string name="language_follow_system">Follow system</string>
     <string name="language_restart_required">Restart to apply the new language.</string>
     <string name="language_restart_action">Restart</string>
-    <string name="section_network">NETWORK</string>
-    <string name="section_about">ABOUT</string>
+    <string name="section_network">Network</string>
+    <string name="section_about">About</string>
 
     <!-- Appearance -->
-    <string name="theme_color">Theme Color</string>
-    <string name="amoled_black_theme">AMOLED Black Theme</string>
-    <string name="amoled_black_description">Pure black background for dark mode</string>
+    <string name="theme_color">Palette</string>
+    <string name="amoled_black_theme">True black (AMOLED)</string>
+    <string name="amoled_black_description">Pure-black background — saves power on OLED screens.</string>
     <string name="selected_color">Selected color: %1$s</string>
 
     <!-- About -->
@@ -145,10 +145,10 @@
 
     <!-- Proxy -->
     <string name="proxy_type">Proxy Type</string>
-    <string name="proxy_none">None</string>
+    <string name="proxy_none">No proxy</string>
     <string name="proxy_system">System</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_http">HTTP/HTTPS</string>
+    <string name="proxy_socks">SOCKS5</string>
     <string name="proxy_host">Host</string>
     <string name="proxy_port">Port</string>
     <string name="proxy_username">Username (optional)</string>
@@ -157,7 +157,7 @@
     <string name="proxy_saved">Proxy settings saved</string>
     <string name="proxy_system_description">Uses your device's proxy settings</string>
     <string name="proxy_port_error">Port must be 1–65535</string>
-    <string name="proxy_none_description">Direct connection, no proxy</string>
+    <string name="proxy_none_description">The app connects to the internet without a proxy.</string>
     <string name="failed_to_save_proxy_settings">Failed to save proxy settings</string>
     <string name="proxy_host_required">Proxy host is required</string>
     <string name="proxy_host_invalid">Enter a valid hostname or IP address</string>
@@ -174,7 +174,7 @@
     <string name="proxy_test_error_status">Unexpected response: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">Connection test failed</string>
     <string name="proxy_scope_intro">Each category can use its own proxy. Configure them independently.</string>
-    <string name="proxy_scope_discovery_title">Discovery (GitHub API)</string>
+    <string name="proxy_scope_discovery_title">Search &amp; metadata</string>
     <string name="proxy_scope_discovery_description">Home, search, repo details, and update checks</string>
     <string name="proxy_scope_download_title">Downloads</string>
     <string name="proxy_scope_download_description">APK downloads and auto-updates</string>
@@ -611,16 +611,16 @@
     <!-- Search - GitHub Link -->
     <string name="open_github_link">Open GitHub Link</string>
     <string name="clipboard_link_detected">GitHub link detected in clipboard</string>
-    <string name="auto_detect_clipboard_links">Auto-detect clipboard links</string>
-    <string name="auto_detect_clipboard_description">Automatically detect GitHub links from clipboard when opening search</string>
+    <string name="auto_detect_clipboard_links">Detect repo links in clipboard</string>
+    <string name="auto_detect_clipboard_description">When you copy a github.com or codeberg.org link, we\'ll prompt to open it.</string>
     <string name="detected_links">Detected Links</string>
     <string name="open_in_app">Open in app</string>
     <string name="no_github_link_in_clipboard">No GitHub link found in clipboard</string>
 
     <string name="storage">Storage</string>
-    <string name="downloaded_packages">Downloaded Packages</string>
-    <string name="downloaded_packages_description">APKs and installers from GitHub releases</string>
-    <string name="current_size">Current size:</string>
+    <string name="downloaded_packages">Downloaded APKs</string>
+    <string name="downloaded_packages_description">We keep installers around so updates resume fast.</string>
+    <string name="current_size">Using:</string>
     <string name="delete_all">Delete All</string>
     <string name="delete_downloads_confirmation_title">Delete all downloads?</string>
     <string name="delete_downloads_confirmation_message">This will permanently remove all downloaded APKs and installers (%1$s). You can re-download them anytime.</string>
@@ -644,8 +644,8 @@
 
     <!-- Installation method settings -->
     <string name="section_installation">Installation</string>
-    <string name="installer_type_default">Default</string>
-    <string name="installer_type_default_description">Standard system install dialog</string>
+    <string name="installer_type_default">System installer</string>
+    <string name="installer_type_default_description">Asks each time. Works on every device.</string>
     <string name="installer_type_shizuku">Shizuku</string>
     <string name="installer_type_shizuku_description">Silent install without prompts</string>
     <string name="shizuku_status_not_installed">Shizuku is not installed</string>
@@ -672,8 +672,8 @@
     <string name="root_status_unavailable">No root</string>
     <string name="root_grant_permission">Allow root access</string>
     <string name="root_unavailable_hint">Root isn't available on this device. Install Magisk, KernelSU, or APatch first.</string>
-    <string name="auto_update_title">Auto-update apps</string>
-    <string name="auto_update_description">Automatically download and install updates in background via the selected silent installer</string>
+    <string name="auto_update_title">Install updates in the background</string>
+    <string name="auto_update_description">Apply downloaded updates without notifying you each time.</string>
 
     <string name="installer_attribution_title">Installer attribution</string>
     <string name="installer_attribution_description">Apps can see which installer placed them on your device. By default this is the system shell.</string>
@@ -688,14 +688,14 @@
     <string name="installer_attribution_disclosure">Some apps detect when their installer changes and may refuse to run, or fail security checks (e.g. Play Integrity, banking apps).</string>
 
     <string name="section_updates">Updates</string>
-    <string name="update_check_interval_title">Update check interval</string>
-    <string name="update_check_interval_description">How often to check for app updates in background</string>
-    <string name="update_check_enabled_title">Background update check</string>
-    <string name="update_check_enabled_description">Periodically check for updates in the background. Turn off to save battery — you can still check manually from any app's details screen.</string>
-    <string name="interval_3h">3h</string>
-    <string name="interval_6h">6h</string>
-    <string name="interval_12h">12h</string>
-    <string name="interval_24h">24h</string>
+    <string name="update_check_interval_title">Check every</string>
+    <string name="update_check_interval_description">How often to look for new releases.</string>
+    <string name="update_check_enabled_title">Check automatically</string>
+    <string name="update_check_enabled_description">Look for new releases on a schedule. Turn off to save battery — you can still check manually from any app\'s details screen.</string>
+    <string name="interval_3h">Every 3 hours</string>
+    <string name="interval_6h">Every 6 hours</string>
+    <string name="interval_12h">Every 12 hours</string>
+    <string name="interval_24h">Daily</string>
 
     <string name="battery_optimization_card_title">Allow background updates</string>
     <string name="battery_optimization_card_description">Your device aggressively kills background tasks. Whitelist GitHub Store from battery optimization so scheduled update checks and silent installs can run reliably.</string>
@@ -788,10 +788,10 @@
     <string name="content_width_wide">Wide</string>
     <string name="content_width_extra_wide">Extra wide</string>
 
-    <string name="hide_seen_title">Hide Seen Repositories</string>
-    <string name="hide_seen_description">Hide repositories you have already viewed from discovery feeds</string>
-    <string name="clear_seen_history">Clear Seen History</string>
-    <string name="clear_seen_history_description">Reset all seen repositories so they appear again in feeds</string>
+    <string name="hide_seen_title">Hide repos I\'ve already viewed</string>
+    <string name="hide_seen_description">Skip seen repos in feeds and search.</string>
+    <string name="clear_seen_history">Clear viewed history</string>
+    <string name="clear_seen_history_description">Forget which repos you\'ve already opened.</string>
     <string name="seen_history_cleared">Seen history cleared</string>
     <string name="seen_badge">Viewed</string>
     <string name="self_owned_badge">You own this repo</string>
@@ -1088,7 +1088,7 @@
     <string name="done">Done</string>
 
     <!-- Tweaks feature - Mirror -->
-    <string name="mirror_tweaks_entry_label">Download Mirror</string>
+    <string name="mirror_tweaks_entry_label">GitHub mirror</string>
     <string name="mirror_picker_title">Download Mirror</string>
     <string name="mirror_picker_description">Used for downloading release assets. GitHub API calls always go direct. Most users should leave this on Direct GitHub.</string>
 
