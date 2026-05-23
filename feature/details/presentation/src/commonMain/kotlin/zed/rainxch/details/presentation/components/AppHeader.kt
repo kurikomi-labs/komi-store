@@ -231,16 +231,21 @@ fun AppHeader(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                androidx.compose.foundation.text.BasicText(
                     text = repository.name,
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Black,
                         fontSize = 30.sp,
                         letterSpacing = (-0.4).sp,
+                        color = MaterialTheme.colorScheme.onSurface,
                     ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    softWrap = false,
+                    autoSize = androidx.compose.foundation.text.TextAutoSize.StepBased(
+                        minFontSize = 18.sp,
+                        maxFontSize = 30.sp,
+                        stepSize = 1.sp,
+                    ),
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 if (repository.isFork) ForkBadge()
