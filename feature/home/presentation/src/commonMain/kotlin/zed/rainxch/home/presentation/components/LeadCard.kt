@@ -67,6 +67,9 @@ fun LeadCard(
     val isDark = isSystemInDarkTheme()
     val surface = MaterialTheme.colorScheme.surface
     val borderColor = if (isDark) EmberPalette.Hot.copy(alpha = 0.42f) else EmberPalette.Deep.copy(alpha = 0.5f)
+    val ownerAlpha = if (isDark) 0.7f else 0.85f
+    val descAlpha = if (isDark) 0.78f else 0.92f
+    val statAlpha = if (isDark) 0.88f else 1f
 
     Box(
         modifier = modifier
@@ -77,8 +80,8 @@ fun LeadCard(
             .drawBehind {
                 val warmth = Brush.linearGradient(
                     colorStops = arrayOf(
-                        0f to EmberPalette.Hot.copy(alpha = if (isDark) 0.32f else 0.16f),
-                        0.6f to EmberPalette.Warm.copy(alpha = if (isDark) 0.18f else 0.08f),
+                        0f to EmberPalette.Hot.copy(alpha = if (isDark) 0.32f else 0.22f),
+                        0.6f to EmberPalette.Warm.copy(alpha = if (isDark) 0.18f else 0.13f),
                         1f to Color.Transparent,
                     ),
                     start = Offset(0f, 0f),
@@ -87,7 +90,7 @@ fun LeadCard(
                 drawRect(brush = warmth)
                 val sun = Brush.radialGradient(
                     colors = listOf(
-                        EmberPalette.Amber.copy(alpha = if (isDark) 0.18f else 0.12f),
+                        EmberPalette.Amber.copy(alpha = if (isDark) 0.18f else 0.17f),
                         Color.Transparent,
                     ),
                     center = Offset(size.width * 0.18f, size.height * 0.25f),
@@ -130,7 +133,7 @@ fun LeadCard(
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontSize = 12.sp,
                             ),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ownerAlpha),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f),
@@ -186,7 +189,7 @@ fun LeadCard(
                 Text(
                     text = card.description,
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.78f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = descAlpha),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -204,7 +207,7 @@ fun LeadCard(
                     Icon(
                         imageVector = Icons.Outlined.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
                         modifier = Modifier.size(15.dp),
                     )
                     Text(
@@ -213,7 +216,7 @@ fun LeadCard(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 13.sp,
                         ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
                     )
                 }
                 if (card.downloadsCount > 0) {
@@ -224,7 +227,7 @@ fun LeadCard(
                         Icon(
                             imageVector = Icons.Default.Download,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
                             modifier = Modifier.size(15.dp),
                         )
                         Text(
@@ -233,7 +236,7 @@ fun LeadCard(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 13.sp,
                             ),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = statAlpha),
                         )
                     }
                 }
