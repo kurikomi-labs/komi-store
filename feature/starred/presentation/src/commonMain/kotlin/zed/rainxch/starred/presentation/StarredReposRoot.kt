@@ -38,8 +38,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -50,7 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +60,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -382,15 +380,15 @@ private fun StarredSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
 ) {
-    TextField(
+    GhsTextField(
         value = query,
         onValueChange = onQueryChange,
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-        placeholder = { Text(stringResource(Res.string.search_repositories_hint)) },
-        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
+        placeholder = stringResource(Res.string.search_repositories_hint),
+        leadingIcon = Icons.Filled.Search,
         trailingIcon = {
             if (query.isNotEmpty()) {
                 IconButton(onClick = { onQueryChange("") }) {
@@ -402,12 +400,6 @@ private fun StarredSearchBar(
             }
         },
         singleLine = true,
-        shape = RoundedCornerShape(16.dp),
-        colors =
-            TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
     )
 }
 

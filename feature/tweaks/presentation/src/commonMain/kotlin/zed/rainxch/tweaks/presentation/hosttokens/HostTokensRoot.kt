@@ -36,7 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -63,6 +62,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.ForgeKind
 import zed.rainxch.core.domain.model.HostToken
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_add
@@ -570,47 +570,44 @@ private fun AddTokenDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state.draftForge == null) {
-                    OutlinedTextField(
-                        value = state.draftHost,
-                        onValueChange = { onAction(HostTokensAction.OnDraftHostChanged(it)) },
-                        label = { Text(stringResource(Res.string.host_tokens_compose_field_forge_address)) },
-                        singleLine = true,
-                        isError = state.draftHostError != null,
-                        supportingText = state.draftHostError?.let { res ->
-                            { Text(stringResource(res)) }
-                        } ?: state.draftHostNormalized
+                    val hostSupporting = state.draftHostError?.let { stringResource(it) }
+                        ?: state.draftHostNormalized
                             .takeIf { it.isNotBlank() && it != state.draftHost.trim() }
                             ?.let { normalized ->
-                                {
-                                    Text(
-                                        stringResource(
-                                            Res.string.host_tokens_compose_will_connect,
-                                            normalized,
-                                        ),
-                                    )
-                                }
-                            },
+                                stringResource(
+                                    Res.string.host_tokens_compose_will_connect,
+                                    normalized,
+                                )
+                            }
+                    GhsTextField(
+                        value = state.draftHost,
+                        onValueChange = { onAction(HostTokensAction.OnDraftHostChanged(it)) },
+                        label = stringResource(Res.string.host_tokens_compose_field_forge_address),
+                        singleLine = true,
+                        isError = state.draftHostError != null,
+                        supportingText = hostSupporting,
                     )
                 }
-                OutlinedTextField(
+                val tokenSupporting = state.draftTokenError?.let { stringResource(it) }
+                    ?: state.draftDetectedTokenKind?.let { kind ->
+                        stringResource(Res.string.host_tokens_compose_detected, kind)
+                    }
+                    ?: replacingExisting?.let {
+                        stringResource(Res.string.host_tokens_compose_replace_hint)
+                    }
+                GhsTextField(
                     value = state.draftToken,
                     onValueChange = { onAction(HostTokensAction.OnDraftTokenChanged(it)) },
-                    label = { Text(stringResource(Res.string.host_tokens_field_token)) },
+                    label = stringResource(Res.string.host_tokens_field_token),
                     singleLine = true,
                     isError = state.draftTokenError != null,
-                    supportingText = state.draftTokenError?.let { res ->
-                        { Text(stringResource(res)) }
-                    } ?: state.draftDetectedTokenKind?.let { kind ->
-                        { Text(stringResource(Res.string.host_tokens_compose_detected, kind)) }
-                    } ?: replacingExisting?.let {
-                        { Text(stringResource(Res.string.host_tokens_compose_replace_hint)) }
-                    },
+                    supportingText = tokenSupporting,
                     visualTransformation = PasswordVisualTransformation(),
                 )
-                OutlinedTextField(
+                GhsTextField(
                     value = state.draftDisplayName,
                     onValueChange = { onAction(HostTokensAction.OnDraftDisplayNameChanged(it)) },
-                    label = { Text(stringResource(Res.string.host_tokens_field_display_name)) },
+                    label = stringResource(Res.string.host_tokens_field_display_name),
                     singleLine = true,
                 )
             }

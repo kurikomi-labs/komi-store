@@ -63,8 +63,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -80,7 +78,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -110,6 +107,7 @@ import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
@@ -555,23 +553,15 @@ fun AppsScreen(
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                TextField(
+                GhsTextField(
                     value = state.searchQuery,
                     onValueChange = { onAction(AppsAction.OnSearchChange(it)) },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = null)
-                    },
-                    placeholder = { Text(stringResource(Res.string.search_your_apps)) },
+                    leadingIcon = Icons.Default.Search,
+                    placeholder = stringResource(Res.string.search_your_apps),
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
-                    shape = CircleShape,
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
                 )
 
                 if (state.isCheckingForUpdates) {

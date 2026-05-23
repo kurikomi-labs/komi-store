@@ -55,6 +55,7 @@ import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RootAvailability
 import zed.rainxch.core.domain.model.ShizukuAvailability
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
@@ -212,19 +213,18 @@ private fun CustomInstallerEditor(
     onAction: (TweaksAction) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        androidx.compose.material3.OutlinedTextField(
+        val customSupporting = state.installerAttributionCustomError?.let {
+            stringResource(Res.string.installer_attribution_custom_error)
+        }
+        GhsTextField(
             value = state.installerAttributionCustomDraft,
             onValueChange = { onAction(TweaksAction.OnInstallerAttributionCustomChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.installer_attribution_custom_label)) },
-            placeholder = { Text("com.example.installer") },
+            label = stringResource(Res.string.installer_attribution_custom_label),
+            placeholder = "com.example.installer",
             singleLine = true,
             isError = state.installerAttributionCustomError != null,
-            supportingText = state.installerAttributionCustomError?.let {
-                {
-                    Text(stringResource(Res.string.installer_attribution_custom_error))
-                }
-            },
+            supportingText = customSupporting,
         )
         FilledTonalButton(
             onClick = { onAction(TweaksAction.OnInstallerAttributionCustomSave) },

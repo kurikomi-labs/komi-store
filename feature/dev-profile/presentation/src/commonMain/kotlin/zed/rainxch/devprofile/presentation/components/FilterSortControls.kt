@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -37,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.devprofile.domain.model.RepoFilterType
 import zed.rainxch.devprofile.domain.model.RepoSortType
 import zed.rainxch.devprofile.presentation.DeveloperProfileAction
@@ -56,27 +56,14 @@ fun FilterSortControls(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        OutlinedTextField(
+        GhsTextField(
             value = searchQuery,
             onValueChange = { query ->
                 onAction(DeveloperProfileAction.OnSearchQueryChange(query))
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = stringResource(Res.string.search_repositories),
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(Res.string.search_repositories),
-                    modifier = Modifier.size(20.dp),
-                )
-            },
+            placeholder = stringResource(Res.string.search_repositories),
+            leadingIcon = Icons.Default.Search,
             trailingIcon = {
                 if (searchQuery.isNotBlank()) {
                     IconButton(
@@ -91,7 +78,6 @@ fun FilterSortControls(
                 }
             },
             singleLine = true,
-            shape = RoundedCornerShape(12.dp),
         )
 
         Row(

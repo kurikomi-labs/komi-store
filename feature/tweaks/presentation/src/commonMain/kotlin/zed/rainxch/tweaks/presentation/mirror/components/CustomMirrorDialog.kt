@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cancel
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_dialog_hint
@@ -30,10 +30,10 @@ fun CustomMirrorDialog(
         title = { Text(stringResource(Res.string.mirror_custom_dialog_title)) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
+                GhsTextField(
                     value = draft,
                     onValueChange = onDraftChange,
-                    placeholder = { Text(stringResource(Res.string.mirror_custom_dialog_hint)) },
+                    placeholder = stringResource(Res.string.mirror_custom_dialog_hint),
                     isError = error != null,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,

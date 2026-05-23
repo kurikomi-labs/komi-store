@@ -24,8 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,9 +31,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,14 +44,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.SupportedTranslationLanguages
 import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
@@ -377,50 +374,28 @@ private fun YoudaoCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.youdaoAppKey,
             onValueChange = { onAction(TweaksAction.OnYoudaoAppKeyChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_youdao_app_key)) },
+            label = stringResource(Res.string.translation_youdao_app_key),
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.youdaoAppSecret,
             onValueChange = { onAction(TweaksAction.OnYoudaoAppSecretChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_youdao_app_secret)) },
+            label = stringResource(Res.string.translation_youdao_app_secret),
             singleLine = true,
-            visualTransformation =
-                if (state.isYoudaoAppSecretVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
+            visualTransformation = passwordVisualTransformation(state.isYoudaoAppSecretVisible),
             trailingIcon = {
-                IconButton(
-                    onClick = { onAction(TweaksAction.OnYoudaoAppSecretVisibilityToggle) },
-                ) {
-                    Icon(
-                        imageVector =
-                            if (state.isYoudaoAppSecretVisible) {
-                                Icons.Default.VisibilityOff
-                            } else {
-                                Icons.Default.Visibility
-                            },
-                        contentDescription =
-                            if (state.isYoudaoAppSecretVisible) {
-                                stringResource(Res.string.proxy_hide_password)
-                            } else {
-                                stringResource(Res.string.proxy_show_password)
-                            },
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                GhsPasswordVisibilityIcon(
+                    visible = state.isYoudaoAppSecretVisible,
+                    onToggle = { onAction(TweaksAction.OnYoudaoAppSecretVisibilityToggle) },
+                )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
         Row(
@@ -461,52 +436,30 @@ private fun LibreTranslateCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.libreTranslateBaseUrl,
             onValueChange = { onAction(TweaksAction.OnLibreTranslateBaseUrlChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_libre_base_url)) },
-            placeholder = { Text("https://translate.disroot.org") },
+            label = stringResource(Res.string.translation_libre_base_url),
+            placeholder = "https://translate.disroot.org",
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.libreTranslateApiKey,
             onValueChange = { onAction(TweaksAction.OnLibreTranslateApiKeyChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_libre_api_key)) },
+            label = stringResource(Res.string.translation_libre_api_key),
             singleLine = true,
-            visualTransformation =
-                if (state.isLibreTranslateApiKeyVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
+            visualTransformation = passwordVisualTransformation(state.isLibreTranslateApiKeyVisible),
             trailingIcon = {
-                IconButton(
-                    onClick = { onAction(TweaksAction.OnLibreTranslateApiKeyVisibilityToggle) },
-                ) {
-                    Icon(
-                        imageVector =
-                            if (state.isLibreTranslateApiKeyVisible) {
-                                Icons.Default.VisibilityOff
-                            } else {
-                                Icons.Default.Visibility
-                            },
-                        contentDescription =
-                            if (state.isLibreTranslateApiKeyVisible) {
-                                stringResource(Res.string.proxy_hide_password)
-                            } else {
-                                stringResource(Res.string.proxy_show_password)
-                            },
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                GhsPasswordVisibilityIcon(
+                    visible = state.isLibreTranslateApiKeyVisible,
+                    onToggle = { onAction(TweaksAction.OnLibreTranslateApiKeyVisibilityToggle) },
+                )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
         Row(
@@ -554,41 +507,20 @@ private fun DeeplCredentialsForm(
             Text(stringResource(Res.string.translation_deepl_get_free_key))
         }
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.deeplAuthKey,
             onValueChange = { onAction(TweaksAction.OnDeeplAuthKeyChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_deepl_auth_key)) },
+            label = stringResource(Res.string.translation_deepl_auth_key),
             singleLine = true,
-            visualTransformation =
-                if (state.isDeeplAuthKeyVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
+            visualTransformation = passwordVisualTransformation(state.isDeeplAuthKeyVisible),
             trailingIcon = {
-                IconButton(
-                    onClick = { onAction(TweaksAction.OnDeeplAuthKeyVisibilityToggle) },
-                ) {
-                    Icon(
-                        imageVector =
-                            if (state.isDeeplAuthKeyVisible) {
-                                Icons.Default.VisibilityOff
-                            } else {
-                                Icons.Default.Visibility
-                            },
-                        contentDescription =
-                            if (state.isDeeplAuthKeyVisible) {
-                                stringResource(Res.string.proxy_hide_password)
-                            } else {
-                                stringResource(Res.string.proxy_show_password)
-                            },
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                GhsPasswordVisibilityIcon(
+                    visible = state.isDeeplAuthKeyVisible,
+                    onToggle = { onAction(TweaksAction.OnDeeplAuthKeyVisibilityToggle) },
+                )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
         Row(
@@ -636,51 +568,29 @@ private fun MicrosoftCredentialsForm(
             Text(stringResource(Res.string.translation_microsoft_get_free_key))
         }
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.microsoftTranslatorKey,
             onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorKeyChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_microsoft_key)) },
+            label = stringResource(Res.string.translation_microsoft_key),
             singleLine = true,
-            visualTransformation =
-                if (state.isMicrosoftTranslatorKeyVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
+            visualTransformation = passwordVisualTransformation(state.isMicrosoftTranslatorKeyVisible),
             trailingIcon = {
-                IconButton(
-                    onClick = { onAction(TweaksAction.OnMicrosoftTranslatorKeyVisibilityToggle) },
-                ) {
-                    Icon(
-                        imageVector =
-                            if (state.isMicrosoftTranslatorKeyVisible) {
-                                Icons.Default.VisibilityOff
-                            } else {
-                                Icons.Default.Visibility
-                            },
-                        contentDescription =
-                            if (state.isMicrosoftTranslatorKeyVisible) {
-                                stringResource(Res.string.proxy_hide_password)
-                            } else {
-                                stringResource(Res.string.proxy_show_password)
-                            },
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                GhsPasswordVisibilityIcon(
+                    visible = state.isMicrosoftTranslatorKeyVisible,
+                    onToggle = { onAction(TweaksAction.OnMicrosoftTranslatorKeyVisibilityToggle) },
+                )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
-        OutlinedTextField(
+        GhsTextField(
             value = state.microsoftTranslatorRegion,
             onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorRegionChanged(it)) },
-            label = { Text(stringResource(Res.string.translation_microsoft_region)) },
-            placeholder = { Text("global") },
+            label = stringResource(Res.string.translation_microsoft_region),
+            placeholder = "global",
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
         )
 
         Row(

@@ -33,19 +33,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -166,26 +163,13 @@ private fun PickAppStep(
 
         Spacer(Modifier.height(12.dp))
 
-        TextField(
+        GhsTextField(
             value = searchQuery,
             onValueChange = onSearchChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
-            placeholder = {
-                Text(stringResource(Res.string.search_apps_hint))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                )
-            },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = stringResource(Res.string.search_apps_hint),
+            leadingIcon = Icons.Default.Search,
             singleLine = true,
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
         )
 
         Spacer(Modifier.height(8.dp))
@@ -677,18 +661,15 @@ private fun EnterUrlStep(
 
         Spacer(Modifier.height(16.dp))
 
-        OutlinedTextField(
+        GhsTextField(
             value = repoUrl,
             onValueChange = onUrlChanged,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.enter_repo_url)) },
-            placeholder = { Text(stringResource(Res.string.repo_url_hint)) },
+            label = stringResource(Res.string.enter_repo_url),
+            placeholder = stringResource(Res.string.repo_url_hint),
             singleLine = true,
             isError = validationError != null,
-            supportingText = validationError?.let {
-                { Text(it, color = MaterialTheme.colorScheme.error) }
-            },
-            shape = RoundedCornerShape(12.dp),
+            supportingText = validationError,
         )
 
         Spacer(Modifier.height(20.dp))
@@ -779,47 +760,30 @@ private fun PickAssetStep(
 
         Spacer(Modifier.height(12.dp))
 
-        OutlinedTextField(
+        val filterSupporting = when {
+            filterError != null -> stringResource(Res.string.asset_filter_invalid)
+            visibleAssets.isEmpty() && filterValue.isNotBlank() ->
+                stringResource(Res.string.asset_filter_no_match)
+            filterValue.isNotBlank() ->
+                pluralStringResource(
+                    Res.plurals.asset_filter_visible_count,
+                    allAssets.size,
+                    visibleAssets.size,
+                    allAssets.size,
+                )
+            else -> stringResource(Res.string.asset_filter_help)
+        }
+        GhsTextField(
             value = filterValue,
             onValueChange = onFilterChanged,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.asset_filter_label)) },
-            placeholder = { Text(stringResource(Res.string.asset_filter_placeholder)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.FilterAlt,
-                    contentDescription = null,
-                )
-            },
+            label = stringResource(Res.string.asset_filter_label),
+            placeholder = stringResource(Res.string.asset_filter_placeholder),
+            leadingIcon = Icons.Default.FilterAlt,
             singleLine = true,
             isError = filterError != null,
-            supportingText = {
-                Text(
-                    text =
-                        when {
-                            filterError != null -> stringResource(Res.string.asset_filter_invalid)
-                            visibleAssets.isEmpty() && filterValue.isNotBlank() ->
-                                stringResource(Res.string.asset_filter_no_match)
-                            filterValue.isNotBlank() ->
-
-                                pluralStringResource(
-                                    Res.plurals.asset_filter_visible_count,
-                                    allAssets.size,
-                                    visibleAssets.size,
-                                    allAssets.size,
-                                )
-                            else -> stringResource(Res.string.asset_filter_help)
-                        },
-                    color =
-                        if (filterError != null) {
-                            MaterialTheme.colorScheme.error
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                )
-            },
+            supportingText = filterSupporting,
             enabled = !isProcessing,
-            shape = RoundedCornerShape(12.dp),
         )
 
         Spacer(Modifier.height(8.dp))

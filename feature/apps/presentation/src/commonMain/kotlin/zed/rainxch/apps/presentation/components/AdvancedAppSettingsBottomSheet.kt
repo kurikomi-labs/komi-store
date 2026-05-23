@@ -30,9 +30,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -100,15 +100,18 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            OutlinedTextField(
+            val advancedSupporting = when {
+                state.advancedFilterError != null ->
+                    stringResource(Res.string.asset_filter_invalid)
+                else -> stringResource(Res.string.asset_filter_help)
+            }
+            GhsTextField(
                 value = state.advancedFilterDraft,
                 onValueChange = { onAction(AppsAction.OnAdvancedFilterChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(Res.string.asset_filter_label)) },
-                placeholder = { Text(stringResource(Res.string.asset_filter_placeholder)) },
-                leadingIcon = {
-                    Icon(Icons.Default.FilterAlt, contentDescription = null)
-                },
+                label = stringResource(Res.string.asset_filter_label),
+                placeholder = stringResource(Res.string.asset_filter_placeholder),
+                leadingIcon = Icons.Default.FilterAlt,
                 trailingIcon = {
                     if (state.advancedFilterDraft.isNotEmpty()) {
                         TextButton(onClick = { onAction(AppsAction.OnAdvancedClearFilter) }) {
@@ -118,24 +121,8 @@ fun AdvancedAppSettingsBottomSheet(
                 },
                 singleLine = true,
                 isError = state.advancedFilterError != null,
-                supportingText = {
-                    Text(
-                        text =
-                            when {
-                                state.advancedFilterError != null ->
-                                    stringResource(Res.string.asset_filter_invalid)
-                                else -> stringResource(Res.string.asset_filter_help)
-                            },
-                        color =
-                            if (state.advancedFilterError != null) {
-                                MaterialTheme.colorScheme.error
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
-                    )
-                },
+                supportingText = advancedSupporting,
                 enabled = !state.advancedSavingFilter,
-                shape = RoundedCornerShape(12.dp),
             )
 
             Spacer(Modifier.height(12.dp))

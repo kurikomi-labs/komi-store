@@ -17,13 +17,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
@@ -62,10 +62,10 @@ fun CustomForgesDialog(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    OutlinedTextField(
+                    GhsTextField(
                         value = state.customForgeDraft,
                         onValueChange = { onAction(TweaksAction.OnCustomForgeDraftChanged(it)) },
-                        placeholder = { Text("forgejo.example.com") },
+                        placeholder = "forgejo.example.com",
                         singleLine = true,
                         isError = state.customForgeError != null,
                         modifier = Modifier.weight(1f),

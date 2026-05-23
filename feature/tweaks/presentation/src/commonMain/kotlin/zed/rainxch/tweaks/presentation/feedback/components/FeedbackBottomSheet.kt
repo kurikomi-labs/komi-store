@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_close
@@ -108,14 +109,15 @@ fun FeedbackBottomSheet(
                 onSelected = { viewModel.onAction(FeedbackAction.OnTopicChange(it)) },
             )
 
-            OutlinedTextField(
+            GhsTextField(
                 value = state.title,
                 onValueChange = { viewModel.onAction(FeedbackAction.OnTitleChange(it)) },
-                label = { Text(stringResource(Res.string.feedback_field_title) + " *") },
+                label = stringResource(Res.string.feedback_field_title) + " *",
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
+            // TODO(ghs-text-field): needs minLines support
             OutlinedTextField(
                 value = state.description,
                 onValueChange = { viewModel.onAction(FeedbackAction.OnDescriptionChange(it)) },

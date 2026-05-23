@@ -43,8 +43,6 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,8 +53,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
@@ -78,8 +74,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -92,6 +86,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
+import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -110,13 +107,11 @@ import zed.rainxch.githubstore.core.presentation.res.more_requests
 import zed.rainxch.githubstore.core.presentation.res.more_requests_description
 import zed.rainxch.githubstore.core.presentation.res.open_github
 import zed.rainxch.githubstore.core.presentation.res.pat_cancel
-import zed.rainxch.githubstore.core.presentation.res.pat_hide
 import zed.rainxch.githubstore.core.presentation.res.pat_input_label
 import zed.rainxch.githubstore.core.presentation.res.pat_input_placeholder
 import zed.rainxch.githubstore.core.presentation.res.pat_open_settings
 import zed.rainxch.githubstore.core.presentation.res.pat_sheet_description
 import zed.rainxch.githubstore.core.presentation.res.pat_sheet_title
-import zed.rainxch.githubstore.core.presentation.res.pat_show
 import zed.rainxch.githubstore.core.presentation.res.pat_submit
 import zed.rainxch.githubstore.core.presentation.res.pat_use_token_instead
 import zed.rainxch.githubstore.core.presentation.res.redirecting_message
@@ -801,13 +796,13 @@ private fun PatSignInSheet(
                 onClick = { onAction(AuthenticationAction.OpenPatSettingsPage) },
             )
 
-            OutlinedTextField(
+            GhsTextField(
                 value = input,
                 onValueChange = { onAction(AuthenticationAction.OnPatInputChanged(it)) },
-                label = { Text(stringResource(Res.string.pat_input_label)) },
-                placeholder = { Text(stringResource(Res.string.pat_input_placeholder)) },
+                label = stringResource(Res.string.pat_input_label),
+                placeholder = stringResource(Res.string.pat_input_placeholder),
                 singleLine = true,
-                visualTransformation = if (isMasked) PasswordVisualTransformation() else VisualTransformation.None,
+                visualTransformation = passwordVisualTransformation(!isMasked),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     autoCorrectEnabled = false,
@@ -815,27 +810,11 @@ private fun PatSignInSheet(
                 ),
                 isError = error != null,
                 enabled = !isSubmitting,
-                shape = RoundedCornerShape(14.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                ),
                 trailingIcon = {
-                    IconButton(
-                        onClick = { isMasked = !isMasked },
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape),
-                    ) {
-                        Icon(
-                            imageVector = if (isMasked) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = stringResource(
-                                if (isMasked) Res.string.pat_show else Res.string.pat_hide,
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
+                    GhsPasswordVisibilityIcon(
+                        visible = !isMasked,
+                        onToggle = { isMasked = !isMasked },
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
             )

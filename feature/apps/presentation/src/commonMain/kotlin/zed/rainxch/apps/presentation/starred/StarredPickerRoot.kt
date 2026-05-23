@@ -30,8 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.starred.components.StarredCandidateRow
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
@@ -165,18 +164,13 @@ private fun ContentBody(
         }
 
         Spacer(Modifier.height(12.dp))
-        TextField(
+        GhsTextField(
             value = state.searchQuery,
             onValueChange = { onAction(StarredPickerAction.OnSearchChange(it)) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(Res.string.starred_picker_search_hint)) },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
+            placeholder = stringResource(Res.string.starred_picker_search_hint),
+            leadingIcon = Icons.Filled.Search,
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-                unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-            ),
         )
 
         Spacer(Modifier.height(8.dp))

@@ -45,6 +45,7 @@ fun RepoSearchOverride(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box {
+            // TODO(ghs-text-field): needs keyboardActions support
             OutlinedTextField(
                 value = query,
                 onValueChange = onQueryChange,

@@ -24,9 +24,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import zed.rainxch.core.presentation.vocabulary.Squiggle
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -85,15 +85,12 @@ fun LanguagePicker(
             Squiggle()
             Spacer(Modifier.height(8.dp))
 
-            OutlinedTextField(
+            GhsTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text(stringResource(Res.string.search_language)) },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
-                },
+                placeholder = stringResource(Res.string.search_language),
+                leadingIcon = Icons.Default.Search,
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
