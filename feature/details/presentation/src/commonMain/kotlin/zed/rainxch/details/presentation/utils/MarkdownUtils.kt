@@ -51,7 +51,6 @@ fun rememberMarkdownTypography(): MarkdownTypography {
             ),
         quote =
             typography.bodyLarge.copy(
-                fontStyle = FontStyle.Italic,
                 color = colorScheme.onSurfaceVariant,
             ),
         paragraph = typography.bodyLarge,

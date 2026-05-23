@@ -13,8 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -57,11 +57,19 @@ fun LazyListScope.header(
                 release = state.selectedRelease,
                 repository = state.repository,
                 installedApp = state.installedApp,
+                stats = state.stats,
                 downloadStage = state.downloadStage,
                 downloadProgress = state.downloadProgressPercent,
                 isCurrentUserOwner = state.isCurrentUserOwner,
                 onPlatformClick = { platform ->
                     onAction(DetailsAction.OnPlatformChipClick(platform))
+                },
+                onOwnerClick = {
+                    onAction(
+                        DetailsAction.OpenDeveloperProfile(
+                            state.repository.owner.login,
+                        ),
+                    )
                 },
             )
         }
@@ -195,96 +203,48 @@ fun LazyListScope.header(
                     }
                 }
 
-            DropdownMenu(
+            GhsDropdownMenu(
                 expanded = state.isInstallDropdownExpanded,
                 onDismissRequest = {
                     onAction(DetailsAction.OnToggleInstallDropdown)
                 },
                 offset = DpOffset(x = 0.dp, y = 20.dp),
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(
-                                text = stringResource(Res.string.open_in_obtainium),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = stringResource(Res.string.obtainium_description),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                    onClick = {
-                        onAction(DetailsAction.OpenInObtainium)
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.open_in_obtainium),
+                    subtitle = stringResource(Res.string.obtainium_description),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Update,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(20.dp),
                         )
                     },
+                    onClick = { onAction(DetailsAction.OpenInObtainium) },
                 )
-
-                Spacer(Modifier.height(8.dp))
-
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(
-                                text = stringResource(Res.string.inspect_with_appmanager),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = stringResource(Res.string.appmanager_description),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                    onClick = {
-                        onAction(DetailsAction.OpenInAppManager)
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.inspect_with_appmanager),
+                    subtitle = stringResource(Res.string.appmanager_description),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Security,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(20.dp),
                         )
                     },
+                    onClick = { onAction(DetailsAction.OpenInAppManager) },
                 )
-
-                Spacer(Modifier.height(8.dp))
-
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(
-                                text = stringResource(Res.string.open_with_external_installer),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = stringResource(Res.string.external_installer_description),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                    onClick = {
-                        onAction(DetailsAction.InstallWithExternalApp)
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.open_with_external_installer),
+                    subtitle = stringResource(Res.string.external_installer_description),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(20.dp),
                         )
                     },
+                    onClick = { onAction(DetailsAction.InstallWithExternalApp) },
                 )
             }
         }

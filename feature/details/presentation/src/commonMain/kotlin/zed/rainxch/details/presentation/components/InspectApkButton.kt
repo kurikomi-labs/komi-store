@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -37,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
@@ -124,14 +127,14 @@ private fun Coachmark(onDismiss: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.End) {
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = WonkySquircleShape.Toast,
                 color = MaterialTheme.colorScheme.primary,
                 shadowElevation = 6.dp,
                 modifier = Modifier.width(260.dp),
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -145,9 +148,11 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         )
                         Text(
                             text = stringResource(Res.string.apk_inspect_coachmark_title),
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
+                            ),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
                         )
                     }
                     Text(
@@ -156,14 +161,16 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
                     )
                     Row(
-                        modifier = Modifier.padding(top = 4.dp).fillMaxWidthOnly(),
+                        modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
                         TextButton(onClick = onDismiss) {
                             Text(
                                 text = stringResource(Res.string.apk_inspect_coachmark_dismiss),
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
                             )
                         }
                     }
@@ -179,8 +186,6 @@ private fun Coachmark(onDismiss: () -> Unit) {
         }
     }
 }
-
-private fun Modifier.fillMaxWidthOnly(): Modifier = this.fillMaxWidth()
 
 private fun Modifier.arrowDown(color: androidx.compose.ui.graphics.Color): Modifier =
     this.fillMaxSize().background(

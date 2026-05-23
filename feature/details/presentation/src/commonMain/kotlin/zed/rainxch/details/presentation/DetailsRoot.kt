@@ -1,12 +1,17 @@
 package zed.rainxch.details.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.Platform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -29,8 +34,13 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -81,6 +91,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.ContentWidth
+import zed.rainxch.core.presentation.components.FloatingPill
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
@@ -145,6 +156,8 @@ fun DetailsRoot(
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     onOpenRepositoryInApp: (repoId: Long) -> Unit,
     onNavigateToSearchByPlatform: (DiscoveryPlatform) -> Unit,
+    onNavigateToAbout: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
+    onNavigateToWhatsNew: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -226,6 +239,26 @@ fun DetailsRoot(
         state = state,
         snackbarHostState = snackbarHostState,
         onAction = onAction,
+        onReadMoreAbout = state.repository?.let { repo ->
+            {
+                onNavigateToAbout(
+                    repo.id,
+                    repo.owner.login,
+                    repo.name,
+                    repo.sourceHost,
+                )
+            }
+        },
+        onReadMoreWhatsNew = state.repository?.let { repo ->
+            {
+                onNavigateToWhatsNew(
+                    repo.id,
+                    repo.owner.login,
+                    repo.name,
+                    repo.sourceHost,
+                )
+            }
+        },
     )
 
     state.downgradeWarning?.let { warning ->
@@ -233,9 +266,13 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
             },
+            shape = WonkySquircleShape.Dialog,
             title = {
                 Text(
                     text = stringResource(Res.string.downgrade_requires_uninstall),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 )
             },
             text = {
@@ -280,9 +317,13 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissSigningKeyWarning)
             },
+            shape = WonkySquircleShape.Dialog,
             title = {
                 Text(
                     text = stringResource(Res.string.signing_key_changed_title),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 )
             },
             text = {
@@ -327,9 +368,13 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUninstallConfirmation)
             },
+            shape = WonkySquircleShape.Dialog,
             title = {
                 Text(
                     text = stringResource(Res.string.confirm_uninstall_title),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 )
             },
             text = {
@@ -367,8 +412,14 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUnlinkConfirmation)
             },
+            shape = WonkySquircleShape.Dialog,
             title = {
-                Text(text = stringResource(Res.string.details_unlink_external_app_dialog_title))
+                Text(
+                    text = stringResource(Res.string.details_unlink_external_app_dialog_title),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
             },
             text = {
                 Text(
@@ -404,8 +455,14 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.DismissExternalInstallerPrompt)
             },
+            shape = WonkySquircleShape.Dialog,
             title = {
-                Text(text = stringResource(Res.string.install_permission_unavailable))
+                Text(
+                    text = stringResource(Res.string.install_permission_unavailable),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
             },
             text = {
                 Text(text = stringResource(Res.string.install_permission_blocked_message))
@@ -446,6 +503,8 @@ fun DetailsScreen(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
     snackbarHostState: SnackbarHostState,
+    onReadMoreAbout: (() -> Unit)? = null,
+    onReadMoreWhatsNew: (() -> Unit)? = null,
 ) {
     Scaffold(
         topBar = {
@@ -511,7 +570,7 @@ fun DetailsScreen(
 
             val density = LocalDensity.current
             var containerHeightDp by remember { mutableStateOf(0.dp) }
-            val collapsedSectionHeight = containerHeightDp * 0.7f
+            val collapsedSectionHeight = containerHeightDp * 0.4f
             val listState = rememberLazyListState()
             val isScrollbarEnabled = LocalScrollbarEnabled.current
             val contentWidthDp = when (LocalContentWidth.current) {
@@ -612,6 +671,7 @@ fun DetailsScreen(
                                 onToggleTranslation = {
                                     onAction(DetailsAction.ToggleWhatsNewTranslation)
                                 },
+                                onReadMore = onReadMoreWhatsNew,
                             )
                         }
 
@@ -634,6 +694,7 @@ fun DetailsScreen(
                                 onToggleTranslation = {
                                     onAction(DetailsAction.ToggleAboutTranslation)
                                 },
+                                onReadMore = onReadMoreAbout,
                             )
                         }
                     } else {
@@ -656,6 +717,7 @@ fun DetailsScreen(
                                 onToggleTranslation = {
                                     onAction(DetailsAction.ToggleAboutTranslation)
                                 },
+                                onReadMore = onReadMoreAbout,
                             )
                         }
 
@@ -677,6 +739,7 @@ fun DetailsScreen(
                                 onToggleTranslation = {
                                     onAction(DetailsAction.ToggleWhatsNewTranslation)
                                 },
+                                onReadMore = onReadMoreWhatsNew,
                             )
                         }
                     }
@@ -731,155 +794,61 @@ private fun DetailsTopbar(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
 ) {
-    TopAppBar(
-        title = { },
-        navigationIcon = {
-            IconButton(
-                shapes = IconButtonDefaults.shapes(),
-                onClick = {
-                    onAction(DetailsAction.OnNavigateBackClick)
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.navigate_back),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        },
-        actions = {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        FloatingPill(
+            modifier = Modifier.clickable {
+                onAction(DetailsAction.OnNavigateBackClick)
+            },
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.navigate_back),
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+        if (state.repository != null) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (state.repository != null) {
-                    IconButton(
-                        onClick = {
-                            onAction(
-                                DetailsAction.OnMessage(
-                                    messageText =
-                                        if (state.isStarred) {
-                                            Res.string.unstar_from_github
-                                        } else {
-                                            Res.string.star_from_github
-                                        },
-                                ),
-                            )
-                        },
-                        shapes = IconButtonDefaults.shapes(),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector =
-                                if (state.isStarred) {
-                                    Icons.Default.Star
-                                } else {
-                                    Icons.Default.StarBorder
-                                },
-                            contentDescription =
-                                stringResource(
-                                    resource =
-                                        if (state.isStarred) {
-                                            Res.string.repository_starred
-                                        } else {
-                                            Res.string.repository_not_starred
-                                        },
-                                ),
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            onAction(DetailsAction.OnToggleFavorite)
-                        },
-                        shapes = IconButtonDefaults.shapes(),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector =
-                                if (state.isFavourite) {
-                                    Icons.Default.Favorite
-                                } else {
-                                    Icons.Default.FavoriteBorder
-                                },
-                            contentDescription =
-                                stringResource(
-                                    resource =
-                                        if (state.isFavourite) {
-                                            Res.string.remove_from_favourites
-                                        } else {
-                                            Res.string.add_to_favourites
-                                        },
-                                ),
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            onAction(DetailsAction.OnShareClick)
-                        },
-                        shapes = IconButtonDefaults.shapes(),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(Res.string.share_repository),
-                        )
-                    }
-                }
-
-                state.repository?.htmlUrl?.let {
-                    IconButton(
-                        shapes = IconButtonDefaults.shapes(),
-                        onClick = {
-                            onAction(DetailsAction.OpenRepoInBrowser)
-                        },
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.OpenInBrowser,
-                            contentDescription = stringResource(Res.string.open_repository),
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
-                }
-
-                if (state.repository != null) {
-                    DetailsOverflowMenu(state = state, onAction = onAction)
-                }
-            }
-        },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-            ),
-        modifier =
-            Modifier
-                .shadow(
-                    elevation = 6.dp,
-                    ambientColor = MaterialTheme.colorScheme.surfaceTint,
-                    spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                ).background(
-                    Brush.linearGradient(
-                        0f to MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                        0.5f to MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                        1f to MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(50),
                     ),
-                ).background(MaterialTheme.colorScheme.surfaceContainerHighest),
-    )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clickable { onAction(DetailsAction.OnShareClick) }
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = stringResource(Res.string.share_repository),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .size(1.dp, 20.dp)
+                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+                )
+                DetailsOverflowMenu(state = state, onAction = onAction)
+            }
+        }
+    }
 }
+
 
 @OptIn(
     ExperimentalTime::class,
@@ -911,39 +880,97 @@ private fun DetailsOverflowMenu(
     val refreshDisabled = cooldownActive || state.isRefreshing
 
     Box {
-        IconButton(
-            shapes = IconButtonDefaults.shapes(),
-            onClick = { menuOpen = true },
-            colors =
-                IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                ),
+        Box(
+            modifier = Modifier
+                .clickable { menuOpen = true }
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = stringResource(Res.string.details_refresh_more_options),
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(18.dp),
             )
         }
-        DropdownMenu(
+        GhsDropdownMenu(
             expanded = menuOpen,
             onDismissRequest = { menuOpen = false },
         ) {
-            DropdownMenuItem(
-                enabled = !refreshDisabled,
-                text = {
-                    Text(
-                        text =
-                            if (cooldownActive) {
-                                stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
-                            } else {
-                                stringResource(Res.string.details_refresh)
-                            },
+            GhsDropdownMenuItem(
+                text = stringResource(
+                    if (state.isStarred) Res.string.repository_starred
+                    else Res.string.repository_not_starred,
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
                     )
+                },
+                onClick = {
+                    menuOpen = false
+                    onAction(
+                        DetailsAction.OnMessage(
+                            messageText = if (state.isStarred) {
+                                Res.string.unstar_from_github
+                            } else {
+                                Res.string.star_from_github
+                            },
+                        ),
+                    )
+                },
+            )
+            GhsDropdownMenuItem(
+                text = stringResource(
+                    if (state.isFavourite) Res.string.remove_from_favourites
+                    else Res.string.add_to_favourites,
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (state.isFavourite) {
+                            Icons.Default.Favorite
+                        } else {
+                            Icons.Default.FavoriteBorder
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                },
+                onClick = {
+                    menuOpen = false
+                    onAction(DetailsAction.OnToggleFavorite)
+                },
+            )
+            state.repository?.htmlUrl?.let {
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.open_repository),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.OpenInBrowser,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                    onClick = {
+                        menuOpen = false
+                        onAction(DetailsAction.OpenRepoInBrowser)
+                    },
+                )
+            }
+            GhsDropdownMenuItem(
+                enabled = !refreshDisabled,
+                text = if (cooldownActive) {
+                    stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
+                } else {
+                    stringResource(Res.string.details_refresh)
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = null,
+                        modifier = Modifier.size(18.dp),
                     )
                 },
                 onClick = {
@@ -952,14 +979,13 @@ private fun DetailsOverflowMenu(
                 },
             )
             if (state.installedApp?.installSource == InstallSource.MANUAL) {
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(Res.string.details_unlink_external_app_menu))
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.details_unlink_external_app_menu),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.LinkOff,
                             contentDescription = null,
+                            modifier = Modifier.size(18.dp),
                         )
                     },
                     onClick = {

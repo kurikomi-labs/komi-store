@@ -1,14 +1,16 @@
 package zed.rainxch.details.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,21 +23,20 @@ import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -57,6 +58,10 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.core.domain.util.AssetVariant
+import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -107,38 +112,47 @@ fun ReleaseAssetsPicker(
     ) {
         Text(
             text = stringResource(Res.string.assets_title),
-            style = MaterialTheme.typography.labelLargeEmphasized,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+            ),
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(horizontal = 4.dp),
         )
-        OutlinedCard(
-            onClick = { onAction(DetailsAction.ToggleReleaseAssetsPicker) },
-            enabled = isPickerEnabled,
-            modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(Radii.row)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = Radii.row,
+                )
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable(enabled = isPickerEnabled) {
+                    onAction(DetailsAction.ToggleReleaseAssetsPicker)
+                }
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .heightIn(min = 36.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .heightIn(min = 36.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = selectedAsset?.name ?: stringResource(Res.string.no_assets_selected),
-                    style = MaterialTheme.typography.titleSmall,
+            Text(
+                text = selectedAsset?.name ?: stringResource(Res.string.no_assets_selected),
+                style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.SemiBold,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f),
-                )
-                Icon(
-                    imageVector = Icons.Default.UnfoldMore,
-                    contentDescription = stringResource(Res.string.select_version),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                imageVector = Icons.Default.UnfoldMore,
+                contentDescription = stringResource(Res.string.select_version),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
         }
     }
 }
@@ -161,7 +175,6 @@ private fun ReleaseAssetsItemsPicker(
 ) {
     if (!showPicker) return
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showInfoDialog by rememberSaveable { mutableStateOf(false) }
 
     ReleaseAssetsAboutDialog(
@@ -169,29 +182,26 @@ private fun ReleaseAssetsItemsPicker(
         onDismiss = { showInfoDialog = false },
     )
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
-        ) {
+    GhsBottomSheet(onDismissRequest = onDismiss, modifier = modifier) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(Res.string.assets_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .weight(1f),
-                )
+                Column(modifier = Modifier.weight(1f).padding(vertical = 6.dp)) {
+                    Text(
+                        text = stringResource(Res.string.assets_title),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Squiggle()
+                }
                 IconButton(onClick = { showInfoDialog = true }) {
-                    Icon(imageVector = Icons.Outlined.Info, contentDescription = stringResource(Res.string.icon_content_description_info))
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = stringResource(Res.string.icon_content_description_info),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
 
@@ -215,38 +225,37 @@ private fun ReleaseAssetsItemsPicker(
                 }
             }
 
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clip(Radii.row)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = Radii.row,
+                    )
+                    .background(MaterialTheme.colorScheme.surface)
+                    .clickable(onClick = { onToggleShowAllPlatforms(!showAllPlatforms) })
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    modifier =
-                        Modifier
-                            .clickable(onClick = { onToggleShowAllPlatforms(!showAllPlatforms) })
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Devices,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(Modifier.size(12.dp))
-                    Text(
-                        text = stringResource(Res.string.show_all_platforms_label),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                    )
-                    androidx.compose.material3.Switch(
-                        checked = showAllPlatforms,
-                        onCheckedChange = onToggleShowAllPlatforms,
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Outlined.Devices,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(Modifier.size(12.dp))
+                Text(
+                    text = stringResource(Res.string.show_all_platforms_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f),
+                )
+                androidx.compose.material3.Switch(
+                    checked = showAllPlatforms,
+                    onCheckedChange = onToggleShowAllPlatforms,
+                )
             }
 
             val groups = remember(crossPlatformAssets) {
@@ -337,30 +346,37 @@ private fun ReleaseAssetsAboutDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(),
-    containerColor: Color = AlertDialogDefaults.containerColor,
-    shape: Shape = AlertDialogDefaults.shape,
 ) {
     if (!showDialog) return
 
     BasicAlertDialog(onDismissRequest = onDismiss, modifier = modifier, properties = properties) {
-        Surface(
-            color = containerColor,
-            contentColor = contentColorFor(containerColor),
-            shape = shape,
+        Box(
+            modifier = Modifier
+                .clip(WonkySquircleShape.Dialog)
+                .background(MaterialTheme.colorScheme.surface)
+                .border(
+                    width = 1.5.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = WonkySquircleShape.Dialog,
+                )
+                .padding(24.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+            Column {
                 Text(
                     text = stringResource(Res.string.multiple_assets_info_dialog_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = AlertDialogDefaults.titleContentColor,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
+                Spacer(Modifier.size(6.dp))
+                Squiggle()
+                Spacer(Modifier.size(12.dp))
                 Text(
                     text = stringResource(Res.string.multiple_assets_info_dialog_text),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = AlertDialogDefaults.textContentColor,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

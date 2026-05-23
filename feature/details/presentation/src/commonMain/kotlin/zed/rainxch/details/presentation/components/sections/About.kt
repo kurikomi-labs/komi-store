@@ -8,7 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -34,9 +41,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.model.ImageTransformer
 import com.mikepenz.markdown.model.rememberMarkdownState
@@ -69,38 +79,40 @@ fun LazyListScope.about(
     onTranslateClick: () -> Unit,
     onLanguagePickerClick: () -> Unit,
     onToggleTranslation: () -> Unit,
+    onReadMore: (() -> Unit)? = null,
 ) {
     item {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.about_this_app),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                )
-
-                readmeLanguage?.let {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     Text(
-                        text = it,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
+                        text = stringResource(Res.string.about_this_app),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 22.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
+                    readmeLanguage?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline,
+                        )
+                    }
                 }
+                Squiggle()
             }
 
             TranslationControls(
@@ -110,6 +122,7 @@ fun LazyListScope.about(
                 onToggleTranslation = onToggleTranslation,
             )
         }
+        Spacer(Modifier.height(8.dp))
     }
 
     item(key = "about_markdown") {
@@ -131,15 +144,13 @@ fun LazyListScope.about(
             rawMarkdown = raw,
             isDark = isDark,
             isExpanded = isExpanded,
-            onToggleExpanded = onToggleExpanded,
+            onToggleExpanded = onReadMore ?: onToggleExpanded,
             imageTransformer = imageTransformer,
             collapsedHeight = collapsedHeight,
             measuredHeightPx = measuredHeightPx,
             onMeasured = onMeasured,
             fadeColor = MaterialTheme.colorScheme.background,
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -230,36 +241,56 @@ fun ExpandableMarkdownContent(
 
             if (!isExpanded && needsExpansion) {
                 Box(
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .background(
-                                Brush.verticalGradient(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = arrayOf(
                                     0f to fadeColor.copy(alpha = 0f),
+                                    0.35f to fadeColor.copy(alpha = 0.10f),
+                                    0.6f to fadeColor.copy(alpha = 0.35f),
+                                    0.8f to fadeColor.copy(alpha = 0.7f),
                                     1f to fadeColor,
                                 ),
                             ),
+                        ),
                 )
             }
         }
 
         if (needsExpansion) {
-            TextButton(
-                onClick = onToggleExpanded,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.onSurface)
+                    .clickable(onClick = onToggleExpanded)
+                    .padding(horizontal = 22.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text =
-                        if (isExpanded) {
-                            stringResource(Res.string.show_less)
-                        } else {
-                            stringResource(Res.string.read_more)
-                        },
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = if (isExpanded) {
+                        stringResource(Res.string.show_less)
+                    } else {
+                        stringResource(Res.string.read_more)
+                    },
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    color = MaterialTheme.colorScheme.surface,
                 )
+                if (!isExpanded) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
             }
         }
     }

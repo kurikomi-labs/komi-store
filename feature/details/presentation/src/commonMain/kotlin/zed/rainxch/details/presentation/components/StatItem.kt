@@ -1,15 +1,20 @@
 package zed.rainxch.details.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.utils.formatCount
 
 @Composable
 fun StatItem(
@@ -26,31 +31,32 @@ fun StatItem(
     stat: Long,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            ),
+    Column(
+        modifier = modifier
+            .clip(Radii.row)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.outline,
-                maxLines = 1,
-                softWrap = false,
-            )
-
-            Text(
-                text = formatCount(stat),
-                style = MaterialTheme.typography.titleLarge,
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            softWrap = false,
+        )
+        Text(
+            text = formatCount(stat),
+            style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
+                fontSize = 22.sp,
+                letterSpacing = (-0.3).sp,
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
@@ -60,39 +66,33 @@ fun TextStatItem(
     value: String,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            ),
+    Column(
+        modifier = modifier
+            .clip(Radii.row)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.outline,
-                maxLines = 1,
-                softWrap = false,
-            )
-
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            softWrap = false,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 1,
-                softWrap = false,
-            )
-        }
+                fontSize = 18.sp,
+                letterSpacing = (-0.3).sp,
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            softWrap = false,
+        )
     }
 }
-
-private fun formatCount(count: Long): String =
-    when {
-        count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000.0)
-        count >= 1_000 -> String.format("%.1fK", count / 1_000.0)
-        else -> count.toString()
-    }

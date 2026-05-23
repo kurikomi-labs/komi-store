@@ -17,7 +17,7 @@ import zed.rainxch.details.presentation.model.SigningKeyWarning
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.model.TranslationTarget
 
-data class DetailsState(
+internal data class RawDetailsState(
     val isLoading: Boolean = true,
     val isCurrentUserOwner: Boolean = false,
     val isRefreshing: Boolean = false,
@@ -84,9 +84,4 @@ data class DetailsState(
     val isApkInspectCoachmarkPending: Boolean = false,
     val isChannelChipCoachmarkPending: Boolean = false,
     val showAllPlatforms: Boolean = false,
-
-    val filteredReleases: List<GithubRelease> = emptyList(),
-    val latestStableRelease: GithubRelease? = null,
-    val canSwitchToStable: Boolean = false,
-    val isPendingInstallReady: Boolean = false,
 )

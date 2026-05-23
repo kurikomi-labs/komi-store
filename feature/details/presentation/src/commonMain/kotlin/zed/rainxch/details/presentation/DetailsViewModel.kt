@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -138,8 +139,8 @@ class DetailsViewModel(
     private var aboutTranslationJob: Job? = null
     private var whatsNewTranslationJob: Job? = null
 
-    private val _state = MutableStateFlow(DetailsState())
-    val state =
+    private val _state = MutableStateFlow(RawDetailsState())
+    val state: StateFlow<DetailsState> =
         _state
             .onStart {
                 if (!hasLoadedInitialData) {
@@ -151,7 +152,9 @@ class DetailsViewModel(
 
                     hasLoadedInitialData = true
                 }
-            }.stateIn(
+            }
+            .map { it.toView() }
+            .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 DetailsState(),
@@ -687,7 +690,7 @@ class DetailsViewModel(
     }
 
     private fun switchToStable() {
-        val stable = _state.value.latestStableRelease ?: return
+        val stable = _state.value.latestStableRelease() ?: return
 
         val (_, primary) = recomputeAssetsForRelease(stable, _state.value.installedApp)
         if (primary == null) {

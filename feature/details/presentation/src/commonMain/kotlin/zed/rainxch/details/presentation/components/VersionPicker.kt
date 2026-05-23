@@ -1,5 +1,7 @@
 package zed.rainxch.details.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,28 +21,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.isEffectivelyPreRelease
 import zed.rainxch.core.domain.model.preReleaseLabel
+import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.latest_badge
@@ -51,7 +53,7 @@ import zed.rainxch.githubstore.core.presentation.res.pre_release_badge
 import zed.rainxch.githubstore.core.presentation.res.select_version
 import zed.rainxch.githubstore.core.presentation.res.versions_title
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VersionPicker(
     selectedRelease: GithubRelease?,
@@ -70,104 +72,102 @@ fun VersionPicker(
     ) {
         Text(
             text = stringResource(Res.string.versions_title),
-            style = MaterialTheme.typography.labelLargeEmphasized,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+            ),
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(horizontal = 4.dp),
         )
-        OutlinedCard(
-            onClick = { onAction(DetailsAction.ToggleVersionPicker) },
-            enabled = isPickerEnabled,
-            modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(Radii.row)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = Radii.row,
+                )
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable(enabled = isPickerEnabled) {
+                    onAction(DetailsAction.ToggleVersionPicker)
+                }
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .heightIn(min = 36.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .heightIn(min = 36.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text =
-                            selectedRelease?.tagName
-                                ?: stringResource(Res.string.no_version_selected),
-                        style = MaterialTheme.typography.titleSmall,
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = selectedRelease?.tagName
+                        ?: stringResource(Res.string.no_version_selected),
+                    style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.SemiBold,
-                        overflow = TextOverflow.Clip,
-                        maxLines = 1,
-                    )
-                    selectedRelease?.name?.let { name ->
-                        if (name != selectedRelease.tagName) {
-                            Text(
-                                text = name,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    overflow = TextOverflow.Clip,
+                    maxLines = 1,
+                )
+                selectedRelease?.name?.let { name ->
+                    if (name != selectedRelease.tagName) {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
-                Icon(
-                    imageVector = Icons.Default.UnfoldMore,
-                    contentDescription = stringResource(Res.string.select_version),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
+            Icon(
+                imageVector = Icons.Default.UnfoldMore,
+                contentDescription = stringResource(Res.string.select_version),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
         }
     }
 
     if (isPickerVisible) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-
-        ModalBottomSheet(
-            onDismissRequest = { onAction(DetailsAction.ToggleVersionPicker) },
-            sheetState = sheetState,
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding(),
-            ) {
+        GhsBottomSheet(onDismissRequest = { onAction(DetailsAction.ToggleVersionPicker) }) {
+            Text(
+                text = stringResource(Res.string.versions_title),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(vertical = 6.dp),
+            )
+            Squiggle()
+            Spacer(Modifier.size(8.dp))
+            if (filteredReleases.isEmpty()) {
                 Text(
-                    text = stringResource(Res.string.versions_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    text = stringResource(Res.string.not_available),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 16.dp),
                 )
-
-                HorizontalDivider()
-
-                if (filteredReleases.isEmpty()) {
-                    Text(
-                        text = stringResource(Res.string.not_available),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(16.dp),
-                    )
-                } else {
-                    val latestReleaseId by remember(filteredReleases) {
-                        derivedStateOf { filteredReleases.firstOrNull()?.id }
-                    }
-
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(vertical = 8.dp),
-                    ) {
-                        items(
-                            items = filteredReleases,
-                            key = { it.id },
-                        ) { release ->
-                            VersionListItem(
-                                release = release,
-                                isSelected = release.id == selectedRelease?.id,
-                                isLatest = release.id == latestReleaseId,
-                                onClick = { onAction(DetailsAction.SelectRelease(release)) },
-                            )
-                        }
+            } else {
+                val latestReleaseId by remember(filteredReleases) {
+                    derivedStateOf { filteredReleases.firstOrNull()?.id }
+                }
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                ) {
+                    items(items = filteredReleases, key = { it.id }) { release ->
+                        VersionListItem(
+                            release = release,
+                            isSelected = release.id == selectedRelease?.id,
+                            isLatest = release.id == latestReleaseId,
+                            onClick = { onAction(DetailsAction.SelectRelease(release)) },
+                        )
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            thickness = 0.5.dp,
+                        )
                     }
                 }
             }
@@ -183,13 +183,13 @@ private fun VersionListItem(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(
-                    onClickLabel = stringResource(Res.string.select_version),
-                    onClick = onClick,
-                ).padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClickLabel = stringResource(Res.string.select_version),
+                onClick = onClick,
+            )
+            .padding(horizontal = 4.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -200,45 +200,52 @@ private fun VersionListItem(
             ) {
                 Text(
                     text = release.tagName,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color =
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                    ),
+                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurface,
                 )
                 if (isLatest) {
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.latest_badge),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
+                    Text(
+                        text = stringResource(Res.string.latest_badge),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.sp,
+                            letterSpacing = 0.6.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(50),
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
                 }
                 if (release.isEffectivelyPreRelease()) {
-
                     val specificLabel = release.preReleaseLabel()
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
-                    ) {
-                        Text(
-                            text = specificLabel ?: stringResource(Res.string.pre_release_badge),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
-                    }
+                    Text(
+                        text = specificLabel ?: stringResource(Res.string.pre_release_badge),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.sp,
+                            letterSpacing = 0.6.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                shape = RoundedCornerShape(50),
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
                 }
             }
-
             release.name?.let { name ->
                 if (name != release.tagName) {
                     Text(
@@ -250,14 +257,14 @@ private fun VersionListItem(
                     )
                 }
             }
-
             Text(
                 text = release.publishedAt.take(10),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.outline,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-
         if (isSelected) {
             Spacer(Modifier.width(8.dp))
             Icon(

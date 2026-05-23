@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.outlined.Link
@@ -37,7 +38,7 @@ fun LinkedRepoBanner(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
+        shape = Radii.row,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
     ) {
         Row(

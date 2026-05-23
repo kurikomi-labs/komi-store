@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -145,15 +147,15 @@ fun LazyListScope.releaseChannel(
                 Card(
                     colors =
                         CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f),
                             contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         ),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = Radii.row,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         verticalAlignment = Alignment.Top,
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.WarningAmber,
@@ -187,10 +189,10 @@ fun LazyListScope.releaseChannel(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                             contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = Radii.row,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.Bolt,
@@ -290,14 +292,14 @@ private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
     ) {
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = WonkySquircleShape.Toast,
             color = MaterialTheme.colorScheme.primary,
             shadowElevation = 6.dp,
             modifier = Modifier.width(280.dp),
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

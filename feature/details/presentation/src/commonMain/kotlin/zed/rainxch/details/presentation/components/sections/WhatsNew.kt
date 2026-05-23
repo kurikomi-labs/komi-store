@@ -8,7 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -33,10 +39,14 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
+import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import kotlinx.coroutines.withContext
 import org.intellij.markdown.parser.MarkdownParser
 import com.mikepenz.markdown.model.rememberMarkdownState
@@ -65,26 +75,29 @@ fun LazyListScope.whatsNew(
     onTranslateClick: () -> Unit,
     onLanguagePickerClick: () -> Unit,
     onToggleTranslation: () -> Unit,
+    onReadMore: (() -> Unit)? = null,
 ) {
     item {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = stringResource(Res.string.whats_new),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    text = stringResource(Res.string.whats_new),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp,
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Squiggle()
+            }
 
             TranslationControls(
                 translationState = translationState,
@@ -94,39 +107,36 @@ fun LazyListScope.whatsNew(
             )
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors =
-                CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    shape = Radii.row,
+                )
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        release.tagName,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-
-                    Text(
-                        release.publishedAt.take(10),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            Text(
+                text = release.tagName,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = release.publishedAt.take(10),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                softWrap = false,
+            )
         }
     }
 
@@ -138,7 +148,7 @@ fun LazyListScope.whatsNew(
             release = release,
             collapsedHeight = collapsedHeight,
             isExpanded = isExpanded,
-            onToggleExpanded = onToggleExpanded,
+            onToggleExpanded = onReadMore ?: onToggleExpanded,
             measuredHeightPx = measuredHeightPx,
             onMeasured = onMeasured,
         )
@@ -190,7 +200,7 @@ private fun ExpandableMarkdownContent(
     val components = remember(isDark, imageTransformer) {
         githubStoreMarkdownComponents(imageTransformer, isDark)
     }
-    val cardColor = MaterialTheme.colorScheme.surfaceContainerLow
+    val cardColor = MaterialTheme.colorScheme.background
 
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
     val effectiveHeight = measuredHeightPx ?: 0f
@@ -238,36 +248,56 @@ private fun ExpandableMarkdownContent(
 
             if (!isExpanded && needsExpansion) {
                 Box(
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .background(
-                                Brush.verticalGradient(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = arrayOf(
                                     0f to cardColor.copy(alpha = 0f),
+                                    0.35f to cardColor.copy(alpha = 0.10f),
+                                    0.6f to cardColor.copy(alpha = 0.35f),
+                                    0.8f to cardColor.copy(alpha = 0.7f),
                                     1f to cardColor,
                                 ),
                             ),
+                        ),
                 )
             }
         }
 
         if (needsExpansion) {
-            TextButton(
-                onClick = onToggleExpanded,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.onSurface)
+                    .clickable(onClick = onToggleExpanded)
+                    .padding(horizontal = 22.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text =
-                        if (isExpanded) {
-                            stringResource(Res.string.show_less)
-                        } else {
-                            stringResource(Res.string.read_more)
-                        },
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = if (isExpanded) {
+                        stringResource(Res.string.show_less)
+                    } else {
+                        stringResource(Res.string.read_more)
+                    },
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    color = MaterialTheme.colorScheme.surface,
                 )
+                if (!isExpanded) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
             }
         }
     }

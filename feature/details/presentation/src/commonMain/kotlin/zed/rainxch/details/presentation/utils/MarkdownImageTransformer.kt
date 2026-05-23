@@ -32,6 +32,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.cd_image
 
 class MarkdownImageTransformer(
     private val probeClient: HttpClient,
@@ -112,7 +115,7 @@ class MarkdownImageTransformer(
         return ImageData(
             painter = painter,
             modifier = inlineModifier,
-            contentDescription = "Image",
+            contentDescription = stringResource(Res.string.cd_image),
             contentScale = ContentScale.Fit,
         )
     }

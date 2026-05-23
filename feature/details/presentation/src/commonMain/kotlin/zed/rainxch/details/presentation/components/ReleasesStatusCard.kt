@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -42,7 +43,7 @@ fun ReleasesStatusCard(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(modifier = modifier.fillMaxWidth()) {
+    OutlinedCard(modifier = modifier.fillMaxWidth(), shape = Radii.row) {
         Column(
             modifier =
                 Modifier

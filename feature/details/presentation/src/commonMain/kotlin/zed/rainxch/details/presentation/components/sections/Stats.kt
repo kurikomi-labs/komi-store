@@ -1,14 +1,23 @@
 package zed.rainxch.details.presentation.components.sections
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.components.StatItem
 import zed.rainxch.details.presentation.components.TextStatItem
@@ -18,24 +27,39 @@ fun LazyListScope.stats(
     repoStats: RepoStats,
 ) {
     item {
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.details_stats_section),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Squiggle()
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             StatItem(
                 label = stringResource(Res.string.forks),
                 stat = repoStats.forks,
                 modifier = Modifier.weight(1.5f),
             )
-
             StatItem(
                 label = stringResource(Res.string.stars),
                 stat = repoStats.stars,
                 modifier = Modifier.weight(2f),
             )
-
             StatItem(
                 label = stringResource(Res.string.issues),
                 stat = repoStats.openIssues,
@@ -43,18 +67,17 @@ fun LazyListScope.stats(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(10.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             StatItem(
                 label = stringResource(Res.string.downloads),
                 stat = repoStats.totalDownloads,
                 modifier = Modifier.weight(1f),
             )
-
             TextStatItem(
                 label = stringResource(Res.string.license),
                 value = repoStats.license ?: stringResource(Res.string.license_none),

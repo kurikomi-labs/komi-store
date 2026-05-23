@@ -1,8 +1,13 @@
 package zed.rainxch.details.presentation.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,53 +18,82 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.outlined.AccountTree
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.coil3.CoilImage
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.util.VersionMath
+import zed.rainxch.core.presentation.color.avatarColorFor
 import zed.rainxch.core.presentation.components.ForkBadge
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.OfficialBadge
 import zed.rainxch.core.presentation.components.PlatformChip
-import zed.rainxch.core.presentation.utils.formatReleasedAt
+import zed.rainxch.core.presentation.theme.shapes.CornerRadii
+import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.utils.formatCount
+import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.by_author
 import zed.rainxch.githubstore.core.presentation.res.installed
-import zed.rainxch.githubstore.core.presentation.res.installed_version
 import zed.rainxch.githubstore.core.presentation.res.no_description
 import zed.rainxch.githubstore.core.presentation.res.pending_install
 import zed.rainxch.githubstore.core.presentation.res.update_available
+
+private val HeaderShape = WonkySquircleShape(
+    topStart = CornerRadii(30.dp, 24.dp),
+    topEnd = CornerRadii(24.dp, 30.dp),
+    bottomEnd = CornerRadii(28.dp, 22.dp),
+    bottomStart = CornerRadii(22.dp, 28.dp),
+)
+
+private fun Color.normalizedForStripe(isDark: Boolean): Color {
+    val r = (red * 255f).toInt().coerceIn(0, 255)
+    val g = (green * 255f).toInt().coerceIn(0, 255)
+    val b = (blue * 255f).toInt().coerceIn(0, 255)
+    val lum = (r + g + b) / 3
+    val target = if (isDark) 170 else 140
+    val minLum = if (isDark) 90 else 70
+    if (lum >= minLum) return this
+    val factor = target.toFloat() / lum.coerceAtLeast(1).toFloat()
+    return Color(
+        red = (r * factor).toInt().coerceIn(0, 255),
+        green = (g * factor).toInt().coerceIn(0, 255),
+        blue = (b * factor).toInt().coerceIn(0, 255),
+        alpha = 255,
+    )
+}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -68,322 +102,339 @@ fun AppHeader(
     repository: GithubRepoSummary,
     release: GithubRelease?,
     installedApp: InstalledApp?,
+    stats: RepoStats?,
     modifier: Modifier = Modifier,
     downloadStage: DownloadStage = DownloadStage.IDLE,
     downloadProgress: Int? = null,
     isCurrentUserOwner: Boolean = false,
     onPlatformClick: ((DiscoveryPlatform) -> Unit)? = null,
+    onOwnerClick: () -> Unit = {},
 ) {
+    val isDark = isSystemInDarkTheme()
+    val surface = MaterialTheme.colorScheme.surface
+    val avatarUrl = author?.avatarUrl ?: repository.owner.avatarUrl
+    val rawAccent = avatarColorFor(avatarUrl, MaterialTheme.colorScheme.primary)
+    val normalizedAccent = remember(rawAccent, isDark) { rawAccent.normalizedForStripe(isDark) }
+    val tintFraction = if (isDark) 0.10f else 0.06f
+    val animatedAccent by animateColorAsState(
+        targetValue = normalizedAccent,
+        animationSpec = tween(durationMillis = 1800, easing = LinearOutSlowInEasing),
+        label = "details-hero-accent",
+    )
+    val animatedSurface by animateColorAsState(
+        targetValue = lerp(surface, normalizedAccent, tintFraction),
+        animationSpec = tween(durationMillis = 1800, easing = LinearOutSlowInEasing),
+        label = "details-hero-surface",
+    )
+    val stripeBase = if (isDark) animatedAccent.copy(alpha = 0.18f) else animatedAccent.copy(alpha = 0.12f)
+    val stripeLineThick = if (isDark) animatedAccent.copy(alpha = 0.45f) else animatedAccent.copy(alpha = 0.55f)
+    val stripeLineThin = if (isDark) animatedAccent.copy(alpha = 0.22f) else animatedAccent.copy(alpha = 0.30f)
+    val avatarBg = if (isDark) animatedAccent.copy(alpha = 0.20f) else animatedAccent.copy(alpha = 0.14f)
+    val borderColor = MaterialTheme.colorScheme.outline
+
     val animatedProgress by animateFloatAsState(
         targetValue = (downloadProgress ?: 0) / 100f,
         animationSpec = tween(durationMillis = 500),
-        label = "avatar_progress_animation",
+        label = "avatar-progress",
     )
 
-    val supportedPlatforms by remember(release?.assets) {
-        derivedStateOf {
-            derivePlatformsFromAssets(release)
+    val supportedPlatforms = remember(release?.assets) {
+        val names = release?.assets?.map { it.name.lowercase() }.orEmpty()
+        buildList {
+            if (names.any { it.endsWith(".apk") }) add(DiscoveryPlatform.Android)
+            if (names.any { it.endsWith(".exe") || it.endsWith(".msi") }) add(DiscoveryPlatform.Windows)
+            if (names.any { it.endsWith(".dmg") || it.endsWith(".pkg") }) add(DiscoveryPlatform.Macos)
+            if (names.any {
+                    it.endsWith(".appimage") ||
+                        it.endsWith(".deb") ||
+                        it.endsWith(".rpm") ||
+                        it.endsWith(".pkg.tar.zst")
+                }
+            ) add(DiscoveryPlatform.Linux)
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(HeaderShape)
+            .background(animatedSurface)
+            .border(1.5.dp, borderColor, HeaderShape),
     ) {
-        Row(
-            verticalAlignment = Alignment.Top,
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(100.dp),
-            ) {
-                CoilImage(
-
-                    imageModel = { author?.avatarUrl ?: repository.owner.avatarUrl },
-                    modifier =
-                        Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                shape = CircleShape,
-                            ),
-                    loading = {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularWavyProgressIndicator()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(76.dp)
+                    .clipToBounds()
+                    .drawBehind {
+                        drawRect(color = stripeBase)
+                        val thick = 9.dp.toPx()
+                        val thin = 2.5.dp.toPx()
+                        val gapAfterThick = 10.dp.toPx()
+                        val gapBetweenThin = 6.dp.toPx()
+                        val cycle = thick + gapAfterThick + thin + gapBetweenThin + thin + gapAfterThick
+                        var x = -size.height
+                        while (x < size.width + size.height) {
+                            drawLine(
+                                color = stripeLineThick,
+                                start = Offset(x, size.height),
+                                end = Offset(x + size.height, 0f),
+                                strokeWidth = thick,
+                                cap = StrokeCap.Round,
+                            )
+                            var xt = x + thick + gapAfterThick
+                            drawLine(
+                                color = stripeLineThin,
+                                start = Offset(xt, size.height),
+                                end = Offset(xt + size.height, 0f),
+                                strokeWidth = thin,
+                                cap = StrokeCap.Round,
+                            )
+                            xt += thin + gapBetweenThin
+                            drawLine(
+                                color = stripeLineThin,
+                                start = Offset(xt, size.height),
+                                end = Offset(xt + size.height, 0f),
+                                strokeWidth = thin,
+                                cap = StrokeCap.Round,
+                            )
+                            x += cycle
                         }
                     },
-                )
-
-                if (downloadStage != DownloadStage.IDLE) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(100.dp),
-                    ) {
-                        when (downloadStage) {
-                            DownloadStage.DOWNLOADING -> {
-                                CircularProgressIndicator(
-                                    progress = { 1f },
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                    strokeWidth = 4.dp,
-                                )
-
-                                CircularProgressIndicator(
-                                    progress = { animatedProgress },
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.primary,
-                                    strokeWidth = 4.dp,
-                                    strokeCap = StrokeCap.Round,
-                                )
-                            }
-
-                            DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.primary,
-                                    strokeWidth = 4.dp,
-                                    strokeCap = StrokeCap.Round,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 130.dp, end = 20.dp, top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                Text(
+                    text = author?.login ?: repository.owner.login,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontSize = 13.sp,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .clickable(onClick = onOwnerClick),
+                )
+                if (isCurrentUserOwner) OfficialBadge()
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 130.dp, end = 20.dp, top = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = repository.name,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Black,
+                        fontSize = 30.sp,
+                        letterSpacing = (-0.4).sp,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (repository.isFork) ForkBadge()
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                val statColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f)
+                val statStyle = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(
-                        text = repository.name,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false),
+                    Icon(
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = null,
+                        tint = statColor,
+                        modifier = Modifier.size(15.dp),
                     )
-
-                    if (repository.isFork) {
-                        ForkBadge()
-                    }
+                    Text(
+                        text = formatCount(stats?.stars ?: repository.stargazersCount),
+                        style = statStyle,
+                        color = statColor,
+                    )
                 }
-                author?.login?.let { author ->
+                val forksValue = stats?.forks ?: repository.forksCount
+                if (forksValue > 0) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        Text(
-                            text = stringResource(Res.string.by_author, author),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false),
+                        Icon(
+                            imageVector = Icons.Outlined.AccountTree,
+                            contentDescription = null,
+                            tint = statColor,
+                            modifier = Modifier.size(15.dp),
                         )
-
-                        if (isCurrentUserOwner) {
-                            OfficialBadge()
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                if (installedApp != null) {
-                    when {
-                        installedApp.isPendingInstall -> {
-                            PendingInstallBadge()
-                        }
-
-                        else -> {
-                            InstallStatusBadge(
-                                isUpdateAvailable = installedApp.isUpdateAvailable,
-                            )
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    release?.tagName?.let {
                         Text(
-                            text = it,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.secondary,
+                            text = formatCount(forksValue),
+                            style = statStyle,
+                            color = statColor,
                         )
                     }
-
-                    if (installedApp != null &&
-                        !VersionMath.isExactSameVersion(installedApp.installedVersion, release?.tagName)
+                }
+                val downloadsValue = stats?.totalDownloads ?: repository.downloadCount
+                if (downloadsValue > 0) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = null,
+                            tint = statColor,
+                            modifier = Modifier.size(15.dp),
+                        )
                         Text(
-                            text =
-                                stringResource(
-                                    Res.string.installed_version,
-                                    installedApp.installedVersion,
-                                ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = formatCount(downloadsValue),
+                            style = statStyle,
+                            color = statColor,
                         )
                     }
                 }
-
-                release?.publishedAt?.let { publishedAt ->
-                    Spacer(Modifier.height(4.dp))
-
+                val licenseValue = stats?.license
+                if (!licenseValue.isNullOrBlank()) {
                     Text(
-                        text = formatReleasedAt(publishedAt),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline,
+                        text = licenseValue,
+                        style = statStyle,
+                        color = statColor,
                     )
                 }
             }
-        }
-
-        if (supportedPlatforms.isNotEmpty()) {
             Spacer(Modifier.height(12.dp))
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                supportedPlatforms.forEach { platform ->
-                    PlatformChip(
-                        platform = platform,
-                        onClick = onPlatformClick?.let { handler -> { handler(platform) } },
-                    )
+            Text(
+                text = repository.description ?: stringResource(Res.string.no_description),
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+            if (installedApp != null) {
+                Spacer(Modifier.height(12.dp))
+                Box(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .border(
+                                width = 1.dp,
+                                color = when {
+                                    installedApp.isPendingInstall ->
+                                        MaterialTheme.colorScheme.secondary
+                                    installedApp.isUpdateAvailable ->
+                                        MaterialTheme.colorScheme.tertiary
+                                    else -> MaterialTheme.colorScheme.primary
+                                },
+                                shape = RoundedCornerShape(50),
+                            )
+                            .padding(horizontal = 12.dp, vertical = 5.dp),
+                    ) {
+                        Text(
+                            text = stringResource(
+                                when {
+                                    installedApp.isPendingInstall -> Res.string.pending_install
+                                    installedApp.isUpdateAvailable -> Res.string.update_available
+                                    else -> Res.string.installed
+                                },
+                            ),
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp,
+                            ),
+                            color = when {
+                                installedApp.isPendingInstall ->
+                                    MaterialTheme.colorScheme.secondary
+                                installedApp.isUpdateAvailable ->
+                                    MaterialTheme.colorScheme.tertiary
+                                else -> MaterialTheme.colorScheme.primary
+                            },
+                        )
+                    }
                 }
             }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        Text(
-            text = repository.description ?: stringResource(Res.string.no_description),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
-private fun derivePlatformsFromAssets(release: GithubRelease?): List<DiscoveryPlatform> {
-    if (release == null) return emptyList()
-    val names = release.assets.map { it.name.lowercase() }
-    return buildList {
-        if (names.any { it.endsWith(".apk") }) add(DiscoveryPlatform.Android)
-        if (names.any { it.endsWith(".exe") || it.endsWith(".msi") }) add(DiscoveryPlatform.Windows)
-        if (names.any { it.endsWith(".dmg") || it.endsWith(".pkg") }) add(DiscoveryPlatform.Macos)
-        if (names.any {
-                it.endsWith(".appimage") ||
-                    it.endsWith(".deb") ||
-                    it.endsWith(".rpm") ||
-                    it.endsWith(".pkg.tar.zst")
+            if (supportedPlatforms.isNotEmpty()) {
+                Spacer(Modifier.height(14.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                ) {
+                    supportedPlatforms.forEach { platform ->
+                        PlatformChip(
+                            platform = platform,
+                            onClick = onPlatformClick?.let { handler -> { handler(platform) } },
+                        )
+                    }
+                }
             }
+            Spacer(Modifier.height(20.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = 20.dp, y = 30.dp)
+                .size(100.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            add(
-                DiscoveryPlatform.Linux,
-            )
-        }
-    }
-}
-
-@Composable
-fun InstallStatusBadge(
-    isUpdateAvailable: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val backgroundColor =
-        if (isUpdateAvailable) {
-            MaterialTheme.colorScheme.tertiaryContainer
-        } else {
-            MaterialTheme.colorScheme.primaryContainer
-        }
-
-    val textColor =
-        if (isUpdateAvailable) {
-            MaterialTheme.colorScheme.onTertiaryContainer
-        } else {
-            MaterialTheme.colorScheme.onPrimaryContainer
-        }
-
-    val icon =
-        if (isUpdateAvailable) {
-            Icons.Default.Update
-        } else {
-            Icons.Default.CheckCircle
-        }
-
-    val text =
-        if (isUpdateAvailable) {
-            stringResource(Res.string.update_available)
-        } else {
-            stringResource(Res.string.installed)
-        }
-
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = backgroundColor,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = textColor,
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelSmall,
-                color = textColor,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
-}
-
-@Composable
-fun PendingInstallBadge(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Schedule,
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Text(
-                text = stringResource(Res.string.pending_install),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontWeight = FontWeight.SemiBold,
-            )
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .background(avatarBg)
+                    .border(2.5.dp, animatedAccent, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                GitHubStoreImage(
+                    imageModel = { avatarUrl },
+                    modifier = Modifier.size(92.dp).clip(CircleShape),
+                    extractDominantFor = avatarUrl,
+                )
+            }
+            if (downloadStage != DownloadStage.IDLE) {
+                when (downloadStage) {
+                    DownloadStage.DOWNLOADING -> {
+                        CircularProgressIndicator(
+                            progress = { 1f },
+                            modifier = Modifier.fillMaxSize(),
+                            color = animatedAccent.copy(alpha = 0.2f),
+                            strokeWidth = 4.dp,
+                        )
+                        CircularProgressIndicator(
+                            progress = { animatedProgress },
+                            modifier = Modifier.fillMaxSize(),
+                            color = animatedAccent,
+                            strokeWidth = 4.dp,
+                            strokeCap = StrokeCap.Round,
+                        )
+                    }
+                    DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(),
+                            color = animatedAccent,
+                            strokeWidth = 4.dp,
+                            strokeCap = StrokeCap.Round,
+                        )
+                    }
+                }
+            }
         }
     }
 }
