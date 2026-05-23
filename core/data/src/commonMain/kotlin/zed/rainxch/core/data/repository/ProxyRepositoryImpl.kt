@@ -43,6 +43,7 @@ class ProxyRepositoryImpl(
     init {
         migrationScope.launch {
             runCatching { migrateIfNeeded() }
+            runCatching { migrateMasterV2IfNeeded() }
             migrationDeferred.complete(Unit)
         }
     }
@@ -310,7 +311,48 @@ class ProxyRepositoryImpl(
         }
     }
 
+    private suspend fun migrateMasterV2IfNeeded() {
+        val alreadyDone = runCatching {
+            ksafe.safeGet(MIGRATION_MARKER_MASTER_V2, false)
+        }.getOrDefault(false)
+        if (alreadyDone) return
+
+        val configs = ProxyScope.entries.map { scope ->
+            scope to readScopeConfigDirect(scope)
+        }
+
+        // Plurality vote: most common scope config becomes the master.
+        // Tie-break: Download > Discovery > Translation (most-common scope usage order).
+        val tieBreakOrder = listOf(ProxyScope.DOWNLOAD, ProxyScope.DISCOVERY, ProxyScope.TRANSLATION)
+        val counts = configs.groupBy { it.second }.mapValues { it.value.size }
+        val maxCount = counts.values.maxOrNull() ?: 0
+        val winners = counts.filter { it.value == maxCount }.keys
+        val winnerConfig = tieBreakOrder.firstNotNullOfOrNull { scope ->
+            configs.firstOrNull { it.first == scope && it.second in winners }?.second
+        } ?: configs.first().second
+
+        runCatching { setMasterProxyConfig(winnerConfig) }
+
+        configs.forEach { (scope, config) ->
+            val matches = config == winnerConfig
+            runCatching { setUseMaster(scope, matches) }
+        }
+
+        runCatching { ksafe.safePut(MIGRATION_MARKER_MASTER_V2, true) }
+    }
+
+    private suspend fun readScopeConfigDirect(scope: ProxyScope): ProxyConfig {
+        val keys = keysFor(scope)
+        val type = runCatching { ksafe.safeGet<String?>(keys.type, null) }.getOrNull()
+        val host = runCatching { ksafe.safeGet<String?>(keys.host, null) }.getOrNull()
+        val port = runCatching { ksafe.safeGet<Int?>(keys.port, null) }.getOrNull()
+        val user = runCatching { ksafe.safeGet<String?>(keys.username, null) }.getOrNull()
+        val pass = runCatching { ksafe.safeGet<String?>(keys.password, null) }.getOrNull()
+        return parseConfig(type, host, port, user, pass)
+    }
+
     private companion object {
         const val MIGRATION_MARKER = "__migrated_proxy_v1__"
+        const val MIGRATION_MARKER_MASTER_V2 = "__migrated_proxy_master_v2__"
     }
 }
