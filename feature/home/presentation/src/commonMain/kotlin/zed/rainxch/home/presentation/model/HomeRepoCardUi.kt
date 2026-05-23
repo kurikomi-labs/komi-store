@@ -15,6 +15,8 @@ data class HomeRepoCardUi(
     val ownerAvatarUrl: String,
     val description: String,
     val starsCount: Int,
+    val downloadsCount: Long,
+    val language: String?,
     val daysSinceUpdate: Int,
     val relativeAgoLabel: String,
     val freshnessState: FreshnessState,

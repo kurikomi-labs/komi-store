@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.home_topbar_discover
 
 @Composable
 fun HomeTopBar(
@@ -26,9 +29,8 @@ fun HomeTopBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
-            text = "Discover",
+            text = stringResource(Res.string.home_topbar_discover),
             style = MaterialTheme.typography.displaySmall.copy(
-                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 28.sp,
             ),

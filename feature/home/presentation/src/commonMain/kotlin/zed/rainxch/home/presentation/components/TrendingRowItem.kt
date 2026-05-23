@@ -1,15 +1,17 @@
 package zed.rainxch.home.presentation.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.outlined.AccountTree
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,17 +21,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.color.avatarColorFor
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.buttons.OutlineButton
-import zed.rainxch.core.presentation.components.cards.RowCard
-import zed.rainxch.core.presentation.vocabulary.PlatformGlyph
-import zed.rainxch.core.presentation.vocabulary.StarTier
+import zed.rainxch.core.presentation.components.buttons.PrimaryButton
+import zed.rainxch.core.presentation.components.cards.RepoStripeCard
+import zed.rainxch.core.presentation.components.chips.PlatformsChip
+import zed.rainxch.core.presentation.components.chips.StatChip
+import zed.rainxch.core.presentation.utils.formatCount
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.home_action_get
+import zed.rainxch.githubstore.core.presentation.res.home_rank_format
+import zed.rainxch.githubstore.core.presentation.res.open
+import zed.rainxch.githubstore.core.presentation.res.update
 import zed.rainxch.home.presentation.model.HomeRepoCardUi
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TrendingRowItem(
     card: HomeRepoCardUi,
@@ -41,14 +49,13 @@ fun TrendingRowItem(
     RankRowItem(
         card = card,
         rank = rank,
-        rankColor = MaterialTheme.colorScheme.primary,
+        rankColor = MaterialTheme.colorScheme.onSurface,
         onClick = onClick,
         onLongClick = onLongClick,
         modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PopularRowItem(
     card: HomeRepoCardUi,
@@ -60,14 +67,14 @@ fun PopularRowItem(
     RankRowItem(
         card = card,
         rank = rank,
-        rankColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
+        rankColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
         onClick = onClick,
         onLongClick = onLongClick,
         modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RankRowItem(
     card: HomeRepoCardUi,
@@ -77,68 +84,108 @@ private fun RankRowItem(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-    ) {
-        RowCard {
+    val accent = avatarColorFor(card.ownerAvatarUrl, MaterialTheme.colorScheme.primary)
+    RepoStripeCard(
+        accent = accent,
+        ownerLogin = card.ownerLogin,
+        name = card.name,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        modifier = modifier,
+        stripeTrailing = {
             Text(
-                text = "#$rank",
+                text = stringResource(Res.string.home_rank_format, rank),
                 color = rankColor,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
+                style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.Black,
+                    fontSize = 34.sp,
+                    letterSpacing = (-0.5).sp,
                 ),
-                modifier = Modifier.width(38.dp),
             )
+        },
+        avatar = {
             GitHubStoreImage(
                 imageModel = { card.ownerAvatarUrl },
-                modifier = Modifier.size(36.dp).clip(CircleShape),
+                modifier = Modifier.size(72.dp).clip(CircleShape),
+                extractDominantFor = card.ownerAvatarUrl,
             )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = card.name,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+        },
+        chips = {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                if (card.starsCount > 0) {
+                    StatChip(
+                        label = formatCount(card.starsCount),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                    )
+                }
+                if (card.rawRepository.forksCount > 0) {
+                    StatChip(
+                        label = formatCount(card.rawRepository.forksCount),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Outlined.AccountTree,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                    )
+                }
+                if (card.downloadsCount > 0) {
+                    StatChip(
+                        label = formatCount(card.downloadsCount),
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                    )
+                }
+                if (card.platforms.isNotEmpty()) {
+                    PlatformsChip(platforms = card.platforms)
+                }
+            }
+        },
+        languagePill = null,
+        cta = {
+            PrimaryButton(
+                onClick = onClick,
+                backgroundColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.surface,
+            ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    StarTier(stars = card.starsCount, size = 10)
                     Text(
-                        text = card.ownerLogin,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        text = stringResource(
+                            when {
+                                card.isUpdateAvailable -> Res.string.update
+                                card.isInstalled -> Res.string.open
+                                else -> Res.string.home_action_get
+                            },
+                        ),
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
                     )
                 }
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                card.platforms.forEach { kind ->
-                    PlatformGlyph(kind = kind, supported = true, sizeDp = 12)
-                }
-            }
-            OutlineButton(onClick = onClick) {
-                Text(
-                    text = when {
-                        card.isUpdateAvailable -> "Update"
-                        card.isInstalled -> "Open"
-                        else -> "Get"
-                    },
-                )
-            }
-        }
-    }
+        },
+    )
 }

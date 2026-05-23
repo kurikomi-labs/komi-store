@@ -41,12 +41,18 @@ import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.home_finding_repositories
 import zed.rainxch.githubstore.core.presentation.res.home_retry
+import zed.rainxch.githubstore.core.presentation.res.home_section_from_your_stars
+import zed.rainxch.githubstore.core.presentation.res.home_section_hot_releases
+import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
+import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.components.HomeTopBar
 import zed.rainxch.home.presentation.components.HotCardItem
 import zed.rainxch.home.presentation.components.LeadCard
 import zed.rainxch.home.presentation.components.PopularRowItem
 import zed.rainxch.home.presentation.components.RepositoryActionsSheet
+import zed.rainxch.home.presentation.components.SeeAllHotTile
+import zed.rainxch.home.presentation.components.SeeMoreRow
 import zed.rainxch.home.presentation.components.StarredRowItem
 import zed.rainxch.home.presentation.components.TrendingRowItem
 
@@ -90,7 +96,6 @@ fun HomeRoot(
                 else -> viewModel.onAction(action)
             }
         },
-        viewModel = viewModel,
     )
 }
 
@@ -100,7 +105,6 @@ private fun HomeScreen(
     state: HomeState,
     snackbarHost: SnackbarHostState,
     onAction: (HomeAction) -> Unit,
-    viewModel: HomeViewModel,
 ) {
     val bottomNavHeight = LocalBottomNavigationHeight.current
     val listState = rememberLazyListState()
@@ -188,7 +192,7 @@ private fun HomeScreen(
                         if (state.hot.isNotEmpty()) {
                             item(key = "hot_header") {
                                 SectionHeader(
-                                    title = "Hot releases",
+                                    title = stringResource(Res.string.home_section_hot_releases),
                                     subCount = state.hot.size.toString(),
                                     onSeeAll = { onAction(HomeAction.OnSeeAllHot) },
                                 )
@@ -205,6 +209,11 @@ private fun HomeScreen(
                                             onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                         )
                                     }
+                                    item(key = "hot_see_all") {
+                                        SeeAllHotTile(
+                                            onClick = { onAction(HomeAction.OnSeeAllHot) },
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -212,7 +221,7 @@ private fun HomeScreen(
                         if (state.trending.isNotEmpty()) {
                             item(key = "trending_header") {
                                 SectionHeader(
-                                    title = "Trending now",
+                                    title = stringResource(Res.string.home_section_trending_now),
                                     subCount = state.trending.size.toString(),
                                     onSeeAll = { onAction(HomeAction.OnSeeAllTrending) },
                                 )
@@ -228,12 +237,15 @@ private fun HomeScreen(
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                 )
                             }
+                            item(key = "trending_see_more") {
+                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllTrending) })
+                            }
                         }
 
                         if (state.popular.isNotEmpty()) {
                             item(key = "popular_header") {
                                 SectionHeader(
-                                    title = "Most popular",
+                                    title = stringResource(Res.string.home_section_most_popular),
                                     subCount = state.popular.size.toString(),
                                     onSeeAll = { onAction(HomeAction.OnSeeAllPopular) },
                                 )
@@ -249,12 +261,15 @@ private fun HomeScreen(
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                 )
                             }
+                            item(key = "popular_see_more") {
+                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllPopular) })
+                            }
                         }
 
                         if (state.isUserSignedIn && state.starred.isNotEmpty()) {
                             item(key = "starred_header") {
                                 SectionHeader(
-                                    title = "From your stars",
+                                    title = stringResource(Res.string.home_section_from_your_stars),
                                     subCount = state.starred.size.toString(),
                                     onSeeAll = { onAction(HomeAction.OnSeeAllStarred) },
                                 )
@@ -265,6 +280,9 @@ private fun HomeScreen(
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                 )
+                            }
+                            item(key = "starred_see_more") {
+                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllStarred) })
                             }
                         }
                     }

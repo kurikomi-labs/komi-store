@@ -32,8 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.cd_back
+import zed.rainxch.githubstore.core.presentation.res.home_section_hot_releases
+import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
+import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
 import zed.rainxch.core.presentation.components.buttons.IconButton
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.vocabulary.Squiggle
@@ -146,15 +152,20 @@ private fun CategoryListTopBar(category: HomeCategory, onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(Res.string.cd_back),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
         Column(modifier = Modifier.padding(start = 4.dp)) {
             Text(
-                text = categoryTitle(category),
+                text = stringResource(
+                    when (category) {
+                        HomeCategory.HOT_RELEASE -> Res.string.home_section_hot_releases
+                        HomeCategory.TRENDING -> Res.string.home_section_trending_now
+                        HomeCategory.MOST_POPULAR -> Res.string.home_section_most_popular
+                    },
+                ),
                 style = MaterialTheme.typography.headlineSmall.copy(
-                    fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 26.sp,
                 ),
@@ -164,10 +175,4 @@ private fun CategoryListTopBar(category: HomeCategory, onBack: () -> Unit) {
             Squiggle()
         }
     }
-}
-
-private fun categoryTitle(category: HomeCategory): String = when (category) {
-    HomeCategory.HOT_RELEASE -> "Hot releases"
-    HomeCategory.TRENDING -> "Trending now"
-    HomeCategory.MOST_POPULAR -> "Most popular"
 }

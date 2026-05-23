@@ -35,6 +35,8 @@ fun toHomeRepoCardUi(
         ownerAvatarUrl = ui.owner.avatarUrl,
         description = ui.description.orEmpty(),
         starsCount = ui.stargazersCount,
+        downloadsCount = repo.downloadCount,
+        language = repo.language,
         daysSinceUpdate = days,
         relativeAgoLabel = relativeAgo(repo.updatedAt),
         freshnessState = freshness.state,
