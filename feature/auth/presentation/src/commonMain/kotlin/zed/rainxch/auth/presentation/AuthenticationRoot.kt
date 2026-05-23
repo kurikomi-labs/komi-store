@@ -1,3 +1,8 @@
+@file:OptIn(
+    androidx.compose.material3.ExperimentalMaterial3Api::class,
+    androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class,
+)
+
 package zed.rainxch.auth.presentation
 
 import androidx.compose.animation.AnimatedContent
@@ -13,11 +18,14 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,29 +41,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.OpenWith
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.outlined.WarningAmber
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,6 +72,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -85,24 +92,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
-import zed.rainxch.core.presentation.components.GithubStoreButton
+import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.auth_use_device_code_instead
-import zed.rainxch.githubstore.core.presentation.res.pat_cancel
-import zed.rainxch.githubstore.core.presentation.res.pat_hide
-import zed.rainxch.githubstore.core.presentation.res.pat_input_label
-import zed.rainxch.githubstore.core.presentation.res.pat_input_placeholder
-import zed.rainxch.githubstore.core.presentation.res.pat_open_settings
-import zed.rainxch.githubstore.core.presentation.res.pat_sheet_description
-import zed.rainxch.githubstore.core.presentation.res.pat_sheet_title
-import zed.rainxch.githubstore.core.presentation.res.pat_show
-import zed.rainxch.githubstore.core.presentation.res.pat_submit
-import zed.rainxch.githubstore.core.presentation.res.pat_use_token_instead
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.auth_check_status
-import zed.rainxch.githubstore.core.presentation.res.auth_code_expires_in
 import zed.rainxch.githubstore.core.presentation.res.auth_error_with_message
 import zed.rainxch.githubstore.core.presentation.res.auth_polling_status
 import zed.rainxch.githubstore.core.presentation.res.auth_rate_limited
@@ -113,6 +109,16 @@ import zed.rainxch.githubstore.core.presentation.res.ic_github
 import zed.rainxch.githubstore.core.presentation.res.more_requests
 import zed.rainxch.githubstore.core.presentation.res.more_requests_description
 import zed.rainxch.githubstore.core.presentation.res.open_github
+import zed.rainxch.githubstore.core.presentation.res.pat_cancel
+import zed.rainxch.githubstore.core.presentation.res.pat_hide
+import zed.rainxch.githubstore.core.presentation.res.pat_input_label
+import zed.rainxch.githubstore.core.presentation.res.pat_input_placeholder
+import zed.rainxch.githubstore.core.presentation.res.pat_open_settings
+import zed.rainxch.githubstore.core.presentation.res.pat_sheet_description
+import zed.rainxch.githubstore.core.presentation.res.pat_sheet_title
+import zed.rainxch.githubstore.core.presentation.res.pat_show
+import zed.rainxch.githubstore.core.presentation.res.pat_submit
+import zed.rainxch.githubstore.core.presentation.res.pat_use_token_instead
 import zed.rainxch.githubstore.core.presentation.res.redirecting_message
 import zed.rainxch.githubstore.core.presentation.res.sign_in_with_github
 import zed.rainxch.githubstore.core.presentation.res.signed_in
@@ -133,9 +139,7 @@ fun AuthenticationRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            AuthenticationEvents.OnNavigateToMain -> {
-                onNavigateToHome()
-            }
+            AuthenticationEvents.OnNavigateToMain -> onNavigateToHome()
         }
     }
 
@@ -145,7 +149,6 @@ fun AuthenticationRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AuthenticationScreen(
     state: AuthenticationState,
@@ -156,40 +159,37 @@ fun AuthenticationScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 24.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(48.dp))
+            Spacer(Modifier.height(56.dp))
 
             val iconScale by animateFloatAsState(
-                targetValue =
-                    when (state.loginState) {
-                        is AuthLoginState.LoggedIn -> 0.9f
-                        is AuthLoginState.Error -> 0.95f
-                        else -> 1f
-                    },
-                animationSpec =
-                    spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                targetValue = when (state.loginState) {
+                    is AuthLoginState.LoggedIn -> 0.92f
+                    is AuthLoginState.Error -> 0.96f
+                    else -> 1f
+                },
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow,
+                ),
                 label = "icon_scale",
             )
 
             Image(
                 painter = painterResource(Res.drawable.app_icon),
                 contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(120.dp)
-                        .graphicsLayer {
-                            scaleX = iconScale
-                            scaleY = iconScale
-                        }.clip(RoundedCornerShape(28.dp)),
+                modifier = Modifier
+                    .size(96.dp)
+                    .graphicsLayer {
+                        scaleX = iconScale
+                        scaleY = iconScale
+                    }
+                    .clip(RoundedCornerShape(24.dp)),
                 contentScale = ContentScale.Crop,
             )
 
@@ -198,50 +198,32 @@ fun AuthenticationScreen(
             AnimatedContent(
                 targetState = state.loginState,
                 transitionSpec = {
-                    val enter =
-                        fadeIn(tween(350)) +
-                            slideInVertically(
-                                animationSpec =
-                                    spring(
-                                        dampingRatio = Spring.DampingRatioLowBouncy,
-                                        stiffness = Spring.StiffnessMediumLow,
-                                    ),
-                                initialOffsetY = { it / 5 },
-                            )
+                    val enter = fadeIn(tween(350)) + slideInVertically(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessMediumLow,
+                        ),
+                        initialOffsetY = { it / 5 },
+                    )
                     val exit = fadeOut(tween(200))
                     enter togetherWith exit
                 },
                 contentKey = { it::class },
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 label = "auth_state",
             ) { authState ->
                 when (authState) {
-                    is AuthLoginState.LoggedOut -> {
-                        StateLoggedOut(onAction = onAction)
-                    }
-
-                    is AuthLoginState.DevicePrompt -> {
-                        StateDevicePrompt(
-                            state = state,
-                            authState = authState,
-                            onAction = onAction,
-                        )
-                    }
-
-                    is AuthLoginState.Pending -> {
-                        StatePending()
-                    }
-
-                    is AuthLoginState.LoggedIn -> {
-                        StateLoggedIn()
-                    }
-
-                    is AuthLoginState.Error -> {
-                        StateError(
-                            authState = authState,
-                            onAction = onAction,
-                        )
-                    }
+                    is AuthLoginState.LoggedOut -> StateLoggedOut(onAction = onAction)
+                    is AuthLoginState.DevicePrompt -> StateDevicePrompt(
+                        state = state,
+                        authState = authState,
+                        onAction = onAction,
+                    )
+                    is AuthLoginState.Pending -> StatePending()
+                    is AuthLoginState.LoggedIn -> StateLoggedIn()
+                    is AuthLoginState.Error -> StateError(authState = authState, onAction = onAction)
                 }
             }
         }
@@ -259,60 +241,81 @@ fun AuthenticationScreen(
 
 @Composable
 private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
+    var showMoreOptions by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = stringResource(Res.string.unlock_full_experience),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(20.dp))
 
-        ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(32.dp),
-            colors =
-                CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                ),
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.Top,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.OpenWith,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        BenefitsCard()
+
+        Spacer(Modifier.weight(1f))
+
+        PrimaryPillButton(
+            text = stringResource(Res.string.sign_in_with_github),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_github),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            },
+            onClick = { onAction(AuthenticationAction.StartWebAuth) },
+        )
+
+        Spacer(Modifier.height(10.dp))
+
+        TextButton(onClick = { onAction(AuthenticationAction.SkipLogin) }) {
+            Text(
+                text = stringResource(Res.string.continue_as_guest),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        TextButton(onClick = { showMoreOptions = !showMoreOptions }) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = if (showMoreOptions) "Hide options" else "More sign-in options",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Icon(
+                    imageVector = Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .graphicsLayer { rotationZ = if (showMoreOptions) 180f else 0f },
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        AnimatedVisibility(visible = showMoreOptions) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(Modifier.height(4.dp))
+                TextButton(onClick = { onAction(AuthenticationAction.OpenPatSheet) }) {
+                    Text(
+                        text = stringResource(Res.string.pat_use_token_instead),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
+                TextButton(onClick = { onAction(AuthenticationAction.StartLogin) }) {
                     Text(
-                        text = stringResource(Res.string.more_requests),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-
-                    Text(
-                        text = stringResource(Res.string.more_requests_description),
+                        text = stringResource(Res.string.auth_use_device_code_instead),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -320,52 +323,58 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
             }
         }
 
-        Spacer(Modifier.weight(1f))
-
-        GithubStoreButton(
-            text = stringResource(Res.string.sign_in_with_github),
-            onClick = { onAction(AuthenticationAction.StartWebAuth) },
-            icon = {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_github),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        TextButton(onClick = { onAction(AuthenticationAction.OpenPatSheet) }) {
-            Text(
-                text = stringResource(Res.string.pat_use_token_instead),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
-
-        TextButton(onClick = { onAction(AuthenticationAction.StartLogin) }) {
-            Text(
-                text = stringResource(Res.string.auth_use_device_code_instead),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline,
-            )
-        }
-
-        TextButton(onClick = { onAction(AuthenticationAction.SkipLogin) }) {
-            Text(
-                text = stringResource(Res.string.continue_as_guest),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline,
-            )
-        }
-
         Spacer(Modifier.height(16.dp))
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun BenefitsCard() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(22.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(18.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_github),
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.more_requests),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = stringResource(Res.string.more_requests_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun StateDevicePrompt(
     state: AuthenticationState,
@@ -378,26 +387,22 @@ private fun StateDevicePrompt(
     ) {
         Spacer(Modifier.weight(1f))
 
-        ElevatedCard(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(32.dp),
-            colors =
-                CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                ),
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = stringResource(Res.string.enter_code_on_github),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-
-                Spacer(Modifier.height(16.dp))
-
+                Spacer(Modifier.height(14.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -405,123 +410,94 @@ private fun StateDevicePrompt(
                 ) {
                     Text(
                         text = authState.start.userCode,
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        ),
                         color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 2.sp,
+                        letterSpacing = 3.sp,
                     )
-
                     Spacer(Modifier.width(12.dp))
-
-                    IconButton(
-                        shapes = IconButtonDefaults.shapes(),
-                        onClick = {
-                            onAction(AuthenticationAction.CopyCode(authState.start))
-                        },
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f))
+                            .clickable {
+                                onAction(AuthenticationAction.CopyCode(authState.start))
+                            },
+                        contentAlignment = Alignment.Center,
                     ) {
                         AnimatedContent(
                             targetState = state.copied,
                             transitionSpec = {
-                                (scaleIn(
-                                    spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                                ) + fadeIn()) togetherWith (scaleOut() + fadeOut())
+                                (scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn()) togetherWith
+                                    (scaleOut() + fadeOut())
                             },
                             label = "copy_icon",
                         ) { isCopied ->
                             Icon(
-                                imageVector =
-                                    if (isCopied) {
-                                        Icons.Default.DoneAll
-                                    } else {
-                                        Icons.Default.ContentCopy
-                                    },
+                                imageVector = if (isCopied) Icons.Default.DoneAll else Icons.Default.ContentCopy,
                                 contentDescription = stringResource(Res.string.copy_code),
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
                 }
-
                 state.info?.let { info ->
-                    Spacer(Modifier.height(12.dp))
-
+                    Spacer(Modifier.height(10.dp))
                     Text(
                         text = info,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
                     )
                 }
-
                 if (authState.remainingSeconds > 0) {
-                    Spacer(Modifier.height(20.dp))
-
-                    val progress =
-                        authState.remainingSeconds.toFloat() /
-                            authState.start.expiresInSec.toFloat()
-
+                    Spacer(Modifier.height(16.dp))
+                    val progress = authState.remainingSeconds.toFloat() /
+                        authState.start.expiresInSec.toFloat()
                     val animatedProgress by animateFloatAsState(
                         targetValue = progress,
                         animationSpec = tween(900),
                         label = "countdown_progress",
                     )
-
                     val isUrgent = authState.remainingSeconds < 60
-
                     val progressColor by animateColorAsState(
-                        targetValue =
-                            if (isUrgent) {
-                                MaterialTheme.colorScheme.error
-                            } else {
-                                MaterialTheme.colorScheme.primary
-                            },
+                        targetValue = if (isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                         animationSpec = tween(500),
                         label = "progress_color",
                     )
-
                     val timerColor by animateColorAsState(
-                        targetValue =
-                            if (isUrgent) {
-                                MaterialTheme.colorScheme.error
-                            } else {
-                                MaterialTheme.colorScheme.outline
-                            },
+                        targetValue = if (isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                         animationSpec = tween(500),
                         label = "timer_color",
                     )
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         LinearProgressIndicator(
                             progress = { animatedProgress },
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(4.dp)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(4.dp)),
                             color = progressColor,
-                            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         )
-
                         Spacer(Modifier.width(12.dp))
-
                         val minutes = authState.remainingSeconds / 60
                         val seconds = authState.remainingSeconds % 60
-                        val formatted =
-                            remember(minutes, seconds) {
-                                "%02d:%02d".format(minutes, seconds)
-                            }
-
+                        val formatted = remember(minutes, seconds) {
+                            "%02d:%02d".format(minutes, seconds)
+                        }
                         Text(
                             text = formatted,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            ),
                             color = timerColor,
                         )
                     }
@@ -529,57 +505,50 @@ private fun StateDevicePrompt(
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(18.dp))
 
-        GithubStoreButton(
+        PrimaryPillButton(
             text = stringResource(Res.string.open_github),
-            onClick = {
-                onAction(AuthenticationAction.OpenGitHub(authState.start))
-            },
-            icon = {
+            leadingIcon = {
                 Icon(
                     painter = painterResource(Res.drawable.ic_github),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             },
-            modifier = Modifier.fillMaxWidth(),
+            onClick = { onAction(AuthenticationAction.OpenGitHub(authState.start)) },
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(10.dp))
 
-        FilledTonalButton(
-            onClick = { onAction(AuthenticationAction.PollNow) },
-            enabled = !state.isPolling,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (state.isPolling) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(18.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
+        OutlinedPillButton(
+            text = if (state.isPolling) {
+                stringResource(Res.string.auth_polling_status)
             } else {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-            }
-
-            Spacer(Modifier.width(8.dp))
-
-            Text(
-                text =
-                    if (state.isPolling) {
-                        stringResource(Res.string.auth_polling_status)
-                    } else {
-                        stringResource(Res.string.auth_check_status)
-                    },
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
+                stringResource(Res.string.auth_check_status)
+            },
+            leadingIcon = if (state.isPolling) {
+                {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            } else {
+                {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            },
+            enabled = !state.isPolling,
+            onClick = { onAction(AuthenticationAction.PollNow) },
+        )
 
         if (state.pollIntervalSec > 0) {
             Spacer(Modifier.height(8.dp))
@@ -594,7 +563,6 @@ private fun StateDevicePrompt(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun StatePending() {
     Column(
@@ -602,12 +570,8 @@ private fun StatePending() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        CircularWavyProgressIndicator(
-            modifier = Modifier.size(64.dp),
-        )
-
-        Spacer(Modifier.height(24.dp))
-
+        CircularWavyProgressIndicator(modifier = Modifier.size(56.dp))
+        Spacer(Modifier.height(20.dp))
         Text(
             text = stringResource(Res.string.waiting_for_authorization),
             style = MaterialTheme.typography.titleMedium,
@@ -625,38 +589,36 @@ private fun StateLoggedIn() {
         verticalArrangement = Arrangement.Center,
     ) {
         var visible by remember { mutableStateOf(false) }
-
         LaunchedEffect(Unit) { visible = true }
-
         AnimatedVisibility(
             visible = visible,
-            enter =
-                scaleIn(
-                    spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                ) + fadeIn(),
+            enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn(),
         ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = null,
-                modifier = Modifier.size(72.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
-
-        Spacer(Modifier.height(20.dp))
-
+        Spacer(Modifier.height(18.dp))
         Text(
             text = stringResource(Res.string.signed_in),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onBackground,
         )
-
-        Spacer(Modifier.height(8.dp))
-
+        Spacer(Modifier.height(6.dp))
         Text(
             text = stringResource(Res.string.redirecting_message),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -672,75 +634,129 @@ private fun StateError(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
-
-        ElevatedCard(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(32.dp),
-            colors =
-                CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                ),
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.errorContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f)),
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
-                    imageVector = Icons.Default.Warning,
+                    imageVector = Icons.Outlined.WarningAmber,
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(34.dp),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                 )
-
-                Spacer(Modifier.height(16.dp))
-
+                Spacer(Modifier.height(12.dp))
                 Text(
-                    text =
-                        stringResource(
-                            Res.string.auth_error_with_message,
-                            authState.message,
-                        ),
-                    style = MaterialTheme.typography.titleMedium,
+                    text = stringResource(Res.string.auth_error_with_message, authState.message),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center,
                 )
-
                 authState.recoveryHint?.let { hint ->
-                    Spacer(Modifier.height(8.dp))
-
+                    Spacer(Modifier.height(6.dp))
                     Text(
                         text = hint,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
                     )
                 }
             }
         }
-
-        Spacer(Modifier.height(24.dp))
-
-        GithubStoreButton(
+        Spacer(Modifier.height(20.dp))
+        PrimaryPillButton(
             text = stringResource(Res.string.try_again),
             onClick = { onAction(AuthenticationAction.StartLogin) },
-            modifier = Modifier.fillMaxWidth(),
         )
-
-        Spacer(Modifier.height(8.dp))
-
+        Spacer(Modifier.height(6.dp))
         TextButton(onClick = { onAction(AuthenticationAction.SkipLogin) }) {
             Text(
                 text = stringResource(Res.string.continue_as_guest),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-
         Spacer(Modifier.weight(2f))
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PrimaryPillButton(
+    text: String,
+    onClick: () -> Unit,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            leadingIcon?.invoke()
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun OutlinedPillButton(
+    text: String,
+    onClick: () -> Unit,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(50),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+        onClick = onClick,
+        enabled = enabled,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            leadingIcon?.invoke()
+            if (leadingIcon != null) Spacer(Modifier.width(8.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
 @Composable
 private fun PatSignInSheet(
     input: String,
@@ -750,48 +766,40 @@ private fun PatSignInSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
-
         confirmValueChange = { newValue ->
             !(isSubmitting && newValue == SheetValue.Hidden)
         },
     )
     var isMasked by remember { mutableStateOf(true) }
 
-    ModalBottomSheet(
+    GhsBottomSheet(
         onDismissRequest = { if (!isSubmitting) onAction(AuthenticationAction.DismissPatSheet) },
         sheetState = sheetState,
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(
                 text = stringResource(Res.string.pat_sheet_title),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
                 color = MaterialTheme.colorScheme.onSurface,
             )
-
             Text(
                 text = stringResource(Res.string.pat_sheet_description),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            FilledTonalButton(
+            OutlinedPillButton(
+                text = stringResource(Res.string.pat_open_settings),
                 onClick = { onAction(AuthenticationAction.OpenPatSettingsPage) },
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = stringResource(Res.string.pat_open_settings),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+            )
 
             OutlinedTextField(
                 value = input,
@@ -799,25 +807,33 @@ private fun PatSignInSheet(
                 label = { Text(stringResource(Res.string.pat_input_label)) },
                 placeholder = { Text(stringResource(Res.string.pat_input_placeholder)) },
                 singleLine = true,
-                visualTransformation =
-                    if (isMasked) PasswordVisualTransformation() else VisualTransformation.None,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        autoCorrectEnabled = false,
-                        capitalization = KeyboardCapitalization.None,
-                    ),
+                visualTransformation = if (isMasked) PasswordVisualTransformation() else VisualTransformation.None,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    autoCorrectEnabled = false,
+                    capitalization = KeyboardCapitalization.None,
+                ),
                 isError = error != null,
                 enabled = !isSubmitting,
+                shape = RoundedCornerShape(14.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                ),
                 trailingIcon = {
-                    IconButton(onClick = { isMasked = !isMasked }) {
+                    IconButton(
+                        onClick = { isMasked = !isMasked },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape),
+                    ) {
                         Icon(
-                            imageVector =
-                                if (isMasked) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription =
-                                stringResource(
-                                    if (isMasked) Res.string.pat_show else Res.string.pat_hide,
-                                ),
+                            imageVector = if (isMasked) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = stringResource(
+                                if (isMasked) Res.string.pat_show else Res.string.pat_hide,
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                 },
@@ -827,42 +843,70 @@ private fun PatSignInSheet(
             if (error != null) {
                 Text(
                     text = error,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
                 )
             }
 
-            Spacer(Modifier.height(4.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextButton(
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(50),
+                    color = Color.Transparent,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
                     onClick = { onAction(AuthenticationAction.DismissPatSheet) },
                     enabled = !isSubmitting,
-                    modifier = Modifier.weight(1f),
                 ) {
-                    Text(stringResource(Res.string.pat_cancel))
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.pat_cancel),
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
                 }
 
-                GithubStoreButton(
-                    text = stringResource(Res.string.pat_submit),
+                Button(
                     onClick = { onAction(AuthenticationAction.SubmitPat) },
-                    modifier = Modifier.weight(1f),
-                    icon =
+                    enabled = !isSubmitting && input.isNotBlank(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         if (isSubmitting) {
-                            {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(18.dp),
-                                    strokeWidth = 2.dp,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                )
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                        Text(
+                            text = stringResource(Res.string.pat_submit),
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }
@@ -873,14 +917,12 @@ private fun PatSignInSheet(
 private fun PreviewError() {
     GithubStoreTheme {
         AuthenticationScreen(
-            state =
-                AuthenticationState(
-                    loginState =
-                        AuthLoginState.Error(
-                            message = "Network timeout",
-                            recoveryHint = "Check your internet connection",
-                        ),
+            state = AuthenticationState(
+                loginState = AuthLoginState.Error(
+                    message = "Network timeout",
+                    recoveryHint = "Check your internet connection",
                 ),
+            ),
             onAction = {},
         )
     }
@@ -891,10 +933,7 @@ private fun PreviewError() {
 private fun PreviewLoggedOut() {
     GithubStoreTheme {
         AuthenticationScreen(
-            state =
-                AuthenticationState(
-                    loginState = AuthLoginState.LoggedOut,
-                ),
+            state = AuthenticationState(loginState = AuthLoginState.LoggedOut),
             onAction = {},
         )
     }
@@ -905,20 +944,18 @@ private fun PreviewLoggedOut() {
 private fun PreviewDevicePrompt() {
     GithubStoreTheme {
         AuthenticationScreen(
-            state =
-                AuthenticationState(
-                    loginState =
-                        AuthLoginState.DevicePrompt(
-                            GithubDeviceStartUi(
-                                deviceCode = "",
-                                userCode = "2102-UHHUF",
-                                verificationUri = "",
-                                expiresInSec = 900,
-                            ),
-                            remainingSeconds = 847,
-                        ),
-                    copied = true,
+            state = AuthenticationState(
+                loginState = AuthLoginState.DevicePrompt(
+                    GithubDeviceStartUi(
+                        deviceCode = "",
+                        userCode = "2102-UHHUF",
+                        verificationUri = "",
+                        expiresInSec = 900,
+                    ),
+                    remainingSeconds = 847,
                 ),
+                copied = true,
+            ),
             onAction = {},
         )
     }
@@ -929,10 +966,7 @@ private fun PreviewDevicePrompt() {
 private fun PreviewLoggedIn() {
     GithubStoreTheme {
         AuthenticationScreen(
-            state =
-                AuthenticationState(
-                    loginState = AuthLoginState.LoggedIn,
-                ),
+            state = AuthenticationState(loginState = AuthLoginState.LoggedIn),
             onAction = {},
         )
     }
