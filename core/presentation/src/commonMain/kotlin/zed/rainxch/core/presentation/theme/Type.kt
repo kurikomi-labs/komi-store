@@ -12,35 +12,37 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.fraunces
-import zed.rainxch.githubstore.core.presentation.res.fraunces_italic
-import zed.rainxch.githubstore.core.presentation.res.inter_tight
-import zed.rainxch.githubstore.core.presentation.res.jetbrains_mono
+import zed.rainxch.githubstore.core.presentation.res.geist
+import zed.rainxch.githubstore.core.presentation.res.geist_mono
 
+val geist
+    @Composable get() = FontFamily(
+        Font(Res.font.geist, FontWeight.Normal, FontStyle.Normal),
+        Font(Res.font.geist, FontWeight.Medium, FontStyle.Normal),
+        Font(Res.font.geist, FontWeight.SemiBold, FontStyle.Normal),
+        Font(Res.font.geist, FontWeight.Bold, FontStyle.Normal),
+        Font(Res.font.geist, FontWeight.Black, FontStyle.Normal),
+    )
+
+val geistMono
+    @Composable get() = FontFamily(
+        Font(Res.font.geist_mono, FontWeight.Normal),
+        Font(Res.font.geist_mono, FontWeight.Medium),
+        Font(Res.font.geist_mono, FontWeight.SemiBold),
+        Font(Res.font.geist_mono, FontWeight.Bold),
+    )
+
+@Deprecated("Use geist", ReplaceWith("geist"))
 val fraunces
-    @Composable get() = FontFamily(
-        Font(Res.font.fraunces, FontWeight.Medium, FontStyle.Normal),
-        Font(Res.font.fraunces, FontWeight.SemiBold, FontStyle.Normal),
-        Font(Res.font.fraunces, FontWeight.Bold, FontStyle.Normal),
-        Font(Res.font.fraunces_italic, FontWeight.Medium, FontStyle.Italic),
-        Font(Res.font.fraunces_italic, FontWeight.SemiBold, FontStyle.Italic),
-        Font(Res.font.fraunces_italic, FontWeight.Bold, FontStyle.Italic),
-    )
+    @Composable get() = geist
 
+@Deprecated("Use geist", ReplaceWith("geist"))
 val interTight
-    @Composable get() = FontFamily(
-        Font(Res.font.inter_tight, FontWeight.Normal),
-        Font(Res.font.inter_tight, FontWeight.Medium),
-        Font(Res.font.inter_tight, FontWeight.SemiBold),
-        Font(Res.font.inter_tight, FontWeight.Bold),
-    )
+    @Composable get() = geist
 
+@Deprecated("Use geistMono", ReplaceWith("geistMono"))
 val jetbrainsMono
-    @Composable get() = FontFamily(
-        Font(Res.font.jetbrains_mono, FontWeight.Normal),
-        Font(Res.font.jetbrains_mono, FontWeight.Medium),
-        Font(Res.font.jetbrains_mono, FontWeight.Bold),
-    )
+    @Composable get() = geistMono
 
 private val baseline = Typography()
 
@@ -48,42 +50,42 @@ private val baseline = Typography()
 fun getAppTypography(fontTheme: FontTheme = FontTheme.CUSTOM): Typography {
     if (fontTheme == FontTheme.SYSTEM) return baseline
 
-    val serif = fraunces
-    val sans = interTight
+    val family = geist
 
-    fun TextStyle.fraunces(weight: FontWeight) = copy(
-        fontFamily = serif,
+    fun TextStyle.display(weight: FontWeight) = copy(
+        fontFamily = family,
         fontWeight = weight,
-        fontStyle = FontStyle.Italic,
-        letterSpacing = (-0.02).em,
+        fontStyle = FontStyle.Normal,
+        letterSpacing = (-0.022).em,
+        textDecoration = TextDecoration.None,
     )
 
-    fun TextStyle.sans(weight: FontWeight) = copy(
-        fontFamily = sans,
+    fun TextStyle.body(weight: FontWeight) = copy(
+        fontFamily = family,
         fontWeight = weight,
+        fontStyle = FontStyle.Normal,
         textDecoration = TextDecoration.None,
     )
 
     return Typography(
-
-        displayLarge = baseline.displayLarge.fraunces(FontWeight.SemiBold).copy(
-            letterSpacing = (-0.025).em,
+        displayLarge = baseline.displayLarge.display(FontWeight.Bold).copy(
+            letterSpacing = (-0.028).em,
             fontSize = 36.sp,
         ),
-        displayMedium = baseline.displayMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 32.sp),
-        displaySmall = baseline.displaySmall.fraunces(FontWeight.SemiBold).copy(fontSize = 28.sp),
-        headlineLarge = baseline.headlineLarge.fraunces(FontWeight.SemiBold).copy(fontSize = 26.sp),
-        headlineMedium = baseline.headlineMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 22.sp),
-        headlineSmall = baseline.headlineSmall.fraunces(FontWeight.SemiBold).copy(fontSize = 20.sp),
-        titleLarge = baseline.titleLarge.fraunces(FontWeight.SemiBold).copy(fontSize = 18.sp),
-        titleMedium = baseline.titleMedium.fraunces(FontWeight.SemiBold).copy(fontSize = 16.sp),
-        titleSmall = baseline.titleSmall.fraunces(FontWeight.SemiBold).copy(fontSize = 14.sp),
+        displayMedium = baseline.displayMedium.display(FontWeight.Bold).copy(fontSize = 32.sp),
+        displaySmall = baseline.displaySmall.display(FontWeight.Bold).copy(fontSize = 28.sp),
+        headlineLarge = baseline.headlineLarge.display(FontWeight.SemiBold).copy(fontSize = 26.sp),
+        headlineMedium = baseline.headlineMedium.display(FontWeight.SemiBold).copy(fontSize = 22.sp),
+        headlineSmall = baseline.headlineSmall.display(FontWeight.SemiBold).copy(fontSize = 20.sp),
+        titleLarge = baseline.titleLarge.display(FontWeight.SemiBold).copy(fontSize = 18.sp),
+        titleMedium = baseline.titleMedium.display(FontWeight.SemiBold).copy(fontSize = 16.sp),
+        titleSmall = baseline.titleSmall.display(FontWeight.SemiBold).copy(fontSize = 14.sp),
 
-        bodyLarge = baseline.bodyLarge.sans(FontWeight.Normal).copy(fontSize = 14.sp),
-        bodyMedium = baseline.bodyMedium.sans(FontWeight.Normal).copy(fontSize = 13.sp),
-        bodySmall = baseline.bodySmall.sans(FontWeight.Medium).copy(fontSize = 12.sp),
-        labelLarge = baseline.labelLarge.sans(FontWeight.SemiBold),
-        labelMedium = baseline.labelMedium.sans(FontWeight.SemiBold),
-        labelSmall = baseline.labelSmall.sans(FontWeight.SemiBold),
+        bodyLarge = baseline.bodyLarge.body(FontWeight.Normal).copy(fontSize = 14.sp),
+        bodyMedium = baseline.bodyMedium.body(FontWeight.Normal).copy(fontSize = 13.sp),
+        bodySmall = baseline.bodySmall.body(FontWeight.Medium).copy(fontSize = 12.sp),
+        labelLarge = baseline.labelLarge.body(FontWeight.SemiBold),
+        labelMedium = baseline.labelMedium.body(FontWeight.SemiBold),
+        labelSmall = baseline.labelSmall.body(FontWeight.SemiBold),
     )
 }
