@@ -7,6 +7,7 @@ import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.model.RestartReason
 import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.domain.model.TranslationProvider
 
@@ -192,4 +193,10 @@ interface TweaksRepository {
     suspend fun addCustomForgeHost(host: String)
 
     suspend fun removeCustomForgeHost(host: String)
+
+    fun getNeedsRestartReasons(): Flow<Set<RestartReason>>
+
+    suspend fun addRestartReason(reason: RestartReason)
+
+    suspend fun clearRestartReasons()
 }
