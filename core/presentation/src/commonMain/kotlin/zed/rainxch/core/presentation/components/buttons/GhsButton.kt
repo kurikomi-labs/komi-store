@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,15 +65,18 @@ fun GhsButton(
     trailingIcon: ImageVector? = null,
 ) {
     val cs = MaterialTheme.colorScheme
+    // Dark mode mutes Primary fill — issue #665 (eye-strain on large dark monitors).
+    // Light: full primary. Dark: primaryContainer (low-luminance, blends into surface).
+    val isDark = cs.background.luminance() < 0.5f
     val container: Color = when (variant) {
-        GhsButtonVariant.Primary -> cs.primary
+        GhsButtonVariant.Primary -> if (isDark) cs.primaryContainer else cs.primary
         GhsButtonVariant.Tonal -> cs.secondaryContainer
         GhsButtonVariant.Outline -> Color.Transparent
         GhsButtonVariant.Text -> Color.Transparent
         GhsButtonVariant.Destructive -> cs.errorContainer
     }
     val content: Color = when (variant) {
-        GhsButtonVariant.Primary -> cs.onPrimary
+        GhsButtonVariant.Primary -> if (isDark) cs.onPrimaryContainer else cs.onPrimary
         GhsButtonVariant.Tonal -> cs.onSecondaryContainer
         GhsButtonVariant.Outline -> cs.onSurface
         GhsButtonVariant.Text -> cs.primary
