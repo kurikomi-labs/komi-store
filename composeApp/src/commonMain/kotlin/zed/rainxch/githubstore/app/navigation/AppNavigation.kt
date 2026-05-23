@@ -73,11 +73,16 @@ import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
+import zed.rainxch.tweaks.presentation.appearance.TweaksAppearanceRoot
+import zed.rainxch.tweaks.presentation.appinfo.TweaksAppInfoRoot
 import zed.rainxch.tweaks.presentation.components.TweaksStubScreen
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
+import zed.rainxch.tweaks.presentation.language.TweaksLanguageRoot
+import zed.rainxch.tweaks.presentation.licenses.LicensesRoot
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
 import zed.rainxch.tweaks.presentation.skipped.SkippedUpdatesRoot
+import zed.rainxch.tweaks.presentation.storage.TweaksStorageRoot
 
 @Composable
 fun AppNavigation(
@@ -715,15 +720,13 @@ fun AppNavigation(
                     }
 
                     composable<GithubStoreGraph.TweaksAppearanceScreen> {
-                        TweaksStubScreen(
-                            title = stringResource(Res.string.tweaks_entry_appearance),
+                        TweaksAppearanceRoot(
                             onNavigateBack = { navController.popBackStack() },
                         )
                     }
 
                     composable<GithubStoreGraph.TweaksLanguageScreen> {
-                        TweaksStubScreen(
-                            title = stringResource(Res.string.tweaks_entry_language),
+                        TweaksLanguageRoot(
                             onNavigateBack = { navController.popBackStack() },
                         )
                     }
@@ -764,8 +767,7 @@ fun AppNavigation(
                     }
 
                     composable<GithubStoreGraph.TweaksStorageScreen> {
-                        TweaksStubScreen(
-                            title = stringResource(Res.string.tweaks_entry_storage),
+                        TweaksStorageRoot(
                             onNavigateBack = { navController.popBackStack() },
                         )
                     }
@@ -778,8 +780,23 @@ fun AppNavigation(
                     }
 
                     composable<GithubStoreGraph.TweaksAppInfoScreen> {
-                        TweaksStubScreen(
-                            title = stringResource(Res.string.tweaks_entry_app_info),
+                        TweaksAppInfoRoot(
+                            onNavigateBack = { navController.popBackStack() },
+                            onNavigateToWhatsNewHistory = {
+                                navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onNavigateToLicenses = {
+                                navController.navigate(GithubStoreGraph.LicensesScreen) {
+                                    launchSingleTop = true
+                                }
+                            },
+                        )
+                    }
+
+                    composable<GithubStoreGraph.LicensesScreen> {
+                        LicensesRoot(
                             onNavigateBack = { navController.popBackStack() },
                         )
                     }
