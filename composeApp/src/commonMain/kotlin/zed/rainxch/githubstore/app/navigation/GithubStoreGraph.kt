@@ -78,4 +78,20 @@ sealed interface GithubStoreGraph {
     data class CategoryListScreen(
         val category: String,
     ) : GithubStoreGraph
+
+    @Serializable
+    data class DetailsAboutScreen(
+        val repositoryId: Long = -1L,
+        val owner: String = "",
+        val repo: String = "",
+        val sourceHost: String? = null,
+    ) : GithubStoreGraph
+
+    @Serializable
+    data class DetailsWhatsNewScreen(
+        val repositoryId: Long = -1L,
+        val owner: String = "",
+        val repo: String = "",
+        val sourceHost: String? = null,
+    ) : GithubStoreGraph
 }

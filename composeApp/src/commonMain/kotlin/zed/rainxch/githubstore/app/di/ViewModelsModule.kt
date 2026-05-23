@@ -9,6 +9,8 @@ import zed.rainxch.apps.presentation.import.ExternalImportViewModel
 import zed.rainxch.apps.presentation.starred.StarredPickerViewModel
 import zed.rainxch.auth.presentation.AuthenticationViewModel
 import zed.rainxch.details.presentation.DetailsViewModel
+import zed.rainxch.details.presentation.about.DetailsAboutViewModel
+import zed.rainxch.details.presentation.whatsnew.DetailsWhatsNewViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
 import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
@@ -65,6 +67,24 @@ val viewModelsModule =
                 systemInstallSerializer = get(),
             )
         }
+        viewModel { params ->
+            DetailsAboutViewModel(
+                repositoryId = params[0],
+                owner = params[1],
+                repo = params[2],
+                sourceHost = if (params.size() > 3) params[3] else null,
+                detailsRepository = get(),
+            )
+        }
+        viewModel { params ->
+            DetailsWhatsNewViewModel(
+                repositoryId = params[0],
+                owner = params[1],
+                repo = params[2],
+                sourceHost = if (params.size() > 3) params[3] else null,
+                detailsRepository = get(),
+            )
+        }
         viewModelOf(::DeveloperProfileViewModel)
         viewModelOf(::FavouritesViewModel)
         viewModelOf(::HomeViewModel)
@@ -85,7 +105,7 @@ val viewModelsModule =
                 searchHistoryRepository = get(),
                 hiddenReposRepository = get(),
                 userSessionRepository = get(),
-                initialPlatform = get(),
+                initialPlatform = params.getOrNull<SearchPlatformUi>(),
             )
         }
         viewModelOf(::ProfileViewModel)
