@@ -222,6 +222,14 @@ sealed interface TweaksAction {
     data object OnMasterProxySave : TweaksAction
     data object OnMasterProxyTest : TweaksAction
 
+    data class OnMasterProxyPasteUrl(
+        val type: ProxyType,
+        val host: String,
+        val port: Int,
+        val username: String?,
+        val password: String?,
+    ) : TweaksAction
+
     data class OnScopeUseMainToggled(val scope: ProxyScope, val useMain: Boolean) : TweaksAction
 
     data class OnTelemetryToggled(val enabled: Boolean) : TweaksAction

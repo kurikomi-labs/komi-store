@@ -1215,6 +1215,18 @@ class TweaksViewModel(
                 mutateMasterForm { it.copy(isPasswordVisible = !it.isPasswordVisible) }
             }
 
+            is TweaksAction.OnMasterProxyPasteUrl -> {
+                mutateMasterForm {
+                    it.copy(
+                        type = action.type,
+                        host = action.host,
+                        port = action.port.toString(),
+                        username = action.username.orEmpty(),
+                        password = action.password.orEmpty(),
+                    )
+                }
+            }
+
             TweaksAction.OnMasterProxySave -> {
                 val config = buildMasterProxyConfig() ?: return
                 viewModelScope.launch {

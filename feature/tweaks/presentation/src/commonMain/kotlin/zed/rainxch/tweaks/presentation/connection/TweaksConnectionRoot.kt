@@ -25,10 +25,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.outlined.ContentPaste
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.ProxyScope
 import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
@@ -75,6 +80,7 @@ fun TweaksConnectionRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var pasteSheetOpen by rememberSaveable { mutableStateOf(false) }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -114,6 +120,7 @@ fun TweaksConnectionRoot(
             MainConnectionCard(
                 form = state.masterProxyForm,
                 onAction = { viewModel.onAction(it) },
+                onPasteUrl = { pasteSheetOpen = true },
             )
             Spacer(Modifier.height(16.dp))
         }
@@ -124,6 +131,24 @@ fun TweaksConnectionRoot(
                 onAction = { viewModel.onAction(it) },
             )
         }
+    }
+
+    if (pasteSheetOpen) {
+        PasteProxyUrlSheet(
+            onDismiss = { pasteSheetOpen = false },
+            onParsed = { parsed ->
+                viewModel.onAction(
+                    TweaksAction.OnMasterProxyPasteUrl(
+                        type = parsed.type,
+                        host = parsed.host,
+                        port = parsed.port,
+                        username = parsed.username,
+                        password = parsed.password,
+                    ),
+                )
+                pasteSheetOpen = false
+            },
+        )
     }
 }
 
@@ -157,6 +182,7 @@ private fun IntroCard() {
 private fun MainConnectionCard(
     form: ProxyScopeFormState,
     onAction: (TweaksAction) -> Unit,
+    onPasteUrl: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -196,7 +222,15 @@ private fun MainConnectionCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(8.dp))
+                    GhsButton(
+                        onClick = onPasteUrl,
+                        label = "Paste full URL",
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
+                        leadingIcon = Icons.Outlined.ContentPaste,
+                    )
+                    Spacer(Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
