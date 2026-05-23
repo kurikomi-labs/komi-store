@@ -57,8 +57,6 @@ import com.mikepenz.markdown.compose.Markdown
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.details.presentation.components.TranslationControls
-import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
 import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
@@ -71,10 +69,6 @@ fun LazyListScope.whatsNew(
     collapsedHeight: Dp,
     measuredHeightPx: Float?,
     onMeasured: (Float) -> Unit,
-    translationState: TranslationState,
-    onTranslateClick: () -> Unit,
-    onLanguagePickerClick: () -> Unit,
-    onToggleTranslation: () -> Unit,
     onReadMore: (() -> Unit)? = null,
 ) {
     item {
@@ -134,7 +128,6 @@ fun LazyListScope.whatsNew(
         Spacer(Modifier.height(12.dp))
 
         ExpandableMarkdownContent(
-            translationState = translationState,
             release = release,
             collapsedHeight = collapsedHeight,
             isExpanded = isExpanded,
@@ -147,7 +140,6 @@ fun LazyListScope.whatsNew(
 
 @Composable
 private fun ExpandableMarkdownContent(
-    translationState: TranslationState,
     release: GithubRelease,
     collapsedHeight: Dp,
     isExpanded: Boolean,
@@ -155,12 +147,7 @@ private fun ExpandableMarkdownContent(
     measuredHeightPx: Float?,
     onMeasured: (Float) -> Unit,
 ) {
-    val raw =
-        if (translationState.isShowingTranslation && translationState.translatedText != null) {
-            translationState.translatedText
-        } else {
-            release.description ?: stringResource(Res.string.no_release_notes)
-        }
+    val raw = release.description ?: stringResource(Res.string.no_release_notes)
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     var fullChunks by remember(raw, isDark) { mutableStateOf<List<String>?>(null) }

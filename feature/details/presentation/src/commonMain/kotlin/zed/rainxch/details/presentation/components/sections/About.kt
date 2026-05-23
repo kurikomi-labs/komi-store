@@ -57,9 +57,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.util.applyThemeAwareImages
-import zed.rainxch.details.presentation.components.TranslationControls
 import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
-import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
 import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
@@ -75,10 +73,6 @@ fun LazyListScope.about(
     collapsedHeight: Dp,
     measuredHeightPx: Float?,
     onMeasured: (Float) -> Unit,
-    translationState: TranslationState,
-    onTranslateClick: () -> Unit,
-    onLanguagePickerClick: () -> Unit,
-    onToggleTranslation: () -> Unit,
     onReadMore: (() -> Unit)? = null,
 ) {
     item {
@@ -116,12 +110,7 @@ fun LazyListScope.about(
     }
 
     item(key = "about_markdown") {
-        val raw =
-            if (translationState.isShowingTranslation && translationState.translatedText != null) {
-                translationState.translatedText
-            } else {
-                readmeMarkdown
-            }
+        val raw = readmeMarkdown
         val isDark = androidx.compose.foundation.isSystemInDarkTheme()
         val probeClient = org.koin.compose.koinInject<io.ktor.client.HttpClient>(
             qualifier = org.koin.core.qualifier.named("test"),

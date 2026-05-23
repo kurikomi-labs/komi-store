@@ -101,7 +101,6 @@ import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.isPullToRefreshSupported
 import zed.rainxch.core.domain.model.RefreshError
 import zed.rainxch.details.presentation.components.ApkInspectSheet
-import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.sections.about
 import zed.rainxch.details.presentation.components.sections.author
 import zed.rainxch.details.presentation.components.sections.header
@@ -111,7 +110,6 @@ import zed.rainxch.details.presentation.components.sections.stats
 import zed.rainxch.details.presentation.components.sections.releaseChannel
 import zed.rainxch.details.presentation.components.sections.whatsNew
 import zed.rainxch.details.presentation.components.states.ErrorState
-import zed.rainxch.details.presentation.model.TranslationTarget
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.add_to_favourites
 import zed.rainxch.githubstore.core.presentation.res.cancel
@@ -521,36 +519,6 @@ fun DetailsScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
 
-            LanguagePicker(
-                isVisible = state.isLanguagePickerVisible,
-                selectedLanguageCode =
-                    when (state.languagePickerTarget) {
-                        TranslationTarget.About -> state.aboutTranslation.targetLanguageCode
-                        TranslationTarget.WhatsNew -> state.whatsNewTranslation.targetLanguageCode
-                        null -> null
-                    },
-                deviceLanguageCode = state.deviceLanguageCode,
-                onLanguageSelected = { language ->
-                    when (state.languagePickerTarget) {
-                        TranslationTarget.About -> {
-                            onAction(DetailsAction.TranslateAbout(language.code))
-                        }
-
-                        TranslationTarget.WhatsNew -> {
-                            onAction(
-                                DetailsAction.TranslateWhatsNew(
-                                    language.code,
-                                ),
-                            )
-                        }
-
-                        null -> {}
-                    }
-                    onAction(DetailsAction.DismissLanguagePicker)
-                },
-                onDismiss = { onAction(DetailsAction.DismissLanguagePicker) },
-            )
-
             if (state.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -661,16 +629,6 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.whatsNewMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
-                                translationState = state.whatsNewTranslation,
-                                onTranslateClick = {
-                                    onAction(DetailsAction.TranslateWhatsNew(state.deviceLanguageCode))
-                                },
-                                onLanguagePickerClick = {
-                                    onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.WhatsNew))
-                                },
-                                onToggleTranslation = {
-                                    onAction(DetailsAction.ToggleWhatsNewTranslation)
-                                },
                                 onReadMore = onReadMoreWhatsNew,
                             )
                         }
@@ -684,16 +642,6 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.aboutMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
-                                translationState = state.aboutTranslation,
-                                onTranslateClick = {
-                                    onAction(DetailsAction.TranslateAbout(state.deviceLanguageCode))
-                                },
-                                onLanguagePickerClick = {
-                                    onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.About))
-                                },
-                                onToggleTranslation = {
-                                    onAction(DetailsAction.ToggleAboutTranslation)
-                                },
                                 onReadMore = onReadMoreAbout,
                             )
                         }
@@ -707,16 +655,6 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.aboutMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
-                                translationState = state.aboutTranslation,
-                                onTranslateClick = {
-                                    onAction(DetailsAction.TranslateAbout(state.deviceLanguageCode))
-                                },
-                                onLanguagePickerClick = {
-                                    onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.About))
-                                },
-                                onToggleTranslation = {
-                                    onAction(DetailsAction.ToggleAboutTranslation)
-                                },
                                 onReadMore = onReadMoreAbout,
                             )
                         }
@@ -729,16 +667,6 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.whatsNewMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
-                                translationState = state.whatsNewTranslation,
-                                onTranslateClick = {
-                                    onAction(DetailsAction.TranslateWhatsNew(state.deviceLanguageCode))
-                                },
-                                onLanguagePickerClick = {
-                                    onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.WhatsNew))
-                                },
-                                onToggleTranslation = {
-                                    onAction(DetailsAction.ToggleWhatsNewTranslation)
-                                },
                                 onReadMore = onReadMoreWhatsNew,
                             )
                         }
