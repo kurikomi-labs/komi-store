@@ -366,6 +366,34 @@
     <string name="home_failed_to_load_repositories">Failed to load repositories</string>
     <string name="home_view_details">View Details</string>
 
+    <string name="home_topbar_discover">Discover</string>
+    <string name="home_section_hot_releases">Hot releases</string>
+    <string name="home_section_trending_now">Trending now</string>
+    <string name="home_section_most_popular">Most popular</string>
+    <string name="home_section_from_your_stars">From your stars</string>
+    <string name="home_hot_pill_format">HOT · %1$s ago</string>
+    <string name="home_rank_format">#%1$d</string>
+    <string name="home_action_get">Get</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_image">Image</string>
+    <string name="common_see_all">See all ›</string>
+    <string name="home_view_all">View all</string>
+    <string name="home_view_more">View more</string>
+
+    <string name="details_update_banner_format">Update available: %1$s → %2$s</string>
+    <string name="details_whats_changed_since_format">What's changed since %1$s</string>
+    <string name="details_mirror_via_format">via %1$s</string>
+    <string name="details_mirror_sha_verified">sha-256 verified</string>
+    <string name="details_mirror_change">change</string>
+    <string name="details_view_all_releases_format">View all %1$d releases</string>
+    <string name="details_view_all_releases">View all releases</string>
+    <string name="details_view_developer_profile">View profile</string>
+    <string name="details_developer_section">Developer</string>
+    <string name="details_permissions_section">Permissions</string>
+    <string name="details_stats_section">Stats</string>
+    <string name="details_about_screen_title">About</string>
+    <string name="details_whats_new_screen_title">What's new</string>
+
     <string name="updated_just_now">updated just now</string>
     <string name="updated_hours_ago">updated %1$d hour(s) ago</string>
     <string name="updated_yesterday">updated yesterday</string>
@@ -1123,6 +1151,24 @@
     <string name="apps_compact_status_updates_ignored">updates ignored</string>
     <string name="apps_ignore_updates">Ignore updates</string>
     <string name="discard_pending_install">Discard</string>
+    <string name="apps_updates_banner_title_one">1 update available</string>
+    <string name="apps_updates_banner_title_other">%1$d updates available</string>
+    <string name="apps_updates_banner_subtitle">Review or update everything at once.</string>
+    <string name="apps_updates_banner_show">See list</string>
+    <string name="apps_updates_banner_hide">Hide list</string>
+    <string name="apps_section_pending_installs">Ready to install</string>
+    <string name="apps_two_pane_empty_title">Pick an app</string>
+    <string name="apps_two_pane_empty_subtitle">Select any app on the left to see its details and actions.</string>
+    <string name="apps_two_pane_detail_section_status">Status</string>
+    <string name="apps_two_pane_detail_section_actions">Quick actions</string>
+    <string name="apps_two_pane_detail_section_settings">Settings</string>
+    <string name="apps_two_pane_open_repo">Open repository</string>
+    <string name="apps_two_pane_installed_label">Installed</string>
+    <string name="apps_two_pane_latest_label">Latest</string>
+    <string name="apps_two_pane_pick_variant">Pick variant</string>
+    <string name="apps_two_pane_advanced_settings">Advanced settings</string>
+    <string name="adaptive_pick_repo_title">Pick a repository</string>
+    <string name="adaptive_pick_repo_subtitle">Tap any card on the left to view its details here.</string>
 
     <!-- APK Inspect feature -->
     <string name="apk_inspect_title">APK Inspect</string>
