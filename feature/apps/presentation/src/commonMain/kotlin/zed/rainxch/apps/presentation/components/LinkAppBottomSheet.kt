@@ -33,7 +33,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -67,11 +67,9 @@ fun LinkAppBottomSheet(
     state: AppsState,
     onAction: (AppsAction) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
+    GhsBottomSheet(
         onDismissRequest = { onAction(AppsAction.OnDismissLinkSheet) },
-        sheetState = sheetState,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         AnimatedContent(
             targetState = state.linkStep,

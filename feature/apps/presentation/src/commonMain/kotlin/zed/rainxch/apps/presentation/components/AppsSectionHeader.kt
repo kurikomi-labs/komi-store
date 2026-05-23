@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,7 +27,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_section_collapse
 import zed.rainxch.githubstore.core.presentation.res.apps_section_count_suffix
@@ -55,54 +58,63 @@ fun AppsSectionHeader(
 
     val rowSemantic = if (isExpanded) collapseLabel else expandLabel
 
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp, bottom = 4.dp)
-                .let { base ->
-                    if (collapsible) {
-                        base
-                            .clickable(onClick = onToggle)
-                            .semantics(mergeDescendants = true) {
-                                role = Role.Button
-                                heading()
-                                contentDescription = "$title, $count, $rowSemantic"
-                                stateDescription = if (isExpanded) expandedStateLabel else collapsedStateLabel
-                            }
-                    } else {
-                        base.semantics(mergeDescendants = true) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(top = 20.dp, bottom = 6.dp)
+            .let { base ->
+                if (collapsible) {
+                    base
+                        .clickable(onClick = onToggle)
+                        .semantics(mergeDescendants = true) {
+                            role = Role.Button
                             heading()
-                            contentDescription = "$title, $count"
+                            contentDescription = "$title, $count, $rowSemantic"
+                            stateDescription = if (isExpanded) expandedStateLabel else collapsedStateLabel
                         }
+                } else {
+                    base.semantics(mergeDescendants = true) {
+                        heading()
+                        contentDescription = "$title, $count"
                     }
-                },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                }
+            },
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Text(
-            text = stringResource(Res.string.apps_section_count_suffix, count),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f),
-        )
-        if (collapsible) {
-            Icon(
-                imageVector = Icons.Default.ExpandMore,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier =
-                    Modifier
-                        .size(20.dp)
-                        .rotate(rotation),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
+            Text(
+                text = stringResource(Res.string.apps_section_count_suffix, count),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 13.sp,
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            if (collapsible) {
+                Icon(
+                    imageVector = Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(22.dp)
+                        .rotate(rotation),
+                )
+            }
         }
+        Squiggle()
     }
 }

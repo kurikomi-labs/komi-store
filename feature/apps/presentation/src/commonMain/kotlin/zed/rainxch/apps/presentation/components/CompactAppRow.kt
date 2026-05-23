@@ -3,7 +3,9 @@
 package zed.rainxch.apps.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +26,8 @@ import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -95,16 +97,21 @@ fun CompactAppRow(
     val rowSemanticName = buildCompactRowSemantics(app.appName, app.installedVersion, flags)
 
     Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 64.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .clickable(onClick = onRowClick)
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .semantics(mergeDescendants = true) {
-                    contentDescription = rowSemanticName
-                },
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 68.dp)
+            .clip(Radii.row)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = Radii.row,
+            )
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(onClick = onRowClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = rowSemanticName
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -241,47 +248,47 @@ private fun CompactRowOverflow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        DropdownMenu(
+        GhsDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(Res.string.advanced_settings_open)) },
+            GhsDropdownMenuItem(
+                text = stringResource(Res.string.advanced_settings_open),
                 onClick = {
                     expanded = false
                     onAdvancedSettingsClick()
                 },
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(Res.string.variant_picker_open)) },
+            GhsDropdownMenuItem(
+                text = stringResource(Res.string.variant_picker_open),
                 onClick = {
                     expanded = false
                     onPickVariantClick()
                 },
             )
-            DropdownMenuItem(
-                text = {
-                    val baseLabel = stringResource(Res.string.pre_release_badge)
-                    Text(text = if (isPreReleaseEnabled) "$baseLabel  ✓" else baseLabel)
-                },
-                onClick = {
-                    expanded = false
-                    onTogglePreReleases(!isPreReleaseEnabled)
-                },
-            )
-            DropdownMenuItem(
-                text = {
-                    val baseLabel = stringResource(Res.string.apps_ignore_updates)
-                    Text(text = if (!isUpdateCheckEnabled) "$baseLabel  ✓" else baseLabel)
-                },
-                onClick = {
-                    expanded = false
-                    onToggleUpdateCheck(!isUpdateCheckEnabled)
-                },
-            )
+            run {
+                val baseLabel = stringResource(Res.string.pre_release_badge)
+                GhsDropdownMenuItem(
+                    text = if (isPreReleaseEnabled) "$baseLabel  ✓" else baseLabel,
+                    onClick = {
+                        expanded = false
+                        onTogglePreReleases(!isPreReleaseEnabled)
+                    },
+                )
+            }
+            run {
+                val baseLabel = stringResource(Res.string.apps_ignore_updates)
+                GhsDropdownMenuItem(
+                    text = if (!isUpdateCheckEnabled) "$baseLabel  ✓" else baseLabel,
+                    onClick = {
+                        expanded = false
+                        onToggleUpdateCheck(!isUpdateCheckEnabled)
+                    },
+                )
+            }
             if (hasSkippedReleaseTag) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(Res.string.apps_skip_version_unskip)) },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.apps_skip_version_unskip),
                     onClick = {
                         expanded = false
                         onUnskipVersionClick()
@@ -289,13 +296,9 @@ private fun CompactRowOverflow(
                 )
             }
             if (isPending) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(Res.string.discard_pending_install),
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.discard_pending_install),
+                    contentColor = MaterialTheme.colorScheme.error,
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.DeleteOutline,
@@ -309,13 +312,9 @@ private fun CompactRowOverflow(
                     },
                 )
             } else {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(Res.string.uninstall),
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    },
+                GhsDropdownMenuItem(
+                    text = stringResource(Res.string.uninstall),
+                    contentColor = MaterialTheme.colorScheme.error,
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.DeleteOutline,

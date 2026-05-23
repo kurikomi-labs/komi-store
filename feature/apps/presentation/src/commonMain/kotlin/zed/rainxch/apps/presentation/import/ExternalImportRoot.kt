@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -129,12 +129,12 @@ fun ExternalImportRoot(
                                         contentDescription = stringResource(Res.string.external_import_overflow_more),
                                     )
                                 }
-                                DropdownMenu(
+                                GhsDropdownMenu(
                                     expanded = menuOpen,
                                     onDismissRequest = { menuOpen = false },
                                 ) {
-                                    DropdownMenuItem(
-                                        text = { Text(stringResource(Res.string.external_import_overflow_skip_remaining)) },
+                                    GhsDropdownMenuItem(
+                                        text = stringResource(Res.string.external_import_overflow_skip_remaining),
                                         onClick = {
                                             menuOpen = false
                                             viewModel.onAction(ExternalImportAction.OnSkipRemaining)

@@ -50,6 +50,7 @@ fun VariantPickerDialog(
 
     AlertDialog(
         onDismissRequest = { onAction(AppsAction.OnDismissVariantPicker) },
+        shape = zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog,
         title = {
             Column {
                 Text(
