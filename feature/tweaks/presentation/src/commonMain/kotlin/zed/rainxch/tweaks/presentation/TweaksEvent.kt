@@ -15,6 +15,12 @@ sealed interface TweaksEvent {
         val message: String,
     ) : TweaksEvent
 
+    data class OnMasterProxyTestResult(
+        val searchMs: Long?,
+        val downloadMs: Long?,
+        val translationMs: Long?,
+    ) : TweaksEvent
+
     data object OnCacheCleared : TweaksEvent
 
     data class OnCacheClearError(

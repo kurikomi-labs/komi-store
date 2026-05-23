@@ -98,6 +98,14 @@ fun TweaksConnectionRoot(
             is TweaksEvent.OnProxyTestError -> coroutineScope.launch {
                 snackbarState.showSnackbar(event.message)
             }
+            is TweaksEvent.OnMasterProxyTestResult -> coroutineScope.launch {
+                val parts = listOfNotNull(
+                    "Search ${event.searchMs?.let { "✓ ${it}ms" } ?: "✗"}",
+                    "Downloads ${event.downloadMs?.let { "✓ ${it}ms" } ?: "✗"}",
+                    "Translation ${event.translationMs?.let { "✓ ${it}ms" } ?: "✗"}",
+                )
+                snackbarState.showSnackbar(parts.joinToString(" · "))
+            }
             else -> Unit
         }
     }

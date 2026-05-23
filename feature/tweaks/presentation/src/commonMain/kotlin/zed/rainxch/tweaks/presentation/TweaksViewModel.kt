@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -1263,12 +1264,23 @@ class TweaksViewModel(
                     it.copy(masterProxyForm = it.masterProxyForm.copy(isTestInProgress = true))
                 }
                 viewModelScope.launch {
-                    val outcome: ProxyTestOutcome = try {
-                        proxyTester.test(config)
+                    val results = try {
+                        kotlinx.coroutines.coroutineScope {
+                            val search = async {
+                                runProbe(config, "https://api.github.com/zen")
+                            }
+                            val download = async {
+                                runProbe(config, "https://github.com/robots.txt")
+                            }
+                            val translation = async {
+                                runProbe(config, "https://translate.disroot.org")
+                            }
+                            Triple(search.await(), download.await(), translation.await())
+                        }
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
-                        ProxyTestOutcome.Failure.Unknown(e.message)
+                        Triple<Long?, Long?, Long?>(null, null, null)
                     } finally {
                         _state.update {
                             it.copy(
@@ -1276,7 +1288,13 @@ class TweaksViewModel(
                             )
                         }
                     }
-                    _events.send(outcome.toEvent())
+                    _events.send(
+                        TweaksEvent.OnMasterProxyTestResult(
+                            searchMs = results.first,
+                            downloadMs = results.second,
+                            translationMs = results.third,
+                        ),
+                    )
                 }
             }
 
@@ -1329,6 +1347,15 @@ class TweaksViewModel(
                 }
             }
         }
+    }
+
+    private suspend fun runProbe(config: ProxyConfig, url: String): Long? = try {
+        val outcome = proxyTester.test(config, url)
+        (outcome as? ProxyTestOutcome.Success)?.latencyMs
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        null
     }
 
     private fun buildMasterProxyConfigForTest(): ProxyConfig? {
