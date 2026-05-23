@@ -451,6 +451,7 @@ private fun OverridesCard(
                     onToggle = { useMain ->
                         onAction(TweaksAction.OnScopeUseMainToggled(scope, useMain))
                     },
+                    onAction = onAction,
                 )
             }
         }
@@ -463,6 +464,7 @@ private fun ScopeOverrideRow(
     useMain: Boolean,
     scopeForm: ProxyScopeFormState,
     onToggle: (Boolean) -> Unit,
+    onAction: (TweaksAction) -> Unit,
 ) {
     val (title, subtitle) = when (scope) {
         ProxyScope.DISCOVERY -> "Search & metadata" to "GitHub API, search, repo details."
@@ -503,27 +505,113 @@ private fun ScopeOverrideRow(
 
             AnimatedVisibility(visible = !useMain) {
                 Column {
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = scopeStatusLabel(scopeForm),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontFamily = FontFamily.Monospace,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Spacer(Modifier.height(12.dp))
+                    ModePillSegment(
+                        selected = scopeForm.type,
+                        onSelected = { onAction(TweaksAction.OnProxyTypeSelected(scope, it)) },
                     )
+
+                    AnimatedVisibility(
+                        visible = scopeForm.type == ProxyType.HTTP ||
+                            scopeForm.type == ProxyType.SOCKS,
+                    ) {
+                        Column {
+                            Spacer(Modifier.height(12.dp))
+                            ProxyFormFields(
+                                form = scopeForm,
+                                onHostChange = {
+                                    onAction(TweaksAction.OnProxyHostChanged(scope, it))
+                                },
+                                onPortChange = {
+                                    onAction(TweaksAction.OnProxyPortChanged(scope, it))
+                                },
+                                onUserChange = {
+                                    onAction(TweaksAction.OnProxyUsernameChanged(scope, it))
+                                },
+                                onPassChange = {
+                                    onAction(TweaksAction.OnProxyPasswordChanged(scope, it))
+                                },
+                                onPassVisibility = {
+                                    onAction(TweaksAction.OnProxyPasswordVisibilityToggle(scope))
+                                },
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                OutlinedButton(
+                                    onClick = { onAction(TweaksAction.OnProxyTest(scope)) },
+                                    shape = Radii.chip,
+                                    modifier = Modifier.weight(1f),
+                                    enabled = !scopeForm.isTestInProgress,
+                                ) {
+                                    if (scopeForm.isTestInProgress) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(16.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.NetworkCheck,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                        )
+                                    }
+                                    Spacer(Modifier.size(6.dp))
+                                    Text(text = "Test ${title.lowercase()}")
+                                }
+                                FilledTonalButton(
+                                    onClick = { onAction(TweaksAction.OnProxySave(scope)) },
+                                    shape = WonkySquircleShape.CtaPrimary,
+                                    modifier = Modifier.weight(1f),
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    ),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Save,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                    Spacer(Modifier.size(6.dp))
+                                    Text(text = stringResource(Res.string.proxy_save))
+                                }
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = scopeForm.type == ProxyType.NONE ||
+                            scopeForm.type == ProxyType.SYSTEM,
+                    ) {
+                        Column {
+                            Spacer(Modifier.height(12.dp))
+                            FilledTonalButton(
+                                onClick = { onAction(TweaksAction.OnProxySave(scope)) },
+                                shape = WonkySquircleShape.CtaPrimary,
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                ),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                                Spacer(Modifier.size(6.dp))
+                                Text(text = stringResource(Res.string.proxy_save))
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
-
-private fun scopeStatusLabel(form: ProxyScopeFormState): String =
-    when (form.type) {
-        ProxyType.NONE -> "Custom: no proxy"
-        ProxyType.SYSTEM -> "Custom: system"
-        ProxyType.HTTP -> "Custom: HTTP ${form.host.ifBlank { "—" }}:${form.port.ifBlank { "—" }}"
-        ProxyType.SOCKS -> "Custom: SOCKS5 ${form.host.ifBlank { "—" }}:${form.port.ifBlank { "—" }}"
-    }
 
 @Composable
 private fun UseMainSegment(
