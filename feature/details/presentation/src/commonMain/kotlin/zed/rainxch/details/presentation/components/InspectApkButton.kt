@@ -30,7 +30,9 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -164,16 +166,13 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        // TODO(ghs-button): needs onPrimary text color in coachmark popup
-                        TextButton(onClick = onDismiss) {
-                            Text(
-                                text = stringResource(Res.string.apk_inspect_coachmark_dismiss),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
-                            )
-                        }
+                        GhsButton(
+                            onClick = onDismiss,
+                            label = stringResource(Res.string.apk_inspect_coachmark_dismiss),
+                            variant = GhsButtonVariant.Text,
+                            size = GhsButtonSize.Sm,
+                            contentColorOverride = MaterialTheme.colorScheme.onPrimary,
+                        )
                     }
                 }
             }

@@ -11,7 +11,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
@@ -60,19 +59,18 @@ fun SortByBottomSheet(
             ) {
                 SortByUi.entries.forEach { option ->
                     val isSelected = option == selectedSortBy
-                    // TODO(ghs-button): needs per-item color (primary when selected, onSurface otherwise)
-                    TextButton(
-                        onClick = {
-                            onSortBySelected(option)
-                        },
+                    GhsButton(
+                        onClick = { onSortBySelected(option) },
+                        label = stringResource(option.label()) + if (isSelected) "  ✓" else "",
+                        variant = GhsButtonVariant.Text,
+                        size = GhsButtonSize.Sm,
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = stringResource(option.label()) + if (isSelected) "  ✓" else "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
+                        contentColorOverride = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                    )
                 }
 
                 HorizontalDivider()

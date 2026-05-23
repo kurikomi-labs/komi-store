@@ -85,6 +85,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
+import androidx.compose.ui.text.style.TextOverflow
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
@@ -668,7 +669,6 @@ private fun StateError(
     }
 }
 
-// TODO(ghs-button): PrimaryPillButton wraps Button with composite Row(icon + text) content.
 @Composable
 private fun PrimaryPillButton(
     text: String,
@@ -676,31 +676,21 @@ private fun PrimaryPillButton(
     leadingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
 ) {
-    Button(
+    GhsButton(
         onClick = onClick,
         enabled = enabled,
+        variant = GhsButtonVariant.Primary,
+        size = GhsButtonSize.Lg,
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
-        shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-        contentPadding = PaddingValues(horizontal = 20.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            leadingIcon?.invoke()
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            )
-        }
+        leadingIcon?.invoke()
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -844,38 +834,16 @@ private fun PatSignInSheet(
                     }
                 }
 
-                // TODO(ghs-button): composite content (CircularProgressIndicator + Text), needs custom width/height match
-                Button(
+                GhsButton(
                     onClick = { onAction(AuthenticationAction.SubmitPat) },
+                    label = stringResource(Res.string.pat_submit),
                     enabled = !isSubmitting && input.isNotBlank(),
+                    loading = isSubmitting,
+                    variant = GhsButtonVariant.Primary,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (isSubmitting) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                        Text(
-                            text = stringResource(Res.string.pat_submit),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                        )
-                    }
-                }
+                )
             }
         }
     }

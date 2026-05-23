@@ -8,7 +8,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,11 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_hide
@@ -153,26 +151,17 @@ fun UpdatesBanner(
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
-                    // TODO(ghs-button): needs onPrimaryContainer border/ink to match banner context
-                    OutlinedButton(
+                    GhsButton(
                         onClick = onToggleExpanded,
+                        label = if (isExpanded) {
+                            stringResource(Res.string.apps_updates_banner_hide)
+                        } else {
+                            stringResource(Res.string.apps_updates_banner_show)
+                        },
+                        variant = GhsButtonVariant.Outline,
                         modifier = Modifier.height(44.dp),
-                        shape = RoundedCornerShape(50),
-                        contentPadding = PaddingValues(horizontal = 18.dp),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.35f)),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        ),
-                    ) {
-                        Text(
-                            text = if (isExpanded) {
-                                stringResource(Res.string.apps_updates_banner_hide)
-                            } else {
-                                stringResource(Res.string.apps_updates_banner_show)
-                            },
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
+                        contentColorOverride = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
                 }
             }
         }
@@ -211,19 +200,14 @@ private fun UpdateAllInlineProgress(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            // TODO(ghs-button): needs onPrimaryContainer border/ink to match banner context
-            OutlinedButton(
+            GhsButton(
                 onClick = onCancel,
+                label = stringResource(Res.string.cancel),
+                variant = GhsButtonVariant.Outline,
+                size = GhsButtonSize.Sm,
                 modifier = Modifier.height(38.dp),
-                shape = RoundedCornerShape(50),
-                contentPadding = PaddingValues(horizontal = 14.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.35f)),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
-            ) {
-                Text(stringResource(Res.string.cancel))
-            }
+                contentColorOverride = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
         }
         Spacer(Modifier.height(10.dp))
         LinearWavyProgressIndicator(

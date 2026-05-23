@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -55,27 +57,25 @@ enum class GhsButtonSize {
 @Composable
 fun GhsButton(
     onClick: () -> Unit,
-    label: String,
     modifier: Modifier = Modifier,
     variant: GhsButtonVariant = GhsButtonVariant.Primary,
     size: GhsButtonSize = GhsButtonSize.Md,
     enabled: Boolean = true,
     loading: Boolean = false,
-    leadingIcon: ImageVector? = null,
-    trailingIcon: ImageVector? = null,
+    containerColorOverride: Color? = null,
+    contentColorOverride: Color? = null,
+    content: @Composable RowScope.() -> Unit,
 ) {
     val cs = MaterialTheme.colorScheme
-    // Dark mode mutes Primary fill — issue #665 (eye-strain on large dark monitors).
-    // Light: full primary. Dark: primaryContainer (low-luminance, blends into surface).
     val isDark = cs.background.luminance() < 0.5f
-    val container: Color = when (variant) {
+    val container: Color = containerColorOverride ?: when (variant) {
         GhsButtonVariant.Primary -> if (isDark) cs.primaryContainer else cs.primary
         GhsButtonVariant.Tonal -> cs.secondaryContainer
         GhsButtonVariant.Outline -> Color.Transparent
         GhsButtonVariant.Text -> Color.Transparent
         GhsButtonVariant.Destructive -> cs.errorContainer
     }
-    val content: Color = when (variant) {
+    val contentColor: Color = contentColorOverride ?: when (variant) {
         GhsButtonVariant.Primary -> if (isDark) cs.onPrimaryContainer else cs.onPrimary
         GhsButtonVariant.Tonal -> cs.onSecondaryContainer
         GhsButtonVariant.Outline -> cs.onSurface
@@ -112,11 +112,6 @@ fun GhsButton(
         GhsButtonSize.Sm -> 13.sp
         GhsButtonSize.Md -> 14.sp
         GhsButtonSize.Lg -> 16.sp
-    }
-    val iconSize = when (size) {
-        GhsButtonSize.Sm -> 16.dp
-        GhsButtonSize.Md -> 18.dp
-        GhsButtonSize.Lg -> 20.dp
     }
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -157,40 +152,73 @@ fun GhsButton(
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CompositionLocalProvider(LocalContentColor provides content.copy(alpha = alpha)) {
-            if (loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(iconSize),
-                    strokeWidth = 2.dp,
-                    color = content.copy(alpha = alpha),
-                )
-            } else if (leadingIcon != null) {
-                Icon(
-                    imageVector = leadingIcon,
-                    contentDescription = null,
-                    modifier = Modifier.size(iconSize),
-                    tint = content.copy(alpha = alpha),
-                )
-            }
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge.copy(
+        CompositionLocalProvider(LocalContentColor provides contentColor.copy(alpha = alpha)) {
+            ProvideTextStyle(
+                value = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = fontSize,
                 ),
-                color = content.copy(alpha = alpha),
-                maxLines = 1,
-                softWrap = false,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (trailingIcon != null && !loading) {
-                Icon(
-                    imageVector = trailingIcon,
-                    contentDescription = null,
-                    modifier = Modifier.size(iconSize),
-                    tint = content.copy(alpha = alpha),
-                )
+            ) {
+                content()
             }
+        }
+    }
+}
+
+@Composable
+fun GhsButton(
+    onClick: () -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    variant: GhsButtonVariant = GhsButtonVariant.Primary,
+    size: GhsButtonSize = GhsButtonSize.Md,
+    enabled: Boolean = true,
+    loading: Boolean = false,
+    leadingIcon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
+    containerColorOverride: Color? = null,
+    contentColorOverride: Color? = null,
+) {
+    val iconSize = when (size) {
+        GhsButtonSize.Sm -> 16.dp
+        GhsButtonSize.Md -> 18.dp
+        GhsButtonSize.Lg -> 20.dp
+    }
+    GhsButton(
+        onClick = onClick,
+        modifier = modifier,
+        variant = variant,
+        size = size,
+        enabled = enabled,
+        loading = loading,
+        containerColorOverride = containerColorOverride,
+        contentColorOverride = contentColorOverride,
+    ) {
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(iconSize),
+                strokeWidth = 2.dp,
+                color = LocalContentColor.current,
+            )
+        } else if (leadingIcon != null) {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                modifier = Modifier.size(iconSize),
+            )
+        }
+        Text(
+            text = label,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (trailingIcon != null && !loading) {
+            Icon(
+                imageVector = trailingIcon,
+                contentDescription = null,
+                modifier = Modifier.size(iconSize),
+            )
         }
     }
 }
