@@ -328,6 +328,14 @@ class AppsViewModel(
                 _state.update { it.copy(isUpToDateSectionExpanded = !it.isUpToDateSectionExpanded) }
             }
 
+            AppsAction.OnToggleUpdatesSection -> {
+                _state.update { it.copy(isUpdatesSectionExpanded = !it.isUpdatesSectionExpanded) }
+            }
+
+            is AppsAction.OnTwoPaneSelect -> {
+                _state.update { it.copy(twoPaneSelectedPackage = action.packageName) }
+            }
+
             is AppsAction.OnNavigateToRepo -> {
                 viewModelScope.launch {
                     _events.send(

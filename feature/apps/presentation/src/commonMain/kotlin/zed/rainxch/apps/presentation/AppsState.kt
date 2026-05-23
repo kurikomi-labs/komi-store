@@ -29,6 +29,7 @@ data class AppsState(
     val isRefreshing: Boolean = false,
 
     val isUpToDateSectionExpanded: Boolean = true,
+    val isUpdatesSectionExpanded: Boolean = true,
 
     val showLinkSheet: Boolean = false,
     val linkStep: LinkStep = LinkStep.PickApp,
@@ -85,6 +86,8 @@ data class AppsState(
 
     val showKaoBanner: Boolean = false,
     val linkSourceHost: String? = null,
+
+    val twoPaneSelectedPackage: String? = null,
 ) {
     val filteredDeviceApps: ImmutableList<DeviceAppUi>
         get() {

@@ -40,6 +40,12 @@ sealed interface AppsAction {
 
     data object OnToggleUpToDateSection : AppsAction
 
+    data object OnToggleUpdatesSection : AppsAction
+
+    data class OnTwoPaneSelect(
+        val packageName: String?,
+    ) : AppsAction
+
     data class OnNavigateToRepo(
         val repoId: Long,
         val sourceHost: String? = null,
