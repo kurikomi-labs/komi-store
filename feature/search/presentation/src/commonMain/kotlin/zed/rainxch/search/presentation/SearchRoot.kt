@@ -1,6 +1,9 @@
 package zed.rainxch.search.presentation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -193,6 +196,26 @@ fun SearchScreen(
     val listState = rememberLazyStaggeredGridState()
     val bottomNavHeight = LocalBottomNavigationHeight.current
 
+    var showTopbar by remember { mutableStateOf(true) }
+    LaunchedEffect(listState) {
+        var prevIndex = 0
+        var prevOffset = 0
+        snapshotFlow {
+            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        }.collect { (index, offset) ->
+            val scrolledDown = index > prevIndex || (index == prevIndex && offset > prevOffset + 4)
+            val scrolledUp = index < prevIndex || (index == prevIndex && offset < prevOffset - 4)
+            showTopbar = when {
+                index == 0 && offset == 0 -> true
+                scrolledDown -> false
+                scrolledUp -> true
+                else -> showTopbar
+            }
+            prevIndex = index
+            prevOffset = offset
+        }
+    }
+
     val shouldLoadMore by remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
@@ -278,11 +301,17 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            SearchTopbar(
-                onAction = onAction,
-                state = state,
-                focusRequester = focusRequester,
-            )
+            AnimatedVisibility(
+                visible = showTopbar,
+                enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            ) {
+                SearchTopbar(
+                    onAction = onAction,
+                    state = state,
+                    focusRequester = focusRequester,
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(
