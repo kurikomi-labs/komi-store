@@ -164,17 +164,7 @@ class CachedRepositoriesDataSourceImpl(
             platforms.map { plat ->
                 async {
                     val r = backendApiClient.getCategory(categorySlug, plat)
-                    val discoveryPlatform = when (plat) {
-                        "android" -> DiscoveryPlatform.Android
-                        "windows" -> DiscoveryPlatform.Windows
-                        "macos" -> DiscoveryPlatform.Macos
-                        "linux" -> DiscoveryPlatform.Linux
-                        else -> return@async null
-                    }
-                    r.getOrNull()?.map {
-                        it.toCachedGithubRepoSummary()
-                            .copy(availablePlatforms = listOf(discoveryPlatform))
-                    }
+                    r.getOrNull()?.map { it.toCachedGithubRepoSummary() }
                 }
             }.awaitAll().filterNotNull()
         }
@@ -245,16 +235,8 @@ class CachedRepositoriesDataSourceImpl(
         val responses = coroutineScope {
             platforms.map { plat ->
                 async {
-                    val discoveryPlatform = when (plat) {
-                        "android" -> DiscoveryPlatform.Android
-                        "windows" -> DiscoveryPlatform.Windows
-                        "macos" -> DiscoveryPlatform.Macos
-                        "linux" -> DiscoveryPlatform.Linux
-                        else -> return@async null
-                    }
                     backendApiClient.getTopic(topicSlug, plat).getOrNull()?.map {
                         it.toCachedGithubRepoSummary()
-                            .copy(availablePlatforms = listOf(discoveryPlatform))
                     }
                 }
             }.awaitAll().filterNotNull()
@@ -452,8 +434,12 @@ class CachedRepositoriesDataSourceImpl(
                 json.decodeFromString<CachedRepoResponse>(response.bodyAsText())
                     .let { repoResponse ->
                         repoResponse.copy(
-                            repositories = repoResponse.repositories.map {
-                                it.copy(availablePlatforms = listOf(filePlatform))
+                            repositories = repoResponse.repositories.map { repo ->
+                                if (repo.availablePlatforms.isEmpty()) {
+                                    repo.copy(availablePlatforms = listOf(filePlatform))
+                                } else {
+                                    repo
+                                }
                             },
                         )
                     }
