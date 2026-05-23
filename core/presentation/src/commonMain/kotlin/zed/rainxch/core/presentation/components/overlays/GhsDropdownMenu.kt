@@ -56,7 +56,7 @@ fun GhsDropdownMenu(
         shape = RoundedCornerShape(14.dp),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 0.dp,
-        shadowElevation = 18.dp,
+        shadowElevation = 6.dp,
         border = BorderStroke(
             width = 0.5.dp,
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
