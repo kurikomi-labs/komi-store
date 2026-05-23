@@ -36,11 +36,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.custom_forges_count
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_sources
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
@@ -110,7 +112,7 @@ fun TweaksSourcesRoot(
                 subtitle = if (count == 0) {
                     "Add a Forgejo or Gitea host"
                 } else {
-                    "$count host${if (count == 1) "" else "s"}"
+                    pluralStringResource(Res.plurals.custom_forges_count, count, count)
                 },
                 accent = TweaksAccents.Mint,
                 onClick = { viewModel.onAction(TweaksAction.OnOpenCustomForgesDialog) },

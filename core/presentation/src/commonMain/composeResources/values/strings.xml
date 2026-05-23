@@ -841,6 +841,22 @@
         <item quantity="one">Showing %1$d of %2$d asset</item>
         <item quantity="other">Showing %1$d of %2$d assets</item>
     </plurals>
+    <plurals name="custom_forges_count">
+        <item quantity="one">%1$d host</item>
+        <item quantity="other">%1$d hosts</item>
+    </plurals>
+    <plurals name="host_tokens_count">
+        <item quantity="one">%1$d token</item>
+        <item quantity="other">%1$d tokens</item>
+    </plurals>
+    <plurals name="skipped_updates_count">
+        <item quantity="one">%1$d app</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
+    <plurals name="hidden_repositories_count">
+        <item quantity="one">%1$d repo</item>
+        <item quantity="other">%1$d repos</item>
+    </plurals>
     <string name="fallback_older_releases_title">Fall back to older releases</string>
     <string name="fallback_older_releases_description">Walk back through past releases until one matches the filter. Required for monorepos where the latest release belongs to a sibling app.</string>
     <string name="advanced_settings_title">Advanced filter</string>
