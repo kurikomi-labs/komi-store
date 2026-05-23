@@ -2,6 +2,7 @@ package zed.rainxch.tweaks.presentation.privacy
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -27,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
 import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_privacy
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -112,8 +119,10 @@ fun TweaksPrivacyRoot(
 
         item(key = "hidden_repos_row") {
             DrillRow(
+                icon = Icons.Outlined.VisibilityOff,
                 title = "Hidden repositories",
                 subtitle = "Repos you've muted from feeds and search.",
+                accent = TweaksAccents.Periwinkle,
                 onClick = onNavigateToHiddenRepositories,
             )
         }
@@ -282,10 +291,22 @@ private fun ToggleCard(
 
 @Composable
 private fun DrillRow(
+    icon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    accent: Color = Color.Unspecified,
 ) {
+    val tileBg = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        accent.copy(alpha = 0.14f)
+    }
+    val tint = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        accent
+    }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,6 +323,20 @@ private fun DrillRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(Radii.chip)
+                    .background(tileBg),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = tint,
+                    modifier = Modifier.size(22.dp),
+                )
+            }
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),

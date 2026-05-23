@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_sources
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -94,6 +96,7 @@ fun TweaksSourcesRoot(
                 icon = Icons.Outlined.NetworkCheck,
                 title = "GitHub mirror",
                 subtitle = "Default (github.com)",
+                accent = TweaksAccents.Sky,
                 onClick = onNavigateToMirrorPicker,
             )
             Spacer(Modifier.height(8.dp))
@@ -109,6 +112,7 @@ fun TweaksSourcesRoot(
                 } else {
                     "$count host${if (count == 1) "" else "s"}"
                 },
+                accent = TweaksAccents.Mint,
                 onClick = { viewModel.onAction(TweaksAction.OnOpenCustomForgesDialog) },
             )
         }
@@ -152,7 +156,18 @@ private fun DrillRow(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    accent: Color = Color.Unspecified,
 ) {
+    val tileBg = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        accent.copy(alpha = 0.14f)
+    }
+    val tint = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        accent
+    }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,13 +188,13 @@ private fun DrillRow(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(Radii.chip)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                    .background(tileBg),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = tint,
                     modifier = Modifier.size(22.dp),
                 )
             }

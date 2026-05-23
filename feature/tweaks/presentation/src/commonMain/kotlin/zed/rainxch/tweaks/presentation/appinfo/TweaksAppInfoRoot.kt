@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontFamily
@@ -40,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -79,6 +81,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.NewReleases,
                 title = "What's new",
                 subtitle = "Past release notes.",
+                accent = TweaksAccents.Peach,
                 onClick = onNavigateToWhatsNewHistory,
             )
             Spacer(Modifier.height(8.dp))
@@ -89,6 +92,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Code,
                 title = "Open source licenses",
                 subtitle = "Libraries used in the app.",
+                accent = TweaksAccents.Sage,
                 onClick = onNavigateToLicenses,
             )
             Spacer(Modifier.height(8.dp))
@@ -99,6 +103,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Description,
                 title = "Privacy policy",
                 subtitle = "View on github-store.org.",
+                accent = TweaksAccents.Rose,
                 onClick = {
                     runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
                 },
@@ -111,6 +116,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
                 title = "Source code on GitHub",
                 subtitle = "View this app's source.",
+                accent = TweaksAccents.Aqua,
                 onClick = {
                     runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
                 },
@@ -184,7 +190,18 @@ private fun ActionRow(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    accent: Color = Color.Unspecified,
 ) {
+    val tileBg = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        accent.copy(alpha = 0.14f)
+    }
+    val tint = if (accent == Color.Unspecified) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        accent
+    }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,13 +222,13 @@ private fun ActionRow(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(Radii.chip)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                    .background(tileBg),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = tint,
                     modifier = Modifier.size(22.dp),
                 )
             }

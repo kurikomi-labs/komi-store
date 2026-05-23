@@ -45,6 +45,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +64,7 @@ import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.RestartBanner
 import zed.rainxch.tweaks.presentation.components.SectionHeader
+import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.tweaks.presentation.components.TweaksEntryRow
 import zed.rainxch.tweaks.presentation.components.TweaksSearchField
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
@@ -171,6 +173,7 @@ private data class TweaksHubEntry(
     val subtitle: String,
     val icon: ImageVector,
     val onClick: () -> Unit,
+    val accent: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Unspecified,
 )
 
 private data class TweaksHubBlock(
@@ -213,12 +216,14 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Palette,
                     onClick = onNavigateToAppearance,
+                    accent = TweaksAccents.Lavender,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_language),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Translate,
                     onClick = onNavigateToLanguage,
+                    accent = TweaksAccents.Mint,
                 ),
             ),
         ),
@@ -230,18 +235,21 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Wifi,
                     onClick = onNavigateToConnection,
+                    accent = TweaksAccents.Sky,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_sources),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Hub,
                     onClick = onNavigateToSources,
+                    accent = TweaksAccents.Blush,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_translation),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.GTranslate,
                     onClick = onNavigateToTranslation,
+                    accent = TweaksAccents.Peach,
                 ),
             ),
         ),
@@ -253,12 +261,14 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.InstallMobile,
                     onClick = onNavigateToInstallMethod,
+                    accent = TweaksAccents.Sage,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_updates),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Update,
                     onClick = onNavigateToUpdates,
+                    accent = TweaksAccents.Amber,
                 ),
             ),
         ),
@@ -270,18 +280,21 @@ fun TweaksHubScreen(
                     subtitle = state.cacheSize.ifBlank { tapToManage },
                     icon = Icons.Outlined.Inventory2,
                     onClick = onNavigateToStorage,
+                    accent = TweaksAccents.Periwinkle,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_privacy),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.PrivacyTip,
                     onClick = onNavigateToPrivacy,
+                    accent = TweaksAccents.Rose,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_access_tokens),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.VpnKey,
                     onClick = onNavigateToHostTokens,
+                    accent = TweaksAccents.Gold,
                 ),
             ),
         ),
@@ -293,12 +306,14 @@ fun TweaksHubScreen(
                     subtitle = state.versionName.ifBlank { "—" },
                     icon = Icons.Outlined.Info,
                     onClick = onNavigateToAppInfo,
+                    accent = TweaksAccents.Aqua,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_feedback),
                     subtitle = stringResource(Res.string.feedback_hub_subtitle),
                     icon = Icons.Outlined.Feedback,
                     onClick = onSendFeedbackClick,
+                    accent = TweaksAccents.Tan,
                 ),
             ),
         ),
@@ -400,6 +415,7 @@ fun TweaksHubScreen(
                                 subtitle = entry.subtitle,
                                 icon = entry.icon,
                                 onClick = entry.onClick,
+                                accentColor = entry.accent,
                             )
                             Spacer(Modifier.height(8.dp))
                         }

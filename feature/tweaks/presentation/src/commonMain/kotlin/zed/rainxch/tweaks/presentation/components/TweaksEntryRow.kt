@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -38,7 +39,20 @@ fun TweaksEntryRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     badge: (@Composable () -> Unit)? = null,
+    accentColor: Color = Color.Unspecified,
 ) {
+    val effectiveAccent =
+        if (accentColor == Color.Unspecified) {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        } else {
+            accentColor
+        }
+    val tileBackground =
+        if (accentColor == Color.Unspecified) {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        } else {
+            accentColor.copy(alpha = 0.14f)
+        }
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -73,13 +87,13 @@ fun TweaksEntryRow(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(Radii.chip)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                    .background(tileBackground),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = effectiveAccent,
                     modifier = Modifier.size(22.dp),
                 )
             }
