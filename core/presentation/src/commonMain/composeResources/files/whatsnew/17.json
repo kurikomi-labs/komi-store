@@ -13,7 +13,10 @@
         "Search in Starred and Favourites — quickly filter long lists by repo name, owner, description, or language.",
         "Self-owned ✓ badge — when you're signed in, repos you own get a verified checkmark on Home and Search cards.",
         "Hide repository — long-press any repo card on Home or Search to hide it from discovery. The repo stays in your library if you have it installed.",
-        "Multi-OS release picker — toggle 'Show all platforms' on the asset picker to grab Android APKs from desktop or Linux .debs from your phone. Other-platform downloads open in your browser to save for transfer."
+        "Multi-OS release picker — toggle 'Show all platforms' on the asset picker to grab Android APKs from desktop or Linux .debs from your phone. Other-platform downloads open in your browser to save for transfer.",
+        "Design overhaul — new Geist typography, hero app header on Details, redesigned Home cards with platform glyphs, Apple-style menus, and a refreshed Library with an updates banner.",
+        "Tablet two-pane layout — Home, Search, and Library keep the list on the left and open the repo on the right; drag the divider to resize.",
+        "Inner Details pages — About and What's New now slide in as dedicated screens with their own back action."
       ]
     },
     {
@@ -24,7 +27,8 @@
         "Updating multiple apps in a row now works reliably — installs serialize so each one shows the correct APK in the system dialog. Apps screen versions also stay in sync after every install.",
         "Auto-update picks the right APK when a release ships both a regular and an F-Droid variant — no more accidentally installing a sibling app with a different package id.",
         "Search no longer shows a result count over an empty list — when 'Hide seen' filters out every hit, the screen now explains why and offers a one-tap reset.",
-        "Sibling-app detection — auto-update no longer mistakes a different app shipped from the same repo (e.g. APP A → APP B) for a higher version of the tracked one."
+        "Sibling-app detection — auto-update no longer mistakes a different app shipped from the same repo (e.g. APP A → APP B) for a higher version of the tracked one.",
+        "Discovery cards now show every platform a repo ships installers for, not just the one whose endpoint listed it."
       ]
     },
     {
