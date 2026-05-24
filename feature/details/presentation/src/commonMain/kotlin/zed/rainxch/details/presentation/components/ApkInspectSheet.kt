@@ -1,5 +1,7 @@
 package zed.rainxch.details.presentation.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,9 +51,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.draw.clip
 import zed.rainxch.core.domain.model.ApkInspection
 import zed.rainxch.core.domain.model.ApkPermission
 import zed.rainxch.core.domain.model.ProtectionLevel
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_compatibility
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_components
@@ -157,8 +161,9 @@ private fun Header(inspection: ApkInspection) {
         )
         Text(
             text = inspection.appLabel,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -364,10 +369,11 @@ private fun PermissionGroupHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = label.uppercase(),
-            style = MaterialTheme.typography.labelMedium,
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
             color = color,
-            fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f, fill = false),
         )
         Surface(
@@ -518,21 +524,42 @@ private fun InspectSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp),
-            )
-            Spacer(Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(Radii.chip)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            Spacer(Modifier.width(10.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold,
             )
         }
-        content()
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = Radii.row,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                content()
+            }
+        }
     }
 }
 
@@ -564,8 +591,9 @@ private fun InspectRow(label: String, value: String, monospace: Boolean = false)
 @Composable
 private fun DangerNote(text: String) {
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = Radii.chip,
         color = MaterialTheme.colorScheme.errorContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.35f)),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
