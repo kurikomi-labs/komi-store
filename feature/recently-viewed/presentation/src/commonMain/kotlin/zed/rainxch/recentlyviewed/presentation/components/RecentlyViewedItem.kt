@@ -1,10 +1,12 @@
 package zed.rainxch.recentlyviewed.presentation.components
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,20 +14,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,9 +36,11 @@ import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.chips.StatChip
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.recentlyviewed.presentation.model.RecentlyViewedRepo
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun RecentlyViewedItem(
     repo: RecentlyViewedRepo,
@@ -55,26 +54,22 @@ fun RecentlyViewedItem(
         onClick = onItemClick,
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
             Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(24.dp))
-                        .clickable(onClick = onDevProfileClick),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Radii.chip)
+                    .clickable(onClick = onDevProfileClick)
+                    .padding(vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CoilImage(
                     imageModel = { repo.repoOwnerAvatarUrl },
-                    modifier =
-                        Modifier
-                            .size(32.dp)
-                            .clip(CircleShape),
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape),
                     loading = {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -83,122 +78,111 @@ fun RecentlyViewedItem(
                             CircularWavyProgressIndicator()
                         }
                     },
-                    component =
-                        rememberImageComponent {
-                            CrossfadePlugin()
-                        },
+                    component = rememberImageComponent {
+                        CrossfadePlugin()
+                    },
                 )
-
                 Text(
                     text = repo.repoOwner,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                ) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = repo.repoName,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-
                     repo.repoDescription?.let {
-                        Spacer(modifier = Modifier.height(4.dp))
-
+                        Spacer(Modifier.height(4.dp))
                         Text(
                             text = it,
-                            fontWeight = FontWeight.Medium,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
-
-                IconButton(
-                    onClick = onRemoveClick,
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Close,
-                        contentDescription = null,
-                    )
-                }
+                RemoveToggle(onClick = onRemoveClick)
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 repo.primaryLanguage?.let { language ->
-                    AssistChip(
-                        onClick = { },
-                        label = {
-                            Text(
-                                text = language,
-                                style = MaterialTheme.typography.titleSmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        leadingIcon = {
+                    StatChip(
+                        label = language,
+                        leading = {
                             Icon(
                                 imageVector = Icons.Default.Code,
                                 contentDescription = null,
-                                modifier = Modifier.size(AssistChipDefaults.IconSize),
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         },
-                        colors =
-                            AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
+                        background = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = MaterialTheme.colorScheme.outline,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-
-                AssistChip(
-                    onClick = { },
-                    label = {
-                        Text(
-                            text = repo.viewedAtFormatted,
-                            style = MaterialTheme.typography.titleSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    leadingIcon = {
+                StatChip(
+                    label = repo.viewedAtFormatted,
+                    leading = {
                         Icon(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
-                            modifier = Modifier.size(AssistChipDefaults.IconSize),
+                            modifier = Modifier.size(12.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
+                    background = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = MaterialTheme.colorScheme.outline,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun RemoveToggle(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        contentAlignment = Alignment.Center,
+    ) {
+        IconButton(onClick = onClick, modifier = Modifier.size(38.dp)) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
         }
     }
 }
