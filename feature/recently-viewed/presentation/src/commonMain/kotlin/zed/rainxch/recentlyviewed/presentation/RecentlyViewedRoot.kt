@@ -143,14 +143,14 @@ private fun RecentlyViewedTopbar(onAction: (RecentlyViewedAction) -> Unit) {
         title = {
             Text(
                 text = stringResource(Res.string.recently_viewed),
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
         },
         navigationIcon = {
             IconButton(
-                shapes = IconButtonDefaults.shapes(),
                 onClick = {
                     onAction(RecentlyViewedAction.OnNavigateBackClick)
                 },

@@ -291,9 +291,10 @@ private fun StarredTopBar(
                 Column {
                     Text(
                         text = stringResource(Res.string.starred_repositories),
-                        style = MaterialTheme.typography.titleMediumEmphasized,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
 
                     if (lastSyncTime != null && !isSyncing) {
@@ -309,7 +310,6 @@ private fun StarredTopBar(
             },
             navigationIcon = {
                 IconButton(
-                    shapes = IconButtonDefaults.shapes(),
                     onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
                 ) {
                     Icon(
@@ -446,9 +446,10 @@ private fun EmptyStateContent(
         if (actionText != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            GithubStoreButton(
-                text = actionText,
+            GhsButton(
                 onClick = onActionClick,
+                label = actionText,
+                variant = GhsButtonVariant.Primary,
             )
         }
     }

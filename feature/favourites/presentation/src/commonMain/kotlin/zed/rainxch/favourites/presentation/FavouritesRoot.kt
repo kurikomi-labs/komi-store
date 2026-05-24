@@ -196,14 +196,14 @@ private fun FavouritesTopbar(
         title = {
             Text(
                 text = stringResource(Res.string.favourites),
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
             )
         },
         navigationIcon = {
             IconButton(
-                shapes = IconButtonDefaults.shapes(),
                 onClick = {
                     onAction(FavouritesAction.OnNavigateBackClick)
                 },
