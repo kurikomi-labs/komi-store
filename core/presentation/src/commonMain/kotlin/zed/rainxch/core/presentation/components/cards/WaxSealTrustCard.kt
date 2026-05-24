@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.presentation.theme.jetbrainsMono
+import zed.rainxch.core.presentation.theme.geistMono
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.WaxSeal
 import zed.rainxch.core.presentation.vocabulary.WaxSealState
@@ -55,7 +55,7 @@ fun WaxSealTrustCard(
             )
             Text(
                 text = fingerprintDetail,
-                fontFamily = jetbrainsMono,
+                fontFamily = geistMono,
                 color = cs.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
             )

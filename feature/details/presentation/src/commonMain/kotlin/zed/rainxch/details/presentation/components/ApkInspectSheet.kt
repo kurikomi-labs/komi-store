@@ -649,6 +649,7 @@ private fun protectionStyle(level: ProtectionLevel): Pair<Color, String> {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Modifier.copyableOnLongPress(value: String): Modifier {
+    @Suppress("DEPRECATION")
     val clipboard = LocalClipboardManager.current
     val haptic = LocalHapticFeedback.current
     return this.combinedClickable(

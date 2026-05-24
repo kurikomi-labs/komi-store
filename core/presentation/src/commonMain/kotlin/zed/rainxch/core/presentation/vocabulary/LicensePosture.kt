@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.presentation.theme.jetbrainsMono
+import zed.rainxch.core.presentation.theme.geistMono
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 
 @Composable
@@ -26,7 +26,7 @@ fun LicensePosture(
     val heavy = spdx != null && spdx in Tokens.Licenses.copyleft
     val ink = MaterialTheme.colorScheme.onSurface
     val bg = MaterialTheme.colorScheme.background
-    val mono = jetbrainsMono
+    val mono = geistMono
     Box(
         modifier = modifier
             .size(sizeDp.dp)

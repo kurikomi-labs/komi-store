@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.fraunces
+import zed.rainxch.core.presentation.theme.geist
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.VersionStack
@@ -70,7 +70,7 @@ fun DesktopDrawer(
                     color = Color.White,
                     style =
                         MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = fraunces,
+                            fontFamily = geist,
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
@@ -82,7 +82,7 @@ fun DesktopDrawer(
                 color = cs.onSurface,
                 style =
                     MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = fraunces,
+                        fontFamily = geist,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                         fontWeight = FontWeight.SemiBold,
                     ),

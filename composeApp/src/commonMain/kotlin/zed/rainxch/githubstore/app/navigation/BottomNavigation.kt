@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.theme.fraunces
+import zed.rainxch.core.presentation.theme.geist
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.VersionStack
 
@@ -155,7 +155,7 @@ private fun CookieTabItem(
                     color = cs.primary,
                     style =
                         MaterialTheme.typography.labelSmall.copy(
-                            fontFamily = fraunces,
+                            fontFamily = geist,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 11.sp,
                         ),

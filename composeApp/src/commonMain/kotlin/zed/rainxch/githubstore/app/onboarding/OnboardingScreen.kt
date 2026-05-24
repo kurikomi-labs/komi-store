@@ -45,7 +45,7 @@ import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.fraunces
+import zed.rainxch.core.presentation.theme.geist
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.primaryColor
@@ -147,7 +147,7 @@ private fun StepPalette(
             text = "Pick your palette",
             style =
                 MaterialTheme.typography.displaySmall.copy(
-                    fontFamily = fraunces,
+                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
@@ -271,7 +271,7 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             Text(
                 text = "G",
                 color = MaterialTheme.colorScheme.onPrimary,
-                fontFamily = fraunces,
+                fontFamily = geist,
                 fontWeight = FontWeight.Bold,
                 fontSize = 48.sp,
             )
@@ -280,7 +280,7 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             text = "Sign in with GitHub",
             style =
                 MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = fraunces,
+                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
@@ -313,7 +313,7 @@ private fun StepPermissions(controller: OnboardingPermissionsController) {
             text = "Two quick prompts",
             style =
                 MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = fraunces,
+                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
