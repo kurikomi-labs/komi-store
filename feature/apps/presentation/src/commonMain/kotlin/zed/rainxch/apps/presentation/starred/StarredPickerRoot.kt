@@ -90,7 +90,10 @@ private fun StarredPickerScreen(
                 title = {
                     Text(
                         text = stringResource(Res.string.starred_picker_title),
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 navigationIcon = {

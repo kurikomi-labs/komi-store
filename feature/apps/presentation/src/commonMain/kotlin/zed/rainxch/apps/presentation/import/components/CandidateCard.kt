@@ -1,5 +1,6 @@
 package zed.rainxch.apps.presentation.import.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -22,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,12 +73,13 @@ fun CandidateCard(
     val reducedMotion = LocalReducedMotion.current
 
     Surface(
-        tonalElevation = 1.dp,
-        shape = RoundedCornerShape(20.dp),
+        shape = Radii.row,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier =
             modifier
                 .fillMaxWidth()
+                .clip(Radii.row)
                 .clickable(
                     onClickLabel = if (expanded) collapseLabel else expandLabel,
                     role = Role.Button,

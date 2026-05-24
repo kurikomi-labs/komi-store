@@ -107,8 +107,10 @@ fun ExternalImportRoot(
                     title = {
                         Text(
                             text = stringResource(Res.string.external_import_top_bar_title),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground,
                         )
                     },
                     navigationIcon = {

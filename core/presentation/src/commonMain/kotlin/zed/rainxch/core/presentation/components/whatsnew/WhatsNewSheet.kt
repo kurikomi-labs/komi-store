@@ -1,5 +1,6 @@
 package zed.rainxch.core.presentation.components.whatsnew
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.WhatsNewEntry
+import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.domain.model.WhatsNewSection
 import zed.rainxch.core.domain.model.WhatsNewSectionType
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -117,9 +119,10 @@ private fun SheetHeader(entry: WhatsNewEntry) {
 @Composable
 fun WhatsNewEntryCard(entry: WhatsNewEntry) {
     Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = Modifier.fillMaxWidth(),
+        shape = Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -182,7 +185,7 @@ private fun SectionLabel(type: WhatsNewSectionType) {
     }
 
     Text(
-        text = label.uppercase(),
+        text = label,
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.SemiBold,
         color = color,

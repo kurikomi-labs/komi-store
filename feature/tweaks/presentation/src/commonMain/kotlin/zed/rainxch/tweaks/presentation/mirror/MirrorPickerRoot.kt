@@ -90,8 +90,10 @@ fun MirrorPickerRoot(
                 title = {
                     Text(
                         text = stringResource(Res.string.mirror_picker_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 navigationIcon = {
