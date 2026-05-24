@@ -63,6 +63,28 @@ import zed.rainxch.githubstore.core.presentation.res.proxy_saved
 import zed.rainxch.githubstore.core.presentation.res.proxy_host
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_success
 import zed.rainxch.githubstore.core.presentation.res.proxy_username
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_applies_to_all
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_custom
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_intro_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_intro_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_main_section
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_http
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_http_caption
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_no_proxy
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_socks
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_socks_caption
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_mode_system
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_overrides_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_overrides_section
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_discovery_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_discovery_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_download_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_download_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_translation_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_scope_translation_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_test
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_use_main
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_connection
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksEvent
@@ -170,7 +192,7 @@ private fun IntroCard() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "How the app reaches the internet",
+                text = stringResource(Res.string.tweaks_connection_intro_title),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -178,7 +200,7 @@ private fun IntroCard() {
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Pick a connection mode below. Most people leave this on No proxy.",
+                text = stringResource(Res.string.tweaks_connection_intro_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -200,7 +222,7 @@ private fun MainConnectionCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Main connection",
+                text = stringResource(Res.string.tweaks_connection_main_section),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -226,14 +248,14 @@ private fun MainConnectionCard(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Applies to all traffic unless overridden below.",
+                        text = stringResource(Res.string.tweaks_connection_applies_to_all),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(8.dp))
                     GhsButton(
                         onClick = onPasteUrl,
-                        label = "Paste full URL",
+                        label = stringResource(Res.string.tweaks_connection_paste_url),
                         variant = GhsButtonVariant.Text,
                         size = GhsButtonSize.Sm,
                         leadingIcon = Icons.Outlined.ContentPaste,
@@ -245,7 +267,7 @@ private fun MainConnectionCard(
                     ) {
                         GhsButton(
                             onClick = { onAction(TweaksAction.OnMasterProxyTest) },
-                            label = "Test",
+                            label = stringResource(Res.string.tweaks_connection_test),
                             variant = GhsButtonVariant.Outline,
                             leadingIcon = Icons.Default.NetworkCheck,
                             enabled = !form.isTestInProgress,
@@ -336,10 +358,16 @@ private fun ModePillSegment(
     onSelected: (ProxyType) -> Unit,
 ) {
     val items = listOf(
-        ProxyType.NONE to ("No proxy" to null),
-        ProxyType.SYSTEM to ("System" to null),
-        ProxyType.HTTP to ("HTTP/HTTPS" to "Most corporate proxies."),
-        ProxyType.SOCKS to ("SOCKS5" to "Tor, SSH tunnels."),
+        ProxyType.NONE to (stringResource(Res.string.tweaks_connection_mode_no_proxy) to null),
+        ProxyType.SYSTEM to (stringResource(Res.string.tweaks_connection_mode_system) to null),
+        ProxyType.HTTP to (
+            stringResource(Res.string.tweaks_connection_mode_http) to
+                stringResource(Res.string.tweaks_connection_mode_http_caption)
+            ),
+        ProxyType.SOCKS to (
+            stringResource(Res.string.tweaks_connection_mode_socks) to
+                stringResource(Res.string.tweaks_connection_mode_socks_caption)
+            ),
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -404,7 +432,7 @@ private fun OverridesCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Per-scope overrides",
+                text = stringResource(Res.string.tweaks_connection_overrides_section),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -412,7 +440,7 @@ private fun OverridesCard(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Each scope uses the main connection by default. Choose 'Custom' to keep its own settings.",
+                text = stringResource(Res.string.tweaks_connection_overrides_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -443,9 +471,12 @@ private fun ScopeOverrideRow(
     onAction: (TweaksAction) -> Unit,
 ) {
     val (title, subtitle) = when (scope) {
-        ProxyScope.DISCOVERY -> "Search & metadata" to "GitHub API, search, repo details."
-        ProxyScope.DOWNLOAD -> "Downloads" to "APK and asset downloads."
-        ProxyScope.TRANSLATION -> "Translation" to "DeepL, Microsoft, LibreTranslate calls."
+        ProxyScope.DISCOVERY -> stringResource(Res.string.tweaks_connection_scope_discovery_title) to
+            stringResource(Res.string.tweaks_connection_scope_discovery_body)
+        ProxyScope.DOWNLOAD -> stringResource(Res.string.tweaks_connection_scope_download_title) to
+            stringResource(Res.string.tweaks_connection_scope_download_body)
+        ProxyScope.TRANSLATION -> stringResource(Res.string.tweaks_connection_scope_translation_title) to
+            stringResource(Res.string.tweaks_connection_scope_translation_body)
     }
 
     Surface(
@@ -518,7 +549,7 @@ private fun ScopeOverrideRow(
                             ) {
                                 GhsButton(
                                     onClick = { onAction(TweaksAction.OnProxyTest(scope)) },
-                                    label = "Test",
+                                    label = stringResource(Res.string.tweaks_connection_test),
                                     variant = GhsButtonVariant.Outline,
                                     leadingIcon = Icons.Default.NetworkCheck,
                                     enabled = !scopeForm.isTestInProgress,
@@ -570,12 +601,12 @@ private fun UseMainSegment(
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         SegmentChip(
-            label = "Use main",
+            label = stringResource(Res.string.tweaks_connection_use_main),
             selected = useMain,
             onClick = { onSelected(true) },
         )
         SegmentChip(
-            label = "Custom",
+            label = stringResource(Res.string.tweaks_connection_custom),
             selected = !useMain,
             onClick = { onSelected(false) },
         )

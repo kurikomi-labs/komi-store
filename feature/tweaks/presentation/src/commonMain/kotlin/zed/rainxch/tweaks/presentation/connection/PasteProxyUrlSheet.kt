@@ -19,9 +19,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_cta
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_error
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_placeholder
+import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_title
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 data class PastedProxy(
@@ -88,6 +95,7 @@ fun PasteProxyUrlSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var input by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
+    val parseErrorMessage = stringResource(Res.string.tweaks_connection_paste_url_error)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -101,14 +109,14 @@ fun PasteProxyUrlSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Paste proxy URL",
+                text = stringResource(Res.string.tweaks_connection_paste_url_title),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "Paste a full proxy URL and we'll fill the form for you.",
+                text = stringResource(Res.string.tweaks_connection_paste_url_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -118,7 +126,7 @@ fun PasteProxyUrlSheet(
                     input = it
                     error = null
                 },
-                label = "scheme://user:pass@host:port",
+                label = stringResource(Res.string.tweaks_connection_paste_url_placeholder),
                 isError = error != null,
                 supportingText = error,
                 modifier = Modifier.fillMaxWidth(),
@@ -128,12 +136,12 @@ fun PasteProxyUrlSheet(
                 onClick = {
                     val parsed = parseProxyUrl(input)
                     if (parsed == null) {
-                        error = "Couldn't read that URL."
+                        error = parseErrorMessage
                     } else {
                         onParsed(parsed)
                     }
                 },
-                label = "Use this URL",
+                label = stringResource(Res.string.tweaks_connection_paste_url_cta),
                 variant = GhsButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = input.isNotBlank(),

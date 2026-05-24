@@ -43,7 +43,15 @@ import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_count
+import zed.rainxch.githubstore.core.presentation.res.custom_forges_entry_label
+import zed.rainxch.githubstore.core.presentation.res.remove_search_history_item
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_sources
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_add_a_host
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_added_hosts_section
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_github_mirror_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_intro_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_intro_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_mirror_default
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.CustomForgesDialog
@@ -76,7 +84,7 @@ fun TweaksSourcesRoot(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Where the app looks for repositories",
+                        text = stringResource(Res.string.tweaks_sources_intro_title),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         ),
@@ -84,7 +92,7 @@ fun TweaksSourcesRoot(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "The app searches GitHub by default. Route through a regional mirror or add custom Forgejo / Gitea hosts.",
+                        text = stringResource(Res.string.tweaks_sources_intro_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -96,8 +104,8 @@ fun TweaksSourcesRoot(
         item(key = "mirror_row") {
             DrillRow(
                 icon = Icons.Outlined.NetworkCheck,
-                title = "GitHub mirror",
-                subtitle = "Default (github.com)",
+                title = stringResource(Res.string.tweaks_sources_github_mirror_title),
+                subtitle = stringResource(Res.string.tweaks_sources_mirror_default),
                 accent = TweaksAccents.Sky,
                 onClick = onNavigateToMirrorPicker,
             )
@@ -108,9 +116,9 @@ fun TweaksSourcesRoot(
             val count = state.customForgeHosts.size
             DrillRow(
                 icon = Icons.Outlined.Dns,
-                title = "Custom forges",
+                title = stringResource(Res.string.custom_forges_entry_label),
                 subtitle = if (count == 0) {
-                    "Add a Forgejo or Gitea host"
+                    stringResource(Res.string.tweaks_sources_add_a_host)
                 } else {
                     pluralStringResource(Res.plurals.custom_forges_count, count, count)
                 },
@@ -123,7 +131,7 @@ fun TweaksSourcesRoot(
             item(key = "forges_subheader") {
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Added hosts",
+                    text = stringResource(Res.string.tweaks_sources_added_hosts_section),
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -260,7 +268,7 @@ private fun ForgeHostRow(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.DeleteOutline,
-                    contentDescription = "Remove",
+                    contentDescription = stringResource(Res.string.remove_search_history_item),
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(20.dp),
                 )

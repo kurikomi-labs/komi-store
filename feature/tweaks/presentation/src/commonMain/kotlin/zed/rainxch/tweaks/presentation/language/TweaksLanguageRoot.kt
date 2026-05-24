@@ -42,6 +42,7 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.language_follow_system
 import zed.rainxch.githubstore.core.presentation.res.language_picker_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_language
+import zed.rainxch.githubstore.core.presentation.res.tweaks_language_intro_body
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSearchField
@@ -78,7 +79,7 @@ fun TweaksLanguageRoot(
     ) {
         item(key = "language_intro") {
             Text(
-                text = "The app restarts when you switch language.",
+                text = stringResource(Res.string.tweaks_language_intro_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),

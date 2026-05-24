@@ -43,6 +43,28 @@ import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_privacy
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_browsing_history_section
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clear_viewed_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clear_viewed_dialog_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clear_viewed_dialog_confirm
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clear_viewed_dialog_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clear_viewed_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clipboard_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_clipboard_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hide_seen_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hide_seen_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hidden_repos_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hidden_repos_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_app_version
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_feature_usage
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_identifiers
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_repo_names
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_tokens
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_os
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_what_we_collect
+import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_usage_data_section
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
@@ -77,8 +99,8 @@ fun TweaksPrivacyRoot(
 
         item(key = "clipboard_card") {
             ToggleCard(
-                title = "Detect repo links in clipboard",
-                subtitle = "When you copy a github.com or codeberg.org link, we'll prompt to open it.",
+                title = stringResource(Res.string.tweaks_privacy_clipboard_title),
+                subtitle = stringResource(Res.string.tweaks_privacy_clipboard_body),
                 checked = state.autoDetectClipboardLinks,
                 onCheckedChange = {
                     viewModel.onAction(TweaksAction.OnAutoDetectClipboardToggled(it))
@@ -89,7 +111,7 @@ fun TweaksPrivacyRoot(
 
         item(key = "history_header") {
             Text(
-                text = "Browsing history",
+                text = stringResource(Res.string.tweaks_privacy_browsing_history_section),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -100,8 +122,8 @@ fun TweaksPrivacyRoot(
 
         item(key = "hide_seen_card") {
             ToggleCard(
-                title = "Hide repos I've already viewed",
-                subtitle = "Skip seen repos in feeds and search.",
+                title = stringResource(Res.string.tweaks_privacy_hide_seen_title),
+                subtitle = stringResource(Res.string.tweaks_privacy_hide_seen_body),
                 checked = state.isHideSeenEnabled,
                 onCheckedChange = { viewModel.onAction(TweaksAction.OnHideSeenToggled(it)) },
             )
@@ -110,8 +132,8 @@ fun TweaksPrivacyRoot(
 
         item(key = "clear_history_row") {
             DestructiveRow(
-                title = "Clear viewed history",
-                subtitle = "Forget which repos you've already opened.",
+                title = stringResource(Res.string.tweaks_privacy_clear_viewed_title),
+                subtitle = stringResource(Res.string.tweaks_privacy_clear_viewed_body),
                 onClick = { viewModel.onAction(TweaksAction.OnClearSeenHistoryRequest) },
             )
             Spacer(Modifier.height(8.dp))
@@ -120,8 +142,8 @@ fun TweaksPrivacyRoot(
         item(key = "hidden_repos_row") {
             DrillRow(
                 icon = Icons.Outlined.VisibilityOff,
-                title = "Hidden repositories",
-                subtitle = "Repos you've muted from feeds and search.",
+                title = stringResource(Res.string.tweaks_privacy_hidden_repos_title),
+                subtitle = stringResource(Res.string.tweaks_privacy_hidden_repos_body),
                 accent = TweaksAccents.Periwinkle,
                 onClick = onNavigateToHiddenRepositories,
             )
@@ -130,9 +152,9 @@ fun TweaksPrivacyRoot(
 
     if (state.isClearSeenHistoryDialogVisible) {
         GhsConfirmDialog(
-            title = "Clear viewed history?",
-            body = "This won't unstar or unfavorite anything.",
-            confirmLabel = "Clear",
+            title = stringResource(Res.string.tweaks_privacy_clear_viewed_dialog_title),
+            body = stringResource(Res.string.tweaks_privacy_clear_viewed_dialog_body),
+            confirmLabel = stringResource(Res.string.tweaks_privacy_clear_viewed_dialog_confirm),
             destructive = true,
             onConfirm = { viewModel.onAction(TweaksAction.OnClearSeenHistoryConfirm) },
             onDismiss = { viewModel.onAction(TweaksAction.OnClearSeenHistoryDismiss) },
@@ -155,7 +177,7 @@ private fun TelemetryCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Usage data",
+                text = stringResource(Res.string.tweaks_privacy_usage_data_section),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -173,14 +195,14 @@ private fun TelemetryCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Share anonymous usage data",
+                        text = stringResource(Res.string.tweaks_privacy_telemetry_title),
                         style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.SemiBold,
                         ),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
-                        text = "Help us understand which features get used.",
+                        text = stringResource(Res.string.tweaks_privacy_telemetry_body),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -203,7 +225,7 @@ private fun TelemetryCard(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = "What we collect",
+                    text = stringResource(Res.string.tweaks_privacy_telemetry_what_we_collect),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -225,12 +247,12 @@ private fun TelemetryCard(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     listOf(
-                        "App version.",
-                        "OS and platform.",
-                        "Feature usage counts.",
-                        "No repo names.",
-                        "No tokens.",
-                        "No identifiers.",
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_app_version),
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_os),
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_feature_usage),
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_repo_names),
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_tokens),
+                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_identifiers),
                     ).forEach { line ->
                         Text(
                             text = "• $line",

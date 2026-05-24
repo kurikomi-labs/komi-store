@@ -1401,4 +1401,86 @@
     <string name="host_tokens_compose_add_title">Add token</string>
     <string name="host_tokens_validation_failed_fallback">unknown error</string>
     <string name="host_tokens_undo_failed">Couldn't restore token for %1$s</string>
+
+    <!-- Tweaks redesign (P14/P15/P16) -->
+    <string name="tweaks_connection_intro_title">How the app reaches the internet</string>
+    <string name="tweaks_connection_intro_body">Pick a connection mode below. Most people leave this on No proxy.</string>
+    <string name="tweaks_connection_main_section">Main connection</string>
+    <string name="tweaks_connection_overrides_section">Per-scope overrides</string>
+    <string name="tweaks_connection_overrides_body">Each scope uses the main connection by default. Choose \'Custom\' to keep its own settings.</string>
+    <string name="tweaks_connection_applies_to_all">Applies to all traffic unless overridden below.</string>
+    <string name="tweaks_connection_paste_url">Paste full URL</string>
+    <string name="tweaks_connection_paste_url_title">Paste proxy URL</string>
+    <string name="tweaks_connection_paste_url_body">Paste a full proxy URL and we\'ll fill the form for you.</string>
+    <string name="tweaks_connection_paste_url_placeholder">scheme://user:pass@host:port</string>
+    <string name="tweaks_connection_paste_url_error">Couldn\'t read that URL.</string>
+    <string name="tweaks_connection_paste_url_cta">Use this URL</string>
+    <string name="tweaks_connection_scope_discovery_title">Search &amp; metadata</string>
+    <string name="tweaks_connection_scope_discovery_body">GitHub API, search, repo details.</string>
+    <string name="tweaks_connection_scope_download_title">Downloads</string>
+    <string name="tweaks_connection_scope_download_body">APK and asset downloads.</string>
+    <string name="tweaks_connection_scope_translation_title">Translation</string>
+    <string name="tweaks_connection_scope_translation_body">DeepL, Microsoft, LibreTranslate calls.</string>
+    <string name="tweaks_connection_use_main">Use main</string>
+    <string name="tweaks_connection_custom">Custom</string>
+    <string name="tweaks_connection_test">Test</string>
+    <string name="tweaks_connection_mode_no_proxy">No proxy</string>
+    <string name="tweaks_connection_mode_system">System</string>
+    <string name="tweaks_connection_mode_http">HTTP/HTTPS</string>
+    <string name="tweaks_connection_mode_socks">SOCKS5</string>
+    <string name="tweaks_connection_mode_http_caption">Most corporate proxies.</string>
+    <string name="tweaks_connection_mode_socks_caption">Tor, SSH tunnels.</string>
+
+    <string name="tweaks_sources_intro_title">Where the app looks for repositories</string>
+    <string name="tweaks_sources_intro_body">The app searches GitHub by default. Route through a regional mirror or add custom Forgejo / Gitea hosts.</string>
+    <string name="tweaks_sources_added_hosts_section">Added hosts</string>
+    <string name="tweaks_sources_mirror_default">Default (github.com)</string>
+    <string name="tweaks_sources_add_a_host">Add a Forgejo or Gitea host</string>
+    <string name="tweaks_sources_github_mirror_title">GitHub mirror</string>
+
+    <string name="tweaks_privacy_browsing_history_section">Browsing history</string>
+    <string name="tweaks_privacy_usage_data_section">Usage data</string>
+    <string name="tweaks_privacy_telemetry_title">Share anonymous usage data</string>
+    <string name="tweaks_privacy_telemetry_body">Help us understand which features get used.</string>
+    <string name="tweaks_privacy_telemetry_what_we_collect">What we collect</string>
+    <string name="tweaks_privacy_telemetry_collect_app_version">App version.</string>
+    <string name="tweaks_privacy_telemetry_collect_os">OS and platform.</string>
+    <string name="tweaks_privacy_telemetry_collect_feature_usage">Feature usage counts.</string>
+    <string name="tweaks_privacy_telemetry_collect_no_repo_names">No repo names.</string>
+    <string name="tweaks_privacy_telemetry_collect_no_tokens">No tokens.</string>
+    <string name="tweaks_privacy_telemetry_collect_no_identifiers">No identifiers.</string>
+    <string name="tweaks_privacy_clipboard_title">Detect repo links in clipboard</string>
+    <string name="tweaks_privacy_clipboard_body">When you copy a github.com or codeberg.org link, we\'ll prompt to open it.</string>
+    <string name="tweaks_privacy_hide_seen_title">Hide repos I\'ve already viewed</string>
+    <string name="tweaks_privacy_hide_seen_body">Skip seen repos in feeds and search.</string>
+    <string name="tweaks_privacy_clear_viewed_title">Clear viewed history</string>
+    <string name="tweaks_privacy_clear_viewed_body">Forget which repos you\'ve already opened.</string>
+    <string name="tweaks_privacy_clear_viewed_dialog_title">Clear viewed history?</string>
+    <string name="tweaks_privacy_clear_viewed_dialog_body">This won\'t unstar or unfavorite anything.</string>
+    <string name="tweaks_privacy_clear_viewed_dialog_confirm">Clear</string>
+    <string name="tweaks_privacy_hidden_repos_title">Hidden repositories</string>
+    <string name="tweaks_privacy_hidden_repos_body">Repos you\'ve muted from feeds and search.</string>
+
+    <string name="tweaks_storage_downloaded_apks_title">Downloaded APKs</string>
+    <string name="tweaks_storage_downloaded_apks_body">We keep installers around so updates resume fast.</string>
+    <string name="tweaks_storage_using_label">Using: %1$s</string>
+    <string name="tweaks_storage_downloaded_apks_clear">Clear</string>
+    <string name="tweaks_storage_empty_size">0 B</string>
+
+    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_tagline">Cross-platform app store for GitHub, Codeberg, and Forgejo releases.</string>
+    <string name="tweaks_app_info_whats_new_title">What\'s new</string>
+    <string name="tweaks_app_info_whats_new_subtitle">Past release notes.</string>
+    <string name="tweaks_app_info_licenses_title">Open source licenses</string>
+    <string name="tweaks_app_info_licenses_subtitle">Libraries used in the app.</string>
+    <string name="tweaks_app_info_privacy_policy_title">Privacy policy</string>
+    <string name="tweaks_app_info_privacy_policy_subtitle">View on github-store.org.</string>
+    <string name="tweaks_app_info_source_code_title">Source code on GitHub</string>
+    <string name="tweaks_app_info_source_code_subtitle">View this app\'s source.</string>
+
+    <string name="tweaks_language_intro_body">The app restarts when you switch language.</string>
+
+    <string name="tweaks_licenses_title">Open source licenses</string>
+    <string name="tweaks_licenses_intro_title">GitHub Store stands on these libraries.</string>
+    <string name="tweaks_licenses_intro_body">Tap any entry to open its project page.</string>
 </resources>

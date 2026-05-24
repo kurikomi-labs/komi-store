@@ -42,6 +42,11 @@ import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.downloads_cleared
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_storage
+import zed.rainxch.githubstore.core.presentation.res.tweaks_storage_downloaded_apks_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_storage_downloaded_apks_clear
+import zed.rainxch.githubstore.core.presentation.res.tweaks_storage_downloaded_apks_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_storage_empty_size
+import zed.rainxch.githubstore.core.presentation.res.tweaks_storage_using_label
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksEvent
 import zed.rainxch.tweaks.presentation.TweaksViewModel
@@ -104,8 +109,9 @@ private fun DownloadsCard(
     cacheSize: String,
     onClearClick: () -> Unit,
 ) {
-    val sizeDisplay = cacheSize.ifBlank { "0 B" }
-    val isEmpty = sizeDisplay == "0 B"
+    val emptySize = stringResource(Res.string.tweaks_storage_empty_size)
+    val sizeDisplay = cacheSize.ifBlank { emptySize }
+    val isEmpty = sizeDisplay == emptySize
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -140,20 +146,20 @@ private fun DownloadsCard(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
-                    text = "Downloaded APKs",
+                    text = stringResource(Res.string.tweaks_storage_downloaded_apks_title),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "We keep installers around so updates resume fast.",
+                    text = stringResource(Res.string.tweaks_storage_downloaded_apks_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Using: $sizeDisplay",
+                    text = stringResource(Res.string.tweaks_storage_using_label, sizeDisplay),
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.SemiBold,
@@ -164,7 +170,7 @@ private fun DownloadsCard(
 
             GhsButton(
                 onClick = onClearClick,
-                label = "Clear",
+                label = stringResource(Res.string.tweaks_storage_downloaded_apks_clear),
                 variant = GhsButtonVariant.Destructive,
                 enabled = !isEmpty,
                 leadingIcon = Icons.Outlined.DeleteOutline,

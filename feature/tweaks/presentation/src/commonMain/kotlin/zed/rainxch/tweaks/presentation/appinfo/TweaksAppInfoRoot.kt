@@ -43,6 +43,16 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_licenses_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_licenses_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_privacy_policy_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_privacy_policy_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_tagline
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
@@ -79,8 +89,8 @@ fun TweaksAppInfoRoot(
         item(key = "action_whats_new") {
             ActionRow(
                 icon = Icons.Outlined.NewReleases,
-                title = "What's new",
-                subtitle = "Past release notes.",
+                title = stringResource(Res.string.tweaks_app_info_whats_new_title),
+                subtitle = stringResource(Res.string.tweaks_app_info_whats_new_subtitle),
                 accent = TweaksAccents.Peach,
                 onClick = onNavigateToWhatsNewHistory,
             )
@@ -90,8 +100,8 @@ fun TweaksAppInfoRoot(
         item(key = "action_licenses") {
             ActionRow(
                 icon = Icons.Outlined.Code,
-                title = "Open source licenses",
-                subtitle = "Libraries used in the app.",
+                title = stringResource(Res.string.tweaks_app_info_licenses_title),
+                subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
                 accent = TweaksAccents.Sage,
                 onClick = onNavigateToLicenses,
             )
@@ -101,8 +111,8 @@ fun TweaksAppInfoRoot(
         item(key = "action_privacy") {
             ActionRow(
                 icon = Icons.Outlined.Description,
-                title = "Privacy policy",
-                subtitle = "View on github-store.org.",
+                title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
+                subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
                 accent = TweaksAccents.Rose,
                 onClick = {
                     runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
@@ -114,8 +124,8 @@ fun TweaksAppInfoRoot(
         item(key = "action_source") {
             ActionRow(
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
-                title = "Source code on GitHub",
-                subtitle = "View this app's source.",
+                title = stringResource(Res.string.tweaks_app_info_source_code_title),
+                subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
                 accent = TweaksAccents.Aqua,
                 onClick = {
                     runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
@@ -160,7 +170,7 @@ private fun AppIdentityCard(versionName: String) {
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
-                    text = "GitHub Store",
+                    text = stringResource(Res.string.tweaks_app_info_app_name),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -175,7 +185,7 @@ private fun AppIdentityCard(versionName: String) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Cross-platform app store for GitHub, Codeberg, and Forgejo releases.",
+                    text = stringResource(Res.string.tweaks_app_info_tagline),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
