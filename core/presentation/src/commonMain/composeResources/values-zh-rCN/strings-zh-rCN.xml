@@ -1,14 +1,12 @@
 <resources>
     <string name="app_name">GitHub Store</string>
 
-    <string name="installed_apps">已安装的应用</string>
     <string name="navigate_back">返回</string>
     <string name="check_for_updates">检查更新</string>
 
     <string name="cannot_launch">无法启动 %1$s</string>
     <string name="failed_to_open">无法打开 %1$s</string>
     <string name="failed_to_update">更新 %1$s 失败：%2$s</string>
-    <string name="update_failed">更新失败</string>
     <string name="update_all_failed">全部更新失败：%1$s</string>
     <string name="all_apps_updated_successfully">所有应用已成功更新</string>
     <string name="no_updates_available">暂无可用更新</string>
@@ -50,12 +48,9 @@
 
     <string name="sign_in_with_github">使用 GitHub 登录</string>
 
-    <string name="error_cancelled">已取消</string>
     <string name="error_unknown">未知错误</string>
 
-    <string name="language_label">语言：</string>
 
-    <string name="discover_repositories">发现仓库</string>
     <string name="search_repositories_hint">搜索仓库、描述…</string>
 
     <string name="filter_by_language">按语言筛选</string>
@@ -100,29 +95,18 @@
 
     <string name="profile_title">个人资料</string>
 
-    <string name="section_appearance">外观</string>
-    <string name="section_language">语言</string>
-    <string name="language_intro">覆盖应用界面语言。</string>
-    <string name="language_picker_title">应用语言</string>
-    <string name="language_picker_description">更改应用中的菜单、按钮和消息。不会更改来自 GitHub 的内容。</string>
     <string name="language_follow_system">跟随系统</string>
     <string name="language_restart_required">重新启动以应用新语言。</string>
     <string name="language_restart_action">重新启动</string>
-    <string name="section_about">关于</string>
-    <string name="section_network">网络</string>
 
     <string name="theme_color">主题颜色</string>
     <string name="amoled_black_theme">AMOLED 黑色主题</string>
     <string name="amoled_black_description">深色模式下的纯黑背景</string>
-    <string name="selected_color">已选择颜色：%1$s</string>
 
-    <string name="version">版本</string>
-    <string name="help_support">帮助与支持</string>
 
     <string name="logout">退出登录</string>
 
     <string name="logout_success">已成功退出，正在跳转…</string>
-    <string name="cache_cleared">缓存已成功清除</string>
 
     <string name="warning">警告！</string>
     <string name="logout_confirmation">确定要退出登录吗？</string>
@@ -132,16 +116,13 @@
     <string name="theme_cream">Cream</string>
     <string name="theme_plum">Plum</string>
 
-    <string name="error_loading_details">加载详情失败</string>
     <string name="about_this_app">关于此应用</string>
     <string name="install_logs">安装日志</string>
-    <string name="author">作者</string>
     <string name="whats_new">更新内容</string>
 
     <string name="installed">已安装</string>
     <string name="update_available">有可用更新</string>
     <string name="install_latest">安装最新版本</string>
-    <string name="reinstall">重新安装</string>
 
     <string name="downloading">正在下载</string>
     <string name="updating">正在更新</string>
@@ -160,13 +141,10 @@
     <string name="no_more_github_results">GitHub 上没有更多结果</string>
     <string name="explore_error">从 GitHub 获取失败，请重试。</string>
 
-    <string name="by_author">由 %1$s</string>
-    <string name="installed_version">• 已安装：%1$s</string>
     <string name="architecture_compatible">架构兼容</string>
     <string name="update_to_version">更新到 %1$s</string>
     <string name="report_issue">报告问题</string>
 
-    <string name="error_load_details">无法加载详情</string>
     <string name="installer_saved_downloads">安装程序已保存到下载文件夹</string>
 
     <string name="log_download_started">开始下载</string>
@@ -189,30 +167,13 @@
     <string name="external_installer_description">使用第三方应用安装APK</string>
 
     <string name="error_generic">错误：%1$s</string>
-    <string name="error_asset_not_supported">不支持的文件类型 .%1$s</string>
-    <string name="error_file_not_found">未找到下载的文件</string>
 
-    <string name="home_category_trending">热门</string>
-    <string name="home_category_hot_release">热门发布</string>
-    <string name="home_category_most_popular">最受欢迎</string>
 
-    <string name="home_topic_privacy">隐私</string>
-    <string name="home_topic_media">媒体</string>
-    <string name="home_topic_productivity">生产力</string>
-    <string name="home_topic_networking">网络</string>
-    <string name="home_topic_dev_tools">开发工具</string>
 
     <string name="home_finding_repositories">正在查找仓库…</string>
-    <string name="home_loading_more">加载中…</string>
-    <string name="home_no_more_repositories">没有更多仓库了</string>
     <string name="home_retry">重试</string>
     <string name="home_failed_to_load_repositories">加载仓库失败</string>
-    <string name="home_view_details">查看详情</string>
 
-    <string name="updated_just_now">刚刚更新</string>
-    <string name="updated_hours_ago">%1$d 小时前更新</string>
-    <string name="updated_yesterday">昨天更新</string>
-    <string name="updated_days_ago">%1$d 天前更新</string>
     <string name="updated_on_date">%1$s 更新</string>
 
     <string name="rate_limit_exceeded">请求次数已达上限</string>
@@ -261,8 +222,6 @@
     <string name="dismiss">关闭</string>
     <string name="sync_starred_failed">同步收藏的仓库失败</string>
 
-    <string name="developer_profile_title">开发者简介</string>
-    <string name="open_developer_profile">打开开发者个人资料</string>
 
     <!-- Developer Profile - General -->
     <string name="failed_to_load_repositories">加载仓库失败</string>
@@ -276,7 +235,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">搜索仓库…</string>
     <string name="clear_search">清除搜索</string>
-    <string name="filter_all">全部</string>
     <string name="filter_with_releases">有发布版</string>
     <string name="filter_installed">已安装</string>
     <string name="filter_favorites">收藏</string>
@@ -288,7 +246,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">个仓库</string>
-    <string name="repositories_plural">个仓库</string>
     <string name="showing_x_of_y_repositories">显示 %2$d 个中的 %1$d 个仓库</string>
 
     <!-- Developer Profile - Empty States -->
@@ -296,8 +253,6 @@
     <string name="no_installed_repos">没有已安装的仓库</string>
     <string name="no_favorite_repos">没有收藏的仓库</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">%1$s前更新</string>
     <string name="has_release">有发布版</string>
 
     <!-- Developer Profile - Relative Time -->
@@ -344,7 +299,6 @@
 
     <!-- Install status -->
     <string name="not_available">不可用</string>
-    <string name="update_app">更新应用</string>
     <string name="pending_install">等待安装</string>
 
     <!-- Install helpers -->
@@ -368,35 +322,21 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">上次检查：%1$s</string>
-    <string name="last_checked_never">从未检查</string>
     <string name="last_checked_just_now">刚刚</string>
     <string name="last_checked_minutes_ago">%1$d 分钟前</string>
     <string name="last_checked_hours_ago">%1$d 小时前</string>
     <string name="checking_for_updates">正在检查更新…</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">代理类型</string>
-    <string name="proxy_none">无</string>
-    <string name="proxy_system">系统代理</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
     <string name="proxy_host">主机地址</string>
     <string name="proxy_port">端口</string>
     <string name="proxy_username">用户名（可选）</string>
     <string name="proxy_password">密码（可选）</string>
     <string name="proxy_save">保存代理</string>
     <string name="proxy_saved">代理设置已保存</string>
-    <string name="proxy_system_description">使用设备的代理设置</string>
-    <string name="proxy_port_error">端口必须为 1–65535</string>
-    <string name="proxy_none_description">直连，不使用代理</string>
     <string name="failed_to_save_proxy_settings">无法保存代理设置</string>
     <string name="proxy_host_required">必须填写代理主机</string>
     <string name="proxy_host_invalid">请输入有效的主机名或 IP 地址</string>
     <string name="invalid_proxy_port">无效的代理端口</string>
-    <string name="proxy_show_password">显示密码</string>
-    <string name="proxy_hide_password">隐藏密码</string>
-    <string name="proxy_test">测试</string>
-    <string name="proxy_test_in_progress">测试中…</string>
     <string name="proxy_test_success">连接正常 (%1$d ms)</string>
     <string name="proxy_test_error_dns">无法解析主机。请检查代理地址。</string>
     <string name="proxy_test_error_unreachable">无法连接到代理服务器。</string>
@@ -404,20 +344,8 @@
     <string name="proxy_test_error_auth_required">需要代理身份验证。</string>
     <string name="proxy_test_error_status">意外响应：HTTP %1$d</string>
     <string name="proxy_test_error_unknown">连接测试失败</string>
-    <string name="proxy_scope_intro">每个类别都可以使用自己的代理。请独立配置它们。</string>
-    <string name="proxy_scope_discovery_title">发现 (GitHub API)</string>
-    <string name="proxy_scope_discovery_description">主页、搜索、仓库详情和更新检查</string>
-    <string name="proxy_scope_download_title">下载</string>
-    <string name="proxy_scope_download_description">APK 下载和自动更新</string>
-    <string name="proxy_scope_translation_title">翻译</string>
-    <string name="proxy_scope_translation_description">README 翻译服务</string>
 
 
-    <!-- Track app feature -->
-    <string name="track_this_app">跟踪此应用</string>
-    <string name="app_tracked_successfully">应用已添加到跟踪列表</string>
-    <string name="failed_to_track_app">跟踪应用失败：%1$s</string>
-    <string name="already_tracked">该应用已在跟踪中</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">登录 GitHub</string>
@@ -434,7 +362,6 @@
     <string name="sign_in_again">重新登录</string>
     <string name="continue_as_guest">以访客身份继续</string>
     <string name="logout_revocation_note">这将清除您的本地会话和缓存数据。要完全撤销访问权限，请访问 GitHub Settings > Applications。</string>
-    <string name="auth_code_expires_in">验证码将在 %1$s 后过期</string>
     <string name="auth_error_code_expired">设备验证码已过期。</string>
     <string name="auth_hint_try_again">请重新登录以获取新的验证码。</string>
     <string name="auth_hint_check_connection">请检查您的网络连接并重试。</string>
@@ -451,27 +378,16 @@
     <string name="failed_to_share_link">无法分享链接</string>
     <string name="link_copied_to_clipboard">链接已复制到剪贴板</string>
 
-    <!-- Translation feature -->
-    <string name="translate">翻译</string>
-    <string name="translating">翻译中…</string>
-    <string name="show_original">显示原文</string>
-    <string name="translated_to">已翻译为%1$s</string>
     <string name="translate_to">翻译为…</string>
     <string name="search_language">搜索语言</string>
-    <string name="change_language">更改语言</string>
     <string name="translation_failed">翻译失败，请重试。</string>
 
     <string name="open_github_link">打开 GitHub 链接</string>
     <string name="clipboard_link_detected">在剪贴板中检测到 GitHub 链接</string>
-    <string name="auto_detect_clipboard_links">自动检测剪贴板链接</string>
-    <string name="auto_detect_clipboard_description">打开搜索时自动检测剪贴板中的 GitHub 链接</string>
     <string name="detected_links">检测到的链接</string>
     <string name="open_in_app">在应用中打开</string>
     <string name="no_github_link_in_clipboard">剪贴板中未找到 GitHub 链接</string>
 
-    <string name="storage">存储</string>
-    <string name="clear_cache">清除缓存</string>
-    <string name="current_size">当前大小：</string>
     <string name="clear">清除</string>
 
 
@@ -486,8 +402,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">安装</string>
     <string name="installer_type_default">默认</string>
     <string name="installer_type_default_description">标准系统安装对话框</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -504,7 +418,6 @@
     <string name="auto_update_title">自动更新应用</string>
     <string name="auto_update_description">通过 Shizuku 在后台自动下载并安装更新</string>
 
-    <string name="section_updates">更新</string>
     <string name="update_check_interval_title">更新检查间隔</string>
     <string name="update_check_interval_description">在后台检查应用更新的频率</string>
     <string name="update_check_enabled_title">后台检查更新</string>
@@ -528,18 +441,13 @@
     <string name="validating_repo">验证中…</string>
     <string name="link_and_track">链接并追踪</string>
     <string name="checking_release">检查最新版本…</string>
-    <string name="downloading_for_verification">正在下载APK进行验证…</string>
     <string name="verifying_signing_key">正在验证签名密钥…</string>
     <string name="package_name_mismatch">包名不匹配：APK为%1$s，但所选应用为%2$s</string>
     <string name="signing_key_mismatch_link">签名密钥不匹配：此仓库中的APK由不同的开发者签名</string>
     <string name="select_asset_title">选择安装包</string>
     <string name="select_asset_description">选择APK以与已安装的应用进行验证</string>
-    <string name="download_failed">下载失败</string>
     <string name="export_apps">导出</string>
     <string name="import_apps">导入</string>
-    <string name="import_apps_title">导入应用</string>
-    <string name="import_apps_description">粘贴导出的JSON以恢复跟踪的应用</string>
-    <string name="import_apps_hint">在此粘贴导出的JSON…</string>
     <string name="include_pre_releases_title">默认测试版渠道</string>
     <string name="include_pre_releases_description">新追踪的应用默认包含测试版。已追踪的应用保留各自设置（在应用详情页切换）。</string>
     <string name="confirm_uninstall_title">卸载应用？</string>
@@ -552,9 +460,6 @@
     <string name="app_linked_success">%1$s已链接到%2$s/%3$s</string>
     <string name="export_failed">导出失败：%1$s</string>
     <string name="import_failed">导入失败：%1$s</string>
-    <string name="imported_apps_summary">已导入%1$d个应用</string>
-    <string name="imported_skipped">，%1$d个已跳过</string>
-    <string name="imported_failed">，%1$d个失败</string>
     <string name="signing_key_changed_title">签名密钥已更改</string>
     <string name="signing_key_changed_message">此应用的签名证书自首次安装以来已更改。\n\n这可能意味着开发者更换了签名密钥，或者二进制文件可能已被篡改。\n\n预期：%1$s\n收到：%2$s</string>
     <string name="install_anyway">仍然安装</string>
@@ -567,8 +472,6 @@
     <string name="multiple_assets_info_dialog_title">多个资源可用</string>
     <string name="multiple_assets_info_dialog_text">此版本有多个可安装文件。请查看列表并选择适合您设备的文件。</string>
     <string name="icon_content_description_info">信息</string>
-    <string name="translation_error_retry">重试</string>
-    <string name="translated_from">自动检测：%1$s</string>
     <string name="select_language">选择语言</string>
     <string name="update_package_mismatch">包名不匹配：APK 为 %1$s，但已安装的应用为 %2$s。更新已阻止。</string>
     <string name="update_signing_key_mismatch">签名密钥不匹配：更新由不同的开发者签名。更新已阻止。</string>
@@ -581,21 +484,13 @@
     <string name="content_width_wide">宽</string>
     <string name="content_width_extra_wide">超宽</string>
 
-    <string name="hide_seen_title">隐藏已浏览的仓库</string>
-    <string name="hide_seen_description">在发现信息流中隐藏你已经浏览过的仓库</string>
-    <string name="clear_seen_history">清除浏览记录</string>
-    <string name="clear_seen_history_description">重置所有已浏览的仓库，使其重新出现在信息流中</string>
     <string name="seen_history_cleared">浏览记录已清除</string>
     <string name="seen_badge">已浏览</string>
     <string name="self_owned_badge">你拥有此仓库</string>
     <string name="hide_repository">隐藏仓库</string>
-    <string name="repository_hidden">仓库已隐藏</string>
-    <string name="undo_hide">撤销</string>
 
     <string name="recently_viewed">最近查看</string>
     <string name="profile_recently_viewed_description">你访问过的仓库</string>
-    <string name="downloaded_packages">已下载的包</string>
-    <string name="downloaded_packages_description">来自 GitHub 发布的 APK 和安装程序</string>
     <string name="delete_all">全部删除</string>
     <string name="delete_downloads_confirmation_title">删除所有下载？</string>
     <string name="delete_downloads_confirmation_message">这将永久删除所有 APK 和安装程序（%1$s）。你可以随时重新下载。</string>
@@ -606,9 +501,7 @@
     <string name="clear_all_history">清除全部</string>
     <string name="remove_search_history_item">移除</string>
 
-    <string name="bottom_nav_profile_tweaks">调整</string>
     <string name="tweaks_title">调整</string>
-    <string name="pre_releases">预发布版本</string>
 
     <!-- Monorepo support -->
     <string name="asset_filter_label">资产过滤器</string>
@@ -666,8 +559,6 @@
     <string name="ready_to_install">准备安装</string>
     <string name="install_ready">安装（已就绪）</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">翻译</string>
     <string name="translation_intro">选择用于翻译 README 的服务。</string>
     <string name="translation_provider_title">翻译服务</string>
     <string name="translation_provider_description">Google 全球可用，无需配置。有道可从中国大陆访问，但需要从有道开发者门户获取 API 凭据。</string>
@@ -710,8 +601,6 @@
     <string name="pat_input_placeholder">ghp_… 或 github_pat_…</string>
     <string name="pat_submit">登录</string>
     <string name="pat_cancel">取消</string>
-    <string name="pat_show">显示令牌</string>
-    <string name="pat_hide">隐藏令牌</string>
     <string name="pat_error_empty">请粘贴令牌。</string>
     <string name="pat_error_invalid_format">这不像是 GitHub 令牌。令牌以 ghp_ 或 github_pat_ 开头。</string>
     <string name="pat_error_bad_credentials">该令牌无效或已被吊销。</string>
@@ -733,13 +622,11 @@
     <string name="channel_chip_coachmark_title">选择发布渠道</string>
     <string name="channel_chip_coachmark_body">点按以在此应用的稳定版和测试版之间切换。</string>
     <string name="channel_chip_coachmark_dismiss">知道了</string>
-    <string name="channel_toggle_cd">切换此应用的测试版发布</string>
     <string name="action_switch_to_stable">切换到 %1$s 稳定版</string>
     <string name="stalled_project_warning_months">%1$d 个月内无稳定版发布</string>
     <string name="stalled_project_warning_days">%1$d 天内无稳定版发布</string>
     <string name="stalled_project_warning_description">目前有活跃的预发布版本，但该项目已有一段时间未发布稳定版。测试版可能不会收敛为稳定版。</string>
     <string name="merged_whats_changed_title">自 %1$s 以来的变更</string>
-    <string name="merged_release_heading">— %1$s —</string>
 
     <!-- ═══════════════════════════════════════════════════════════════
          E1 — External import wizard
@@ -760,7 +647,6 @@
     <string name="external_import_card_action_more">更多匹配</string>
     <string name="external_import_card_action_less">隐藏匹配</string>
     <string name="external_import_card_installer_chip">通过 %1$s 安装</string>
-    <string name="external_import_card_preselect_known">我们认为这是 %1$s · %2$d</string>
     <string name="external_import_card_preselect_unknown">点击查找仓库</string>
     <string name="external_import_card_expand_label">展开以查看其他匹配</string>
     <string name="external_import_card_collapse_label">收起卡片</string>
@@ -825,7 +711,6 @@
          E1 — Details unlink dialog
          ═══════════════════════════════════════════════════════════════ -->
     <string name="details_unlink_external_app_menu">从此仓库取消关联</string>
-    <string name="details_unlink_external_app_more_options">更多选项</string>
     <string name="details_unlink_external_app_dialog_title">取消关联此应用？</string>
     <string name="details_unlink_external_app_dialog_body">我们将停止追踪 %1$s 作为从此仓库安装的应用。该应用仍保留在您的设备上 — 仅删除关联。</string>
     <string name="details_unlink_external_app_dialog_confirm">取消关联</string>
@@ -848,7 +733,6 @@
     <!-- ═══════════════════════════════════════════════════════════════
          Feedback feature
          ═══════════════════════════════════════════════════════════════ -->
-    <string name="feedback_send">发送反馈</string>
     <string name="feedback_title">发送反馈</string>
     <string name="feedback_close">关闭</string>
     <string name="feedback_category_label">类别</string>
@@ -886,15 +770,12 @@
          ═══════════════════════════════════════════════════════════════ -->
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">自定义代码托管</string>
-    <string name="custom_forges_entry_subtitle">添加你希望 GHS 识别的 Forgejo / Gitea 主机</string>
-    <string name="custom_forges_count_label">已添加 %1$d 个</string>
     <string name="custom_forges_dialog_title">自定义代码托管</string>
     <string name="custom_forges_dialog_help">输入 Forgejo 或 Gitea 实例的主机名（例如 git.example.com）。在手动关联表单中，GHS 将接受这些主机的链接。</string>
     <string name="custom_forges_add_button">添加</string>
     <string name="custom_forges_empty">尚无自定义代码托管。</string>
     <string name="done">完成</string>
 
-    <string name="mirror_tweaks_entry_label">下载镜像</string>
     <string name="mirror_picker_title">下载镜像</string>
     <string name="mirror_picker_description">用于下载发布资源。GitHub API 调用始终直接进行。大多数用户应保持"直连 GitHub"设置。</string>
     <string name="mirror_section_official">官方</string>
@@ -910,7 +791,6 @@
     <string name="mirror_custom_validation_template">模板必须恰好包含一次 {url}</string>
     <string name="mirror_custom_save">保存</string>
     <string name="mirror_test_button">测试所选</string>
-    <string name="mirror_test_in_progress">测试中…</string>
     <string name="mirror_test_success">已在 %1$dms 内到达</string>
     <string name="mirror_test_http_error">镜像返回 %1$d</string>
     <string name="mirror_test_timeout">5s 后超时</string>
@@ -918,12 +798,6 @@
     <string name="mirror_test_other">失败：%1$s</string>
     <string name="mirror_deploy_your_own_hint">所有镜像都无法使用？您可以在 5 分钟内自行托管 — 请参阅文档。</string>
     <string name="mirror_removed_toast">%1$s 已不再可用，已切换到直连 GitHub。</string>
-    <string name="mirror_digest_mismatch_error">校验和不匹配 — 文件可能已被篡改</string>
-    <string name="mirror_auto_suggest_title">尝试更快的镜像？</string>
-    <string name="mirror_auto_suggest_body">网络较慢的部分用户使用社区代理效果更好。</string>
-    <string name="mirror_auto_suggest_pick_one">选择一个</string>
-    <string name="mirror_auto_suggest_maybe_later">稍后再说</string>
-    <string name="mirror_auto_suggest_dont_ask_again">不再询问</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
     <string name="add_from_starred_title">从星标添加</string>
@@ -934,13 +808,7 @@
     <string name="announcements_category_security">安全</string>
     <string name="announcements_category_status">状态</string>
     <string name="announcements_category_survey">调查</string>
-    <string name="announcements_critical_modal_close">确认后关闭</string>
-    <string name="announcements_days_ago">%1$d 天</string>
     <string name="announcements_empty">当前没有可分享的内容。</string>
-    <string name="announcements_hours_ago">%1$d 小时</string>
-    <string name="announcements_just_now">刚刚</string>
-    <string name="announcements_last_refreshed">%1$s 前刷新</string>
-    <string name="announcements_minutes_ago">%1$d 分钟</string>
     <string name="announcements_mute_locked">无法关闭</string>
     <string name="announcements_mute_settings_title">显示来自</string>
     <string name="announcements_open_mute_settings">打开静音设置</string>
@@ -997,7 +865,6 @@
     <string name="apps_section_state_collapsed">已折叠</string>
     <string name="apps_section_state_expanded">已展开</string>
     <string name="apps_section_up_to_date">已是最新</string>
-    <string name="apps_section_updates_available">有可用更新</string>
     <string name="confirm_discard_pending_message">放弃 %1$s 的暂存安装包并从应用列表中移除该行？已下载的 APK 将被删除。</string>
     <string name="confirm_discard_pending_title">放弃待安装项？</string>
     <string name="dhizuku_grant_permission">授予权限</string>
@@ -1083,7 +950,6 @@
     <string name="whats_new_section_new">新增</string>
     <string name="whats_new_sheet_heading">%1$s 的更新内容</string>
     <string name="whats_new_title">更新内容</string>
-    <string name="whats_new_translations_note">更新日志为英文。欢迎通过 Issues 提交翻译。</string>
     <string name="whats_new_version_label">版本 %1$s · %2$s</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1121,7 +987,6 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">其他平台 — 在浏览器中打开以保存并转移</string>
     <string name="section_chip_your_device">你的设备</string>
     <string name="section_chip_for_transfer">用于转移</string>
     <string name="kao_banner_title">保持 Android 开放</string>

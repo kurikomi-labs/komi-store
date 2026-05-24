@@ -3,8 +3,6 @@
     <!-- Apps feature - App -->
     <string name="app_name">GitHub Store</string>
 
-    <!-- Apps feature - Navigation / Top bar -->
-    <string name="installed_apps">설치된 앱</string>
     <string name="navigate_back">뒤로 이동</string>
     <string name="check_for_updates">업데이트 확인</string>
 
@@ -12,7 +10,6 @@
     <string name="cannot_launch">%1$s을(를) 실행할 수 없습니다</string>
     <string name="failed_to_open">%1$s을(를) 열지 못했습니다</string>
     <string name="failed_to_update">%1$s 업데이트 실패: %2$s</string>
-    <string name="update_failed">업데이트 실패</string>
     <string name="update_all_failed">모두 업데이트 실패: %1$s</string>
     <string name="all_apps_updated_successfully">모든 앱이 성공적으로 업데이트되었습니다</string>
     <string name="no_updates_available">사용 가능한 업데이트가 없습니다</string>
@@ -60,12 +57,9 @@
 
     <string name="sign_in_with_github">GitHub로 로그인</string>
 
-    <string name="error_cancelled">취소됨</string>
     <string name="error_unknown">알 수 없는 오류</string>
 
-    <string name="language_label">언어:</string>
 
-    <string name="discover_repositories">저장소 탐색</string>
     <string name="search_repositories_hint">저장소, 설명 검색…</string>
 
     <!-- Filters -->
@@ -113,34 +107,21 @@
     <!-- Settings -->
     <string name="profile_title">프로필</string>
 
-    <!-- Sections -->
-    <string name="section_appearance">외관</string>
-    <string name="section_language">언어</string>
-    <string name="language_intro">앱의 UI 언어를 재정의합니다.</string>
-    <string name="language_picker_title">앱 언어</string>
-    <string name="language_picker_description">앱 전체의 메뉴, 버튼, 메시지를 변경합니다. GitHub의 콘텐츠는 변경하지 않습니다.</string>
     <string name="language_follow_system">시스템 따름</string>
     <string name="language_restart_required">새 언어를 적용하려면 다시 시작하세요.</string>
     <string name="language_restart_action">다시 시작</string>
-    <string name="section_about">정보</string>
-    <string name="section_network">네트워크</string>
 
     <!-- Appearance -->
     <string name="theme_color">테마 색상</string>
     <string name="amoled_black_theme">AMOLED 블랙 테마</string>
     <string name="amoled_black_description">다크 모드용 순수 블랙 배경</string>
-    <string name="selected_color">선택된 색상: %1$s</string>
 
-    <!-- About -->
-    <string name="version">버전</string>
-    <string name="help_support">도움말 및 지원</string>
 
     <!-- Account -->
     <string name="logout">로그아웃</string>
 
     <!-- Snackbar -->
     <string name="logout_success">성공적으로 로그아웃되었습니다. 이동 중...</string>
-    <string name="cache_cleared">캐시가 성공적으로 삭제되었습니다</string>
 
     <!-- Dialog -->
     <string name="warning">경고!</string>
@@ -158,8 +139,6 @@
     <string name="cancel_download">다운로드 취소</string>
     <string name="show_install_options">설치 옵션 보기</string>
 
-    <!-- Errors & states -->
-    <string name="error_loading_details">상세 정보를 불러오는 중 오류 발생</string>
     <string name="retry">다시 시도</string>
     <string name="no_description">설명이 없습니다.</string>
     <string name="no_release_notes">릴리스 노트가 없습니다.</string>
@@ -168,7 +147,6 @@
     <!-- Headers -->
     <string name="about_this_app">이 앱 정보</string>
     <string name="install_logs">설치 로그</string>
-    <string name="author">작성자</string>
     <string name="whats_new">새로운 기능</string>
 
     <!-- Install status -->
@@ -176,8 +154,6 @@
     <string name="update_available">업데이트 가능</string>
     <string name="not_available">사용 불가</string>
     <string name="install_latest">최신 버전 설치</string>
-    <string name="reinstall">재설치</string>
-    <string name="update_app">앱 업데이트</string>
 
     <!-- Download stages -->
     <string name="downloading">다운로드 중</string>
@@ -206,14 +182,9 @@
     <string name="no_more_github_results">GitHub에 더 이상 결과가 없습니다</string>
     <string name="explore_error">GitHub에서 가져오기 실패. 다시 시도하세요.</string>
 
-    <!-- Misc -->
-    <string name="by_author">%1$s 작성</string>
-    <string name="installed_version">• 설치됨: %1$s</string>
     <string name="architecture_compatible">아키텍처 호환</string>
     <string name="update_to_version">%1$s(으)로 업데이트</string>
 
-    <!-- General -->
-    <string name="error_load_details">상세 정보를 불러오지 못했습니다</string>
     <string name="installer_saved_downloads">설치 파일이 다운로드 폴더에 저장되었습니다</string>
 
     <!-- Download / install states -->
@@ -239,30 +210,13 @@
 
     <!-- Errors -->
     <string name="error_generic">오류: %1$s</string>
-    <string name="error_asset_not_supported">.%1$s 파일 형식은 지원되지 않습니다</string>
-    <string name="error_file_not_found">다운로드된 파일을 찾을 수 없습니다</string>
 
-    <string name="home_category_trending">인기</string>
-    <string name="home_category_hot_release">핫 릴리스</string>
-    <string name="home_category_most_popular">가장 인기 있는</string>
 
-    <string name="home_topic_privacy">개인정보</string>
-    <string name="home_topic_media">미디어</string>
-    <string name="home_topic_productivity">생산성</string>
-    <string name="home_topic_networking">네트워크</string>
-    <string name="home_topic_dev_tools">개발 도구</string>
 
     <string name="home_finding_repositories">저장소를 찾는 중...</string>
-    <string name="home_loading_more">더 불러오는 중...</string>
-    <string name="home_no_more_repositories">더 이상 저장소가 없습니다</string>
     <string name="home_retry">다시 시도</string>
     <string name="home_failed_to_load_repositories">저장소를 불러오지 못했습니다</string>
-    <string name="home_view_details">상세 보기</string>
 
-    <string name="updated_just_now">방금 업데이트됨</string>
-    <string name="updated_hours_ago">%1$d시간 전 업데이트됨</string>
-    <string name="updated_yesterday">어제 업데이트됨</string>
-    <string name="updated_days_ago">%1$d일 전 업데이트됨</string>
     <string name="updated_on_date">%1$s에 업데이트됨</string>
 
     <string name="rate_limit_exceeded">요청 한도 초과</string>
@@ -311,8 +265,6 @@
     <string name="dismiss">닫기</string>
     <string name="sync_starred_failed">별표 저장소 동기화에 실패했습니다</string>
 
-    <string name="developer_profile_title">개발자 프로필</string>
-    <string name="open_developer_profile">개발자 프로필 열기</string>
 
     <!-- Developer Profile - General -->
     <string name="failed_to_load_repositories">저장소를 불러오지 못했습니다</string>
@@ -326,7 +278,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">저장소 검색…</string>
     <string name="clear_search">검색 지우기</string>
-    <string name="filter_all">전체</string>
     <string name="filter_with_releases">릴리스 포함</string>
     <string name="filter_installed">설치됨</string>
     <string name="filter_favorites">즐겨찾기</string>
@@ -338,7 +289,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">저장소</string>
-    <string name="repositories_plural">저장소</string>
     <string name="showing_x_of_y_repositories">총 %2$d개 중 %1$d개의 저장소 표시</string>
 
     <!-- Developer Profile - Empty States -->
@@ -346,8 +296,6 @@
     <string name="no_installed_repos">설치된 저장소가 없습니다</string>
     <string name="no_favorite_repos">즐겨찾기 저장소가 없습니다</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">%1$s 업데이트됨</string>
     <string name="has_release">릴리스 있음</string>
 
     <!-- Developer Profile - Relative Time -->
@@ -400,35 +348,21 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">마지막 확인: %1$s</string>
-    <string name="last_checked_never">확인한 적 없음</string>
     <string name="last_checked_just_now">방금</string>
     <string name="last_checked_minutes_ago">%1$d분 전</string>
     <string name="last_checked_hours_ago">%1$d시간 전</string>
     <string name="checking_for_updates">업데이트 확인 중…</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">프록시 유형</string>
-    <string name="proxy_none">없음</string>
-    <string name="proxy_system">시스템</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
     <string name="proxy_host">호스트</string>
     <string name="proxy_port">포트</string>
     <string name="proxy_username">사용자 이름 (선택 사항)</string>
     <string name="proxy_password">비밀번호 (선택 사항)</string>
     <string name="proxy_save">프록시 저장</string>
     <string name="proxy_saved">프록시 설정이 저장되었습니다</string>
-    <string name="proxy_system_description">기기의 프록시 설정을 사용합니다</string>
-    <string name="proxy_port_error">포트는 1–65535 사이여야 합니다</string>
-    <string name="proxy_none_description">직접 연결, 프록시 없음</string>
     <string name="failed_to_save_proxy_settings">프록시 설정을 저장하지 못했습니다</string>
     <string name="proxy_host_required">프록시 호스트가 필요합니다</string>
     <string name="proxy_host_invalid">유효한 호스트 이름 또는 IP 주소를 입력하세요</string>
     <string name="invalid_proxy_port">잘못된 프록시 포트</string>
-    <string name="proxy_show_password">비밀번호 표시</string>
-    <string name="proxy_hide_password">비밀번호 숨기기</string>
-    <string name="proxy_test">테스트</string>
-    <string name="proxy_test_in_progress">테스트 중…</string>
     <string name="proxy_test_success">연결 성공 (%1$d ms)</string>
     <string name="proxy_test_error_dns">호스트를 확인할 수 없습니다. 프록시 주소를 확인하세요.</string>
     <string name="proxy_test_error_unreachable">프록시 서버에 연결할 수 없습니다.</string>
@@ -436,20 +370,8 @@
     <string name="proxy_test_error_auth_required">프록시 인증이 필요합니다.</string>
     <string name="proxy_test_error_status">예기치 않은 응답: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">연결 테스트 실패</string>
-    <string name="proxy_scope_intro">각 카테고리는 자체 프록시를 사용할 수 있습니다. 독립적으로 구성하십시오.</string>
-    <string name="proxy_scope_discovery_title">탐색 (GitHub API)</string>
-    <string name="proxy_scope_discovery_description">홈, 검색, 저장소 상세, 업데이트 확인</string>
-    <string name="proxy_scope_download_title">다운로드</string>
-    <string name="proxy_scope_download_description">APK 다운로드 및 자동 업데이트</string>
-    <string name="proxy_scope_translation_title">번역</string>
-    <string name="proxy_scope_translation_description">README 번역 서비스</string>
 
 
-    <!-- Track app feature -->
-    <string name="track_this_app">이 앱 추적</string>
-    <string name="app_tracked_successfully">앱이 추적 목록에 추가되었습니다</string>
-    <string name="failed_to_track_app">앱 추적 실패: %1$s</string>
-    <string name="already_tracked">이미 추적 중인 앱입니다</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">GitHub에 로그인</string>
@@ -466,7 +388,6 @@
     <string name="sign_in_again">다시 로그인</string>
     <string name="continue_as_guest">게스트로 계속</string>
     <string name="logout_revocation_note">로컬 세션과 캐시 데이터가 삭제됩니다. 접근을 완전히 취소하려면 GitHub Settings > Applications를 방문하세요.</string>
-    <string name="auth_code_expires_in">코드 만료까지 %1$s</string>
     <string name="auth_error_code_expired">디바이스 코드가 만료되었습니다.</string>
     <string name="auth_hint_try_again">새 코드를 받으려면 다시 로그인해 주세요.</string>
     <string name="auth_hint_check_connection">인터넷 연결을 확인하고 다시 시도하세요.</string>
@@ -483,27 +404,16 @@
     <string name="failed_to_share_link">링크 공유에 실패했습니다</string>
     <string name="link_copied_to_clipboard">링크가 클립보드에 복사되었습니다</string>
 
-    <!-- Translation feature -->
-    <string name="translate">번역</string>
-    <string name="translating">번역 중…</string>
-    <string name="show_original">원문 보기</string>
-    <string name="translated_to">%1$s로 번역됨</string>
     <string name="translate_to">번역 대상…</string>
     <string name="search_language">언어 검색</string>
-    <string name="change_language">언어 변경</string>
     <string name="translation_failed">번역 실패. 다시 시도해주세요.</string>
 
     <string name="open_github_link">GitHub 링크 열기</string>
     <string name="clipboard_link_detected">클립보드에서 GitHub 링크 감지됨</string>
-    <string name="auto_detect_clipboard_links">클립보드 링크 자동 감지</string>
-    <string name="auto_detect_clipboard_description">검색을 열 때 클립보드에서 GitHub 링크를 자동으로 감지</string>
     <string name="detected_links">감지된 링크</string>
     <string name="open_in_app">앱에서 열기</string>
     <string name="no_github_link_in_clipboard">클립보드에서 GitHub 링크를 찾을 수 없습니다</string>
 
-    <string name="storage">저장 공간</string>
-    <string name="clear_cache">캐시 지우기</string>
-    <string name="current_size">현재 크기:</string>
     <string name="clear">지우기</string>
 
 
@@ -520,8 +430,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">설치</string>
     <string name="installer_type_default">기본</string>
     <string name="installer_type_default_description">표준 시스템 설치 대화 상자</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -538,7 +446,6 @@
     <string name="auto_update_title">앱 자동 업데이트</string>
     <string name="auto_update_description">Shizuku를 통해 백그라운드에서 자동으로 업데이트 다운로드 및 설치</string>
 
-    <string name="section_updates">업데이트</string>
     <string name="update_check_interval_title">업데이트 확인 주기</string>
     <string name="update_check_interval_description">백그라운드에서 앱 업데이트를 확인하는 빈도</string>
     <string name="update_check_enabled_title">백그라운드 업데이트 확인</string>
@@ -562,18 +469,13 @@
     <string name="validating_repo">확인 중…</string>
     <string name="link_and_track">연결 및 추적</string>
     <string name="checking_release">최신 릴리스 확인 중…</string>
-    <string name="downloading_for_verification">확인용 APK 다운로드 중…</string>
     <string name="verifying_signing_key">서명 키 확인 중…</string>
     <string name="package_name_mismatch">패키지 이름 불일치: APK는 %1$s이지만 선택된 앱은 %2$s입니다</string>
     <string name="signing_key_mismatch_link">서명 키 불일치: 이 저장소의 APK는 다른 개발자가 서명했습니다</string>
     <string name="select_asset_title">설치 파일 선택</string>
     <string name="select_asset_description">설치된 앱과 대조할 APK를 선택하세요</string>
-    <string name="download_failed">다운로드 실패</string>
     <string name="export_apps">내보내기</string>
     <string name="import_apps">가져오기</string>
-    <string name="import_apps_title">앱 가져오기</string>
-    <string name="import_apps_description">내보낸 JSON을 붙여넣어 추적 중인 앱을 복원하세요</string>
-    <string name="import_apps_hint">내보낸 JSON을 여기에 붙여넣기…</string>
     <string name="include_pre_releases_title">기본 베타 채널</string>
     <string name="include_pre_releases_description">새로 추적한 앱은 기본적으로 베타 빌드를 포함합니다. 이미 추적 중인 앱은 자체 설정을 유지합니다(앱 세부 정보 화면에서 전환).</string>
     <string name="confirm_uninstall_title">앱을 제거하시겠습니까?</string>
@@ -586,9 +488,6 @@
     <string name="app_linked_success">%1$s이(가) %2$s/%3$s에 연결됨</string>
     <string name="export_failed">내보내기 실패: %1$s</string>
     <string name="import_failed">가져오기 실패: %1$s</string>
-    <string name="imported_apps_summary">%1$d개의 앱을 가져왔습니다</string>
-    <string name="imported_skipped">, %1$d개 건너뜀</string>
-    <string name="imported_failed">, %1$d개 실패</string>
     <string name="signing_key_changed_title">서명 키가 변경됨</string>
     <string name="signing_key_changed_message">이 앱의 서명 인증서가 처음 설치된 이후 변경되었습니다.\n\n개발자가 서명 키를 교체했거나 바이너리가 변조되었을 수 있습니다.\n\n예상: %1$s\n수신: %2$s</string>
     <string name="install_anyway">그래도 설치</string>
@@ -601,8 +500,6 @@
     <string name="multiple_assets_info_dialog_title">여러 에셋 사용 가능</string>
     <string name="multiple_assets_info_dialog_text">이 릴리스에 여러 설치 가능한 파일이 있습니다. 목록을 검토하고 기기에 맞는 파일을 선택하세요.</string>
     <string name="icon_content_description_info">정보</string>
-    <string name="translation_error_retry">재시도</string>
-    <string name="translated_from">자동 감지: %1$s</string>
     <string name="select_language">언어 선택</string>
     <string name="update_package_mismatch">패키지 불일치: APK는 %1$s이지만 설치된 앱은 %2$s입니다. 업데이트가 차단되었습니다.</string>
     <string name="update_signing_key_mismatch">서명 키 불일치: 업데이트가 다른 개발자에 의해 서명되었습니다. 업데이트가 차단되었습니다.</string>
@@ -615,21 +512,13 @@
     <string name="content_width_wide">넓게</string>
     <string name="content_width_extra_wide">매우 넓게</string>
 
-    <string name="hide_seen_title">본 저장소 숨기기</string>
-    <string name="hide_seen_description">이미 본 저장소를 디스커버리 피드에서 숨깁니다</string>
-    <string name="clear_seen_history">조회 기록 삭제</string>
-    <string name="clear_seen_history_description">모든 조회 기록을 초기화하여 피드에 다시 표시합니다</string>
     <string name="seen_history_cleared">조회 기록이 삭제되었습니다</string>
     <string name="seen_badge">확인함</string>
     <string name="self_owned_badge">내가 소유한 저장소</string>
     <string name="hide_repository">저장소 숨기기</string>
-    <string name="repository_hidden">저장소가 숨겨졌습니다</string>
-    <string name="undo_hide">실행 취소</string>
 
     <string name="recently_viewed">최근 본 항목</string>
     <string name="profile_recently_viewed_description">방문한 저장소</string>
-    <string name="downloaded_packages">다운로드된 패키지</string>
-    <string name="downloaded_packages_description">GitHub 릴리스의 APK 및 설치 파일</string>
     <string name="delete_all">모두 삭제</string>
     <string name="delete_downloads_confirmation_title">모든 다운로드를 삭제하시겠습니까?</string>
     <string name="delete_downloads_confirmation_message">모든 APK 및 설치 파일이 영구적으로 삭제됩니다 (%1$s). 언제든 다시 다운로드할 수 있습니다.</string>
@@ -640,9 +529,7 @@
     <string name="clear_all_history">모두 지우기</string>
     <string name="remove_search_history_item">삭제</string>
 
-    <string name="bottom_nav_profile_tweaks">조정</string>
     <string name="tweaks_title">조정</string>
-    <string name="pre_releases">프리릴리스</string>
 
     <!-- Monorepo support -->
     <string name="asset_filter_label">에셋 필터</string>
@@ -700,8 +587,6 @@
     <string name="ready_to_install">설치 준비 완료</string>
     <string name="install_ready">설치 (준비됨)</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">번역</string>
     <string name="translation_intro">README 번역에 사용할 서비스를 선택하세요.</string>
     <string name="translation_provider_title">번역 서비스</string>
     <string name="translation_provider_description">Google은 전 세계적으로 설정 없이 작동합니다. Youdao는 중국 본토에서 작동하지만 Youdao 개발자 포털의 API 자격 증명이 필요합니다.</string>
@@ -744,8 +629,6 @@
     <string name="pat_input_placeholder">ghp_… 또는 github_pat_…</string>
     <string name="pat_submit">로그인</string>
     <string name="pat_cancel">취소</string>
-    <string name="pat_show">토큰 표시</string>
-    <string name="pat_hide">토큰 숨기기</string>
     <string name="pat_error_empty">토큰을 붙여넣어 주세요.</string>
     <string name="pat_error_invalid_format">GitHub 토큰이 아닌 것 같습니다. 토큰은 ghp_ 또는 github_pat_로 시작합니다.</string>
     <string name="pat_error_bad_credentials">이 토큰은 유효하지 않거나 취소되었습니다.</string>
@@ -766,13 +649,11 @@
     <string name="channel_chip_coachmark_title">릴리스 채널 선택</string>
     <string name="channel_chip_coachmark_body">이 앱의 안정 릴리스와 베타 빌드를 전환하려면 탭하세요.</string>
     <string name="channel_chip_coachmark_dismiss">확인</string>
-    <string name="channel_toggle_cd">이 앱의 베타 릴리스 전환</string>
     <string name="action_switch_to_stable">%1$s 안정 버전으로 전환</string>
     <string name="stalled_project_warning_months">%1$d개월간 안정 릴리스 없음</string>
     <string name="stalled_project_warning_days">%1$d일간 안정 릴리스 없음</string>
     <string name="stalled_project_warning_description">사전 릴리스가 활발하지만 프로젝트가 한동안 안정 빌드를 출시하지 않았습니다. 베타가 안정 릴리스로 이어지지 않을 수 있습니다.</string>
     <string name="merged_whats_changed_title">%1$s 이후 변경 사항</string>
-    <string name="merged_release_heading">— %1$s —</string>
 
     <!-- ═══════════════════════════════════════════════════════════════
          E1 — External import wizard
@@ -793,7 +674,6 @@
     <string name="external_import_card_action_more">더 많은 일치 항목</string>
     <string name="external_import_card_action_less">일치 항목 숨기기</string>
     <string name="external_import_card_installer_chip">%1$s를 통해 설치됨</string>
-    <string name="external_import_card_preselect_known">%1$s(으)로 추정됩니다 · %2$d</string>
     <string name="external_import_card_preselect_unknown">저장소를 찾으려면 탭하세요</string>
     <string name="external_import_card_expand_label">다른 일치 항목을 보려면 펼치기</string>
     <string name="external_import_card_collapse_label">카드 접기</string>
@@ -858,7 +738,6 @@
          E1 — Details unlink dialog
          ═══════════════════════════════════════════════════════════════ -->
     <string name="details_unlink_external_app_menu">이 저장소에서 연결 해제</string>
-    <string name="details_unlink_external_app_more_options">더 많은 옵션</string>
     <string name="details_unlink_external_app_dialog_title">이 앱의 연결을 해제하시겠습니까?</string>
     <string name="details_unlink_external_app_dialog_body">이 저장소에서 설치된 앱으로 %1$s 추적을 중단합니다. 앱은 기기에 그대로 남습니다 — 연결만 제거됩니다.</string>
     <string name="details_unlink_external_app_dialog_confirm">연결 해제</string>
@@ -881,7 +760,6 @@
     <!-- ═══════════════════════════════════════════════════════════════
          Feedback feature
          ═══════════════════════════════════════════════════════════════ -->
-    <string name="feedback_send">피드백 보내기</string>
     <string name="feedback_title">피드백 보내기</string>
     <string name="feedback_close">닫기</string>
     <string name="feedback_category_label">카테고리</string>
@@ -919,15 +797,12 @@
          ═══════════════════════════════════════════════════════════════ -->
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">사용자 포지</string>
-    <string name="custom_forges_entry_subtitle">GHS가 인식할 Forgejo / Gitea 호스트를 추가하세요</string>
-    <string name="custom_forges_count_label">%1$d개 추가됨</string>
     <string name="custom_forges_dialog_title">사용자 포지</string>
     <string name="custom_forges_dialog_help">Forgejo 또는 Gitea 인스턴스의 호스트명을 입력하세요 (예: git.example.com). 수동 연결 시트에서 이러한 호스트의 URL을 GHS가 받습니다.</string>
     <string name="custom_forges_add_button">추가</string>
     <string name="custom_forges_empty">아직 사용자 포지가 없습니다.</string>
     <string name="done">완료</string>
 
-    <string name="mirror_tweaks_entry_label">다운로드 미러</string>
     <string name="mirror_picker_title">다운로드 미러</string>
     <string name="mirror_picker_description">릴리스 파일 다운로드에 사용됩니다. GitHub API 호출은 항상 직접 이루어집니다. 대부분의 사용자는 GitHub 직접으로 두는 것이 좋습니다.</string>
     <string name="mirror_section_official">공식</string>
@@ -943,7 +818,6 @@
     <string name="mirror_custom_validation_template">템플릿에는 {url}이 정확히 한 번 포함되어야 합니다</string>
     <string name="mirror_custom_save">저장</string>
     <string name="mirror_test_button">선택한 항목 테스트</string>
-    <string name="mirror_test_in_progress">테스트 중…</string>
     <string name="mirror_test_success">%1$dms에 도달</string>
     <string name="mirror_test_http_error">미러가 %1$d를 반환했습니다</string>
     <string name="mirror_test_timeout">5s 후 타임아웃</string>
@@ -951,12 +825,6 @@
     <string name="mirror_test_other">실패: %1$s</string>
     <string name="mirror_deploy_your_own_hint">모든 미러가 다운되었나요? 5분 안에 직접 호스팅할 수 있습니다 — 문서를 참조하세요.</string>
     <string name="mirror_removed_toast">%1$s를 더 이상 사용할 수 없어 GitHub 직접으로 전환했습니다.</string>
-    <string name="mirror_digest_mismatch_error">체크섬 불일치 — 파일이 변조되었을 수 있습니다</string>
-    <string name="mirror_auto_suggest_title">더 빠른 미러를 사용해 볼까요?</string>
-    <string name="mirror_auto_suggest_body">느린 네트워크에서 일부 사용자는 커뮤니티 프록시를 사용할 때 더 나은 경험을 합니다.</string>
-    <string name="mirror_auto_suggest_pick_one">선택하기</string>
-    <string name="mirror_auto_suggest_maybe_later">나중에</string>
-    <string name="mirror_auto_suggest_dont_ask_again">다시 묻지 않기</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
     <string name="add_from_starred_title">별표한 항목에서 추가</string>
@@ -967,13 +835,7 @@
     <string name="announcements_category_security">보안</string>
     <string name="announcements_category_status">상태</string>
     <string name="announcements_category_survey">설문조사</string>
-    <string name="announcements_critical_modal_close">확인 후 닫기</string>
-    <string name="announcements_days_ago">%1$d일</string>
     <string name="announcements_empty">지금 공유할 내용이 없습니다.</string>
-    <string name="announcements_hours_ago">%1$d시간</string>
-    <string name="announcements_just_now">방금 전</string>
-    <string name="announcements_last_refreshed">%1$s 전에 새로 고침됨</string>
-    <string name="announcements_minutes_ago">%1$d분</string>
     <string name="announcements_mute_locked">비활성화할 수 없음</string>
     <string name="announcements_mute_settings_title">표시할 항목</string>
     <string name="announcements_open_mute_settings">알림 끄기 설정 열기</string>
@@ -1030,7 +892,6 @@
     <string name="apps_section_state_collapsed">접힘</string>
     <string name="apps_section_state_expanded">펼침</string>
     <string name="apps_section_up_to_date">최신</string>
-    <string name="apps_section_updates_available">업데이트 사용 가능</string>
     <string name="confirm_discard_pending_message">%1$s의 보관된 설치 프로그램을 삭제하고 앱 목록에서 행을 제거하시겠습니까? 다운로드된 APK가 삭제됩니다.</string>
     <string name="confirm_discard_pending_title">대기 중인 설치를 삭제할까요?</string>
     <string name="dhizuku_grant_permission">권한 부여</string>
@@ -1116,7 +977,6 @@
     <string name="whats_new_section_new">신규</string>
     <string name="whats_new_sheet_heading">%1$s의 새로운 기능</string>
     <string name="whats_new_title">새로운 기능</string>
-    <string name="whats_new_translations_note">변경 로그는 영어로 제공됩니다. Issues를 통한 번역을 환영합니다.</string>
     <string name="whats_new_version_label">버전 %1$s · %2$s</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1154,7 +1014,6 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">다른 플랫폼 — 전송용 저장을 위해 브라우저에서 열립니다</string>
     <string name="section_chip_your_device">내 기기</string>
     <string name="section_chip_for_transfer">전송용</string>
     <string name="kao_banner_title">Android를 열린 상태로</string>

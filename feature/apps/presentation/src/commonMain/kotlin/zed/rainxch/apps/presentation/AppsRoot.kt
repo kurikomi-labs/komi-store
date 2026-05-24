@@ -141,7 +141,6 @@ import zed.rainxch.githubstore.core.presentation.res.export_apps_obtainium
 import zed.rainxch.githubstore.core.presentation.res.external_import_rescan_menu
 import zed.rainxch.githubstore.core.presentation.res.import_apps
 import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
-import zed.rainxch.githubstore.core.presentation.res.installed_apps
 import zed.rainxch.githubstore.core.presentation.res.installing
 import zed.rainxch.githubstore.core.presentation.res.last_checked
 import zed.rainxch.githubstore.core.presentation.res.last_checked_hours_ago

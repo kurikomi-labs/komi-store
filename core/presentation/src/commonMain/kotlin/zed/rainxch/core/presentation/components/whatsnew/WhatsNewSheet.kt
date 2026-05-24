@@ -38,7 +38,6 @@ import zed.rainxch.githubstore.core.presentation.res.whats_new_section_heads_up
 import zed.rainxch.githubstore.core.presentation.res.whats_new_section_improved
 import zed.rainxch.githubstore.core.presentation.res.whats_new_section_new
 import zed.rainxch.githubstore.core.presentation.res.whats_new_sheet_heading
-import zed.rainxch.githubstore.core.presentation.res.whats_new_translations_note
 import zed.rainxch.githubstore.core.presentation.res.whats_new_version_label
 
 @OptIn(ExperimentalMaterial3Api::class)

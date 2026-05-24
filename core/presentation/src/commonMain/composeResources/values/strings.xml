@@ -3,8 +3,6 @@
     <!-- Apps feature - App -->
     <string name="app_name">GitHub Store</string>
 
-    <!-- Apps feature - Navigation / Top bar -->
-    <string name="installed_apps">Installed Apps</string>
     <string name="navigate_back">Navigate back</string>
     <string name="check_for_updates">Check for updates</string>
 
@@ -12,7 +10,6 @@
     <string name="cannot_launch">Cannot launch %1$s</string>
     <string name="failed_to_open">Failed to open %1$s</string>
     <string name="failed_to_update">Failed to update %1$s: %2$s</string>
-    <string name="update_failed">Update failed</string>
     <string name="update_all_failed">Update all failed: %1$s</string>
     <string name="all_apps_updated_successfully">All apps updated successfully</string>
     <string name="no_updates_available">No updates available</string>
@@ -64,12 +61,9 @@
 
     <string name="sign_in_with_github">Sign in with GitHub</string>
 
-    <string name="error_cancelled">Cancelled</string>
     <string name="error_unknown">Unknown error</string>
 
-    <string name="language_label">Language:</string>
 
-    <string name="discover_repositories">Discover Repositories</string>
     <string name="search_repositories_hint">Search repo, description…</string>
 
     <!-- Filters -->
@@ -118,54 +112,29 @@
     <!-- Profile -->
     <string name="profile_title">Profile</string>
 
-    <!-- Sections -->
-    <string name="section_appearance">Appearance</string>
-    <string name="section_language">Language</string>
-    <string name="language_intro">Override the app's UI language.</string>
-    <string name="language_picker_title">App language</string>
-    <string name="language_picker_description">Changes menus, buttons, and messages throughout the app. Does not change content coming from GitHub.</string>
     <string name="language_follow_system">Follow system</string>
     <string name="language_restart_required">Restart to apply the new language.</string>
     <string name="language_restart_action">Restart</string>
-    <string name="section_network">Network</string>
-    <string name="section_about">About</string>
 
     <!-- Appearance -->
     <string name="theme_color">Palette</string>
     <string name="amoled_black_theme">True black (AMOLED)</string>
     <string name="amoled_black_description">Pure-black background — saves power on OLED screens.</string>
-    <string name="selected_color">Selected color: %1$s</string>
 
-    <!-- About -->
-    <string name="version">Version</string>
-    <string name="help_support">Help &amp; Support</string>
 
     <!-- Account -->
     <string name="logout">Logout</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">Proxy Type</string>
-    <string name="proxy_none">No proxy</string>
-    <string name="proxy_system">System</string>
-    <string name="proxy_http">HTTP/HTTPS</string>
-    <string name="proxy_socks">SOCKS5</string>
     <string name="proxy_host">Host</string>
     <string name="proxy_port">Port</string>
     <string name="proxy_username">Username (optional)</string>
     <string name="proxy_password">Password (optional)</string>
     <string name="proxy_save">Save</string>
     <string name="proxy_saved">Proxy settings saved</string>
-    <string name="proxy_system_description">Uses your device's proxy settings</string>
-    <string name="proxy_port_error">Port must be 1–65535</string>
-    <string name="proxy_none_description">The app connects to the internet without a proxy.</string>
     <string name="failed_to_save_proxy_settings">Failed to save proxy settings</string>
     <string name="proxy_host_required">Proxy host is required</string>
     <string name="proxy_host_invalid">Enter a valid hostname or IP address</string>
     <string name="invalid_proxy_port">Invalid proxy port</string>
-    <string name="proxy_show_password">Show password</string>
-    <string name="proxy_hide_password">Hide password</string>
-    <string name="proxy_test">Test</string>
-    <string name="proxy_test_in_progress">Testing…</string>
     <string name="proxy_test_success">Connection OK (%1$d ms)</string>
     <string name="proxy_test_error_dns">Could not resolve host. Check the proxy address.</string>
     <string name="proxy_test_error_unreachable">Could not reach the proxy server.</string>
@@ -173,13 +142,6 @@
     <string name="proxy_test_error_auth_required">Proxy authentication required.</string>
     <string name="proxy_test_error_status">Unexpected response: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">Connection test failed</string>
-    <string name="proxy_scope_intro">Each category can use its own proxy. Configure them independently.</string>
-    <string name="proxy_scope_discovery_title">Search &amp; metadata</string>
-    <string name="proxy_scope_discovery_description">Home, search, repo details, and update checks</string>
-    <string name="proxy_scope_download_title">Downloads</string>
-    <string name="proxy_scope_download_description">APK downloads and auto-updates</string>
-    <string name="proxy_scope_translation_title">Translation</string>
-    <string name="proxy_scope_translation_description">README translation service</string>
 
     <!-- Snackbar -->
     <string name="logout_success">Logged out successfully, redirecting...</string>
@@ -200,8 +162,6 @@
     <string name="cancel_download">Cancel download</string>
     <string name="show_install_options">Show install options</string>
 
-    <!-- Errors & states -->
-    <string name="error_loading_details">Error loading details</string>
     <string name="error_state_title_generic">Something went wrong</string>
     <string name="error_state_title_offline">You're offline</string>
     <string name="error_state_title_rate_limit">Rate limit hit</string>
@@ -218,7 +178,6 @@
     <!-- Headers -->
     <string name="about_this_app">About this app</string>
     <string name="install_logs">Install logs</string>
-    <string name="author">Author</string>
     <string name="whats_new">What’s New</string>
 
     <!-- Install status -->
@@ -248,8 +207,6 @@
     <string name="pat_input_placeholder">ghp_… or github_pat_…</string>
     <string name="pat_submit">Sign in</string>
     <string name="pat_cancel">Cancel</string>
-    <string name="pat_show">Show token</string>
-    <string name="pat_hide">Hide token</string>
     <string name="pat_error_empty">Please paste a token.</string>
     <string name="pat_error_invalid_format">That doesn't look like a GitHub token. Tokens start with ghp_ or github_pat_.</string>
     <string name="pat_error_bad_credentials">That token is invalid or has been revoked.</string>
@@ -260,8 +217,6 @@
     <string name="no_releases_published">No releases published yet</string>
     <string name="loading_releases">Loading releases…</string>
     <string name="install_latest">Install latest</string>
-    <string name="reinstall">Reinstall</string>
-    <string name="update_app">Update app</string>
     <string name="report_issue">Report issue</string>
 
     <!-- Download stages -->
@@ -311,14 +266,9 @@
     <string name="no_more_github_results">No more results on GitHub</string>
     <string name="explore_error">Failed to fetch from GitHub. Try again.</string>
 
-    <!-- Misc -->
-    <string name="by_author">by %1$s</string>
-    <string name="installed_version">• Installed: %1$s</string>
     <string name="architecture_compatible">Architecture compatible</string>
     <string name="update_to_version">Update to %1$s</string>
 
-    <!-- General -->
-    <string name="error_load_details">Failed to load details</string>
     <string name="installer_saved_downloads">Installer was saved into the Downloads folder</string>
 
     <!-- Download / install states -->
@@ -346,32 +296,18 @@
 
     <!-- Errors -->
     <string name="error_generic">Error: %1$s</string>
-    <string name="error_asset_not_supported">Asset type .%1$s not supported</string>
-    <string name="error_file_not_found">Downloaded file not found</string>
 
-    <string name="home_category_trending">Trending</string>
-    <string name="home_category_hot_release">Hot release</string>
-    <string name="home_category_most_popular">Most popular</string>
 
-    <string name="home_topic_privacy">Privacy</string>
-    <string name="home_topic_media">Media</string>
-    <string name="home_topic_productivity">Productivity</string>
-    <string name="home_topic_networking">Network</string>
-    <string name="home_topic_dev_tools">Dev Tools</string>
 
     <string name="home_finding_repositories">Finding repositories...</string>
-    <string name="home_loading_more">Loading more...</string>
-    <string name="home_no_more_repositories">No more repositories</string>
     <string name="home_retry">Retry</string>
     <string name="home_failed_to_load_repositories">Failed to load repositories</string>
-    <string name="home_view_details">View Details</string>
 
     <string name="home_topbar_discover">Discover</string>
     <string name="home_section_hot_releases">Hot releases</string>
     <string name="home_section_trending_now">Trending now</string>
     <string name="home_section_most_popular">Most popular</string>
     <string name="home_section_from_your_stars">From your stars</string>
-    <string name="home_hot_pill_format">HOT · %1$s ago</string>
     <string name="home_rank_format">#%1$d</string>
     <string name="home_action_get">Get</string>
     <string name="cd_back">Back</string>
@@ -380,24 +316,12 @@
     <string name="home_view_all">View all</string>
     <string name="home_view_more">View more</string>
 
-    <string name="details_update_banner_format">Update available: %1$s → %2$s</string>
-    <string name="details_whats_changed_since_format">What's changed since %1$s</string>
-    <string name="details_mirror_via_format">via %1$s</string>
-    <string name="details_mirror_sha_verified">sha-256 verified</string>
-    <string name="details_mirror_change">change</string>
-    <string name="details_view_all_releases_format">View all %1$d releases</string>
-    <string name="details_view_all_releases">View all releases</string>
     <string name="details_view_developer_profile">View profile</string>
     <string name="details_developer_section">Developer</string>
-    <string name="details_permissions_section">Permissions</string>
     <string name="details_stats_section">Stats</string>
     <string name="details_about_screen_title">About</string>
     <string name="details_whats_new_screen_title">What's new</string>
 
-    <string name="updated_just_now">updated just now</string>
-    <string name="updated_hours_ago">updated %1$d hour(s) ago</string>
-    <string name="updated_yesterday">updated yesterday</string>
-    <string name="updated_days_ago">updated %1$d day(s) ago</string>
     <string name="updated_on_date">updated on %1$s</string>
 
     <string name="rate_limit_exceeded">Rate Limit Exceeded</string>
@@ -451,8 +375,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="sync_starred_failed">Failed to sync starred repos</string>
 
-    <string name="developer_profile_title">Developer Profile</string>
-    <string name="open_developer_profile">Open developer profile</string>
 
     <string name="failed_to_load_repositories">Failed to load repositories</string>
     <string name="failed_to_load_profile">Failed to load profile</string>
@@ -465,7 +387,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">Search repositories…</string>
     <string name="clear_search">Clear search</string>
-    <string name="filter_all">All</string>
     <string name="filter_with_releases">With Releases</string>
     <string name="filter_installed">Installed</string>
     <string name="filter_favorites">Favorites</string>
@@ -477,7 +398,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repository</string>
-    <string name="repositories_plural">repositories</string>
     <string name="showing_x_of_y_repositories">Showing %1$d of %2$d repositories</string>
 
     <!-- Developer Profile - Empty States -->
@@ -485,8 +405,6 @@
     <string name="no_installed_repos">No installed repositories</string>
     <string name="no_favorite_repos">No favorite repositories</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">Updated %1$s</string>
     <string name="has_release">Has Release</string>
 
     <string name="time_years_ago">%1$d y ago</string>
@@ -509,7 +427,6 @@
     <string name="bottom_nav_search_title">Search</string>
     <string name="bottom_nav_apps_title">Library</string>
     <string name="bottom_nav_profile_title">Profile</string>
-    <string name="bottom_nav_profile_tweaks">Tweaks</string>
 
     <string name="forked_repository">Fork</string>
 
@@ -527,13 +444,11 @@
     <string name="channel_chip_coachmark_title">Choose your release channel</string>
     <string name="channel_chip_coachmark_body">Tap to switch between stable releases and beta builds for this app.</string>
     <string name="channel_chip_coachmark_dismiss">Got it</string>
-    <string name="channel_toggle_cd">Toggle beta releases for this app</string>
     <string name="action_switch_to_stable">Switch to stable %1$s</string>
     <string name="stalled_project_warning_months">No stable release in %1$d months</string>
     <string name="stalled_project_warning_days">No stable release in %1$d days</string>
     <string name="stalled_project_warning_description">Active pre-releases but the project hasn't shipped a stable build in a while. Betas may not converge to a stable release.</string>
     <string name="merged_whats_changed_title">What's changed since %1$s</string>
-    <string name="merged_release_heading">— %1$s —</string>
     <string name="no_version_selected">No version</string>
     <string name="versions_title">Versions</string>
     <string name="assets_title">Assets</string>
@@ -547,17 +462,11 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">Last checked: %1$s</string>
-    <string name="last_checked_never">Never checked</string>
     <string name="last_checked_just_now">just now</string>
     <string name="last_checked_minutes_ago">%1$d min ago</string>
     <string name="last_checked_hours_ago">%1$d h ago</string>
     <string name="checking_for_updates">Checking for updates…</string>
 
-    <!-- Track app feature -->
-    <string name="track_this_app">Track this app</string>
-    <string name="app_tracked_successfully">App added to tracking list</string>
-    <string name="failed_to_track_app">Failed to track app: %1$s</string>
-    <string name="already_tracked">App is already being tracked</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">Sign in to GitHub</string>
@@ -577,8 +486,6 @@
     <!-- Logout improvements -->
     <string name="logout_revocation_note">This will clear your local session and cached data. To fully revoke access, visit GitHub Settings > Applications.</string>
 
-    <!-- Auth UI improvements -->
-    <string name="auth_code_expires_in">Code expires in %1$s</string>
     <string name="auth_error_code_expired">The device code has expired.</string>
     <string name="auth_hint_try_again">Please try signing in again to get a new code.</string>
     <string name="auth_hint_check_connection">Please check your internet connection and try again.</string>
@@ -595,40 +502,23 @@
     <string name="failed_to_share_link">Failed to share link</string>
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
 
-    <!-- Translation feature -->
-    <string name="translate">Translate</string>
-    <string name="translating">Translating…</string>
-    <string name="show_original">Show original</string>
-    <string name="translated_to">Translated to %1$s</string>
     <string name="translate_to">Translate to…</string>
     <string name="search_language">Search language</string>
-    <string name="change_language">Change language</string>
     <string name="translation_failed">Translation failed. Please try again.</string>
-    <string name="translation_error_retry">Retry</string>
-    <string name="translated_from">Auto-detected: %1$s</string>
     <string name="select_language">Select language</string>
 
     <!-- Search - GitHub Link -->
     <string name="open_github_link">Open GitHub Link</string>
     <string name="clipboard_link_detected">GitHub link detected in clipboard</string>
-    <string name="auto_detect_clipboard_links">Detect repo links in clipboard</string>
-    <string name="auto_detect_clipboard_description">When you copy a github.com or codeberg.org link, we\'ll prompt to open it.</string>
     <string name="detected_links">Detected Links</string>
     <string name="open_in_app">Open in app</string>
     <string name="no_github_link_in_clipboard">No GitHub link found in clipboard</string>
 
-    <string name="storage">Storage</string>
-    <string name="downloaded_packages">Downloaded APKs</string>
-    <string name="downloaded_packages_description">We keep installers around so updates resume fast.</string>
-    <string name="current_size">Using:</string>
     <string name="delete_all">Delete All</string>
     <string name="delete_downloads_confirmation_title">Delete all downloads?</string>
     <string name="delete_downloads_confirmation_message">This will permanently remove all downloaded APKs and installers (%1$s). You can re-download them anytime.</string>
     <string name="downloads_cleared">All downloaded packages have been deleted.</string>
-    <!-- Legacy keys kept for compatibility -->
-    <string name="clear_cache">Clear cache</string>
     <string name="clear">Clear</string>
-    <string name="cache_cleared">The cache is gradually cleared.</string>
 
 
 
@@ -642,8 +532,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">Installation</string>
     <string name="installer_type_default">System installer</string>
     <string name="installer_type_default_description">Asks each time. Works on every device.</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -687,7 +575,6 @@
     <string name="installer_attribution_custom_error">Use a valid Android package name (e.g. com.example.installer)</string>
     <string name="installer_attribution_disclosure">Some apps detect when their installer changes and may refuse to run, or fail security checks (e.g. Play Integrity, banking apps).</string>
 
-    <string name="section_updates">Updates</string>
     <string name="update_check_interval_title">Check every</string>
     <string name="update_check_interval_description">How often to look for new releases.</string>
     <string name="update_check_enabled_title">Check automatically</string>
@@ -711,13 +598,11 @@
     <string name="validating_repo">Validating…</string>
     <string name="link_and_track">Link &amp; Track</string>
     <string name="checking_release">Checking latest release…</string>
-    <string name="downloading_for_verification">Downloading APK for verification…</string>
     <string name="verifying_signing_key">Verifying signing key…</string>
     <string name="package_name_mismatch">Package name mismatch: the APK is %1$s, but the selected app is %2$s</string>
     <string name="signing_key_mismatch_link">Signing key mismatch: the APK in this repository was signed by a different developer than the installed app</string>
     <string name="select_asset_title">Select installer</string>
     <string name="select_asset_description">Pick the APK to verify against your installed app</string>
-    <string name="download_failed">Download failed</string>
     <string name="export_apps">Export library</string>
     <string name="export_apps_obtainium">Export for Obtainium</string>
     <string name="import_apps">Import from file</string>
@@ -753,9 +638,6 @@
     <string name="starred_picker_rate_limited">GitHub rate limit reached. Resume to keep checking.</string>
     <string name="starred_picker_resume">Resume</string>
     <string name="starred_picker_star_dedup_tooltip">Removing a star on GitHub won't untrack the app.</string>
-    <string name="import_apps_title">Import apps</string>
-    <string name="import_apps_description">Paste the exported JSON to restore your tracked apps</string>
-    <string name="import_apps_hint">Paste exported JSON here…</string>
 
     <string name="include_pre_releases_title">Default beta channel</string>
     <string name="include_pre_releases_description">Newly tracked apps include beta builds by default. Already-tracked apps keep their own per-app channel setting (toggle it on the app's Details screen).</string>
@@ -772,9 +654,6 @@
     <string name="app_linked_success">%1$s linked to %2$s/%3$s</string>
     <string name="export_failed">Export failed: %1$s</string>
     <string name="import_failed">Import failed: %1$s</string>
-    <string name="imported_apps_summary">Imported %1$d apps</string>
-    <string name="imported_skipped">, %1$d skipped</string>
-    <string name="imported_failed">, %1$d failed</string>
     <string name="update_package_mismatch">Package mismatch: the APK is %1$s, but the installed app is %2$s. Update blocked.</string>
     <string name="update_signing_key_mismatch">Signing key mismatch: the update was signed by a different developer. Update blocked.</string>
 
@@ -788,10 +667,6 @@
     <string name="content_width_wide">Wide</string>
     <string name="content_width_extra_wide">Extra wide</string>
 
-    <string name="hide_seen_title">Hide repos I\'ve already viewed</string>
-    <string name="hide_seen_description">Skip seen repos in feeds and search.</string>
-    <string name="clear_seen_history">Clear viewed history</string>
-    <string name="clear_seen_history_description">Forget which repos you\'ve already opened.</string>
     <string name="seen_history_cleared">Seen history cleared</string>
     <string name="seen_badge">Viewed</string>
     <string name="self_owned_badge">You own this repo</string>
@@ -804,11 +679,8 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">Other platform — opens in browser to save for transfer</string>
     <string name="section_chip_your_device">Your device</string>
     <string name="section_chip_for_transfer">For transfer</string>
-    <string name="repository_hidden">Repository hidden</string>
-    <string name="undo_hide">Undo</string>
     <string name="hidden_repositories_title">Hidden repositories</string>
     <string name="hidden_repositories_entry_description">Manage repositories you hid from Home and Search.</string>
     <string name="hidden_repositories_count">%1$d hidden</string>
@@ -827,8 +699,6 @@
 
     <string name="tweaks_title">Tweaks</string>
 
-    <!-- Per-app pre-release toggle -->
-    <string name="pre_releases">Pre-releases</string>
 
     <!-- Monorepo support: per-app asset filter & older-release fallback -->
     <string name="asset_filter_label">Asset filter</string>
@@ -906,8 +776,6 @@
     <string name="ready_to_install">Ready to install</string>
     <string name="install_ready">Install (ready)</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">Translation</string>
     <string name="translation_intro">Choose the service used to translate README content.</string>
     <string name="translation_provider_title">Translation Service</string>
     <string name="translation_provider_description">Google works globally without configuration. Youdao works from mainland China but requires API credentials from Youdao's developer portal.</string>
@@ -955,7 +823,6 @@
     <string name="external_import_card_action_skip">Skip</string>
     <string name="external_import_card_action_link">Link</string>
     <string name="external_import_card_installer_chip">Installed via %1$s</string>
-    <string name="external_import_card_preselect_known">We think this is %1$s · %2$d</string>
     <string name="external_import_card_preselect_known_prefix">We think this is</string>
     <string name="external_import_card_preselect_unknown">Tap to find a repo</string>
     <string name="external_import_card_owner_byline">by %1$s</string>
@@ -1028,7 +895,6 @@
 
     <!-- E1: Details unlink dialog -->
     <string name="details_unlink_external_app_menu">Unlink from this repo</string>
-    <string name="details_unlink_external_app_more_options">More options</string>
     <string name="details_unlink_external_app_dialog_title">Unlink this app?</string>
     <string name="details_unlink_external_app_dialog_body">We'll stop tracking %1$s as installed from this repo. The app stays on your device — only the link is removed.</string>
     <string name="details_unlink_external_app_dialog_confirm">Unlink</string>
@@ -1048,8 +914,6 @@
     <string name="details_refresh_snackbar_upstream">Couldn't refresh. Try again shortly.</string>
     <string name="details_refresh_snackbar_generic">Refresh failed. Try again.</string>
 
-    <!-- Tweaks feature - Feedback -->
-    <string name="feedback_send">Send feedback</string>
     <string name="feedback_title">Send feedback</string>
     <string name="feedback_close">Close</string>
 
@@ -1094,8 +958,6 @@
 
     <!-- Tweaks feature - Custom forges -->
     <string name="custom_forges_entry_label">Custom forges</string>
-    <string name="custom_forges_entry_subtitle">Add Forgejo / Gitea hosts you want GHS to recognise</string>
-    <string name="custom_forges_count_label">%1$d added</string>
     <string name="custom_forges_dialog_title">Custom forges</string>
     <string name="custom_forges_dialog_help">Enter the hostname of a Forgejo or Gitea instance (e.g. git.example.com). GHS will accept URLs from these hosts in the manual-link sheet.</string>
     <string name="custom_forges_dialog_builtin_note">Codeberg, gitea.com and git.disroot.org are already searched by default — you don't need to add them here. Use this list only for your own self-hosted Forgejo or Gitea.</string>
@@ -1103,8 +965,6 @@
     <string name="custom_forges_empty">No custom forges yet.</string>
     <string name="done">Done</string>
 
-    <!-- Tweaks feature - Mirror -->
-    <string name="mirror_tweaks_entry_label">GitHub mirror</string>
     <string name="mirror_picker_title">Download Mirror</string>
     <string name="mirror_picker_description">Used for downloading release assets. GitHub API calls always go direct. Most users should leave this on Direct GitHub.</string>
 
@@ -1128,7 +988,6 @@
 
     <!-- Mirror - Test connection -->
     <string name="mirror_test_button">Test selected</string>
-    <string name="mirror_test_in_progress">Testing…</string>
     <string name="mirror_test_success">Reached in %1$dms</string>
     <string name="mirror_test_http_error">Mirror returned %1$d</string>
     <string name="mirror_test_timeout">Timed out after 5s</string>
@@ -1140,17 +999,8 @@
 
     <!-- Mirror - Removed notice + verification -->
     <string name="mirror_removed_toast">%1$s is no longer available, switched to Direct GitHub.</string>
-    <string name="mirror_digest_mismatch_error">Checksum mismatch — file may have been tampered with</string>
 
-    <!-- Mirror - Auto-suggest -->
-    <string name="mirror_auto_suggest_title">Try a faster mirror?</string>
-    <string name="mirror_auto_suggest_body">Some users on slow networks have better luck with a community proxy.</string>
-    <string name="mirror_auto_suggest_pick_one">Pick one</string>
-    <string name="mirror_auto_suggest_maybe_later">Maybe later</string>
-    <string name="mirror_auto_suggest_dont_ask_again">Don't ask again</string>
 
-    <!-- Apps screen sections (issue #463) -->
-    <string name="apps_section_updates_available">Updates available</string>
     <string name="apps_section_up_to_date">Up to date</string>
     <string name="apps_section_count_suffix">· %1$d</string>
     <string name="apps_section_expand">Expand section</string>
@@ -1192,7 +1042,6 @@
     <string name="translation_card_subtitle_original">Showing original</string>
     <string name="translation_card_target_label">Target language</string>
     <string name="translation_card_translate_to">Translate to %1$s</string>
-    <string name="translation_card_translate_generic">Translate</string>
     <string name="translation_card_show_original">Show original</string>
     <string name="translation_card_show_translation">Show translation</string>
     <string name="translation_card_cancel">Cancel</string>
@@ -1207,7 +1056,6 @@
     <string name="search_filters_section_sort">Sort by</string>
     <string name="search_filters_reset">Reset all</string>
     <string name="search_filters_apply">Done</string>
-    <string name="search_active_filters_label">Active</string>
     <string name="search_clear_filter_cd">Remove filter</string>
     <string name="profile_tweaks_description">App settings, theme, network, translation, advanced options.</string>
 
@@ -1240,7 +1088,6 @@
     <string name="restart_banner_reason_telemetry">usage data</string>
     <string name="restart_banner_restart_now">Restart now</string>
     <string name="restart_banner_later">Later</string>
-    <string name="tweaks_install_method_android_only_badge">Android only</string>
     <string name="tweaks_install_method_desktop_empty_title">Install method is Android-only</string>
     <string name="tweaks_install_method_desktop_empty_body">Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager.</string>
     <string name="tweaks_stub_coming_soon_title">Coming in a follow-up</string>
@@ -1292,18 +1139,12 @@
     <string name="whats_new_section_heads_up">Heads up</string>
     <string name="whats_new_cta_dismiss">Got it</string>
     <string name="whats_new_cta_history">View previous versions</string>
-    <string name="whats_new_translations_note">Changelog is in English. Translations welcome via Issues.</string>
     <string name="whats_new_history_empty">No changelog entries yet.</string>
     <string name="whats_new_profile_description">Highlights from recent releases.</string>
     <string name="announcements_title">Announcements</string>
     <string name="announcements_profile_description">News, surveys, and important notices.</string>
     <string name="announcements_empty">Nothing to share right now.</string>
-    <string name="announcements_last_refreshed">Last refreshed %1$s ago</string>
     <string name="announcements_refresh_failed">Couldn't refresh — showing cached items.</string>
-    <string name="announcements_just_now">just now</string>
-    <string name="announcements_minutes_ago">%1$d min</string>
-    <string name="announcements_hours_ago">%1$d h</string>
-    <string name="announcements_days_ago">%1$d d</string>
     <string name="announcements_acknowledge">I've read this</string>
     <string name="announcements_acknowledged">Acknowledged</string>
     <string name="announcements_read_more">Read more</string>
@@ -1318,7 +1159,6 @@
     <string name="announcements_severity_info">Info</string>
     <string name="announcements_severity_important">Important</string>
     <string name="announcements_severity_critical">Critical</string>
-    <string name="announcements_critical_modal_close">Close after acknowledgment</string>
     <string name="announcements_open_mute_settings">Open mute settings</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1346,19 +1186,14 @@
     <!-- Auto-translate -->
     <string name="translation_auto_title">Auto-translate repositories</string>
     <string name="translation_auto_subtitle">Translate README and release notes automatically when opening a repository. Uses your app language as the target.</string>
-    <string name="translation_auto_target">Target: %1$s</string>
-    <string name="translation_auto_target_reset">Reset</string>
     <string name="translation_auto_target_label">Translate into</string>
     <string name="translation_auto_target_followup">Following app language (%1$s)</string>
 
     <!-- Host tokens -->
     <string name="host_tokens_title">Authentication tokens</string>
     <string name="host_tokens_entry_subtitle">Personal access tokens per forge host (GitHub, Codeberg, Forgejo)</string>
-    <string name="host_tokens_intro">Personal access tokens stored encrypted per forge host. Used to authenticate direct API calls.</string>
     <string name="host_tokens_empty_title">No tokens stored</string>
     <string name="host_tokens_empty_subtitle">Tap + to add a personal access token</string>
-    <string name="host_tokens_add_dialog_title">Add token</string>
-    <string name="host_tokens_field_host">Host (e.g. github.com)</string>
     <string name="host_tokens_field_token">Personal access token</string>
     <string name="host_tokens_field_display_name">Display name (optional)</string>
     <string name="host_tokens_validation_host_required">Host required</string>
@@ -1369,11 +1204,8 @@
     <string name="host_tokens_action_cancel">Cancel</string>
     <string name="host_tokens_action_back">Back</string>
     <string name="host_tokens_action_add">Add token</string>
-    <string name="host_tokens_action_validate">Validate</string>
     <string name="host_tokens_action_delete">Delete</string>
     <string name="host_tokens_saved">Saved token for %1$s</string>
-    <string name="host_tokens_removed">Removed token for %1$s</string>
-    <string name="host_tokens_validation_success">Token accepted (login=%1$s, scopes=%2$s)</string>
     <string name="host_tokens_validation_failed">Validation failed: %1$s</string>
 
     <!-- Host tokens — picker / forge presets / inline feedback / undo -->

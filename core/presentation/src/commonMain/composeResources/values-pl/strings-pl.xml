@@ -2,14 +2,12 @@
 
     <string name="app_name">GitHub Store</string>
 
-    <string name="installed_apps">Zainstalowane aplikacje</string>
     <string name="navigate_back">Cofnij</string>
     <string name="check_for_updates">Sprawdź aktualizacje</string>
 
     <string name="cannot_launch">Nie można uruchomić %1$s</string>
     <string name="failed_to_open">Nie udało się otworzyć %1$s</string>
     <string name="failed_to_update">Nie udało się zaktualizować %1$s: %2$s</string>
-    <string name="update_failed">Aktualizacja nie powiodła się</string>
     <string name="update_all_failed">Aktualizacja wszystkich nie powiodła się: %1$s</string>
     <string name="all_apps_updated_successfully">Wszystkie aplikacje zostały pomyślnie zaktualizowane</string>
     <string name="no_updates_available">Brak dostępnych aktualizacji</string>
@@ -50,12 +48,9 @@
 
     <string name="sign_in_with_github">Zaloguj się przez GitHub</string>
 
-    <string name="error_cancelled">Anulowano</string>
     <string name="error_unknown">Nieznany błąd</string>
 
-    <string name="language_label">Język:</string>
 
-    <string name="discover_repositories">Odkrywaj repozytoria</string>
     <string name="search_repositories_hint">Szukaj repozytorium, opisu…</string>
 
     <string name="filter_by_language">Filtruj według języka</string>
@@ -99,29 +94,18 @@
 
     <string name="profile_title">Profil</string>
 
-    <string name="section_appearance">WYGLĄD</string>
-    <string name="section_language">JĘZYK</string>
-    <string name="language_intro">Zmień język interfejsu aplikacji.</string>
-    <string name="language_picker_title">Język aplikacji</string>
-    <string name="language_picker_description">Zmienia menu, przyciski i komunikaty w całej aplikacji. Nie zmienia treści pochodzącej z GitHub.</string>
     <string name="language_follow_system">Taki jak system</string>
     <string name="language_restart_required">Uruchom ponownie, aby zastosować nowy język.</string>
     <string name="language_restart_action">Uruchom ponownie</string>
-    <string name="section_about">O APLIKACJI</string>
-    <string name="section_network">SIEĆ</string>
 
     <string name="theme_color">Kolor motywu</string>
     <string name="amoled_black_theme">Motyw AMOLED Black</string>
     <string name="amoled_black_description">Czyste czarne tło dla trybu ciemnego</string>
-    <string name="selected_color">Wybrany kolor: %1$s</string>
 
-    <string name="version">Wersja</string>
-    <string name="help_support">Pomoc i wsparcie</string>
 
     <string name="logout">Wyloguj się</string>
 
     <string name="logout_success">Wylogowano pomyślnie, przekierowywanie...</string>
-    <string name="cache_cleared">Pamięć podręczna wyczyszczona pomyślnie</string>
 
     <string name="warning">Ostrzeżenie!</string>
     <string name="logout_confirmation">Czy na pewno chcesz się wylogować?</string>
@@ -137,22 +121,18 @@
     <string name="show_install_options">Pokaż opcje instalacji</string>
     <string name="report_issue">Zgłoś problem</string>
 
-    <string name="error_loading_details">Błąd podczas ładowania szczegółów</string>
     <string name="retry">Ponów</string>
     <string name="no_description">Brak opisu.</string>
     <string name="no_release_notes">Brak informacji o wydaniu.</string>
 
     <string name="about_this_app">O tej aplikacji</string>
     <string name="install_logs">Logi instalacji</string>
-    <string name="author">Autor</string>
     <string name="whats_new">Co nowego</string>
 
     <string name="installed">Zainstalowano</string>
     <string name="update_available">Dostępna aktualizacja</string>
     <string name="not_available">Niedostępne</string>
     <string name="install_latest">Zainstaluj najnowszą</string>
-    <string name="reinstall">Zainstaluj ponownie</string>
-    <string name="update_app">Aktualizuj aplikację</string>
 
     <string name="downloading">Pobieranie</string>
     <string name="updating">Aktualizowanie</string>
@@ -177,12 +157,9 @@
     <string name="no_more_github_results">Brak więcej wyników na GitHub</string>
     <string name="explore_error">Nie udało się pobrać z GitHub. Spróbuj ponownie.</string>
 
-    <string name="by_author">autor: %1$s</string>
-    <string name="installed_version">• Zainstalowana: %1$s</string>
     <string name="architecture_compatible">Architektura zgodna</string>
     <string name="update_to_version">Aktualizuj do %1$s</string>
 
-    <string name="error_load_details">Nie udało się załadować szczegółów</string>
     <string name="installer_saved_downloads">Instalator został zapisany w folderze Pobrane</string>
 
     <string name="log_download_started">Rozpoczęto pobieranie</string>
@@ -205,30 +182,13 @@
     <string name="external_installer_description">Użyj aplikacji innej firmy do zainstalowania APK</string>
 
     <string name="error_generic">Błąd: %1$s</string>
-    <string name="error_asset_not_supported">Typ pliku .%1$s nie jest obsługiwany</string>
-    <string name="error_file_not_found">Nie znaleziono pobranego pliku</string>
 
-    <string name="home_category_trending">Na czasie</string>
-    <string name="home_category_hot_release">Gorące wydanie</string>
-    <string name="home_category_most_popular">Najpopularniejsze</string>
 
-    <string name="home_topic_privacy">Prywatność</string>
-    <string name="home_topic_media">Media</string>
-    <string name="home_topic_productivity">Produktywność</string>
-    <string name="home_topic_networking">Sieć</string>
-    <string name="home_topic_dev_tools">Narzędzia deweloperskie</string>
 
     <string name="home_finding_repositories">Wyszukiwanie repozytoriów...</string>
-    <string name="home_loading_more">Ładowanie więcej...</string>
-    <string name="home_no_more_repositories">Brak kolejnych repozytoriów</string>
     <string name="home_retry">Ponów</string>
     <string name="home_failed_to_load_repositories">Nie udało się załadować repozytoriów</string>
-    <string name="home_view_details">Zobacz szczegóły</string>
 
-    <string name="updated_just_now">zaktualizowano przed chwilą</string>
-    <string name="updated_hours_ago">zaktualizowano %1$d godz. temu</string>
-    <string name="updated_yesterday">zaktualizowano wczoraj</string>
-    <string name="updated_days_ago">zaktualizowano %1$d dni temu</string>
     <string name="updated_on_date">zaktualizowano %1$s</string>
 
     <string name="rate_limit_exceeded">Limit zapytań przekroczony</string>
@@ -277,8 +237,6 @@
     <string name="dismiss">Zamknij</string>
     <string name="sync_starred_failed">Nie udało się zsynchronizować oznaczonych gwiazdką repozytoriów</string>
 
-    <string name="developer_profile_title">Profil dewelopera</string>
-    <string name="open_developer_profile">Otwórz profil dewelopera</string>
 
     <!-- Developer Profile - General -->
     <string name="failed_to_load_repositories">Nie udało się załadować repozytoriów</string>
@@ -292,7 +250,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">Szukaj repozytoriów…</string>
     <string name="clear_search">Wyczyść wyszukiwanie</string>
-    <string name="filter_all">Wszystkie</string>
     <string name="filter_with_releases">Z wydaniami</string>
     <string name="filter_installed">Zainstalowane</string>
     <string name="filter_favorites">Ulubione</string>
@@ -304,7 +261,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">repozytorium</string>
-    <string name="repositories_plural">repozytoriów</string>
     <string name="showing_x_of_y_repositories">Wyświetlanie %1$d z %2$d repozytoriów</string>
 
     <!-- Developer Profile - Empty States -->
@@ -312,8 +268,6 @@
     <string name="no_installed_repos">Brak zainstalowanych repozytoriów</string>
     <string name="no_favorite_repos">Brak ulubionych repozytoriów</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">Zaktualizowano %1$s</string>
     <string name="has_release">Ma wydanie</string>
 
     <!-- Developer Profile - Relative Time -->
@@ -365,35 +319,21 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">Ostatnio sprawdzono: %1$s</string>
-    <string name="last_checked_never">Nigdy nie sprawdzano</string>
     <string name="last_checked_just_now">właśnie teraz</string>
     <string name="last_checked_minutes_ago">%1$d min temu</string>
     <string name="last_checked_hours_ago">%1$d godz. temu</string>
     <string name="checking_for_updates">Sprawdzanie aktualizacji…</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">Typ proxy</string>
-    <string name="proxy_none">Brak</string>
-    <string name="proxy_system">Systemowy</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
     <string name="proxy_host">Host</string>
     <string name="proxy_port">Port</string>
     <string name="proxy_username">Nazwa użytkownika (opcjonalnie)</string>
     <string name="proxy_password">Hasło (opcjonalnie)</string>
     <string name="proxy_save">Zapisz Proxy</string>
     <string name="proxy_saved">Ustawienia proxy zostały zapisane</string>
-    <string name="proxy_system_description">Używa ustawień proxy urządzenia</string>
-    <string name="proxy_port_error">Port musi być z zakresu 1–65535</string>
-    <string name="proxy_none_description">Połączenie bezpośrednie, bez proxy</string>
     <string name="failed_to_save_proxy_settings">Nie udało się zapisać ustawień proxy</string>
     <string name="proxy_host_required">Host proxy jest wymagany</string>
     <string name="proxy_host_invalid">Wprowadź prawidłową nazwę hosta lub adres IP</string>
     <string name="invalid_proxy_port">Nieprawidłowy port proxy</string>
-    <string name="proxy_show_password">Pokaż hasło</string>
-    <string name="proxy_hide_password">Ukryj hasło</string>
-    <string name="proxy_test">Testuj</string>
-    <string name="proxy_test_in_progress">Testowanie…</string>
     <string name="proxy_test_success">Połączenie OK (%1$d ms)</string>
     <string name="proxy_test_error_dns">Nie można rozwiązać hosta. Sprawdź adres proxy.</string>
     <string name="proxy_test_error_unreachable">Nie można połączyć się z serwerem proxy.</string>
@@ -401,20 +341,8 @@
     <string name="proxy_test_error_auth_required">Wymagane uwierzytelnienie proxy.</string>
     <string name="proxy_test_error_status">Nieoczekiwana odpowiedź: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">Test połączenia nie powiódł się</string>
-    <string name="proxy_scope_intro">Każda kategoria może używać własnego proxy. Skonfiguruj je niezależnie.</string>
-    <string name="proxy_scope_discovery_title">Odkrywanie (GitHub API)</string>
-    <string name="proxy_scope_discovery_description">Strona główna, wyszukiwanie, szczegóły repo i sprawdzanie aktualizacji</string>
-    <string name="proxy_scope_download_title">Pobieranie</string>
-    <string name="proxy_scope_download_description">Pobieranie APK i automatyczne aktualizacje</string>
-    <string name="proxy_scope_translation_title">Tłumaczenie</string>
-    <string name="proxy_scope_translation_description">Usługa tłumaczenia README</string>
 
 
-    <!-- Track app feature -->
-    <string name="track_this_app">Śledź tę aplikację</string>
-    <string name="app_tracked_successfully">Aplikacja dodana do listy śledzonych</string>
-    <string name="failed_to_track_app">Nie udało się śledzić aplikacji: %1$s</string>
-    <string name="already_tracked">Aplikacja jest już śledzona</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">Zaloguj się przez GitHub</string>
@@ -431,7 +359,6 @@
     <string name="sign_in_again">Zaloguj się ponownie</string>
     <string name="continue_as_guest">Kontynuuj jako gość</string>
     <string name="logout_revocation_note">Spowoduje to wyczyszczenie lokalnej sesji i danych z pamięci podręcznej. Aby całkowicie cofnąć dostęp, odwiedź GitHub Settings > Applications.</string>
-    <string name="auth_code_expires_in">Kod wygasa za %1$s</string>
     <string name="auth_error_code_expired">Kod urządzenia wygasł.</string>
     <string name="auth_hint_try_again">Spróbuj zalogować się ponownie, aby uzyskać nowy kod.</string>
     <string name="auth_hint_check_connection">Sprawdź połączenie internetowe i spróbuj ponownie.</string>
@@ -448,27 +375,16 @@
     <string name="failed_to_share_link">Nie udało się udostępnić linku</string>
     <string name="link_copied_to_clipboard">Link skopiowany do schowka</string>
 
-    <!-- Translation feature -->
-    <string name="translate">Tłumacz</string>
-    <string name="translating">Tłumaczenie…</string>
-    <string name="show_original">Pokaż oryginał</string>
-    <string name="translated_to">Przetłumaczono na %1$s</string>
     <string name="translate_to">Tłumacz na…</string>
     <string name="search_language">Szukaj języka</string>
-    <string name="change_language">Zmień język</string>
     <string name="translation_failed">Tłumaczenie nie powiodło się. Spróbuj ponownie.</string>
 
     <string name="open_github_link">Otwórz link GitHub</string>
     <string name="clipboard_link_detected">Wykryto link GitHub w schowku</string>
-    <string name="auto_detect_clipboard_links">Automatyczne wykrywanie linków ze schowka</string>
-    <string name="auto_detect_clipboard_description">Automatycznie wykrywaj linki GitHub ze schowka przy otwieraniu wyszukiwania</string>
     <string name="detected_links">Wykryte linki</string>
     <string name="open_in_app">Otwórz w aplikacji</string>
     <string name="no_github_link_in_clipboard">Nie znaleziono linku GitHub w schowku</string>
 
-    <string name="storage">Przechowywanie</string>
-    <string name="clear_cache">Wyczyść pamięć podręczną</string>
-    <string name="current_size">Aktualny rozmiar:</string>
     <string name="clear">Wyczyść</string>
 
 
@@ -486,8 +402,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">Instalacja</string>
     <string name="installer_type_default">Domyślny</string>
     <string name="installer_type_default_description">Standardowe okno instalacji systemowej</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -504,7 +418,6 @@
     <string name="auto_update_title">Automatyczna aktualizacja</string>
     <string name="auto_update_description">Automatycznie pobieraj i instaluj aktualizacje w tle przez Shizuku</string>
 
-    <string name="section_updates">Aktualizacje</string>
     <string name="update_check_interval_title">Częstotliwość sprawdzania</string>
     <string name="update_check_interval_description">Jak często sprawdzać aktualizacje aplikacji w tle</string>
     <string name="update_check_enabled_title">Sprawdzanie aktualizacji w tle</string>
@@ -528,18 +441,13 @@
     <string name="validating_repo">Weryfikacja…</string>
     <string name="link_and_track">Połącz i śledź</string>
     <string name="checking_release">Sprawdzanie najnowszego wydania…</string>
-    <string name="downloading_for_verification">Pobieranie APK do weryfikacji…</string>
     <string name="verifying_signing_key">Weryfikacja klucza podpisu…</string>
     <string name="package_name_mismatch">Niezgodność nazwy pakietu: APK to %1$s, ale wybrana aplikacja to %2$s</string>
     <string name="signing_key_mismatch_link">Niezgodność klucza podpisu: APK z tego repozytorium został podpisany przez innego programistę</string>
     <string name="select_asset_title">Wybierz instalator</string>
     <string name="select_asset_description">Wybierz APK do weryfikacji z zainstalowaną aplikacją</string>
-    <string name="download_failed">Pobieranie nie powiodło się</string>
     <string name="export_apps">Eksportuj</string>
     <string name="import_apps">Importuj</string>
-    <string name="import_apps_title">Importuj aplikacje</string>
-    <string name="import_apps_description">Wklej wyeksportowany JSON, aby przywrócić śledzone aplikacje</string>
-    <string name="import_apps_hint">Wklej wyeksportowany JSON tutaj…</string>
     <string name="include_pre_releases_title">Domyślny kanał beta</string>
     <string name="include_pre_releases_description">Nowo śledzone aplikacje domyślnie zawierają wersje beta. Już śledzone aplikacje zachowują własne ustawienie (zmień je na ekranie Szczegółów aplikacji).</string>
     <string name="confirm_uninstall_title">Odinstalować aplikację?</string>
@@ -552,9 +460,6 @@
     <string name="app_linked_success">%1$s połączono z %2$s/%3$s</string>
     <string name="export_failed">Eksport nie powiódł się: %1$s</string>
     <string name="import_failed">Import nie powiódł się: %1$s</string>
-    <string name="imported_apps_summary">Zaimportowano %1$d aplikacji</string>
-    <string name="imported_skipped">, %1$d pominięto</string>
-    <string name="imported_failed">, %1$d nie powiodło się</string>
     <string name="signing_key_changed_title">Klucz podpisu zmieniony</string>
     <string name="signing_key_changed_message">Certyfikat podpisu tej aplikacji zmienił się od pierwszej instalacji.\n\nMoże to oznaczać, że programista zmienił klucz podpisu lub plik binarny mógł zostać zmodyfikowany.\n\nOczekiwano: %1$s\nOtrzymano: %2$s</string>
     <string name="install_anyway">Zainstaluj mimo to</string>
@@ -567,8 +472,6 @@
     <string name="multiple_assets_info_dialog_title">Dostępnych wiele zasobów</string>
     <string name="multiple_assets_info_dialog_text">Dla tego wydania dostępnych jest wiele plików do zainstalowania. Przejrzyj listę i wybierz odpowiedni dla swojego urządzenia.</string>
     <string name="icon_content_description_info">Informacje</string>
-    <string name="translation_error_retry">Ponów</string>
-    <string name="translated_from">Wykryto automatycznie: %1$s</string>
     <string name="select_language">Wybierz język</string>
     <string name="update_package_mismatch">Niezgodność pakietu: APK to %1$s, ale zainstalowana aplikacja to %2$s. Aktualizacja zablokowana.</string>
     <string name="update_signing_key_mismatch">Niezgodność klucza podpisu: aktualizacja została podpisana przez innego programistę. Aktualizacja zablokowana.</string>
@@ -581,21 +484,13 @@
     <string name="content_width_wide">Szeroka</string>
     <string name="content_width_extra_wide">Bardzo szeroka</string>
 
-    <string name="hide_seen_title">Ukryj przeglądane repozytoria</string>
-    <string name="hide_seen_description">Ukryj repozytoria, które już przeglądałeś, z kanałów odkrywania</string>
-    <string name="clear_seen_history">Wyczyść historię przeglądania</string>
-    <string name="clear_seen_history_description">Zresetuj wszystkie przeglądane repozytoria, aby ponownie pojawiły się w kanałach</string>
     <string name="seen_history_cleared">Historia przeglądania wyczyszczona</string>
     <string name="seen_badge">Przeglądane</string>
     <string name="self_owned_badge">Jesteś właścicielem tego repo</string>
     <string name="hide_repository">Ukryj repozytorium</string>
-    <string name="repository_hidden">Repozytorium ukryte</string>
-    <string name="undo_hide">Cofnij</string>
 
     <string name="recently_viewed">Ostatnio oglądane</string>
     <string name="profile_recently_viewed_description">Repozytoria, które odwiedziłeś</string>
-    <string name="downloaded_packages">Pobrane pakiety</string>
-    <string name="downloaded_packages_description">APK i instalatory z wydań GitHub</string>
     <string name="delete_all">Usuń wszystko</string>
     <string name="delete_downloads_confirmation_title">Usunąć wszystkie pobrania?</string>
     <string name="delete_downloads_confirmation_message">Spowoduje to trwałe usunięcie wszystkich APK i instalatorów (%1$s). Możesz je pobrać ponownie w dowolnym momencie.</string>
@@ -606,9 +501,7 @@
     <string name="clear_all_history">Wyczyść wszystko</string>
     <string name="remove_search_history_item">Usuń</string>
 
-    <string name="bottom_nav_profile_tweaks">Ustawienia</string>
     <string name="tweaks_title">Ustawienia</string>
-    <string name="pre_releases">Wersje wstępne</string>
 
     <!-- Monorepo support -->
     <string name="asset_filter_label">Filtr zasobów</string>
@@ -672,8 +565,6 @@
     <string name="ready_to_install">Gotowe do instalacji</string>
     <string name="install_ready">Zainstaluj (gotowe)</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">Tłumaczenie</string>
     <string name="translation_intro">Wybierz usługę używaną do tłumaczenia plików README.</string>
     <string name="translation_provider_title">Usługa tłumaczenia</string>
     <string name="translation_provider_description">Google działa globalnie bez konfiguracji. Youdao działa z Chin kontynentalnych, ale wymaga poświadczeń API z portalu deweloperskiego Youdao.</string>
@@ -716,8 +607,6 @@
     <string name="pat_input_placeholder">ghp_… lub github_pat_…</string>
     <string name="pat_submit">Zaloguj się</string>
     <string name="pat_cancel">Anuluj</string>
-    <string name="pat_show">Pokaż token</string>
-    <string name="pat_hide">Ukryj token</string>
     <string name="pat_error_empty">Wklej token.</string>
     <string name="pat_error_invalid_format">To nie wygląda na token GitHuba. Tokeny zaczynają się od ghp_ lub github_pat_.</string>
     <string name="pat_error_bad_credentials">Ten token jest nieprawidłowy lub został unieważniony.</string>
@@ -739,13 +628,11 @@
     <string name="channel_chip_coachmark_title">Wybierz kanał wydań</string>
     <string name="channel_chip_coachmark_body">Dotknij, aby przełączać między stabilnymi wydaniami a wersjami beta tej aplikacji.</string>
     <string name="channel_chip_coachmark_dismiss">OK</string>
-    <string name="channel_toggle_cd">Przełącz wydania beta dla tej aplikacji</string>
     <string name="action_switch_to_stable">Przejdź do stabilnej wersji %1$s</string>
     <string name="stalled_project_warning_months">Brak stabilnego wydania od %1$d miesięcy</string>
     <string name="stalled_project_warning_days">Brak stabilnego wydania od %1$d dni</string>
     <string name="stalled_project_warning_description">Są aktywne wersje przedpremierowe, ale projekt od dłuższego czasu nie wydał stabilnej kompilacji. Wersje beta mogą nie prowadzić do stabilnego wydania.</string>
     <string name="merged_whats_changed_title">Co zmieniło się od %1$s</string>
-    <string name="merged_release_heading">— %1$s —</string>
 
     <!-- ═══════════════════════════════════════════════════════════════
          E1 — External import wizard
@@ -769,7 +656,6 @@
     <string name="external_import_card_action_more">Więcej dopasowań</string>
     <string name="external_import_card_action_less">Ukryj dopasowania</string>
     <string name="external_import_card_installer_chip">Zainstalowano przez %1$s</string>
-    <string name="external_import_card_preselect_known">Uważamy, że to %1$s · %2$d</string>
     <string name="external_import_card_preselect_unknown">Dotknij, aby znaleźć repozytorium</string>
     <string name="external_import_card_expand_label">Rozwiń, aby zobaczyć inne dopasowania</string>
     <string name="external_import_card_collapse_label">Zwiń kartę</string>
@@ -849,7 +735,6 @@
          E1 — Details unlink dialog
          ═══════════════════════════════════════════════════════════════ -->
     <string name="details_unlink_external_app_menu">Odłącz od tego repozytorium</string>
-    <string name="details_unlink_external_app_more_options">Więcej opcji</string>
     <string name="details_unlink_external_app_dialog_title">Odłączyć tę aplikację?</string>
     <string name="details_unlink_external_app_dialog_body">Przestaniemy śledzić %1$s jako zainstalowaną z tego repozytorium. Aplikacja pozostaje na urządzeniu — usuwane jest tylko połączenie.</string>
     <string name="details_unlink_external_app_dialog_confirm">Odłącz</string>
@@ -872,7 +757,6 @@
     <!-- ═══════════════════════════════════════════════════════════════
          Feedback feature
          ═══════════════════════════════════════════════════════════════ -->
-    <string name="feedback_send">Wyślij opinię</string>
     <string name="feedback_title">Wyślij opinię</string>
     <string name="feedback_close">Zamknij</string>
     <string name="feedback_category_label">Kategoria</string>
@@ -910,15 +794,12 @@
          ═══════════════════════════════════════════════════════════════ -->
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">Niestandardowe forge</string>
-    <string name="custom_forges_entry_subtitle">Dodaj hosty Forgejo / Gitea, które GHS ma rozpoznawać</string>
-    <string name="custom_forges_count_label">Dodano %1$d</string>
     <string name="custom_forges_dialog_title">Niestandardowe forge</string>
     <string name="custom_forges_dialog_help">Wpisz nazwę hosta instancji Forgejo lub Gitea (np. git.example.com). GHS przyjmie URL z tych hostów w formularzu ręcznego powiązania.</string>
     <string name="custom_forges_add_button">Dodaj</string>
     <string name="custom_forges_empty">Brak niestandardowych forge.</string>
     <string name="done">Gotowe</string>
 
-    <string name="mirror_tweaks_entry_label">Serwer lustrzany pobierania</string>
     <string name="mirror_picker_title">Serwer lustrzany pobierania</string>
     <string name="mirror_picker_description">Używany do pobierania plików wydań. Wywołania API GitHub zawsze przechodzą bezpośrednio. Większość użytkowników powinna pozostawić to ustawienie na GitHub bezpośrednio.</string>
     <string name="mirror_section_official">Oficjalny</string>
@@ -934,7 +815,6 @@
     <string name="mirror_custom_validation_template">Szablon musi zawierać {url} dokładnie jeden raz</string>
     <string name="mirror_custom_save">Zapisz</string>
     <string name="mirror_test_button">Testuj wybrany</string>
-    <string name="mirror_test_in_progress">Testowanie…</string>
     <string name="mirror_test_success">Osiągnięto w %1$dms</string>
     <string name="mirror_test_http_error">Serwer lustrzany zwrócił %1$d</string>
     <string name="mirror_test_timeout">Przekroczono limit czasu po 5s</string>
@@ -942,12 +822,6 @@
     <string name="mirror_test_other">Niepowodzenie: %1$s</string>
     <string name="mirror_deploy_your_own_hint">Wszystkie serwery lustrzane niedostępne? Możesz uruchomić własny w 5 minut — sprawdź dokumentację.</string>
     <string name="mirror_removed_toast">%1$s nie jest już dostępny, przełączono na GitHub bezpośrednio.</string>
-    <string name="mirror_digest_mismatch_error">Niezgodność sumy kontrolnej — plik mógł zostać zmodyfikowany</string>
-    <string name="mirror_auto_suggest_title">Wypróbować szybszy serwer lustrzany?</string>
-    <string name="mirror_auto_suggest_body">Niektórzy użytkownicy z wolnymi sieciami osiągają lepsze wyniki z proxy społeczności.</string>
-    <string name="mirror_auto_suggest_pick_one">Wybierz jeden</string>
-    <string name="mirror_auto_suggest_maybe_later">Może później</string>
-    <string name="mirror_auto_suggest_dont_ask_again">Nie pytaj ponownie</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
     <string name="add_from_starred_title">Dodaj z oznaczonych gwiazdką</string>
@@ -958,13 +832,7 @@
     <string name="announcements_category_security">Bezpieczeństwo</string>
     <string name="announcements_category_status">Status</string>
     <string name="announcements_category_survey">Ankiety</string>
-    <string name="announcements_critical_modal_close">Zamknij po potwierdzeniu</string>
-    <string name="announcements_days_ago">%1$d d</string>
     <string name="announcements_empty">Aktualnie nic do udostępnienia.</string>
-    <string name="announcements_hours_ago">%1$d h</string>
-    <string name="announcements_just_now">przed chwilą</string>
-    <string name="announcements_last_refreshed">Odświeżono %1$s temu</string>
-    <string name="announcements_minutes_ago">%1$d min</string>
     <string name="announcements_mute_locked">Nie można wyłączyć</string>
     <string name="announcements_mute_settings_title">Pokaż elementy z</string>
     <string name="announcements_open_mute_settings">Otwórz ustawienia wyciszenia</string>
@@ -1021,7 +889,6 @@
     <string name="apps_section_state_collapsed">Zwinięte</string>
     <string name="apps_section_state_expanded">Rozwinięte</string>
     <string name="apps_section_up_to_date">Aktualne</string>
-    <string name="apps_section_updates_available">Dostępne aktualizacje</string>
     <string name="confirm_discard_pending_message">Odrzucić zaparkowany instalator dla %1$s i usunąć wiersz z listy aplikacji? Pobrany APK zostanie usunięty.</string>
     <string name="confirm_discard_pending_title">Odrzucić oczekującą instalację?</string>
     <string name="dhizuku_grant_permission">Udziel uprawnienia</string>
@@ -1107,7 +974,6 @@
     <string name="whats_new_section_new">Nowe</string>
     <string name="whats_new_sheet_heading">Co nowego w %1$s</string>
     <string name="whats_new_title">Co nowego</string>
-    <string name="whats_new_translations_note">Changelog jest w języku angielskim. Tłumaczenia mile widziane przez Issues.</string>
     <string name="whats_new_version_label">Wersja %1$s · %2$s</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1145,7 +1011,6 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">Inna platforma — otwiera się w przeglądarce, aby zapisać do transferu</string>
     <string name="section_chip_your_device">Twoje urządzenie</string>
     <string name="section_chip_for_transfer">Do transferu</string>
     <string name="kao_banner_title">Niech Android pozostanie otwarty</string>

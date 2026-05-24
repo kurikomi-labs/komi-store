@@ -1,14 +1,12 @@
 <resources>
     <string name="app_name">GitHub Store</string>
 
-    <string name="installed_apps">Установленные приложения</string>
     <string name="navigate_back">Назад</string>
     <string name="check_for_updates">Проверить обновления</string>
 
     <string name="cannot_launch">Не удалось запустить %1$s</string>
     <string name="failed_to_open">Не удалось открыть %1$s</string>
     <string name="failed_to_update">Не удалось обновить %1$s: %2$s</string>
-    <string name="update_failed">Ошибка обновления</string>
     <string name="update_all_failed">Ошибка обновления всех: %1$s</string>
     <string name="all_apps_updated_successfully">Все приложения успешно обновлены</string>
     <string name="no_updates_available">Обновлений нет</string>
@@ -50,12 +48,9 @@
 
     <string name="sign_in_with_github">Войти через GitHub</string>
 
-    <string name="error_cancelled">Отменено</string>
     <string name="error_unknown">Неизвестная ошибка</string>
 
-    <string name="language_label">Язык:</string>
 
-    <string name="discover_repositories">Поиск репозиториев</string>
     <string name="search_repositories_hint">Поиск по репозиторию, описанию…</string>
 
     <string name="filter_by_language">Фильтр по языку</string>
@@ -98,29 +93,18 @@
 
     <string name="profile_title">Профиль</string>
 
-    <string name="section_appearance">ВНЕШНИЙ ВИД</string>
-    <string name="section_language">ЯЗЫК</string>
-    <string name="language_intro">Переопределить язык интерфейса приложения.</string>
-    <string name="language_picker_title">Язык приложения</string>
-    <string name="language_picker_description">Изменяет меню, кнопки и сообщения во всём приложении. Не изменяет содержимое с GitHub.</string>
     <string name="language_follow_system">Как в системе</string>
     <string name="language_restart_required">Перезапустите, чтобы применить новый язык.</string>
     <string name="language_restart_action">Перезапустить</string>
-    <string name="section_about">О ПРИЛОЖЕНИИ</string>
-    <string name="section_network">СЕТЬ</string>
 
     <string name="theme_color">Цвет темы</string>
     <string name="amoled_black_theme">AMOLED чёрная тема</string>
     <string name="amoled_black_description">Чёрный фон для тёмного режима</string>
-    <string name="selected_color">Выбранный цвет: %1$s</string>
 
-    <string name="version">Версия</string>
-    <string name="help_support">Помощь и поддержка</string>
 
     <string name="logout">Выйти</string>
 
     <string name="logout_success">Вы успешно вышли, перенаправление...</string>
-    <string name="cache_cleared">Кэш успешно очищен</string>
 
     <string name="warning">Внимание!</string>
     <string name="logout_confirmation">Вы уверены, что хотите выйти?</string>
@@ -133,21 +117,17 @@
     <string name="open_repository">Открыть репозиторий</string>
     <string name="cancel_download">Отменить загрузку</string>
 
-    <string name="error_loading_details">Ошибка загрузки данных</string>
     <string name="retry">Повторить</string>
     <string name="no_description">Описание отсутствует.</string>
 
     <string name="about_this_app">Об этом приложении</string>
     <string name="install_logs">Журнал установки</string>
-    <string name="author">Автор</string>
     <string name="whats_new">Что нового</string>
 
     <string name="installed">Установлено</string>
     <string name="update_available">Доступно обновление</string>
     <string name="not_available">Недоступно</string>
     <string name="install_latest">Установить последнюю</string>
-    <string name="reinstall">Переустановить</string>
-    <string name="update_app">Обновить приложение</string>
     <string name="report_issue">Сообщить о проблеме</string>
 
     <string name="downloading">Загрузка</string>
@@ -173,8 +153,6 @@
     <string name="no_more_github_results">Больше результатов на GitHub нет</string>
     <string name="explore_error">Не удалось загрузить с GitHub. Попробуйте снова.</string>
 
-    <string name="by_author">от %1$s</string>
-    <string name="installed_version">• Установлено: %1$s</string>
     <string name="architecture_compatible">Совместимо с архитектурой</string>
     <string name="update_to_version">Обновить до %1$s</string>
 
@@ -182,7 +160,6 @@
     <string name="open_in_browser">Открыть в браузере</string>
     <string name="show_install_options">Показать параметры установки</string>
 
-    <string name="error_load_details">Не удалось загрузить данные</string>
     <string name="installer_saved_downloads">Установщик сохранён в папку Загрузки</string>
 
     <string name="log_download_started">Загрузка начата</string>
@@ -206,30 +183,13 @@
     <string name="external_installer_description">Использовать стороннее приложение для установки APK</string>
 
     <string name="error_generic">Ошибка: %1$s</string>
-    <string name="error_asset_not_supported">Тип файла .%1$s не поддерживается</string>
-    <string name="error_file_not_found">Загруженный файл не найден</string>
 
-    <string name="home_category_trending">В тренде</string>
-    <string name="home_category_hot_release">Горячий релиз</string>
-    <string name="home_category_most_popular">Самые популярные</string>
 
-    <string name="home_topic_privacy">Конфиденциальность</string>
-    <string name="home_topic_media">Медиа</string>
-    <string name="home_topic_productivity">Продуктивность</string>
-    <string name="home_topic_networking">Сеть</string>
-    <string name="home_topic_dev_tools">Инструменты разработчика</string>
 
     <string name="home_finding_repositories">Поиск репозиториев...</string>
-    <string name="home_loading_more">Загрузка...</string>
-    <string name="home_no_more_repositories">Больше репозиториев нет</string>
     <string name="home_retry">Повторить</string>
     <string name="home_failed_to_load_repositories">Не удалось загрузить репозитории</string>
-    <string name="home_view_details">Подробнее</string>
 
-    <string name="updated_just_now">обновлено только что</string>
-    <string name="updated_hours_ago">обновлено %1$d ч. назад</string>
-    <string name="updated_yesterday">обновлено вчера</string>
-    <string name="updated_days_ago">обновлено %1$d дн. назад</string>
     <string name="updated_on_date">обновлено %1$s</string>
 
     <string name="rate_limit_exceeded">Превышен лимит запросов</string>
@@ -278,8 +238,6 @@
     <string name="dismiss">Закрыть</string>
     <string name="sync_starred_failed">Не удалось синхронизировать избранные репозитории</string>
 
-    <string name="developer_profile_title">Профиль разработчика</string>
-    <string name="open_developer_profile">Открытый профиль разработчика</string>
 
     <!-- Developer Profile - General -->
     <string name="failed_to_load_repositories">Не удалось загрузить репозитории</string>
@@ -293,7 +251,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">Поиск репозиториев…</string>
     <string name="clear_search">Очистить поиск</string>
-    <string name="filter_all">Все</string>
     <string name="filter_with_releases">С релизами</string>
     <string name="filter_installed">Установленные</string>
     <string name="filter_favorites">Избранные</string>
@@ -305,7 +262,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">репозиторий</string>
-    <string name="repositories_plural">репозиториев</string>
     <string name="showing_x_of_y_repositories">Показано %1$d из %2$d репозиториев</string>
 
     <!-- Developer Profile - Empty States -->
@@ -313,8 +269,6 @@
     <string name="no_installed_repos">Нет установленных репозиториев</string>
     <string name="no_favorite_repos">Нет избранных репозиториев</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">Обновлено %1$s</string>
     <string name="has_release">Есть релиз</string>
 
     <!-- Developer Profile - Relative Time -->
@@ -367,35 +321,21 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">Последняя проверка: %1$s</string>
-    <string name="last_checked_never">Не проверялось</string>
     <string name="last_checked_just_now">только что</string>
     <string name="last_checked_minutes_ago">%1$d мин назад</string>
     <string name="last_checked_hours_ago">%1$d ч назад</string>
     <string name="checking_for_updates">Проверка обновлений…</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">Тип прокси</string>
-    <string name="proxy_none">Нет</string>
-    <string name="proxy_system">Системный</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
     <string name="proxy_host">Хост</string>
     <string name="proxy_port">Порт</string>
     <string name="proxy_username">Имя пользователя (необязательно)</string>
     <string name="proxy_password">Пароль (необязательно)</string>
     <string name="proxy_save">Сохранить прокси</string>
     <string name="proxy_saved">Настройки прокси сохранены</string>
-    <string name="proxy_system_description">Использует прокси-настройки устройства</string>
-    <string name="proxy_port_error">Порт должен быть 1–65535</string>
-    <string name="proxy_none_description">Прямое подключение, без прокси</string>
     <string name="failed_to_save_proxy_settings">Не удалось сохранить настройки прокси</string>
     <string name="proxy_host_required">Требуется хост прокси</string>
     <string name="proxy_host_invalid">Введите корректное имя хоста или IP-адрес</string>
     <string name="invalid_proxy_port">Недопустимый порт прокси</string>
-    <string name="proxy_show_password">Показать пароль</string>
-    <string name="proxy_hide_password">Скрыть пароль</string>
-    <string name="proxy_test">Проверить</string>
-    <string name="proxy_test_in_progress">Проверка…</string>
     <string name="proxy_test_success">Соединение в порядке (%1$d мс)</string>
     <string name="proxy_test_error_dns">Не удалось разрешить хост. Проверьте адрес прокси.</string>
     <string name="proxy_test_error_unreachable">Не удалось подключиться к прокси-серверу.</string>
@@ -403,20 +343,8 @@
     <string name="proxy_test_error_auth_required">Требуется аутентификация прокси.</string>
     <string name="proxy_test_error_status">Неожиданный ответ: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">Не удалось проверить соединение</string>
-    <string name="proxy_scope_intro">Каждая категория может использовать свой собственный прокси. Настройте их независимо.</string>
-    <string name="proxy_scope_discovery_title">Обнаружение (GitHub API)</string>
-    <string name="proxy_scope_discovery_description">Главная, поиск, детали репозитория и проверка обновлений</string>
-    <string name="proxy_scope_download_title">Загрузки</string>
-    <string name="proxy_scope_download_description">Загрузка APK и автоматические обновления</string>
-    <string name="proxy_scope_translation_title">Перевод</string>
-    <string name="proxy_scope_translation_description">Сервис перевода README</string>
 
 
-    <!-- Track app feature -->
-    <string name="track_this_app">Отслеживать приложение</string>
-    <string name="app_tracked_successfully">Приложение добавлено в список отслеживания</string>
-    <string name="failed_to_track_app">Не удалось отследить приложение: %1$s</string>
-    <string name="already_tracked">Приложение уже отслеживается</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">Войти через GitHub</string>
@@ -433,7 +361,6 @@
     <string name="sign_in_again">Войти снова</string>
     <string name="continue_as_guest">Продолжить как гость</string>
     <string name="logout_revocation_note">Это очистит вашу локальную сессию и кэшированные данные. Чтобы полностью отозвать доступ, перейдите в GitHub Settings > Applications.</string>
-    <string name="auth_code_expires_in">Код истекает через %1$s</string>
     <string name="auth_error_code_expired">Срок действия кода устройства истёк.</string>
     <string name="auth_hint_try_again">Пожалуйста, попробуйте войти снова для получения нового кода.</string>
     <string name="auth_hint_check_connection">Проверьте подключение к интернету и попробуйте снова.</string>
@@ -450,27 +377,16 @@
     <string name="failed_to_share_link">Не удалось поделиться ссылкой</string>
     <string name="link_copied_to_clipboard">Ссылка скопирована в буфер обмена</string>
 
-    <!-- Translation feature -->
-    <string name="translate">Перевести</string>
-    <string name="translating">Перевод…</string>
-    <string name="show_original">Показать оригинал</string>
-    <string name="translated_to">Переведено на %1$s</string>
     <string name="translate_to">Перевести на…</string>
     <string name="search_language">Поиск языка</string>
-    <string name="change_language">Изменить язык</string>
     <string name="translation_failed">Ошибка перевода. Попробуйте ещё раз.</string>
 
     <string name="open_github_link">Открыть ссылку GitHub</string>
     <string name="clipboard_link_detected">Обнаружена ссылка GitHub в буфере обмена</string>
-    <string name="auto_detect_clipboard_links">Автоопределение ссылок из буфера</string>
-    <string name="auto_detect_clipboard_description">Автоматически определять ссылки GitHub из буфера обмена при открытии поиска</string>
     <string name="detected_links">Обнаруженные ссылки</string>
     <string name="open_in_app">Открыть в приложении</string>
     <string name="no_github_link_in_clipboard">Ссылка GitHub не найдена в буфере обмена</string>
 
-    <string name="storage">Хранение</string>
-    <string name="clear_cache">Очистить кэш</string>
-    <string name="current_size">Текущий размер:</string>
     <string name="clear">Очистить</string>
 
 
@@ -486,8 +402,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">Установка</string>
     <string name="installer_type_default">По умолчанию</string>
     <string name="installer_type_default_description">Стандартный системный диалог установки</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -504,7 +418,6 @@
     <string name="auto_update_title">Автообновление приложений</string>
     <string name="auto_update_description">Автоматически загружать и устанавливать обновления в фоне через Shizuku</string>
 
-    <string name="section_updates">Обновления</string>
     <string name="update_check_interval_title">Интервал проверки обновлений</string>
     <string name="update_check_interval_description">Как часто проверять обновления приложения в фоне</string>
     <string name="update_check_enabled_title">Фоновая проверка обновлений</string>
@@ -528,18 +441,13 @@
     <string name="validating_repo">Проверка…</string>
     <string name="link_and_track">Привязать и отслеживать</string>
     <string name="checking_release">Проверка последнего релиза…</string>
-    <string name="downloading_for_verification">Загрузка APK для проверки…</string>
     <string name="verifying_signing_key">Проверка ключа подписи…</string>
     <string name="package_name_mismatch">Несоответствие имени пакета: APK — %1$s, а выбранное приложение — %2$s</string>
     <string name="signing_key_mismatch_link">Несоответствие ключа подписи: APK в этом репозитории подписан другим разработчиком</string>
     <string name="select_asset_title">Выберите установщик</string>
     <string name="select_asset_description">Выберите APK для проверки соответствия установленному приложению</string>
-    <string name="download_failed">Ошибка загрузки</string>
     <string name="export_apps">Экспорт</string>
     <string name="import_apps">Импорт</string>
-    <string name="import_apps_title">Импорт приложений</string>
-    <string name="import_apps_description">Вставьте экспортированный JSON для восстановления отслеживаемых приложений</string>
-    <string name="import_apps_hint">Вставьте экспортированный JSON…</string>
     <string name="include_pre_releases_title">Канал бета по умолчанию</string>
     <string name="include_pre_releases_description">Вновь отслеживаемые приложения по умолчанию включают бета-сборки. Ранее отслеживаемые приложения сохраняют своё значение (переключите на экране Подробностей приложения).</string>
     <string name="confirm_uninstall_title">Удалить приложение?</string>
@@ -552,9 +460,6 @@
     <string name="app_linked_success">%1$s привязано к %2$s/%3$s</string>
     <string name="export_failed">Ошибка экспорта: %1$s</string>
     <string name="import_failed">Ошибка импорта: %1$s</string>
-    <string name="imported_apps_summary">Импортировано %1$d приложений</string>
-    <string name="imported_skipped">, %1$d пропущено</string>
-    <string name="imported_failed">, %1$d с ошибкой</string>
     <string name="signing_key_changed_title">Ключ подписи изменён</string>
     <string name="signing_key_changed_message">Сертификат подписи этого приложения изменился с момента первой установки.\n\nЭто может означать, что разработчик сменил ключ подписи, или бинарный файл был изменён.\n\nОжидалось: %1$s\nПолучено: %2$s</string>
     <string name="install_anyway">Всё равно установить</string>
@@ -567,8 +472,6 @@
     <string name="multiple_assets_info_dialog_title">Доступно несколько ресурсов</string>
     <string name="multiple_assets_info_dialog_text">Для этого релиза доступно несколько устанавливаемых файлов. Просмотрите список и выберите подходящий для вашего устройства.</string>
     <string name="icon_content_description_info">Информация</string>
-    <string name="translation_error_retry">Повторить</string>
-    <string name="translated_from">Автоопределение: %1$s</string>
     <string name="select_language">Выбрать язык</string>
     <string name="update_package_mismatch">Несоответствие пакета: APK — %1$s, но установленное приложение — %2$s. Обновление заблокировано.</string>
     <string name="update_signing_key_mismatch">Несоответствие ключа подписи: обновление подписано другим разработчиком. Обновление заблокировано.</string>
@@ -581,21 +484,13 @@
     <string name="content_width_wide">Широкая</string>
     <string name="content_width_extra_wide">Очень широкая</string>
 
-    <string name="hide_seen_title">Скрыть просмотренные репозитории</string>
-    <string name="hide_seen_description">Скрыть уже просмотренные репозитории из лент обнаружения</string>
-    <string name="clear_seen_history">Очистить историю просмотров</string>
-    <string name="clear_seen_history_description">Сбросить все просмотренные репозитории, чтобы они снова появились в лентах</string>
     <string name="seen_history_cleared">История просмотров очищена</string>
     <string name="seen_badge">Просмотрено</string>
     <string name="self_owned_badge">Ваш репозиторий</string>
     <string name="hide_repository">Скрыть репозиторий</string>
-    <string name="repository_hidden">Репозиторий скрыт</string>
-    <string name="undo_hide">Отменить</string>
 
     <string name="recently_viewed">Недавно просмотренные</string>
     <string name="profile_recently_viewed_description">Репозитории, которые вы посещали</string>
-    <string name="downloaded_packages">Загруженные пакеты</string>
-    <string name="downloaded_packages_description">APK и установщики из релизов GitHub</string>
     <string name="delete_all">Удалить всё</string>
     <string name="delete_downloads_confirmation_title">Удалить все загрузки?</string>
     <string name="delete_downloads_confirmation_message">Это навсегда удалит все APK и установщики (%1$s). Вы сможете скачать их снова в любое время.</string>
@@ -606,9 +501,7 @@
     <string name="clear_all_history">Очистить всё</string>
     <string name="remove_search_history_item">Удалить</string>
 
-    <string name="bottom_nav_profile_tweaks">Настройки</string>
     <string name="tweaks_title">Настройки</string>
-    <string name="pre_releases">Пре-релизы</string>
 
     <!-- Monorepo support -->
     <string name="asset_filter_label">Фильтр ассетов</string>
@@ -672,8 +565,6 @@
     <string name="ready_to_install">Готово к установке</string>
     <string name="install_ready">Установить (готово)</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">Перевод</string>
     <string name="translation_intro">Выберите сервис для перевода README.</string>
     <string name="translation_provider_title">Сервис перевода</string>
     <string name="translation_provider_description">Google работает глобально без настройки. Youdao работает из материкового Китая, но требует учётных данных API с портала разработчиков Youdao.</string>
@@ -716,8 +607,6 @@
     <string name="pat_input_placeholder">ghp_… или github_pat_…</string>
     <string name="pat_submit">Войти</string>
     <string name="pat_cancel">Отмена</string>
-    <string name="pat_show">Показать токен</string>
-    <string name="pat_hide">Скрыть токен</string>
     <string name="pat_error_empty">Вставьте токен.</string>
     <string name="pat_error_invalid_format">Это не похоже на токен GitHub. Токены начинаются с ghp_ или github_pat_.</string>
     <string name="pat_error_bad_credentials">Этот токен недействителен или отозван.</string>
@@ -739,13 +628,11 @@
     <string name="channel_chip_coachmark_title">Выберите канал релизов</string>
     <string name="channel_chip_coachmark_body">Нажмите, чтобы переключаться между стабильными релизами и бета-сборками этого приложения.</string>
     <string name="channel_chip_coachmark_dismiss">Понятно</string>
-    <string name="channel_toggle_cd">Переключить бета-релизы для этого приложения</string>
     <string name="action_switch_to_stable">Перейти на стабильную %1$s</string>
     <string name="stalled_project_warning_months">Нет стабильного релиза уже %1$d месяцев</string>
     <string name="stalled_project_warning_days">Нет стабильного релиза уже %1$d дней</string>
     <string name="stalled_project_warning_description">Есть активные предварительные версии, но проект давно не выпускал стабильную сборку. Бета-версии могут так и не перейти в стабильный релиз.</string>
     <string name="merged_whats_changed_title">Что изменилось с %1$s</string>
-    <string name="merged_release_heading">— %1$s —</string>
 
     <!-- ═══════════════════════════════════════════════════════════════
          E1 — External import wizard
@@ -769,7 +656,6 @@
     <string name="external_import_card_action_more">Другие совпадения</string>
     <string name="external_import_card_action_less">Скрыть совпадения</string>
     <string name="external_import_card_installer_chip">Установлено через %1$s</string>
-    <string name="external_import_card_preselect_known">Мы думаем, это %1$s · %2$d</string>
     <string name="external_import_card_preselect_unknown">Нажмите, чтобы найти репозиторий</string>
     <string name="external_import_card_expand_label">Развернуть для просмотра других совпадений</string>
     <string name="external_import_card_collapse_label">Свернуть карточку</string>
@@ -849,7 +735,6 @@
          E1 — Details unlink dialog
          ═══════════════════════════════════════════════════════════════ -->
     <string name="details_unlink_external_app_menu">Отвязать от этого репозитория</string>
-    <string name="details_unlink_external_app_more_options">Другие параметры</string>
     <string name="details_unlink_external_app_dialog_title">Отвязать это приложение?</string>
     <string name="details_unlink_external_app_dialog_body">Мы перестанем отслеживать %1$s как установленное из этого репозитория. Приложение останется на устройстве — удаляется только связь.</string>
     <string name="details_unlink_external_app_dialog_confirm">Отвязать</string>
@@ -872,7 +757,6 @@
     <!-- ═══════════════════════════════════════════════════════════════
          Feedback feature
          ═══════════════════════════════════════════════════════════════ -->
-    <string name="feedback_send">Отправить отзыв</string>
     <string name="feedback_title">Отправить отзыв</string>
     <string name="feedback_close">Закрыть</string>
     <string name="feedback_category_label">Категория</string>
@@ -910,15 +794,12 @@
          ═══════════════════════════════════════════════════════════════ -->
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">Свои форджи</string>
-    <string name="custom_forges_entry_subtitle">Добавьте хосты Forgejo / Gitea, которые GHS должен распознавать</string>
-    <string name="custom_forges_count_label">Добавлено: %1$d</string>
     <string name="custom_forges_dialog_title">Свои форджи</string>
     <string name="custom_forges_dialog_help">Введите имя хоста Forgejo или Gitea (например git.example.com). GHS будет принимать URL с этих хостов в форме ручной привязки.</string>
     <string name="custom_forges_add_button">Добавить</string>
     <string name="custom_forges_empty">Пока нет своих форджей.</string>
     <string name="done">Готово</string>
 
-    <string name="mirror_tweaks_entry_label">Зеркало для загрузки</string>
     <string name="mirror_picker_title">Зеркало для загрузки</string>
     <string name="mirror_picker_description">Используется для загрузки файлов релизов. Обращения к API GitHub всегда идут напрямую. Большинству пользователей следует оставить настройку «Напрямую через GitHub».</string>
     <string name="mirror_section_official">Официальное</string>
@@ -934,7 +815,6 @@
     <string name="mirror_custom_validation_template">Шаблон должен содержать {url} ровно один раз</string>
     <string name="mirror_custom_save">Сохранить</string>
     <string name="mirror_test_button">Проверить выбранное</string>
-    <string name="mirror_test_in_progress">Проверка…</string>
     <string name="mirror_test_success">Достигнуто за %1$dms</string>
     <string name="mirror_test_http_error">Зеркало вернуло %1$d</string>
     <string name="mirror_test_timeout">Превышено время ожидания (5s)</string>
@@ -942,12 +822,6 @@
     <string name="mirror_test_other">Ошибка: %1$s</string>
     <string name="mirror_deploy_your_own_hint">Все зеркала недоступны? За 5 минут можно развернуть своё — смотрите документацию.</string>
     <string name="mirror_removed_toast">%1$s больше недоступно, выполнен переход на прямой доступ через GitHub.</string>
-    <string name="mirror_digest_mismatch_error">Несоответствие контрольной суммы — файл мог быть изменён</string>
-    <string name="mirror_auto_suggest_title">Попробовать более быстрое зеркало?</string>
-    <string name="mirror_auto_suggest_body">Некоторым пользователям с медленным соединением лучше подходит прокси сообщества.</string>
-    <string name="mirror_auto_suggest_pick_one">Выбрать</string>
-    <string name="mirror_auto_suggest_maybe_later">Может быть, позже</string>
-    <string name="mirror_auto_suggest_dont_ask_again">Больше не спрашивать</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
     <string name="add_from_starred_title">Добавить из избранных</string>
@@ -958,13 +832,7 @@
     <string name="announcements_category_security">Безопасность</string>
     <string name="announcements_category_status">Статус</string>
     <string name="announcements_category_survey">Опросы</string>
-    <string name="announcements_critical_modal_close">Закрыть после подтверждения</string>
-    <string name="announcements_days_ago">%1$d дн</string>
     <string name="announcements_empty">Сейчас нечем поделиться.</string>
-    <string name="announcements_hours_ago">%1$d ч</string>
-    <string name="announcements_just_now">только что</string>
-    <string name="announcements_last_refreshed">Обновлено %1$s назад</string>
-    <string name="announcements_minutes_ago">%1$d мин</string>
     <string name="announcements_mute_locked">Нельзя отключить</string>
     <string name="announcements_mute_settings_title">Показывать элементы из</string>
     <string name="announcements_open_mute_settings">Открыть настройки отключения</string>
@@ -1021,7 +889,6 @@
     <string name="apps_section_state_collapsed">Свёрнут</string>
     <string name="apps_section_state_expanded">Развёрнут</string>
     <string name="apps_section_up_to_date">Актуально</string>
-    <string name="apps_section_updates_available">Доступны обновления</string>
     <string name="confirm_discard_pending_message">Отбросить отложенный установщик для %1$s и удалить строку из списка приложений? Загруженный APK будет удалён.</string>
     <string name="confirm_discard_pending_title">Отбросить ожидающую установку?</string>
     <string name="dhizuku_grant_permission">Предоставить разрешение</string>
@@ -1107,7 +974,6 @@
     <string name="whats_new_section_new">Новое</string>
     <string name="whats_new_sheet_heading">Что нового в %1$s</string>
     <string name="whats_new_title">Что нового</string>
-    <string name="whats_new_translations_note">Журнал изменений на английском. Переводы приветствуются через Issues.</string>
     <string name="whats_new_version_label">Версия %1$s · %2$s</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1145,7 +1011,6 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">Другая платформа — открывается в браузере для сохранения и переноса</string>
     <string name="section_chip_your_device">Это устройство</string>
     <string name="section_chip_for_transfer">Для переноса</string>
     <string name="kao_banner_title">Сохраним Android открытым</string>

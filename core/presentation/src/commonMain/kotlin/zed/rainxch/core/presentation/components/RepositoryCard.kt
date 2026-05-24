@@ -77,7 +77,6 @@ import zed.rainxch.githubstore.core.presentation.res.hide_repository
 import zed.rainxch.githubstore.core.presentation.res.mark_as_unviewed
 import zed.rainxch.githubstore.core.presentation.res.mark_as_viewed
 import zed.rainxch.githubstore.core.presentation.res.open_on_github
-import zed.rainxch.githubstore.core.presentation.res.home_view_details
 import zed.rainxch.githubstore.core.presentation.res.installed
 import zed.rainxch.githubstore.core.presentation.res.open_in_browser
 import zed.rainxch.githubstore.core.presentation.res.seen_badge

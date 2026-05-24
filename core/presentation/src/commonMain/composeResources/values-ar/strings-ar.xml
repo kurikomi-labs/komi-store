@@ -3,8 +3,6 @@
     <!-- Apps feature - App -->
     <string name="app_name">GitHub Store</string>
 
-    <!-- Apps feature - Navigation / Top bar -->
-    <string name="installed_apps">التطبيقات المثبتة</string>
     <string name="navigate_back">العودة</string>
     <string name="check_for_updates">التحقق من التحديثات</string>
 
@@ -12,7 +10,6 @@
     <string name="cannot_launch">تعذر تشغيل %1$s</string>
     <string name="failed_to_open">فشل فتح %1$s</string>
     <string name="failed_to_update">فشل تحديث %1$s: %2$s</string>
-    <string name="update_failed">فشل التحديث</string>
     <string name="update_all_failed">فشل تحديث الكل: %1$s</string>
     <string name="all_apps_updated_successfully">تم تحديث جميع التطبيقات بنجاح</string>
     <string name="no_updates_available">لا توجد تحديثات متاحة</string>
@@ -61,12 +58,9 @@
 
     <string name="sign_in_with_github">تسجيل الدخول بـ GitHub</string>
 
-    <string name="error_cancelled">تم الإلغاء</string>
     <string name="error_unknown">خطأ غير معروف</string>
 
-    <string name="language_label">اللغة:</string>
 
-    <string name="discover_repositories">اكتشف المستودعات</string>
     <string name="search_repositories_hint">ابحث عن مستودع، وصف…</string>
 
     <!-- Filters -->
@@ -115,54 +109,29 @@
     <!-- Profile -->
     <string name="profile_title">الملف الشخصي</string>
 
-    <!-- Sections -->
-    <string name="section_appearance">المظهر</string>
-    <string name="section_language">اللغة</string>
-    <string name="language_intro">تجاوز لغة واجهة التطبيق.</string>
-    <string name="language_picker_title">لغة التطبيق</string>
-    <string name="language_picker_description">يغير القوائم والأزرار والرسائل في جميع أنحاء التطبيق. لا يغير المحتوى القادم من GitHub.</string>
     <string name="language_follow_system">اتباع النظام</string>
     <string name="language_restart_required">أعد التشغيل لتطبيق اللغة الجديدة.</string>
     <string name="language_restart_action">إعادة التشغيل</string>
-    <string name="section_network">الشبكة</string>
-    <string name="section_about">حول</string>
 
     <!-- Appearance -->
     <string name="theme_color">لون السمة</string>
     <string name="amoled_black_theme">سمة AMOLED السوداء</string>
     <string name="amoled_black_description">خلفية سوداء نقية للوضع الداكن</string>
-    <string name="selected_color">اللون المحدد: %1$s</string>
 
-    <!-- About -->
-    <string name="version">الإصدار</string>
-    <string name="help_support">المساعدة والدعم</string>
 
     <!-- Account -->
     <string name="logout">تسجيل الخروج</string>
 
-    <!-- Proxy -->
-    <string name="proxy_type">نوع الوكيل</string>
-    <string name="proxy_none">بدون</string>
-    <string name="proxy_system">النظام</string>
-    <string name="proxy_http">HTTP</string>
-    <string name="proxy_socks">SOCKS</string>
     <string name="proxy_host">المضيف</string>
     <string name="proxy_port">المنفذ</string>
     <string name="proxy_username">اسم المستخدم (اختياري)</string>
     <string name="proxy_password">كلمة المرور (اختياري)</string>
     <string name="proxy_save">حفظ الوكيل</string>
     <string name="proxy_saved">تم حفظ إعدادات الوكيل</string>
-    <string name="proxy_system_description">يستخدم إعدادات الوكيل الخاصة بجهازك</string>
-    <string name="proxy_port_error">يجب أن يكون المنفذ بين 1–65535</string>
-    <string name="proxy_none_description">اتصال مباشر، بدون وكيل</string>
     <string name="failed_to_save_proxy_settings">فشل حفظ إعدادات الوكيل</string>
     <string name="proxy_host_required">المضيف مطلوب</string>
     <string name="proxy_host_invalid">أدخل اسم مضيف أو عنوان IP صالحًا</string>
     <string name="invalid_proxy_port">منفذ الوكيل غير صالح</string>
-    <string name="proxy_show_password">إظهار كلمة المرور</string>
-    <string name="proxy_hide_password">إخفاء كلمة المرور</string>
-    <string name="proxy_test">اختبار</string>
-    <string name="proxy_test_in_progress">جارٍ الاختبار…</string>
     <string name="proxy_test_success">الاتصال ناجح (%1$d مللي ثانية)</string>
     <string name="proxy_test_error_dns">تعذر تحليل المضيف. تحقق من عنوان الوكيل.</string>
     <string name="proxy_test_error_unreachable">تعذر الوصول إلى خادم الوكيل.</string>
@@ -170,17 +139,9 @@
     <string name="proxy_test_error_auth_required">يلزم التحقق من الوكيل.</string>
     <string name="proxy_test_error_status">استجابة غير متوقعة: HTTP %1$d</string>
     <string name="proxy_test_error_unknown">فشل اختبار الاتصال</string>
-    <string name="proxy_scope_intro">يمكن لكل فئة استخدام البروكسي الخاص بها. قم بتكوينها بشكل مستقل.</string>
-    <string name="proxy_scope_discovery_title">الاكتشاف (GitHub API)</string>
-    <string name="proxy_scope_discovery_description">الصفحة الرئيسية والبحث وتفاصيل المستودع وفحوصات التحديث</string>
-    <string name="proxy_scope_download_title">التنزيلات</string>
-    <string name="proxy_scope_download_description">تنزيلات APK والتحديثات التلقائية</string>
-    <string name="proxy_scope_translation_title">الترجمة</string>
-    <string name="proxy_scope_translation_description">خدمة ترجمة README</string>
 
     <!-- Snackbar -->
     <string name="logout_success">تم تسجيل الخروج بنجاح، جارٍ إعادة التوجيه...</string>
-    <string name="cache_cleared">تم مسح ذاكرة التخزين المؤقت بنجاح</string>
 
     <!-- Dialog -->
     <string name="warning">تحذير!</string>
@@ -198,8 +159,6 @@
     <string name="cancel_download">إلغاء التنزيل</string>
     <string name="show_install_options">عرض خيارات التثبيت</string>
 
-    <!-- Errors & states -->
-    <string name="error_loading_details">خطأ في تحميل التفاصيل</string>
     <string name="retry">إعادة المحاولة</string>
     <string name="no_description">لا يوجد وصف.</string>
     <string name="no_release_notes">لا توجد ملاحظات إصدار.</string>
@@ -208,7 +167,6 @@
     <!-- Headers -->
     <string name="about_this_app">حول هذا التطبيق</string>
     <string name="install_logs">سجلات التثبيت</string>
-    <string name="author">المؤلف</string>
     <string name="whats_new">ما الجديد</string>
 
     <!-- Install status -->
@@ -216,8 +174,6 @@
     <string name="update_available">تحديث متاح</string>
     <string name="not_available">غير متاح</string>
     <string name="install_latest">تثبيت الأحدث</string>
-    <string name="reinstall">إعادة التثبيت</string>
-    <string name="update_app">تحديث التطبيق</string>
 
     <!-- Download stages -->
     <string name="downloading">جارٍ التنزيل</string>
@@ -257,14 +213,9 @@
     <string name="no_more_github_results">لا توجد نتائج أخرى على GitHub</string>
     <string name="explore_error">فشل الجلب من GitHub. حاول مرة أخرى.</string>
 
-    <!-- Misc -->
-    <string name="by_author">بواسطة %1$s</string>
-    <string name="installed_version">• المثبت: %1$s</string>
     <string name="architecture_compatible">متوافق مع المعمارية</string>
     <string name="update_to_version">التحديث إلى %1$s</string>
 
-    <!-- General -->
-    <string name="error_load_details">فشل تحميل التفاصيل</string>
     <string name="installer_saved_downloads">تم حفظ المثبت في مجلد التنزيلات</string>
 
     <!-- Download / install states -->
@@ -292,30 +243,13 @@
 
     <!-- Errors -->
     <string name="error_generic">خطأ: %1$s</string>
-    <string name="error_asset_not_supported">نوع الملف .%1$s غير مدعوم</string>
-    <string name="error_file_not_found">لم يتم العثور على الملف المنزّل</string>
 
-    <string name="home_category_trending">الرائج</string>
-    <string name="home_category_hot_release">إصدار ساخن</string>
-    <string name="home_category_most_popular">الأكثر شعبية</string>
 
-    <string name="home_topic_privacy">الخصوصية</string>
-    <string name="home_topic_media">الوسائط</string>
-    <string name="home_topic_productivity">الإنتاجية</string>
-    <string name="home_topic_networking">الشبكة</string>
-    <string name="home_topic_dev_tools">أدوات المطور</string>
 
     <string name="home_finding_repositories">جارٍ البحث عن مستودعات...</string>
-    <string name="home_loading_more">جارٍ تحميل المزيد...</string>
-    <string name="home_no_more_repositories">لا مزيد من المستودعات</string>
     <string name="home_retry">إعادة المحاولة</string>
     <string name="home_failed_to_load_repositories">فشل تحميل المستودعات</string>
-    <string name="home_view_details">عرض التفاصيل</string>
 
-    <string name="updated_just_now">تم التحديث للتو</string>
-    <string name="updated_hours_ago">تم التحديث منذ %1$d ساعة</string>
-    <string name="updated_yesterday">تم التحديث أمس</string>
-    <string name="updated_days_ago">تم التحديث منذ %1$d يوم</string>
     <string name="updated_on_date">تم التحديث في %1$s</string>
 
     <string name="rate_limit_exceeded">تم تجاوز حد الطلبات</string>
@@ -364,8 +298,6 @@
     <string name="dismiss">تجاهل</string>
     <string name="sync_starred_failed">فشلت مزامنة المستودعات المميزة بنجمة</string>
 
-    <string name="developer_profile_title">الملف الشخصي للمطور</string>
-    <string name="open_developer_profile">فتح الملف الشخصي للمطور</string>
 
     <string name="failed_to_load_repositories">فشل تحميل المستودعات</string>
     <string name="failed_to_load_profile">فشل تحميل الملف الشخصي</string>
@@ -378,7 +310,6 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">البحث في المستودعات…</string>
     <string name="clear_search">مسح البحث</string>
-    <string name="filter_all">الكل</string>
     <string name="filter_with_releases">مع إصدارات</string>
     <string name="filter_installed">المثبتة</string>
     <string name="filter_favorites">المفضلة</string>
@@ -390,7 +321,6 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">مستودع</string>
-    <string name="repositories_plural">مستودعات</string>
     <string name="showing_x_of_y_repositories">عرض %1$d من %2$d مستودع</string>
 
     <!-- Developer Profile - Empty States -->
@@ -398,8 +328,6 @@
     <string name="no_installed_repos">لا توجد مستودعات مثبتة</string>
     <string name="no_favorite_repos">لا توجد مستودعات مفضلة</string>
 
-    <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">تم التحديث %1$s</string>
     <string name="has_release">يحتوي على إصدار</string>
 
     <string name="time_years_ago">منذ %1$d سنة</string>
@@ -437,17 +365,11 @@
 
     <!-- Apps feature - Last checked -->
     <string name="last_checked">آخر فحص: %1$s</string>
-    <string name="last_checked_never">لم يتم الفحص مطلقاً</string>
     <string name="last_checked_just_now">الآن</string>
     <string name="last_checked_minutes_ago">منذ %1$d دقيقة</string>
     <string name="last_checked_hours_ago">منذ %1$d ساعة</string>
     <string name="checking_for_updates">جارٍ التحقق من التحديثات…</string>
 
-    <!-- Track app feature -->
-    <string name="track_this_app">تتبع هذا التطبيق</string>
-    <string name="app_tracked_successfully">تمت إضافة التطبيق إلى قائمة التتبع</string>
-    <string name="failed_to_track_app">فشل تتبع التطبيق: %1$s</string>
-    <string name="already_tracked">التطبيق قيد التتبع بالفعل</string>
 
     <!-- Profile section -->
     <string name="profile_sign_in_title">تسجيل الدخول إلى GitHub</string>
@@ -467,8 +389,6 @@
     <!-- Logout improvements -->
     <string name="logout_revocation_note">سيؤدي هذا إلى مسح جلستك المحلية والبيانات المخزنة مؤقتاً. لإلغاء الوصول بالكامل، قم بزيارة إعدادات GitHub > التطبيقات.</string>
 
-    <!-- Auth UI improvements -->
-    <string name="auth_code_expires_in">ينتهي الرمز خلال %1$s</string>
     <string name="auth_error_code_expired">انتهت صلاحية رمز الجهاز.</string>
     <string name="auth_hint_try_again">يرجى محاولة تسجيل الدخول مرة أخرى للحصول على رمز جديد.</string>
     <string name="auth_hint_check_connection">يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.</string>
@@ -485,28 +405,17 @@
     <string name="failed_to_share_link">فشل مشاركة الرابط</string>
     <string name="link_copied_to_clipboard">تم نسخ الرابط إلى الحافظة</string>
 
-    <!-- Translation feature -->
-    <string name="translate">ترجمة</string>
-    <string name="translating">جارٍ الترجمة…</string>
-    <string name="show_original">عرض الأصلي</string>
-    <string name="translated_to">تُرجم إلى %1$s</string>
     <string name="translate_to">ترجمة إلى…</string>
     <string name="search_language">البحث عن لغة</string>
-    <string name="change_language">تغيير اللغة</string>
     <string name="translation_failed">فشلت الترجمة. يرجى المحاولة مرة أخرى.</string>
 
     <!-- Search - GitHub Link -->
     <string name="open_github_link">فتح رابط GitHub</string>
     <string name="clipboard_link_detected">تم اكتشاف رابط GitHub في الحافظة</string>
-    <string name="auto_detect_clipboard_links">الكشف التلقائي عن روابط الحافظة</string>
-    <string name="auto_detect_clipboard_description">الكشف التلقائي عن روابط GitHub من الحافظة عند فتح البحث</string>
     <string name="detected_links">الروابط المكتشفة</string>
     <string name="open_in_app">فتح في التطبيق</string>
     <string name="no_github_link_in_clipboard">لم يتم العثور على رابط GitHub في الحافظة</string>
 
-    <string name="storage">التخزين</string>
-    <string name="clear_cache">مسح ذاكرة التخزين المؤقت</string>
-    <string name="current_size">الحجم الحالي:</string>
     <string name="clear">مسح</string>
 
 
@@ -523,8 +432,6 @@
 
 
 
-    <!-- Installation method settings -->
-    <string name="section_installation">التثبيت</string>
     <string name="installer_type_default">الافتراضي</string>
     <string name="installer_type_default_description">نافذة التثبيت القياسية للنظام</string>
     <string name="installer_type_shizuku">Shizuku</string>
@@ -541,7 +448,6 @@
     <string name="auto_update_title">تحديث التطبيقات تلقائيًا</string>
     <string name="auto_update_description">تنزيل التحديثات وتثبيتها تلقائيًا في الخلفية عبر Shizuku</string>
 
-    <string name="section_updates">التحديثات</string>
     <string name="update_check_interval_title">فترة التحقق من التحديثات</string>
     <string name="update_check_interval_description">عدد مرات التحقق من تحديثات التطبيق في الخلفية</string>
     <string name="update_check_enabled_title">التحقق التلقائي من التحديثات</string>
@@ -565,18 +471,13 @@
     <string name="validating_repo">جارٍ التحقق…</string>
     <string name="link_and_track">ربط وتتبع</string>
     <string name="checking_release">التحقق من آخر إصدار…</string>
-    <string name="downloading_for_verification">تنزيل APK للتحقق…</string>
     <string name="verifying_signing_key">التحقق من مفتاح التوقيع…</string>
     <string name="package_name_mismatch">عدم تطابق اسم الحزمة: ملف APK هو %1$s، لكن التطبيق المحدد هو %2$s</string>
     <string name="signing_key_mismatch_link">عدم تطابق مفتاح التوقيع: ملف APK في هذا المستودع موقّع من مطور مختلف</string>
     <string name="select_asset_title">اختر المثبّت</string>
     <string name="select_asset_description">اختر ملف APK للتحقق من مطابقته للتطبيق المثبت</string>
-    <string name="download_failed">فشل التنزيل</string>
     <string name="export_apps">تصدير</string>
     <string name="import_apps">استيراد</string>
-    <string name="import_apps_title">استيراد التطبيقات</string>
-    <string name="import_apps_description">الصق ملف JSON المُصدَّر لاستعادة التطبيقات المتتبعة</string>
-    <string name="import_apps_hint">الصق JSON المُصدَّر هنا…</string>
     <string name="include_pre_releases_title">قناة البيتا الافتراضية</string>
     <string name="include_pre_releases_description">تشمل التطبيقات التي تتعقبها حديثاً إصدارات البيتا افتراضياً. التطبيقات المتعقَّبة مسبقاً تحتفظ بإعدادها الخاص (بدّله من شاشة التفاصيل).</string>
     <string name="confirm_uninstall_title">إلغاء تثبيت التطبيق؟</string>
@@ -589,9 +490,6 @@
     <string name="app_linked_success">تم ربط %1$s بـ %2$s/%3$s</string>
     <string name="export_failed">فشل التصدير: %1$s</string>
     <string name="import_failed">فشل الاستيراد: %1$s</string>
-    <string name="imported_apps_summary">تم استيراد %1$d تطبيقات</string>
-    <string name="imported_skipped">، %1$d تم تخطيها</string>
-    <string name="imported_failed">، %1$d فشلت</string>
     <string name="signing_key_changed_title">تغيّر مفتاح التوقيع</string>
     <string name="signing_key_changed_message">تغيّرت شهادة توقيع هذا التطبيق منذ تثبيته لأول مرة.\n\nقد يعني هذا أن المطور غيّر مفتاح التوقيع، أو أن الملف قد تم التلاعب به.\n\nالمتوقع: %1$s\nالمستلم: %2$s</string>
     <string name="install_anyway">التثبيت على أي حال</string>
@@ -604,8 +502,6 @@
     <string name="multiple_assets_info_dialog_title">ملفات متعددة متاحة</string>
     <string name="multiple_assets_info_dialog_text">تتوفر عدة ملفات قابلة للتثبيت لهذا الإصدار. يرجى مراجعة القائمة واختيار الملف المناسب لجهازك.</string>
     <string name="icon_content_description_info">معلومات</string>
-    <string name="translation_error_retry">إعادة المحاولة</string>
-    <string name="translated_from">اكتشاف تلقائي: %1$s</string>
     <string name="select_language">اختر اللغة</string>
     <string name="update_package_mismatch">عدم تطابق الحزمة: ملف APK هو %1$s، لكن التطبيق المثبت هو %2$s. تم حظر التحديث.</string>
     <string name="update_signing_key_mismatch">عدم تطابق مفتاح التوقيع: تم توقيع التحديث بواسطة مطور مختلف. تم حظر التحديث.</string>
@@ -618,21 +514,13 @@
     <string name="content_width_wide">واسع</string>
     <string name="content_width_extra_wide">واسع جدًا</string>
 
-    <string name="hide_seen_title">إخفاء المستودعات المشاهَدة</string>
-    <string name="hide_seen_description">إخفاء المستودعات التي شاهدتها بالفعل من خلاصات الاكتشاف</string>
-    <string name="clear_seen_history">مسح سجل المشاهدة</string>
-    <string name="clear_seen_history_description">إعادة تعيين جميع المستودعات المشاهَدة لتظهر مجدداً في الخلاصات</string>
     <string name="seen_history_cleared">تم مسح سجل المشاهدة</string>
     <string name="seen_badge">تمت المشاهدة</string>
     <string name="self_owned_badge">هذا المستودع لك</string>
     <string name="hide_repository">إخفاء المستودع</string>
-    <string name="repository_hidden">تم إخفاء المستودع</string>
-    <string name="undo_hide">تراجع</string>
 
     <string name="recently_viewed">تمت مشاهدته مؤخرًا</string>
     <string name="profile_recently_viewed_description">المستودعات التي قمت بزيارتها</string>
-    <string name="downloaded_packages">الحزم التي تم تنزيلها</string>
-    <string name="downloaded_packages_description">ملفات APK والمثبتات من إصدارات GitHub</string>
     <string name="delete_all">حذف الكل</string>
     <string name="delete_downloads_confirmation_title">حذف جميع التنزيلات؟</string>
     <string name="delete_downloads_confirmation_message">سيؤدي هذا إلى حذف جميع ملفات APK والمثبتات نهائيًا (%1$s). يمكنك إعادة تنزيلها في أي وقت.</string>
@@ -643,9 +531,7 @@
     <string name="clear_all_history">مسح الكل</string>
     <string name="remove_search_history_item">إزالة</string>
 
-    <string name="bottom_nav_profile_tweaks">تعديلات</string>
     <string name="tweaks_title">تعديلات</string>
-    <string name="pre_releases">إصدارات تجريبية</string>
 
     <!-- Monorepo support -->
     <string name="asset_filter_label">عامل تصفية الأصول</string>
@@ -705,8 +591,6 @@
     <string name="ready_to_install">جاهز للتثبيت</string>
     <string name="install_ready">تثبيت (جاهز)</string>
 
-    <!-- Translation provider selection -->
-    <string name="section_translation">الترجمة</string>
     <string name="translation_intro">اختر الخدمة المستخدمة لترجمة README.</string>
     <string name="translation_provider_title">خدمة الترجمة</string>
     <string name="translation_provider_description">يعمل Google عالميًا دون تهيئة. يعمل Youdao من الصين القارية ولكنه يتطلب بيانات اعتماد API من بوابة مطوري Youdao.</string>
@@ -749,8 +633,6 @@
     <string name="pat_input_placeholder">ghp_… أو github_pat_…</string>
     <string name="pat_submit">تسجيل الدخول</string>
     <string name="pat_cancel">إلغاء</string>
-    <string name="pat_show">عرض الرمز</string>
-    <string name="pat_hide">إخفاء الرمز</string>
     <string name="pat_error_empty">يرجى لصق رمز.</string>
     <string name="pat_error_invalid_format">هذا لا يبدو كرمز GitHub. تبدأ الرموز بـ ghp_ أو github_pat_.</string>
     <string name="pat_error_bad_credentials">هذا الرمز غير صالح أو تم إلغاؤه.</string>
@@ -767,13 +649,11 @@
     <string name="channel_chip_coachmark_title">اختر قناة الإصدار</string>
     <string name="channel_chip_coachmark_body">اضغط للتبديل بين الإصدارات المستقرة وإصدارات البيتا لهذا التطبيق.</string>
     <string name="channel_chip_coachmark_dismiss">حسناً</string>
-    <string name="channel_toggle_cd">تبديل الإصدارات التجريبية لهذا التطبيق</string>
     <string name="action_switch_to_stable">التبديل إلى الإصدار المستقر %1$s</string>
     <string name="stalled_project_warning_months">لا يوجد إصدار مستقر منذ %1$d أشهر</string>
     <string name="stalled_project_warning_days">لا يوجد إصدار مستقر منذ %1$d أيام</string>
     <string name="stalled_project_warning_description">إصدارات تجريبية نشطة لكن المشروع لم يُصدر بناءً مستقراً منذ فترة. قد لا تتقارب الإصدارات التجريبية إلى إصدار مستقر.</string>
     <string name="merged_whats_changed_title">ما الذي تغيّر منذ %1$s</string>
-    <string name="merged_release_heading">— %1$s —</string>
 
     <!-- E1 — External import wizard -->
     <string name="external_import_top_bar_title">استيراد التطبيقات المثبّتة</string>
@@ -796,7 +676,6 @@
     <string name="external_import_card_action_more">المزيد من التطابقات</string>
     <string name="external_import_card_action_less">إخفاء التطابقات</string>
     <string name="external_import_card_installer_chip">مثبّت عبر %1$s</string>
-    <string name="external_import_card_preselect_known">نعتقد أن هذا هو %1$s · %2$d</string>
     <string name="external_import_card_preselect_unknown">اضغط للبحث عن مستودع</string>
     <string name="external_import_card_expand_label">توسيع لرؤية تطابقات أخرى</string>
     <string name="external_import_card_collapse_label">طي البطاقة</string>
@@ -884,7 +763,6 @@
 
     <!-- E1 — Details unlink dialog -->
     <string name="details_unlink_external_app_menu">إلغاء الربط بهذا المستودع</string>
-    <string name="details_unlink_external_app_more_options">المزيد من الخيارات</string>
     <string name="details_unlink_external_app_dialog_title">إلغاء ربط هذا التطبيق؟</string>
     <string name="details_unlink_external_app_dialog_body">سنتوقف عن تتبع %1$s كمثبّت من هذا المستودع. يبقى التطبيق على جهازك — يُزال الرابط فقط.</string>
     <string name="details_unlink_external_app_dialog_confirm">إلغاء الربط</string>
@@ -904,8 +782,6 @@
     <string name="details_refresh_snackbar_upstream">تعذر التحديث. حاول مرة أخرى لاحقاً.</string>
     <string name="details_refresh_snackbar_generic">فشل التحديث. حاول مرة أخرى.</string>
 
-    <!-- Feedback feature -->
-    <string name="feedback_send">إرسال ملاحظات</string>
     <string name="feedback_title">إرسال ملاحظات</string>
     <string name="feedback_close">إغلاق</string>
     <string name="feedback_category_label">الفئة</string>
@@ -940,16 +816,12 @@
 
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">منصّات مخصّصة</string>
-    <string name="custom_forges_entry_subtitle">أضف مضيفات Forgejo / Gitea ليتعرّف عليها GHS</string>
-    <string name="custom_forges_count_label">%1$d مُضافة</string>
     <string name="custom_forges_dialog_title">منصّات مخصّصة</string>
     <string name="custom_forges_dialog_help">أدخل اسم مضيف Forgejo أو Gitea (مثل git.example.com). سيقبل GHS روابط هذه المضيفات في نموذج الربط اليدوي.</string>
     <string name="custom_forges_add_button">إضافة</string>
     <string name="custom_forges_empty">لا توجد منصّات مخصّصة بعد.</string>
     <string name="done">تم</string>
 
-    <!-- E5 — Mirror feature -->
-    <string name="mirror_tweaks_entry_label">مرآة التنزيل</string>
     <string name="mirror_picker_title">مرآة التنزيل</string>
     <string name="mirror_picker_description">تُستخدم لتنزيل أصول الإصدار. تتجه مكالمات GitHub API دائماً مباشرة. يجب على معظم المستخدمين إبقاء هذا على GitHub المباشر.</string>
     <string name="mirror_section_official">رسمي</string>
@@ -965,7 +837,6 @@
     <string name="mirror_custom_validation_template">يجب أن يحتوي القالب على {url} مرة واحدة بالضبط</string>
     <string name="mirror_custom_save">حفظ</string>
     <string name="mirror_test_button">اختبار المحدد</string>
-    <string name="mirror_test_in_progress">جارٍ الاختبار…</string>
     <string name="mirror_test_success">تم الوصول في %1$dms</string>
     <string name="mirror_test_http_error">أرجعت المرآة %1$d</string>
     <string name="mirror_test_timeout">انتهت المهلة بعد 5 ثوانٍ</string>
@@ -973,12 +844,6 @@
     <string name="mirror_test_other">فشل: %1$s</string>
     <string name="mirror_deploy_your_own_hint">كل المرايا معطّلة؟ يمكنك استضافة مرآتك الخاصة في 5 دقائق — راجع الوثائق.</string>
     <string name="mirror_removed_toast">%1$s لم يعد متاحاً، تم التبديل إلى GitHub المباشر.</string>
-    <string name="mirror_digest_mismatch_error">عدم تطابق المجموع الاختباري — قد يكون الملف قد تم التلاعب به</string>
-    <string name="mirror_auto_suggest_title">هل تجرب مرآة أسرع؟</string>
-    <string name="mirror_auto_suggest_body">يُفضّل بعض المستخدمين على الشبكات البطيئة استخدام وكيل مجتمعي.</string>
-    <string name="mirror_auto_suggest_pick_one">اختر واحدة</string>
-    <string name="mirror_auto_suggest_maybe_later">ربما لاحقاً</string>
-    <string name="mirror_auto_suggest_dont_ask_again">لا تسأل مجدداً</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
     <string name="add_from_starred_title">إضافة من المميزة بنجمة</string>
@@ -989,13 +854,7 @@
     <string name="announcements_category_security">الأمان</string>
     <string name="announcements_category_status">الحالة</string>
     <string name="announcements_category_survey">استطلاعات</string>
-    <string name="announcements_critical_modal_close">أغلق بعد الاطلاع</string>
-    <string name="announcements_days_ago">%1$d ي</string>
     <string name="announcements_empty">لا شيء لمشاركته الآن.</string>
-    <string name="announcements_hours_ago">%1$d س</string>
-    <string name="announcements_just_now">الآن</string>
-    <string name="announcements_last_refreshed">آخر تحديث منذ %1$s</string>
-    <string name="announcements_minutes_ago">%1$d د</string>
     <string name="announcements_mute_locked">لا يمكن تعطيله</string>
     <string name="announcements_mute_settings_title">إظهار العناصر من</string>
     <string name="announcements_open_mute_settings">فتح إعدادات الكتم</string>
@@ -1052,7 +911,6 @@
     <string name="apps_section_state_collapsed">مطوي</string>
     <string name="apps_section_state_expanded">موسّع</string>
     <string name="apps_section_up_to_date">محدَّث</string>
-    <string name="apps_section_updates_available">تحديثات متاحة</string>
     <string name="confirm_discard_pending_message">إسقاط المثبِّت المحفوظ لـ %1$s وإزالة الصف من قائمة تطبيقاتك؟ سيتم حذف ملف APK الذي تم تنزيله.</string>
     <string name="confirm_discard_pending_title">إسقاط التثبيت المعلّق؟</string>
     <string name="dhizuku_grant_permission">منح الإذن</string>
@@ -1138,7 +996,6 @@
     <string name="whats_new_section_new">جديد</string>
     <string name="whats_new_sheet_heading">ما الجديد في %1$s</string>
     <string name="whats_new_title">ما الجديد</string>
-    <string name="whats_new_translations_note">سجل التغييرات بالإنجليزية. الترجمات مرحَّب بها عبر Issues.</string>
     <string name="whats_new_version_label">الإصدار %1$s · %2$s</string>
 
     <!-- Skip this version (issue #542) -->
@@ -1176,7 +1033,6 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
-    <string name="saved_for_transfer_hint">منصة أخرى — يفتح في المتصفح للحفظ والنقل</string>
     <string name="section_chip_your_device">جهازك</string>
     <string name="section_chip_for_transfer">للنقل</string>
     <string name="kao_banner_title">أبقِ أندرويد مفتوحًا</string>

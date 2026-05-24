@@ -40,7 +40,6 @@ import zed.rainxch.core.domain.model.AppLanguages
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.language_follow_system
-import zed.rainxch.githubstore.core.presentation.res.language_picker_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_language
 import zed.rainxch.githubstore.core.presentation.res.tweaks_language_intro_body
 import zed.rainxch.tweaks.presentation.TweaksAction
