@@ -974,7 +974,6 @@
     <string name="skipped_updates_unskip_failure">No se pudo actualizar la preferencia</string>
     <string name="hidden_repositories_title">Repositorios ocultos</string>
     <string name="hidden_repositories_entry_description">Gestiona los repositorios que ocultaste de Inicio y Búsqueda.</string>
-    <string name="hidden_repositories_count">%1$d oculto(s)</string>
     <string name="hidden_repositories_empty_title">Sin repositorios ocultos</string>
     <string name="hidden_repositories_empty_description">Mantén pulsada una tarjeta de repositorio en Inicio o Búsqueda para ocultarla.</string>
     <string name="hidden_repositories_unhide_action">Mostrar</string>
@@ -1246,4 +1245,8 @@
     <string name="tweaks_storage_using_label">En uso: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">Esta pantalla forma parte del rediseño en curso. Los ajustes siguen funcionando — solo los estamos moviendo aquí desde el diseño anterior.</string>
     <string name="tweaks_stub_coming_soon_title">Llegará en una próxima versión</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="one">%1$d repo oculto</item>
+        <item quantity="other">%1$d repos ocultos</item>
+    </plurals>
 </resources>

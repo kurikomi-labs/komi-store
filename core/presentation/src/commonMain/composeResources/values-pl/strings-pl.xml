@@ -995,7 +995,6 @@
     <string name="skipped_updates_unskip_failure">Nie udało się zmienić preferencji</string>
     <string name="hidden_repositories_title">Ukryte repozytoria</string>
     <string name="hidden_repositories_entry_description">Zarządzaj repozytoriami ukrytymi na Ekranie głównym i w Wyszukiwarce.</string>
-    <string name="hidden_repositories_count">%1$d ukryte</string>
     <string name="hidden_repositories_empty_title">Brak ukrytych repozytoriów</string>
     <string name="hidden_repositories_empty_description">Przytrzymaj kartę repozytorium na Ekranie głównym lub w Wyszukiwarce, aby ukryć ją z odkrywania.</string>
     <string name="hidden_repositories_unhide_action">Pokaż</string>
@@ -1273,4 +1272,10 @@
     <string name="tweaks_storage_using_label">Zajmuje: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">Ten ekran jest częścią trwającego przeprojektowania. Ustawienia nadal działają — są tylko przenoszone tutaj ze starego układu.</string>
     <string name="tweaks_stub_coming_soon_title">Wkrótce w kolejnej aktualizacji</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="one">%1$d repo</item>
+        <item quantity="few">%1$d repo</item>
+        <item quantity="many">%1$d repo</item>
+        <item quantity="other">%1$d repo</item>
+    </plurals>
 </resources>

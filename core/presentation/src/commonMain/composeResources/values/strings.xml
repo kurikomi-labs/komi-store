@@ -683,7 +683,6 @@
     <string name="section_chip_for_transfer">For transfer</string>
     <string name="hidden_repositories_title">Hidden repositories</string>
     <string name="hidden_repositories_entry_description">Manage repositories you hid from Home and Search.</string>
-    <string name="hidden_repositories_count">%1$d hidden</string>
     <string name="hidden_repositories_empty_title">No hidden repositories</string>
     <string name="hidden_repositories_empty_description">Long-press a repository card on Home or Search to hide it from discovery.</string>
     <string name="hidden_repositories_unhide_action">Unhide</string>

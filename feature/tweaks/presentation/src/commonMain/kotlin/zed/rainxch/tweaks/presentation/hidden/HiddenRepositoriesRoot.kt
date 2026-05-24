@@ -49,6 +49,7 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import org.jetbrains.compose.resources.pluralStringResource
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_count
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_empty_description
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_empty_title
@@ -107,7 +108,11 @@ fun HiddenRepositoriesRoot(
                         )
                         if (state.items.isNotEmpty()) {
                             Text(
-                                text = stringResource(Res.string.hidden_repositories_count, state.items.size),
+                                text = pluralStringResource(
+                                    Res.plurals.hidden_repositories_count,
+                                    state.items.size,
+                                    state.items.size,
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

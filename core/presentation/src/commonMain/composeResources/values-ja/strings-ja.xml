@@ -969,7 +969,6 @@
     <string name="skipped_updates_unskip_failure">設定を更新できませんでした</string>
     <string name="hidden_repositories_title">非表示のリポジトリ</string>
     <string name="hidden_repositories_entry_description">ホームと検索で非表示にしたリポジトリを管理。</string>
-    <string name="hidden_repositories_count">%1$d 件非表示</string>
     <string name="hidden_repositories_empty_title">非表示のリポジトリはありません</string>
     <string name="hidden_repositories_empty_description">ホームや検索でリポジトリカードを長押しすると検索結果から非表示にできます。</string>
     <string name="hidden_repositories_unhide_action">表示する</string>
@@ -1237,4 +1236,7 @@
     <string name="tweaks_storage_using_label">使用中: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">この画面は進行中のリデザインの一部です。設定は引き続き動作します — 旧来のレイアウトからここへ移動している途中です。</string>
     <string name="tweaks_stub_coming_soon_title">今後のアップデートで実装予定</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="other">%1$d 件非表示</item>
+    </plurals>
 </resources>

@@ -995,7 +995,6 @@
     <string name="skipped_updates_unskip_failure">পছন্দ আপডেট করা যায়নি</string>
     <string name="hidden_repositories_title">লুকানো রিপোজিটরি</string>
     <string name="hidden_repositories_entry_description">হোম ও সার্চ থেকে লুকানো রিপোজিটরি পরিচালনা করুন।</string>
-    <string name="hidden_repositories_count">%1$d লুকানো</string>
     <string name="hidden_repositories_empty_title">কোনো লুকানো রিপোজিটরি নেই</string>
     <string name="hidden_repositories_empty_description">হোম বা সার্চে রিপোজিটরি কার্ডে দীর্ঘক্ষণ চাপ দিয়ে আবিষ্কার থেকে লুকান।</string>
     <string name="hidden_repositories_unhide_action">দেখান</string>

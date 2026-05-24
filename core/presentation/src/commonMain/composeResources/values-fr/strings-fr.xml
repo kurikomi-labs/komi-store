@@ -975,7 +975,6 @@
     <string name="skipped_updates_unskip_failure">Impossible de mettre à jour la préférence</string>
     <string name="hidden_repositories_title">Dépôts masqués</string>
     <string name="hidden_repositories_entry_description">Gérez les dépôts masqués depuis Accueil et Recherche.</string>
-    <string name="hidden_repositories_count">%1$d masqué(s)</string>
     <string name="hidden_repositories_empty_title">Aucun dépôt masqué</string>
     <string name="hidden_repositories_empty_description">Appuyez longuement sur une carte de dépôt dans Accueil ou Recherche pour la masquer.</string>
     <string name="hidden_repositories_unhide_action">Afficher</string>
@@ -1246,4 +1245,8 @@
     <string name="tweaks_storage_using_label">Utilisation : %1$s</string>
     <string name="tweaks_stub_coming_soon_body">Cet écran fait partie de la refonte en cours. Les paramètres fonctionnent toujours — ils sont simplement en cours de migration depuis l\'ancienne disposition.</string>
     <string name="tweaks_stub_coming_soon_title">Bientôt disponible</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="one">%1$d dépôt masqué</item>
+        <item quantity="other">%1$d dépôts masqués</item>
+    </plurals>
 </resources>

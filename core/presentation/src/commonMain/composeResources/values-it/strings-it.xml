@@ -1008,7 +1008,6 @@
     <string name="skipped_updates_unskip_failure">Impossibile aggiornare la preferenza</string>
     <string name="hidden_repositories_title">Repository nascosti</string>
     <string name="hidden_repositories_entry_description">Gestisci i repository nascosti da Home e Ricerca.</string>
-    <string name="hidden_repositories_count">%1$d nascosti</string>
     <string name="hidden_repositories_empty_title">Nessun repository nascosto</string>
     <string name="hidden_repositories_empty_description">Tieni premuta una scheda repository in Home o Ricerca per nasconderla.</string>
     <string name="hidden_repositories_unhide_action">Mostra</string>
@@ -1280,4 +1279,8 @@
     <string name="tweaks_storage_using_label">In uso: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">Questa schermata fa parte del redesign in corso. Le impostazioni funzionano ancora — vengono solo spostate qui dal vecchio layout.</string>
     <string name="tweaks_stub_coming_soon_title">In arrivo</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="one">%1$d repo nascosto</item>
+        <item quantity="other">%1$d repo nascosti</item>
+    </plurals>
 </resources>

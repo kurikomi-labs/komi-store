@@ -971,7 +971,6 @@
     <string name="skipped_updates_unskip_failure">无法更新偏好设置</string>
     <string name="hidden_repositories_title">已隐藏的仓库</string>
     <string name="hidden_repositories_entry_description">管理从首页和搜索中隐藏的仓库。</string>
-    <string name="hidden_repositories_count">已隐藏 %1$d 个</string>
     <string name="hidden_repositories_empty_title">没有隐藏的仓库</string>
     <string name="hidden_repositories_empty_description">在首页或搜索中长按仓库卡片即可从发现中隐藏。</string>
     <string name="hidden_repositories_unhide_action">取消隐藏</string>
@@ -1240,4 +1239,7 @@
     <string name="tweaks_storage_using_label">占用：%1$s</string>
     <string name="tweaks_stub_coming_soon_body">此页面属于正在进行的重新设计。设置依然有效 — 只是正从旧布局迁移到这里。</string>
     <string name="tweaks_stub_coming_soon_title">后续更新中</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="other">已隐藏 %1$d 个</item>
+    </plurals>
 </resources>

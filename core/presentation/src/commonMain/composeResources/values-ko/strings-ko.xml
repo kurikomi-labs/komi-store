@@ -998,7 +998,6 @@
     <string name="skipped_updates_unskip_failure">설정을 업데이트할 수 없습니다</string>
     <string name="hidden_repositories_title">숨긴 저장소</string>
     <string name="hidden_repositories_entry_description">홈과 검색에서 숨긴 저장소를 관리합니다.</string>
-    <string name="hidden_repositories_count">%1$d개 숨김</string>
     <string name="hidden_repositories_empty_title">숨긴 저장소 없음</string>
     <string name="hidden_repositories_empty_description">홈 또는 검색에서 저장소 카드를 길게 눌러 탐색에서 숨길 수 있습니다.</string>
     <string name="hidden_repositories_unhide_action">표시</string>
@@ -1267,4 +1266,7 @@
     <string name="tweaks_storage_using_label">사용 중: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">이 화면은 진행 중인 디자인 개편의 일부입니다. 설정은 정상 동작하며 — 이전 레이아웃에서 이곳으로 옮겨지는 중일 뿐입니다.</string>
     <string name="tweaks_stub_coming_soon_title">후속 업데이트 예정</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="other">%1$d개 숨김</item>
+    </plurals>
 </resources>

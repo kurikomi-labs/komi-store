@@ -1017,7 +1017,6 @@
     <string name="skipped_updates_unskip_failure">تعذّر تحديث التفضيل</string>
     <string name="hidden_repositories_title">المستودعات المخفية</string>
     <string name="hidden_repositories_entry_description">إدارة المستودعات التي أخفيتها من الرئيسية والبحث.</string>
-    <string name="hidden_repositories_count">%1$d مخفي</string>
     <string name="hidden_repositories_empty_title">لا توجد مستودعات مخفية</string>
     <string name="hidden_repositories_empty_description">اضغط مطولاً على بطاقة مستودع في الرئيسية أو البحث لإخفائه من الاستكشاف.</string>
     <string name="hidden_repositories_unhide_action">إظهار</string>
@@ -1301,4 +1300,12 @@
     <string name="tweaks_storage_using_label">يستخدم: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">هذه الشاشة جزء من التصميم الجديد قيد التطوير. الإعدادات لا تزال تعمل — يجري نقلها إلى هنا من التخطيط القديم.</string>
     <string name="tweaks_stub_coming_soon_title">قادم في تحديث لاحق</string>
+    <plurals name="hidden_repositories_count">
+        <item quantity="zero">لا مستودعات مخفية</item>
+        <item quantity="one">مستودع مخفي واحد</item>
+        <item quantity="two">مستودعان مخفيان</item>
+        <item quantity="few">%1$d مستودعات مخفية</item>
+        <item quantity="many">%1$d مستودعًا مخفيًا</item>
+        <item quantity="other">%1$d مستودع مخفي</item>
+    </plurals>
 </resources>

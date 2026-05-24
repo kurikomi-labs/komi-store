@@ -1005,7 +1005,6 @@
     <string name="skipped_updates_unskip_failure">Tercih güncellenemedi</string>
     <string name="hidden_repositories_title">Gizli depolar</string>
     <string name="hidden_repositories_entry_description">Ana ekran ve Arama'da gizlediğin depoları yönet.</string>
-    <string name="hidden_repositories_count">%1$d gizli</string>
     <string name="hidden_repositories_empty_title">Gizli depo yok</string>
     <string name="hidden_repositories_empty_description">Ana ekran veya Arama'da bir depo kartına basılı tutarak keşiften gizleyin.</string>
     <string name="hidden_repositories_unhide_action">Göster</string>
