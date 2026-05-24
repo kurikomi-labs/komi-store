@@ -1,8 +1,10 @@
 package zed.rainxch.details.presentation.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -137,7 +143,7 @@ private fun EmptyState() {
 private fun InspectionContent(inspection: ApkInspection) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item { Header(inspection) }
@@ -167,12 +173,14 @@ private fun Header(inspection: ApkInspection) {
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.copyableOnLongPress(inspection.appLabel),
         )
         Text(
             text = inspection.packageName,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily.Monospace,
+            modifier = Modifier.copyableOnLongPress(inspection.packageName),
         )
         val sourceLabel = when (inspection.source) {
             ApkInspection.Source.FILE -> stringResource(Res.string.apk_inspect_source_file)
@@ -435,6 +443,7 @@ private fun PermissionRow(permission: ApkPermission) {
                 fontFamily = FontFamily.Monospace,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.copyableOnLongPress(permission.name),
             )
         }
         Surface(
@@ -578,12 +587,17 @@ private fun InspectRow(label: String, value: String, monospace: Boolean = false)
                 modifier = Modifier.width(120.dp),
             )
         }
+        val valueModifier = if (monospace) {
+            Modifier.weight(1f).copyableOnLongPress(value)
+        } else {
+            Modifier.weight(1f)
+        }
         Text(
             text = value,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
             fontFamily = if (monospace) FontFamily.Monospace else FontFamily.Default,
-            modifier = Modifier.weight(1f),
+            modifier = valueModifier,
         )
     }
 }
@@ -630,6 +644,20 @@ private fun protectionStyle(level: ProtectionLevel): Pair<Color, String> {
         ProtectionLevel.NORMAL -> neutral to stringResource(Res.string.apk_inspect_protection_normal)
         ProtectionLevel.UNKNOWN -> muted to stringResource(Res.string.apk_inspect_protection_unknown)
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun Modifier.copyableOnLongPress(value: String): Modifier {
+    val clipboard = LocalClipboardManager.current
+    val haptic = LocalHapticFeedback.current
+    return this.combinedClickable(
+        onClick = {},
+        onLongClick = {
+            clipboard.setText(AnnotatedString(value))
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        },
+    )
 }
 
 private fun formatBytes(bytes: Long): String =
