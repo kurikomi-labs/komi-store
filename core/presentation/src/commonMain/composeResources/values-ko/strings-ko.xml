@@ -1270,4 +1270,6 @@
     <string name="theme_dynamic">다이내믹</string>
     <string name="auth_more_signin_options">추가 로그인 옵션</string>
     <string name="auth_hide_signin_options">옵션 숨기기</string>
+    <string name="tweaks_sources_platforms_title">디스커버리 플랫폼</string>
+    <string name="tweaks_sources_platforms_body">홈 피드를 특정 플랫폼으로 필터링합니다. 모두 꺼두면 전체 표시.</string>
 </resources>

@@ -1250,4 +1250,6 @@
     <string name="theme_dynamic">Dinámico</string>
     <string name="auth_more_signin_options">Más opciones de inicio de sesión</string>
     <string name="auth_hide_signin_options">Ocultar opciones</string>
+    <string name="tweaks_sources_platforms_title">Plataformas de descubrimiento</string>
+    <string name="tweaks_sources_platforms_body">Filtra el feed principal por plataforma. Déjalas todas desactivadas para verlo todo.</string>
 </resources>

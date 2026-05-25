@@ -1284,4 +1284,6 @@
     <string name="theme_dynamic">Dinamico</string>
     <string name="auth_more_signin_options">Altre opzioni di accesso</string>
     <string name="auth_hide_signin_options">Nascondi opzioni</string>
+    <string name="tweaks_sources_platforms_title">Piattaforme di scoperta</string>
+    <string name="tweaks_sources_platforms_body">Filtra il feed Home per piattaforma. Lasciale tutte disattivate per vedere tutto.</string>
 </resources>

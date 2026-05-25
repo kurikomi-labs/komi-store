@@ -1281,4 +1281,6 @@
     <string name="theme_dynamic">Dinamik</string>
     <string name="auth_more_signin_options">Diğer giriş seçenekleri</string>
     <string name="auth_hide_signin_options">Seçenekleri gizle</string>
+    <string name="tweaks_sources_platforms_title">Keşif platformları</string>
+    <string name="tweaks_sources_platforms_body">Ana akışı platforma göre filtrele. Hepsini kapalı bırakırsan her şey gösterilir.</string>
 </resources>

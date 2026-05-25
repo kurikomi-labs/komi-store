@@ -1271,4 +1271,6 @@
     <string name="theme_dynamic">ডাইনামিক</string>
     <string name="auth_more_signin_options">আরও সাইন-ইন বিকল্প</string>
     <string name="auth_hide_signin_options">বিকল্প লুকান</string>
+    <string name="tweaks_sources_platforms_title">ডিসকভারি প্ল্যাটফর্ম</string>
+    <string name="tweaks_sources_platforms_body">হোম ফিডকে নির্দিষ্ট প্ল্যাটফর্মে ফিল্টার করুন। সব বন্ধ রাখলে সব দেখাবে।</string>
 </resources>

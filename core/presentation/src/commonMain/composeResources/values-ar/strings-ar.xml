@@ -1309,4 +1309,6 @@
     <string name="theme_dynamic">ديناميكي</string>
     <string name="auth_more_signin_options">خيارات تسجيل دخول إضافية</string>
     <string name="auth_hide_signin_options">إخفاء الخيارات</string>
+    <string name="tweaks_sources_platforms_title">منصات الاكتشاف</string>
+    <string name="tweaks_sources_platforms_body">تصفية الصفحة الرئيسية حسب المنصة. اترك الكل بدون تحديد لعرض كل شيء.</string>
 </resources>

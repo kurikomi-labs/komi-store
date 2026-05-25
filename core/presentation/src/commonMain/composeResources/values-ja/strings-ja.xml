@@ -1240,4 +1240,6 @@
     <string name="theme_dynamic">ダイナミック</string>
     <string name="auth_more_signin_options">他のサインイン方法</string>
     <string name="auth_hide_signin_options">オプションを隠す</string>
+    <string name="tweaks_sources_platforms_title">ディスカバリー対象プラットフォーム</string>
+    <string name="tweaks_sources_platforms_body">ホームフィードを特定のプラットフォームで絞り込みます。すべてオフで全表示。</string>
 </resources>

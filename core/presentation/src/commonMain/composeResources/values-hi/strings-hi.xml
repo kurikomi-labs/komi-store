@@ -1286,4 +1286,6 @@
     <string name="theme_dynamic">डायनामिक</string>
     <string name="auth_more_signin_options">अधिक साइन-इन विकल्प</string>
     <string name="auth_hide_signin_options">विकल्प छिपाएँ</string>
+    <string name="tweaks_sources_platforms_title">डिस्कवरी प्लेटफ़ॉर्म</string>
+    <string name="tweaks_sources_platforms_body">होम फ़ीड को विशिष्ट प्लेटफ़ॉर्म पर फ़िल्टर करें। सब बंद रहने पर सब कुछ दिखेगा।</string>
 </resources>

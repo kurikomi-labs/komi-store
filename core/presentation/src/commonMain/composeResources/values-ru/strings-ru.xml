@@ -1279,4 +1279,6 @@
     <string name="theme_dynamic">Динамичная</string>
     <string name="auth_more_signin_options">Другие способы входа</string>
     <string name="auth_hide_signin_options">Скрыть параметры</string>
+    <string name="tweaks_sources_platforms_title">Платформы для подборки</string>
+    <string name="tweaks_sources_platforms_body">Фильтрация главной ленты по платформам. Если все выключены, показываются все.</string>
 </resources>

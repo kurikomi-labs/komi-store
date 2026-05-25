@@ -1279,4 +1279,6 @@
     <string name="theme_dynamic">Dynamiczny</string>
     <string name="auth_more_signin_options">Więcej opcji logowania</string>
     <string name="auth_hide_signin_options">Ukryj opcje</string>
+    <string name="tweaks_sources_platforms_title">Platformy odkrywania</string>
+    <string name="tweaks_sources_platforms_body">Filtruj kanał Home według platformy. Pozostaw wszystkie wyłączone, aby zobaczyć wszystko.</string>
 </resources>
