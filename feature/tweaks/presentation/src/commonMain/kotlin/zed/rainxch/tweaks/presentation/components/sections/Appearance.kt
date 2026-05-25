@@ -1,9 +1,11 @@
 package zed.rainxch.tweaks.presentation.components.sections
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,13 +31,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.outlined.SettingsBrightness
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,17 +41,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
@@ -63,22 +60,74 @@ import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
 import zed.rainxch.tweaks.presentation.components.ToggleSettingCard
 
+private enum class ModeChoice { LIGHT, DARK, SYSTEM }
+
+private fun isDarkToChoice(value: Boolean?): ModeChoice = when (value) {
+    true -> ModeChoice.DARK
+    false -> ModeChoice.LIGHT
+    null -> ModeChoice.SYSTEM
+}
+
+private fun choiceToIsDark(choice: ModeChoice): Boolean? = when (choice) {
+    ModeChoice.DARK -> true
+    ModeChoice.LIGHT -> false
+    ModeChoice.SYSTEM -> null
+}
+
+@OptIn(ExperimentalLayoutApi::class)
 fun LazyListScope.appearanceSection(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
 ) {
-    item {
-        ThemePickerCard(
-            isDarkTheme = state.isDarkTheme,
-            selectedPalette = state.selectedThemeColor,
-            amoledEnabled = state.isAmoledThemeEnabled,
-            onDarkThemeChange = { onAction(TweaksAction.OnDarkThemeChange(it)) },
-            onPaletteSelected = { onAction(TweaksAction.OnThemeColorSelected(it)) },
-            onAmoledToggled = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
+    item(key = "mode_header") {
+        GhsSectionHeader(text = stringResource(Res.string.appearance_section_mode))
+        Spacer(Modifier.height(8.dp))
+    }
+    item(key = "mode_tiles") {
+        ModeTiles(
+            current = isDarkToChoice(state.isDarkTheme),
+            paletteForPreview = state.selectedThemeColor,
+            onSelected = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
         )
-
-        Spacer(Modifier.height(12.dp))
-
+        Spacer(Modifier.height(16.dp))
+    }
+    item(key = "palette_header") {
+        GhsSectionHeader(text = stringResource(Res.string.theme_color))
+        Spacer(Modifier.height(8.dp))
+    }
+    item(key = "palette_grid") {
+        PaletteGrid(
+            isDarkTheme = state.isDarkTheme,
+            amoledEnabled = state.isAmoledThemeEnabled,
+            selected = state.selectedThemeColor,
+            onSelected = { onAction(TweaksAction.OnThemeColorSelected(it)) },
+        )
+    }
+    item(key = "amoled_toggle") {
+        val systemDark = isSystemInDarkTheme()
+        val resolvedDark = state.isDarkTheme ?: systemDark
+        AnimatedVisibility(
+            visible = resolvedDark,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Column {
+                Spacer(Modifier.height(8.dp))
+                ToggleSettingCard(
+                    title = stringResource(Res.string.amoled_black_theme),
+                    description = stringResource(Res.string.amoled_black_description),
+                    checked = state.isAmoledThemeEnabled,
+                    onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
+                )
+            }
+        }
+    }
+    item(key = "display_header") {
+        Spacer(Modifier.height(16.dp))
+        GhsSectionHeader(text = stringResource(Res.string.appearance_section_display))
+        Spacer(Modifier.height(8.dp))
+    }
+    item(key = "system_font") {
         ToggleSettingCard(
             title = stringResource(Res.string.system_font),
             description = stringResource(Res.string.system_font_description),
@@ -91,8 +140,9 @@ fun LazyListScope.appearanceSection(
                 )
             },
         )
-
-        if (getPlatform() != Platform.ANDROID) {
+    }
+    if (getPlatform() != Platform.ANDROID) {
+        item(key = "scrollbar") {
             Spacer(Modifier.height(8.dp))
             ToggleSettingCard(
                 title = stringResource(Res.string.scrollbar_option_title),
@@ -100,6 +150,8 @@ fun LazyListScope.appearanceSection(
                 checked = state.isScrollbarEnabled,
                 onCheckedChange = { onAction(TweaksAction.OnScrollbarToggled(it)) },
             )
+        }
+        item(key = "content_width") {
             Spacer(Modifier.height(8.dp))
             ContentWidthCard(
                 selected = state.contentWidth,
@@ -109,15 +161,208 @@ fun LazyListScope.appearanceSection(
     }
 }
 
+@Composable
+private fun ModeTiles(
+    current: ModeChoice,
+    paletteForPreview: AppTheme,
+    onSelected: (ModeChoice) -> Unit,
+) {
+    val token = paletteForPreview.toTokenPalette()
+    val lightScheme = colorSchemeFor(token, Tokens.Mode.LIGHT)
+    val darkScheme = colorSchemeFor(token, Tokens.Mode.DARK)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        ModeTile(
+            label = stringResource(Res.string.theme_light),
+            selected = current == ModeChoice.LIGHT,
+            preview = { ThemePreviewCanvas(scheme = lightScheme) },
+            onClick = { onSelected(ModeChoice.LIGHT) },
+            modifier = Modifier.weight(1f),
+        )
+        ModeTile(
+            label = stringResource(Res.string.theme_dark),
+            selected = current == ModeChoice.DARK,
+            preview = { ThemePreviewCanvas(scheme = darkScheme) },
+            onClick = { onSelected(ModeChoice.DARK) },
+            modifier = Modifier.weight(1f),
+        )
+        ModeTile(
+            label = stringResource(Res.string.theme_system),
+            selected = current == ModeChoice.SYSTEM,
+            preview = {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.weight(1f).fillMaxSize()) {
+                        ThemePreviewCanvas(scheme = lightScheme, edgeFade = true)
+                    }
+                    Box(modifier = Modifier.weight(1f).fillMaxSize()) {
+                        ThemePreviewCanvas(scheme = darkScheme, edgeFade = true)
+                    }
+                }
+            },
+            onClick = { onSelected(ModeChoice.SYSTEM) },
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun ModeTile(
+    label: String,
+    selected: Boolean,
+    preview: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val borderColor by animateColorAsState(
+        targetValue = if (selected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.outline
+        },
+        animationSpec = tween(durationMillis = 220),
+        label = "mode_border",
+    )
+    val borderWidth by animateFloatAsState(
+        targetValue = if (selected) 2f else 1f,
+        animationSpec = tween(durationMillis = 220),
+        label = "mode_border_w",
+    )
+    Column(
+        modifier = modifier
+            .clip(Radii.row)
+            .clickable(onClick = onClick)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(96.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(
+                    width = borderWidth.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(16.dp),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            preview()
+            if (selected) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .size(18.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(12.dp),
+                    )
+                }
+            }
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+            ),
+            color = if (selected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+        )
+    }
+}
+
+@Composable
+private fun ThemePreviewCanvas(
+    scheme: androidx.compose.material3.ColorScheme,
+    edgeFade: Boolean = false,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(scheme.background),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.55f)
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(scheme.onSurface.copy(alpha = if (edgeFade) 0.55f else 0.85f)),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(28.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(scheme.surfaceContainerHigh)
+                    .padding(6.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(scheme.primary),
+                    )
+                    Box(
+                        modifier = Modifier
+                            .height(6.dp)
+                            .fillMaxWidth(0.5f)
+                            .clip(RoundedCornerShape(50))
+                            .background(scheme.onSurfaceVariant.copy(alpha = 0.6f)),
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(18.dp)
+                        .width(44.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(scheme.primary),
+                )
+                Box(
+                    modifier = Modifier
+                        .height(18.dp)
+                        .width(28.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(scheme.secondaryContainer),
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ThemePickerCard(
+private fun PaletteGrid(
     isDarkTheme: Boolean?,
-    selectedPalette: AppTheme,
     amoledEnabled: Boolean,
-    onDarkThemeChange: (Boolean?) -> Unit,
-    onPaletteSelected: (AppTheme) -> Unit,
-    onAmoledToggled: (Boolean) -> Unit,
+    selected: AppTheme,
+    onSelected: (AppTheme) -> Unit,
 ) {
     val systemDark = isSystemInDarkTheme()
     val resolvedDark = isDarkTheme ?: systemDark
@@ -126,146 +371,27 @@ private fun ThemePickerCard(
         resolvedDark -> Tokens.Mode.DARK
         else -> Tokens.Mode.LIGHT
     }
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = Radii.row,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
-        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = stringResource(Res.string.theme_color),
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            // Mode segment
-            ModeSegment(
-                isDarkTheme = isDarkTheme,
-                onChange = onDarkThemeChange,
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            // Palette grid
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                AppTheme.entries.forEach { palette ->
-                    PaletteSwatch(
-                        palette = palette,
-                        mode = previewMode,
-                        selected = palette == selectedPalette,
-                        onClick = { onPaletteSelected(palette) },
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = resolvedDark,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Column {
-                    Spacer(Modifier.height(14.dp))
-                    InlineToggleRow(
-                        title = stringResource(Res.string.amoled_black_theme),
-                        description = stringResource(Res.string.amoled_black_description),
-                        checked = amoledEnabled,
-                        onCheckedChange = onAmoledToggled,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ModeSegment(
-    isDarkTheme: Boolean?,
-    onChange: (Boolean?) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        SegmentItem(
-            icon = Icons.Default.LightMode,
-            label = stringResource(Res.string.theme_light),
-            selected = isDarkTheme == false,
-            onClick = { onChange(false) },
-            modifier = Modifier.weight(1f),
-        )
-        SegmentItem(
-            icon = Icons.Default.DarkMode,
-            label = stringResource(Res.string.theme_dark),
-            selected = isDarkTheme == true,
-            onClick = { onChange(true) },
-            modifier = Modifier.weight(1f),
-        )
-        SegmentItem(
-            icon = Icons.Outlined.SettingsBrightness,
-            label = stringResource(Res.string.theme_system),
-            selected = isDarkTheme == null,
-            onClick = { onChange(null) },
-            modifier = Modifier.weight(1f),
-        )
-    }
-}
-
-@Composable
-private fun SegmentItem(
-    icon: ImageVector,
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val container =
-        if (selected) MaterialTheme.colorScheme.primary
-        else Color.Transparent
-    val content =
-        if (selected) MaterialTheme.colorScheme.onPrimary
-        else MaterialTheme.colorScheme.onSurfaceVariant
-    Box(
-        modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(container)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = content,
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = content,
-            )
+            AppTheme.entries.forEach { palette ->
+                PaletteSwatch(
+                    palette = palette,
+                    mode = previewMode,
+                    isSelected = palette == selected,
+                    onClick = { onSelected(palette) },
+                )
+            }
         }
     }
 }
@@ -274,18 +400,32 @@ private fun SegmentItem(
 private fun PaletteSwatch(
     palette: AppTheme,
     mode: Tokens.Mode,
-    selected: Boolean,
+    isSelected: Boolean,
     onClick: () -> Unit,
 ) {
     val scheme = colorSchemeFor(palette.toTokenPalette(), mode)
     val scale by animateFloatAsState(
-        targetValue = if (selected) 1.0f else 0.98f,
+        targetValue = if (isSelected) 1.0f else 0.96f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "swatch_scale",
     )
+    val borderColor by animateColorAsState(
+        targetValue = if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.outline
+        },
+        animationSpec = tween(durationMillis = 220),
+        label = "swatch_border",
+    )
+    val borderWidth by animateFloatAsState(
+        targetValue = if (isSelected) 2f else 1f,
+        animationSpec = tween(durationMillis = 220),
+        label = "swatch_border_w",
+    )
     Column(
         modifier = Modifier
-            .width(74.dp)
+            .width(78.dp)
             .scale(scale)
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
@@ -294,29 +434,24 @@ private fun PaletteSwatch(
     ) {
         Box(
             modifier = Modifier
-                .size(width = 74.dp, height = 56.dp)
+                .size(width = 78.dp, height = 60.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .background(scheme.background)
                 .border(
-                    width = if (selected) 2.dp else 1.dp,
-                    color = if (selected) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
-                    },
+                    width = borderWidth.dp,
+                    color = borderColor,
                     shape = RoundedCornerShape(14.dp),
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            // Mini palette preview: primary blob + secondary dot
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Box(
                     modifier = Modifier
-                        .size(width = 22.dp, height = 22.dp)
-                        .clip(RoundedCornerShape(7.dp))
+                        .size(width = 24.dp, height = 24.dp)
+                        .clip(RoundedCornerShape(8.dp))
                         .background(scheme.primary),
                 )
                 Box(
@@ -332,7 +467,7 @@ private fun PaletteSwatch(
                         .background(scheme.tertiary),
                 )
             }
-            if (selected) {
+            if (isSelected) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -354,49 +489,13 @@ private fun PaletteSwatch(
         Text(
             text = palette.displayName,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
             ),
-            color = if (selected) {
+            color = if (isSelected) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
             },
-        )
-    }
-}
-
-@Composable
-private fun InlineToggleRow(
-    title: String,
-    description: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onCheckedChange(!checked) }
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Switch(
-            checked = checked,
-            onCheckedChange = null,
         )
     }
 }
@@ -410,10 +509,7 @@ private fun ContentWidthCard(
         modifier = Modifier.fillMaxWidth(),
         shape = Radii.row,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
-        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -435,12 +531,24 @@ private fun ContentWidthCard(
             ) {
                 ContentWidth.entries.forEach { width ->
                     val isSelected = width == selected
-                    val container =
-                        if (isSelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surfaceContainerHigh
-                    val content =
-                        if (isSelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurface
+                    val container by animateColorAsState(
+                        targetValue = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerHigh
+                        },
+                        animationSpec = tween(durationMillis = 220),
+                        label = "cw_container",
+                    )
+                    val content by animateColorAsState(
+                        targetValue = if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                        animationSpec = tween(durationMillis = 220),
+                        label = "cw_content",
+                    )
                     Box(
                         modifier = Modifier
                             .weight(1f)
