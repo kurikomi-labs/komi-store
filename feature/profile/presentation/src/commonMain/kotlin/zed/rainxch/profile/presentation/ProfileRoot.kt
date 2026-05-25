@@ -1,6 +1,8 @@
 package zed.rainxch.profile.presentation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.downloads_cleared
 import zed.rainxch.githubstore.core.presentation.res.logout_success
@@ -195,23 +199,28 @@ fun ProfileScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val listState = rememberLazyListState()
-        LazyColumn(
-            state = listState,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp)
-                    .arrowKeyScroll(listState, autoFocus = true),
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            profileSections(
-                state = state,
-                hasUnreadAnnouncements = hasUnreadAnnouncements,
-                onAction = onAction,
-            )
+            LazyColumn(
+                state = listState,
+                modifier =
+                    Modifier
+                        .constrainedContentWidth()
+                        .fillMaxHeight()
+                        .padding(16.dp)
+                        .arrowKeyScroll(listState, autoFocus = true),
+            ) {
+                profileSections(
+                    state = state,
+                    hasUnreadAnnouncements = hasUnreadAnnouncements,
+                    onAction = onAction,
+                )
 
-            item {
-                Spacer(Modifier.height(bottomNavHeight + 32.dp))
+                item {
+                    Spacer(Modifier.height(bottomNavHeight + 32.dp))
+                }
             }
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,6 +105,7 @@ import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
@@ -535,8 +537,12 @@ fun AppsScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            Column(
+            Box(
                 modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+            Column(
+                modifier = Modifier.constrainedContentWidth().fillMaxHeight(),
             ) {
                 GhsTextField(
                     value = state.searchQuery,
@@ -895,6 +901,7 @@ fun AppsScreen(
                         }
                     }
                 }
+            }
             }
         }
     }

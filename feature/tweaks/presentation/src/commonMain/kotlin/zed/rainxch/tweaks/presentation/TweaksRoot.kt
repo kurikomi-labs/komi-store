@@ -2,6 +2,7 @@ package zed.rainxch.tweaks.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,6 +62,7 @@ import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.RestartBanner
 import zed.rainxch.core.presentation.components.hub.GhsEntryRow
@@ -367,11 +369,15 @@ fun TweaksHubScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val listState = rememberLazyListState()
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            contentAlignment = Alignment.TopCenter,
+        ) {
         LazyColumn(
             state = listState,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .constrainedContentWidth()
+                .fillMaxHeight()
                 .padding(horizontal = 16.dp)
                 .arrowKeyScroll(listState, autoFocus = true),
         ) {
@@ -438,6 +444,7 @@ fun TweaksHubScreen(
             item(key = "bottom_spacer") {
                 Spacer(Modifier.height(bottomNavHeight + 32.dp))
             }
+        }
         }
     }
 }

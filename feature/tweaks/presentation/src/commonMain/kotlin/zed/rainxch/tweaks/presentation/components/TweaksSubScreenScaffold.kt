@@ -1,7 +1,9 @@
 package zed.rainxch.tweaks.presentation.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.RestartReason
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.back_cd
 
@@ -75,15 +79,21 @@ fun TweaksSubScreenScaffold(
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val listState = rememberLazyListState()
-        LazyColumn(
-            state = listState,
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .arrowKeyScroll(listState, autoFocus = true),
-            contentPadding = PaddingValues(top = 8.dp, bottom = bottomNavHeight + 32.dp),
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter,
         ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .constrainedContentWidth()
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp)
+                    .arrowKeyScroll(listState, autoFocus = true),
+                contentPadding = PaddingValues(top = 8.dp, bottom = bottomNavHeight + 32.dp),
+            ) {
             if (showRestartBanner && restartReasons.isNotEmpty()) {
                 item(key = "restart_banner") {
                     RestartBanner(
@@ -94,7 +104,8 @@ fun TweaksSubScreenScaffold(
                     Spacer(Modifier.height(16.dp))
                 }
             }
-            content()
+                content()
+            }
         }
     }
 }

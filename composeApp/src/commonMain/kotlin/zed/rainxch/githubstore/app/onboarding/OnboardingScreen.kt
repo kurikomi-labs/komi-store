@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,8 +47,10 @@ import zed.rainxch.core.domain.model.ThemeMode
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.theme.geist
+import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.core.presentation.utils.primaryColor
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.Squiggle
@@ -73,39 +76,47 @@ fun OnboardingScreen(
     state: OnboardingState,
     onAction: (OnboardingAction) -> Unit,
 ) {
-    Column(
+    Box(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .systemBarsPadding()
-                .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+                .systemBarsPadding(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        StepIndicator(total = state.steps.size, currentIndex = state.currentIndex)
-        Spacer(Modifier.height(32.dp))
+        Column(
+            modifier =
+                Modifier
+                    .constrainedContentWidth()
+                    .fillMaxHeight()
+                    .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            StepIndicator(total = state.steps.size, currentIndex = state.currentIndex)
+            Spacer(Modifier.height(32.dp))
 
-        val permissionsController = rememberOnboardingPermissionsController()
+            val permissionsController = rememberOnboardingPermissionsController()
 
-        AnimatedContent(
-            targetState = state.currentStep,
-            transitionSpec = {
-                (
-                    slideInHorizontally { it } + fadeIn() togetherWith
-                        slideOutHorizontally { -it } + fadeOut()
-                )
-            },
-            label = "onboarding-step",
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-        ) { step ->
-            when (step) {
-                OnboardingStep.PALETTE -> StepPalette(state, onAction)
-                OnboardingStep.SIGN_IN -> StepSignIn(onAction)
-                OnboardingStep.PERMISSIONS -> StepPermissions(permissionsController)
+            AnimatedContent(
+                targetState = state.currentStep,
+                transitionSpec = {
+                    (
+                        slideInHorizontally { it } + fadeIn() togetherWith
+                            slideOutHorizontally { -it } + fadeOut()
+                    )
+                },
+                label = "onboarding-step",
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+            ) { step ->
+                when (step) {
+                    OnboardingStep.PALETTE -> StepPalette(state, onAction)
+                    OnboardingStep.SIGN_IN -> StepSignIn(onAction)
+                    OnboardingStep.PERMISSIONS -> StepPermissions(permissionsController)
+                }
             }
-        }
 
-        ActionRow(state, onAction)
+            ActionRow(state, onAction)
+        }
     }
 }
 
@@ -161,13 +172,16 @@ private fun StepPalette(
             textAlign = TextAlign.Center,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            AppTheme.entries.forEach { palette ->
-                PaletteSwatch(
-                    palette = palette,
-                    isSelected = state.selectedPalette == palette,
-                    onClick = { onAction(OnboardingAction.OnPaletteSelected(palette)) },
-                )
-            }
+            val dynamicAvailable = isDynamicColorAvailable()
+            AppTheme.entries
+                .filter { it != AppTheme.DYNAMIC || dynamicAvailable }
+                .forEach { palette ->
+                    PaletteSwatch(
+                        palette = palette,
+                        isSelected = state.selectedPalette == palette,
+                        onClick = { onAction(OnboardingAction.OnPaletteSelected(palette)) },
+                    )
+                }
         }
         Spacer(Modifier.height(16.dp))
         ModeRow(

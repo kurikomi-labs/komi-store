@@ -39,6 +39,7 @@ import zed.rainxch.core.presentation.components.section.SectionHeader
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.home_finding_repositories
 import zed.rainxch.githubstore.core.presentation.res.home_retry
@@ -120,7 +121,11 @@ private fun HomeScreen(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+        Box(modifier = Modifier.constrainedContentWidth().fillMaxSize()) {
             val sectionsAreEmpty = state.lead == null && state.hot.isEmpty() &&
                 state.trending.isEmpty() && state.popular.isEmpty() && state.starred.isEmpty()
             val isAnyLoading = state.isHotLoading || state.isTrendingLoading ||
@@ -319,6 +324,7 @@ private fun HomeScreen(
                     },
                 )
             }
+        }
         }
     }
 }
