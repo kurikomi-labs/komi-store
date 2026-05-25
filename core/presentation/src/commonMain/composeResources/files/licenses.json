@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-05-25",
+  "note": "Maintainer-curated. To regenerate, run ./gradlew :composeApp:printRuntimeDependencies and reconcile against this list.",
+  "libraries": [
+    {"name": "Kotlin", "license": "Apache-2.0", "url": "https://github.com/JetBrains/kotlin"},
+    {"name": "Compose Multiplatform", "license": "Apache-2.0", "url": "https://github.com/JetBrains/compose-multiplatform"},
+    {"name": "Jetpack Compose", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/compose"},
+    {"name": "Ktor", "license": "Apache-2.0", "url": "https://github.com/ktorio/ktor"},
+    {"name": "Room", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/androidx/releases/room"},
+    {"name": "Koin", "license": "Apache-2.0", "url": "https://github.com/InsertKoinIO/koin"},
+    {"name": "kotlinx.serialization", "license": "Apache-2.0", "url": "https://github.com/Kotlin/kotlinx.serialization"},
+    {"name": "kotlinx.coroutines", "license": "Apache-2.0", "url": "https://github.com/Kotlin/kotlinx.coroutines"},
+    {"name": "kotlinx.datetime", "license": "Apache-2.0", "url": "https://github.com/Kotlin/kotlinx-datetime"},
+    {"name": "kotlinx.collections.immutable", "license": "Apache-2.0", "url": "https://github.com/Kotlin/kotlinx.collections.immutable"},
+    {"name": "DataStore", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/androidx/releases/datastore"},
+    {"name": "Landscapist", "license": "Apache-2.0", "url": "https://github.com/skydoves/landscapist"},
+    {"name": "Coil", "license": "Apache-2.0", "url": "https://github.com/coil-kt/coil"},
+    {"name": "Kermit", "license": "Apache-2.0", "url": "https://github.com/touchlab/Kermit"},
+    {"name": "MOKO Permissions", "license": "Apache-2.0", "url": "https://github.com/icerockdev/moko-permissions"},
+    {"name": "Navigation Compose", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/androidx/releases/navigation"},
+    {"name": "multiplatform-markdown-renderer", "license": "Apache-2.0", "url": "https://github.com/mikepenz/multiplatform-markdown-renderer"},
+    {"name": "Shizuku", "license": "Apache-2.0", "url": "https://github.com/RikkaApps/Shizuku"},
+    {"name": "WorkManager", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/androidx/releases/work"},
+    {"name": "KSafe", "license": "Apache-2.0", "url": "https://github.com/Anifantakis/KSafe"},
+    {"name": "Material Icons Extended", "license": "Apache-2.0", "url": "https://fonts.google.com/icons"},
+    {"name": "Geist (Vercel)", "license": "OFL-1.1", "url": "https://github.com/vercel/geist-font"}
+  ]
+}

@@ -16,6 +16,7 @@ kotlin {
                 api(libs.ktor.client.core)
 
                 implementation(libs.touchlab.kermit)
+                implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)
