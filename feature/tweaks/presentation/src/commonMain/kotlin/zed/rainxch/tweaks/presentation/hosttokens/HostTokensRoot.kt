@@ -264,9 +264,9 @@ private fun OAuthCoexistenceNote() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(
                 Icons.Default.Info,
@@ -295,23 +295,28 @@ private fun EmptyStatePicker(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(Res.string.host_tokens_empty_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
             )
+            Spacer(Modifier.height(4.dp))
             Text(
                 text = stringResource(Res.string.host_tokens_empty_subtitle),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = stringResource(Res.string.host_tokens_picker_title),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
         }
         items(presetForges, key = { it.tokenHost }) { kind ->
             PresetForgeCard(
@@ -368,7 +373,7 @@ private fun PresetForgeCard(
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
                 GhsButton(
                     onClick = onOpenTokenCreationPage,
@@ -484,13 +489,14 @@ private fun TokenRow(
                 .fillMaxWidth()
                 .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
                 Icons.Default.VpnKey,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(8.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = forge?.displayName ?: token.host,
