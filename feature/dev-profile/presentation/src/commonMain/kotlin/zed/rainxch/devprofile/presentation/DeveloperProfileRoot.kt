@@ -272,6 +272,7 @@ private fun EmptyReposContent(
     val message =
         when (filter) {
             RepoFilterType.WITH_RELEASES -> stringResource(Res.string.no_repos_with_releases)
+            RepoFilterType.WITH_INSTALLABLE -> stringResource(Res.string.no_repos_with_installable)
             RepoFilterType.INSTALLED -> stringResource(Res.string.no_installed_repos)
             RepoFilterType.FAVORITES -> stringResource(Res.string.no_favorite_repos)
         }

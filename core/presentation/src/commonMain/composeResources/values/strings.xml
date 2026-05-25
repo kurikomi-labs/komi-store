@@ -388,7 +388,8 @@
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">Search repositories…</string>
     <string name="clear_search">Clear search</string>
-    <string name="filter_with_releases">With Releases</string>
+    <string name="filter_with_releases">With releases</string>
+    <string name="filter_with_installable">Installable here</string>
     <string name="filter_installed">Installed</string>
     <string name="filter_favorites">Favorites</string>
     <string name="sort">Sort</string>
@@ -402,7 +403,8 @@
     <string name="showing_x_of_y_repositories">Showing %1$d of %2$d repositories</string>
 
     <!-- Developer Profile - Empty States -->
-    <string name="no_repos_with_releases">No repositories with installable releases</string>
+    <string name="no_repos_with_releases">No repositories with releases</string>
+    <string name="no_repos_with_installable">No repositories with installable assets for this platform</string>
     <string name="no_installed_repos">No installed repositories</string>
     <string name="no_favorite_repos">No favorite repositories</string>
 

@@ -174,7 +174,9 @@ fun DeveloperRepoItem(
                 }
             }
 
-            val showBadges = repository.hasInstallableAssets || repository.isInstalled
+            val showBadges = repository.hasReleases ||
+                repository.hasInstallableAssets ||
+                repository.isInstalled
             if (showBadges) {
                 Spacer(Modifier.height(10.dp))
                 FlowRow(
@@ -188,6 +190,13 @@ fun DeveloperRepoItem(
                                 ?: stringResource(Res.string.has_release),
                             container = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
                             content = MaterialTheme.colorScheme.primary,
+                        )
+                    } else if (repository.hasReleases) {
+                        TonalBadge(
+                            text = repository.latestVersion
+                                ?: stringResource(Res.string.has_release),
+                            container = MaterialTheme.colorScheme.secondaryContainer,
+                            content = MaterialTheme.colorScheme.onSecondaryContainer,
                         )
                     }
                     if (repository.isInstalled) {
