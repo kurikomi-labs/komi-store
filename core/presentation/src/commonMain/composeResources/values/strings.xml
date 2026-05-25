@@ -152,6 +152,7 @@
 
     <!-- Theme names -->
     <string name="theme_forest">Forest</string>
+    <string name="theme_dynamic">Dynamic</string>
     <string name="theme_nord">Nord</string>
     <string name="theme_cream">Cream</string>
     <string name="theme_plum">Plum</string>

@@ -3,7 +3,7 @@ package zed.rainxch.core.presentation.theme.tokens
 import androidx.compose.ui.graphics.Color
 
 object Tokens {
-    enum class Palette { NORD, CREAM, FOREST, PLUM }
+    enum class Palette { DYNAMIC, NORD, CREAM, FOREST, PLUM }
 
     enum class Mode { LIGHT, DARK, AMOLED }
 
@@ -167,6 +167,11 @@ object Tokens {
     }
 
     fun palette(p: Palette, m: Mode): PaletteColors = when (p) {
+        Palette.DYNAMIC -> when (m) {
+            Mode.LIGHT -> Nord.light
+            Mode.DARK -> Nord.dark
+            Mode.AMOLED -> Nord.amoled
+        }
         Palette.NORD -> when (m) {
             Mode.LIGHT -> Nord.light
             Mode.DARK -> Nord.dark

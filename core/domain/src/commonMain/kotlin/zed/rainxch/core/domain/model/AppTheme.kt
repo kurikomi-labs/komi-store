@@ -1,6 +1,7 @@
 package zed.rainxch.core.domain.model
 
 enum class AppTheme {
+    DYNAMIC,
     NORD,
     CREAM,
     FOREST,
@@ -10,7 +11,6 @@ enum class AppTheme {
     companion object {
 
         private val LEGACY_MIGRATION = mapOf(
-            "DYNAMIC" to NORD,
             "OCEAN" to NORD,
             "SLATE" to NORD,
             "PURPLE" to PLUM,

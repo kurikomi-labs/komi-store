@@ -50,6 +50,8 @@ import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
+import zed.rainxch.core.presentation.theme.dynamicColorScheme
+import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
@@ -384,14 +386,17 @@ private fun PaletteGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AppTheme.entries.forEach { palette ->
-                PaletteSwatch(
-                    palette = palette,
-                    mode = previewMode,
-                    isSelected = palette == selected,
-                    onClick = { onSelected(palette) },
-                )
-            }
+            val dynamicAvailable = isDynamicColorAvailable()
+            AppTheme.entries
+                .filter { it != AppTheme.DYNAMIC || dynamicAvailable }
+                .forEach { palette ->
+                    PaletteSwatch(
+                        palette = palette,
+                        mode = previewMode,
+                        isSelected = palette == selected,
+                        onClick = { onSelected(palette) },
+                    )
+                }
         }
     }
 }
@@ -403,7 +408,12 @@ private fun PaletteSwatch(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val scheme = colorSchemeFor(palette.toTokenPalette(), mode)
+    val isDark = mode != Tokens.Mode.LIGHT
+    val scheme = if (palette == AppTheme.DYNAMIC) {
+        dynamicColorScheme(isDark = isDark) ?: colorSchemeFor(Tokens.Palette.NORD, mode)
+    } else {
+        colorSchemeFor(palette.toTokenPalette(), mode)
+    }
     val scale by animateFloatAsState(
         targetValue = if (isSelected) 1.0f else 0.96f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),

@@ -9,11 +9,13 @@ import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.theme_cream
+import zed.rainxch.githubstore.core.presentation.res.theme_dynamic
 import zed.rainxch.githubstore.core.presentation.res.theme_forest
 import zed.rainxch.githubstore.core.presentation.res.theme_nord
 import zed.rainxch.githubstore.core.presentation.res.theme_plum
 
 fun AppTheme.toTokenPalette(): Tokens.Palette = when (this) {
+    AppTheme.DYNAMIC -> Tokens.Palette.DYNAMIC
     AppTheme.NORD -> Tokens.Palette.NORD
     AppTheme.CREAM -> Tokens.Palette.CREAM
     AppTheme.FOREST -> Tokens.Palette.FOREST
@@ -36,6 +38,7 @@ val AppTheme.displayName: String
     @Composable
     get() = stringResource(
         when (this) {
+            AppTheme.DYNAMIC -> Res.string.theme_dynamic
             AppTheme.NORD -> Res.string.theme_nord
             AppTheme.CREAM -> Res.string.theme_cream
             AppTheme.FOREST -> Res.string.theme_forest
