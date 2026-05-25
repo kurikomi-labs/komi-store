@@ -13,7 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -190,7 +190,7 @@ fun ProfileScreen(
             )
         },
         topBar = {
-            TopAppBar()
+            GhsHomeTopBar(title = stringResource(Res.string.profile_title))
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
@@ -217,21 +217,6 @@ fun ProfileScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun TopAppBar() {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(Res.string.profile_title),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        },
-    )
-}
 
 @Preview
 @Composable

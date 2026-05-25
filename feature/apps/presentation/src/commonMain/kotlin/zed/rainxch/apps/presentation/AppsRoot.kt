@@ -103,6 +103,7 @@ import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
@@ -249,34 +250,20 @@ fun AppsScreen(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = stringResource(Res.string.bottom_nav_apps_title),
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 24.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(start = 4.dp),
-                )
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(50),
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+            GhsHomeTopBar(
+                title = stringResource(Res.string.bottom_nav_apps_title),
+                actions = {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.outline,
+                                shape = RoundedCornerShape(50),
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                     Box {
                         Box(
                             modifier = Modifier
@@ -415,8 +402,9 @@ fun AppsScreen(
                             )
                         }
                     }
-                }
-            }
+                    }
+                },
+            )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
