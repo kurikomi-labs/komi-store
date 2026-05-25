@@ -1282,4 +1282,6 @@
     <string name="appearance_section_mode">Modalità</string>
     <string name="appearance_section_display">Visualizzazione</string>
     <string name="theme_dynamic">Dinamico</string>
+    <string name="auth_more_signin_options">Altre opzioni di accesso</string>
+    <string name="auth_hide_signin_options">Nascondi opzioni</string>
 </resources>

@@ -1248,4 +1248,6 @@
     <string name="appearance_section_mode">Mode</string>
     <string name="appearance_section_display">Affichage</string>
     <string name="theme_dynamic">Dynamique</string>
+    <string name="auth_more_signin_options">Plus d'options de connexion</string>
+    <string name="auth_hide_signin_options">Masquer les options</string>
 </resources>

@@ -1268,4 +1268,6 @@
     <string name="appearance_section_mode">모드</string>
     <string name="appearance_section_display">디스플레이</string>
     <string name="theme_dynamic">다이내믹</string>
+    <string name="auth_more_signin_options">추가 로그인 옵션</string>
+    <string name="auth_hide_signin_options">옵션 숨기기</string>
 </resources>

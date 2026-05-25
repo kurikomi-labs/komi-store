@@ -1279,4 +1279,6 @@
     <string name="appearance_section_mode">Mod</string>
     <string name="appearance_section_display">Görüntü</string>
     <string name="theme_dynamic">Dinamik</string>
+    <string name="auth_more_signin_options">Diğer giriş seçenekleri</string>
+    <string name="auth_hide_signin_options">Seçenekleri gizle</string>
 </resources>

@@ -1277,4 +1277,6 @@
     <string name="appearance_section_mode">Tryb</string>
     <string name="appearance_section_display">Wyświetlanie</string>
     <string name="theme_dynamic">Dynamiczny</string>
+    <string name="auth_more_signin_options">Więcej opcji logowania</string>
+    <string name="auth_hide_signin_options">Ukryj opcje</string>
 </resources>

@@ -1269,4 +1269,6 @@
     <string name="appearance_section_mode">মোড</string>
     <string name="appearance_section_display">ডিসপ্লে</string>
     <string name="theme_dynamic">ডাইনামিক</string>
+    <string name="auth_more_signin_options">আরও সাইন-ইন বিকল্প</string>
+    <string name="auth_hide_signin_options">বিকল্প লুকান</string>
 </resources>

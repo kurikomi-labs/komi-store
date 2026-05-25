@@ -1284,4 +1284,6 @@
     <string name="appearance_section_mode">मोड</string>
     <string name="appearance_section_display">डिस्प्ले</string>
     <string name="theme_dynamic">डायनामिक</string>
+    <string name="auth_more_signin_options">अधिक साइन-इन विकल्प</string>
+    <string name="auth_hide_signin_options">विकल्प छिपाएँ</string>
 </resources>

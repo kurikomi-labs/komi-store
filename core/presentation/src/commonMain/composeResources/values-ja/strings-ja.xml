@@ -1238,4 +1238,6 @@
     <string name="appearance_section_mode">モード</string>
     <string name="appearance_section_display">表示</string>
     <string name="theme_dynamic">ダイナミック</string>
+    <string name="auth_more_signin_options">他のサインイン方法</string>
+    <string name="auth_hide_signin_options">オプションを隠す</string>
 </resources>

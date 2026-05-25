@@ -1241,4 +1241,6 @@
     <string name="appearance_section_mode">模式</string>
     <string name="appearance_section_display">显示</string>
     <string name="theme_dynamic">动态</string>
+    <string name="auth_more_signin_options">更多登录方式</string>
+    <string name="auth_hide_signin_options">隐藏选项</string>
 </resources>
