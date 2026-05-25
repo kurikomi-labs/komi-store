@@ -38,8 +38,7 @@ import zed.rainxch.githubstore.core.presentation.res.profile_title
 import zed.rainxch.githubstore.core.presentation.res.proxy_saved
 import zed.rainxch.githubstore.core.presentation.res.seen_history_cleared
 import zed.rainxch.profile.presentation.components.LogoutDialog
-import zed.rainxch.profile.presentation.components.sections.logout
-import zed.rainxch.profile.presentation.components.sections.profile
+import zed.rainxch.profile.presentation.components.profileSections
 
 @Composable
 fun ProfileRoot(
@@ -205,21 +204,11 @@ fun ProfileScreen(
                     .padding(16.dp)
                     .arrowKeyScroll(listState, autoFocus = true),
         ) {
-            profile(
+            profileSections(
                 state = state,
                 hasUnreadAnnouncements = hasUnreadAnnouncements,
                 onAction = onAction,
             )
-
-            item {
-                Spacer(Modifier.height(32.dp))
-            }
-
-            if (state.isUserLoggedIn) {
-                logout(
-                    onAction = onAction,
-                )
-            }
 
             item {
                 Spacer(Modifier.height(bottomNavHeight + 32.dp))

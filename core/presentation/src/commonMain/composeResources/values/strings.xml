@@ -1064,6 +1064,9 @@
     <string name="section_app_block">App</string>
     <string name="section_installs_and_updates">Installs &amp; updates</string>
     <string name="section_look_and_feel">Look &amp; feel</string>
+    <string name="profile_section_library">Library</string>
+    <string name="profile_section_updates">Updates</string>
+    <string name="profile_section_account">Account</string>
     <string name="tweaks_entry_appearance">Appearance</string>
     <string name="tweaks_entry_language">Language</string>
     <string name="tweaks_entry_connection">Connection</string>
