@@ -1194,6 +1194,39 @@ class TweaksViewModel(
 
             is TweaksAction.OnMasterProxyTypeSelected -> {
                 mutateMasterForm { it.copy(type = action.type) }
+
+                if (action.type == ProxyType.NONE || action.type == ProxyType.SYSTEM) {
+                    val config =
+                        if (action.type == ProxyType.NONE) {
+                            ProxyConfig.None
+                        } else {
+                            ProxyConfig.System
+                        }
+                    viewModelScope.launch {
+                        runCatching {
+                            proxyRepository.setMasterProxyConfig(config)
+                            ProxyScope.entries.forEach { scope ->
+                                if (_state.value.useMain(scope)) {
+                                    proxyRepository.setProxyConfig(scope, config)
+                                }
+                            }
+                        }.onSuccess {
+                            _state.update {
+                                it.copy(
+                                    masterProxyForm = it.masterProxyForm.copy(isDraftDirty = false),
+                                )
+                            }
+                            _events.send(TweaksEvent.OnProxySaved)
+                        }.onFailure { error ->
+                            _events.send(
+                                TweaksEvent.OnProxySaveError(
+                                    error.message
+                                        ?: getString(Res.string.failed_to_save_proxy_settings),
+                                ),
+                            )
+                        }
+                    }
+                }
             }
 
             is TweaksAction.OnMasterProxyHostChanged -> {
@@ -1327,6 +1360,11 @@ class TweaksViewModel(
             }
 
             is TweaksAction.OnScopeUseMainToggled -> {
+                _state.update {
+                    it.copy(
+                        useMasterByScope = it.useMasterByScope + (action.scope to action.useMain),
+                    )
+                }
                 viewModelScope.launch {
                     runCatching {
                         proxyRepository.setUseMaster(action.scope, action.useMain)

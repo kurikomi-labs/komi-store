@@ -285,18 +285,6 @@ private fun MainConnectionCard(
                 }
             }
 
-            AnimatedVisibility(visible = form.type == ProxyType.NONE || form.type == ProxyType.SYSTEM) {
-                Column {
-                    Spacer(Modifier.height(12.dp))
-                    GhsButton(
-                        onClick = { onAction(TweaksAction.OnMasterProxySave) },
-                        label = stringResource(Res.string.proxy_save),
-                        variant = GhsButtonVariant.Primary,
-                        leadingIcon = Icons.Default.Save,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
         }
     }
 }
@@ -567,21 +555,6 @@ private fun ScopeOverrideRow(
                         }
                     }
 
-                    AnimatedVisibility(
-                        visible = scopeForm.type == ProxyType.NONE ||
-                            scopeForm.type == ProxyType.SYSTEM,
-                    ) {
-                        Column {
-                            Spacer(Modifier.height(12.dp))
-                            GhsButton(
-                                onClick = { onAction(TweaksAction.OnProxySave(scope)) },
-                                label = stringResource(Res.string.proxy_save),
-                                variant = GhsButtonVariant.Tonal,
-                                leadingIcon = Icons.Default.Save,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
                 }
             }
         }
