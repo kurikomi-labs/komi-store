@@ -64,10 +64,12 @@ class DeveloperProfileViewModel(
                                 profile = profile,
                                 isLoading = false,
                                 isLoadingRepos = true,
-                                isLoadingContributions = true,
+                                isLoadingContributions = !profile.isOrganization,
                             )
                         }
-                        loadContributions()
+                        if (!profile.isOrganization) {
+                            loadContributions()
+                        }
                     }.onFailure { error ->
                         _state.update {
                             it.copy(

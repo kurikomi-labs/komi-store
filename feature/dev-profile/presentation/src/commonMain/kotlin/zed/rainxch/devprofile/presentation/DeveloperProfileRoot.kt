@@ -157,11 +157,13 @@ fun DeveloperProfileScreen(
                             )
                         }
 
-                        item {
-                            ContributionCalendarCard(
-                                contributions = state.contributions,
-                                isLoading = state.isLoadingContributions,
-                            )
+                        if (!state.profile.isOrganization) {
+                            item {
+                                ContributionCalendarCard(
+                                    contributions = state.contributions,
+                                    isLoading = state.isLoadingContributions,
+                                )
+                            }
                         }
 
                         item {
