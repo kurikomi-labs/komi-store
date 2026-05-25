@@ -1279,4 +1279,6 @@
     <string name="profile_section_library">লাইব্রেরি</string>
     <string name="profile_section_updates">আপডেট</string>
     <string name="profile_section_account">অ্যাকাউন্ট</string>
+    <string name="appearance_section_mode">মোড</string>
+    <string name="appearance_section_display">ডিসপ্লে</string>
 </resources>

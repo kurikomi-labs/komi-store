@@ -1278,4 +1278,6 @@
     <string name="profile_section_library">라이브러리</string>
     <string name="profile_section_updates">업데이트</string>
     <string name="profile_section_account">계정</string>
+    <string name="appearance_section_mode">모드</string>
+    <string name="appearance_section_display">디스플레이</string>
 </resources>

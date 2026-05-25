@@ -1292,4 +1292,6 @@
     <string name="profile_section_library">Libreria</string>
     <string name="profile_section_updates">Aggiornamenti</string>
     <string name="profile_section_account">Account</string>
+    <string name="appearance_section_mode">Modalità</string>
+    <string name="appearance_section_display">Visualizzazione</string>
 </resources>

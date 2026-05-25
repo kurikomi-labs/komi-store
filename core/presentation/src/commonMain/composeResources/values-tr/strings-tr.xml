@@ -1289,4 +1289,6 @@
     <string name="profile_section_library">Kitaplık</string>
     <string name="profile_section_updates">Güncellemeler</string>
     <string name="profile_section_account">Hesap</string>
+    <string name="appearance_section_mode">Mod</string>
+    <string name="appearance_section_display">Görüntü</string>
 </resources>

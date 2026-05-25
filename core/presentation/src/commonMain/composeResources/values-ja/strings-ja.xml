@@ -1248,4 +1248,6 @@
     <string name="profile_section_library">ライブラリ</string>
     <string name="profile_section_updates">アップデート</string>
     <string name="profile_section_account">アカウント</string>
+    <string name="appearance_section_mode">モード</string>
+    <string name="appearance_section_display">表示</string>
 </resources>

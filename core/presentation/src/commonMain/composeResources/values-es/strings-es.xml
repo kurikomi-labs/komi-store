@@ -1258,4 +1258,6 @@
     <string name="profile_section_library">Biblioteca</string>
     <string name="profile_section_updates">Actualizaciones</string>
     <string name="profile_section_account">Cuenta</string>
+    <string name="appearance_section_mode">Modo</string>
+    <string name="appearance_section_display">Pantalla</string>
 </resources>

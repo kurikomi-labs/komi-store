@@ -1287,4 +1287,6 @@
     <string name="profile_section_library">Biblioteka</string>
     <string name="profile_section_updates">Aktualizacje</string>
     <string name="profile_section_account">Konto</string>
+    <string name="appearance_section_mode">Tryb</string>
+    <string name="appearance_section_display">Wyświetlanie</string>
 </resources>

@@ -1251,4 +1251,6 @@
     <string name="profile_section_library">媒体库</string>
     <string name="profile_section_updates">更新</string>
     <string name="profile_section_account">账户</string>
+    <string name="appearance_section_mode">模式</string>
+    <string name="appearance_section_display">显示</string>
 </resources>

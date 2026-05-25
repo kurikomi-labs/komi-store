@@ -1287,4 +1287,6 @@
     <string name="profile_section_library">Библиотека</string>
     <string name="profile_section_updates">Обновления</string>
     <string name="profile_section_account">Аккаунт</string>
+    <string name="appearance_section_mode">Режим</string>
+    <string name="appearance_section_display">Отображение</string>
 </resources>

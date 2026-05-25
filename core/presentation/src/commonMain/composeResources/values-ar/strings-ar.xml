@@ -1317,4 +1317,6 @@
     <string name="profile_section_library">المكتبة</string>
     <string name="profile_section_updates">التحديثات</string>
     <string name="profile_section_account">الحساب</string>
+    <string name="appearance_section_mode">الوضع</string>
+    <string name="appearance_section_display">العرض</string>
 </resources>
