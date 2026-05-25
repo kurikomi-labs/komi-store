@@ -1219,7 +1219,7 @@
     <string name="tweaks_app_info_whats_new_title">ما الجديد</string>
     <string name="tweaks_connection_applies_to_all">يُطبَّق على كل الحركة ما لم يُعَد تجاوزه أدناه.</string>
     <string name="tweaks_connection_custom">مخصّص</string>
-    <string name="tweaks_connection_intro_body">اختر وضع الاتصال أدناه. معظم المستخدمين يتركونه على \'بدون وكيل\'.</string>
+    <string name="tweaks_connection_intro_body">اختر وضع الاتصال أدناه. معظم المستخدمين يتركونه على 'بدون وكيل'.</string>
     <string name="tweaks_connection_intro_title">كيف يصل التطبيق إلى الإنترنت</string>
     <string name="tweaks_connection_main_section">الاتصال الرئيسي</string>
     <string name="tweaks_connection_mode_http">HTTP/HTTPS</string>
@@ -1228,7 +1228,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor، أنفاق SSH.</string>
     <string name="tweaks_connection_mode_system">النظام</string>
-    <string name="tweaks_connection_overrides_body">يستخدم كل نطاق الاتصال الرئيسي افتراضياً. اختر \'مخصّص\' للاحتفاظ بإعداداته الخاصة.</string>
+    <string name="tweaks_connection_overrides_body">يستخدم كل نطاق الاتصال الرئيسي افتراضياً. اختر 'مخصّص' للاحتفاظ بإعداداته الخاصة.</string>
     <string name="tweaks_connection_overrides_section">تجاوزات لكل نطاق</string>
     <string name="tweaks_connection_paste_url">لصق رابط كامل</string>
     <string name="tweaks_connection_paste_url_body">الصق رابط وكيل كاملاً وسنملأ النموذج نيابةً عنك.</string>
@@ -1285,7 +1285,7 @@
     <string name="tweaks_privacy_telemetry_title">مشاركة بيانات استخدام مجهولة</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">ما الذي نجمعه</string>
     <string name="tweaks_privacy_usage_data_section">بيانات الاستخدام</string>
-    <string name="tweaks_search_empty">لا توجد إعدادات تطابق \'%1$s\'.</string>
+    <string name="tweaks_search_empty">لا توجد إعدادات تطابق '%1$s'.</string>
     <string name="tweaks_search_placeholder">البحث في الإعدادات</string>
     <string name="tweaks_sources_add_a_host">إضافة مضيف Forgejo أو Gitea</string>
     <string name="tweaks_sources_added_hosts_section">المضيفات المضافة</string>

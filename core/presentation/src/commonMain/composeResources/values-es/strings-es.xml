@@ -1173,7 +1173,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, túneles SSH.</string>
     <string name="tweaks_connection_mode_system">Sistema</string>
-    <string name="tweaks_connection_overrides_body">Cada ámbito usa la conexión principal por defecto. Elige \'Personalizado\' para mantener sus propios ajustes.</string>
+    <string name="tweaks_connection_overrides_body">Cada ámbito usa la conexión principal por defecto. Elige 'Personalizado' para mantener sus propios ajustes.</string>
     <string name="tweaks_connection_overrides_section">Sustituciones por ámbito</string>
     <string name="tweaks_connection_paste_url">Pegar URL completa</string>
     <string name="tweaks_connection_paste_url_body">Pega una URL de proxy completa y rellenaremos el formulario por ti.</string>
@@ -1230,7 +1230,7 @@
     <string name="tweaks_privacy_telemetry_title">Compartir datos de uso anónimos</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">Qué recopilamos</string>
     <string name="tweaks_privacy_usage_data_section">Datos de uso</string>
-    <string name="tweaks_search_empty">Ningún ajuste coincide con \'%1$s\'.</string>
+    <string name="tweaks_search_empty">Ningún ajuste coincide con '%1$s'.</string>
     <string name="tweaks_search_placeholder">Buscar ajustes</string>
     <string name="tweaks_sources_add_a_host">Añadir un host de Forgejo o Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Hosts añadidos</string>

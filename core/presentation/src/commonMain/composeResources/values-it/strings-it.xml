@@ -1207,12 +1207,12 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, tunnel SSH.</string>
     <string name="tweaks_connection_mode_system">Sistema</string>
-    <string name="tweaks_connection_overrides_body">Ogni ambito usa la connessione principale per impostazione predefinita. Scegli \'Personalizzato\' per mantenerne uno proprio.</string>
+    <string name="tweaks_connection_overrides_body">Ogni ambito usa la connessione principale per impostazione predefinita. Scegli 'Personalizzato' per mantenerne uno proprio.</string>
     <string name="tweaks_connection_overrides_section">Override per ambito</string>
     <string name="tweaks_connection_paste_url">Incolla URL completo</string>
     <string name="tweaks_connection_paste_url_body">Incolla un URL proxy completo e compileremo noi il modulo.</string>
     <string name="tweaks_connection_paste_url_cta">Usa questo URL</string>
-    <string name="tweaks_connection_paste_url_error">Impossibile leggere quell\'URL.</string>
+    <string name="tweaks_connection_paste_url_error">Impossibile leggere quell'URL.</string>
     <string name="tweaks_connection_paste_url_placeholder">scheme://user:pass@host:port</string>
     <string name="tweaks_connection_paste_url_title">Incolla URL del proxy</string>
     <string name="tweaks_connection_scope_discovery_body">API di GitHub, ricerca, dettagli repo.</string>
@@ -1264,7 +1264,7 @@
     <string name="tweaks_privacy_telemetry_title">Condividi dati di utilizzo anonimi</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">Cosa raccogliamo</string>
     <string name="tweaks_privacy_usage_data_section">Dati di utilizzo</string>
-    <string name="tweaks_search_empty">Nessuna impostazione corrisponde a \'%1$s\'.</string>
+    <string name="tweaks_search_empty">Nessuna impostazione corrisponde a '%1$s'.</string>
     <string name="tweaks_search_placeholder">Cerca impostazioni</string>
     <string name="tweaks_sources_add_a_host">Aggiungi un host Forgejo o Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Host aggiunti</string>

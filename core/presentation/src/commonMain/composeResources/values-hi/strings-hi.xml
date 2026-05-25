@@ -1196,7 +1196,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, SSH टनल।</string>
     <string name="tweaks_connection_mode_system">सिस्टम</string>
-    <string name="tweaks_connection_overrides_body">प्रत्येक स्कोप डिफ़ॉल्ट रूप से मुख्य कनेक्शन का उपयोग करता है। अपनी सेटिंग्स रखने के लिए \'कस्टम\' चुनें।</string>
+    <string name="tweaks_connection_overrides_body">प्रत्येक स्कोप डिफ़ॉल्ट रूप से मुख्य कनेक्शन का उपयोग करता है। अपनी सेटिंग्स रखने के लिए 'कस्टम' चुनें।</string>
     <string name="tweaks_connection_overrides_section">प्रति-स्कोप ओवरराइड</string>
     <string name="tweaks_connection_paste_url">पूरा URL पेस्ट करें</string>
     <string name="tweaks_connection_paste_url_body">एक पूरा प्रॉक्सी URL पेस्ट करें और हम आपके लिए फ़ॉर्म भर देंगे।</string>
@@ -1253,7 +1253,7 @@
     <string name="tweaks_privacy_telemetry_title">अनाम उपयोग डेटा साझा करें</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">हम क्या एकत्र करते हैं</string>
     <string name="tweaks_privacy_usage_data_section">उपयोग डेटा</string>
-    <string name="tweaks_search_empty">कोई सेटिंग \'%1$s\' से मेल नहीं खाती।</string>
+    <string name="tweaks_search_empty">कोई सेटिंग '%1$s' से मेल नहीं खाती।</string>
     <string name="tweaks_search_placeholder">सेटिंग्स खोजें</string>
     <string name="tweaks_sources_add_a_host">Forgejo या Gitea होस्ट जोड़ें</string>
     <string name="tweaks_sources_added_hosts_section">जोड़े गए होस्ट</string>

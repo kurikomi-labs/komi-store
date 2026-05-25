@@ -1200,7 +1200,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, tunele SSH.</string>
     <string name="tweaks_connection_mode_system">Systemowe</string>
-    <string name="tweaks_connection_overrides_body">Każdy zakres domyślnie używa głównego połączenia. Wybierz \'Niestandardowe\', aby zachować własne ustawienia.</string>
+    <string name="tweaks_connection_overrides_body">Każdy zakres domyślnie używa głównego połączenia. Wybierz 'Niestandardowe', aby zachować własne ustawienia.</string>
     <string name="tweaks_connection_overrides_section">Nadpisania per-zakres</string>
     <string name="tweaks_connection_paste_url">Wklej pełny URL</string>
     <string name="tweaks_connection_paste_url_body">Wklej pełny URL proxy, a wypełnimy formularz za Ciebie.</string>
@@ -1257,7 +1257,7 @@
     <string name="tweaks_privacy_telemetry_title">Udostępniaj anonimowe dane użycia</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">Co zbieramy</string>
     <string name="tweaks_privacy_usage_data_section">Dane użycia</string>
-    <string name="tweaks_search_empty">Żadne ustawienie nie pasuje do \'%1$s\'.</string>
+    <string name="tweaks_search_empty">Żadne ustawienie nie pasuje do '%1$s'.</string>
     <string name="tweaks_search_placeholder">Szukaj ustawień</string>
     <string name="tweaks_sources_add_a_host">Dodaj host Forgejo lub Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Dodane hosty</string>

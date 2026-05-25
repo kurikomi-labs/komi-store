@@ -1198,7 +1198,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, SSH টানেল।</string>
     <string name="tweaks_connection_mode_system">সিস্টেম</string>
-    <string name="tweaks_connection_overrides_body">প্রতিটি স্কোপ ডিফল্টভাবে প্রধান সংযোগ ব্যবহার করে। নিজস্ব সেটিংস রাখতে \'কাস্টম\' বেছে নিন।</string>
+    <string name="tweaks_connection_overrides_body">প্রতিটি স্কোপ ডিফল্টভাবে প্রধান সংযোগ ব্যবহার করে। নিজস্ব সেটিংস রাখতে 'কাস্টম' বেছে নিন।</string>
     <string name="tweaks_connection_overrides_section">প্রতি-স্কোপ ওভাররাইড</string>
     <string name="tweaks_connection_paste_url">সম্পূর্ণ URL পেস্ট করুন</string>
     <string name="tweaks_connection_paste_url_body">একটি সম্পূর্ণ প্রক্সি URL পেস্ট করুন, আমরা আপনার জন্য ফর্ম পূরণ করব।</string>
@@ -1255,7 +1255,7 @@
     <string name="tweaks_privacy_telemetry_title">বেনামী ব্যবহারের তথ্য শেয়ার করুন</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">আমরা কী সংগ্রহ করি</string>
     <string name="tweaks_privacy_usage_data_section">ব্যবহারের তথ্য</string>
-    <string name="tweaks_search_empty">\'%1$s\' এর সাথে কোনো সেটিংস মেলে না।</string>
+    <string name="tweaks_search_empty">'%1$s' এর সাথে কোনো সেটিংস মেলে না।</string>
     <string name="tweaks_search_placeholder">সেটিংস অনুসন্ধান করুন</string>
     <string name="tweaks_sources_add_a_host">একটি Forgejo বা Gitea হোস্ট যোগ করুন</string>
     <string name="tweaks_sources_added_hosts_section">যোগ করা হোস্ট</string>

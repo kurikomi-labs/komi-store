@@ -1194,7 +1194,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor, SSH 터널.</string>
     <string name="tweaks_connection_mode_system">시스템</string>
-    <string name="tweaks_connection_overrides_body">각 스코프는 기본적으로 주 연결을 사용합니다. 자체 설정을 유지하려면 \'사용자 지정\'을 선택하세요.</string>
+    <string name="tweaks_connection_overrides_body">각 스코프는 기본적으로 주 연결을 사용합니다. 자체 설정을 유지하려면 '사용자 지정'을 선택하세요.</string>
     <string name="tweaks_connection_overrides_section">스코프별 재정의</string>
     <string name="tweaks_connection_paste_url">전체 URL 붙여넣기</string>
     <string name="tweaks_connection_paste_url_body">전체 프록시 URL을 붙여넣으면 양식을 자동으로 채워 드립니다.</string>
@@ -1251,7 +1251,7 @@
     <string name="tweaks_privacy_telemetry_title">익명 사용 데이터 공유</string>
     <string name="tweaks_privacy_telemetry_what_we_collect">수집 항목</string>
     <string name="tweaks_privacy_usage_data_section">사용 데이터</string>
-    <string name="tweaks_search_empty">\'%1$s\'와(과) 일치하는 설정이 없습니다.</string>
+    <string name="tweaks_search_empty">'%1$s'와(과) 일치하는 설정이 없습니다.</string>
     <string name="tweaks_search_placeholder">설정 검색</string>
     <string name="tweaks_sources_add_a_host">Forgejo 또는 Gitea 호스트 추가</string>
     <string name="tweaks_sources_added_hosts_section">추가된 호스트</string>

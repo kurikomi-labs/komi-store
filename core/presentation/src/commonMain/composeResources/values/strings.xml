@@ -579,7 +579,7 @@
     <string name="update_check_interval_title">Check every</string>
     <string name="update_check_interval_description">How often to look for new releases.</string>
     <string name="update_check_enabled_title">Check automatically</string>
-    <string name="update_check_enabled_description">Look for new releases on a schedule. Turn off to save battery — you can still check manually from any app\'s details screen.</string>
+    <string name="update_check_enabled_description">Look for new releases on a schedule. Turn off to save battery — you can still check manually from any app's details screen.</string>
     <string name="interval_3h">Every 3 hours</string>
     <string name="interval_6h">Every 6 hours</string>
     <string name="interval_12h">Every 12 hours</string>
@@ -1084,7 +1084,7 @@
     <string name="tweaks_entry_feedback">Send feedback</string>
     <string name="tweaks_entry_subtitle_tap">Tap to manage</string>
     <string name="tweaks_search_placeholder">Search settings</string>
-    <string name="tweaks_search_empty">No settings match \'%1$s\'.</string>
+    <string name="tweaks_search_empty">No settings match '%1$s'.</string>
     <string name="feedback_hub_subtitle">We read every report.</string>
     <string name="restart_banner_body">Some changes need a restart to apply.</string>
     <string name="restart_banner_reasons_prefix">Affected: %1$s</string>
@@ -1096,7 +1096,7 @@
     <string name="tweaks_install_method_desktop_empty_title">Install method is Android-only</string>
     <string name="tweaks_install_method_desktop_empty_body">Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager.</string>
     <string name="tweaks_stub_coming_soon_title">Coming in a follow-up</string>
-    <string name="tweaks_stub_coming_soon_body">This screen is part of the in-progress redesign. The settings still work — they\'re just being moved here from the old layout.</string>
+    <string name="tweaks_stub_coming_soon_body">This screen is part of the in-progress redesign. The settings still work — they're just being moved here from the old layout.</string>
     <string name="back_cd">Back</string>
     <string name="menubar_help_menu">Help</string>
     <string name="menubar_help_about">About GitHub Store</string>
@@ -1244,13 +1244,13 @@
     <string name="tweaks_connection_intro_body">Pick a connection mode below. Most people leave this on No proxy.</string>
     <string name="tweaks_connection_main_section">Main connection</string>
     <string name="tweaks_connection_overrides_section">Per-scope overrides</string>
-    <string name="tweaks_connection_overrides_body">Each scope uses the main connection by default. Choose \'Custom\' to keep its own settings.</string>
+    <string name="tweaks_connection_overrides_body">Each scope uses the main connection by default. Choose 'Custom' to keep its own settings.</string>
     <string name="tweaks_connection_applies_to_all">Applies to all traffic unless overridden below.</string>
     <string name="tweaks_connection_paste_url">Paste full URL</string>
     <string name="tweaks_connection_paste_url_title">Paste proxy URL</string>
-    <string name="tweaks_connection_paste_url_body">Paste a full proxy URL and we\'ll fill the form for you.</string>
+    <string name="tweaks_connection_paste_url_body">Paste a full proxy URL and we'll fill the form for you.</string>
     <string name="tweaks_connection_paste_url_placeholder">scheme://user:pass@host:port</string>
-    <string name="tweaks_connection_paste_url_error">Couldn\'t read that URL.</string>
+    <string name="tweaks_connection_paste_url_error">Couldn't read that URL.</string>
     <string name="tweaks_connection_paste_url_cta">Use this URL</string>
     <string name="tweaks_connection_scope_discovery_title">Search &amp; metadata</string>
     <string name="tweaks_connection_scope_discovery_body">GitHub API, search, repo details.</string>
@@ -1287,16 +1287,16 @@
     <string name="tweaks_privacy_telemetry_collect_no_tokens">No tokens.</string>
     <string name="tweaks_privacy_telemetry_collect_no_identifiers">No identifiers.</string>
     <string name="tweaks_privacy_clipboard_title">Detect repo links in clipboard</string>
-    <string name="tweaks_privacy_clipboard_body">When you copy a github.com or codeberg.org link, we\'ll prompt to open it.</string>
-    <string name="tweaks_privacy_hide_seen_title">Hide repos I\'ve already viewed</string>
+    <string name="tweaks_privacy_clipboard_body">When you copy a github.com or codeberg.org link, we'll prompt to open it.</string>
+    <string name="tweaks_privacy_hide_seen_title">Hide repos I've already viewed</string>
     <string name="tweaks_privacy_hide_seen_body">Skip seen repos in feeds and search.</string>
     <string name="tweaks_privacy_clear_viewed_title">Clear viewed history</string>
-    <string name="tweaks_privacy_clear_viewed_body">Forget which repos you\'ve already opened.</string>
+    <string name="tweaks_privacy_clear_viewed_body">Forget which repos you've already opened.</string>
     <string name="tweaks_privacy_clear_viewed_dialog_title">Clear viewed history?</string>
-    <string name="tweaks_privacy_clear_viewed_dialog_body">This won\'t unstar or unfavorite anything.</string>
+    <string name="tweaks_privacy_clear_viewed_dialog_body">This won't unstar or unfavorite anything.</string>
     <string name="tweaks_privacy_clear_viewed_dialog_confirm">Clear</string>
     <string name="tweaks_privacy_hidden_repos_title">Hidden repositories</string>
-    <string name="tweaks_privacy_hidden_repos_body">Repos you\'ve muted from feeds and search.</string>
+    <string name="tweaks_privacy_hidden_repos_body">Repos you've muted from feeds and search.</string>
 
     <string name="tweaks_storage_downloaded_apks_title">Downloaded APKs</string>
     <string name="tweaks_storage_downloaded_apks_body">We keep installers around so updates resume fast.</string>
@@ -1312,14 +1312,14 @@
     <string name="tweaks_app_info_community_business_title">Business inquiries</string>
     <string name="tweaks_app_info_community_business_subtitle">Partnerships, press, integrations.</string>
     <string name="tweaks_app_info_community_business_cta">Contact</string>
-    <string name="tweaks_app_info_whats_new_title">What\'s new</string>
+    <string name="tweaks_app_info_whats_new_title">What's new</string>
     <string name="tweaks_app_info_whats_new_subtitle">Past release notes.</string>
     <string name="tweaks_app_info_licenses_title">Open source licenses</string>
     <string name="tweaks_app_info_licenses_subtitle">Libraries used in the app.</string>
     <string name="tweaks_app_info_privacy_policy_title">Privacy policy</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">View on github-store.org.</string>
     <string name="tweaks_app_info_source_code_title">Source code on GitHub</string>
-    <string name="tweaks_app_info_source_code_subtitle">View this app\'s source.</string>
+    <string name="tweaks_app_info_source_code_subtitle">View this app's source.</string>
 
     <string name="tweaks_language_intro_body">The app restarts when you switch language.</string>
 
