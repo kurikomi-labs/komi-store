@@ -1070,6 +1070,8 @@
     <string name="profile_section_account">Account</string>
     <string name="appearance_section_mode">Mode</string>
     <string name="appearance_section_display">Display</string>
+    <string name="auth_more_signin_options">More sign-in options</string>
+    <string name="auth_hide_signin_options">Hide options</string>
     <string name="tweaks_entry_appearance">Appearance</string>
     <string name="tweaks_entry_language">Language</string>
     <string name="tweaks_entry_connection">Connection</string>

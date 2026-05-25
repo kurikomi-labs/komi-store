@@ -104,6 +104,8 @@ import zed.rainxch.githubstore.core.presentation.res.auth_check_status
 import zed.rainxch.githubstore.core.presentation.res.auth_error_with_message
 import zed.rainxch.githubstore.core.presentation.res.auth_polling_status
 import zed.rainxch.githubstore.core.presentation.res.auth_rate_limited
+import zed.rainxch.githubstore.core.presentation.res.auth_hide_signin_options
+import zed.rainxch.githubstore.core.presentation.res.auth_more_signin_options
 import zed.rainxch.githubstore.core.presentation.res.continue_as_guest
 import zed.rainxch.githubstore.core.presentation.res.copy_code
 import zed.rainxch.githubstore.core.presentation.res.enter_code_on_github
@@ -291,7 +293,11 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 
         GhsButton(
             onClick = { showMoreOptions = !showMoreOptions },
-            label = if (showMoreOptions) "Hide options" else "More sign-in options",
+            label = if (showMoreOptions) {
+                stringResource(Res.string.auth_hide_signin_options)
+            } else {
+                stringResource(Res.string.auth_more_signin_options)
+            },
             variant = GhsButtonVariant.Text,
             size = GhsButtonSize.Sm,
             trailingIcon = Icons.Default.ExpandMore,
