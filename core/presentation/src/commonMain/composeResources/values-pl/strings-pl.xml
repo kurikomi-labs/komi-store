@@ -1289,4 +1289,5 @@
     <string name="profile_section_account">Konto</string>
     <string name="appearance_section_mode">Tryb</string>
     <string name="appearance_section_display">Wyświetlanie</string>
+    <string name="theme_dynamic">Dynamiczny</string>
 </resources>

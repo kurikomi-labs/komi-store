@@ -1250,4 +1250,5 @@
     <string name="profile_section_account">アカウント</string>
     <string name="appearance_section_mode">モード</string>
     <string name="appearance_section_display">表示</string>
+    <string name="theme_dynamic">ダイナミック</string>
 </resources>

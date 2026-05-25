@@ -1260,4 +1260,5 @@
     <string name="profile_section_account">Cuenta</string>
     <string name="appearance_section_mode">Modo</string>
     <string name="appearance_section_display">Pantalla</string>
+    <string name="theme_dynamic">Dinámico</string>
 </resources>

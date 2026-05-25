@@ -1319,4 +1319,5 @@
     <string name="profile_section_account">الحساب</string>
     <string name="appearance_section_mode">الوضع</string>
     <string name="appearance_section_display">العرض</string>
+    <string name="theme_dynamic">ديناميكي</string>
 </resources>

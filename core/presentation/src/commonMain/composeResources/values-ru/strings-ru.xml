@@ -1289,4 +1289,5 @@
     <string name="profile_section_account">Аккаунт</string>
     <string name="appearance_section_mode">Режим</string>
     <string name="appearance_section_display">Отображение</string>
+    <string name="theme_dynamic">Динамичная</string>
 </resources>

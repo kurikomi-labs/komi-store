@@ -1296,4 +1296,5 @@
     <string name="profile_section_account">अकाउंट</string>
     <string name="appearance_section_mode">मोड</string>
     <string name="appearance_section_display">डिस्प्ले</string>
+    <string name="theme_dynamic">डायनामिक</string>
 </resources>

@@ -1280,4 +1280,5 @@
     <string name="profile_section_account">계정</string>
     <string name="appearance_section_mode">모드</string>
     <string name="appearance_section_display">디스플레이</string>
+    <string name="theme_dynamic">다이내믹</string>
 </resources>
