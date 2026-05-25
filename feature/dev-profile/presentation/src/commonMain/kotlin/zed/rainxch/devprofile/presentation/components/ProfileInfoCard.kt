@@ -2,6 +2,7 @@ package zed.rainxch.devprofile.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,22 +27,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
 import zed.rainxch.devprofile.presentation.DeveloperProfileAction
 
-@OptIn(ExperimentalLayoutApi::class)
+private val MentionRegex = Regex("(?<![A-Za-z0-9-])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?)")
+
 @Composable
 fun ProfileInfoCard(
     profile: DeveloperProfile,
@@ -53,13 +63,13 @@ fun ProfileInfoCard(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
             width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
+            color = MaterialTheme.colorScheme.outline,
         ),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 CoilImage(
                     imageModel = { profile.avatarUrl },
@@ -69,100 +79,219 @@ fun ProfileInfoCard(
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                 )
-                Spacer(Modifier.width(14.dp))
+                Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = profile.name ?: profile.login,
-                        maxLines = 2,
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = profile.name ?: profile.login,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                        if (profile.isOrganization) {
+                            Spacer(Modifier.width(8.dp))
+                            OrgPill()
+                        }
+                    }
                     Text(
                         text = "@${profile.login}",
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
-                    profile.location?.takeIf { it.isNotBlank() }?.let { location ->
-                        Spacer(Modifier.height(6.dp))
-                        InfoChip(icon = Icons.Default.LocationOn, text = location)
-                    }
                 }
-            }
-            profile.bio?.takeIf { it.isNotBlank() }?.let { bio ->
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = bio,
-                    maxLines = 4,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
 
-            val hasMetaChips = profile.company != null ||
-                profile.blog?.isNotBlank() == true ||
-                profile.twitterUsername != null
-            if (hasMetaChips) {
+            profile.bio?.takeIf { it.isNotBlank() }?.let { bio ->
                 Spacer(Modifier.height(12.dp))
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    profile.company?.let { company ->
-                        StaticChip(icon = Icons.Default.Business, text = company)
-                    }
-                    profile.blog?.takeIf { it.isNotBlank() }?.let { blog ->
-                        val displayUrl = blog.removePrefix("https://").removePrefix("http://")
-                        ClickableChip(
-                            icon = Icons.Default.Link,
-                            text = displayUrl,
-                            onClick = {
-                                val url = if (!blog.startsWith("http")) "https://$blog" else blog
-                                onAction(DeveloperProfileAction.OnOpenLink(url))
-                            },
-                        )
-                    }
-                    profile.twitterUsername?.let { twitter ->
-                        ClickableChip(
-                            icon = Icons.Default.Tag,
-                            text = "@$twitter",
-                            onClick = {
-                                onAction(DeveloperProfileAction.OnOpenLink("https://twitter.com/$twitter"))
-                            },
-                        )
-                    }
-                }
+                BioText(bio = bio, onMention = { user ->
+                    onAction(DeveloperProfileAction.OnNavigateToUser(user))
+                })
             }
+
+            Spacer(Modifier.height(16.dp))
+            MetricsStrip(
+                repos = profile.publicRepos,
+                followers = profile.followers,
+                following = profile.following,
+            )
         }
     }
 }
 
 @Composable
-private fun InfoChip(
-    icon: ImageVector,
-    text: String,
-) {
+private fun BioText(bio: String, onMention: (String) -> Unit) {
+    val cs = MaterialTheme.colorScheme
+    val annotated = remember(bio, cs.primary) {
+        buildAnnotatedString {
+            var cursor = 0
+            for (match in MentionRegex.findAll(bio)) {
+                if (match.range.first > cursor) {
+                    append(bio.substring(cursor, match.range.first))
+                }
+                val handle = match.groupValues[1]
+                withLink(
+                    LinkAnnotation.Clickable(
+                        tag = "mention:$handle",
+                        styles = TextLinkStyles(
+                            style = SpanStyle(
+                                color = cs.primary,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        ),
+                        linkInteractionListener = { onMention(handle) },
+                    ),
+                ) {
+                    append("@$handle")
+                }
+                cursor = match.range.last + 1
+            }
+            if (cursor < bio.length) append(bio.substring(cursor))
+        }
+    }
+    Text(
+        text = annotated,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 5,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
+
+@Composable
+private fun MetricsStrip(repos: Int, followers: Int, following: Int) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(14.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Metric(value = formatCount(repos), label = "Repos", modifier = Modifier.weight(1f))
+        MetricDivider()
+        Metric(value = formatCount(followers), label = "Followers", modifier = Modifier.weight(1f))
+        MetricDivider()
+        Metric(value = formatCount(following), label = "Following", modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun Metric(value: String, label: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
         )
         Text(
-            text = text,
-            maxLines = 1,
+            text = label,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
         )
+    }
+}
+
+@Composable
+private fun MetricDivider() {
+    Box(
+        modifier = Modifier
+            .width(1.dp)
+            .height(28.dp)
+            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+    )
+}
+
+@Composable
+private fun OrgPill() {
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+    ) {
+        Text(
+            text = "Org",
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun IdentityRailCard(
+    profile: DeveloperProfile,
+    onAction: (DeveloperProfileAction) -> Unit,
+) {
+    val hasAny = profile.company?.isNotBlank() == true ||
+        profile.location?.isNotBlank() == true ||
+        profile.blog?.isNotBlank() == true ||
+        profile.twitterUsername?.isNotBlank() == true
+    if (!hasAny) return
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            profile.company?.takeIf { it.isNotBlank() }?.let { company ->
+                val trimmed = company.trim()
+                if (trimmed.startsWith("@") && trimmed.length > 1) {
+                    val handle = trimmed.removePrefix("@")
+                    LinkChip(
+                        icon = Icons.Default.Business,
+                        text = trimmed,
+                        onClick = { onAction(DeveloperProfileAction.OnNavigateToUser(handle)) },
+                    )
+                } else {
+                    StaticChip(icon = Icons.Default.Business, text = trimmed)
+                }
+            }
+            profile.location?.takeIf { it.isNotBlank() }?.let { location ->
+                StaticChip(icon = Icons.Default.LocationOn, text = location)
+            }
+            profile.blog?.takeIf { it.isNotBlank() }?.let { blog ->
+                val display = blog.removePrefix("https://").removePrefix("http://")
+                LinkChip(
+                    icon = Icons.Default.Link,
+                    text = display,
+                    onClick = {
+                        val url = if (!blog.startsWith("http")) "https://$blog" else blog
+                        onAction(DeveloperProfileAction.OnOpenLink(url))
+                    },
+                )
+            }
+            profile.twitterUsername?.takeIf { it.isNotBlank() }?.let { twitter ->
+                LinkChip(
+                    icon = Icons.Default.Tag,
+                    text = "@$twitter",
+                    onClick = {
+                        onAction(DeveloperProfileAction.OnOpenLink("https://twitter.com/$twitter"))
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -171,20 +300,17 @@ private fun StaticChip(icon: ImageVector, text: String) {
     Surface(
         shape = RoundedCornerShape(50),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = BorderStroke(
-            width = 0.5.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(13.dp),
+                modifier = Modifier.size(14.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
@@ -199,25 +325,22 @@ private fun StaticChip(icon: ImageVector, text: String) {
 }
 
 @Composable
-private fun ClickableChip(icon: ImageVector, text: String, onClick: () -> Unit) {
+private fun LinkChip(icon: ImageVector, text: String, onClick: () -> Unit) {
     Surface(
-        onClick = onClick,
+        modifier = Modifier.clickable(onClick = onClick),
         shape = RoundedCornerShape(50),
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(13.dp),
+                modifier = Modifier.size(14.dp),
                 tint = MaterialTheme.colorScheme.primary,
             )
             Text(

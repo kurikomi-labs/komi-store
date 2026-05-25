@@ -17,4 +17,7 @@ data class DeveloperProfile(
     val createdAt: String,
     val updatedAt: String,
     val htmlUrl: String,
-)
+    val userType: String? = null,
+) {
+    val isOrganization: Boolean get() = userType.equals("Organization", ignoreCase = true)
+}

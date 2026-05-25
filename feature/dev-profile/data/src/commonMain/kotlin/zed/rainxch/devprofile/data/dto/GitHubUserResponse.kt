@@ -21,4 +21,5 @@ data class GitHubUserResponse(
     @SerialName("created_at") val createdAt: String,
     @SerialName("updated_at") val updatedAt: String,
     @SerialName("html_url") val htmlUrl: String,
+    val type: String? = null,
 )

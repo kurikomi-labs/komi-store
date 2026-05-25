@@ -21,4 +21,5 @@ fun GitHubUserResponse.toDomain() =
         createdAt = createdAt,
         updatedAt = updatedAt,
         htmlUrl = htmlUrl,
+        userType = type,
     )

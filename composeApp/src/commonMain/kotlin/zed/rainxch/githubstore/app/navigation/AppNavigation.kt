@@ -470,6 +470,11 @@ fun AppNavigation(
                                     ),
                                 )
                             },
+                            onNavigateToUser = { username ->
+                                navController.navigate(
+                                    GithubStoreGraph.DeveloperProfileScreen(username = username),
+                                )
+                            },
                             viewModel =
                                 koinViewModel {
                                     parametersOf(args.username)

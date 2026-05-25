@@ -35,6 +35,7 @@ import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -49,16 +50,18 @@ import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.devprofile.domain.model.RepoFilterType
+import zed.rainxch.devprofile.presentation.components.ContributionCalendarCard
 import zed.rainxch.devprofile.presentation.components.DeveloperRepoItem
 import zed.rainxch.devprofile.presentation.components.FilterSortControls
+import zed.rainxch.devprofile.presentation.components.IdentityRailCard
 import zed.rainxch.devprofile.presentation.components.ProfileInfoCard
-import zed.rainxch.devprofile.presentation.components.StatsRow
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
 fun DeveloperProfileRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
+    onNavigateToUser: (username: String) -> Unit,
     viewModel: DeveloperProfileViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -80,6 +83,13 @@ fun DeveloperProfileRoot(
                     val url = action.url.trim()
                     val allowed = url.startsWith("https://") || url.startsWith("http://")
                     if (allowed) uriHandler.openUri(url)
+                }
+
+                is DeveloperProfileAction.OnNavigateToUser -> {
+                    val username = action.username.trim().removePrefix("@")
+                    if (username.isNotBlank() && username != state.username) {
+                        onNavigateToUser(username)
+                    }
                 }
 
                 else -> {
@@ -148,7 +158,25 @@ fun DeveloperProfileScreen(
                         }
 
                         item {
-                            StatsRow(profile = state.profile)
+                            val primary = MaterialTheme.colorScheme.primary
+                            val hex = remember(primary) {
+                                val r = (primary.red * 255).toInt().coerceIn(0, 255)
+                                val g = (primary.green * 255).toInt().coerceIn(0, 255)
+                                val b = (primary.blue * 255).toInt().coerceIn(0, 255)
+                                fun byte(n: Int) = n.toString(16).padStart(2, '0')
+                                "${byte(r)}${byte(g)}${byte(b)}"
+                            }
+                            ContributionCalendarCard(
+                                username = state.profile.login,
+                                accentHex = hex,
+                            )
+                        }
+
+                        item {
+                            IdentityRailCard(
+                                profile = state.profile,
+                                onAction = onAction,
+                            )
                         }
 
                         item {

@@ -14,6 +14,8 @@ kotlin {
                 implementation(projects.feature.devProfile.domain)
 
                 implementation(libs.bundles.landscapist)
+                implementation(libs.coil3.compose)
+                implementation(libs.coil3.svg)
 
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)

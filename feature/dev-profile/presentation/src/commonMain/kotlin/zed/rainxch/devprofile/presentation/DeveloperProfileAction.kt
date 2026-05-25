@@ -34,4 +34,8 @@ sealed interface DeveloperProfileAction {
     data class OnOpenLink(
         val url: String,
     ) : DeveloperProfileAction
+
+    data class OnNavigateToUser(
+        val username: String,
+    ) : DeveloperProfileAction
 }

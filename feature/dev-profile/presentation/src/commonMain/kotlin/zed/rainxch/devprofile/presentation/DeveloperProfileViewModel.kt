@@ -179,6 +179,7 @@ class DeveloperProfileViewModel(
             DeveloperProfileAction.OnNavigateBackClick,
             is DeveloperProfileAction.OnRepositoryClick,
             is DeveloperProfileAction.OnOpenLink,
+            is DeveloperProfileAction.OnNavigateToUser,
             -> {
             }
 
