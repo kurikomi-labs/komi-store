@@ -37,15 +37,11 @@ fun GithubStoreTheme(
     }
     val baseScheme = colorSchemeFor(palette = tokenPalette, mode = mode)
     val targetScheme = if (dynamic != null) {
-        if (isAmoledTheme && isDarkTheme) {
-            dynamic.copy(
-                background = Color.Black,
-                surface = Color(0xFF0B0F14),
-                surfaceContainerLowest = Color.Black,
-            )
-        } else {
-            dynamic
-        }
+        applyDynamicSurfaces(
+            dynamic = dynamic,
+            isDark = isDarkTheme,
+            isAmoled = isAmoledTheme && isDarkTheme,
+        )
     } else {
         baseScheme
     }
@@ -66,4 +62,44 @@ fun GithubStoreTheme(
             content = content,
         )
     }
+}
+
+private fun applyDynamicSurfaces(
+    dynamic: ColorScheme,
+    isDark: Boolean,
+    isAmoled: Boolean,
+): ColorScheme {
+    val accent = dynamic.primary
+    val base = when {
+        isAmoled -> Color.Black
+        isDark -> Color(0xFF101319)
+        else -> Color.White
+    }
+    fun tint(ratio: Float): Color = blend(base, accent, ratio)
+    return dynamic.copy(
+        background = if (isAmoled) Color.Black else tint(0.06f),
+        surface = if (isAmoled) Color(0xFF0B0F14) else tint(if (isDark) 0.08f else 0.04f),
+        surfaceVariant = tint(if (isDark) 0.14f else 0.10f),
+        surfaceTint = accent,
+        surfaceBright = tint(if (isDark) 0.16f else 0.02f),
+        surfaceDim = tint(if (isDark) 0.04f else 0.10f),
+        surfaceContainerLowest = if (isAmoled) Color.Black else if (isDark) base else Color.White,
+        surfaceContainerLow = tint(if (isDark) 0.06f else 0.04f),
+        surfaceContainer = tint(if (isDark) 0.09f else 0.07f),
+        surfaceContainerHigh = tint(if (isDark) 0.12f else 0.10f),
+        surfaceContainerHighest = tint(if (isDark) 0.16f else 0.13f),
+        outline = tint(if (isDark) 0.30f else 0.25f),
+        outlineVariant = tint(if (isDark) 0.18f else 0.15f),
+    )
+}
+
+private fun blend(base: Color, accent: Color, ratio: Float): Color {
+    val r = ratio.coerceIn(0f, 1f)
+    val inv = 1f - r
+    return Color(
+        red = base.red * inv + accent.red * r,
+        green = base.green * inv + accent.green * r,
+        blue = base.blue * inv + accent.blue * r,
+        alpha = 1f,
+    )
 }
