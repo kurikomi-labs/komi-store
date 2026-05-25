@@ -158,17 +158,9 @@ fun DeveloperProfileScreen(
                         }
 
                         item {
-                            val primary = MaterialTheme.colorScheme.primary
-                            val hex = remember(primary) {
-                                val r = (primary.red * 255).toInt().coerceIn(0, 255)
-                                val g = (primary.green * 255).toInt().coerceIn(0, 255)
-                                val b = (primary.blue * 255).toInt().coerceIn(0, 255)
-                                fun byte(n: Int) = n.toString(16).padStart(2, '0')
-                                "${byte(r)}${byte(g)}${byte(b)}"
-                            }
                             ContributionCalendarCard(
-                                username = state.profile.login,
-                                accentHex = hex,
+                                contributions = state.contributions,
+                                isLoading = state.isLoadingContributions,
                             )
                         }
 

@@ -2,6 +2,7 @@ package zed.rainxch.devprofile.presentation
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import zed.rainxch.devprofile.domain.model.ContributionCalendar
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
 import zed.rainxch.devprofile.domain.model.DeveloperRepository
 import zed.rainxch.devprofile.domain.model.RepoFilterType
@@ -18,4 +19,6 @@ data class DeveloperProfileState(
     val currentFilter: RepoFilterType = RepoFilterType.WITH_RELEASES,
     val currentSort: RepoSortType = RepoSortType.UPDATED,
     val searchQuery: String = "",
+    val contributions: ContributionCalendar? = null,
+    val isLoadingContributions: Boolean = false,
 )

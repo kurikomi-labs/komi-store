@@ -24,11 +24,16 @@ import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.repository.FavouritesRepository
+import io.ktor.client.request.headers
+import io.ktor.client.request.url
+import zed.rainxch.devprofile.data.dto.ContributionsResponse
 import zed.rainxch.devprofile.data.dto.GitHubRepoResponse
 import zed.rainxch.devprofile.data.dto.GitHubUserResponse
 import zed.rainxch.devprofile.data.mappers.toDeveloperProfile
 import zed.rainxch.devprofile.data.mappers.toDomain
 import zed.rainxch.devprofile.data.mappers.toGitHubRepoResponse
+import zed.rainxch.devprofile.domain.model.ContributionCalendar
+import zed.rainxch.devprofile.domain.model.ContributionDay
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
 import zed.rainxch.devprofile.domain.model.DeveloperRepository
 import zed.rainxch.devprofile.domain.repository.DeveloperProfileRepository
@@ -70,6 +75,33 @@ class DeveloperProfileRepositoryImpl(
                 throw e
             } catch (e: Exception) {
                 logger.error("Failed to fetch developer profile for $username")
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun getContributionCalendar(username: String): Result<ContributionCalendar> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = httpClient.get {
+                    url("https://github-contributions-api.jogruber.de/v4/$username?y=last")
+                    headers { remove("X-GitHub-Token") }
+                }
+                if (!response.status.isSuccess()) {
+                    return@withContext Result.failure(
+                        Exception("Failed to fetch contributions: ${response.status.description}"),
+                    )
+                }
+                val body: ContributionsResponse = response.body()
+                val days = body.contributions.map {
+                    ContributionDay(date = it.date, count = it.count, level = it.level)
+                }
+                val total = body.total["lastYear"] ?: body.total.values.firstOrNull() ?: 0
+                Result.success(ContributionCalendar(totalLastYear = total, days = days))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.warn("Failed to fetch contributions for $username: ${e.message}")
                 Result.failure(e)
             }
         }

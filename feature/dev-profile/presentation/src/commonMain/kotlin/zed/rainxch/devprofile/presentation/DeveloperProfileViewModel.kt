@@ -64,8 +64,10 @@ class DeveloperProfileViewModel(
                                 profile = profile,
                                 isLoading = false,
                                 isLoadingRepos = true,
+                                isLoadingContributions = true,
                             )
                         }
+                        loadContributions()
                     }.onFailure { error ->
                         _state.update {
                             it.copy(
@@ -116,6 +118,23 @@ class DeveloperProfileViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun loadContributions() {
+        viewModelScope.launch {
+            repository.getContributionCalendar(username)
+                .onSuccess { cal ->
+                    _state.update {
+                        it.copy(
+                            contributions = cal,
+                            isLoadingContributions = false,
+                        )
+                    }
+                }
+                .onFailure {
+                    _state.update { it.copy(isLoadingContributions = false) }
+                }
         }
     }
 
