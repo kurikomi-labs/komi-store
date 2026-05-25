@@ -1314,4 +1314,7 @@
     <string name="tweaks_app_info_community_business_title">استفسارات الأعمال</string>
     <string name="tweaks_app_info_community_business_subtitle">الشراكات، الصحافة، التكاملات.</string>
     <string name="tweaks_app_info_community_business_cta">تواصل</string>
+    <string name="profile_section_library">المكتبة</string>
+    <string name="profile_section_updates">التحديثات</string>
+    <string name="profile_section_account">الحساب</string>
 </resources>

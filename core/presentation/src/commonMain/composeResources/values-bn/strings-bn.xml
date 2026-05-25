@@ -1276,4 +1276,7 @@
     <string name="tweaks_app_info_community_business_title">ব্যবসায়িক অনুসন্ধান</string>
     <string name="tweaks_app_info_community_business_subtitle">অংশীদারি, প্রেস, ইন্টিগ্রেশন।</string>
     <string name="tweaks_app_info_community_business_cta">যোগাযোগ</string>
+    <string name="profile_section_library">লাইব্রেরি</string>
+    <string name="profile_section_updates">আপডেট</string>
+    <string name="profile_section_account">অ্যাকাউন্ট</string>
 </resources>

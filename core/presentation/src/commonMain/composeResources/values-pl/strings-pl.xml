@@ -1284,4 +1284,7 @@
     <string name="tweaks_app_info_community_business_title">Sprawy biznesowe</string>
     <string name="tweaks_app_info_community_business_subtitle">Współprace, prasa, integracje.</string>
     <string name="tweaks_app_info_community_business_cta">Kontakt</string>
+    <string name="profile_section_library">Biblioteka</string>
+    <string name="profile_section_updates">Aktualizacje</string>
+    <string name="profile_section_account">Konto</string>
 </resources>

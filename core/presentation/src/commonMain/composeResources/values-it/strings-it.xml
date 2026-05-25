@@ -1289,4 +1289,7 @@
     <string name="tweaks_app_info_community_business_title">Richieste commerciali</string>
     <string name="tweaks_app_info_community_business_subtitle">Partnership, stampa, integrazioni.</string>
     <string name="tweaks_app_info_community_business_cta">Contattaci</string>
+    <string name="profile_section_library">Libreria</string>
+    <string name="profile_section_updates">Aggiornamenti</string>
+    <string name="profile_section_account">Account</string>
 </resources>

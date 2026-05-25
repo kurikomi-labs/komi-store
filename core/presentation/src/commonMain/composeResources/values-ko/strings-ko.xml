@@ -1275,4 +1275,7 @@
     <string name="tweaks_app_info_community_business_title">비즈니스 문의</string>
     <string name="tweaks_app_info_community_business_subtitle">파트너십, 보도, 연동.</string>
     <string name="tweaks_app_info_community_business_cta">문의</string>
+    <string name="profile_section_library">라이브러리</string>
+    <string name="profile_section_updates">업데이트</string>
+    <string name="profile_section_account">계정</string>
 </resources>

@@ -1245,4 +1245,7 @@
     <string name="tweaks_app_info_community_business_title">ビジネスのお問い合わせ</string>
     <string name="tweaks_app_info_community_business_subtitle">パートナーシップ、プレス、連携。</string>
     <string name="tweaks_app_info_community_business_cta">お問い合わせ</string>
+    <string name="profile_section_library">ライブラリ</string>
+    <string name="profile_section_updates">アップデート</string>
+    <string name="profile_section_account">アカウント</string>
 </resources>

@@ -1255,4 +1255,7 @@
     <string name="tweaks_app_info_community_business_title">Consultas comerciales</string>
     <string name="tweaks_app_info_community_business_subtitle">Alianzas, prensa, integraciones.</string>
     <string name="tweaks_app_info_community_business_cta">Contactar</string>
+    <string name="profile_section_library">Biblioteca</string>
+    <string name="profile_section_updates">Actualizaciones</string>
+    <string name="profile_section_account">Cuenta</string>
 </resources>

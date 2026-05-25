@@ -1291,4 +1291,7 @@
     <string name="tweaks_app_info_community_business_title">व्यावसायिक पूछताछ</string>
     <string name="tweaks_app_info_community_business_subtitle">साझेदारी, प्रेस, इंटीग्रेशन।</string>
     <string name="tweaks_app_info_community_business_cta">संपर्क करें</string>
+    <string name="profile_section_library">लाइब्रेरी</string>
+    <string name="profile_section_updates">अपडेट</string>
+    <string name="profile_section_account">अकाउंट</string>
 </resources>

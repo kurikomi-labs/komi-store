@@ -1286,4 +1286,7 @@
     <string name="tweaks_app_info_community_business_title">Ticari sorular</string>
     <string name="tweaks_app_info_community_business_subtitle">Ortaklıklar, basın, entegrasyonlar.</string>
     <string name="tweaks_app_info_community_business_cta">İletişim</string>
+    <string name="profile_section_library">Kitaplık</string>
+    <string name="profile_section_updates">Güncellemeler</string>
+    <string name="profile_section_account">Hesap</string>
 </resources>

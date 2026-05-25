@@ -1255,4 +1255,7 @@
     <string name="tweaks_app_info_community_business_title">Demandes professionnelles</string>
     <string name="tweaks_app_info_community_business_subtitle">Partenariats, presse, intégrations.</string>
     <string name="tweaks_app_info_community_business_cta">Contacter</string>
+    <string name="profile_section_library">Bibliothèque</string>
+    <string name="profile_section_updates">Mises à jour</string>
+    <string name="profile_section_account">Compte</string>
 </resources>
