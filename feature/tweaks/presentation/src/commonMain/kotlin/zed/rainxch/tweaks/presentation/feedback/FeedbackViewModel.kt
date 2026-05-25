@@ -118,6 +118,15 @@ class FeedbackViewModel(
             }
         val user = userSessionRepository.getUser().firstOrNull()
         val appLanguage = tweaksRepository.getAppLanguage().firstOrNull()
+        val palette = tweaksRepository.getThemeColor().firstOrNull()
+        val isDark = tweaksRepository.getIsDarkTheme().firstOrNull()
+        val amoled = tweaksRepository.getAmoledTheme().firstOrNull() ?: false
+        val themeMode = when {
+            isDark == null -> "System"
+            isDark && amoled -> "AMOLED"
+            isDark -> "Dark"
+            else -> "Light"
+        }
         return DiagnosticsInfo(
             appVersion = appVersionInfo.versionName,
             platform = platform.displayName(),
@@ -125,6 +134,8 @@ class FeedbackViewModel(
             locale = appLanguage ?: getSystemLocaleTag(),
             installerType = installerString,
             githubUsername = user?.username,
+            themePalette = palette?.name ?: "Nord",
+            themeMode = themeMode,
         )
     }
 

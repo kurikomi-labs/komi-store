@@ -7,4 +7,6 @@ data class DiagnosticsInfo(
     val locale: String,
     val installerType: String?,
     val githubUsername: String?,
+    val themePalette: String,
+    val themeMode: String,
 )

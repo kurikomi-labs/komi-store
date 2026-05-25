@@ -47,6 +47,7 @@ object FeedbackComposer {
                 builder.append("- App: GitHub Store v").append(d.appVersion).append('\n')
                 builder.append("- Platform: ").append(d.platform).append(' ').append(d.osVersion).append('\n')
                 builder.append("- Locale: ").append(d.locale).append('\n')
+                builder.append("- Theme: ").append(d.themePalette).append(" / ").append(d.themeMode).append('\n')
                 d.installerType?.let { builder.append("- Installer: ").append(it).append('\n') }
                 if (channel == FeedbackChannel.GITHUB) {
                     d.githubUsername?.let { builder.append("- GitHub user: @").append(it).append('\n') }

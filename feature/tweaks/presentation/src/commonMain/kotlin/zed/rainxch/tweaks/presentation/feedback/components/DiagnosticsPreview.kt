@@ -79,7 +79,8 @@ private fun formatDiagnostics(d: DiagnosticsInfo, channel: FeedbackChannel): Str
     val sb = StringBuilder()
     sb.append("- App: GitHub Store v").append(d.appVersion).append('\n')
     sb.append("- Platform: ").append(d.platform).append(' ').append(d.osVersion).append('\n')
-    sb.append("- Locale: ").append(d.locale)
+    sb.append("- Locale: ").append(d.locale).append('\n')
+    sb.append("- Theme: ").append(d.themePalette).append(" / ").append(d.themeMode)
     d.installerType?.let { sb.append('\n').append("- Installer: ").append(it) }
     if (channel == FeedbackChannel.GITHUB) {
         d.githubUsername?.let { sb.append('\n').append("- GitHub user: @").append(it) }
