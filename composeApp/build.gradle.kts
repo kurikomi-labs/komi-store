@@ -171,23 +171,24 @@ compose.desktop {
     }
 }
 
-// Maintainer helper: prints sorted unique runtime dependencies of the Android release variant.
-// Use to audit the curated licenses.json after adding/removing deps.
-//   ./gradlew :composeApp:printRuntimeDependencies
 tasks.register("printRuntimeDependencies") {
     description = "Lists all runtime dependencies for licenses.json maintenance."
     group = "verification"
-    val coordinatesProvider: Provider<List<String>> = project.provider {
-        val cfg = configurations.findByName("releaseRuntimeClasspath")
-            ?: configurations.findByName("androidReleaseRuntimeClasspath")
-            ?: error("No release runtime classpath configuration found.")
-        cfg.incoming.resolutionResult.allComponents
-            .map { it.id }
-            .filterIsInstance<org.gradle.api.artifacts.component.ModuleComponentIdentifier>()
-            .map { "${it.group}:${it.module}:${it.version}" }
-            .distinct()
-            .sorted()
-    }
+    val coordinatesProvider: Provider<List<String>> =
+        project.provider {
+            val cfg =
+                configurations.findByName("releaseRuntimeClasspath")
+                    ?: configurations.findByName("androidReleaseRuntimeClasspath")
+                    ?: error("No release runtime classpath configuration found.")
+            cfg.incoming.resolutionResult.allComponents
+                .asSequence()
+                .map { it.id }
+                .filterIsInstance<ModuleComponentIdentifier>()
+                .map { "${it.group}:${it.module}:${it.version}" }
+                .distinct()
+                .sorted()
+                .toList()
+        }
     notCompatibleWithConfigurationCache("Resolves Android variant configurations at execution time.")
     doLast {
         coordinatesProvider.get().forEach { println(it) }
