@@ -65,6 +65,8 @@ import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.RestartBanner
+import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.components.hub.GhsEntryRow
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.core.presentation.theme.tokens.GhsAccents
@@ -208,8 +210,9 @@ fun TweaksHubScreen(
     var query by rememberSaveable { mutableStateOf("") }
 
     val tapToManage = stringResource(Res.string.tweaks_entry_subtitle_tap)
+    val isAndroid = getPlatform() == Platform.ANDROID
 
-    val blocks = listOf(
+    val blocks = listOfNotNull(
         TweaksHubBlock(
             title = stringResource(Res.string.section_look_and_feel),
             entries = listOf(
@@ -255,25 +258,29 @@ fun TweaksHubScreen(
                 ),
             ),
         ),
-        TweaksHubBlock(
-            title = stringResource(Res.string.section_installs_and_updates),
-            entries = listOf(
-                TweaksHubEntry(
-                    title = stringResource(Res.string.tweaks_entry_install_method),
-                    subtitle = tapToManage,
-                    icon = Icons.Outlined.InstallMobile,
-                    onClick = onNavigateToInstallMethod,
-                    accent = GhsAccents.Sage,
+        if (isAndroid) {
+            TweaksHubBlock(
+                title = stringResource(Res.string.section_installs_and_updates),
+                entries = listOf(
+                    TweaksHubEntry(
+                        title = stringResource(Res.string.tweaks_entry_install_method),
+                        subtitle = tapToManage,
+                        icon = Icons.Outlined.InstallMobile,
+                        onClick = onNavigateToInstallMethod,
+                        accent = GhsAccents.Sage,
+                    ),
+                    TweaksHubEntry(
+                        title = stringResource(Res.string.tweaks_entry_updates),
+                        subtitle = tapToManage,
+                        icon = Icons.Outlined.Update,
+                        onClick = onNavigateToUpdates,
+                        accent = GhsAccents.Amber,
+                    ),
                 ),
-                TweaksHubEntry(
-                    title = stringResource(Res.string.tweaks_entry_updates),
-                    subtitle = tapToManage,
-                    icon = Icons.Outlined.Update,
-                    onClick = onNavigateToUpdates,
-                    accent = GhsAccents.Amber,
-                ),
-            ),
-        ),
+            )
+        } else {
+            null
+        },
         TweaksHubBlock(
             title = stringResource(Res.string.section_privacy_and_data),
             entries = listOf(
