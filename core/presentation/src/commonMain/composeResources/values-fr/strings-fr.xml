@@ -1093,9 +1093,7 @@
     <string name="profile_tweaks_description">Paramètres, thème, réseau, traduction, options avancées.</string>
     <string name="restart_banner_body">Certains changements nécessitent un redémarrage pour s'appliquer.</string>
     <string name="restart_banner_later">Plus tard</string>
-    <string name="restart_banner_reason_language">langue</string>
-    <string name="restart_banner_reason_telemetry">données d'usage</string>
-    <string name="restart_banner_reason_theme">thème</string>
+    <string name="restart_banner_reason_language">langue</string>    <string name="restart_banner_reason_theme">thème</string>
     <string name="restart_banner_reasons_prefix">Concerné : %1$s</string>
     <string name="restart_banner_restart_now">Redémarrer</string>
     <string name="search_clear_filter_cd">Retirer le filtre</string>
@@ -1219,18 +1217,7 @@
     <string name="tweaks_privacy_hidden_repos_body">Dépôts que vous avez masqués des flux et de la recherche.</string>
     <string name="tweaks_privacy_hidden_repos_title">Dépôts masqués</string>
     <string name="tweaks_privacy_hide_seen_body">Ignorer les dépôts déjà vus dans les flux et la recherche.</string>
-    <string name="tweaks_privacy_hide_seen_title">Masquer les dépôts déjà consultés</string>
-    <string name="tweaks_privacy_telemetry_body">Aidez-nous à comprendre quelles fonctionnalités sont utilisées.</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">Version de l'application.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">Nombre d'utilisations des fonctionnalités.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Aucun identifiant.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">Aucun nom de dépôt.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">Aucun jeton.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">Système d'exploitation et plateforme.</string>
-    <string name="tweaks_privacy_telemetry_title">Partager des données d'usage anonymes</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">Ce que nous collectons</string>
-    <string name="tweaks_privacy_usage_data_section">Données d'usage</string>
-    <string name="tweaks_search_empty">Aucun paramètre ne correspond à « %1$s ».</string>
+    <string name="tweaks_privacy_hide_seen_title">Masquer les dépôts déjà consultés</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Aucun identifiant.</string>    <string name="tweaks_privacy_telemetry_collect_os">Système d'exploitation et plateforme.</string>    <string name="tweaks_search_empty">Aucun paramètre ne correspond à « %1$s ».</string>
     <string name="tweaks_search_placeholder">Rechercher dans les paramètres</string>
     <string name="tweaks_sources_add_a_host">Ajouter un hôte Forgejo ou Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Hôtes ajoutés</string>

@@ -26,7 +26,6 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_body
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_later
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_reason_language
-import zed.rainxch.githubstore.core.presentation.res.restart_banner_reason_telemetry
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_reason_theme
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_reasons_prefix
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_restart_now
@@ -45,7 +44,6 @@ fun RestartBanner(
             when (reason) {
                 RestartReason.LANGUAGE -> Res.string.restart_banner_reason_language
                 RestartReason.THEME_MIGRATION -> Res.string.restart_banner_reason_theme
-                RestartReason.TELEMETRY_TOGGLE -> Res.string.restart_banner_reason_telemetry
             },
         )
     }

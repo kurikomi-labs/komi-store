@@ -1122,9 +1122,7 @@
     <string name="profile_tweaks_description">অ্যাপ সেটিংস, থিম, নেটওয়ার্ক, অনুবাদ, উন্নত বিকল্প।</string>
     <string name="restart_banner_body">কিছু পরিবর্তন প্রয়োগ করতে পুনরায় চালু করা প্রয়োজন।</string>
     <string name="restart_banner_later">পরে</string>
-    <string name="restart_banner_reason_language">ভাষা</string>
-    <string name="restart_banner_reason_telemetry">ব্যবহারের তথ্য</string>
-    <string name="restart_banner_reason_theme">থিম</string>
+    <string name="restart_banner_reason_language">ভাষা</string>    <string name="restart_banner_reason_theme">থিম</string>
     <string name="restart_banner_reasons_prefix">প্রভাবিত: %1$s</string>
     <string name="restart_banner_restart_now">এখন পুনরায় চালু করুন</string>
     <string name="search_clear_filter_cd">ফিল্টার সরান</string>
@@ -1244,18 +1242,7 @@
     <string name="tweaks_privacy_hidden_repos_body">যেসব রিপো আপনি ফিড ও সার্চ থেকে মিউট করেছেন।</string>
     <string name="tweaks_privacy_hidden_repos_title">লুকানো রিপোজিটরি</string>
     <string name="tweaks_privacy_hide_seen_body">ফিড ও সার্চে দেখা রিপোগুলি বাদ দিন।</string>
-    <string name="tweaks_privacy_hide_seen_title">যে রিপো ইতিমধ্যে দেখেছি সেগুলি লুকান</string>
-    <string name="tweaks_privacy_telemetry_body">কোন ফিচারগুলি ব্যবহৃত হচ্ছে তা বুঝতে আমাদের সাহায্য করুন।</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">অ্যাপ সংস্করণ।</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">ফিচার ব্যবহারের গণনা।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">কোনো শনাক্তকারী নেই।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">রিপোর নাম নেই।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">কোনো টোকেন নেই।</string>
-    <string name="tweaks_privacy_telemetry_collect_os">OS এবং প্ল্যাটফর্ম।</string>
-    <string name="tweaks_privacy_telemetry_title">বেনামী ব্যবহারের তথ্য শেয়ার করুন</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">আমরা কী সংগ্রহ করি</string>
-    <string name="tweaks_privacy_usage_data_section">ব্যবহারের তথ্য</string>
-    <string name="tweaks_search_empty">'%1$s' এর সাথে কোনো সেটিংস মেলে না।</string>
+    <string name="tweaks_privacy_hide_seen_title">যে রিপো ইতিমধ্যে দেখেছি সেগুলি লুকান</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">কোনো শনাক্তকারী নেই।</string>    <string name="tweaks_privacy_telemetry_collect_os">OS এবং প্ল্যাটফর্ম।</string>    <string name="tweaks_search_empty">'%1$s' এর সাথে কোনো সেটিংস মেলে না।</string>
     <string name="tweaks_search_placeholder">সেটিংস অনুসন্ধান করুন</string>
     <string name="tweaks_sources_add_a_host">একটি Forgejo বা Gitea হোস্ট যোগ করুন</string>
     <string name="tweaks_sources_added_hosts_section">যোগ করা হোস্ট</string>

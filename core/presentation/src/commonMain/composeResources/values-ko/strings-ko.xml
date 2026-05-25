@@ -1115,9 +1115,7 @@
     <string name="profile_tweaks_description">앱 설정, 테마, 네트워크, 번역, 고급 옵션.</string>
     <string name="restart_banner_body">일부 변경 사항을 적용하려면 다시 시작해야 합니다.</string>
     <string name="restart_banner_later">나중에</string>
-    <string name="restart_banner_reason_language">언어</string>
-    <string name="restart_banner_reason_telemetry">사용 데이터</string>
-    <string name="restart_banner_reason_theme">테마</string>
+    <string name="restart_banner_reason_language">언어</string>    <string name="restart_banner_reason_theme">테마</string>
     <string name="restart_banner_reasons_prefix">영향: %1$s</string>
     <string name="restart_banner_restart_now">지금 다시 시작</string>
     <string name="search_clear_filter_cd">필터 제거</string>
@@ -1240,18 +1238,7 @@
     <string name="tweaks_privacy_hidden_repos_body">피드와 검색에서 숨긴 저장소입니다.</string>
     <string name="tweaks_privacy_hidden_repos_title">숨긴 저장소</string>
     <string name="tweaks_privacy_hide_seen_body">피드와 검색에서 본 저장소를 건너뜁니다.</string>
-    <string name="tweaks_privacy_hide_seen_title">이미 본 저장소 숨기기</string>
-    <string name="tweaks_privacy_telemetry_body">어떤 기능이 사용되는지 파악하는 데 도움을 주세요.</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">앱 버전.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">기능 사용 횟수.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">식별자 없음.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">저장소 이름 없음.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">토큰 없음.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">OS 및 플랫폼.</string>
-    <string name="tweaks_privacy_telemetry_title">익명 사용 데이터 공유</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">수집 항목</string>
-    <string name="tweaks_privacy_usage_data_section">사용 데이터</string>
-    <string name="tweaks_search_empty">'%1$s'와(과) 일치하는 설정이 없습니다.</string>
+    <string name="tweaks_privacy_hide_seen_title">이미 본 저장소 숨기기</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">식별자 없음.</string>    <string name="tweaks_privacy_telemetry_collect_os">OS 및 플랫폼.</string>    <string name="tweaks_search_empty">'%1$s'와(과) 일치하는 설정이 없습니다.</string>
     <string name="tweaks_search_placeholder">설정 검색</string>
     <string name="tweaks_sources_add_a_host">Forgejo 또는 Gitea 호스트 추가</string>
     <string name="tweaks_sources_added_hosts_section">추가된 호스트</string>

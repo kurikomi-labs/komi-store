@@ -1132,9 +1132,7 @@
     <string name="profile_tweaks_description">Uygulama ayarları, tema, ağ, çeviri, gelişmiş seçenekler.</string>
     <string name="restart_banner_body">Bazı değişikliklerin uygulanması için yeniden başlatma gerekir.</string>
     <string name="restart_banner_later">Sonra</string>
-    <string name="restart_banner_reason_language">dil</string>
-    <string name="restart_banner_reason_telemetry">kullanım verisi</string>
-    <string name="restart_banner_reason_theme">tema</string>
+    <string name="restart_banner_reason_language">dil</string>    <string name="restart_banner_reason_theme">tema</string>
     <string name="restart_banner_reasons_prefix">Etkilenen: %1$s</string>
     <string name="restart_banner_restart_now">Şimdi yeniden başlat</string>
     <string name="search_clear_filter_cd">Filtreyi kaldır</string>
@@ -1254,18 +1252,7 @@
     <string name="tweaks_privacy_hidden_repos_body">Akışlardan ve aramadan sessize aldığınız repolar.</string>
     <string name="tweaks_privacy_hidden_repos_title">Gizli depolar</string>
     <string name="tweaks_privacy_hide_seen_body">Akışlarda ve aramada görülen repoları atla.</string>
-    <string name="tweaks_privacy_hide_seen_title">Daha önce görüntülediğim repoları gizle</string>
-    <string name="tweaks_privacy_telemetry_body">Hangi özelliklerin kullanıldığını anlamamıza yardımcı ol.</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">Uygulama sürümü.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">Özellik kullanım sayıları.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Tanımlayıcı yok.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">Repo adı yok.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">Token yok.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">İşletim sistemi ve platform.</string>
-    <string name="tweaks_privacy_telemetry_title">Anonim kullanım verisi paylaş</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">Ne topluyoruz</string>
-    <string name="tweaks_privacy_usage_data_section">Kullanım verisi</string>
-    <string name="tweaks_search_empty">'%1$s' ile eşleşen ayar yok.</string>
+    <string name="tweaks_privacy_hide_seen_title">Daha önce görüntülediğim repoları gizle</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Tanımlayıcı yok.</string>    <string name="tweaks_privacy_telemetry_collect_os">İşletim sistemi ve platform.</string>    <string name="tweaks_search_empty">'%1$s' ile eşleşen ayar yok.</string>
     <string name="tweaks_search_placeholder">Ayarları ara</string>
     <string name="tweaks_sources_add_a_host">Bir Forgejo veya Gitea hostu ekle</string>
     <string name="tweaks_sources_added_hosts_section">Eklenen hostlar</string>

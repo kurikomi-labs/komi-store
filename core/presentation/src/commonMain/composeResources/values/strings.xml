@@ -1089,9 +1089,7 @@
     <string name="restart_banner_body">Some changes need a restart to apply.</string>
     <string name="restart_banner_reasons_prefix">Affected: %1$s</string>
     <string name="restart_banner_reason_language">language</string>
-    <string name="restart_banner_reason_theme">theme</string>
-    <string name="restart_banner_reason_telemetry">usage data</string>
-    <string name="restart_banner_restart_now">Restart now</string>
+    <string name="restart_banner_reason_theme">theme</string>    <string name="restart_banner_restart_now">Restart now</string>
     <string name="restart_banner_later">Later</string>
     <string name="tweaks_install_method_desktop_empty_title">Install method is Android-only</string>
     <string name="tweaks_install_method_desktop_empty_body">Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager.</string>
@@ -1276,17 +1274,7 @@
     <string name="tweaks_sources_github_mirror_title">GitHub mirror</string>
 
     <string name="tweaks_privacy_browsing_history_section">Browsing history</string>
-    <string name="tweaks_privacy_usage_data_section">Usage data</string>
-    <string name="tweaks_privacy_telemetry_title">Share anonymous usage data</string>
-    <string name="tweaks_privacy_telemetry_body">Help us understand which features get used.</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">What we collect</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">App version.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">OS and platform.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">Feature usage counts.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">No repo names.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">No tokens.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">No identifiers.</string>
-    <string name="tweaks_privacy_clipboard_title">Detect repo links in clipboard</string>
+    <string name="tweaks_privacy_usage_data_section">Usage data</string>    <string name="tweaks_privacy_clipboard_title">Detect repo links in clipboard</string>
     <string name="tweaks_privacy_clipboard_body">When you copy a github.com or codeberg.org link, we'll prompt to open it.</string>
     <string name="tweaks_privacy_hide_seen_title">Hide repos I've already viewed</string>
     <string name="tweaks_privacy_hide_seen_body">Skip seen repos in feeds and search.</string>

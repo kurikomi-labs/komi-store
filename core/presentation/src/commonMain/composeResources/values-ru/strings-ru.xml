@@ -1118,9 +1118,7 @@
     <string name="profile_tweaks_description">Настройки приложения, тема, сеть, перевод, расширенные параметры.</string>
     <string name="restart_banner_body">Некоторым изменениям нужен перезапуск.</string>
     <string name="restart_banner_later">Позже</string>
-    <string name="restart_banner_reason_language">язык</string>
-    <string name="restart_banner_reason_telemetry">данные использования</string>
-    <string name="restart_banner_reason_theme">тема</string>
+    <string name="restart_banner_reason_language">язык</string>    <string name="restart_banner_reason_theme">тема</string>
     <string name="restart_banner_reasons_prefix">Затронуто: %1$s</string>
     <string name="restart_banner_restart_now">Перезапустить</string>
     <string name="search_clear_filter_cd">Убрать фильтр</string>
@@ -1246,18 +1244,7 @@
     <string name="tweaks_privacy_hidden_repos_body">Репо, которые ты убрал из ленты и поиска.</string>
     <string name="tweaks_privacy_hidden_repos_title">Скрытые репозитории</string>
     <string name="tweaks_privacy_hide_seen_body">Пропускать просмотренные репо в ленте и поиске.</string>
-    <string name="tweaks_privacy_hide_seen_title">Скрывать уже просмотренные репо</string>
-    <string name="tweaks_privacy_telemetry_body">Помоги нам понять, какие функции используются.</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">Версия приложения.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">Счётчики использования функций.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Никаких идентификаторов.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">Никаких названий репо.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">Никаких токенов.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">ОС и платформа.</string>
-    <string name="tweaks_privacy_telemetry_title">Делиться анонимными данными использования</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">Что мы собираем</string>
-    <string name="tweaks_privacy_usage_data_section">Данные использования</string>
-    <string name="tweaks_search_empty">Под «%1$s» ничего не нашлось.</string>
+    <string name="tweaks_privacy_hide_seen_title">Скрывать уже просмотренные репо</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Никаких идентификаторов.</string>    <string name="tweaks_privacy_telemetry_collect_os">ОС и платформа.</string>    <string name="tweaks_search_empty">Под «%1$s» ничего не нашлось.</string>
     <string name="tweaks_search_placeholder">Поиск по настройкам</string>
     <string name="tweaks_sources_add_a_host">Добавить хост Forgejo или Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Добавленные хосты</string>

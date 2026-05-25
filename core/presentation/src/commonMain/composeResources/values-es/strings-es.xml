@@ -1093,9 +1093,7 @@
     <string name="profile_tweaks_description">Ajustes de la app, tema, red, traducción, opciones avanzadas.</string>
     <string name="restart_banner_body">Algunos cambios necesitan reiniciar para aplicarse.</string>
     <string name="restart_banner_later">Más tarde</string>
-    <string name="restart_banner_reason_language">idioma</string>
-    <string name="restart_banner_reason_telemetry">datos de uso</string>
-    <string name="restart_banner_reason_theme">tema</string>
+    <string name="restart_banner_reason_language">idioma</string>    <string name="restart_banner_reason_theme">tema</string>
     <string name="restart_banner_reasons_prefix">Afectado: %1$s</string>
     <string name="restart_banner_restart_now">Reiniciar ahora</string>
     <string name="search_clear_filter_cd">Quitar filtro</string>
@@ -1219,18 +1217,7 @@
     <string name="tweaks_privacy_hidden_repos_body">Repos que has silenciado en los feeds y la búsqueda.</string>
     <string name="tweaks_privacy_hidden_repos_title">Repositorios ocultos</string>
     <string name="tweaks_privacy_hide_seen_body">Omite los repos vistos en feeds y búsqueda.</string>
-    <string name="tweaks_privacy_hide_seen_title">Ocultar repos que ya he visto</string>
-    <string name="tweaks_privacy_telemetry_body">Ayúdanos a entender qué funciones se usan.</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">Versión de la app.</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">Recuentos de uso de funciones.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Sin identificadores.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">Sin nombres de repos.</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">Sin tokens.</string>
-    <string name="tweaks_privacy_telemetry_collect_os">Sistema operativo y plataforma.</string>
-    <string name="tweaks_privacy_telemetry_title">Compartir datos de uso anónimos</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">Qué recopilamos</string>
-    <string name="tweaks_privacy_usage_data_section">Datos de uso</string>
-    <string name="tweaks_search_empty">Ningún ajuste coincide con '%1$s'.</string>
+    <string name="tweaks_privacy_hide_seen_title">Ocultar repos que ya he visto</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Sin identificadores.</string>    <string name="tweaks_privacy_telemetry_collect_os">Sistema operativo y plataforma.</string>    <string name="tweaks_search_empty">Ningún ajuste coincide con '%1$s'.</string>
     <string name="tweaks_search_placeholder">Buscar ajustes</string>
     <string name="tweaks_sources_add_a_host">Añadir un host de Forgejo o Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Hosts añadidos</string>

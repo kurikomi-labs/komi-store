@@ -1085,9 +1085,7 @@
     <string name="profile_tweaks_description">アプリ設定、テーマ、ネットワーク、翻訳、詳細オプション。</string>
     <string name="restart_banner_body">一部の変更を反映するには再起動が必要です。</string>
     <string name="restart_banner_later">後で</string>
-    <string name="restart_banner_reason_language">言語</string>
-    <string name="restart_banner_reason_telemetry">使用状況データ</string>
-    <string name="restart_banner_reason_theme">テーマ</string>
+    <string name="restart_banner_reason_language">言語</string>    <string name="restart_banner_reason_theme">テーマ</string>
     <string name="restart_banner_reasons_prefix">対象: %1$s</string>
     <string name="restart_banner_restart_now">今すぐ再起動</string>
     <string name="search_clear_filter_cd">フィルターを解除</string>
@@ -1210,18 +1208,7 @@
     <string name="tweaks_privacy_hidden_repos_body">フィードと検索からミュートしたリポジトリ。</string>
     <string name="tweaks_privacy_hidden_repos_title">非表示のリポジトリ</string>
     <string name="tweaks_privacy_hide_seen_body">既読のリポジトリをフィードと検索から除外します。</string>
-    <string name="tweaks_privacy_hide_seen_title">既読のリポジトリを隠す</string>
-    <string name="tweaks_privacy_telemetry_body">どの機能が使われているかを把握する手助けをしてください。</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">アプリのバージョン。</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">機能の使用回数。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">識別子は収集しません。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">リポジトリ名は収集しません。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">トークンは収集しません。</string>
-    <string name="tweaks_privacy_telemetry_collect_os">OS とプラットフォーム。</string>
-    <string name="tweaks_privacy_telemetry_title">匿名の使用状況データを共有</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">収集する内容</string>
-    <string name="tweaks_privacy_usage_data_section">使用状況データ</string>
-    <string name="tweaks_search_empty">「%1$s」に一致する設定はありません。</string>
+    <string name="tweaks_privacy_hide_seen_title">既読のリポジトリを隠す</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">識別子は収集しません。</string>    <string name="tweaks_privacy_telemetry_collect_os">OS とプラットフォーム。</string>    <string name="tweaks_search_empty">「%1$s」に一致する設定はありません。</string>
     <string name="tweaks_search_placeholder">設定を検索</string>
     <string name="tweaks_sources_add_a_host">Forgejo または Gitea ホストを追加</string>
     <string name="tweaks_sources_added_hosts_section">追加したホスト</string>

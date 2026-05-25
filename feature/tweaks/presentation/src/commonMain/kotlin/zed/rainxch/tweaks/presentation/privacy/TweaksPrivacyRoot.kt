@@ -55,16 +55,6 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hide_seen_bo
 import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hide_seen_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hidden_repos_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_hidden_repos_title
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_body
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_app_version
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_feature_usage
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_identifiers
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_repo_names
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_no_tokens
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_collect_os
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_title
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_telemetry_what_we_collect
-import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_usage_data_section
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
@@ -87,15 +77,6 @@ fun TweaksPrivacyRoot(
         onRestartLater = { viewModel.onAction(TweaksAction.OnRestartLaterClick) },
         showRestartBanner = state.restartBannerVisible,
     ) {
-        item(key = "telemetry_card") {
-            TelemetryCard(
-                enabled = state.telemetryEnabled,
-                expanded = state.telemetryExpanded,
-                onToggled = { viewModel.onAction(TweaksAction.OnTelemetryToggled(it)) },
-                onExpandToggle = { viewModel.onAction(TweaksAction.OnTelemetryExpandToggle) },
-            )
-            Spacer(Modifier.height(12.dp))
-        }
 
         item(key = "clipboard_card") {
             ToggleCard(
@@ -159,110 +140,6 @@ fun TweaksPrivacyRoot(
             onConfirm = { viewModel.onAction(TweaksAction.OnClearSeenHistoryConfirm) },
             onDismiss = { viewModel.onAction(TweaksAction.OnClearSeenHistoryDismiss) },
         )
-    }
-}
-
-@Composable
-private fun TelemetryCard(
-    enabled: Boolean,
-    expanded: Boolean,
-    onToggled: (Boolean) -> Unit,
-    onExpandToggle: () -> Unit,
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = stringResource(Res.string.tweaks_privacy_usage_data_section),
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(Radii.chip)
-                    .clickable { onToggled(!enabled) }
-                    .padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(Res.string.tweaks_privacy_telemetry_title),
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        text = stringResource(Res.string.tweaks_privacy_telemetry_body),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(
-                    checked = enabled,
-                    onCheckedChange = null,
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(Radii.chip)
-                    .clickable(onClick = onExpandToggle)
-                    .padding(vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.tweaks_privacy_telemetry_what_we_collect),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .rotate(if (expanded) 180f else 0f),
-                )
-            }
-
-            AnimatedVisibility(visible = expanded) {
-                Column(
-                    modifier = Modifier.padding(top = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    listOf(
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_app_version),
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_os),
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_feature_usage),
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_repo_names),
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_tokens),
-                        stringResource(Res.string.tweaks_privacy_telemetry_collect_no_identifiers),
-                    ).forEach { line ->
-                        Text(
-                            text = "• $line",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 

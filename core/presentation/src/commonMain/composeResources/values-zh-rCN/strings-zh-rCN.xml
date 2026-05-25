@@ -1088,9 +1088,7 @@
     <string name="profile_tweaks_description">应用设置、主题、网络、翻译、高级选项。</string>
     <string name="restart_banner_body">部分更改需要重启后生效。</string>
     <string name="restart_banner_later">稍后</string>
-    <string name="restart_banner_reason_language">语言</string>
-    <string name="restart_banner_reason_telemetry">使用数据</string>
-    <string name="restart_banner_reason_theme">主题</string>
+    <string name="restart_banner_reason_language">语言</string>    <string name="restart_banner_reason_theme">主题</string>
     <string name="restart_banner_reasons_prefix">受影响：%1$s</string>
     <string name="restart_banner_restart_now">立即重启</string>
     <string name="search_clear_filter_cd">移除筛选</string>
@@ -1213,18 +1211,7 @@
     <string name="tweaks_privacy_hidden_repos_body">你从信息流和搜索中静音的仓库。</string>
     <string name="tweaks_privacy_hidden_repos_title">已隐藏的仓库</string>
     <string name="tweaks_privacy_hide_seen_body">在信息流和搜索中跳过已查看的仓库。</string>
-    <string name="tweaks_privacy_hide_seen_title">隐藏我已查看过的仓库</string>
-    <string name="tweaks_privacy_telemetry_body">帮助我们了解哪些功能被使用。</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">应用版本。</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">功能使用计数。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">不收集标识符。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">不收集仓库名。</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">不收集令牌。</string>
-    <string name="tweaks_privacy_telemetry_collect_os">操作系统和平台。</string>
-    <string name="tweaks_privacy_telemetry_title">共享匿名使用数据</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">我们收集的内容</string>
-    <string name="tweaks_privacy_usage_data_section">使用数据</string>
-    <string name="tweaks_search_empty">没有设置匹配 '%1$s'。</string>
+    <string name="tweaks_privacy_hide_seen_title">隐藏我已查看过的仓库</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">不收集标识符。</string>    <string name="tweaks_privacy_telemetry_collect_os">操作系统和平台。</string>    <string name="tweaks_search_empty">没有设置匹配 '%1$s'。</string>
     <string name="tweaks_search_placeholder">搜索设置</string>
     <string name="tweaks_sources_add_a_host">添加 Forgejo 或 Gitea 主机</string>
     <string name="tweaks_sources_added_hosts_section">已添加的主机</string>

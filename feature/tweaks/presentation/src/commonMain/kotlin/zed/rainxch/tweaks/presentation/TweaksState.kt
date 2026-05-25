@@ -69,9 +69,7 @@ data class TweaksState(
     val masterProxyForm: ProxyScopeFormState = ProxyScopeFormState(),
     val useMasterByScope: Map<ProxyScope, Boolean> =
         ProxyScope.entries.associateWith { false },
-    val telemetryEnabled: Boolean = false,
     val isClearSeenHistoryDialogVisible: Boolean = false,
-    val telemetryExpanded: Boolean = false,
 ) {
 
     val restartBannerVisible: Boolean

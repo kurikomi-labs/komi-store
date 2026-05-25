@@ -1120,9 +1120,7 @@
     <string name="profile_tweaks_description">ऐप सेटिंग्स, थीम, नेटवर्क, अनुवाद, उन्नत विकल्प।</string>
     <string name="restart_banner_body">कुछ बदलाव लागू करने के लिए पुनरारंभ की आवश्यकता है।</string>
     <string name="restart_banner_later">बाद में</string>
-    <string name="restart_banner_reason_language">भाषा</string>
-    <string name="restart_banner_reason_telemetry">उपयोग डेटा</string>
-    <string name="restart_banner_reason_theme">थीम</string>
+    <string name="restart_banner_reason_language">भाषा</string>    <string name="restart_banner_reason_theme">थीम</string>
     <string name="restart_banner_reasons_prefix">प्रभावित: %1$s</string>
     <string name="restart_banner_restart_now">अभी पुनरारंभ करें</string>
     <string name="search_clear_filter_cd">फ़िल्टर हटाएँ</string>
@@ -1242,18 +1240,7 @@
     <string name="tweaks_privacy_hidden_repos_body">वे रिपो जिन्हें आपने फ़ीड और खोज से म्यूट किया है।</string>
     <string name="tweaks_privacy_hidden_repos_title">छिपी हुई रिपॉजिटरी</string>
     <string name="tweaks_privacy_hide_seen_body">फ़ीड और खोज में देखी हुई रिपो छोड़ें।</string>
-    <string name="tweaks_privacy_hide_seen_title">मेरे द्वारा पहले से देखी गई रिपो छिपाएँ</string>
-    <string name="tweaks_privacy_telemetry_body">हमें यह समझने में मदद करें कि कौन सी सुविधाओं का उपयोग किया जाता है।</string>
-    <string name="tweaks_privacy_telemetry_collect_app_version">ऐप संस्करण।</string>
-    <string name="tweaks_privacy_telemetry_collect_feature_usage">सुविधा उपयोग गणना।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_identifiers">कोई पहचानकर्ता नहीं।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_repo_names">कोई रिपो नाम नहीं।</string>
-    <string name="tweaks_privacy_telemetry_collect_no_tokens">कोई टोकन नहीं।</string>
-    <string name="tweaks_privacy_telemetry_collect_os">OS और प्लेटफ़ॉर्म।</string>
-    <string name="tweaks_privacy_telemetry_title">अनाम उपयोग डेटा साझा करें</string>
-    <string name="tweaks_privacy_telemetry_what_we_collect">हम क्या एकत्र करते हैं</string>
-    <string name="tweaks_privacy_usage_data_section">उपयोग डेटा</string>
-    <string name="tweaks_search_empty">कोई सेटिंग '%1$s' से मेल नहीं खाती।</string>
+    <string name="tweaks_privacy_hide_seen_title">मेरे द्वारा पहले से देखी गई रिपो छिपाएँ</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">कोई पहचानकर्ता नहीं।</string>    <string name="tweaks_privacy_telemetry_collect_os">OS और प्लेटफ़ॉर्म।</string>    <string name="tweaks_search_empty">कोई सेटिंग '%1$s' से मेल नहीं खाती।</string>
     <string name="tweaks_search_placeholder">सेटिंग्स खोजें</string>
     <string name="tweaks_sources_add_a_host">Forgejo या Gitea होस्ट जोड़ें</string>
     <string name="tweaks_sources_added_hosts_section">जोड़े गए होस्ट</string>
