@@ -77,19 +77,19 @@ private fun applyDynamicSurfaces(
     }
     fun tint(ratio: Float): Color = blend(base, accent, ratio)
     return dynamic.copy(
-        background = if (isAmoled) Color.Black else tint(0.06f),
-        surface = if (isAmoled) Color(0xFF0B0F14) else tint(if (isDark) 0.08f else 0.04f),
-        surfaceVariant = tint(if (isDark) 0.14f else 0.10f),
+        background = if (isAmoled) Color.Black else tint(if (isDark) 0.04f else 0.03f),
+        surface = if (isAmoled) Color(0xFF0B0F14) else tint(if (isDark) 0.04f else 0.03f),
+        surfaceVariant = tint(if (isDark) 0.15f else 0.11f),
         surfaceTint = accent,
-        surfaceBright = tint(if (isDark) 0.16f else 0.02f),
-        surfaceDim = tint(if (isDark) 0.04f else 0.10f),
+        surfaceBright = tint(if (isDark) 0.18f else 0.02f),
+        surfaceDim = tint(if (isDark) 0.02f else 0.10f),
         surfaceContainerLowest = if (isAmoled) Color.Black else if (isDark) base else Color.White,
-        surfaceContainerLow = tint(if (isDark) 0.06f else 0.04f),
-        surfaceContainer = tint(if (isDark) 0.09f else 0.07f),
-        surfaceContainerHigh = tint(if (isDark) 0.12f else 0.10f),
-        surfaceContainerHighest = tint(if (isDark) 0.16f else 0.13f),
-        outline = tint(if (isDark) 0.30f else 0.25f),
-        outlineVariant = tint(if (isDark) 0.18f else 0.15f),
+        surfaceContainerLow = tint(if (isDark) 0.07f else 0.06f),
+        surfaceContainer = tint(if (isDark) 0.10f else 0.09f),
+        surfaceContainerHigh = tint(if (isDark) 0.13f else 0.12f),
+        surfaceContainerHighest = tint(if (isDark) 0.17f else 0.15f),
+        outline = tint(if (isDark) 0.32f else 0.28f),
+        outlineVariant = tint(if (isDark) 0.20f else 0.16f),
     )
 }
 
