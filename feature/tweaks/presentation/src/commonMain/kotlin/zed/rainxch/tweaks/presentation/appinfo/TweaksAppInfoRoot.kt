@@ -280,21 +280,21 @@ private fun CommunityCard(
             ) {
                 SocialTile(
                     label = "Telegram",
-                    icon = Icons.AutoMirrored.Filled.Send,
+                    iconUrl = "https://cdn.simpleicons.org/telegram/000000",
                     accent = GhsAccents.Sky,
                     onClick = onTelegram,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Discord",
-                    icon = Icons.Outlined.Forum,
+                    iconUrl = "https://cdn.simpleicons.org/discord/000000",
                     accent = GhsAccents.Periwinkle,
                     onClick = onDiscord,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Mastodon",
-                    icon = Icons.Outlined.AlternateEmail,
+                    iconUrl = "https://cdn.simpleicons.org/mastodon/000000",
                     accent = GhsAccents.Lavender,
                     onClick = onMastodon,
                     modifier = Modifier.weight(1f),
@@ -307,21 +307,21 @@ private fun CommunityCard(
             ) {
                 SocialTile(
                     label = "Reddit",
-                    icon = Icons.Outlined.Public,
+                    iconUrl = "https://cdn.simpleicons.org/reddit/000000",
                     accent = GhsAccents.Peach,
                     onClick = onReddit,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "GitHub",
-                    icon = Icons.Outlined.Code,
+                    iconUrl = "https://cdn.simpleicons.org/github/000000",
                     accent = GhsAccents.Tan,
                     onClick = onGithub,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Website",
-                    icon = Icons.Outlined.Language,
+                    iconFallback = Icons.Outlined.Language,
                     accent = GhsAccents.Sage,
                     onClick = onWebsite,
                     modifier = Modifier.weight(1f),
@@ -366,10 +366,11 @@ private fun CommunityCard(
 @Composable
 private fun SocialTile(
     label: String,
-    icon: ImageVector,
     accent: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    iconUrl: String? = null,
+    iconFallback: ImageVector? = null,
 ) {
     Surface(
         modifier = modifier
@@ -393,12 +394,21 @@ private fun SocialTile(
                     .background(accent.copy(alpha = 0.22f)),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = accent,
-                    modifier = Modifier.size(20.dp),
-                )
+                if (iconUrl != null) {
+                    coil3.compose.AsyncImage(
+                        model = iconUrl,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(accent),
+                    )
+                } else if (iconFallback != null) {
+                    Icon(
+                        imageVector = iconFallback,
+                        contentDescription = null,
+                        tint = accent,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
             Text(
                 text = label,

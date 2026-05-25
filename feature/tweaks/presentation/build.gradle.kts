@@ -18,6 +18,9 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.serialization.json)
 
+                implementation(libs.coil3.compose)
+                implementation(libs.coil3.svg)
+
                 implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.jetbrains.compose.components.resources)
             }
