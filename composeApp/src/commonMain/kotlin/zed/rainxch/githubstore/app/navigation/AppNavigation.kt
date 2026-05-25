@@ -603,6 +603,9 @@ fun AppNavigation(
                             onNavigateToTweaks = {
                                 navController.navigate(GithubStoreGraph.TweaksScreen)
                             },
+                            onNavigateToAbout = {
+                                navController.navigate(GithubStoreGraph.AboutScreen)
+                            },
                             hasUnreadAnnouncements = announcementsUnreadCount > 0,
                         )
                     }
@@ -717,11 +720,6 @@ fun AppNavigation(
                                     launchSingleTop = true
                                 }
                             },
-                            onNavigateToAppInfo = {
-                                navController.navigate(GithubStoreGraph.TweaksAppInfoScreen) {
-                                    launchSingleTop = true
-                                }
-                            },
                         )
                     }
 
@@ -794,14 +792,9 @@ fun AppNavigation(
                         )
                     }
 
-                    composable<GithubStoreGraph.TweaksAppInfoScreen> {
+                    composable<GithubStoreGraph.AboutScreen> {
                         TweaksAppInfoRoot(
                             onNavigateBack = { navController.popBackStack() },
-                            onNavigateToWhatsNewHistory = {
-                                navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen) {
-                                    launchSingleTop = true
-                                }
-                            },
                             onNavigateToLicenses = {
                                 navController.navigate(GithubStoreGraph.LicensesScreen) {
                                     launchSingleTop = true

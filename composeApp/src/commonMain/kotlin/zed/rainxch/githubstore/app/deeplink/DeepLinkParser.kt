@@ -20,7 +20,7 @@ sealed interface DeepLinkDestination {
 
     data object Tweaks : DeepLinkDestination
 
-    data object TweaksAppInfo : DeepLinkDestination
+    data object About : DeepLinkDestination
 
     data object TweaksLicenses : DeepLinkDestination
 
@@ -109,8 +109,8 @@ object DeepLinkParser {
                 DeepLinkDestination.Tweaks
             }
 
-            uri == "githubstore://tweaks/app-info" -> {
-                DeepLinkDestination.TweaksAppInfo
+            uri == "githubstore://about" || uri == "githubstore://tweaks/app-info" -> {
+                DeepLinkDestination.About
             }
 
             uri == "githubstore://tweaks/licenses" -> {

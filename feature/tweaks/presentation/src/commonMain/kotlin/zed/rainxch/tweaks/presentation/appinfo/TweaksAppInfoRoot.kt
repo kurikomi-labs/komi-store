@@ -89,7 +89,6 @@ private const val BUSINESS_EMAIL = "mailto:contact@github-store.org"
 @Composable
 fun TweaksAppInfoRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToWhatsNewHistory: () -> Unit,
     onNavigateToLicenses: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
@@ -127,17 +126,6 @@ fun TweaksAppInfoRoot(
                 onBusiness = { runCatching { uriHandler.openUri(BUSINESS_EMAIL) } },
             )
             Spacer(Modifier.height(20.dp))
-        }
-
-        item(key = "action_whats_new") {
-            ActionRow(
-                icon = Icons.Outlined.NewReleases,
-                title = stringResource(Res.string.tweaks_app_info_whats_new_title),
-                subtitle = stringResource(Res.string.tweaks_app_info_whats_new_subtitle),
-                accent = GhsAccents.Peach,
-                onClick = onNavigateToWhatsNewHistory,
-            )
-            Spacer(Modifier.height(8.dp))
         }
 
         item(key = "action_licenses") {

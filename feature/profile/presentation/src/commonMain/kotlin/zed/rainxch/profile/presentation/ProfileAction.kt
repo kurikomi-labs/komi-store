@@ -25,4 +25,6 @@ sealed interface ProfileAction {
     data object OnAnnouncementsLongClick : ProfileAction
 
     data object OnTweaksClick : ProfileAction
+
+    data object OnAboutClick : ProfileAction
 }

@@ -57,6 +57,7 @@ fun ProfileRoot(
     onNavigateToAnnouncements: () -> Unit,
     onPreviewAnnouncements: () -> Unit,
     onNavigateToTweaks: () -> Unit,
+    onNavigateToAbout: () -> Unit,
     hasUnreadAnnouncements: Boolean,
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
@@ -155,6 +156,10 @@ fun ProfileRoot(
 
                 ProfileAction.OnTweaksClick -> {
                     onNavigateToTweaks()
+                }
+
+                ProfileAction.OnAboutClick -> {
+                    onNavigateToAbout()
                 }
 
                 else -> {

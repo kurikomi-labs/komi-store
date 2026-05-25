@@ -152,6 +152,10 @@ class ProfileViewModel(
             ProfileAction.OnTweaksClick -> {
 
             }
+
+            ProfileAction.OnAboutClick -> {
+
+            }
         }
     }
 }

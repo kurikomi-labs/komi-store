@@ -63,7 +63,7 @@ sealed interface GithubStoreGraph {
     data object TweaksPrivacyScreen : GithubStoreGraph
 
     @Serializable
-    data object TweaksAppInfoScreen : GithubStoreGraph
+    data object AboutScreen : GithubStoreGraph
 
     @Serializable
     data object LicensesScreen : GithubStoreGraph

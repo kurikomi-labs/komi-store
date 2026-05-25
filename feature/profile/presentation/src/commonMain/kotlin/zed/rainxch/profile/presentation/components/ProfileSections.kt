@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Star
@@ -141,6 +142,16 @@ fun LazyListScope.profileSections(
             icon = Icons.Outlined.Tune,
             accentColor = GhsAccents.Sage,
             onClick = { onAction(ProfileAction.OnTweaksClick) },
+        )
+        Spacer(Modifier.height(8.dp))
+    }
+    item(key = "row_about") {
+        GhsEntryRow(
+            title = stringResource(Res.string.profile_entry_about_title),
+            subtitle = stringResource(Res.string.profile_entry_about_subtitle),
+            icon = Icons.Outlined.Info,
+            accentColor = GhsAccents.Aqua,
+            onClick = { onAction(ProfileAction.OnAboutClick) },
         )
     }
 

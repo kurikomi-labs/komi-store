@@ -87,7 +87,6 @@ fun TweaksRoot(
     onNavigateToStorage: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
     onNavigateToHostTokens: () -> Unit,
-    onNavigateToAppInfo: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -141,7 +140,6 @@ fun TweaksRoot(
         onNavigateToStorage = onNavigateToStorage,
         onNavigateToPrivacy = onNavigateToPrivacy,
         onNavigateToHostTokens = onNavigateToHostTokens,
-        onNavigateToAppInfo = onNavigateToAppInfo,
         onSendFeedbackClick = { feedbackSheetOpen = true },
         onRestartNow = { viewModel.onAction(TweaksAction.OnRestartNowClick) },
         onRestartLater = { viewModel.onAction(TweaksAction.OnRestartLaterClick) },
@@ -200,7 +198,6 @@ fun TweaksHubScreen(
     onNavigateToStorage: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
     onNavigateToHostTokens: () -> Unit,
-    onNavigateToAppInfo: () -> Unit,
     onSendFeedbackClick: () -> Unit,
     onRestartNow: () -> Unit,
     onRestartLater: () -> Unit,
@@ -310,13 +307,6 @@ fun TweaksHubScreen(
         TweaksHubBlock(
             title = stringResource(Res.string.section_app_block),
             entries = listOf(
-                TweaksHubEntry(
-                    title = stringResource(Res.string.tweaks_entry_app_info),
-                    subtitle = state.versionName.ifBlank { "—" },
-                    icon = Icons.Outlined.Info,
-                    onClick = onNavigateToAppInfo,
-                    accent = GhsAccents.Aqua,
-                ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_feedback),
                     subtitle = stringResource(Res.string.feedback_hub_subtitle),
@@ -500,7 +490,6 @@ private fun Preview() {
             onNavigateToStorage = {},
             onNavigateToPrivacy = {},
             onNavigateToHostTokens = {},
-            onNavigateToAppInfo = {},
             onSendFeedbackClick = {},
             onRestartNow = {},
             onRestartLater = {},
