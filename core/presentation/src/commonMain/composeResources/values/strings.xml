@@ -1300,6 +1300,12 @@
 
     <string name="tweaks_app_info_app_name">GitHub Store</string>
     <string name="tweaks_app_info_tagline">Cross-platform app store for GitHub, Codeberg, and Forgejo releases.</string>
+    <string name="tweaks_app_info_community_section">Connect</string>
+    <string name="tweaks_app_info_community_title">Join the community</string>
+    <string name="tweaks_app_info_community_subtitle">6 places</string>
+    <string name="tweaks_app_info_community_business_title">Business inquiries</string>
+    <string name="tweaks_app_info_community_business_subtitle">Partnerships, press, integrations.</string>
+    <string name="tweaks_app_info_community_business_cta">Contact</string>
     <string name="tweaks_app_info_whats_new_title">What\'s new</string>
     <string name="tweaks_app_info_whats_new_subtitle">Past release notes.</string>
     <string name="tweaks_app_info_licenses_title">Open source licenses</string>

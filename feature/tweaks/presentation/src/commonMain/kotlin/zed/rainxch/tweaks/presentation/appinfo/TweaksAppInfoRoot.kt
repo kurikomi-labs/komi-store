@@ -13,12 +13,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Forum
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.NewReleases
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Store
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -43,7 +50,17 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.tweaks.presentation.components.TweaksAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
+import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.tweaks.presentation.components.SectionHeader
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_section
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_subtitle
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_licenses_subtitle
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_licenses_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_privacy_policy_subtitle
@@ -60,6 +77,14 @@ import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 
 private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy"
 private const val SOURCE_CODE_URL = "https://github.com/OpenHub-Store/GitHub-Store"
+
+private const val TELEGRAM_URL = "https://t.me/githubstore"
+private const val DISCORD_URL = "https://discord.gg/githubstore"
+private const val MASTODON_URL = "https://fosstodon.org/@githubstore"
+private const val REDDIT_URL = "https://reddit.com/r/githubstore"
+private const val GITHUB_ORG_URL = "https://github.com/OpenHub-Store"
+private const val WEBSITE_URL = "https://github-store.org"
+private const val BUSINESS_EMAIL = "mailto:contact@github-store.org"
 
 @Composable
 fun TweaksAppInfoRoot(
@@ -83,7 +108,25 @@ fun TweaksAppInfoRoot(
     ) {
         item(key = "app_identity") {
             AppIdentityCard(versionName = state.versionName)
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(20.dp))
+        }
+
+        item(key = "community_section_header") {
+            SectionHeader(text = stringResource(Res.string.tweaks_app_info_community_section))
+            Spacer(Modifier.height(8.dp))
+        }
+
+        item(key = "community_card") {
+            CommunityCard(
+                onTelegram = { runCatching { uriHandler.openUri(TELEGRAM_URL) } },
+                onDiscord = { runCatching { uriHandler.openUri(DISCORD_URL) } },
+                onMastodon = { runCatching { uriHandler.openUri(MASTODON_URL) } },
+                onReddit = { runCatching { uriHandler.openUri(REDDIT_URL) } },
+                onGithub = { runCatching { uriHandler.openUri(GITHUB_ORG_URL) } },
+                onWebsite = { runCatching { uriHandler.openUri(WEBSITE_URL) } },
+                onBusiness = { runCatching { uriHandler.openUri(BUSINESS_EMAIL) } },
+            )
+            Spacer(Modifier.height(20.dp))
         }
 
         item(key = "action_whats_new") {
@@ -190,6 +233,182 @@ private fun AppIdentityCard(versionName: String) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun CommunityCard(
+    onTelegram: () -> Unit,
+    onDiscord: () -> Unit,
+    onMastodon: () -> Unit,
+    onReddit: () -> Unit,
+    onGithub: () -> Unit,
+    onWebsite: () -> Unit,
+    onBusiness: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.tweaks_app_info_community_title),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = stringResource(Res.string.tweaks_app_info_community_subtitle),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                SocialTile(
+                    label = "Telegram",
+                    icon = Icons.AutoMirrored.Filled.Send,
+                    accent = TweaksAccents.Sky,
+                    onClick = onTelegram,
+                    modifier = Modifier.weight(1f),
+                )
+                SocialTile(
+                    label = "Discord",
+                    icon = Icons.Outlined.Forum,
+                    accent = TweaksAccents.Periwinkle,
+                    onClick = onDiscord,
+                    modifier = Modifier.weight(1f),
+                )
+                SocialTile(
+                    label = "Mastodon",
+                    icon = Icons.Outlined.AlternateEmail,
+                    accent = TweaksAccents.Lavender,
+                    onClick = onMastodon,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                SocialTile(
+                    label = "Reddit",
+                    icon = Icons.Outlined.Public,
+                    accent = TweaksAccents.Peach,
+                    onClick = onReddit,
+                    modifier = Modifier.weight(1f),
+                )
+                SocialTile(
+                    label = "GitHub",
+                    icon = Icons.Outlined.Code,
+                    accent = TweaksAccents.Tan,
+                    onClick = onGithub,
+                    modifier = Modifier.weight(1f),
+                )
+                SocialTile(
+                    label = "Website",
+                    icon = Icons.Outlined.Language,
+                    accent = TweaksAccents.Sage,
+                    onClick = onWebsite,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+            Spacer(Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(Res.string.tweaks_app_info_community_business_title),
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        text = stringResource(Res.string.tweaks_app_info_community_business_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                GhsButton(
+                    onClick = onBusiness,
+                    label = stringResource(Res.string.tweaks_app_info_community_business_cta),
+                    variant = GhsButtonVariant.Outline,
+                    size = GhsButtonSize.Sm,
+                    trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SocialTile(
+    label: String,
+    icon: ImageVector,
+    accent: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier
+            .clip(Radii.row)
+            .clickable(onClick = onClick),
+        shape = Radii.row,
+        color = accent.copy(alpha = 0.14f),
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(Radii.chip)
+                    .background(accent.copy(alpha = 0.22f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = accent,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
