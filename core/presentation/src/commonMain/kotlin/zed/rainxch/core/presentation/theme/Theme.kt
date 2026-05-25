@@ -28,7 +28,8 @@ fun GithubStoreTheme(
     }
     val tokenPalette = appTheme.toTokenPalette()
     val palette = Tokens.palette(tokenPalette, mode)
-    val scheme = colorSchemeFor(palette = tokenPalette, mode = mode)
+    val targetScheme = colorSchemeFor(palette = tokenPalette, mode = mode)
+    val animatedScheme = animateColorScheme(target = targetScheme)
 
     CompositionLocalProvider(
         LocalPalette provides palette,
@@ -38,7 +39,7 @@ fun GithubStoreTheme(
         LocalSpacing provides defaultSpacing,
     ) {
         MaterialExpressiveTheme(
-            colorScheme = scheme,
+            colorScheme = animatedScheme,
             typography = getAppTypography(fontTheme),
             motionScheme = MotionScheme.expressive(),
             shapes = MaterialTheme.shapes,
