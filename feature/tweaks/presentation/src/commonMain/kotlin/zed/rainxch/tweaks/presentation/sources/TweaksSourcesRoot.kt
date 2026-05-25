@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,9 +41,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.platform_section_android
+import zed.rainxch.githubstore.core.presentation.res.platform_section_linux
+import zed.rainxch.githubstore.core.presentation.res.platform_section_macos
+import zed.rainxch.githubstore.core.presentation.res.platform_section_windows
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_platforms_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_platforms_title
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_count
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_entry_label
 import zed.rainxch.githubstore.core.presentation.res.remove_search_history_item
@@ -125,6 +134,14 @@ fun TweaksSourcesRoot(
                 accent = GhsAccents.Mint,
                 onClick = { viewModel.onAction(TweaksAction.OnOpenCustomForgesDialog) },
             )
+            Spacer(Modifier.height(16.dp))
+        }
+
+        item(key = "platforms_card") {
+            DiscoveryPlatformsCard(
+                selected = state.selectedDiscoveryPlatforms,
+                onToggle = { viewModel.onAction(TweaksAction.OnDiscoveryPlatformToggled(it)) },
+            )
         }
 
         if (state.customForgeHosts.isNotEmpty()) {
@@ -158,6 +175,92 @@ fun TweaksSourcesRoot(
             onAction = { viewModel.onAction(it) },
         )
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DiscoveryPlatformsCard(
+    selected: Set<DiscoveryPlatform>,
+    onToggle: (DiscoveryPlatform) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = Radii.row,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(Res.string.tweaks_sources_platforms_title),
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(Res.string.tweaks_sources_platforms_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(12.dp))
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DiscoveryPlatform.selectablePlatforms.forEach { platform ->
+                    PlatformChip(
+                        label = stringResource(platform.labelRes()),
+                        isSelected = platform in selected,
+                        onClick = { onToggle(platform) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlatformChip(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    val container = if (isSelected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+    val content = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+    Box(
+        modifier = Modifier
+            .clip(Radii.chip)
+            .background(container)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+            color = content,
+        )
+    }
+}
+
+private fun DiscoveryPlatform.labelRes() = when (this) {
+    DiscoveryPlatform.Android -> Res.string.platform_section_android
+    DiscoveryPlatform.Macos -> Res.string.platform_section_macos
+    DiscoveryPlatform.Windows -> Res.string.platform_section_windows
+    DiscoveryPlatform.Linux -> Res.string.platform_section_linux
+    DiscoveryPlatform.All -> Res.string.platform_section_android
 }
 
 @Composable

@@ -109,6 +109,7 @@ class TweaksViewModel(
                     observeNeedsRestartReasons()
                     observeMasterProxyConfig()
                     observeUseMasterFlags()
+                    observeDiscoveryPlatforms()
 
                     hasLoadedInitialData = true
                 }
@@ -1166,6 +1167,18 @@ class TweaksViewModel(
                 }
             }
 
+            is TweaksAction.OnDiscoveryPlatformToggled -> {
+                viewModelScope.launch {
+                    val current = _state.value.selectedDiscoveryPlatforms
+                    val next = if (action.platform in current) {
+                        current - action.platform
+                    } else {
+                        current + action.platform
+                    }
+                    runCatching { tweaksRepository.setDiscoveryPlatforms(next) }
+                }
+            }
+
             is TweaksAction.OnRemoveCustomForge -> {
                 viewModelScope.launch {
                     val result = runCatching { tweaksRepository.removeCustomForgeHost(action.host) }
@@ -1461,6 +1474,14 @@ class TweaksViewModel(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeDiscoveryPlatforms() {
+        viewModelScope.launch {
+            tweaksRepository.getDiscoveryPlatforms().collect { platforms ->
+                _state.update { it.copy(selectedDiscoveryPlatforms = platforms) }
             }
         }
     }

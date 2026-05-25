@@ -3,6 +3,7 @@ package zed.rainxch.tweaks.presentation
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.domain.model.DhizukuAvailability
+import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.InstallerAttribution
 import zed.rainxch.core.domain.model.InstallerType
@@ -70,6 +71,7 @@ data class TweaksState(
     val useMasterByScope: Map<ProxyScope, Boolean> =
         ProxyScope.entries.associateWith { false },
     val isClearSeenHistoryDialogVisible: Boolean = false,
+    val selectedDiscoveryPlatforms: Set<DiscoveryPlatform> = emptySet(),
 ) {
 
     val restartBannerVisible: Boolean

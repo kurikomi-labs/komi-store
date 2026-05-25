@@ -1072,6 +1072,8 @@
     <string name="appearance_section_display">Display</string>
     <string name="auth_more_signin_options">More sign-in options</string>
     <string name="auth_hide_signin_options">Hide options</string>
+    <string name="tweaks_sources_platforms_title">Discovery platforms</string>
+    <string name="tweaks_sources_platforms_body">Filter Home feed to specific platforms. Leave all off to see everything.</string>
     <string name="tweaks_entry_appearance">Appearance</string>
     <string name="tweaks_entry_language">Language</string>
     <string name="tweaks_entry_connection">Connection</string>

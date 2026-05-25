@@ -210,6 +210,10 @@ sealed interface TweaksAction {
     data object OnAddCustomForge : TweaksAction
     data class OnRemoveCustomForge(val host: String) : TweaksAction
 
+    data class OnDiscoveryPlatformToggled(
+        val platform: zed.rainxch.core.domain.model.DiscoveryPlatform,
+    ) : TweaksAction
+
     data object OnRestartNowClick : TweaksAction
     data object OnRestartLaterClick : TweaksAction
 
