@@ -425,47 +425,73 @@ private fun PaletteSwatch(
     )
     Column(
         modifier = Modifier
-            .width(78.dp)
+            .width(82.dp)
             .scale(scale)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box(
             modifier = Modifier
-                .size(width = 78.dp, height = 60.dp)
-                .clip(RoundedCornerShape(14.dp))
+                .size(width = 82.dp, height = 78.dp)
+                .clip(RoundedCornerShape(16.dp))
                 .background(scheme.background)
                 .border(
                     width = borderWidth.dp,
                     color = borderColor,
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(16.dp),
                 ),
-            contentAlignment = Alignment.Center,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
-                        .size(width = 24.dp, height = 24.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxWidth()
+                        .height(32.dp)
                         .background(scheme.primary),
                 )
                 Box(
                     modifier = Modifier
-                        .size(14.dp)
-                        .clip(CircleShape)
-                        .background(scheme.secondary),
-                )
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(CircleShape)
-                        .background(scheme.tertiary),
-                )
+                        .fillMaxSize()
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(4.dp)
+                                .fillMaxWidth(0.75f)
+                                .clip(RoundedCornerShape(50))
+                                .background(scheme.onSurface.copy(alpha = 0.55f)),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .height(4.dp)
+                                .fillMaxWidth(0.45f)
+                                .clip(RoundedCornerShape(50))
+                                .background(scheme.onSurface.copy(alpha = 0.32f)),
+                        )
+                        Spacer(Modifier.height(1.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(scheme.secondary),
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(scheme.tertiary),
+                            )
+                        }
+                    }
+                }
             }
             if (isSelected) {
                 Box(
