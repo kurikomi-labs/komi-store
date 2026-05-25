@@ -1239,4 +1239,10 @@
     <plurals name="hidden_repositories_count">
         <item quantity="other">%1$d 件非表示</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">つながる</string>
+    <string name="tweaks_app_info_community_title">コミュニティに参加</string>
+    <string name="tweaks_app_info_community_subtitle">6 か所</string>
+    <string name="tweaks_app_info_community_business_title">ビジネスのお問い合わせ</string>
+    <string name="tweaks_app_info_community_business_subtitle">パートナーシップ、プレス、連携。</string>
+    <string name="tweaks_app_info_community_business_cta">お問い合わせ</string>
 </resources>

@@ -1249,4 +1249,10 @@
         <item quantity="one">%1$d dépôt masqué</item>
         <item quantity="other">%1$d dépôts masqués</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">Se connecter</string>
+    <string name="tweaks_app_info_community_title">Rejoignez la communauté</string>
+    <string name="tweaks_app_info_community_subtitle">6 endroits</string>
+    <string name="tweaks_app_info_community_business_title">Demandes professionnelles</string>
+    <string name="tweaks_app_info_community_business_subtitle">Partenariats, presse, intégrations.</string>
+    <string name="tweaks_app_info_community_business_cta">Contacter</string>
 </resources>

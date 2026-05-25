@@ -1278,4 +1278,10 @@
         <item quantity="many">%1$d репозиториев скрыто</item>
         <item quantity="other">%1$d репозитория скрыто</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">Связь</string>
+    <string name="tweaks_app_info_community_title">Присоединяйся к сообществу</string>
+    <string name="tweaks_app_info_community_subtitle">6 мест</string>
+    <string name="tweaks_app_info_community_business_title">Деловые запросы</string>
+    <string name="tweaks_app_info_community_business_subtitle">Партнёрства, пресса, интеграции.</string>
+    <string name="tweaks_app_info_community_business_cta">Написать</string>
 </resources>

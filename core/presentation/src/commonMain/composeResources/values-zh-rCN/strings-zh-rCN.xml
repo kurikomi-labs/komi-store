@@ -1242,4 +1242,10 @@
     <plurals name="hidden_repositories_count">
         <item quantity="other">已隐藏 %1$d 个</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">连接</string>
+    <string name="tweaks_app_info_community_title">加入社区</string>
+    <string name="tweaks_app_info_community_subtitle">6 个平台</string>
+    <string name="tweaks_app_info_community_business_title">商务咨询</string>
+    <string name="tweaks_app_info_community_business_subtitle">合作、媒体、集成。</string>
+    <string name="tweaks_app_info_community_business_cta">联系</string>
 </resources>

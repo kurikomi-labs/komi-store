@@ -1269,4 +1269,10 @@
     <plurals name="hidden_repositories_count">
         <item quantity="other">%1$d개 숨김</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">연결</string>
+    <string name="tweaks_app_info_community_title">커뮤니티 참여</string>
+    <string name="tweaks_app_info_community_subtitle">6곳</string>
+    <string name="tweaks_app_info_community_business_title">비즈니스 문의</string>
+    <string name="tweaks_app_info_community_business_subtitle">파트너십, 보도, 연동.</string>
+    <string name="tweaks_app_info_community_business_cta">문의</string>
 </resources>

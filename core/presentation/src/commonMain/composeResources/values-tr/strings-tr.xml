@@ -1280,4 +1280,10 @@
     <string name="tweaks_storage_using_label">Kullanılıyor: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">Bu ekran sürmekte olan yeniden tasarımın bir parçası. Ayarlar hâlâ çalışıyor — sadece eski düzenden buraya taşınıyor.</string>
     <string name="tweaks_stub_coming_soon_title">Yakında bir sonraki sürümde</string>
+    <string name="tweaks_app_info_community_section">Bağlan</string>
+    <string name="tweaks_app_info_community_title">Topluluğa katıl</string>
+    <string name="tweaks_app_info_community_subtitle">6 yer</string>
+    <string name="tweaks_app_info_community_business_title">Ticari sorular</string>
+    <string name="tweaks_app_info_community_business_subtitle">Ortaklıklar, basın, entegrasyonlar.</string>
+    <string name="tweaks_app_info_community_business_cta">İletişim</string>
 </resources>

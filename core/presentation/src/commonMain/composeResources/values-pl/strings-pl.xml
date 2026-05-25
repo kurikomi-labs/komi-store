@@ -1278,4 +1278,10 @@
         <item quantity="many">%1$d repo</item>
         <item quantity="other">%1$d repo</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">Połącz się</string>
+    <string name="tweaks_app_info_community_title">Dołącz do społeczności</string>
+    <string name="tweaks_app_info_community_subtitle">6 miejsc</string>
+    <string name="tweaks_app_info_community_business_title">Sprawy biznesowe</string>
+    <string name="tweaks_app_info_community_business_subtitle">Współprace, prasa, integracje.</string>
+    <string name="tweaks_app_info_community_business_cta">Kontakt</string>
 </resources>

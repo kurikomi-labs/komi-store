@@ -1249,4 +1249,10 @@
         <item quantity="one">%1$d repo oculto</item>
         <item quantity="other">%1$d repos ocultos</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">Conectar</string>
+    <string name="tweaks_app_info_community_title">Únete a la comunidad</string>
+    <string name="tweaks_app_info_community_subtitle">6 lugares</string>
+    <string name="tweaks_app_info_community_business_title">Consultas comerciales</string>
+    <string name="tweaks_app_info_community_business_subtitle">Alianzas, prensa, integraciones.</string>
+    <string name="tweaks_app_info_community_business_cta">Contactar</string>
 </resources>

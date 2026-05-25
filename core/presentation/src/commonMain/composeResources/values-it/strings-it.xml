@@ -1283,4 +1283,10 @@
         <item quantity="one">%1$d repo nascosto</item>
         <item quantity="other">%1$d repo nascosti</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">Connettiti</string>
+    <string name="tweaks_app_info_community_title">Unisciti alla community</string>
+    <string name="tweaks_app_info_community_subtitle">6 luoghi</string>
+    <string name="tweaks_app_info_community_business_title">Richieste commerciali</string>
+    <string name="tweaks_app_info_community_business_subtitle">Partnership, stampa, integrazioni.</string>
+    <string name="tweaks_app_info_community_business_cta">Contattaci</string>
 </resources>

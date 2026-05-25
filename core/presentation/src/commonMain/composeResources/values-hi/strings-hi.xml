@@ -1285,4 +1285,10 @@
         <item quantity="one">%1$d ऐप</item>
         <item quantity="other">%1$d ऐप</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">जुड़ें</string>
+    <string name="tweaks_app_info_community_title">समुदाय में शामिल हों</string>
+    <string name="tweaks_app_info_community_subtitle">6 जगह</string>
+    <string name="tweaks_app_info_community_business_title">व्यावसायिक पूछताछ</string>
+    <string name="tweaks_app_info_community_business_subtitle">साझेदारी, प्रेस, इंटीग्रेशन।</string>
+    <string name="tweaks_app_info_community_business_cta">संपर्क करें</string>
 </resources>

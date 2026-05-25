@@ -1270,4 +1270,10 @@
     <string name="tweaks_storage_using_label">ব্যবহার: %1$s</string>
     <string name="tweaks_stub_coming_soon_body">এই স্ক্রিনটি চলমান নতুন ডিজাইনের অংশ। সেটিংসগুলো এখনো কাজ করে — শুধু পুরোনো লেআউট থেকে এখানে সরানো হচ্ছে।</string>
     <string name="tweaks_stub_coming_soon_title">পরবর্তী আপডেটে আসছে</string>
+    <string name="tweaks_app_info_community_section">যোগাযোগ</string>
+    <string name="tweaks_app_info_community_title">কমিউনিটিতে যোগ দিন</string>
+    <string name="tweaks_app_info_community_subtitle">৬টি স্থান</string>
+    <string name="tweaks_app_info_community_business_title">ব্যবসায়িক অনুসন্ধান</string>
+    <string name="tweaks_app_info_community_business_subtitle">অংশীদারি, প্রেস, ইন্টিগ্রেশন।</string>
+    <string name="tweaks_app_info_community_business_cta">যোগাযোগ</string>
 </resources>

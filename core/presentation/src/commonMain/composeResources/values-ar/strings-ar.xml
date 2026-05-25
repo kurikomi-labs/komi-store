@@ -1308,4 +1308,10 @@
         <item quantity="many">%1$d مستودعًا مخفيًا</item>
         <item quantity="other">%1$d مستودع مخفي</item>
     </plurals>
+    <string name="tweaks_app_info_community_section">تواصل</string>
+    <string name="tweaks_app_info_community_title">انضم إلى المجتمع</string>
+    <string name="tweaks_app_info_community_subtitle">6 أماكن</string>
+    <string name="tweaks_app_info_community_business_title">استفسارات الأعمال</string>
+    <string name="tweaks_app_info_community_business_subtitle">الشراكات، الصحافة، التكاملات.</string>
+    <string name="tweaks_app_info_community_business_cta">تواصل</string>
 </resources>
