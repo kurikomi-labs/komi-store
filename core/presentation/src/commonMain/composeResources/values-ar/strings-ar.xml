@@ -1313,4 +1313,6 @@
     <string name="tweaks_sources_platforms_body">تصفية الصفحة الرئيسية حسب المنصة. اترك الكل بدون تحديد لعرض كل شيء.</string>
     <string name="profile_entry_about_title">حول</string>
     <string name="profile_entry_about_subtitle">الإصدار، المجتمع، القانوني</string>
+    <string name="filter_with_installable">قابل للتثبيت هنا</string>
+    <string name="no_repos_with_installable">لا توجد مستودعات بأصول قابلة للتثبيت لهذه المنصة</string>
 </resources>

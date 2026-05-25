@@ -1285,4 +1285,6 @@
     <string name="tweaks_sources_platforms_body">Ana akışı platforma göre filtrele. Hepsini kapalı bırakırsan her şey gösterilir.</string>
     <string name="profile_entry_about_title">Hakkında</string>
     <string name="profile_entry_about_subtitle">Sürüm, topluluk, yasal</string>
+    <string name="filter_with_installable">Burada kurulabilir</string>
+    <string name="no_repos_with_installable">Bu platform için kurulabilir varlığı olan depo yok</string>
 </resources>

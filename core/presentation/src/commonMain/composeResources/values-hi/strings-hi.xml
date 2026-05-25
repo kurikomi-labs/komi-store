@@ -1290,4 +1290,6 @@
     <string name="tweaks_sources_platforms_body">होम फ़ीड को विशिष्ट प्लेटफ़ॉर्म पर फ़िल्टर करें। सब बंद रहने पर सब कुछ दिखेगा।</string>
     <string name="profile_entry_about_title">के बारे में</string>
     <string name="profile_entry_about_subtitle">संस्करण, समुदाय, कानूनी</string>
+    <string name="filter_with_installable">यहाँ इंस्टॉल योग्य</string>
+    <string name="no_repos_with_installable">इस प्लेटफ़ॉर्म के लिए इंस्टॉल योग्य ऐसेट वाले रिपॉज़िटरी नहीं</string>
 </resources>

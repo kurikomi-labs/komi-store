@@ -1283,4 +1283,6 @@
     <string name="tweaks_sources_platforms_body">Filtruj kanał Home według platformy. Pozostaw wszystkie wyłączone, aby zobaczyć wszystko.</string>
     <string name="profile_entry_about_title">Informacje</string>
     <string name="profile_entry_about_subtitle">Wersja, społeczność, informacje prawne</string>
+    <string name="filter_with_installable">Instalowalne tutaj</string>
+    <string name="no_repos_with_installable">Brak repozytoriów z plikami instalowalnymi dla tej platformy</string>
 </resources>

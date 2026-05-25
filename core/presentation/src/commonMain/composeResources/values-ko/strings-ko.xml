@@ -1274,4 +1274,6 @@
     <string name="tweaks_sources_platforms_body">홈 피드를 특정 플랫폼으로 필터링합니다. 모두 꺼두면 전체 표시.</string>
     <string name="profile_entry_about_title">정보</string>
     <string name="profile_entry_about_subtitle">버전, 커뮤니티, 법적 고지</string>
+    <string name="filter_with_installable">여기서 설치 가능</string>
+    <string name="no_repos_with_installable">이 플랫폼용 설치 가능한 자산이 있는 저장소가 없습니다</string>
 </resources>

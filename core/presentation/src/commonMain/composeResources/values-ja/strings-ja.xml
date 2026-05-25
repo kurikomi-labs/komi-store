@@ -1244,4 +1244,6 @@
     <string name="tweaks_sources_platforms_body">ホームフィードを特定のプラットフォームで絞り込みます。すべてオフで全表示。</string>
     <string name="profile_entry_about_title">アプリ情報</string>
     <string name="profile_entry_about_subtitle">バージョン、コミュニティ、法的情報</string>
+    <string name="filter_with_installable">ここでインストール可能</string>
+    <string name="no_repos_with_installable">このプラットフォーム向けのインストール可能なアセットを持つリポジトリはありません</string>
 </resources>

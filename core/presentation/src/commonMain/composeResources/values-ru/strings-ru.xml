@@ -1283,4 +1283,6 @@
     <string name="tweaks_sources_platforms_body">Фильтрация главной ленты по платформам. Если все выключены, показываются все.</string>
     <string name="profile_entry_about_title">О приложении</string>
     <string name="profile_entry_about_subtitle">Версия, сообщество, юридическая информация</string>
+    <string name="filter_with_installable">Можно установить здесь</string>
+    <string name="no_repos_with_installable">Нет репозиториев с устанавливаемыми сборками для этой платформы</string>
 </resources>

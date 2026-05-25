@@ -1254,4 +1254,6 @@
     <string name="tweaks_sources_platforms_body">Filtra el feed principal por plataforma. Déjalas todas desactivadas para verlo todo.</string>
     <string name="profile_entry_about_title">Acerca de</string>
     <string name="profile_entry_about_subtitle">Versión, comunidad, legal</string>
+    <string name="filter_with_installable">Instalable aquí</string>
+    <string name="no_repos_with_installable">Sin repositorios con assets instalables para esta plataforma</string>
 </resources>

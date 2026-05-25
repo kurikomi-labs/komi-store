@@ -1288,4 +1288,6 @@
     <string name="tweaks_sources_platforms_body">Filtra il feed Home per piattaforma. Lasciale tutte disattivate per vedere tutto.</string>
     <string name="profile_entry_about_title">Informazioni</string>
     <string name="profile_entry_about_subtitle">Versione, community, legale</string>
+    <string name="filter_with_installable">Installabile qui</string>
+    <string name="no_repos_with_installable">Nessun repository con asset installabili per questa piattaforma</string>
 </resources>

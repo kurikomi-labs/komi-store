@@ -1275,4 +1275,6 @@
     <string name="tweaks_sources_platforms_body">হোম ফিডকে নির্দিষ্ট প্ল্যাটফর্মে ফিল্টার করুন। সব বন্ধ রাখলে সব দেখাবে।</string>
     <string name="profile_entry_about_title">সম্পর্কে</string>
     <string name="profile_entry_about_subtitle">সংস্করণ, কমিউনিটি, আইনি</string>
+    <string name="filter_with_installable">এখানে ইনস্টলযোগ্য</string>
+    <string name="no_repos_with_installable">এই প্ল্যাটফর্মের জন্য ইনস্টলযোগ্য অ্যাসেট সহ কোনো রিপো নেই</string>
 </resources>

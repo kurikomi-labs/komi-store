@@ -1254,4 +1254,6 @@
     <string name="tweaks_sources_platforms_body">Filtre le fil d&#39;accueil par plateforme. Laisse tout désactivé pour tout voir.</string>
     <string name="profile_entry_about_title">À propos</string>
     <string name="profile_entry_about_subtitle">Version, communauté, mentions légales</string>
+    <string name="filter_with_installable">Installable ici</string>
+    <string name="no_repos_with_installable">Aucun dépôt avec des assets installables pour cette plateforme</string>
 </resources>
