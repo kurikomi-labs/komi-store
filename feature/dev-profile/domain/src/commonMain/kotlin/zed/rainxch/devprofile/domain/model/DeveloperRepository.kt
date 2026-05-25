@@ -15,5 +15,6 @@ data class DeveloperRepository(
     val isInstalled: Boolean = false,
     val isFavorite: Boolean = false,
     val latestVersion: String? = null,
+    val latestReleaseAt: String? = null,
     val updatedAt: String,
 )

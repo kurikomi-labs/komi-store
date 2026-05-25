@@ -84,11 +84,15 @@ fun DeveloperRepoItem(
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
+                    val releaseDate = repository.latestReleaseAt
+                    val (label, dateString) = if (releaseDate != null) {
+                        Res.string.released_on_date to releaseDate
+                    } else {
+                        Res.string.updated_on_date to repository.updatedAt
+                    }
                     Text(
-                        text = stringResource(
-                            resource = Res.string.updated_on_date,
-                            formatRelativeDate(repository.updatedAt),
-                        ).replaceFirstChar { it.uppercase() },
+                        text = stringResource(label, formatRelativeDate(dateString))
+                            .replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.labelMedium,
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
