@@ -1252,4 +1252,6 @@
     <string name="auth_hide_signin_options">Masquer les options</string>
     <string name="tweaks_sources_platforms_title">Plateformes de découverte</string>
     <string name="tweaks_sources_platforms_body">Filtre le fil d&#39;accueil par plateforme. Laisse tout désactivé pour tout voir.</string>
+    <string name="profile_entry_about_title">À propos</string>
+    <string name="profile_entry_about_subtitle">Version, communauté, mentions légales</string>
 </resources>

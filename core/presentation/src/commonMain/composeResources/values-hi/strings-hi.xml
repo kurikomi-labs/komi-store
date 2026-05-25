@@ -1288,4 +1288,6 @@
     <string name="auth_hide_signin_options">विकल्प छिपाएँ</string>
     <string name="tweaks_sources_platforms_title">डिस्कवरी प्लेटफ़ॉर्म</string>
     <string name="tweaks_sources_platforms_body">होम फ़ीड को विशिष्ट प्लेटफ़ॉर्म पर फ़िल्टर करें। सब बंद रहने पर सब कुछ दिखेगा।</string>
+    <string name="profile_entry_about_title">के बारे में</string>
+    <string name="profile_entry_about_subtitle">संस्करण, समुदाय, कानूनी</string>
 </resources>

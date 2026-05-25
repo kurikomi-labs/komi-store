@@ -1283,4 +1283,6 @@
     <string name="auth_hide_signin_options">Seçenekleri gizle</string>
     <string name="tweaks_sources_platforms_title">Keşif platformları</string>
     <string name="tweaks_sources_platforms_body">Ana akışı platforma göre filtrele. Hepsini kapalı bırakırsan her şey gösterilir.</string>
+    <string name="profile_entry_about_title">Hakkında</string>
+    <string name="profile_entry_about_subtitle">Sürüm, topluluk, yasal</string>
 </resources>

@@ -1272,4 +1272,6 @@
     <string name="auth_hide_signin_options">옵션 숨기기</string>
     <string name="tweaks_sources_platforms_title">디스커버리 플랫폼</string>
     <string name="tweaks_sources_platforms_body">홈 피드를 특정 플랫폼으로 필터링합니다. 모두 꺼두면 전체 표시.</string>
+    <string name="profile_entry_about_title">정보</string>
+    <string name="profile_entry_about_subtitle">버전, 커뮤니티, 법적 고지</string>
 </resources>

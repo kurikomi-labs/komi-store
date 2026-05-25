@@ -1245,4 +1245,6 @@
     <string name="auth_hide_signin_options">隐藏选项</string>
     <string name="tweaks_sources_platforms_title">发现平台</string>
     <string name="tweaks_sources_platforms_body">按平台筛选首页内容。全部关闭则显示全部。</string>
+    <string name="profile_entry_about_title">关于</string>
+    <string name="profile_entry_about_subtitle">版本、社区、法律</string>
 </resources>

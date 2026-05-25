@@ -1281,4 +1281,6 @@
     <string name="auth_hide_signin_options">Скрыть параметры</string>
     <string name="tweaks_sources_platforms_title">Платформы для подборки</string>
     <string name="tweaks_sources_platforms_body">Фильтрация главной ленты по платформам. Если все выключены, показываются все.</string>
+    <string name="profile_entry_about_title">О приложении</string>
+    <string name="profile_entry_about_subtitle">Версия, сообщество, юридическая информация</string>
 </resources>
