@@ -48,12 +48,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.tweaks.presentation.components.TweaksAccents
+import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.tweaks.presentation.components.SectionHeader
+import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
@@ -112,7 +112,7 @@ fun TweaksAppInfoRoot(
         }
 
         item(key = "community_section_header") {
-            SectionHeader(text = stringResource(Res.string.tweaks_app_info_community_section))
+            GhsSectionHeader(text = stringResource(Res.string.tweaks_app_info_community_section))
             Spacer(Modifier.height(8.dp))
         }
 
@@ -134,7 +134,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.NewReleases,
                 title = stringResource(Res.string.tweaks_app_info_whats_new_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_whats_new_subtitle),
-                accent = TweaksAccents.Peach,
+                accent = GhsAccents.Peach,
                 onClick = onNavigateToWhatsNewHistory,
             )
             Spacer(Modifier.height(8.dp))
@@ -145,7 +145,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Code,
                 title = stringResource(Res.string.tweaks_app_info_licenses_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
-                accent = TweaksAccents.Sage,
+                accent = GhsAccents.Sage,
                 onClick = onNavigateToLicenses,
             )
             Spacer(Modifier.height(8.dp))
@@ -156,7 +156,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Description,
                 title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
-                accent = TweaksAccents.Rose,
+                accent = GhsAccents.Rose,
                 onClick = {
                     runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
                 },
@@ -169,7 +169,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
                 title = stringResource(Res.string.tweaks_app_info_source_code_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
-                accent = TweaksAccents.Aqua,
+                accent = GhsAccents.Aqua,
                 onClick = {
                     runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
                 },
@@ -281,21 +281,21 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Telegram",
                     icon = Icons.AutoMirrored.Filled.Send,
-                    accent = TweaksAccents.Sky,
+                    accent = GhsAccents.Sky,
                     onClick = onTelegram,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Discord",
                     icon = Icons.Outlined.Forum,
-                    accent = TweaksAccents.Periwinkle,
+                    accent = GhsAccents.Periwinkle,
                     onClick = onDiscord,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Mastodon",
                     icon = Icons.Outlined.AlternateEmail,
-                    accent = TweaksAccents.Lavender,
+                    accent = GhsAccents.Lavender,
                     onClick = onMastodon,
                     modifier = Modifier.weight(1f),
                 )
@@ -308,21 +308,21 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Reddit",
                     icon = Icons.Outlined.Public,
-                    accent = TweaksAccents.Peach,
+                    accent = GhsAccents.Peach,
                     onClick = onReddit,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "GitHub",
                     icon = Icons.Outlined.Code,
-                    accent = TweaksAccents.Tan,
+                    accent = GhsAccents.Tan,
                     onClick = onGithub,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Website",
                     icon = Icons.Outlined.Language,
-                    accent = TweaksAccents.Sage,
+                    accent = GhsAccents.Sage,
                     onClick = onWebsite,
                     modifier = Modifier.weight(1f),
                 )

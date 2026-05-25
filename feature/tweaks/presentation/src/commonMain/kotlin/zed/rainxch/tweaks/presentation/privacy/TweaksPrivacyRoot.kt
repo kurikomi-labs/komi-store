@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
 import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.tweaks.presentation.components.TweaksAccents
+import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_privacy
 import zed.rainxch.githubstore.core.presentation.res.tweaks_privacy_browsing_history_section
@@ -144,7 +144,7 @@ fun TweaksPrivacyRoot(
                 icon = Icons.Outlined.VisibilityOff,
                 title = stringResource(Res.string.tweaks_privacy_hidden_repos_title),
                 subtitle = stringResource(Res.string.tweaks_privacy_hidden_repos_body),
-                accent = TweaksAccents.Periwinkle,
+                accent = GhsAccents.Periwinkle,
                 onClick = onNavigateToHiddenRepositories,
             )
         }

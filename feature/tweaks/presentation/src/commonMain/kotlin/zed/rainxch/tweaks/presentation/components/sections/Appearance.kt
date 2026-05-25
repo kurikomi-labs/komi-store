@@ -61,7 +61,6 @@ import zed.rainxch.core.presentation.utils.toTokenPalette
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
-import zed.rainxch.tweaks.presentation.components.SectionHeader
 import zed.rainxch.tweaks.presentation.components.ToggleSettingCard
 
 fun LazyListScope.appearanceSection(

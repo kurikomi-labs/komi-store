@@ -1,4 +1,4 @@
-package zed.rainxch.tweaks.presentation.components
+package zed.rainxch.core.presentation.components.hub
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 
 @Composable
-fun SectionHeader(text: String) {
+fun GhsSectionHeader(text: String, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.padding(start = 4.dp, top = 12.dp, bottom = 4.dp),
+        modifier = modifier.padding(start = 4.dp, top = 12.dp, bottom = 4.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(

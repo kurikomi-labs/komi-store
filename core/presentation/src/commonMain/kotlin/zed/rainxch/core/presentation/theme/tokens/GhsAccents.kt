@@ -1,8 +1,8 @@
-package zed.rainxch.tweaks.presentation.components
+package zed.rainxch.core.presentation.theme.tokens
 
 import androidx.compose.ui.graphics.Color
 
-object TweaksAccents {
+object GhsAccents {
     val Lavender = Color(0xFFB19CD9)
     val Mint = Color(0xFF88C9BF)
     val Sky = Color(0xFF8FB8E0)

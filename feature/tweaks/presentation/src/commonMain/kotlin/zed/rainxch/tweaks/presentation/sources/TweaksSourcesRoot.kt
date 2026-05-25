@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.tweaks.presentation.components.TweaksAccents
+import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_count
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_entry_label
@@ -106,7 +106,7 @@ fun TweaksSourcesRoot(
                 icon = Icons.Outlined.NetworkCheck,
                 title = stringResource(Res.string.tweaks_sources_github_mirror_title),
                 subtitle = stringResource(Res.string.tweaks_sources_mirror_default),
-                accent = TweaksAccents.Sky,
+                accent = GhsAccents.Sky,
                 onClick = onNavigateToMirrorPicker,
             )
             Spacer(Modifier.height(8.dp))
@@ -122,7 +122,7 @@ fun TweaksSourcesRoot(
                 } else {
                     pluralStringResource(Res.plurals.custom_forges_count, count, count)
                 },
-                accent = TweaksAccents.Mint,
+                accent = GhsAccents.Mint,
                 onClick = { viewModel.onAction(TweaksAction.OnOpenCustomForgesDialog) },
             )
         }

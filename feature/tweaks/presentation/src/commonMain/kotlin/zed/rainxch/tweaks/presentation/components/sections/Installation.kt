@@ -61,7 +61,6 @@ import zed.rainxch.core.presentation.components.inputs.GhsTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
-import zed.rainxch.tweaks.presentation.components.SectionHeader
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.installationSection(

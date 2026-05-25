@@ -63,9 +63,9 @@ import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.RestartBanner
-import zed.rainxch.tweaks.presentation.components.SectionHeader
-import zed.rainxch.tweaks.presentation.components.TweaksAccents
-import zed.rainxch.tweaks.presentation.components.TweaksEntryRow
+import zed.rainxch.core.presentation.components.hub.GhsEntryRow
+import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
+import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.tweaks.presentation.components.TweaksSearchField
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
@@ -216,14 +216,14 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Palette,
                     onClick = onNavigateToAppearance,
-                    accent = TweaksAccents.Lavender,
+                    accent = GhsAccents.Lavender,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_language),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Translate,
                     onClick = onNavigateToLanguage,
-                    accent = TweaksAccents.Mint,
+                    accent = GhsAccents.Mint,
                 ),
             ),
         ),
@@ -235,21 +235,21 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Wifi,
                     onClick = onNavigateToConnection,
-                    accent = TweaksAccents.Sky,
+                    accent = GhsAccents.Sky,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_sources),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Hub,
                     onClick = onNavigateToSources,
-                    accent = TweaksAccents.Blush,
+                    accent = GhsAccents.Blush,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_translation),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.GTranslate,
                     onClick = onNavigateToTranslation,
-                    accent = TweaksAccents.Peach,
+                    accent = GhsAccents.Peach,
                 ),
             ),
         ),
@@ -261,14 +261,14 @@ fun TweaksHubScreen(
                     subtitle = tapToManage,
                     icon = Icons.Outlined.InstallMobile,
                     onClick = onNavigateToInstallMethod,
-                    accent = TweaksAccents.Sage,
+                    accent = GhsAccents.Sage,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_updates),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.Update,
                     onClick = onNavigateToUpdates,
-                    accent = TweaksAccents.Amber,
+                    accent = GhsAccents.Amber,
                 ),
             ),
         ),
@@ -280,21 +280,21 @@ fun TweaksHubScreen(
                     subtitle = state.cacheSize.ifBlank { tapToManage },
                     icon = Icons.Outlined.Inventory2,
                     onClick = onNavigateToStorage,
-                    accent = TweaksAccents.Periwinkle,
+                    accent = GhsAccents.Periwinkle,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_privacy),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.PrivacyTip,
                     onClick = onNavigateToPrivacy,
-                    accent = TweaksAccents.Rose,
+                    accent = GhsAccents.Rose,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_access_tokens),
                     subtitle = tapToManage,
                     icon = Icons.Outlined.VpnKey,
                     onClick = onNavigateToHostTokens,
-                    accent = TweaksAccents.Gold,
+                    accent = GhsAccents.Gold,
                 ),
             ),
         ),
@@ -306,14 +306,14 @@ fun TweaksHubScreen(
                     subtitle = state.versionName.ifBlank { "—" },
                     icon = Icons.Outlined.Info,
                     onClick = onNavigateToAppInfo,
-                    accent = TweaksAccents.Aqua,
+                    accent = GhsAccents.Aqua,
                 ),
                 TweaksHubEntry(
                     title = stringResource(Res.string.tweaks_entry_feedback),
                     subtitle = stringResource(Res.string.feedback_hub_subtitle),
                     icon = Icons.Outlined.Feedback,
                     onClick = onSendFeedbackClick,
-                    accent = TweaksAccents.Tan,
+                    accent = GhsAccents.Tan,
                 ),
             ),
         ),
@@ -405,12 +405,12 @@ fun TweaksHubScreen(
                 blocks.forEachIndexed { idx, block ->
                     item(key = "block_header_${block.title}") {
                         if (idx > 0) Spacer(Modifier.height(24.dp))
-                        SectionHeader(text = block.title)
+                        GhsSectionHeader(text = block.title)
                         Spacer(Modifier.height(8.dp))
                     }
                     block.entries.forEach { entry ->
                         item(key = "entry_${block.title}_${entry.title}") {
-                            TweaksEntryRow(
+                            GhsEntryRow(
                                 title = entry.title,
                                 subtitle = entry.subtitle,
                                 icon = entry.icon,
@@ -424,7 +424,7 @@ fun TweaksHubScreen(
             } else {
                 filteredBlocks.flatMap { it.entries }.forEach { entry ->
                     item(key = "search_entry_${entry.title}") {
-                        TweaksEntryRow(
+                        GhsEntryRow(
                             title = entry.title,
                             subtitle = entry.subtitle,
                             icon = entry.icon,

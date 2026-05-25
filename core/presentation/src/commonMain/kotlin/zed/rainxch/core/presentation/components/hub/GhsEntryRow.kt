@@ -1,8 +1,9 @@
-package zed.rainxch.tweaks.presentation.components
+package zed.rainxch.core.presentation.components.hub
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +32,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.theme.tokens.Radii
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TweaksEntryRow(
+fun GhsEntryRow(
     title: String,
     icon: ImageVector,
     onClick: () -> Unit,
@@ -40,24 +42,35 @@ fun TweaksEntryRow(
     subtitle: String? = null,
     badge: (@Composable () -> Unit)? = null,
     accentColor: Color = Color.Unspecified,
+    onLongClick: (() -> Unit)? = null,
+    destructive: Boolean = false,
+    trailingChevron: Boolean = true,
 ) {
     val effectiveAccent =
-        if (accentColor == Color.Unspecified) {
-            MaterialTheme.colorScheme.onSurfaceVariant
-        } else {
-            accentColor
+        when {
+            destructive -> MaterialTheme.colorScheme.error
+            accentColor == Color.Unspecified -> MaterialTheme.colorScheme.onSurfaceVariant
+            else -> accentColor
         }
     val tileBackground =
-        if (accentColor == Color.Unspecified) {
-            MaterialTheme.colorScheme.surfaceContainerHigh
+        when {
+            destructive -> MaterialTheme.colorScheme.error.copy(alpha = 0.14f)
+            accentColor == Color.Unspecified -> MaterialTheme.colorScheme.surfaceContainerHigh
+            else -> accentColor.copy(alpha = 0.14f)
+        }
+    val titleColor =
+        if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+    val clickMod =
+        if (onLongClick != null) {
+            Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
         } else {
-            accentColor.copy(alpha = 0.14f)
+            Modifier.combinedClickable(onClick = onClick)
         }
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .clip(Radii.row)
-            .clickable(onClick = onClick)
+            .then(clickMod)
             .semantics {
                 role = Role.Button
                 contentDescription = buildString {
@@ -107,7 +120,7 @@ fun TweaksEntryRow(
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -126,18 +139,20 @@ fun TweaksEntryRow(
                 badge()
             }
 
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp),
-            )
+            if (trailingChevron) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
         }
     }
 }
 
 @Composable
-fun TweaksEntryBadge(text: String) {
+fun GhsEntryBadge(text: String) {
     Surface(
         shape = Radii.chip,
         color = MaterialTheme.colorScheme.tertiaryContainer,
