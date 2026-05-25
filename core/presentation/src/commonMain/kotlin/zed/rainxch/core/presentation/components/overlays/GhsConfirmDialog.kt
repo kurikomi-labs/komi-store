@@ -35,6 +35,7 @@ fun GhsConfirmDialog(
     cancelLabel: String = "Cancel",
     destructive: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
+    note: String? = null,
 ) {
     Dialog(onDismissRequest = onDismiss) {
         val cs = MaterialTheme.colorScheme
@@ -65,6 +66,14 @@ fun GhsConfirmDialog(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
+            if (!note.isNullOrBlank()) {
+                Text(
+                    text = note,
+                    color = cs.outline,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                )
+            }
             Squiggle()
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
