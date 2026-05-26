@@ -17,11 +17,13 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -105,7 +107,11 @@ fun main(args: Array<String>) {
                 Triple(windowState.placement, windowState.position, windowState.size)
             }.distinctUntilChanged()
                 .debounce(500)
-                .collect { WindowStateStore.save(windowState) }
+                .collect {
+                    withContext(Dispatchers.IO) {
+                        WindowStateStore.save(windowState)
+                    }
+                }
         }
 
         LaunchedEffect(Unit) {

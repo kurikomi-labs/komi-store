@@ -3,6 +3,7 @@ package zed.rainxch.githubstore.desktop
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
@@ -95,6 +96,10 @@ object WindowStateStore {
     }
 
     fun save(state: WindowState) {
+        if (!state.size.isSpecified) return
+        val width = state.size.width.value
+        val height = state.size.height.value
+        if (width.isNaN() || height.isNaN()) return
         runCatching {
             val pos = state.position
             val (x, y) =
@@ -107,8 +112,8 @@ object WindowStateStore {
                 PersistedWindowState(
                     x = x,
                     y = y,
-                    width = state.size.width.value,
-                    height = state.size.height.value,
+                    width = width,
+                    height = height,
                     placement = state.placement.name,
                 )
             val parent = configFile.parentFile
