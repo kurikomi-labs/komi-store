@@ -1,6 +1,7 @@
 package zed.rainxch.githubstore
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,6 +90,14 @@ fun main(args: Array<String>) {
     application {
         var deepLinkUri by mutableStateOf(deepLinkArg)
         val windowState = remember { WindowStateStore.load() }
+
+        DisposableEffect(windowState) {
+            val hook = Thread { WindowStateStore.save(windowState) }
+            runCatching { Runtime.getRuntime().addShutdownHook(hook) }
+            onDispose {
+                runCatching { Runtime.getRuntime().removeShutdownHook(hook) }
+            }
+        }
 
         @OptIn(FlowPreview::class)
         LaunchedEffect(windowState) {

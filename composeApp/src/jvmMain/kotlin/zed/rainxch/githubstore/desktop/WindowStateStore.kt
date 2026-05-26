@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.awt.GraphicsEnvironment
 import java.awt.Rectangle
+import java.awt.Toolkit
 import java.io.File
 
 @Serializable
@@ -135,10 +136,25 @@ object WindowStateStore {
             runCatching {
                 GraphicsEnvironment.getLocalGraphicsEnvironment()
             }.getOrNull() ?: return false
+        val toolkit = runCatching { Toolkit.getDefaultToolkit() }.getOrNull()
         return ge.screenDevices.any { device ->
             device.configurations.any { cfg ->
-                cfg.bounds.intersects(rect) &&
-                    cfg.bounds.contains(
+                val usable =
+                    runCatching {
+                        val insets = toolkit?.getScreenInsets(cfg)
+                        if (insets != null) {
+                            Rectangle(
+                                cfg.bounds.x + insets.left,
+                                cfg.bounds.y + insets.top,
+                                cfg.bounds.width - insets.left - insets.right,
+                                cfg.bounds.height - insets.top - insets.bottom,
+                            )
+                        } else {
+                            cfg.bounds
+                        }
+                    }.getOrDefault(cfg.bounds)
+                usable.intersects(rect) &&
+                    usable.contains(
                         rect.x + VISIBLE_TITLEBAR_X_INSET,
                         rect.y + VISIBLE_TITLEBAR_Y_INSET,
                     )
