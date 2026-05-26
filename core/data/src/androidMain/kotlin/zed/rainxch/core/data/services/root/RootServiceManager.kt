@@ -66,15 +66,15 @@ class RootServiceManager(
         val srcPath = shellQuote(apkFile.absolutePath)
         val tmpPathQuoted = shellQuote(tmpPath)
 
-        val copyRes = Shell.cmd("cp $srcPath $tmpPathQuoted && chmod 644 $tmpPathQuoted").exec()
-        if (!copyRes.isSuccess) {
-            Logger.e(TAG) {
-                "installPackage() — staging copy failed: exit=${copyRes.code} out='${copyRes.out.joinToString("\n")}' err='${copyRes.err.joinToString("\n")}'"
-            }
-            return@withContext STATUS_FAILURE
-        }
-
         try {
+            val copyRes = Shell.cmd("cp $srcPath $tmpPathQuoted && chmod 644 $tmpPathQuoted").exec()
+            if (!copyRes.isSuccess) {
+                Logger.e(TAG) {
+                    "installPackage() — staging copy failed: exit=${copyRes.code} out='${copyRes.out.joinToString("\n")}' err='${copyRes.err.joinToString("\n")}'"
+                }
+                return@withContext STATUS_FAILURE
+            }
+
             val command = buildString {
                 append("pm install ")
                 if (safeInstaller != null) append("-i ").append(safeInstaller).append(' ')
@@ -141,7 +141,6 @@ class RootServiceManager(
             try {
                 Shell.setDefaultBuilder(
                     Shell.Builder.create()
-                        .setFlags(Shell.FLAG_MOUNT_MASTER)
                         .setTimeout(SHELL_TIMEOUT_SECONDS),
                 )
             } catch (e: IllegalStateException) {
