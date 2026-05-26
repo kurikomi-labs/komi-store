@@ -25,13 +25,32 @@ private const val DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 private const val DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1 = 19
 private const val S_OK = 0
 
+private val osName: String
+    get() = System.getProperty("os.name").orEmpty().lowercase()
+
 private val isWindows: Boolean
-    get() =
-        System
-            .getProperty("os.name")
-            .orEmpty()
-            .lowercase()
-            .startsWith("windows")
+    get() = osName.startsWith("windows")
+
+private val isMac: Boolean
+    get() = osName.contains("mac")
+
+fun installMacosSystemAppearance() {
+    if (!isMac) return
+    if (System.getProperty("apple.awt.application.appearance") == null) {
+        System.setProperty("apple.awt.application.appearance", "system")
+    }
+}
+
+fun applyMacosWindowAppearance(
+    window: Window,
+    isDark: Boolean,
+) {
+    if (!isMac) return
+    val frame = window as? javax.swing.JFrame ?: return
+    val key = "apple.awt.windowAppearance"
+    val value = if (isDark) "NSAppearanceNameDarkAqua" else "NSAppearanceNameAqua"
+    runCatching { frame.rootPane.putClientProperty(key, value) }
+}
 
 fun applyWindowsImmersiveDarkMode(
     window: Window,

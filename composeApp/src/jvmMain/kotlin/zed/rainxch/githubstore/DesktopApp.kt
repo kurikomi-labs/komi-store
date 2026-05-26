@@ -33,7 +33,9 @@ import zed.rainxch.githubstore.core.presentation.res.menubar_help_feedback
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_licenses
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_menu
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_privacy
+import zed.rainxch.githubstore.desktop.applyMacosWindowAppearance
 import zed.rainxch.githubstore.desktop.applyWindowsImmersiveDarkMode
+import zed.rainxch.githubstore.desktop.installMacosSystemAppearance
 import java.awt.Desktop
 import java.net.URI
 import kotlin.system.exitProcess
@@ -43,6 +45,7 @@ private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy"
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
 fun main(args: Array<String>) {
+    installMacosSystemAppearance()
     CrashReporter.install()
 
     A11yCrashGuard.install()
@@ -123,6 +126,7 @@ fun main(args: Array<String>) {
             val isOsDark = isSystemInDarkTheme()
             LaunchedEffect(window, isOsDark) {
                 applyWindowsImmersiveDarkMode(window, isOsDark)
+                applyMacosWindowAppearance(window, isOsDark)
             }
             MenuBar {
                 Menu(text = stringResource(Res.string.menubar_help_menu)) {
