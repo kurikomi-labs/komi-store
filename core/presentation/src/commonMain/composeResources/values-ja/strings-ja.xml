@@ -421,11 +421,6 @@
     <string name="update_check_interval_description">バックグラウンドでアプリのアップデートを確認する頻度</string>
     <string name="update_check_enabled_title">バックグラウンド更新確認</string>
     <string name="update_check_enabled_description">バックグラウンドで定期的に更新を確認します。バッテリー節約のためオフにできます — 各アプリの詳細画面から手動で確認できます。</string>
-    <string name="interval_3h">3時間</string>
-    <string name="interval_6h">6時間</string>
-    <string name="interval_12h">12時間</string>
-    <string name="interval_24h">24時間</string>
-
     <string name="battery_optimization_card_title">バックグラウンド更新を許可</string>
     <string name="battery_optimization_card_description">このデバイスはバックグラウンドタスクを積極的に終了します。バッテリー最適化からGitHub Storeを除外して、定期的な更新チェックとサイレントインストールが確実に動作するようにしましょう。</string>
     <string name="battery_optimization_card_open">設定を開く</string>
@@ -1246,4 +1241,10 @@
     <string name="profile_entry_about_subtitle">バージョン、コミュニティ、法的情報</string>
     <string name="filter_with_installable">ここでインストール可能</string>
     <string name="no_repos_with_installable">このプラットフォーム向けのインストール可能なアセットを持つリポジトリはありません</string>
+    <string name="interval_every_hours">%1$d 時間ごと</string>
+    <string name="interval_daily">毎日</string>
+    <string name="interval_every_days">%1$d 日ごと</string>
+    <string name="interval_weekly">毎週</string>
+    <string name="interval_biweekly">2 週間ごと</string>
+    <string name="interval_monthly">30 日ごと</string>
 </resources>

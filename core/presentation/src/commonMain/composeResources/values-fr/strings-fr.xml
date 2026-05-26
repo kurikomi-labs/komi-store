@@ -420,11 +420,6 @@
     <string name="update_check_interval_description">Fréquence de vérification des mises à jour en arrière-plan</string>
     <string name="update_check_enabled_title">Vérification des mises à jour en arrière-plan</string>
     <string name="update_check_enabled_description">Vérifie périodiquement les mises à jour en arrière-plan. Désactivez pour économiser la batterie — vous pouvez vérifier manuellement depuis la fiche détails de n'importe quelle app.</string>
-    <string name="interval_3h">3h</string>
-    <string name="interval_6h">6h</string>
-    <string name="interval_12h">12h</string>
-    <string name="interval_24h">24h</string>
-
     <string name="battery_optimization_card_title">Autoriser les mises à jour en arrière-plan</string>
     <string name="battery_optimization_card_description">Votre appareil interrompt agressivement les tâches d'arrière-plan. Excluez GitHub Store de l'optimisation de la batterie pour que les vérifications planifiées et les installations silencieuses fonctionnent de manière fiable.</string>
     <string name="battery_optimization_card_open">Ouvrir les paramètres</string>
@@ -1256,4 +1251,10 @@
     <string name="profile_entry_about_subtitle">Version, communauté, mentions légales</string>
     <string name="filter_with_installable">Installable ici</string>
     <string name="no_repos_with_installable">Aucun dépôt avec des assets installables pour cette plateforme</string>
+    <string name="interval_every_hours">Toutes les %1$d heures</string>
+    <string name="interval_daily">Quotidien</string>
+    <string name="interval_every_days">Tous les %1$d jours</string>
+    <string name="interval_weekly">Hebdomadaire</string>
+    <string name="interval_biweekly">Toutes les 2 semaines</string>
+    <string name="interval_monthly">Tous les 30 jours</string>
 </resources>

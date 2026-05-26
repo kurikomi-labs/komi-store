@@ -450,11 +450,6 @@
     <string name="update_check_interval_description">पृष्ठभूमि में ऐप अपडेट कितनी बार जाँचें</string>
     <string name="update_check_enabled_title">पृष्ठभूमि अपडेट जाँच</string>
     <string name="update_check_enabled_description">पृष्ठभूमि में समय-समय पर अपडेट जाँचता है। बैटरी बचाने के लिए बंद करें — किसी भी ऐप के विवरण स्क्रीन से मैन्युअली जाँच की जा सकती है।</string>
-    <string name="interval_3h">3घ</string>
-    <string name="interval_6h">6घ</string>
-    <string name="interval_12h">12घ</string>
-    <string name="interval_24h">24घ</string>
-
     <string name="battery_optimization_card_title">बैकग्राउंड अपडेट की अनुमति दें</string>
     <string name="battery_optimization_card_description">आपका डिवाइस बैकग्राउंड कार्य आक्रामक रूप से बंद कर देता है। GitHub Store को बैटरी ऑप्टिमाइज़ेशन से व्हाइटलिस्ट करें ताकि निर्धारित अपडेट चेक और साइलेंट इंस्टॉल विश्वसनीय रूप से चलें।</string>
     <string name="battery_optimization_card_open">सेटिंग्स खोलें</string>
@@ -1292,4 +1287,10 @@
     <string name="profile_entry_about_subtitle">संस्करण, समुदाय, कानूनी</string>
     <string name="filter_with_installable">यहाँ इंस्टॉल योग्य</string>
     <string name="no_repos_with_installable">इस प्लेटफ़ॉर्म के लिए इंस्टॉल योग्य ऐसेट वाले रिपॉज़िटरी नहीं</string>
+    <string name="interval_every_hours">हर %1$d घंटे</string>
+    <string name="interval_daily">रोज़ाना</string>
+    <string name="interval_every_days">हर %1$d दिन</string>
+    <string name="interval_weekly">साप्ताहिक</string>
+    <string name="interval_biweekly">हर 2 सप्ताह</string>
+    <string name="interval_monthly">हर 30 दिन</string>
 </resources>

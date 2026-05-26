@@ -419,11 +419,6 @@
     <string name="update_check_interval_description">Con qué frecuencia buscar actualizaciones en segundo plano</string>
     <string name="update_check_enabled_title">Comprobación de actualizaciones en segundo plano</string>
     <string name="update_check_enabled_description">Busca actualizaciones periódicamente en segundo plano. Desactívalo para ahorrar batería — puedes comprobar manualmente desde la pantalla de detalles de cualquier app.</string>
-    <string name="interval_3h">3h</string>
-    <string name="interval_6h">6h</string>
-    <string name="interval_12h">12h</string>
-    <string name="interval_24h">24h</string>
-
     <string name="battery_optimization_card_title">Permitir actualizaciones en segundo plano</string>
     <string name="battery_optimization_card_description">Tu dispositivo cierra agresivamente las tareas en segundo plano. Excluye GitHub Store de la optimización de batería para que las comprobaciones programadas y las instalaciones silenciosas funcionen de forma fiable.</string>
     <string name="battery_optimization_card_open">Abrir ajustes</string>
@@ -1256,4 +1251,10 @@
     <string name="profile_entry_about_subtitle">Versión, comunidad, legal</string>
     <string name="filter_with_installable">Instalable aquí</string>
     <string name="no_repos_with_installable">Sin repositorios con assets instalables para esta plataforma</string>
+    <string name="interval_every_hours">Cada %1$d horas</string>
+    <string name="interval_daily">Diariamente</string>
+    <string name="interval_every_days">Cada %1$d días</string>
+    <string name="interval_weekly">Semanalmente</string>
+    <string name="interval_biweekly">Cada 2 semanas</string>
+    <string name="interval_monthly">Cada 30 días</string>
 </resources>

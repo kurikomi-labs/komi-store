@@ -452,11 +452,6 @@
     <string name="update_check_interval_description">عدد مرات التحقق من تحديثات التطبيق في الخلفية</string>
     <string name="update_check_enabled_title">التحقق التلقائي من التحديثات</string>
     <string name="update_check_enabled_description">يبحث عن التحديثات في الخلفية بشكل دوري. أوقفه لتوفير البطارية — يمكنك دائماً التحقق يدوياً من شاشة تفاصيل أي تطبيق.</string>
-    <string name="interval_3h">٣ ساعات</string>
-    <string name="interval_6h">٦ ساعات</string>
-    <string name="interval_12h">١٢ ساعة</string>
-    <string name="interval_24h">٢٤ ساعة</string>
-
     <string name="battery_optimization_card_title">السماح بالتحديثات في الخلفية</string>
     <string name="battery_optimization_card_description">جهازك يوقف المهام الخلفية بقوة. أضف GitHub Store إلى قائمة الاستثناء من تحسين البطارية حتى تعمل عمليات فحص التحديثات والتثبيت الصامت بشكل موثوق.</string>
     <string name="battery_optimization_card_open">فتح الإعدادات</string>
@@ -1315,4 +1310,10 @@
     <string name="profile_entry_about_subtitle">الإصدار، المجتمع، القانوني</string>
     <string name="filter_with_installable">قابل للتثبيت هنا</string>
     <string name="no_repos_with_installable">لا توجد مستودعات بأصول قابلة للتثبيت لهذه المنصة</string>
+    <string name="interval_every_hours">كل %1$d ساعة</string>
+    <string name="interval_daily">يوميًا</string>
+    <string name="interval_every_days">كل %1$d أيام</string>
+    <string name="interval_weekly">أسبوعيًا</string>
+    <string name="interval_biweekly">كل أسبوعين</string>
+    <string name="interval_monthly">كل 30 يومًا</string>
 </resources>

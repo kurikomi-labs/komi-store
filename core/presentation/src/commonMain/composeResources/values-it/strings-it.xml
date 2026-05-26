@@ -452,11 +452,6 @@
     <string name="update_check_interval_description">Ogni quanto verificare gli aggiornamenti in background</string>
     <string name="update_check_enabled_title">Verifica aggiornamenti in background</string>
     <string name="update_check_enabled_description">Verifica periodicamente gli aggiornamenti in background. Disattiva per risparmiare batteria — puoi sempre verificare manualmente dalla schermata dettagli di qualsiasi app.</string>
-    <string name="interval_3h">3h</string>
-    <string name="interval_6h">6h</string>
-    <string name="interval_12h">12h</string>
-    <string name="interval_24h">24h</string>
-
     <string name="battery_optimization_card_title">Consenti aggiornamenti in background</string>
     <string name="battery_optimization_card_description">Il tuo dispositivo chiude in modo aggressivo le attività in background. Esenta GitHub Store dall'ottimizzazione della batteria affinché i controlli pianificati e le installazioni silenziose funzionino in modo affidabile.</string>
     <string name="battery_optimization_card_open">Apri impostazioni</string>
@@ -1290,4 +1285,10 @@
     <string name="profile_entry_about_subtitle">Versione, community, legale</string>
     <string name="filter_with_installable">Installabile qui</string>
     <string name="no_repos_with_installable">Nessun repository con asset installabili per questa piattaforma</string>
+    <string name="interval_every_hours">Ogni %1$d ore</string>
+    <string name="interval_daily">Quotidiano</string>
+    <string name="interval_every_days">Ogni %1$d giorni</string>
+    <string name="interval_weekly">Settimanale</string>
+    <string name="interval_biweekly">Ogni 2 settimane</string>
+    <string name="interval_monthly">Ogni 30 giorni</string>
 </resources>

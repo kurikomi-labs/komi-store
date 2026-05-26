@@ -450,11 +450,6 @@
     <string name="update_check_interval_description">Arka planda uygulama güncellemelerinin ne sıklıkla kontrol edileceği</string>
     <string name="update_check_enabled_title">Arka planda güncelleme kontrolü</string>
     <string name="update_check_enabled_description">Arka planda düzenli aralıklarla güncellemeleri kontrol eder. Pil tasarrufu için kapatın — her zaman uygulamanın detay ekranından manuel olarak kontrol edebilirsiniz.</string>
-    <string name="interval_3h">3s</string>
-    <string name="interval_6h">6s</string>
-    <string name="interval_12h">12s</string>
-    <string name="interval_24h">24s</string>
-
     <string name="battery_optimization_card_title">Arka planda güncellemelere izin ver</string>
     <string name="battery_optimization_card_description">Cihazın arka plan görevlerini agresif şekilde kapatıyor. GitHub Store'u pil optimizasyonundan hariç tut ki zamanlanmış güncelleme kontrolleri ve sessiz kurulumlar güvenilir biçimde çalışsın.</string>
     <string name="battery_optimization_card_open">Ayarları aç</string>
@@ -1287,4 +1282,10 @@
     <string name="profile_entry_about_subtitle">Sürüm, topluluk, yasal</string>
     <string name="filter_with_installable">Burada kurulabilir</string>
     <string name="no_repos_with_installable">Bu platform için kurulabilir varlığı olan depo yok</string>
+    <string name="interval_every_hours">%1$d saatte bir</string>
+    <string name="interval_daily">Günlük</string>
+    <string name="interval_every_days">%1$d günde bir</string>
+    <string name="interval_weekly">Haftalık</string>
+    <string name="interval_biweekly">2 haftada bir</string>
+    <string name="interval_monthly">30 günde bir</string>
 </resources>

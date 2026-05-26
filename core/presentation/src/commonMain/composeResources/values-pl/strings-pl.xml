@@ -422,11 +422,6 @@
     <string name="update_check_interval_description">Jak często sprawdzać aktualizacje aplikacji w tle</string>
     <string name="update_check_enabled_title">Sprawdzanie aktualizacji w tle</string>
     <string name="update_check_enabled_description">Okresowo sprawdza aktualizacje w tle. Wyłącz, aby oszczędzać baterię — zawsze możesz sprawdzić ręcznie z ekranu szczegółów dowolnej aplikacji.</string>
-    <string name="interval_3h">3g</string>
-    <string name="interval_6h">6g</string>
-    <string name="interval_12h">12g</string>
-    <string name="interval_24h">24g</string>
-
     <string name="battery_optimization_card_title">Zezwól na aktualizacje w tle</string>
     <string name="battery_optimization_card_description">Twoje urządzenie agresywnie zamyka zadania w tle. Wyłącz optymalizację baterii dla GitHub Store, aby zaplanowane sprawdzenia aktualizacji i ciche instalacje działały niezawodnie.</string>
     <string name="battery_optimization_card_open">Otwórz ustawienia</string>
@@ -1285,4 +1280,10 @@
     <string name="profile_entry_about_subtitle">Wersja, społeczność, informacje prawne</string>
     <string name="filter_with_installable">Instalowalne tutaj</string>
     <string name="no_repos_with_installable">Brak repozytoriów z plikami instalowalnymi dla tej platformy</string>
+    <string name="interval_every_hours">Co %1$d godziny</string>
+    <string name="interval_daily">Codziennie</string>
+    <string name="interval_every_days">Co %1$d dni</string>
+    <string name="interval_weekly">Co tydzień</string>
+    <string name="interval_biweekly">Co 2 tygodnie</string>
+    <string name="interval_monthly">Co 30 dni</string>
 </resources>

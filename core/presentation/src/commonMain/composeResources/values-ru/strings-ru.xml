@@ -422,11 +422,6 @@
     <string name="update_check_interval_description">Как часто проверять обновления приложения в фоне</string>
     <string name="update_check_enabled_title">Фоновая проверка обновлений</string>
     <string name="update_check_enabled_description">Периодически проверяет обновления в фоне. Отключи для экономии батареи — всегда можно проверить вручную из экрана деталей любого приложения.</string>
-    <string name="interval_3h">3ч</string>
-    <string name="interval_6h">6ч</string>
-    <string name="interval_12h">12ч</string>
-    <string name="interval_24h">24ч</string>
-
     <string name="battery_optimization_card_title">Разрешить обновления в фоне</string>
     <string name="battery_optimization_card_description">Твоё устройство агрессивно завершает фоновые задачи. Исключи GitHub Store из оптимизации батареи, чтобы запланированные проверки обновлений и тихая установка работали надёжно.</string>
     <string name="battery_optimization_card_open">Открыть настройки</string>
@@ -1285,4 +1280,10 @@
     <string name="profile_entry_about_subtitle">Версия, сообщество, юридическая информация</string>
     <string name="filter_with_installable">Можно установить здесь</string>
     <string name="no_repos_with_installable">Нет репозиториев с устанавливаемыми сборками для этой платформы</string>
+    <string name="interval_every_hours">Каждые %1$d часов</string>
+    <string name="interval_daily">Ежедневно</string>
+    <string name="interval_every_days">Каждые %1$d дней</string>
+    <string name="interval_weekly">Еженедельно</string>
+    <string name="interval_biweekly">Раз в 2 недели</string>
+    <string name="interval_monthly">Каждые 30 дней</string>
 </resources>

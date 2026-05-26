@@ -452,11 +452,6 @@
     <string name="update_check_interval_description">ব্যাকগ্রাউন্ডে কতক্ষণ পর পর অ্যাপ আপডেট খোঁজা হবে</string>
     <string name="update_check_enabled_title">ব্যাকগ্রাউন্ড আপডেট চেক</string>
     <string name="update_check_enabled_description">নিয়মিত ব্যাকগ্রাউন্ডে আপডেট খোঁজে। ব্যাটারি বাঁচাতে বন্ধ করুন — আপনি যেকোনো অ্যাপের ডিটেইলস স্ক্রিন থেকে ম্যানুয়ালি চেক করতে পারবেন।</string>
-    <string name="interval_3h">৩ঘ</string>
-    <string name="interval_6h">৬ঘ</string>
-    <string name="interval_12h">১২ঘ</string>
-    <string name="interval_24h">২৪ঘ</string>
-
     <string name="battery_optimization_card_title">ব্যাকগ্রাউন্ড আপডেট অনুমতি দিন</string>
     <string name="battery_optimization_card_description">আপনার ডিভাইস ব্যাকগ্রাউন্ড টাস্কগুলো আক্রমণাত্মকভাবে বন্ধ করে। GitHub Store-কে ব্যাটারি অপটিমাইজেশন থেকে হোয়াইটলিস্ট করুন যাতে নির্ধারিত আপডেট চেক এবং সাইলেন্ট ইনস্টল নির্ভরযোগ্যভাবে চলে।</string>
     <string name="battery_optimization_card_open">সেটিংস খুলুন</string>
@@ -1277,4 +1272,10 @@
     <string name="profile_entry_about_subtitle">সংস্করণ, কমিউনিটি, আইনি</string>
     <string name="filter_with_installable">এখানে ইনস্টলযোগ্য</string>
     <string name="no_repos_with_installable">এই প্ল্যাটফর্মের জন্য ইনস্টলযোগ্য অ্যাসেট সহ কোনো রিপো নেই</string>
+    <string name="interval_every_hours">প্রতি %1$d ঘণ্টায়</string>
+    <string name="interval_daily">প্রতিদিন</string>
+    <string name="interval_every_days">প্রতি %1$d দিনে</string>
+    <string name="interval_weekly">সাপ্তাহিক</string>
+    <string name="interval_biweekly">প্রতি 2 সপ্তাহে</string>
+    <string name="interval_monthly">প্রতি 30 দিনে</string>
 </resources>

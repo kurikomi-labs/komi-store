@@ -450,11 +450,6 @@
     <string name="update_check_interval_description">백그라운드에서 앱 업데이트를 확인하는 빈도</string>
     <string name="update_check_enabled_title">백그라운드 업데이트 확인</string>
     <string name="update_check_enabled_description">백그라운드에서 주기적으로 업데이트를 확인합니다. 배터리를 절약하려면 끄세요 — 앱 세부 정보 화면에서 언제든 수동으로 확인할 수 있습니다.</string>
-    <string name="interval_3h">3시간</string>
-    <string name="interval_6h">6시간</string>
-    <string name="interval_12h">12시간</string>
-    <string name="interval_24h">24시간</string>
-
     <string name="battery_optimization_card_title">백그라운드 업데이트 허용</string>
     <string name="battery_optimization_card_description">이 기기는 백그라운드 작업을 적극적으로 종료해요. 배터리 최적화에서 GitHub Store를 화이트리스트에 추가하면 예약된 업데이트 확인과 사일런트 설치가 안정적으로 동작해요.</string>
     <string name="battery_optimization_card_open">설정 열기</string>
@@ -1276,4 +1271,10 @@
     <string name="profile_entry_about_subtitle">버전, 커뮤니티, 법적 고지</string>
     <string name="filter_with_installable">여기서 설치 가능</string>
     <string name="no_repos_with_installable">이 플랫폼용 설치 가능한 자산이 있는 저장소가 없습니다</string>
+    <string name="interval_every_hours">%1$d 시간마다</string>
+    <string name="interval_daily">매일</string>
+    <string name="interval_every_days">%1$d 일마다</string>
+    <string name="interval_weekly">매주</string>
+    <string name="interval_biweekly">2주마다</string>
+    <string name="interval_monthly">30일마다</string>
 </resources>

@@ -422,11 +422,6 @@
     <string name="update_check_interval_description">在后台检查应用更新的频率</string>
     <string name="update_check_enabled_title">后台检查更新</string>
     <string name="update_check_enabled_description">在后台周期性检查更新。可关闭以节省电量 — 你随时可在任意应用的详情页手动检查。</string>
-    <string name="interval_3h">3小时</string>
-    <string name="interval_6h">6小时</string>
-    <string name="interval_12h">12小时</string>
-    <string name="interval_24h">24小时</string>
-
     <string name="battery_optimization_card_title">允许后台更新</string>
     <string name="battery_optimization_card_description">你的设备会积极结束后台任务。把 GitHub Store 加入电池优化白名单，定时更新检查和静默安装才能稳定运行。</string>
     <string name="battery_optimization_card_open">打开设置</string>
@@ -1249,4 +1244,10 @@
     <string name="profile_entry_about_subtitle">版本、社区、法律</string>
     <string name="filter_with_installable">可在此安装</string>
     <string name="no_repos_with_installable">没有适用于当前平台的可安装资源仓库</string>
+    <string name="interval_every_hours">每 %1$d 小时</string>
+    <string name="interval_daily">每天</string>
+    <string name="interval_every_days">每 %1$d 天</string>
+    <string name="interval_weekly">每周</string>
+    <string name="interval_biweekly">每 2 周</string>
+    <string name="interval_monthly">每 30 天</string>
 </resources>
