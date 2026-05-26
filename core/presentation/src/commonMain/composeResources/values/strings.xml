@@ -582,10 +582,12 @@
     <string name="update_check_interval_description">How often to look for new releases.</string>
     <string name="update_check_enabled_title">Check automatically</string>
     <string name="update_check_enabled_description">Look for new releases on a schedule. Turn off to save battery — you can still check manually from any app's details screen.</string>
-    <string name="interval_3h">Every 3 hours</string>
-    <string name="interval_6h">Every 6 hours</string>
-    <string name="interval_12h">Every 12 hours</string>
-    <string name="interval_24h">Daily</string>
+    <string name="interval_every_hours">Every %1$d hours</string>
+    <string name="interval_daily">Daily</string>
+    <string name="interval_every_days">Every %1$d days</string>
+    <string name="interval_weekly">Weekly</string>
+    <string name="interval_biweekly">Every 2 weeks</string>
+    <string name="interval_monthly">Every 30 days</string>
 
     <string name="battery_optimization_card_title">Allow background updates</string>
     <string name="battery_optimization_card_description">Your device aggressively kills background tasks. Whitelist GitHub Store from battery optimization so scheduled update checks and silent installs can run reliably.</string>

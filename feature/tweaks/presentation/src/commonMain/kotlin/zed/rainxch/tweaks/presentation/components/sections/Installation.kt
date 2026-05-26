@@ -829,19 +829,42 @@ private fun AutoUpdateCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private val IntervalStops: List<Long> = listOf(3L, 6L, 12L, 24L, 72L, 168L, 336L, 720L)
+
+@Composable
+private fun formatIntervalLabel(hours: Long): String {
+    val days = hours / 24
+    return when {
+        hours < 24 -> stringResource(Res.string.interval_every_hours, hours.toInt())
+        hours == 24L -> stringResource(Res.string.interval_daily)
+        hours == 168L -> stringResource(Res.string.interval_weekly)
+        hours == 336L -> stringResource(Res.string.interval_biweekly)
+        hours == 720L -> stringResource(Res.string.interval_monthly)
+        else -> stringResource(Res.string.interval_every_days, days.toInt())
+    }
+}
+
+@Composable
+private fun formatIntervalShort(hours: Long): String {
+    val days = hours / 24
+    return when {
+        hours < 24 -> "${hours}h"
+        days < 30 -> "${days}d"
+        else -> "30d"
+    }
+}
+
 @Composable
 private fun UpdateCheckIntervalCard(
     selectedIntervalHours: Long,
     enabled: Boolean,
     onIntervalSelected: (Long) -> Unit,
 ) {
-    val intervals = listOf(
-        3L to Res.string.interval_3h,
-        6L to Res.string.interval_6h,
-        12L to Res.string.interval_12h,
-        24L to Res.string.interval_24h,
-    )
+    val currentIndex = IntervalStops.indexOf(selectedIntervalHours)
+        .let { if (it == -1) IntervalStops.indexOf(IntervalStops.minByOrNull { stop -> kotlin.math.abs(stop - selectedIntervalHours) }) else it }
+        .coerceAtLeast(0)
+    val maxIndex = IntervalStops.lastIndex
+    val cs = MaterialTheme.colorScheme
 
     ExpressiveCard {
         Column(
@@ -860,52 +883,63 @@ private fun UpdateCheckIntervalCard(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .background(cs.primaryContainer)
                         .padding(8.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = cs.onPrimaryContainer
                 )
 
                 Column(
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
                         text = stringResource(Res.string.update_check_interval_title),
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = cs.onSurface,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = stringResource(Res.string.update_check_interval_description),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = cs.onSurfaceVariant
                     )
                 }
             }
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                intervals.forEach { (hours, labelRes) ->
-                    val isSelected = selectedIntervalHours == hours
+            Text(
+                text = formatIntervalLabel(IntervalStops[currentIndex]),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = if (enabled) cs.primary else cs.onSurfaceVariant,
+            )
 
-                    FilterChip(
-                        selected = isSelected,
-                        enabled = enabled,
-                        onClick = { onIntervalSelected(hours) },
-                        label = {
-                            Text(
-                                text = stringResource(labelRes),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    )
-                }
+            androidx.compose.material3.Slider(
+                value = currentIndex.toFloat(),
+                onValueChange = { v ->
+                    val idx = v.toInt().coerceIn(0, maxIndex)
+                    onIntervalSelected(IntervalStops[idx])
+                },
+                steps = maxIndex - 1,
+                valueRange = 0f..maxIndex.toFloat(),
+                enabled = enabled,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = formatIntervalShort(IntervalStops.first()),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = cs.onSurfaceVariant,
+                )
+                Text(
+                    text = formatIntervalShort(IntervalStops.last()),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = cs.onSurfaceVariant,
+                )
             }
         }
     }
