@@ -39,6 +39,8 @@ kotlin {
 
                 implementation(libs.dhizuku.api)
 
+                implementation(libs.libsu.core)
+
                 implementation(libs.ktor.client.okhttp)
 
                 implementation(libs.androidx.work.runtime)

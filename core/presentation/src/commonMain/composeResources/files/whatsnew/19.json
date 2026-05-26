@@ -20,7 +20,8 @@
         "Discovery cards now show every platform a repo ships installers for, not just the one whose endpoint listed it.",
         "What's New tag row no longer wraps long release tags into a one-character-wide vertical date column.",
         "Checksum mismatch when a mirror was active — fixed a race between mirror and direct downloads writing to the same destination file.",
-        "Windows 11 title bar now matches system dark mode instead of staying glaringly white."
+        "Windows 11 title bar now matches system dark mode instead of staying glaringly white.",
+        "Silent install via root now properly triggers the Magisk / KernelSU permission prompt on Android 14+ instead of immediately reporting 'No root'; the root path was rewritten on top of libsu."
       ]
     }
   ]
