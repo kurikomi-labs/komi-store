@@ -44,24 +44,22 @@ class SlowDownloadDetectorImpl(
         }
     }
 
-    override fun onProgress(progress: DownloadProgress) {
-        appScope.launch {
-            mutex.withLock {
-                val now = Clock.System.now().toEpochMilliseconds()
-                samples.addLast(now to progress.bytesDownloaded)
-                while (samples.isNotEmpty() && samples.first().first < now - sustainedMs) {
-                    samples.removeFirst()
-                }
-                if (samples.size >= 2) {
-                    val first = samples.first()
-                    val last = samples.last()
-                    val elapsedSec = (last.first - first.first).coerceAtLeast(1L) / 1000.0
-                    val deltaBytes = (last.second - first.second).coerceAtLeast(0L)
-                    val bytesPerSec = (deltaBytes / elapsedSec).toLong()
-                    val windowFull = (last.first - first.first) >= sustainedMs - 500
-                    if (windowFull && bytesPerSec < thresholdBytesPerSec) {
-                        recordSlowEvent(now)
-                    }
+    override suspend fun onProgress(progress: DownloadProgress) {
+        mutex.withLock {
+            val now = Clock.System.now().toEpochMilliseconds()
+            samples.addLast(now to progress.bytesDownloaded)
+            while (samples.isNotEmpty() && samples.first().first < now - sustainedMs) {
+                samples.removeFirst()
+            }
+            if (samples.size >= 2) {
+                val first = samples.first()
+                val last = samples.last()
+                val elapsedSec = (last.first - first.first).coerceAtLeast(1L) / 1000.0
+                val deltaBytes = (last.second - first.second).coerceAtLeast(0L)
+                val bytesPerSec = (deltaBytes / elapsedSec).toLong()
+                val windowFull = (last.first - first.first) >= sustainedMs - 500
+                if (windowFull && bytesPerSec < thresholdBytesPerSec) {
+                    recordSlowEvent(now)
                 }
             }
         }
