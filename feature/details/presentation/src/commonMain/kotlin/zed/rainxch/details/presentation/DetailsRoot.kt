@@ -500,21 +500,6 @@ fun DetailsScreen(
     onReadMoreAbout: (() -> Unit)? = null,
     onReadMoreWhatsNew: (() -> Unit)? = null,
 ) {
-    val shared = zed.rainxch.core.presentation.locals.LocalSharedTransitionScope.current
-    val animatedScope = zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope.current
-    val sharedModifier = state.repository?.let { repo ->
-        if (shared != null && animatedScope != null) {
-            with(shared) {
-                Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "repo-${repo.id}"),
-                    animatedVisibilityScope = animatedScope,
-                )
-            }
-        } else {
-            Modifier
-        }
-    } ?: Modifier
-    Box(modifier = sharedModifier) {
     Scaffold(
         topBar = {
             DetailsTopbar(
@@ -704,7 +689,6 @@ fun DetailsScreen(
                 }
             }
         }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
