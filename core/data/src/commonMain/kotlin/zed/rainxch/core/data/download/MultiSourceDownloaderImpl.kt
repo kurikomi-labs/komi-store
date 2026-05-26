@@ -38,21 +38,13 @@ class MultiSourceDownloaderImpl(
         suggestedFileName: String?,
     ): Flow<DownloadProgress> =
         channelFlow {
-            var mirrorEmitted = false
             try {
-                downloader.download(mirrorUrl, suggestedFileName).collect { progress ->
-                    mirrorEmitted = true
-                    send(progress)
-                }
+                downloader.download(mirrorUrl, suggestedFileName).collect { send(it) }
                 return@channelFlow
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
-                if (mirrorEmitted) {
-                    Logger.w(t) { "Mirror download failed mid-stream, not retrying direct to avoid partial file." }
-                    throw t
-                }
-                Logger.w(t) { "Mirror download failed before progress, falling back to direct." }
+                Logger.w(t) { "Mirror download failed, falling back to direct." }
             }
             downloader
                 .download(directUrl, suggestedFileName, bypassMirror = true)
