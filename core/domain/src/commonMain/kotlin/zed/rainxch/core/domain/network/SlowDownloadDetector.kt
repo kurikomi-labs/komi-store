@@ -8,5 +8,5 @@ interface SlowDownloadDetector {
 
     fun onProgress(progress: DownloadProgress)
 
-    fun reset()
+    suspend fun reset()
 }
