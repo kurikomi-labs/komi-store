@@ -149,6 +149,9 @@ class DefaultDownloadOrchestrator(
         }
 
         multiSourceDownloader.download(spec.asset.downloadUrl, scopedName).collect { progress ->
+            if (progress.restart) {
+                slowDownloadDetector.reset()
+            }
             slowDownloadDetector.onProgress(progress)
             updateEntry(spec.packageName) {
                 it.copy(

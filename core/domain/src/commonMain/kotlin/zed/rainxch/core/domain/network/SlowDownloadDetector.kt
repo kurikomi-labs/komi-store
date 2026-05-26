@@ -6,5 +6,7 @@ import zed.rainxch.core.domain.model.DownloadProgress
 interface SlowDownloadDetector {
     val suggestMirror: Flow<Unit>
 
-    fun onProgress(progress: DownloadProgress)
+    suspend fun onProgress(progress: DownloadProgress)
+
+    suspend fun reset()
 }

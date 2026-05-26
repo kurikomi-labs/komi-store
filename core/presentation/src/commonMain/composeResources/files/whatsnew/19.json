@@ -17,7 +17,8 @@
       "type": "FIXED",
       "bullets": [
         "Discovery cards now show every platform a repo ships installers for, not just the one whose endpoint listed it.",
-        "What's New tag row no longer wraps long release tags into a one-character-wide vertical date column."
+        "What's New tag row no longer wraps long release tags into a one-character-wide vertical date column.",
+        "Checksum mismatch when a mirror was active — fixed a race between mirror and direct downloads writing to the same destination file."
       ]
     }
   ]
