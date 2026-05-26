@@ -1,13 +1,12 @@
 package zed.rainxch.core.data.download
 
-import kotlinx.coroutines.CompletableDeferred
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import zed.rainxch.core.data.network.MirrorRewriter
 import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.model.DownloadProgress
@@ -30,52 +29,33 @@ class MultiSourceDownloaderImpl(
         val mirrorUrl =
             MirrorRewriter.applyTemplate(active.template, githubUrl)
                 ?: return downloader.download(githubUrl, suggestedFileName)
-        return raceDownloads(githubUrl, mirrorUrl, suggestedFileName)
+        return mirrorFirstWithFallback(mirrorUrl, githubUrl, suggestedFileName)
     }
 
-    private fun raceDownloads(
-        directUrl: String,
+    private fun mirrorFirstWithFallback(
         mirrorUrl: String,
+        directUrl: String,
         suggestedFileName: String?,
     ): Flow<DownloadProgress> =
         channelFlow {
-            val winnerSignal = CompletableDeferred<String>()
-
-            val directJob =
-                launch {
-                    try {
-                        downloader
-                            .download(directUrl, suggestedFileName, bypassMirror = true)
-                            .collect { progress ->
-                                if (winnerSignal.complete("direct") || winnerSignal.getCompleted() == "direct") {
-                                    send(progress)
-                                } else {
-                                    return@collect
-                                }
-                            }
-                    } catch (t: Throwable) {
-                        if (winnerSignal.isCompleted && winnerSignal.getCompleted() == "direct") throw t
-                    }
+            var mirrorEmitted = false
+            try {
+                downloader.download(mirrorUrl, suggestedFileName).collect { progress ->
+                    mirrorEmitted = true
+                    send(progress)
                 }
-
-            val mirrorJob =
-                launch {
-                    try {
-                        downloader
-                            .download(mirrorUrl, suggestedFileName)
-                            .collect { progress ->
-                                if (winnerSignal.complete("mirror") || winnerSignal.getCompleted() == "mirror") {
-                                    send(progress)
-                                } else {
-                                    return@collect
-                                }
-                            }
-                    } catch (t: Throwable) {
-                        if (winnerSignal.isCompleted && winnerSignal.getCompleted() == "mirror") throw t
-                    }
+                return@channelFlow
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                if (mirrorEmitted) {
+                    Logger.w(t) { "Mirror download failed mid-stream, not retrying direct to avoid partial file." }
+                    throw t
                 }
-
-            val winner = winnerSignal.await()
-            if (winner == "direct") mirrorJob.cancelAndJoin() else directJob.cancelAndJoin()
+                Logger.w(t) { "Mirror download failed before progress, falling back to direct." }
+            }
+            downloader
+                .download(directUrl, suggestedFileName, bypassMirror = true)
+                .collect { send(it) }
         }.flowOn(Dispatchers.IO)
 }
