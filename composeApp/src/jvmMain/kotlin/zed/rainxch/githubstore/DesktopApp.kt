@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,7 @@ import zed.rainxch.githubstore.core.presentation.res.menubar_help_feedback
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_licenses
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_menu
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_privacy
+import zed.rainxch.githubstore.desktop.applyWindowsImmersiveDarkMode
 import java.awt.Desktop
 import java.net.URI
 import kotlin.system.exitProcess
@@ -118,6 +120,10 @@ fun main(args: Array<String>) {
                 }
             },
         ) {
+            val isOsDark = isSystemInDarkTheme()
+            LaunchedEffect(window, isOsDark) {
+                applyWindowsImmersiveDarkMode(window, isOsDark)
+            }
             MenuBar {
                 Menu(text = stringResource(Res.string.menubar_help_menu)) {
                     Item(
