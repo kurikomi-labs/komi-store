@@ -3,6 +3,17 @@ package zed.rainxch.githubstore.app.navigation
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.toRoute
 
+fun NavBackStackEntry?.bottomNavIndex(): Int? {
+    val route = this?.destination?.route ?: return null
+    return when {
+        route.contains("HomeScreen") -> 0
+        route.contains("SearchScreen") -> 1
+        route.contains("AppsScreen") -> 2
+        route.contains("ProfileScreen") -> 3
+        else -> null
+    }
+}
+
 fun NavBackStackEntry?.getCurrentScreen(): GithubStoreGraph? {
     if (this == null) return null
     val route = destination.route ?: return null

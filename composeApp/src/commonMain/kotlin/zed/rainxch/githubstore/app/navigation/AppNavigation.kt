@@ -156,24 +156,58 @@ fun AppNavigation(
                         startDestination = GithubStoreGraph.HomeScreen,
                         modifier = Modifier.background(MaterialTheme.colorScheme.background),
                         enterTransition = {
-                            androidx.compose.animation.slideInHorizontally(
-                                initialOffsetX = { it / 6 },
-                                animationSpec =
-                                    androidx.compose.animation.core
-                                        .tween(280),
-                            ) +
-                                androidx.compose.animation.fadeIn(
+                            val from = initialState.bottomNavIndex()
+                            val to = targetState.bottomNavIndex()
+                            if (from != null && to != null && from != to) {
+                                val sign = if (to > from) 1 else -1
+                                androidx.compose.animation.slideInHorizontally(
+                                    initialOffsetX = { it * sign },
                                     animationSpec =
                                         androidx.compose.animation.core
-                                            .tween(220),
-                                )
+                                            .tween(280),
+                                ) +
+                                    androidx.compose.animation.fadeIn(
+                                        animationSpec =
+                                            androidx.compose.animation.core
+                                                .tween(220),
+                                    )
+                            } else {
+                                androidx.compose.animation.slideInHorizontally(
+                                    initialOffsetX = { it / 6 },
+                                    animationSpec =
+                                        androidx.compose.animation.core
+                                            .tween(280),
+                                ) +
+                                    androidx.compose.animation.fadeIn(
+                                        animationSpec =
+                                            androidx.compose.animation.core
+                                                .tween(220),
+                                    )
+                            }
                         },
                         exitTransition = {
-                            androidx.compose.animation.fadeOut(
-                                animationSpec =
-                                    androidx.compose.animation.core
-                                        .tween(180),
-                            )
+                            val from = initialState.bottomNavIndex()
+                            val to = targetState.bottomNavIndex()
+                            if (from != null && to != null && from != to) {
+                                val sign = if (to > from) -1 else 1
+                                androidx.compose.animation.slideOutHorizontally(
+                                    targetOffsetX = { it * sign },
+                                    animationSpec =
+                                        androidx.compose.animation.core
+                                            .tween(280),
+                                ) +
+                                    androidx.compose.animation.fadeOut(
+                                        animationSpec =
+                                            androidx.compose.animation.core
+                                                .tween(220),
+                                    )
+                            } else {
+                                androidx.compose.animation.fadeOut(
+                                    animationSpec =
+                                        androidx.compose.animation.core
+                                            .tween(180),
+                                )
+                            }
                         },
                         popEnterTransition = {
                             androidx.compose.animation.fadeIn(
