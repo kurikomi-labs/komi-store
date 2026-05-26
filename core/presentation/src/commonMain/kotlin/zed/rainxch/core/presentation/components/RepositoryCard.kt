@@ -111,8 +111,22 @@ fun RepositoryCard(
     val sheetEnabled = onHideClick != null
     val repo = discoveryRepositoryUi.repository
 
+    val shared = zed.rainxch.core.presentation.locals.LocalSharedTransitionScope.current
+    val animatedScope = zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope.current
+    val sharedModifier = if (shared != null && animatedScope != null) {
+        with(shared) {
+            Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState(key = "repo-${repo.id}"),
+                animatedVisibilityScope = animatedScope,
+            )
+        }
+    } else {
+        Modifier
+    }
+
     Surface(
         modifier = modifier
+            .then(sharedModifier)
             .fillMaxWidth()
             .alpha(contentAlpha),
         shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
