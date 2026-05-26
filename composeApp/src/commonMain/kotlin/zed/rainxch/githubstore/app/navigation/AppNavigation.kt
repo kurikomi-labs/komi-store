@@ -153,6 +153,46 @@ fun AppNavigation(
                     navController = navController,
                     startDestination = GithubStoreGraph.HomeScreen,
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    enterTransition = {
+                        androidx.compose.animation.slideInHorizontally(
+                            initialOffsetX = { it / 6 },
+                            animationSpec =
+                                androidx.compose.animation.core
+                                    .tween(280),
+                        ) +
+                            androidx.compose.animation.fadeIn(
+                                animationSpec =
+                                    androidx.compose.animation.core
+                                        .tween(220),
+                            )
+                    },
+                    exitTransition = {
+                        androidx.compose.animation.fadeOut(
+                            animationSpec =
+                                androidx.compose.animation.core
+                                    .tween(180),
+                        )
+                    },
+                    popEnterTransition = {
+                        androidx.compose.animation.fadeIn(
+                            animationSpec =
+                                androidx.compose.animation.core
+                                    .tween(220),
+                        )
+                    },
+                    popExitTransition = {
+                        androidx.compose.animation.slideOutHorizontally(
+                            targetOffsetX = { it / 6 },
+                            animationSpec =
+                                androidx.compose.animation.core
+                                    .tween(280),
+                        ) +
+                            androidx.compose.animation.fadeOut(
+                                animationSpec =
+                                    androidx.compose.animation.core
+                                        .tween(220),
+                            )
+                    },
                 ) {
                     composable<GithubStoreGraph.HomeScreen> {
                         val listDetailState = rememberAdaptiveListDetailState()

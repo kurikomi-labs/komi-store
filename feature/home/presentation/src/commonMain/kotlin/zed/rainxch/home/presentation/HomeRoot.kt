@@ -215,6 +215,7 @@ private fun HomeScreen(
                                             card = card,
                                             onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                             onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                            modifier = Modifier.animateItem(),
                                         )
                                     }
                                     item(key = "hot_see_all") {
@@ -243,6 +244,7 @@ private fun HomeScreen(
                                     rank = index + 1,
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    modifier = Modifier.animateItem(),
                                 )
                             }
                             item(key = "trending_see_more") {
@@ -267,6 +269,7 @@ private fun HomeScreen(
                                     rank = index + 1,
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    modifier = Modifier.animateItem(),
                                 )
                             }
                             item(key = "popular_see_more") {
@@ -287,6 +290,7 @@ private fun HomeScreen(
                                     card = card,
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    modifier = Modifier.animateItem(),
                                 )
                             }
                             item(key = "starred_see_more") {
