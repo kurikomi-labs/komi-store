@@ -37,6 +37,15 @@ class SlowDownloadDetectorImpl(
 
     override val suggestMirror: Flow<Unit> = _suggestMirror.asSharedFlow()
 
+    override fun reset() {
+        appScope.launch {
+            mutex.withLock {
+                samples.clear()
+                recentSlowEvents.clear()
+            }
+        }
+    }
+
     override fun onProgress(progress: DownloadProgress) {
         appScope.launch {
             mutex.withLock {

@@ -46,8 +46,16 @@ class MultiSourceDownloaderImpl(
             } catch (t: Throwable) {
                 Logger.w(t) { "Mirror download failed, falling back to direct." }
             }
+            var firstDirectEmit = true
             downloader
                 .download(directUrl, suggestedFileName, bypassMirror = true)
-                .collect { send(it) }
+                .collect { progress ->
+                    if (firstDirectEmit) {
+                        firstDirectEmit = false
+                        send(progress.copy(restart = true))
+                    } else {
+                        send(progress)
+                    }
+                }
         }.flowOn(Dispatchers.IO)
 }

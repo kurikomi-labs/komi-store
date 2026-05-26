@@ -7,4 +7,6 @@ interface SlowDownloadDetector {
     val suggestMirror: Flow<Unit>
 
     fun onProgress(progress: DownloadProgress)
+
+    fun reset()
 }
