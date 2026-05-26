@@ -10,7 +10,8 @@
         "Design overhaul — new Geist typography, hero app header on Details, redesigned Home cards with platform glyphs, Apple-style menus, and a refreshed Library with an updates banner and a 'Ready to install' section.",
         "Tablet two-pane layout — Home, Search, and Library keep the list on the left and open the repo on the right; drag the divider to resize.",
         "Inner Details pages — About and What's New now slide in as dedicated screens with their own back action, and stay inside the right pane on tablet.",
-        "Real Apple and Tux icons for the macOS and Linux platform indicators across cards and lists."
+        "Real Apple and Tux icons for the macOS and Linux platform indicators across cards and lists.",
+        "Desktop remembers your last window size, position, and maximized state across launches; new windows open centered instead of in the top-left corner."
       ]
     },
     {
