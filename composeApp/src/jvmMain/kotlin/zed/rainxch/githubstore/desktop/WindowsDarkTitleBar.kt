@@ -23,6 +23,7 @@ private interface DwmApi : StdCallLibrary {
 
 private const val DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 private const val DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1 = 19
+private const val S_OK = 0
 
 private val isWindows: Boolean
     get() =
@@ -43,10 +44,13 @@ fun applyWindowsImmersiveDarkMode(
             WinDef.HWND(com.sun.jna.Pointer(Native.getWindowID(window)))
         }.getOrNull() ?: return
     val flag = WinDef.BOOLByReference(WinDef.BOOL(isDark))
-    runCatching { dwm.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, flag, 4) }
-        .onFailure {
-            runCatching {
-                dwm.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1, flag, 4)
-            }
+    val hr =
+        runCatching {
+            dwm.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, flag, 4)
+        }.getOrElse { -1 }
+    if (hr != S_OK) {
+        runCatching {
+            dwm.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1, flag, 4)
         }
+    }
 }

@@ -31,6 +31,7 @@ koin = "4.1.1"
 ktor = "3.4.0"
 room = "2.8.4"
 slf4jSimple = "2.0.17"
+jna = "5.14.0"
 sqlite = "2.6.2"
 datastore = "1.2.0"
 ksafe = "2.0.0"
@@ -111,6 +112,7 @@ ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
+jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 # Image loading
