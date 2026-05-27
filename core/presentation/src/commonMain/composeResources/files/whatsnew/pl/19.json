@@ -1,0 +1,31 @@
+{
+  "versionCode": 19,
+  "versionName": "1.9.0",
+  "releaseDate": "2026-05-23",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Przebudowa designu — nowa typografia Geist, hero header na Szczegółach, przeprojektowane karty Home z glifami platform, menu w stylu Apple i odświeżona Biblioteka z bannerem aktualizacji i sekcją 'Gotowe do instalacji'.",
+        "Układ dwupanelowy na tablecie — Home, Wyszukiwanie i Biblioteka trzymają listę po lewej i otwierają repo po prawej; przeciągnij separator, by zmienić rozmiar.",
+        "Wewnętrzne strony Szczegółów — Informacje i Co nowego otwierają się teraz jako dedykowane ekrany z własną akcją cofania i pozostają w prawym panelu na tablecie.",
+        "Prawdziwe ikony Apple i Tux dla wskaźników platform macOS i Linux w kartach i listach.",
+        "Desktop pamięta rozmiar, pozycję i stan zmaksymalizowany okna między uruchomieniami; nowe okna otwierają się wyśrodkowane zamiast w lewym górnym rogu."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Karty odkrywania pokazują teraz wszystkie platformy z instalatorami, nie tylko tę z endpointu.",
+        "Wiersz tagów Co nowego nie zawija już długich tagów w pionową kolumnę daty o szerokości jednego znaku.",
+        "Niezgodność sumy kontrolnej przy aktywnym mirrorze — naprawiono race condition między pobraniami z mirrora i bezpośrednim do tego samego pliku.",
+        "Pasek tytułu Windows 11 dopasowuje się teraz do trybu ciemnego systemu zamiast pozostawać biały.",
+        "Cicha instalacja przez root prawidłowo wyzwala teraz prompt uprawnień Magisk / KernelSU na Androidzie 14+ zamiast natychmiast zgłaszać 'Brak roota'; ścieżka roota została przepisana na libsu.",
+        "Powiązanie zainstalowanej aplikacji z repo GitHub pokazuje teraz od razu 'Aktualizuj do X', gdy zainstalowana wersja jest starsza, zamiast mylącego 'Instaluj vX' do następnego sprawdzenia aktualizacji.",
+        "Boczna szuflada desktop pokazuje teraz prawdziwe logo GitHub Store zamiast placeholdera 'G'.",
+        "Szerokość zawartości na desktopie (Home, Szczegóły, Auth) skaluje się teraz jako ułamek okna — Kompaktowa / Szeroka / Bardzo szeroka dostosowują się do monitora zamiast być ograniczone do stałych szerokości w pikselach."
+      ]
+    }
+  ]
+}

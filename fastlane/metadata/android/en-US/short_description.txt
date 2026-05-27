@@ -1,1 +1,1 @@
-App store for GitHub releases - discover and install apps with one click
+ 🩵 A free, open-source app store for GitHub releases — browse, discover, and install apps with one click. Powered by Kotlin and Compose Multiplatform for Android & Desktop (Linux, MacOS, Windows). 
