@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore.app.navigation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +22,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.theme.geist
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.VersionStack
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.app_name
 
 @Composable
@@ -57,26 +61,15 @@ fun DesktopDrawer(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
+            Image(
+                painter = painterResource(Res.drawable.app_icon),
+                contentDescription = null,
                 modifier =
                     Modifier
                         .size(28.dp)
-                        .clip(CookieShape)
-                        .background(cs.primary),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "G",
-                    color = Color.White,
-                    style =
-                        MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = geist,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                        ),
-                )
-            }
+                        .clip(CookieShape),
+                contentScale = ContentScale.Crop,
+            )
             Text(
                 text = stringResource(Res.string.app_name),
                 color = cs.onSurface,

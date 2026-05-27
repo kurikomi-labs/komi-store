@@ -89,14 +89,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.DiscoveryPlatform
 import zed.rainxch.core.domain.model.InstallSource
-import zed.rainxch.core.domain.model.ContentWidth
 import zed.rainxch.core.presentation.components.FloatingPill
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
+import zed.rainxch.core.presentation.utils.contentWidthCap
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -537,11 +536,7 @@ fun DetailsScreen(
             val collapsedSectionHeight = containerHeightDp * 0.4f
             val listState = rememberLazyListState()
             val isScrollbarEnabled = LocalScrollbarEnabled.current
-            val contentWidthDp = when (LocalContentWidth.current) {
-                ContentWidth.COMPACT -> 680.dp
-                ContentWidth.WIDE -> 960.dp
-                ContentWidth.EXTRA_WIDE -> androidx.compose.ui.unit.Dp.Unspecified
-            }
+            val contentWidthDp = contentWidthCap()
             val pullEnabled = remember { isPullToRefreshSupported() }
 
             val isDesktop = remember { getPlatform() != Platform.ANDROID }
