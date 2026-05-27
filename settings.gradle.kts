@@ -27,6 +27,11 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://jitpack.io") {
+            mavenContent {
+                includeGroupAndSubgroups("com.github.topjohnwu")
+            }
+        }
     }
 }
 

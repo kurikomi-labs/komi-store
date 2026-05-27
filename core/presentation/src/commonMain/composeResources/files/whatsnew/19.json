@@ -21,6 +21,8 @@
         "What's New tag row no longer wraps long release tags into a one-character-wide vertical date column.",
         "Checksum mismatch when a mirror was active — fixed a race between mirror and direct downloads writing to the same destination file.",
         "Windows 11 title bar now matches system dark mode instead of staying glaringly white.",
+        "Silent install via root now properly triggers the Magisk / KernelSU permission prompt on Android 14+ instead of immediately reporting 'No root'; the root path was rewritten on top of libsu.",
+        "Linking an installed app to a GitHub repo now immediately shows 'Update to X' when the installed version is older, instead of misleading 'Install vX' until the next update check.",
         "Desktop side drawer now shows the actual GitHub Store logo instead of a 'G' placeholder.",
         "Desktop content width (Home, Details, Auth) now scales as a fraction of the window — Compact / Wide / Extra wide adapt to monitor size instead of being capped to fixed pixel widths."
       ]
