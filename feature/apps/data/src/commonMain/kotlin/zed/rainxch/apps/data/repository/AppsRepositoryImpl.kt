@@ -30,6 +30,7 @@ import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.DeviceApp
+import zed.rainxch.core.domain.util.VersionMath
 import zed.rainxch.core.domain.model.ExportedApp
 import zed.rainxch.core.domain.model.ExportedAppList
 import zed.rainxch.core.domain.model.GithubRelease
@@ -273,6 +274,12 @@ class AppsRepositoryImpl(
         val resolvedGlob = assetGlobPattern ?: freshFingerprint?.glob
         val resolvedSiblingCount = pickedAssetSiblingCount.takeIf { it > 0 }
 
+        val initialIsUpdateAvailable =
+            VersionMath.isVersionNewer(
+                candidate = repoInfo.latestReleaseTag,
+                current = deviceApp.versionName,
+            )
+
         val installedApp =
             InstalledApp(
                 packageName = deviceApp.packageName,
@@ -295,7 +302,7 @@ class AppsRepositoryImpl(
                 installedAt = now,
                 lastCheckedAt = 0L,
                 lastUpdatedAt = now,
-                isUpdateAvailable = false,
+                isUpdateAvailable = initialIsUpdateAvailable,
                 updateCheckEnabled = true,
                 releaseNotes = null,
                 systemArchitecture = "",
