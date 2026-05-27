@@ -1,0 +1,31 @@
+{
+  "versionCode": 19,
+  "versionName": "1.9.0",
+  "releaseDate": "2026-05-23",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Restyling del design — nuova tipografia Geist, hero header su Dettagli, card della Home ridisegnate con glifi di piattaforma, menu in stile Apple e Libreria rinnovata con banner aggiornamenti e sezione 'Pronto da installare'.",
+        "Layout a due pannelli su tablet — Home, Ricerca e Libreria mantengono la lista a sinistra e aprono il repo a destra; trascina il divisore per regolare.",
+        "Pagine interne Dettagli — Info e Novità si aprono ora come schermate dedicate con il proprio tasto indietro, e restano nel pannello destro su tablet.",
+        "Icone vere Apple e Tux per gli indicatori di piattaforma macOS e Linux nelle card e liste.",
+        "Il desktop ricorda dimensione, posizione e stato massimizzato della finestra tra i lanci; le nuove finestre si aprono centrate invece che in alto a sinistra."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Le card di scoperta mostrano ora tutte le piattaforme con installer, non solo quella dell'endpoint.",
+        "La riga di tag delle Novità non incolonna più i tag lunghi in una colonna data verticale di un carattere.",
+        "Mismatch di checksum con mirror attivo — corretta la race condition tra download mirror e diretto sullo stesso file.",
+        "La barra del titolo Windows 11 ora rispetta la modalità scura di sistema invece di restare bianca.",
+        "L'installazione silenziosa via root attiva correttamente il prompt dei permessi Magisk / KernelSU su Android 14+ invece di riportare subito 'Nessun root'; il percorso root è stato riscritto su libsu.",
+        "Collegare un'app installata a un repo GitHub mostra subito 'Aggiorna a X' quando la versione installata è più vecchia, invece del fuorviante 'Installa vX' fino al prossimo controllo.",
+        "Il drawer laterale desktop mostra ora il vero logo di GitHub Store invece del placeholder 'G'.",
+        "La larghezza del contenuto su desktop (Home, Dettagli, Auth) si ridimensiona ora come frazione della finestra — Compatta / Larga / Extra larga si adattano al monitor invece di essere fissate in pixel."
+      ]
+    }
+  ]
+}

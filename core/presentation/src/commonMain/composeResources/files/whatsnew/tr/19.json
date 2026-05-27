@@ -1,0 +1,31 @@
+{
+  "versionCode": 19,
+  "versionName": "1.9.0",
+  "releaseDate": "2026-05-23",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Tasarım yenilemesi — yeni Geist tipografisi, Detaylar'da hero başlık, platform glifli yeniden tasarlanmış Home kartları, Apple tarzı menüler ve güncelleme banner'ı ile 'Yüklenmeye hazır' bölümlü yenilenmiş Kitaplık.",
+        "Tablette iki panel düzeni — Home, Arama ve Kitaplık listeyi solda tutar ve repo'yu sağda açar; ayırıcıyı sürükleyerek boyutlandır.",
+        "İç Detay sayfaları — Hakkında ve Yenilikler artık kendi geri eylemleriyle özel ekranlar olarak açılır ve tablette sağ panelde kalır.",
+        "macOS ve Linux platform göstergeleri için kartlarda ve listelerde gerçek Apple ve Tux ikonları.",
+        "Masaüstü, son pencere boyutu, konumu ve büyütülmüş durumu lansmanlar arasında hatırlar; yeni pencereler sol üst köşe yerine ortalanmış açılır."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Keşif kartları artık endpoint'in listelediği değil, repo'nun installer gönderdiği her platformu gösterir.",
+        "Yenilikler etiket satırı artık uzun release etiketlerini bir karakter genişliğindeki dikey tarih sütununa sarmıyor.",
+        "Mirror aktifken checksum uyuşmazlığı — aynı hedef dosyaya yazan mirror ve doğrudan indirmeler arasındaki race condition düzeltildi.",
+        "Windows 11 başlık çubuğu artık göz alıcı beyaz kalmak yerine sistem koyu modunu yansıtıyor.",
+        "Root ile sessiz yükleme artık 'Root yok' hatasını anında bildirmek yerine Android 14+ üzerinde Magisk / KernelSU izin istemini düzgün tetikliyor; root yolu libsu üzerine yeniden yazıldı.",
+        "Yüklü bir uygulamayı GitHub repo'suna bağlamak, yüklü sürüm daha eskiyse artık yanıltıcı 'Yükle vX' yerine hemen 'X sürümüne güncelle' gösterir.",
+        "Masaüstü yan çekmecesi artık 'G' placeholder'ı yerine gerçek GitHub Store logosunu gösteriyor.",
+        "Masaüstü içerik genişliği (Home, Detaylar, Auth) artık pencerenin kesri olarak ölçekleniyor — Kompakt / Geniş / Çok geniş, sabit piksel genişliklerinde sınırlı kalmak yerine monitör boyutuna uyum sağlıyor."
+      ]
+    }
+  ]
+}

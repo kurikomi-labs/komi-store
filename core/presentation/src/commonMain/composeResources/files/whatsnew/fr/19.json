@@ -1,0 +1,31 @@
+{
+  "versionCode": 19,
+  "versionName": "1.9.0",
+  "releaseDate": "2026-05-23",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Refonte du design — nouvelle typographie Geist, en-tête hero sur Détails, cartes Home redessinées avec glyphes de plateforme, menus style Apple et Bibliothèque rafraîchie avec banner de mises à jour et section 'Prêt à installer'.",
+        "Disposition deux volets sur tablette — Home, Recherche et Bibliothèque gardent la liste à gauche et ouvrent le repo à droite ; faites glisser le séparateur pour ajuster.",
+        "Pages internes Détails — À propos et Nouveautés s'ouvrent maintenant comme écrans dédiés avec leur propre retour, et restent dans le volet droit sur tablette.",
+        "Vraies icônes Apple et Tux pour les indicateurs de plateforme macOS et Linux dans les cartes et listes.",
+        "Le bureau retient la taille, position et état maximisé de la fenêtre entre les lancements ; les nouvelles fenêtres s'ouvrent centrées au lieu d'en haut à gauche."
+      ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Les cartes de découverte affichent maintenant toutes les plateformes avec installateurs, pas seulement celle de l'endpoint.",
+        "La rangée d'étiquettes Nouveautés ne replie plus les longs tags dans une colonne de date verticale d'un caractère de large.",
+        "Mismatch de checksum avec un miroir actif — corrigée la race condition entre téléchargements miroir et direct sur le même fichier.",
+        "La barre de titre Windows 11 correspond maintenant au mode sombre du système au lieu de rester blanche.",
+        "L'installation silencieuse via root déclenche maintenant correctement la demande de permission Magisk / KernelSU sur Android 14+ au lieu de signaler 'Pas de root' immédiatement ; le chemin root a été réécrit sur libsu.",
+        "Lier une app installée à un repo GitHub affiche désormais immédiatement 'Mettre à jour vers X' quand la version installée est plus ancienne, au lieu du trompeur 'Installer vX' jusqu'à la prochaine vérification.",
+        "Le tiroir latéral du bureau affiche maintenant le vrai logo GitHub Store au lieu du placeholder 'G'.",
+        "La largeur de contenu sur bureau (Home, Détails, Auth) se redimensionne maintenant en fraction de la fenêtre — Compact / Large / Extra large s'adaptent à la taille du moniteur au lieu d'être bloqués à des largeurs fixes en pixels."
+      ]
+    }
+  ]
+}

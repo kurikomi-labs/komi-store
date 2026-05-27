@@ -1,14 +1,24 @@
-Github Store is a "play store" for GitHub releases that helps you discover and install apps directly from GitHub repositories.
+GitHub Store is an open "app store" for GitHub, Codeberg, Forgejo, and Gitea releases. Discover repositories that ship real installers and keep them updated — no scraping, no waiting on stores.
 
-The app automatically discovers repositories that ship installable binaries (APK, EXE, DMG, etc.) and lets you install the latest release with one click.
+Browse Trending, Hot Releases, Most Popular, and topic feeds (Privacy, Media, Productivity, Networking, Dev Tools). Search across GitHub or any forge host you trust. Tap an APK and install it — the app handles the rest.
 
 FEATURES
 
-- Smart discovery with Popular, Recently Updated, and New sections
-- Platform-aware filtering - only shows apps compatible with your device
-- Always installs from the latest published release
-- Rich app details with README, changelog, and statistics
-- GitHub login support for higher API rate limits
-- Material 3 design with dark mode support
+- Multi-forge support — GitHub, Codeberg, Forgejo, Gitea, and any self-hosted instance you add.
+- Smart discovery — Trending, Hot Releases, Most Popular, and curated topic categories, platform-aware.
+- Tracked installs — link any sideloaded or F-Droid app to its repo and get update notifications.
+- Multiple install backends — default Android installer, Shizuku (silent install on Android 11+), Dhizuku, and root via libsu (Magisk / KernelSU / APatch).
+- Pinned asset variants — fingerprints the exact APK you picked (universal vs arm64 vs Play) so monorepo updates land on the same flavor every time.
+- Skip-release / ignore-updates / advanced asset regex per app.
+- Sign in with GitHub via web OAuth (PKCE handoff), device flow, or a Personal Access Token — pick what works for your network.
+- Per-host Personal Access Tokens for private repos on any forge.
+- Mirror support for restricted networks — fastly.jsdelivr.net plus your own custom mirrors.
+- README translation in-app — Google, Youdao, LibreTranslate, DeepL, or Microsoft, your key, your provider.
+- Material 3 design with Material You dynamic colors on Android 12+, light / dark / AMOLED themes.
+- Obtainium import/export, starred-repo picker, and "Scan GitHub Apps" to attach repos to apps already on your device.
+- AES-256-GCM encrypted credentials and preferences via KSafe (hardware-backed Keystore on Android).
+- 13 languages — English, Spanish, French, Italian, Polish, Russian, Turkish, Arabic, Hindi, Bengali, Japanese, Korean, Simplified Chinese.
 
-Built with Kotlin Multiplatform and Compose Multiplatform.
+Also available on Desktop (Windows, macOS, Linux) with tablet two-pane layout, fluid content width, persistent window state, and a native dark title bar on Windows 11 and macOS.
+
+Built with Kotlin Multiplatform and Compose Multiplatform. Source on GitHub at OpenHub-Store/GitHub-Store.
