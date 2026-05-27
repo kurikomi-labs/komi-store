@@ -66,7 +66,7 @@ fun DesktopDrawer(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .size(28.dp)
+                        .size(40.dp)
                         .clip(CookieShape),
                 contentScale = ContentScale.Crop,
             )
