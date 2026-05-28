@@ -37,6 +37,7 @@ import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.core.domain.system.ScanResult
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safePut
+import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.InstallerKind
 
@@ -50,6 +51,7 @@ class ExternalImportRepositoryImpl(
     private val backendClient: BackendApiClient,
     private val forgejoClientRegistry: ForgejoClientRegistry,
     private val tweaksRepository: TweaksRepository,
+    private val starredRepository: StarredRepository,
 ) : ExternalImportRepository {
     private val candidateSnapshot = MutableStateFlow<Map<String, ExternalAppCandidate>>(emptyMap())
 
@@ -265,6 +267,10 @@ class ExternalImportRepositoryImpl(
             }
         }
 
+        val starred = runCatching { starredRepository.getAllStarred().first() }
+            .onFailure { Logger.d { "starred fetch for match failed: ${it.message}" } }
+            .getOrDefault(emptyList())
+
         return candidates.map { candidate ->
             val suggestions = mutableListOf<RepoMatchSuggestion>()
             candidate.manifestHint?.let { hint ->
@@ -278,13 +284,52 @@ class ExternalImportRepositoryImpl(
             fingerprintHits[candidate.packageName]?.let { suggestions += it }
             backendResults[candidate.packageName]?.let { suggestions += it }
             forgejoHits[candidate.packageName]?.let { suggestions += it }
+            suggestions += starredMatches(candidate, starred)
+            // Sort before dedupe so the highest-confidence entry survives when the
+            // same repo is surfaced by more than one source (e.g. backend + starred).
             val deduped = suggestions
-                .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
                 .sortedByDescending { it.confidence }
+                .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
 
             RepoMatchResult(packageName = candidate.packageName, suggestions = deduped)
         }
     }
+
+    private fun starredMatches(
+        candidate: ExternalAppCandidate,
+        starred: List<zed.rainxch.core.domain.model.StarredRepository>,
+    ): List<RepoMatchSuggestion> {
+        if (starred.isEmpty()) return emptyList()
+        val label = normalizeMatchToken(candidate.appLabel)
+        val pkgTail = normalizeMatchToken(candidate.packageName.substringAfterLast('.'))
+        val needles = listOf(label, pkgTail).filter { it.length >= MIN_MATCH_TOKEN_LEN }
+        if (needles.isEmpty()) return emptyList()
+
+        return starred.mapNotNull { repo ->
+            val repoName = normalizeMatchToken(repo.repoName)
+            if (repoName.length < MIN_MATCH_TOKEN_LEN) return@mapNotNull null
+            val confidence = needles.maxOf { needle ->
+                when {
+                    needle == repoName -> STARRED_EXACT_CONFIDENCE
+                    needle.contains(repoName) || repoName.contains(needle) -> STARRED_CONTAINS_CONFIDENCE
+                    else -> 0.0
+                }
+            }
+            if (confidence <= 0.0) return@mapNotNull null
+            RepoMatchSuggestion(
+                owner = repo.repoOwner,
+                repo = repo.repoName,
+                confidence = confidence,
+                source = RepoMatchSource.STARRED,
+                stars = repo.stargazersCount,
+                description = repo.repoDescription,
+                sourceHost = null,
+            )
+        }
+    }
+
+    private fun normalizeMatchToken(value: String): String =
+        value.lowercase().filter { it.isLetterOrDigit() }
 
     override suspend fun linkManually(
         packageName: String,
@@ -601,6 +646,9 @@ class ExternalImportRepositoryImpl(
 
         private const val FORGEJO_SEARCH_BASE_CONFIDENCE = 0.55
         private const val FORGEJO_SEARCH_RANK_DECAY = 0.08
+        private const val STARRED_EXACT_CONFIDENCE = 0.78
+        private const val STARRED_CONTAINS_CONFIDENCE = 0.6
+        private const val MIN_MATCH_TOKEN_LEN = 4
         private const val MATCH_BATCH_SIZE = 25
         private const val FINGERPRINT_CONFIDENCE = 0.92
         private const val SEARCH_OVERRIDE_CONFIDENCE = 0.5

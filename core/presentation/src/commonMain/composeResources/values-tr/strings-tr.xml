@@ -619,6 +619,7 @@
     <string name="match_source_fingerprint">İmza</string>
     <string name="match_source_search">Arama</string>
     <string name="match_source_manual">Elle</string>
+    <string name="match_source_starred">Yıldızlı</string>
     <string name="pat_sheet_title">Personal Access Token ile giriş yap</string>
     <string name="pat_sheet_description">GitHub'a erişebilen herhangi bir cihazda Personal Access Token (classic veya fine-grained) oluşturun ve aşağıya yapıştırın. Depolara ve profilinize okuma erişimi gerekir.</string>
     <string name="pat_open_settings">GitHub token ayarlarını aç</string>

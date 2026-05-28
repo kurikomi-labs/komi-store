@@ -576,6 +576,7 @@ private fun MatchSourceChip(source: RepoMatchSource) {
         RepoMatchSource.MANUAL -> stringResource(Res.string.match_source_manual)
 
         RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
+        RepoMatchSource.STARRED -> stringResource(Res.string.match_source_starred)
     }
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,

@@ -621,6 +621,7 @@
     <string name="match_source_fingerprint">সিগনেচার</string>
     <string name="match_source_search">সার্চ</string>
     <string name="match_source_manual">ম্যানুয়াল</string>
+    <string name="match_source_starred">স্টারড</string>
     <string name="pat_sheet_title">Personal Access Token দিয়ে সাইন ইন করুন</string>
     <string name="pat_sheet_description">GitHub অ্যাক্সেস করতে পারে এমন যেকোনো ডিভাইসে একটি Personal Access Token (classic বা fine-grained) তৈরি করুন এবং নিচে পেস্ট করুন। রিপোজিটরি ও আপনার প্রোফাইল পড়ার অনুমতি প্রয়োজন।</string>
     <string name="pat_open_settings">GitHub টোকেন সেটিংস খুলুন</string>

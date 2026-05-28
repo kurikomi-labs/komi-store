@@ -11,7 +11,8 @@
         "Layout a due pannelli su tablet — Home, Ricerca e Libreria mantengono la lista a sinistra e aprono il repo a destra; trascina il divisore per regolare.",
         "Pagine interne Dettagli — Info e Novità si aprono ora come schermate dedicate con il proprio tasto indietro, e restano nel pannello destro su tablet.",
         "Icone vere Apple e Tux per gli indicatori di piattaforma macOS e Linux nelle card e liste.",
-        "Il desktop ricorda dimensione, posizione e stato massimizzato della finestra tra i lanci; le nuove finestre si aprono centrate invece che in alto a sinistra."
+        "Il desktop ricorda dimensione, posizione e stato massimizzato della finestra tra i lanci; le nuove finestre si aprono centrate invece che in alto a sinistra.",
+        "Collegare un'app installata ora cerca anche tra i tuoi repo con stella — 'Scansiona app GitHub' suggerisce automaticamente i repo che hai contrassegnato con stella, così raramente devi incollare un URL."
       ]
     },
     {

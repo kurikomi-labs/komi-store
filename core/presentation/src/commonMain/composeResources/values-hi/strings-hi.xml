@@ -619,6 +619,7 @@
     <string name="match_source_fingerprint">हस्ताक्षर</string>
     <string name="match_source_search">सर्च</string>
     <string name="match_source_manual">मैन्युअल</string>
+    <string name="match_source_starred">तारांकित</string>
     <string name="pat_sheet_title">Personal Access Token से साइन इन करें</string>
     <string name="pat_sheet_description">GitHub तक पहुँच रखने वाले किसी भी डिवाइस पर Personal Access Token (classic या fine-grained) बनाएं और नीचे पेस्ट करें। रिपॉजिटरी और आपकी प्रोफ़ाइल के लिए पठन अनुमति आवश्यक है।</string>
     <string name="pat_open_settings">GitHub टोकन सेटिंग्स खोलें</string>

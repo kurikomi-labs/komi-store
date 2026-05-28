@@ -11,7 +11,8 @@
         "Disposition deux volets sur tablette — Home, Recherche et Bibliothèque gardent la liste à gauche et ouvrent le repo à droite ; faites glisser le séparateur pour ajuster.",
         "Pages internes Détails — À propos et Nouveautés s'ouvrent maintenant comme écrans dédiés avec leur propre retour, et restent dans le volet droit sur tablette.",
         "Vraies icônes Apple et Tux pour les indicateurs de plateforme macOS et Linux dans les cartes et listes.",
-        "Le bureau retient la taille, position et état maximisé de la fenêtre entre les lancements ; les nouvelles fenêtres s'ouvrent centrées au lieu d'en haut à gauche."
+        "Le bureau retient la taille, position et état maximisé de la fenêtre entre les lancements ; les nouvelles fenêtres s'ouvrent centrées au lieu d'en haut à gauche.",
+        "Lier une app installée recherche désormais aussi dans vos repos favoris — 'Scanner les apps GitHub' propose automatiquement les repos que vous avez mis en favori, vous n'avez donc presque jamais besoin de coller une URL."
       ]
     },
     {

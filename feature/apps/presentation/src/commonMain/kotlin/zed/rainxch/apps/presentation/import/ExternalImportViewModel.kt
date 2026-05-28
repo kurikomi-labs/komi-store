@@ -932,6 +932,7 @@ class ExternalImportViewModel(
                     RepoMatchSource.MANUAL -> SuggestionSource.MANUAL
 
                     RepoMatchSource.FORGEJO_SEARCH -> SuggestionSource.SEARCH
+                    RepoMatchSource.STARRED -> SuggestionSource.STARRED
                 },
             stars = stars,
             description = description,

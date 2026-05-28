@@ -272,6 +272,7 @@ val coreModule =
                 backendClient = get(),
                 forgejoClientRegistry = get(),
                 tweaksRepository = get(),
+                starredRepository = get(),
             )
         }
 
