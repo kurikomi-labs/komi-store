@@ -327,6 +327,7 @@ class ExternalImportRepositoryImpl(
         if (needles.isEmpty()) return emptyList()
 
         return starred.mapNotNull { repo ->
+            if (repo.latestReleaseUrl.isNullOrBlank()) return@mapNotNull null
             val repoName = normalizeMatchToken(repo.repoName)
             if (repoName.length < MIN_MATCH_TOKEN_LEN || repoName in GENERIC_MATCH_TOKENS) return@mapNotNull null
             val confidence = needles.maxOf { needle ->

@@ -110,9 +110,9 @@ class StarredRepositoryImpl(
                         allRepos.map { repo ->
                             async {
                                 semaphore.withPermit {
-                                    val hasValidAssets =
+                                    val release =
                                         checkForValidAssets(repo.owner.login, repo.name)
-                                    if (hasValidAssets) {
+                                    if (release != null) {
                                         val installedApps = installedAppsDao.getAppsByRepoId(repo.id)
                                         val firstInstalled = installedApps.firstOrNull { !it.isPendingInstall }
                                         zed.rainxch.core.domain.model.StarredRepository(
@@ -128,8 +128,8 @@ class StarredRepositoryImpl(
                                             openIssuesCount = repo.openIssuesCount,
                                             isInstalled = firstInstalled != null,
                                             installedPackageName = firstInstalled?.packageName,
-                                            latestVersion = null,
-                                            latestReleaseUrl = null,
+                                            latestVersion = release.version,
+                                            latestReleaseUrl = release.url,
                                             starredAt =
                                                 repo.starredAt?.let {
                                                     Instant.parse(it).toEpochMilliseconds()
@@ -176,17 +176,21 @@ class StarredRepositoryImpl(
     private suspend fun checkForValidAssets(
         owner: String,
         repo: String,
-    ): Boolean {
+    ): StableReleaseInfo? {
         val backendResult = backendApiClient.getReleases(owner, repo, perPage = 10)
         backendResult.fold(
             onSuccess = { releases ->
                 val stable = releases.firstOrNull { it.draft != true && it.prerelease != true }
-                    ?: return false
-                if (stable.assets.isEmpty()) return false
-                return stable.assets.any { asset -> matchesPlatform(asset.name) }
+                    ?: return null
+                if (stable.assets.isEmpty()) return null
+                return if (stable.assets.any { asset -> matchesPlatform(asset.name) }) {
+                    StableReleaseInfo(version = stable.tagName, url = stable.htmlUrl)
+                } else {
+                    null
+                }
             },
             onFailure = { error ->
-                if (!zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow(error)) return false
+                if (!zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow(error)) return null
             },
         )
 
@@ -198,7 +202,7 @@ class StarredRepositoryImpl(
                 }
 
             if (!releasesResponse.status.isSuccess()) {
-                return false
+                return null
             }
 
             val allReleases: List<GithubReleaseNetworkModel> = releasesResponse.body()
@@ -206,10 +210,10 @@ class StarredRepositoryImpl(
             val stableRelease =
                 allReleases.firstOrNull {
                     it.draft != true && it.prerelease != true
-                } ?: return false
+                } ?: return null
 
             if (stableRelease.assets.isEmpty()) {
-                return false
+                return null
             }
 
             val relevantAssets =
@@ -235,22 +239,33 @@ class StarredRepositoryImpl(
                     }
                 }
 
-            relevantAssets.isNotEmpty()
+            if (relevantAssets.isNotEmpty()) {
+                StableReleaseInfo(version = stableRelease.tagName, url = stableRelease.htmlUrl)
+            } else {
+                null
+            }
         } catch (e: RateLimitException) {
             throw e
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Logger.w(e) { "Failed to check valid assets for $owner/$repo" }
-            false
+            null
         }
     }
+
+    private data class StableReleaseInfo(
+        val version: String?,
+        val url: String?,
+    )
 
     @Serializable
     private data class GithubReleaseNetworkModel(
         val assets: List<AssetNetworkModel>,
         val draft: Boolean? = null,
         val prerelease: Boolean? = null,
+        @SerialName("tag_name") val tagName: String? = null,
+        @SerialName("html_url") val htmlUrl: String? = null,
         @SerialName("published_at") val publishedAt: String? = null,
     )
 
