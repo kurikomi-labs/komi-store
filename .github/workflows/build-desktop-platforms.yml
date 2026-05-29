@@ -410,7 +410,8 @@ jobs:
           [ ${#rpms[@]} -gt 0 ] || { echo "No rpm to patch"; exit 0; }
 
           if ! sudo apt-get install -y rpmrebuild rpm >/dev/null 2>&1; then
-            echo "WARNING: could not install rpmrebuild — rpm will keep the crashing native launcher (GH#563)"
+            echo "::warning::could not install rpmrebuild; dropping unpatched rpm(s) to avoid shipping the GH#563 crash"
+            rm -f "${rpms[@]}"
             exit 0
           fi
 
@@ -427,10 +428,12 @@ jobs:
                 mv -f "$rebuilt" "$rpm"
                 echo "Patched successfully: $rpm"
               else
-                echo "WARNING: rpmrebuild produced no output for $rpm — keeping original"
+                echo "::warning::rpmrebuild produced no output for $rpm; dropping it to avoid shipping the GH#563 crash"
+                rm -f "$rpm"
               fi
             else
-              echo "WARNING: rpmrebuild failed for $rpm — keeping original (still crashes per GH#563)"
+              echo "::warning::rpmrebuild failed for $rpm; dropping it to avoid shipping the GH#563 crash"
+              rm -f "$rpm"
             fi
             rm -f "$OUTDIR"/*/*.rpm 2>/dev/null || true
           done
