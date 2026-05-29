@@ -28,7 +28,7 @@ if [ ! -x "$JAVA" ]; then
   exit 1
 fi
 
-CFG="$(find "$APPDIR" -maxdepth 1 -name '*.cfg' 2>/dev/null | head -n1)"
+CFG="$(find "$APPDIR" -maxdepth 1 -name '*.cfg' 2>/dev/null | head -n1 || true)"
 if [ -z "$CFG" ] || [ ! -f "$CFG" ]; then
   echo "github-store: launcher .cfg not found under $APPDIR" >&2
   exit 1
@@ -81,13 +81,16 @@ done < "$CFG"
 
 cd "$APPDIR"
 
+launch_args=("${javaopts[@]}")
 if [ -n "$mainmodule" ]; then
-  exec "$JAVA" "${javaopts[@]}" \
-    ${modulepath:+--module-path "$modulepath"} \
-    -m "$mainmodule" "$@"
+  [ -n "$modulepath" ] && launch_args+=(--module-path "$modulepath")
+  [ -n "$classpath" ] && launch_args+=(-cp "$classpath")
+  launch_args+=(-m "$mainmodule")
 elif [ -n "$classpath" ] && [ -n "$mainclass" ]; then
-  exec "$JAVA" "${javaopts[@]}" -cp "$classpath" "$mainclass" "$@"
+  launch_args+=(-cp "$classpath" "$mainclass")
 else
   echo "github-store: could not resolve main class / module from $CFG" >&2
   exit 1
 fi
+
+exec "$JAVA" "${launch_args[@]}" "$@"
