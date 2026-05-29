@@ -595,6 +595,7 @@
     <string name="match_source_fingerprint">Подпись</string>
     <string name="match_source_search">Поиск</string>
     <string name="match_source_manual">Вручную</string>
+    <string name="match_source_starred">Со звездой</string>
     <string name="pat_sheet_title">Вход с Personal Access Token</string>
     <string name="pat_sheet_description">Создай Personal Access Token (classic или fine-grained) на устройстве, где доступен GitHub, и вставь его ниже. Требуется доступ на чтение к репозиториям и твоему профилю.</string>
     <string name="pat_open_settings">Открыть настройки токенов GitHub</string>

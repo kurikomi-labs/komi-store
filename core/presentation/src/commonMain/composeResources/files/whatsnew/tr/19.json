@@ -11,7 +11,8 @@
         "Tablette iki panel düzeni — Home, Arama ve Kitaplık listeyi solda tutar ve repo'yu sağda açar; ayırıcıyı sürükleyerek boyutlandır.",
         "İç Detay sayfaları — Hakkında ve Yenilikler artık kendi geri eylemleriyle özel ekranlar olarak açılır ve tablette sağ panelde kalır.",
         "macOS ve Linux platform göstergeleri için kartlarda ve listelerde gerçek Apple ve Tux ikonları.",
-        "Masaüstü, son pencere boyutu, konumu ve büyütülmüş durumu lansmanlar arasında hatırlar; yeni pencereler sol üst köşe yerine ortalanmış açılır."
+        "Masaüstü, son pencere boyutu, konumu ve büyütülmüş durumu lansmanlar arasında hatırlar; yeni pencereler sol üst köşe yerine ortalanmış açılır.",
+        "Yüklü bir uygulamayı bağlamak artık yıldızladığınız repo'larla da eşleşiyor — 'GitHub uygulamalarını tara' yıldızladığınız repo'ları otomatik önerir, böylece nadiren URL yapıştırmanız gerekir."
       ]
     },
     {

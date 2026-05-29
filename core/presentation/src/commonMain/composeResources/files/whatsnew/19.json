@@ -11,7 +11,8 @@
         "Tablet two-pane layout — Home, Search, and Library keep the list on the left and open the repo on the right; drag the divider to resize.",
         "Inner Details pages — About and What's New now slide in as dedicated screens with their own back action, and stay inside the right pane on tablet.",
         "Real Apple and Tux icons for the macOS and Linux platform indicators across cards and lists.",
-        "Desktop remembers your last window size, position, and maximized state across launches; new windows open centered instead of in the top-left corner."
+        "Desktop remembers your last window size, position, and maximized state across launches; new windows open centered instead of in the top-left corner.",
+        "Linking an installed app now also matches against your starred repos — 'Scan GitHub Apps' surfaces repos you've starred as suggestions automatically, so you rarely need to paste a URL."
       ]
     },
     {

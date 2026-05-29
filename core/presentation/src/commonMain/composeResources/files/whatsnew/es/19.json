@@ -11,7 +11,8 @@
         "Diseño de dos paneles en tablet — Home, Búsqueda y Biblioteca mantienen la lista a la izquierda y abren el repo a la derecha; arrastra el divisor para ajustar.",
         "Páginas internas de Detalles — Acerca de y Novedades aparecen como pantallas dedicadas con su propia acción de retroceso, y se quedan en el panel derecho en tablet.",
         "Iconos reales de Apple y Tux para los indicadores de macOS y Linux en tarjetas y listas.",
-        "El escritorio recuerda el tamaño, posición y estado maximizado de la ventana entre lanzamientos; las ventanas nuevas se abren centradas en lugar de en la esquina superior izquierda."
+        "El escritorio recuerda el tamaño, posición y estado maximizado de la ventana entre lanzamientos; las ventanas nuevas se abren centradas en lugar de en la esquina superior izquierda.",
+        "Vincular una app instalada ahora también busca en tus repos con estrella — 'Escanear apps de GitHub' sugiere automáticamente los repos que has marcado con estrella, así rara vez necesitas pegar una URL."
       ]
     },
     {

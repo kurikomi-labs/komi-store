@@ -595,6 +595,7 @@
     <string name="match_source_fingerprint">Podpis</string>
     <string name="match_source_search">Wyszukiwanie</string>
     <string name="match_source_manual">Ręczne</string>
+    <string name="match_source_starred">Oznaczone gwiazdką</string>
     <string name="pat_sheet_title">Zaloguj się za pomocą Personal Access Token</string>
     <string name="pat_sheet_description">Utwórz Personal Access Token (classic lub fine-grained) na urządzeniu z dostępem do GitHuba i wklej go poniżej. Wymagany jest dostęp do odczytu repozytoriów i Twojego profilu.</string>
     <string name="pat_open_settings">Otwórz ustawienia tokenów GitHuba</string>

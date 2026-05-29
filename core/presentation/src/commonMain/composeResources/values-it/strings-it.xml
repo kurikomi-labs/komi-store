@@ -621,6 +621,7 @@
     <string name="match_source_fingerprint">Firma</string>
     <string name="match_source_search">Ricerca</string>
     <string name="match_source_manual">Manuale</string>
+    <string name="match_source_starred">Con stella</string>
     <string name="pat_sheet_title">Accedi con Personal Access Token</string>
     <string name="pat_sheet_description">Crea un Personal Access Token (classic o fine-grained) su un dispositivo che può raggiungere GitHub, poi incollalo qui sotto. Richiede accesso in lettura ai repository e al tuo profilo.</string>
     <string name="pat_open_settings">Apri impostazioni token GitHub</string>

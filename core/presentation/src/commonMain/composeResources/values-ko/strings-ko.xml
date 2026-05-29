@@ -617,6 +617,7 @@
     <string name="match_source_fingerprint">서명</string>
     <string name="match_source_search">검색</string>
     <string name="match_source_manual">수동</string>
+    <string name="match_source_starred">별표</string>
     <string name="pat_sheet_title">Personal Access Token으로 로그인</string>
     <string name="pat_sheet_description">GitHub에 접속할 수 있는 기기에서 Personal Access Token(classic 또는 fine-grained)을 만든 후 아래에 붙여넣으세요. 저장소와 프로필에 대한 읽기 권한이 필요합니다.</string>
     <string name="pat_open_settings">GitHub 토큰 설정 열기</string>

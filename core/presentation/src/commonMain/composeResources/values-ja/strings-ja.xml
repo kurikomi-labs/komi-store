@@ -588,6 +588,7 @@
     <string name="match_source_fingerprint">署名</string>
     <string name="match_source_search">検索</string>
     <string name="match_source_manual">手動</string>
+    <string name="match_source_starred">スター</string>
     <string name="pat_sheet_title">Personal Access Token でログイン</string>
     <string name="pat_sheet_description">GitHub にアクセスできる端末で Personal Access Token（classic または fine-grained）を作成し、以下に貼り付けてください。リポジトリとプロフィールへの読み取りアクセス権が必要です。</string>
     <string name="pat_open_settings">GitHub のトークン設定を開く</string>

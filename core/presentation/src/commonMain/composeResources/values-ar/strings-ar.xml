@@ -621,6 +621,7 @@
     <string name="match_source_fingerprint">التوقيع</string>
     <string name="match_source_search">بحث</string>
     <string name="match_source_manual">يدوي</string>
+    <string name="match_source_starred">بنجمة</string>
     <string name="pat_sheet_title">تسجيل الدخول باستخدام Personal Access Token</string>
     <string name="pat_sheet_description">أنشئ Personal Access Token (classic أو fine-grained) على أي جهاز يمكنه الوصول إلى GitHub، ثم الصقه أدناه. يتطلب صلاحية قراءة للمستودعات وملفك الشخصي.</string>
     <string name="pat_open_settings">فتح إعدادات رموز GitHub</string>

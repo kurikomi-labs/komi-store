@@ -201,6 +201,7 @@
     <string name="match_source_fingerprint">Signature</string>
     <string name="match_source_search">Search</string>
     <string name="match_source_manual">Manual</string>
+    <string name="match_source_starred">Starred</string>
     <string name="pat_sheet_title">Sign in with Personal Access Token</string>
     <string name="pat_sheet_description">Create a Personal Access Token (classic or fine-grained) on any device that can reach GitHub, then paste it below. Needs read access to repositories and your profile.</string>
     <string name="pat_open_settings">Open GitHub token settings</string>

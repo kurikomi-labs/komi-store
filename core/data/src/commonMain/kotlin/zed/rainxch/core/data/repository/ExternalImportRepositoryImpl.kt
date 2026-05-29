@@ -37,6 +37,7 @@ import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.core.domain.system.ScanResult
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safePut
+import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.InstallerKind
 
@@ -50,6 +51,7 @@ class ExternalImportRepositoryImpl(
     private val backendClient: BackendApiClient,
     private val forgejoClientRegistry: ForgejoClientRegistry,
     private val tweaksRepository: TweaksRepository,
+    private val starredRepository: StarredRepository,
 ) : ExternalImportRepository {
     private val candidateSnapshot = MutableStateFlow<Map<String, ExternalAppCandidate>>(emptyMap())
 
@@ -265,7 +267,29 @@ class ExternalImportRepositoryImpl(
             }
         }
 
-        return candidates.map { candidate ->
+        fun bestConfidence(candidate: ExternalAppCandidate): Double =
+            listOfNotNull(
+                candidate.manifestHint?.confidence,
+                fingerprintHits[candidate.packageName]?.confidence,
+                backendResults[candidate.packageName]?.maxOfOrNull { it.confidence },
+                forgejoHits[candidate.packageName]?.maxOfOrNull { it.confidence },
+            ).maxOrNull() ?: 0.0
+
+        val starredEligible = candidates
+            .filter { bestConfidence(it) < FORGEJO_SEARCH_SKIP_THRESHOLD }
+            .mapTo(mutableSetOf()) { it.packageName }
+        val starred = if (starredEligible.isEmpty()) {
+            emptyList()
+        } else {
+            runCatching { starredRepository.getAllStarred().first() }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    Logger.d { "starred fetch for match failed: ${it.message}" }
+                }
+                .getOrDefault(emptyList())
+        }
+
+        val rawResults = candidates.map { candidate ->
             val suggestions = mutableListOf<RepoMatchSuggestion>()
             candidate.manifestHint?.let { hint ->
                 suggestions += RepoMatchSuggestion(
@@ -278,13 +302,126 @@ class ExternalImportRepositoryImpl(
             fingerprintHits[candidate.packageName]?.let { suggestions += it }
             backendResults[candidate.packageName]?.let { suggestions += it }
             forgejoHits[candidate.packageName]?.let { suggestions += it }
+            if (candidate.packageName in starredEligible) {
+                suggestions += starredMatches(candidate, starred)
+            }
+            // Sort before dedupe so the highest-confidence entry survives when the
+            // same repo is surfaced by more than one source (e.g. backend + starred).
             val deduped = suggestions
-                .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
                 .sortedByDescending { it.confidence }
+                .distinctBy { suggestionKey(it) }
 
             RepoMatchResult(packageName = candidate.packageName, suggestions = deduped)
         }
+
+        return dropSuggestionsWithoutReleases(rawResults)
     }
+
+    private fun suggestionKey(suggestion: RepoMatchSuggestion): String =
+        "${suggestion.sourceHost ?: "github"}|${suggestion.owner}/${suggestion.repo}"
+
+    private suspend fun dropSuggestionsWithoutReleases(
+        results: List<RepoMatchResult>,
+    ): List<RepoMatchResult> {
+        val unique = results
+            .flatMap { it.suggestions }
+            .filterNot { it.source in RELEASE_VERIFY_SKIP_SOURCES }
+            .associateBy { suggestionKey(it) }
+            .values
+        if (unique.size > RELEASE_VERIFY_BUDGET) {
+            Logger.d { "release verify budget hit: ${unique.size} repos, capping at $RELEASE_VERIFY_BUDGET" }
+        }
+        val toVerify = unique.take(RELEASE_VERIFY_BUDGET)
+        if (toVerify.isEmpty()) return results
+
+        val sem = kotlinx.coroutines.sync.Semaphore(FORGEJO_SEARCH_CONCURRENCY)
+        val verdicts = kotlinx.coroutines.coroutineScope {
+            toVerify.map { suggestion ->
+                async {
+                    sem.withPermit {
+                        val ok = kotlinx.coroutines.withTimeoutOrNull(RELEASE_VERIFY_TIMEOUT_MS) {
+                            runCatching {
+                                hasInstallableRelease(
+                                    suggestion.sourceHost,
+                                    suggestion.owner,
+                                    suggestion.repo,
+                                )
+                            }.getOrElse { if (it is CancellationException) throw it else true }
+                        } ?: true
+                        suggestionKey(suggestion) to ok
+                    }
+                }
+            }.awaitAll().toMap()
+        }
+
+        return results.map { result ->
+            result.copy(
+                suggestions = result.suggestions.filter { verdicts[suggestionKey(it)] != false },
+            )
+        }
+    }
+
+    private suspend fun hasInstallableRelease(
+        host: String?,
+        owner: String,
+        repo: String,
+    ): Boolean {
+        val releases =
+            if (host == null) {
+                backendClient.getReleases(owner, repo, perPage = RELEASE_VERIFY_PAGE_SIZE)
+            } else {
+                val client = forgejoClientRegistry.clientFor(host)
+                client.getReleases(owner, repo, perPage = RELEASE_VERIFY_PAGE_SIZE)
+            }
+        return releases.fold(
+            onSuccess = { list ->
+                list.any { release ->
+                    release.draft != true &&
+                        release.prerelease != true &&
+                        release.assets.any { it.name.endsWith(".apk", ignoreCase = true) }
+                }
+            },
+            onFailure = { true },
+        )
+    }
+
+    private fun starredMatches(
+        candidate: ExternalAppCandidate,
+        starred: List<zed.rainxch.core.domain.model.StarredRepository>,
+    ): List<RepoMatchSuggestion> {
+        if (starred.isEmpty()) return emptyList()
+        val label = normalizeMatchToken(candidate.appLabel)
+        val pkgTail = normalizeMatchToken(candidate.packageName.substringAfterLast('.'))
+        val needles = listOf(label, pkgTail)
+            .filter { it.length >= MIN_MATCH_TOKEN_LEN && it !in GENERIC_MATCH_TOKENS }
+        if (needles.isEmpty()) return emptyList()
+
+        return starred.mapNotNull { repo ->
+            if (repo.latestReleaseUrl.isNullOrBlank()) return@mapNotNull null
+            val repoName = normalizeMatchToken(repo.repoName)
+            if (repoName.length < MIN_MATCH_TOKEN_LEN || repoName in GENERIC_MATCH_TOKENS) return@mapNotNull null
+            val confidence = needles.maxOf { needle ->
+                when {
+                    needle == repoName -> STARRED_EXACT_CONFIDENCE
+                    needle.contains(repoName) || repoName.contains(needle) -> STARRED_CONTAINS_CONFIDENCE
+                    else -> 0.0
+                }
+            }
+            if (confidence <= 0.0) return@mapNotNull null
+            RepoMatchSuggestion(
+                owner = repo.repoOwner,
+                repo = repo.repoName,
+                confidence = confidence,
+                source = RepoMatchSource.STARRED,
+                stars = repo.stargazersCount,
+                description = repo.repoDescription,
+                sourceHost = null,
+            )
+        }
+    }
+
+    private fun normalizeMatchToken(value: String): String =
+        value.lowercase().filter { it.isLetterOrDigit() }
 
     override suspend fun linkManually(
         packageName: String,
@@ -601,6 +738,27 @@ class ExternalImportRepositoryImpl(
 
         private const val FORGEJO_SEARCH_BASE_CONFIDENCE = 0.55
         private const val FORGEJO_SEARCH_RANK_DECAY = 0.08
+
+        private const val RELEASE_VERIFY_BUDGET = 60
+        private const val RELEASE_VERIFY_TIMEOUT_MS = 5_000L
+        private const val RELEASE_VERIFY_PAGE_SIZE = 10
+
+        private val RELEASE_VERIFY_SKIP_SOURCES =
+            setOf(
+                RepoMatchSource.STARRED,
+                RepoMatchSource.MANIFEST,
+                RepoMatchSource.FINGERPRINT,
+            )
+        private const val STARRED_EXACT_CONFIDENCE = 0.78
+        private const val STARRED_CONTAINS_CONFIDENCE = 0.6
+        private const val MIN_MATCH_TOKEN_LEN = 4
+
+        private val GENERIC_MATCH_TOKENS =
+            setOf(
+                "android", "application", "mobile", "client", "free", "lite",
+                "beta", "alpha", "debug", "release", "demo", "sample", "test",
+                "plus", "apps", "main", "core",
+            )
         private const val MATCH_BATCH_SIZE = 25
         private const val FINGERPRINT_CONFIDENCE = 0.92
         private const val SEARCH_OVERRIDE_CONFIDENCE = 0.5

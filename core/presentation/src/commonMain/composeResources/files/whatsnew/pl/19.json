@@ -11,7 +11,8 @@
         "Układ dwupanelowy na tablecie — Home, Wyszukiwanie i Biblioteka trzymają listę po lewej i otwierają repo po prawej; przeciągnij separator, by zmienić rozmiar.",
         "Wewnętrzne strony Szczegółów — Informacje i Co nowego otwierają się teraz jako dedykowane ekrany z własną akcją cofania i pozostają w prawym panelu na tablecie.",
         "Prawdziwe ikony Apple i Tux dla wskaźników platform macOS i Linux w kartach i listach.",
-        "Desktop pamięta rozmiar, pozycję i stan zmaksymalizowany okna między uruchomieniami; nowe okna otwierają się wyśrodkowane zamiast w lewym górnym rogu."
+        "Desktop pamięta rozmiar, pozycję i stan zmaksymalizowany okna między uruchomieniami; nowe okna otwierają się wyśrodkowane zamiast w lewym górnym rogu.",
+        "Powiązanie zainstalowanej aplikacji dopasowuje teraz także twoje repozytoria z gwiazdką — 'Skanuj aplikacje GitHub' automatycznie podpowiada repozytoria oznaczone gwiazdką, więc rzadko musisz wklejać URL."
       ]
     },
     {
