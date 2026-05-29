@@ -267,9 +267,27 @@ class ExternalImportRepositoryImpl(
             }
         }
 
-        val starred = runCatching { starredRepository.getAllStarred().first() }
-            .onFailure { Logger.d { "starred fetch for match failed: ${it.message}" } }
-            .getOrDefault(emptyList())
+        fun bestConfidence(candidate: ExternalAppCandidate): Double =
+            listOfNotNull(
+                candidate.manifestHint?.confidence,
+                fingerprintHits[candidate.packageName]?.confidence,
+                backendResults[candidate.packageName]?.maxOfOrNull { it.confidence },
+                forgejoHits[candidate.packageName]?.maxOfOrNull { it.confidence },
+            ).maxOrNull() ?: 0.0
+
+        val starredEligible = candidates
+            .filter { bestConfidence(it) < FORGEJO_SEARCH_SKIP_THRESHOLD }
+            .mapTo(mutableSetOf()) { it.packageName }
+        val starred = if (starredEligible.isEmpty()) {
+            emptyList()
+        } else {
+            runCatching { starredRepository.getAllStarred().first() }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    Logger.d { "starred fetch for match failed: ${it.message}" }
+                }
+                .getOrDefault(emptyList())
+        }
 
         return candidates.map { candidate ->
             val suggestions = mutableListOf<RepoMatchSuggestion>()
@@ -284,7 +302,9 @@ class ExternalImportRepositoryImpl(
             fingerprintHits[candidate.packageName]?.let { suggestions += it }
             backendResults[candidate.packageName]?.let { suggestions += it }
             forgejoHits[candidate.packageName]?.let { suggestions += it }
-            suggestions += starredMatches(candidate, starred)
+            if (candidate.packageName in starredEligible) {
+                suggestions += starredMatches(candidate, starred)
+            }
             // Sort before dedupe so the highest-confidence entry survives when the
             // same repo is surfaced by more than one source (e.g. backend + starred).
             val deduped = suggestions
@@ -302,12 +322,13 @@ class ExternalImportRepositoryImpl(
         if (starred.isEmpty()) return emptyList()
         val label = normalizeMatchToken(candidate.appLabel)
         val pkgTail = normalizeMatchToken(candidate.packageName.substringAfterLast('.'))
-        val needles = listOf(label, pkgTail).filter { it.length >= MIN_MATCH_TOKEN_LEN }
+        val needles = listOf(label, pkgTail)
+            .filter { it.length >= MIN_MATCH_TOKEN_LEN && it !in GENERIC_MATCH_TOKENS }
         if (needles.isEmpty()) return emptyList()
 
         return starred.mapNotNull { repo ->
             val repoName = normalizeMatchToken(repo.repoName)
-            if (repoName.length < MIN_MATCH_TOKEN_LEN) return@mapNotNull null
+            if (repoName.length < MIN_MATCH_TOKEN_LEN || repoName in GENERIC_MATCH_TOKENS) return@mapNotNull null
             val confidence = needles.maxOf { needle ->
                 when {
                     needle == repoName -> STARRED_EXACT_CONFIDENCE
@@ -649,6 +670,13 @@ class ExternalImportRepositoryImpl(
         private const val STARRED_EXACT_CONFIDENCE = 0.78
         private const val STARRED_CONTAINS_CONFIDENCE = 0.6
         private const val MIN_MATCH_TOKEN_LEN = 4
+
+        private val GENERIC_MATCH_TOKENS =
+            setOf(
+                "android", "application", "mobile", "client", "free", "lite",
+                "beta", "alpha", "debug", "release", "demo", "sample", "test",
+                "plus", "apps", "main", "core",
+            )
         private const val MATCH_BATCH_SIZE = 25
         private const val FINGERPRINT_CONFIDENCE = 0.92
         private const val SEARCH_OVERRIDE_CONFIDENCE = 0.5
