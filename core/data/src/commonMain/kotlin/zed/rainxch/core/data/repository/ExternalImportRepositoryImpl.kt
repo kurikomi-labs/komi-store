@@ -325,7 +325,7 @@ class ExternalImportRepositoryImpl(
     ): List<RepoMatchResult> {
         val unique = results
             .flatMap { it.suggestions }
-            .filter { it.source != RepoMatchSource.STARRED }
+            .filterNot { it.source in RELEASE_VERIFY_SKIP_SOURCES }
             .associateBy { suggestionKey(it) }
             .values
         if (unique.size > RELEASE_VERIFY_BUDGET) {
@@ -742,6 +742,13 @@ class ExternalImportRepositoryImpl(
         private const val RELEASE_VERIFY_BUDGET = 60
         private const val RELEASE_VERIFY_TIMEOUT_MS = 5_000L
         private const val RELEASE_VERIFY_PAGE_SIZE = 10
+
+        private val RELEASE_VERIFY_SKIP_SOURCES =
+            setOf(
+                RepoMatchSource.STARRED,
+                RepoMatchSource.MANIFEST,
+                RepoMatchSource.FINGERPRINT,
+            )
         private const val STARRED_EXACT_CONFIDENCE = 0.78
         private const val STARRED_CONTAINS_CONFIDENCE = 0.6
         private const val MIN_MATCH_TOKEN_LEN = 4
