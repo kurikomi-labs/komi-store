@@ -124,11 +124,12 @@ class RootServiceManager(
     }
 
     private fun computeStatus(): RootStatus {
-        val granted = Shell.isAppGrantedRoot()
-        return when (granted) {
+        Shell.getCachedShell()?.let { shell ->
+            return if (shell.isRoot) RootStatus.READY else RootStatus.NOT_AVAILABLE
+        }
+        return when (Shell.isAppGrantedRoot()) {
             true -> RootStatus.READY
-            false -> RootStatus.PERMISSION_NEEDED
-            null -> RootStatus.NOT_AVAILABLE
+            false, null -> RootStatus.PERMISSION_NEEDED
         }
     }
 
