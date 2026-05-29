@@ -289,7 +289,7 @@ class ExternalImportRepositoryImpl(
                 .getOrDefault(emptyList())
         }
 
-        return candidates.map { candidate ->
+        val rawResults = candidates.map { candidate ->
             val suggestions = mutableListOf<RepoMatchSuggestion>()
             candidate.manifestHint?.let { hint ->
                 suggestions += RepoMatchSuggestion(
@@ -309,10 +309,80 @@ class ExternalImportRepositoryImpl(
             // same repo is surfaced by more than one source (e.g. backend + starred).
             val deduped = suggestions
                 .sortedByDescending { it.confidence }
-                .distinctBy { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" }
+                .distinctBy { suggestionKey(it) }
 
             RepoMatchResult(packageName = candidate.packageName, suggestions = deduped)
         }
+
+        return dropSuggestionsWithoutReleases(rawResults)
+    }
+
+    private fun suggestionKey(suggestion: RepoMatchSuggestion): String =
+        "${suggestion.sourceHost ?: "github"}|${suggestion.owner}/${suggestion.repo}"
+
+    private suspend fun dropSuggestionsWithoutReleases(
+        results: List<RepoMatchResult>,
+    ): List<RepoMatchResult> {
+        val unique = results
+            .flatMap { it.suggestions }
+            .filter { it.source != RepoMatchSource.STARRED }
+            .associateBy { suggestionKey(it) }
+            .values
+        if (unique.size > RELEASE_VERIFY_BUDGET) {
+            Logger.d { "release verify budget hit: ${unique.size} repos, capping at $RELEASE_VERIFY_BUDGET" }
+        }
+        val toVerify = unique.take(RELEASE_VERIFY_BUDGET)
+        if (toVerify.isEmpty()) return results
+
+        val sem = kotlinx.coroutines.sync.Semaphore(FORGEJO_SEARCH_CONCURRENCY)
+        val verdicts = kotlinx.coroutines.coroutineScope {
+            toVerify.map { suggestion ->
+                async {
+                    sem.withPermit {
+                        val ok = kotlinx.coroutines.withTimeoutOrNull(RELEASE_VERIFY_TIMEOUT_MS) {
+                            runCatching {
+                                hasInstallableRelease(
+                                    suggestion.sourceHost,
+                                    suggestion.owner,
+                                    suggestion.repo,
+                                )
+                            }.getOrElse { if (it is CancellationException) throw it else true }
+                        } ?: true
+                        suggestionKey(suggestion) to ok
+                    }
+                }
+            }.awaitAll().toMap()
+        }
+
+        return results.map { result ->
+            result.copy(
+                suggestions = result.suggestions.filter { verdicts[suggestionKey(it)] != false },
+            )
+        }
+    }
+
+    private suspend fun hasInstallableRelease(
+        host: String?,
+        owner: String,
+        repo: String,
+    ): Boolean {
+        val releases =
+            if (host == null) {
+                backendClient.getReleases(owner, repo, perPage = RELEASE_VERIFY_PAGE_SIZE)
+            } else {
+                val client = forgejoClientRegistry.clientFor(host)
+                client.getReleases(owner, repo, perPage = RELEASE_VERIFY_PAGE_SIZE)
+            }
+        return releases.fold(
+            onSuccess = { list ->
+                list.any { release ->
+                    release.draft != true &&
+                        release.prerelease != true &&
+                        release.assets.any { it.name.endsWith(".apk", ignoreCase = true) }
+                }
+            },
+            onFailure = { true },
+        )
     }
 
     private fun starredMatches(
@@ -668,6 +738,10 @@ class ExternalImportRepositoryImpl(
 
         private const val FORGEJO_SEARCH_BASE_CONFIDENCE = 0.55
         private const val FORGEJO_SEARCH_RANK_DECAY = 0.08
+
+        private const val RELEASE_VERIFY_BUDGET = 60
+        private const val RELEASE_VERIFY_TIMEOUT_MS = 5_000L
+        private const val RELEASE_VERIFY_PAGE_SIZE = 10
         private const val STARRED_EXACT_CONFIDENCE = 0.78
         private const val STARRED_CONTAINS_CONFIDENCE = 0.6
         private const val MIN_MATCH_TOKEN_LEN = 4
