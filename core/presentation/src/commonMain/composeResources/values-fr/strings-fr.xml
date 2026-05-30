@@ -203,8 +203,8 @@
     <string name="added_on_date">ajouté le %1$s</string>
 
     <string name="starred_repositories">Dépôts Étoilés</string>
-    <string name="repository_starred">Le dépôt est en favori</string>
-    <string name="repository_not_starred">Le dépôt n'est pas en favori</string>
+    <string name="repository_starred">Le dépôt est étoilé</string>
+    <string name="repository_not_starred">Le dépôt n'est pas étoilé</string>
     <string name="star_from_github">Vous pouvez ajouter ce dépôt aux favoris sur GitHub</string>
     <string name="unstar_from_github">Vous pouvez retirer ce dépôt des favoris sur GitHub</string>
 
