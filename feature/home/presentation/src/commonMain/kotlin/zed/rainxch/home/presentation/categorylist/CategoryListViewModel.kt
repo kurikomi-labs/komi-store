@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.failed_to_load
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.domain.repository.HomeRepository
 import zed.rainxch.home.presentation.model.toHomeRepoCardUi
@@ -106,7 +109,7 @@ class CategoryListViewModel(
                         it.copy(
                             isLoading = false,
                             isLoadingMore = false,
-                            errorMessage = e.message ?: "Failed to load",
+                            errorMessage = e.message ?: getString(Res.string.failed_to_load),
                         )
                     }
                 }

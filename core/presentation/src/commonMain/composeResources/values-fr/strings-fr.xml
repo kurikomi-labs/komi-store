@@ -5,7 +5,7 @@
     <string name="check_for_updates">Vérifier les mises à jour</string>
 
     <string name="cannot_launch">Impossible de lancer %1$s</string>
-    <string name="failed_to_open">Impossible d’ouvrir %1$s</string>
+    <string name="failed_to_open">Impossible d'ouvrir %1$s</string>
     <string name="failed_to_update">Échec de la mise à jour de %1$s : %2$s</string>
     <string name="update_all_failed">Échec de la mise à jour globale : %1$s</string>
     <string name="all_apps_updated_successfully">Toutes les applications ont été mises à jour</string>
@@ -26,9 +26,9 @@
     <string name="updating_x_of_y">Mise à jour %1$d sur %2$d</string>
     <string name="currently_updating">Actuellement : %1$s</string>
 
-    <string name="waiting_for_authorization">En attente d’autorisation…</string>
+    <string name="waiting_for_authorization">En attente d'autorisation…</string>
     <string name="signed_in">Connecté !</string>
-    <string name="redirecting_message">Vous pouvez maintenant utiliser l’application. Redirection…</string>
+    <string name="redirecting_message">Vous pouvez maintenant utiliser l'application. Redirection…</string>
     <string name="try_again">Réessayer</string>
 
     <string name="auth_error_with_message">Erreur : %1$s</string>
@@ -37,7 +37,7 @@
     <string name="copy_code">Copier le code</string>
     <string name="open_github">Ouvrir GitHub</string>
 
-    <string name="unlock_full_experience">Débloquez l’expérience\ncomplète</string>
+    <string name="unlock_full_experience">Débloquez l'expérience\ncomplète</string>
 
     <string name="more_requests">Plus de requêtes</string>
     <string name="more_requests_description">
@@ -63,7 +63,7 @@
     <string name="sort_by">Trier par</string>
     <string name="close">Fermer</string>
 
-    <string name="sort_most_stars">Le plus d’étoiles</string>
+    <string name="sort_most_stars">Le plus d'étoiles</string>
     <string name="sort_most_forks">Le plus de forks</string>
     <string name="sort_best_match">Meilleure correspondance</string>
     <string name="sort_recently_released">Récemment publiés</string>
@@ -88,7 +88,7 @@
     <string name="language_ruby">Ruby</string>
     <string name="language_php">PHP</string>
 
-    <string name="search_failed">La recherche a échoué</string>
+    <string name="search_failed">Échec de la recherche</string>
     <string name="no_repositories_found">Aucun dépôt trouvé</string>
 
     <string name="profile_title">Profil</string>
@@ -115,7 +115,7 @@
     <string name="theme_plum">Plum</string>
 
     <string name="about_this_app">À propos de cette application</string>
-    <string name="install_logs">Journaux d’installation</string>
+    <string name="install_logs">Journaux d'installation</string>
     <string name="whats_new">Nouveautés</string>
 
     <string name="installed">Installé</string>
@@ -142,7 +142,7 @@
     <string name="architecture_compatible">Architecture compatible</string>
     <string name="update_to_version">Mettre à jour vers %1$s</string>
 
-    <string name="installer_saved_downloads">L’installateur a été enregistré dans Téléchargements</string>
+    <string name="installer_saved_downloads">L'installateur a été enregistré dans Téléchargements</string>
 
     <string name="log_download_started">Téléchargement démarré</string>
     <string name="log_downloaded">Téléchargé</string>
@@ -168,7 +168,7 @@
 
 
 
-    <string name="home_finding_repositories">Recherche de dépôts...</string>
+    <string name="home_finding_repositories">Recherche de dépôts…</string>
     <string name="home_retry">Réessayer</string>
     <string name="home_failed_to_load_repositories">Impossible de charger les dépôts</string>
 
@@ -196,7 +196,7 @@
     <string name="remove_from_favourites">Retirer des favoris</string>
     <string name="favourites">Favoris</string>
 
-    <string name="added_just_now">ajouté à l’instant</string>
+    <string name="added_just_now">ajouté à l'instant</string>
     <string name="added_hours_ago">ajouté il y a %1$d heure(s)</string>
     <string name="added_yesterday">ajouté hier</string>
     <string name="added_days_ago">ajouté il y a %1$d jour(s)</string>
@@ -204,7 +204,7 @@
 
     <string name="starred_repositories">Dépôts Étoilés</string>
     <string name="repository_starred">Le dépôt est en favori</string>
-    <string name="repository_not_starred">Le dépôt n’est pas en favori</string>
+    <string name="repository_not_starred">Le dépôt n'est pas en favori</string>
     <string name="star_from_github">Vous pouvez ajouter ce dépôt aux favoris sur GitHub</string>
     <string name="unstar_from_github">Vous pouvez retirer ce dépôt des favoris sur GitHub</string>
 
@@ -213,7 +213,7 @@
     <string name="sign_in_with_github_for_stars">Connectez-vous avec GitHub pour voir vos dépôts favoris</string>
     <string name="star_repos_hint">Ajoutez des dépôts avec des versions installables sur GitHub pour les voir ici</string>
     <string name="last_synced">Dernière synchronisation</string>
-    <string name="just_now">À l’instant</string>
+    <string name="just_now">À l'instant</string>
     <string name="minutes_ago">Il y a %1$d min</string>
     <string name="hours_ago">Il y a %1$d h</string>
     <string name="days_ago">Il y a %1$d j</string>
@@ -222,7 +222,7 @@
 
 
     <!-- Developer Profile - General -->
-    <string name="failed_to_load_repositories">Échec du chargement des dépôts</string>
+    <string name="failed_to_load_repositories">Impossible de charger les dépôts</string>
     <string name="failed_to_load_profile">Échec du chargement du profil</string>
 
     <!-- Developer Profile - Stats -->
@@ -265,7 +265,7 @@
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
 
-    <string name="released_just_now">Publié à l’instant</string>
+    <string name="released_just_now">Publié à l'instant</string>
     <string name="released_hours_ago">Publié il y a %1$d heure(s)</string>
     <string name="released_yesterday">Publié hier</string>
     <string name="released_days_ago">Publié il y a %1$d jour(s)</string>
@@ -330,11 +330,11 @@
     <string name="proxy_port">Port</string>
     <string name="proxy_username">Nom d'utilisateur (facultatif)</string>
     <string name="proxy_password">Mot de passe (facultatif)</string>
-    <string name="proxy_save">Sauvegarder le Proxy</string>
+    <string name="proxy_save">Enregistrer le proxy</string>
     <string name="proxy_saved">Paramètres du proxy enregistrés</string>
     <string name="failed_to_save_proxy_settings">Échec de l'enregistrement des paramètres du proxy</string>
-    <string name="proxy_host_required">L’hôte du proxy est requis</string>
-    <string name="proxy_host_invalid">Saisissez un nom d’hôte ou une adresse IP valide</string>
+    <string name="proxy_host_required">L'hôte du proxy est requis</string>
+    <string name="proxy_host_invalid">Saisissez un nom d'hôte ou une adresse IP valide</string>
     <string name="invalid_proxy_port">Port proxy invalide</string>
     <string name="proxy_test_success">Connexion OK (%1$d ms)</string>
     <string name="proxy_test_error_dns">Impossible de résoudre l'hôte. Vérifiez l'adresse du proxy.</string>
@@ -365,7 +365,7 @@
     <string name="auth_hint_try_again">Veuillez réessayer de vous connecter pour obtenir un nouveau code.</string>
     <string name="auth_hint_check_connection">Vérifiez votre connexion internet et réessayez.</string>
     <string name="auth_hint_denied">Vous avez refusé la demande d'autorisation. Réessayez si c'était involontaire.</string>
-    <string name="auth_check_status">J’ai déjà autorisé</string>
+    <string name="auth_check_status">J'ai déjà autorisé</string>
     <string name="auth_polling_status">Vérification…</string>
     <string name="auth_rate_limited">Limite atteinte — nouvelle tentative dans %1$d s</string>
 
@@ -387,7 +387,7 @@
     <string name="open_in_app">Ouvrir dans l'app</string>
     <string name="no_github_link_in_clipboard">Aucun lien GitHub trouvé dans le presse-papiers</string>
 
-    <string name="clear">Vider</string>
+    <string name="clear">Effacer</string>
 
 
 
@@ -408,7 +408,7 @@
     <string name="shizuku_status_not_running">Shizuku n'est pas en cours d'exécution</string>
     <string name="shizuku_status_permission_needed">Autorisation requise</string>
     <string name="shizuku_status_ready">Prêt</string>
-    <string name="shizuku_grant_permission">Accorder l'autorisation</string>
+    <string name="shizuku_grant_permission">Accorder la permission</string>
     <string name="shizuku_install_hint">Installez Shizuku pour activer l'installation silencieuse</string>
     <string name="shizuku_start_hint">Démarrez Shizuku pour activer l'installation silencieuse</string>
     <string name="shizuku_install_failed_fallback">L'installation via Shizuku a échoué, utilisation de l'installateur standard</string>
@@ -637,7 +637,7 @@
         <item quantity="one">%1$d application examinée</item>
         <item quantity="other">%1$d applications examinées</item>
     </plurals>
-    <string name="external_import_card_action_skip">Ignorer</string>
+    <string name="external_import_card_action_skip">Passer</string>
     <string name="external_import_card_action_link">Lier</string>
     <string name="external_import_card_action_more">Plus de correspondances</string>
     <string name="external_import_card_action_less">Masquer les correspondances</string>
@@ -717,7 +717,7 @@
     <string name="details_unlink_external_app_success">Délié. Nous proposerons une correspondance lors du prochain scan.</string>
     <string name="details_unlink_external_app_failure">Impossible de délier — réessayez.</string>
     <string name="details_linked_repo_banner_title">Lié à %1$s/%2$s</string>
-    <string name="details_linked_repo_banner_body">Liée manuellement — vérifiée par toi. Dissocie pour relancer le scan.</string>
+    <string name="details_linked_repo_banner_body">Liée manuellement — vérifiée par vous. Dissociez pour relancer le scan.</string>
 
     <!-- Details manual refresh -->
     <string name="details_refresh">Actualiser</string>
@@ -771,7 +771,7 @@
     <!-- Tweaks - Custom forges -->
     <string name="custom_forges_entry_label">Forges personnalisées</string>
     <string name="custom_forges_dialog_title">Forges personnalisées</string>
-    <string name="custom_forges_dialog_help">Saisis le nom d'hôte d'une instance Forgejo ou Gitea (ex. git.example.com). GHS acceptera les URLs de ces hôtes dans le formulaire de liaison manuelle.</string>
+    <string name="custom_forges_dialog_help">Saisissez le nom d'hôte d'une instance Forgejo ou Gitea (ex. git.example.com). GHS acceptera les URLs de ces hôtes dans le formulaire de liaison manuelle.</string>
     <string name="custom_forges_add_button">Ajouter</string>
     <string name="custom_forges_empty">Aucune forge personnalisée pour l'instant.</string>
     <string name="done">Terminé</string>
@@ -867,7 +867,7 @@
     <string name="apps_section_up_to_date">À jour</string>
     <string name="confirm_discard_pending_message">Abandonner l'installeur en attente pour %1$s et retirer la ligne de votre liste d'apps ? L'APK téléchargé sera supprimé.</string>
     <string name="confirm_discard_pending_title">Abandonner l'installation en attente ?</string>
-    <string name="dhizuku_grant_permission">Accorder l'autorisation</string>
+    <string name="dhizuku_grant_permission">Accorder la permission</string>
     <string name="dhizuku_install_hint">Installez Dhizuku et activez-le comme Device Owner pour activer les installations silencieuses</string>
     <string name="dhizuku_start_hint">Activez Dhizuku comme Device Owner pour activer les installations silencieuses</string>
     <string name="installer_type_root">Root</string>
@@ -1034,7 +1034,7 @@
     <string name="home_section_most_popular">Les plus populaires</string>
     <string name="home_section_trending_now">Tendances du moment</string>
     <string name="home_topbar_discover">Découvrir</string>
-    <string name="home_view_all">Tout voir</string>
+    <string name="home_view_all">Tout afficher</string>
     <string name="home_view_more">Voir plus</string>
     <string name="host_tokens_action_add">Ajouter un jeton</string>
     <string name="host_tokens_action_back">Retour</string>
@@ -1212,8 +1212,10 @@
     <string name="tweaks_privacy_clipboard_title">Détecter les liens de dépôts dans le presse-papiers</string>
     <string name="tweaks_privacy_hidden_repos_body">Dépôts que vous avez masqués des flux et de la recherche.</string>
     <string name="tweaks_privacy_hidden_repos_title">Dépôts masqués</string>
+    <string name="tweaks_privacy_usage_data_section">Données d'utilisation</string>
     <string name="tweaks_privacy_hide_seen_body">Ignorer les dépôts déjà vus dans les flux et la recherche.</string>
-    <string name="tweaks_privacy_hide_seen_title">Masquer les dépôts déjà consultés</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">Aucun identifiant.</string>    <string name="tweaks_privacy_telemetry_collect_os">Système d'exploitation et plateforme.</string>    <string name="tweaks_search_empty">Aucun paramètre ne correspond à « %1$s ».</string>
+    <string name="tweaks_privacy_hide_seen_title">Masquer les dépôts déjà consultés</string>
+    <string name="tweaks_search_empty">Aucun paramètre ne correspond à « %1$s ».</string>
     <string name="tweaks_search_placeholder">Rechercher dans les paramètres</string>
     <string name="tweaks_sources_add_a_host">Ajouter un hôte Forgejo ou Gitea</string>
     <string name="tweaks_sources_added_hosts_section">Hôtes ajoutés</string>
@@ -1222,7 +1224,7 @@
     <string name="tweaks_sources_intro_title">Où l'application cherche les dépôts</string>
     <string name="tweaks_sources_mirror_default">Par défaut (github.com)</string>
     <string name="tweaks_storage_downloaded_apks_body">Nous conservons les installateurs pour que les mises à jour reprennent rapidement.</string>
-    <string name="tweaks_storage_downloaded_apks_clear">Vider</string>
+    <string name="tweaks_storage_downloaded_apks_clear">Effacer</string>
     <string name="tweaks_storage_downloaded_apks_title">APK téléchargés</string>
     <string name="tweaks_storage_empty_size">0 o</string>
     <string name="tweaks_storage_using_label">Utilisation : %1$s</string>
@@ -1247,7 +1249,7 @@
     <string name="auth_more_signin_options">Plus d'options de connexion</string>
     <string name="auth_hide_signin_options">Masquer les options</string>
     <string name="tweaks_sources_platforms_title">Plateformes de découverte</string>
-    <string name="tweaks_sources_platforms_body">Filtre le fil d&#39;accueil par plateforme. Laisse tout désactivé pour tout voir.</string>
+    <string name="tweaks_sources_platforms_body">Filtrez le fil d&#39;accueil par plateforme. Laissez tout désactivé pour tout voir.</string>
     <string name="profile_entry_about_title">À propos</string>
     <string name="profile_entry_about_subtitle">Version, communauté, mentions légales</string>
     <string name="filter_with_installable">Installable ici</string>
@@ -1258,4 +1260,42 @@
     <string name="interval_weekly">Hebdomadaire</string>
     <string name="interval_biweekly">Toutes les 2 semaines</string>
     <string name="interval_monthly">Tous les 30 jours</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Choisissez votre palette</string>
+    <string name="onboarding_palette_subtitle">Quatre palettes × Clair, Sombre, AMOLED, Système.</string>
+    <string name="onboarding_signin_subtitle">Vos étoiles, votre profil et une marge sur la limite de requêtes. Facultatif — passez pour naviguer anonymement.</string>
+    <string name="onboarding_signin_button">Se connecter</string>
+    <string name="onboarding_permissions_title">Deux autorisations rapides</string>
+    <string name="onboarding_permissions_subtitle">Les deux sont facultatives. Vous pourrez les modifier plus tard dans les Réglages.</string>
+    <string name="onboarding_permission_notifications">Notifications</string>
+    <string name="onboarding_permission_notifications_desc">Alertes de mise à jour et progression des installations</string>
+    <string name="onboarding_permission_install">Installer des applications inconnues</string>
+    <string name="onboarding_permission_install_desc">Nécessaire pour installer des APK hors de Play</string>
+    <string name="onboarding_permission_granted">Accordée</string>
+    <string name="onboarding_permission_allow">Autoriser</string>
+    <string name="onboarding_skip">Passer</string>
+    <string name="onboarding_get_started">Commencer</string>
+    <string name="onboarding_next">Suivant</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Activité de contribution</string>
+    <string name="dev_profile_contributions_this_year">%1$s cette année</string>
+    <string name="dev_profile_contributions_load_failed">Impossible de charger les contributions.</string>
+    <string name="dev_profile_contributions_less">Moins</string>
+    <string name="dev_profile_contributions_more">Plus</string>
+    <string name="dev_profile_org_badge">Orga</string>
+
+    <!-- Common -->
+    <string name="loading">Chargement…</string>
+    <string name="failed_to_load">Échec du chargement</string>
+    <string name="failed_to_load_details">Échec du chargement des détails</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">Impossible de charger les licences.</string>
+    <string name="tweaks_app_info_website">Site web</string>
+    <string name="tweaks_clear_downloads_failed">Échec de la suppression des téléchargements</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Saisissez un nom d'hôte valide (ex. forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">Impossible d'enregistrer l'hôte. Réessayez.</string>
+    <string name="tweaks_custom_forge_remove_failed">Impossible de supprimer l'hôte. Réessayez.</string>
 </resources>

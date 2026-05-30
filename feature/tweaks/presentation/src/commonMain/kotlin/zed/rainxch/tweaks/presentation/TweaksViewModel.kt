@@ -47,6 +47,10 @@ import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_status
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_timeout
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_unknown
 import zed.rainxch.githubstore.core.presentation.res.proxy_test_error_unreachable
+import zed.rainxch.githubstore.core.presentation.res.tweaks_clear_downloads_failed
+import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_invalid_hostname
+import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_remove_failed
+import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_save_failed
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 class TweaksViewModel(
@@ -849,7 +853,7 @@ class TweaksViewModel(
                     }.onFailure { error ->
                         _events.send(
                             TweaksEvent.OnCacheClearError(
-                                error.message ?: "Failed to clear downloads",
+                                error.message ?: getString(Res.string.tweaks_clear_downloads_failed),
                             ),
                         )
                     }
@@ -1145,13 +1149,13 @@ class TweaksViewModel(
                     .removePrefix("https://")
                     .removePrefix("http://")
                     .substringBefore('/')
-                if (raw.isEmpty() || !raw.contains('.') || raw.contains(' ')) {
-                    _state.update {
-                        it.copy(customForgeError = "Enter a valid hostname (e.g. forgejo.example.com).")
-                    }
-                    return
-                }
                 viewModelScope.launch {
+                    if (raw.isEmpty() || !raw.contains('.') || raw.contains(' ')) {
+                        _state.update {
+                            it.copy(customForgeError = getString(Res.string.tweaks_custom_forge_invalid_hostname))
+                        }
+                        return@launch
+                    }
                     val result = runCatching { tweaksRepository.addCustomForgeHost(raw) }
                     if (result.isSuccess) {
                         _state.update { it.copy(customForgeDraft = "", customForgeError = null) }
@@ -1160,7 +1164,7 @@ class TweaksViewModel(
                         _state.update {
                             it.copy(
                                 customForgeError = result.exceptionOrNull()?.message
-                                    ?: "Couldn't save the host. Try again.",
+                                    ?: getString(Res.string.tweaks_custom_forge_save_failed),
                             )
                         }
                     }
@@ -1186,7 +1190,7 @@ class TweaksViewModel(
                         _state.update {
                             it.copy(
                                 customForgeError = result.exceptionOrNull()?.message
-                                    ?: "Couldn't remove the host. Try again.",
+                                    ?: getString(Res.string.tweaks_custom_forge_remove_failed),
                             )
                         }
                     }

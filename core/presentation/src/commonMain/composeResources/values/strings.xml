@@ -1325,4 +1325,42 @@
     <string name="tweaks_licenses_title">Open source licenses</string>
     <string name="tweaks_licenses_intro_title">GitHub Store stands on these libraries.</string>
     <string name="tweaks_licenses_intro_body">Tap any entry to open its project page.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Pick your palette</string>
+    <string name="onboarding_palette_subtitle">Four palettes × Light, Dark, AMOLED, System.</string>
+    <string name="onboarding_signin_subtitle">Stars, profile, and rate-limit headroom. Optional — skip to browse anonymously.</string>
+    <string name="onboarding_signin_button">Sign in</string>
+    <string name="onboarding_permissions_title">Two quick prompts</string>
+    <string name="onboarding_permissions_subtitle">Both optional. You can flip these later in Tweaks.</string>
+    <string name="onboarding_permission_notifications">Notifications</string>
+    <string name="onboarding_permission_notifications_desc">Update alerts and install progress</string>
+    <string name="onboarding_permission_install">Install unknown apps</string>
+    <string name="onboarding_permission_install_desc">Required to install APKs outside Play</string>
+    <string name="onboarding_permission_granted">Granted</string>
+    <string name="onboarding_permission_allow">Allow</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_next">Next</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Contribution activity</string>
+    <string name="dev_profile_contributions_this_year">%1$s this year</string>
+    <string name="dev_profile_contributions_load_failed">Couldn't load contributions.</string>
+    <string name="dev_profile_contributions_less">Less</string>
+    <string name="dev_profile_contributions_more">More</string>
+    <string name="dev_profile_org_badge">Org</string>
+
+    <!-- Common -->
+    <string name="loading">Loading…</string>
+    <string name="failed_to_load">Failed to load</string>
+    <string name="failed_to_load_details">Failed to load details</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">Couldn't load licenses.</string>
+    <string name="tweaks_app_info_website">Website</string>
+    <string name="tweaks_clear_downloads_failed">Failed to clear downloads</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Enter a valid hostname (e.g. forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">Couldn't save the host. Try again.</string>
+    <string name="tweaks_custom_forge_remove_failed">Couldn't remove the host. Try again.</string>
 </resources>

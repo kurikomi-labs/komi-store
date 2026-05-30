@@ -46,6 +46,7 @@ import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cd_back
 import zed.rainxch.githubstore.core.presentation.res.details_about_screen_title
+import zed.rainxch.githubstore.core.presentation.res.retry
 
 @Composable
 fun AboutRoot(
@@ -124,7 +125,7 @@ private fun AboutScreen(
                     )
                     Spacer(Modifier.size(8.dp))
                     Text(
-                        text = "Retry",
+                        text = stringResource(Res.string.retry),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier

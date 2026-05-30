@@ -55,6 +55,7 @@ import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_title
@@ -308,7 +309,7 @@ private fun CommunityCard(
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
-                    label = "Website",
+                    label = stringResource(Res.string.tweaks_app_info_website),
                     iconFallback = Icons.Outlined.Language,
                     accent = GhsAccents.Sage,
                     onClick = onWebsite,

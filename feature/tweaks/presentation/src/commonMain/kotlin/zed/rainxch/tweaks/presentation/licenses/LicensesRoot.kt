@@ -32,9 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_body
+import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_title
+import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_load_failed
+import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_title
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
@@ -78,7 +83,7 @@ fun LicensesRoot(
     }
 
     TweaksSubScreenScaffold(
-        title = "Open source licenses",
+        title = stringResource(Res.string.tweaks_licenses_title),
         onNavigateBack = onNavigateBack,
         snackbarState = snackbarState,
         restartReasons = state.needsRestartReasons,
@@ -95,13 +100,13 @@ fun LicensesRoot(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "GitHub Store stands on these libraries.",
+                        text = stringResource(Res.string.tweaks_licenses_intro_title),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Tap any entry to open its project page.",
+                        text = stringResource(Res.string.tweaks_licenses_intro_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -127,7 +132,7 @@ fun LicensesRoot(
             loadError -> {
                 item(key = "error") {
                     Text(
-                        text = "Couldn't load licenses.",
+                        text = stringResource(Res.string.tweaks_licenses_load_failed),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(16.dp),

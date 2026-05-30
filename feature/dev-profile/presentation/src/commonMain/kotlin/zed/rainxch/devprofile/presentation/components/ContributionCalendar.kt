@@ -30,9 +30,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.devprofile.domain.model.ContributionCalendar
 import zed.rainxch.devprofile.domain.model.ContributionDay
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_contribution_activity
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_contributions_load_failed
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_contributions_less
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_contributions_more
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_contributions_this_year
+import zed.rainxch.githubstore.core.presentation.res.loading
 
 private val CELL_SIZE = 11.dp
 private val CELL_GAP = 3.dp
@@ -56,7 +64,7 @@ fun ContributionCalendarCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Contribution activity",
+                    text = stringResource(Res.string.dev_profile_contribution_activity),
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -64,7 +72,7 @@ fun ContributionCalendarCard(
                 )
                 contributions?.let {
                     Text(
-                        text = "${it.totalLastYear} this year",
+                        text = stringResource(Res.string.dev_profile_contributions_this_year, it.totalLastYear),
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontFamily = FontFamily.Monospace,
                         ),
@@ -76,14 +84,14 @@ fun ContributionCalendarCard(
             when {
                 isLoading && contributions == null -> {
                     Text(
-                        text = "Loading…",
+                        text = stringResource(Res.string.loading),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 contributions == null -> {
                     Text(
-                        text = "Couldn't load contributions.",
+                        text = stringResource(Res.string.dev_profile_contributions_load_failed),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -155,7 +163,7 @@ private fun CalendarGrid(days: List<ContributionDay>) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = "Less",
+            text = stringResource(Res.string.dev_profile_contributions_less),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -168,7 +176,7 @@ private fun CalendarGrid(days: List<ContributionDay>) {
             )
         }
         Text(
-            text = "More",
+            text = stringResource(Res.string.dev_profile_contributions_more),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

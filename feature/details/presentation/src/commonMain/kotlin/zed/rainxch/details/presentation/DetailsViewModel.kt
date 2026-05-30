@@ -82,6 +82,7 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.added_to_favourites
 import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_failure
 import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_success
+import zed.rainxch.githubstore.core.presentation.res.failed_to_load_details
 import zed.rainxch.githubstore.core.presentation.res.failed_to_open_app
 import zed.rainxch.githubstore.core.presentation.res.failed_to_share_link
 import zed.rainxch.githubstore.core.presentation.res.failed_to_uninstall
@@ -2497,7 +2498,7 @@ class DetailsViewModel(
                 _state.value =
                     _state.value.copy(
                         isLoading = false,
-                        errorMessage = t.message ?: "Failed to load details",
+                        errorMessage = t.message ?: getString(Res.string.failed_to_load_details),
                     )
             }
         }

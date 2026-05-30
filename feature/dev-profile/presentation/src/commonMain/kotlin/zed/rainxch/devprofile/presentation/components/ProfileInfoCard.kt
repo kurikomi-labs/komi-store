@@ -45,10 +45,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
 import zed.rainxch.devprofile.presentation.DeveloperProfileAction
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.dev_profile_org_badge
+import zed.rainxch.githubstore.core.presentation.res.followers
+import zed.rainxch.githubstore.core.presentation.res.following
+import zed.rainxch.githubstore.core.presentation.res.profile_repos
 
 private val MentionRegex = Regex("(?<![A-Za-z0-9-])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?)")
 
@@ -170,11 +176,11 @@ private fun MetricsStrip(repos: Int, followers: Int, following: Int) {
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Metric(value = formatCount(repos), label = "Repos", modifier = Modifier.weight(1f))
+        Metric(value = formatCount(repos), label = stringResource(Res.string.profile_repos), modifier = Modifier.weight(1f))
         MetricDivider()
-        Metric(value = formatCount(followers), label = "Followers", modifier = Modifier.weight(1f))
+        Metric(value = formatCount(followers), label = stringResource(Res.string.followers), modifier = Modifier.weight(1f))
         MetricDivider()
-        Metric(value = formatCount(following), label = "Following", modifier = Modifier.weight(1f))
+        Metric(value = formatCount(following), label = stringResource(Res.string.following), modifier = Modifier.weight(1f))
     }
 }
 
@@ -220,7 +226,7 @@ private fun OrgPill() {
         color = MaterialTheme.colorScheme.tertiaryContainer,
     ) {
         Text(
-            text = "Org",
+            text = stringResource(Res.string.dev_profile_org_badge),
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.SemiBold,
             ),

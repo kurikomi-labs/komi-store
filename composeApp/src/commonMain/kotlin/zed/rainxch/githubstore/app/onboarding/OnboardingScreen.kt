@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.ThemeMode
@@ -54,6 +55,23 @@ import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.core.presentation.utils.primaryColor
 import zed.rainxch.core.presentation.vocabulary.CookieShape
 import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.onboarding_get_started
+import zed.rainxch.githubstore.core.presentation.res.onboarding_next
+import zed.rainxch.githubstore.core.presentation.res.onboarding_palette_subtitle
+import zed.rainxch.githubstore.core.presentation.res.onboarding_palette_title
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_allow
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_granted
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_install
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_install_desc
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_notifications
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permission_notifications_desc
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permissions_subtitle
+import zed.rainxch.githubstore.core.presentation.res.onboarding_permissions_title
+import zed.rainxch.githubstore.core.presentation.res.onboarding_signin_button
+import zed.rainxch.githubstore.core.presentation.res.onboarding_signin_subtitle
+import zed.rainxch.githubstore.core.presentation.res.onboarding_skip
+import zed.rainxch.githubstore.core.presentation.res.sign_in_with_github
 
 @Composable
 fun OnboardingRoot(
@@ -155,7 +173,7 @@ private fun StepPalette(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = "Pick your palette",
+            text = stringResource(Res.string.onboarding_palette_title),
             style =
                 MaterialTheme.typography.displaySmall.copy(
                     fontFamily = geist,
@@ -166,7 +184,7 @@ private fun StepPalette(
         )
         Squiggle()
         Text(
-            text = "Four palettes × Light, Dark, AMOLED, System.",
+            text = stringResource(Res.string.onboarding_palette_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -291,7 +309,7 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             )
         }
         Text(
-            text = "Sign in with GitHub",
+            text = stringResource(Res.string.sign_in_with_github),
             style =
                 MaterialTheme.typography.headlineSmall.copy(
                     fontFamily = geist,
@@ -302,14 +320,14 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
         )
         Squiggle()
         Text(
-            text = "Stars, profile, and rate-limit headroom. Optional — skip to browse anonymously.",
+            text = stringResource(Res.string.onboarding_signin_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         GhsButton(
             onClick = { onAction(OnboardingAction.OnSignInClick) },
-            label = "Sign in",
+            label = stringResource(Res.string.onboarding_signin_button),
             variant = GhsButtonVariant.Primary,
         )
     }
@@ -324,7 +342,7 @@ private fun StepPermissions(controller: OnboardingPermissionsController) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "Two quick prompts",
+            text = stringResource(Res.string.onboarding_permissions_title),
             style =
                 MaterialTheme.typography.headlineSmall.copy(
                     fontFamily = geist,
@@ -335,22 +353,22 @@ private fun StepPermissions(controller: OnboardingPermissionsController) {
         )
         Squiggle()
         Text(
-            text = "Both optional. You can flip these later in Tweaks.",
+            text = stringResource(Res.string.onboarding_permissions_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         PermissionRow(
             icon = Icons.Outlined.Notifications,
-            label = "Notifications",
-            description = "Update alerts and install progress",
+            label = stringResource(Res.string.onboarding_permission_notifications),
+            description = stringResource(Res.string.onboarding_permission_notifications_desc),
             isGranted = notificationsGranted,
             onAllowClick = { controller.requestNotifications() },
         )
         PermissionRow(
             icon = Icons.Outlined.DownloadForOffline,
-            label = "Install unknown apps",
-            description = "Required to install APKs outside Play",
+            label = stringResource(Res.string.onboarding_permission_install),
+            description = stringResource(Res.string.onboarding_permission_install_desc),
             isGranted = installSourcesGranted,
             onAllowClick = { controller.requestInstallSources() },
         )
@@ -414,7 +432,7 @@ private fun PermissionRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Granted",
+                    contentDescription = stringResource(Res.string.onboarding_permission_granted),
                     tint = cs.onPrimary,
                     modifier = Modifier.size(20.dp),
                 )
@@ -422,7 +440,7 @@ private fun PermissionRow(
         } else {
             GhsButton(
                 onClick = onAllowClick,
-                label = "Allow",
+                label = stringResource(Res.string.onboarding_permission_allow),
                 variant = GhsButtonVariant.Tonal,
             )
         }
@@ -442,7 +460,7 @@ private fun ActionRow(
         if (state.currentStep == OnboardingStep.SIGN_IN || state.currentStep == OnboardingStep.PERMISSIONS) {
             GhsButton(
                 onClick = { onAction(OnboardingAction.OnSkipStepClick) },
-                label = "Skip",
+                label = stringResource(Res.string.onboarding_skip),
                 variant = GhsButtonVariant.Outline,
             )
         } else {
@@ -450,7 +468,7 @@ private fun ActionRow(
         }
         GhsButton(
             onClick = { onAction(OnboardingAction.OnNextClick) },
-            label = if (state.isLast) "Get started" else "Next",
+            label = if (state.isLast) stringResource(Res.string.onboarding_get_started) else stringResource(Res.string.onboarding_next),
             variant = GhsButtonVariant.Primary,
         )
     }

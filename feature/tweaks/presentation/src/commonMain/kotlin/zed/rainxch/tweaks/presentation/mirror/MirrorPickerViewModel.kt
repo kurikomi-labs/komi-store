@@ -13,10 +13,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.model.MirrorConfig
 import zed.rainxch.core.domain.model.MirrorPreference
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.error_unknown
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_validation_https
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_validation_template
 import kotlin.time.TimeSource
@@ -129,7 +131,7 @@ class MirrorPickerViewModel(
                         if (status in 200..299) TestResult.Success(ms) else TestResult.HttpError(status)
                     }
                     result.exceptionOrNull() is UnresolvedAddressException -> TestResult.DnsFailure
-                    else -> TestResult.Other(result.exceptionOrNull()?.message ?: "Unknown error")
+                    else -> TestResult.Other(result.exceptionOrNull()?.message ?: getString(Res.string.error_unknown))
                 }
             _state.update { it.copy(isTesting = false, testResult = testResult) }
         }
