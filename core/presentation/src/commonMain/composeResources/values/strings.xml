@@ -1345,7 +1345,7 @@
 
     <!-- Developer profile -->
     <string name="dev_profile_contribution_activity">Contribution activity</string>
-    <string name="dev_profile_contributions_this_year">%1$s this year</string>
+    <string name="dev_profile_contributions_this_year">%1$d this year</string>
     <string name="dev_profile_contributions_load_failed">Couldn't load contributions.</string>
     <string name="dev_profile_contributions_less">Less</string>
     <string name="dev_profile_contributions_more">More</string>

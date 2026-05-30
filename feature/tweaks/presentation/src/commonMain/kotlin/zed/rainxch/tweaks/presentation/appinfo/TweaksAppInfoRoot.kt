@@ -55,7 +55,6 @@ import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
-import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_title
@@ -69,6 +68,7 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_privacy_pol
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code_subtitle
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_tagline
+import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_subtitle
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info

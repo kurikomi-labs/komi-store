@@ -1280,7 +1280,7 @@
 
     <!-- Developer profile -->
     <string name="dev_profile_contribution_activity">Activité de contribution</string>
-    <string name="dev_profile_contributions_this_year">%1$s cette année</string>
+    <string name="dev_profile_contributions_this_year">%1$d cette année</string>
     <string name="dev_profile_contributions_load_failed">Impossible de charger les contributions.</string>
     <string name="dev_profile_contributions_less">Moins</string>
     <string name="dev_profile_contributions_more">Plus</string>
