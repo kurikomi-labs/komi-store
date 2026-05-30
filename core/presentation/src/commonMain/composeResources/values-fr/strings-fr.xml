@@ -205,12 +205,12 @@
     <string name="starred_repositories">Dépôts Étoilés</string>
     <string name="repository_starred">Le dépôt est étoilé</string>
     <string name="repository_not_starred">Le dépôt n'est pas étoilé</string>
-    <string name="star_from_github">Vous pouvez ajouter ce dépôt aux favoris sur GitHub</string>
-    <string name="unstar_from_github">Vous pouvez retirer ce dépôt des favoris sur GitHub</string>
+    <string name="star_from_github">Vous pouvez mettre une étoile à ce dépôt sur GitHub</string>
+    <string name="unstar_from_github">Vous pouvez retirer l'étoile de ce dépôt sur GitHub</string>
 
     <string name="sign_in_required">Connexion requise</string>
-    <string name="no_starred_repos">Aucun dépôt favori</string>
-    <string name="sign_in_with_github_for_stars">Connectez-vous avec GitHub pour voir vos dépôts favoris</string>
+    <string name="no_starred_repos">Aucun dépôt étoilé</string>
+    <string name="sign_in_with_github_for_stars">Connectez-vous avec GitHub pour voir vos dépôts étoilés</string>
     <string name="star_repos_hint">Ajoutez des dépôts avec des versions installables sur GitHub pour les voir ici</string>
     <string name="last_synced">Dernière synchronisation</string>
     <string name="just_now">À l'instant</string>
@@ -218,7 +218,7 @@
     <string name="hours_ago">Il y a %1$d h</string>
     <string name="days_ago">Il y a %1$d j</string>
     <string name="dismiss">Fermer</string>
-    <string name="sync_starred_failed">Échec de la synchronisation des dépôts favoris</string>
+    <string name="sync_starred_failed">Échec de la synchronisation des dépôts étoilés</string>
 
 
     <!-- Developer Profile - General -->
@@ -589,7 +589,7 @@
     <string name="match_source_fingerprint">Signature</string>
     <string name="match_source_search">Recherche</string>
     <string name="match_source_manual">Manuel</string>
-    <string name="match_source_starred">Favori</string>
+    <string name="match_source_starred">Étoilés</string>
     <string name="pat_sheet_title">Se connecter avec un Personal Access Token</string>
     <string name="pat_sheet_description">Créez un Personal Access Token (classic ou fine-grained) sur un appareil ayant accès à GitHub, puis collez-le ci-dessous. Nécessite un accès en lecture aux dépôts et à votre profil.</string>
     <string name="pat_open_settings">Ouvrir les paramètres de tokens GitHub</string>
@@ -800,7 +800,7 @@
     <string name="mirror_removed_toast">%1$s n'est plus disponible, basculé vers GitHub direct.</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
-    <string name="add_from_starred_title">Ajouter depuis les favoris</string>
+    <string name="add_from_starred_title">Ajouter depuis les dépôts étoilés</string>
     <string name="announcements_acknowledge">J'ai lu</string>
     <string name="announcements_acknowledged">Pris en compte</string>
     <string name="announcements_category_news">Actualités</string>
@@ -926,20 +926,20 @@
     <string name="releases_unavailable_temporarily">Les releases sont temporairement indisponibles. Réessayez dans un moment.</string>
     <string name="starred_picker_already_tracked">Suivi</string>
     <string name="starred_picker_apk_badge">APK</string>
-    <string name="starred_picker_empty">Aucun dépôt favori. Mettez en favori des dépôts sur GitHub pour les voir ici.</string>
+    <string name="starred_picker_empty">Aucun dépôt étoilé. Mettez une étoile à des dépôts sur GitHub pour les voir ici.</string>
     <string name="starred_picker_filter_show_all">Afficher les dépôts sans release APK</string>
-    <string name="starred_picker_header_counts">%1$d favoris · %2$d publient des APK · %3$d déjà suivis</string>
+    <string name="starred_picker_header_counts">%1$d étoilés · %2$d publient des APK · %3$d déjà suivis</string>
     <string name="starred_picker_no_match">Aucun résultat.</string>
     <string name="starred_picker_progress">Vérification %1$d / %2$d…</string>
     <string name="starred_picker_rate_limited">Limite GitHub atteinte. Reprendre pour continuer la vérification.</string>
     <string name="starred_picker_resume">Reprendre</string>
     <string name="starred_picker_search_hint">Rechercher propriétaire / dépôt / description</string>
-    <string name="starred_picker_sign_in_required">Connectez-vous à GitHub pour voir vos dépôts favoris.</string>
+    <string name="starred_picker_sign_in_required">Connectez-vous à GitHub pour voir vos dépôts étoilés.</string>
     <string name="starred_picker_sort_alphabetical">A → Z</string>
-    <string name="starred_picker_sort_recent">Mis en favori récemment</string>
+    <string name="starred_picker_sort_recent">Étoilés récemment</string>
     <string name="starred_picker_sort_stars">Plus d'étoiles</string>
     <string name="starred_picker_star_dedup_tooltip">Retirer l'étoile sur GitHub n'arrêtera pas le suivi de l'app.</string>
-    <string name="starred_picker_title">Ajouter depuis les favoris</string>
+    <string name="starred_picker_title">Ajouter depuis les dépôts étoilés</string>
     <string name="whats_new_cta_dismiss">Compris</string>
     <string name="whats_new_cta_history">Voir les versions précédentes</string>
     <string name="whats_new_history_empty">Pas encore d'entrée de changelog.</string>
@@ -1029,7 +1029,7 @@
     <string name="feedback_hub_subtitle">Nous lisons chaque retour.</string>
     <string name="home_action_get">Obtenir</string>
     <string name="home_rank_format">n°%1$d</string>
-    <string name="home_section_from_your_stars">Depuis vos favoris</string>
+    <string name="home_section_from_your_stars">Depuis vos étoiles</string>
     <string name="home_section_hot_releases">Versions chaudes</string>
     <string name="home_section_most_popular">Les plus populaires</string>
     <string name="home_section_trending_now">Tendances du moment</string>
