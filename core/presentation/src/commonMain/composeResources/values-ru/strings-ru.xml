@@ -1293,7 +1293,7 @@
     <string name="onboarding_palette_subtitle">Четыре палитры × Светлая, Тёмная, AMOLED, Системная.</string>
     <string name="onboarding_signin_subtitle">Звёзды, профиль и более высокий лимит запросов. Необязательно — пропусти, чтобы просматривать анонимно.</string>
     <string name="onboarding_signin_button">Войти</string>
-    <string name="onboarding_permissions_title">Два быстрых запроса</string>
+    <string name="onboarding_permissions_title">Два быстрых разрешения</string>
     <string name="onboarding_permissions_subtitle">Оба необязательны. Их можно изменить позже в Настройках.</string>
     <string name="onboarding_permission_notifications">Уведомления</string>
     <string name="onboarding_permission_notifications_desc">Оповещения об обновлениях и ход установки</string>
@@ -1307,11 +1307,11 @@
 
     <!-- Developer profile -->
     <string name="dev_profile_contribution_activity">Активность вкладов</string>
-    <string name="dev_profile_contributions_this_year">%1$d за этот год</string>
+    <string name="dev_profile_contributions_this_year">%1$d в этом году</string>
     <string name="dev_profile_contributions_load_failed">Не удалось загрузить вклады.</string>
     <string name="dev_profile_contributions_less">Меньше</string>
     <string name="dev_profile_contributions_more">Больше</string>
-    <string name="dev_profile_org_badge">Орг</string>
+    <string name="dev_profile_org_badge">Организация</string>
 
     <!-- Common -->
     <string name="loading">Загрузка…</string>

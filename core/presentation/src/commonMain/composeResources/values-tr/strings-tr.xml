@@ -1295,7 +1295,7 @@
     <string name="onboarding_palette_subtitle">Dört palet × Aydınlık, Karanlık, AMOLED, Sistem.</string>
     <string name="onboarding_signin_subtitle">Yıldızlar, profil ve daha geniş hız sınırı. İsteğe bağlı — anonim gezinmek için atlayın.</string>
     <string name="onboarding_signin_button">Giriş yap</string>
-    <string name="onboarding_permissions_title">İki hızlı istek</string>
+    <string name="onboarding_permissions_title">İki hızlı izin</string>
     <string name="onboarding_permissions_subtitle">İkisi de isteğe bağlı. Bunları daha sonra İnce Ayarlar'dan değiştirebilirsiniz.</string>
     <string name="onboarding_permission_notifications">Bildirimler</string>
     <string name="onboarding_permission_notifications_desc">Güncelleme uyarıları ve kurulum ilerlemesi</string>
@@ -1309,7 +1309,7 @@
 
     <!-- Developer profile -->
     <string name="dev_profile_contribution_activity">Katkı etkinliği</string>
-    <string name="dev_profile_contributions_this_year">Bu yıl %1$d</string>
+    <string name="dev_profile_contributions_this_year">Bu yıl %1$d katkı</string>
     <string name="dev_profile_contributions_load_failed">Katkılar yüklenemedi.</string>
     <string name="dev_profile_contributions_less">Az</string>
     <string name="dev_profile_contributions_more">Çok</string>
