@@ -1287,4 +1287,42 @@
     <string name="interval_weekly">Еженедельно</string>
     <string name="interval_biweekly">Раз в 2 недели</string>
     <string name="interval_monthly">Каждые 30 дней</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Выбери палитру</string>
+    <string name="onboarding_palette_subtitle">Четыре палитры × Светлая, Тёмная, AMOLED, Системная.</string>
+    <string name="onboarding_signin_subtitle">Звёзды, профиль и более высокий лимит запросов. Необязательно — пропусти, чтобы просматривать анонимно.</string>
+    <string name="onboarding_signin_button">Войти</string>
+    <string name="onboarding_permissions_title">Два быстрых запроса</string>
+    <string name="onboarding_permissions_subtitle">Оба необязательны. Их можно изменить позже в Настройках.</string>
+    <string name="onboarding_permission_notifications">Уведомления</string>
+    <string name="onboarding_permission_notifications_desc">Оповещения об обновлениях и ход установки</string>
+    <string name="onboarding_permission_install">Установка неизвестных приложений</string>
+    <string name="onboarding_permission_install_desc">Нужно для установки APK вне Play</string>
+    <string name="onboarding_permission_granted">Предоставлено</string>
+    <string name="onboarding_permission_allow">Разрешить</string>
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_get_started">Начать</string>
+    <string name="onboarding_next">Далее</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Активность вкладов</string>
+    <string name="dev_profile_contributions_this_year">%1$d за этот год</string>
+    <string name="dev_profile_contributions_load_failed">Не удалось загрузить вклады.</string>
+    <string name="dev_profile_contributions_less">Меньше</string>
+    <string name="dev_profile_contributions_more">Больше</string>
+    <string name="dev_profile_org_badge">Орг</string>
+
+    <!-- Common -->
+    <string name="loading">Загрузка…</string>
+    <string name="failed_to_load">Не удалось загрузить</string>
+    <string name="failed_to_load_details">Не удалось загрузить детали</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">Не удалось загрузить лицензии.</string>
+    <string name="tweaks_app_info_website">Веб-сайт</string>
+    <string name="tweaks_clear_downloads_failed">Не удалось очистить загрузки</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Введи корректное имя хоста (например, forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">Не удалось сохранить хост. Попробуй снова.</string>
+    <string name="tweaks_custom_forge_remove_failed">Не удалось удалить хост. Попробуй снова.</string>
 </resources>

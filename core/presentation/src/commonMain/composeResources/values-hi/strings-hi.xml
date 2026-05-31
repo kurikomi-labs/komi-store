@@ -1294,4 +1294,42 @@
     <string name="interval_weekly">साप्ताहिक</string>
     <string name="interval_biweekly">हर 2 सप्ताह</string>
     <string name="interval_monthly">हर 30 दिन</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">अपना पैलेट चुनें</string>
+    <string name="onboarding_palette_subtitle">चार पैलेट × हल्का, डार्क, AMOLED, सिस्टम।</string>
+    <string name="onboarding_signin_subtitle">स्टार्स, प्रोफ़ाइल और ज़्यादा रेट-लिमिट हेडरूम। वैकल्पिक — गुमनाम रूप से ब्राउज़ करने के लिए छोड़ें।</string>
+    <string name="onboarding_signin_button">साइन इन</string>
+    <string name="onboarding_permissions_title">दो छोटे प्रॉम्प्ट</string>
+    <string name="onboarding_permissions_subtitle">दोनों वैकल्पिक हैं। इन्हें बाद में ट्वीक्स में बदल सकते हैं।</string>
+    <string name="onboarding_permission_notifications">सूचनाएँ</string>
+    <string name="onboarding_permission_notifications_desc">अपडेट अलर्ट और इंस्टॉल प्रगति</string>
+    <string name="onboarding_permission_install">अज्ञात ऐप्स इंस्टॉल करें</string>
+    <string name="onboarding_permission_install_desc">Play के बाहर APK इंस्टॉल करने के लिए आवश्यक</string>
+    <string name="onboarding_permission_granted">स्वीकृत</string>
+    <string name="onboarding_permission_allow">अनुमति दें</string>
+    <string name="onboarding_skip">छोड़ें</string>
+    <string name="onboarding_get_started">शुरू करें</string>
+    <string name="onboarding_next">आगे</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">योगदान गतिविधि</string>
+    <string name="dev_profile_contributions_this_year">इस साल %1$d</string>
+    <string name="dev_profile_contributions_load_failed">योगदान लोड नहीं हो सके।</string>
+    <string name="dev_profile_contributions_less">कम</string>
+    <string name="dev_profile_contributions_more">ज़्यादा</string>
+    <string name="dev_profile_org_badge">संगठन</string>
+
+    <!-- Common -->
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="failed_to_load">लोड करने में विफल</string>
+    <string name="failed_to_load_details">विवरण लोड करने में विफल</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">लाइसेंस लोड नहीं हो सके।</string>
+    <string name="tweaks_app_info_website">वेबसाइट</string>
+    <string name="tweaks_clear_downloads_failed">डाउनलोड साफ़ करने में विफल</string>
+    <string name="tweaks_custom_forge_invalid_hostname">मान्य होस्टनेम दर्ज करें (जैसे forgejo.example.com)।</string>
+    <string name="tweaks_custom_forge_save_failed">होस्ट सहेजा नहीं जा सका। पुनः प्रयास करें।</string>
+    <string name="tweaks_custom_forge_remove_failed">होस्ट हटाया नहीं जा सका। पुनः प्रयास करें।</string>
 </resources>

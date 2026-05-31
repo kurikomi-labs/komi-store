@@ -1317,4 +1317,42 @@
     <string name="interval_weekly">أسبوعيًا</string>
     <string name="interval_biweekly">كل أسبوعين</string>
     <string name="interval_monthly">كل 30 يومًا</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">اختر لوحة ألوانك</string>
+    <string name="onboarding_palette_subtitle">أربع لوحات ألوان × فاتح، داكن، AMOLED، النظام.</string>
+    <string name="onboarding_signin_subtitle">نجومك وملفك الشخصي ومتّسع أكبر في حد الطلبات. اختياري — تخطَّ لتتصفّح كمجهول.</string>
+    <string name="onboarding_signin_button">تسجيل الدخول</string>
+    <string name="onboarding_permissions_title">طلبان سريعان</string>
+    <string name="onboarding_permissions_subtitle">كلاهما اختياري. يمكنك تغييرهما لاحقاً من التعديلات.</string>
+    <string name="onboarding_permission_notifications">الإشعارات</string>
+    <string name="onboarding_permission_notifications_desc">تنبيهات التحديث وتقدّم التثبيت</string>
+    <string name="onboarding_permission_install">تثبيت التطبيقات غير المعروفة</string>
+    <string name="onboarding_permission_install_desc">مطلوب لتثبيت ملفات APK خارج Play</string>
+    <string name="onboarding_permission_granted">ممنوح</string>
+    <string name="onboarding_permission_allow">السماح</string>
+    <string name="onboarding_skip">تخطّي</string>
+    <string name="onboarding_get_started">لنبدأ</string>
+    <string name="onboarding_next">التالي</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">نشاط المساهمات</string>
+    <string name="dev_profile_contributions_this_year">%1$d هذا العام</string>
+    <string name="dev_profile_contributions_load_failed">تعذّر تحميل المساهمات.</string>
+    <string name="dev_profile_contributions_less">أقل</string>
+    <string name="dev_profile_contributions_more">أكثر</string>
+    <string name="dev_profile_org_badge">منظمة</string>
+
+    <!-- Common -->
+    <string name="loading">جارٍ التحميل…</string>
+    <string name="failed_to_load">فشل التحميل</string>
+    <string name="failed_to_load_details">فشل تحميل التفاصيل</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">تعذّر تحميل التراخيص.</string>
+    <string name="tweaks_app_info_website">الموقع الإلكتروني</string>
+    <string name="tweaks_clear_downloads_failed">فشل مسح التنزيلات</string>
+    <string name="tweaks_custom_forge_invalid_hostname">أدخل اسم مضيف صالحاً (مثل forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">تعذّر حفظ المضيف. حاول مرة أخرى.</string>
+    <string name="tweaks_custom_forge_remove_failed">تعذّر إزالة المضيف. حاول مرة أخرى.</string>
 </resources>

@@ -1287,4 +1287,42 @@
     <string name="interval_weekly">Co tydzień</string>
     <string name="interval_biweekly">Co 2 tygodnie</string>
     <string name="interval_monthly">Co 30 dni</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Wybierz swoją paletę</string>
+    <string name="onboarding_palette_subtitle">Cztery palety × Jasny, Ciemny, AMOLED, Systemowy.</string>
+    <string name="onboarding_signin_subtitle">Gwiazdki, profil i wyższe limity zapytań. Opcjonalne — pomiń, aby przeglądać anonimowo.</string>
+    <string name="onboarding_signin_button">Zaloguj się</string>
+    <string name="onboarding_permissions_title">Dwa szybkie pytania</string>
+    <string name="onboarding_permissions_subtitle">Oba opcjonalne. Możesz je później zmienić w Ustawieniach.</string>
+    <string name="onboarding_permission_notifications">Powiadomienia</string>
+    <string name="onboarding_permission_notifications_desc">Alerty o aktualizacjach i postęp instalacji</string>
+    <string name="onboarding_permission_install">Instalowanie nieznanych aplikacji</string>
+    <string name="onboarding_permission_install_desc">Wymagane do instalacji APK spoza Play</string>
+    <string name="onboarding_permission_granted">Przyznano</string>
+    <string name="onboarding_permission_allow">Zezwól</string>
+    <string name="onboarding_skip">Pomiń</string>
+    <string name="onboarding_get_started">Rozpocznij</string>
+    <string name="onboarding_next">Dalej</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Aktywność wkładu</string>
+    <string name="dev_profile_contributions_this_year">%1$d w tym roku</string>
+    <string name="dev_profile_contributions_load_failed">Nie udało się załadować wkładu.</string>
+    <string name="dev_profile_contributions_less">Mniej</string>
+    <string name="dev_profile_contributions_more">Więcej</string>
+    <string name="dev_profile_org_badge">Org</string>
+
+    <!-- Common -->
+    <string name="loading">Ładowanie…</string>
+    <string name="failed_to_load">Nie udało się załadować</string>
+    <string name="failed_to_load_details">Nie udało się załadować szczegółów</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">Nie udało się załadować licencji.</string>
+    <string name="tweaks_app_info_website">Strona internetowa</string>
+    <string name="tweaks_clear_downloads_failed">Nie udało się wyczyścić pobrań</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Wpisz prawidłową nazwę hosta (np. forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">Nie można zapisać hosta. Spróbuj ponownie.</string>
+    <string name="tweaks_custom_forge_remove_failed">Nie można usunąć hosta. Spróbuj ponownie.</string>
 </resources>

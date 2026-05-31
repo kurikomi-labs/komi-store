@@ -1278,4 +1278,42 @@
     <string name="interval_weekly">매주</string>
     <string name="interval_biweekly">2주마다</string>
     <string name="interval_monthly">30일마다</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">팔레트를 선택하세요</string>
+    <string name="onboarding_palette_subtitle">4가지 팔레트 × 라이트, 다크, AMOLED, 시스템.</string>
+    <string name="onboarding_signin_subtitle">별표, 프로필, 그리고 넉넉한 요청 한도. 선택 사항이며 — 건너뛰면 익명으로 둘러볼 수 있습니다.</string>
+    <string name="onboarding_signin_button">로그인</string>
+    <string name="onboarding_permissions_title">두 가지 간단한 권한 요청</string>
+    <string name="onboarding_permissions_subtitle">둘 다 선택 사항입니다. 나중에 조정에서 변경할 수 있습니다.</string>
+    <string name="onboarding_permission_notifications">알림</string>
+    <string name="onboarding_permission_notifications_desc">업데이트 알림 및 설치 진행 상황</string>
+    <string name="onboarding_permission_install">알 수 없는 앱 설치</string>
+    <string name="onboarding_permission_install_desc">Play 외부에서 APK를 설치하려면 필요합니다</string>
+    <string name="onboarding_permission_granted">허용됨</string>
+    <string name="onboarding_permission_allow">허용</string>
+    <string name="onboarding_skip">건너뛰기</string>
+    <string name="onboarding_get_started">시작하기</string>
+    <string name="onboarding_next">다음</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">기여 활동</string>
+    <string name="dev_profile_contributions_this_year">올해 %1$d회</string>
+    <string name="dev_profile_contributions_load_failed">기여 내역을 불러올 수 없습니다.</string>
+    <string name="dev_profile_contributions_less">적음</string>
+    <string name="dev_profile_contributions_more">많음</string>
+    <string name="dev_profile_org_badge">조직</string>
+
+    <!-- Common -->
+    <string name="loading">불러오는 중…</string>
+    <string name="failed_to_load">불러오지 못했습니다</string>
+    <string name="failed_to_load_details">세부 정보를 불러오지 못했습니다</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">라이선스를 불러올 수 없습니다.</string>
+    <string name="tweaks_app_info_website">웹사이트</string>
+    <string name="tweaks_clear_downloads_failed">다운로드를 지우지 못했습니다</string>
+    <string name="tweaks_custom_forge_invalid_hostname">유효한 호스트명을 입력하세요 (예: forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">호스트를 저장할 수 없습니다. 다시 시도하세요.</string>
+    <string name="tweaks_custom_forge_remove_failed">호스트를 제거할 수 없습니다. 다시 시도하세요.</string>
 </resources>

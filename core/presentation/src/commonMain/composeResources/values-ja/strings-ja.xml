@@ -1248,4 +1248,42 @@
     <string name="interval_weekly">毎週</string>
     <string name="interval_biweekly">2 週間ごと</string>
     <string name="interval_monthly">30 日ごと</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">パレットを選択</string>
+    <string name="onboarding_palette_subtitle">4 つのパレット × ライト、ダーク、AMOLED、システム。</string>
+    <string name="onboarding_signin_subtitle">スター、プロフィール、レート制限の余裕。任意です — スキップして匿名で閲覧できます。</string>
+    <string name="onboarding_signin_button">サインイン</string>
+    <string name="onboarding_permissions_title">2 つの簡単な確認</string>
+    <string name="onboarding_permissions_subtitle">どちらも任意です。あとから「調整」で変更できます。</string>
+    <string name="onboarding_permission_notifications">通知</string>
+    <string name="onboarding_permission_notifications_desc">更新の通知とインストールの進捗</string>
+    <string name="onboarding_permission_install">提供元不明のアプリのインストール</string>
+    <string name="onboarding_permission_install_desc">Play 以外の APK をインストールするのに必要</string>
+    <string name="onboarding_permission_granted">許可済み</string>
+    <string name="onboarding_permission_allow">許可</string>
+    <string name="onboarding_skip">スキップ</string>
+    <string name="onboarding_get_started">始める</string>
+    <string name="onboarding_next">次へ</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">コントリビューション</string>
+    <string name="dev_profile_contributions_this_year">今年 %1$d 件</string>
+    <string name="dev_profile_contributions_load_failed">コントリビューションを読み込めませんでした。</string>
+    <string name="dev_profile_contributions_less">少ない</string>
+    <string name="dev_profile_contributions_more">多い</string>
+    <string name="dev_profile_org_badge">組織</string>
+
+    <!-- Common -->
+    <string name="loading">読み込み中…</string>
+    <string name="failed_to_load">読み込みに失敗しました</string>
+    <string name="failed_to_load_details">詳細の読み込みに失敗しました</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">ライセンスを読み込めませんでした。</string>
+    <string name="tweaks_app_info_website">ウェブサイト</string>
+    <string name="tweaks_clear_downloads_failed">ダウンロードの消去に失敗しました</string>
+    <string name="tweaks_custom_forge_invalid_hostname">有効なホスト名を入力してください（例: forgejo.example.com）。</string>
+    <string name="tweaks_custom_forge_save_failed">ホストを保存できませんでした。再試行してください。</string>
+    <string name="tweaks_custom_forge_remove_failed">ホストを削除できませんでした。再試行してください。</string>
 </resources>

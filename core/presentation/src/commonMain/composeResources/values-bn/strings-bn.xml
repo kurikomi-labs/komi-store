@@ -1279,4 +1279,42 @@
     <string name="interval_weekly">সাপ্তাহিক</string>
     <string name="interval_biweekly">প্রতি 2 সপ্তাহে</string>
     <string name="interval_monthly">প্রতি 30 দিনে</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">আপনার প্যালেট বেছে নিন</string>
+    <string name="onboarding_palette_subtitle">চারটি প্যালেট × উজ্জ্বল, অন্ধকার, AMOLED, সিস্টেম।</string>
+    <string name="onboarding_signin_subtitle">স্টার, প্রোফাইল এবং বাড়তি রেট লিমিট। ঐচ্ছিক — বাদ দিয়ে বেনামে ব্রাউজ করুন।</string>
+    <string name="onboarding_signin_button">সাইন ইন</string>
+    <string name="onboarding_permissions_title">দুটি দ্রুত অনুরোধ</string>
+    <string name="onboarding_permissions_subtitle">দুটিই ঐচ্ছিক। আপনি এগুলো পরে টুইকস থেকে বদলাতে পারবেন।</string>
+    <string name="onboarding_permission_notifications">বিজ্ঞপ্তি</string>
+    <string name="onboarding_permission_notifications_desc">আপডেট সতর্কতা এবং ইনস্টলের অগ্রগতি</string>
+    <string name="onboarding_permission_install">অজানা অ্যাপ ইনস্টল</string>
+    <string name="onboarding_permission_install_desc">Play-এর বাইরে APK ইনস্টল করতে প্রয়োজন</string>
+    <string name="onboarding_permission_granted">অনুমতি দেওয়া হয়েছে</string>
+    <string name="onboarding_permission_allow">অনুমতি দিন</string>
+    <string name="onboarding_skip">বাদ দিন</string>
+    <string name="onboarding_get_started">শুরু করুন</string>
+    <string name="onboarding_next">পরবর্তী</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">অবদানের কার্যকলাপ</string>
+    <string name="dev_profile_contributions_this_year">এ বছর %1$d টি</string>
+    <string name="dev_profile_contributions_load_failed">অবদান লোড করা যায়নি।</string>
+    <string name="dev_profile_contributions_less">কম</string>
+    <string name="dev_profile_contributions_more">বেশি</string>
+    <string name="dev_profile_org_badge">প্রতিষ্ঠান</string>
+
+    <!-- Common -->
+    <string name="loading">লোড হচ্ছে…</string>
+    <string name="failed_to_load">লোড করতে ব্যর্থ</string>
+    <string name="failed_to_load_details">বিস্তারিত লোড করতে ব্যর্থ</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">লাইসেন্স লোড করা যায়নি।</string>
+    <string name="tweaks_app_info_website">ওয়েবসাইট</string>
+    <string name="tweaks_clear_downloads_failed">ডাউনলোড মুছতে ব্যর্থ</string>
+    <string name="tweaks_custom_forge_invalid_hostname">একটি বৈধ হোস্টনেম দিন (যেমন forgejo.example.com)।</string>
+    <string name="tweaks_custom_forge_save_failed">হোস্ট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="tweaks_custom_forge_remove_failed">হোস্ট সরানো যায়নি। আবার চেষ্টা করুন।</string>
 </resources>

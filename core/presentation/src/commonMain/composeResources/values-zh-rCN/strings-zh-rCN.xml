@@ -1251,4 +1251,42 @@
     <string name="interval_weekly">每周</string>
     <string name="interval_biweekly">每 2 周</string>
     <string name="interval_monthly">每 30 天</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">选择你的配色</string>
+    <string name="onboarding_palette_subtitle">四种配色 × 浅色、深色、AMOLED、跟随系统。</string>
+    <string name="onboarding_signin_subtitle">星标、个人资料，以及更高的请求限额。可选 — 跳过即可匿名浏览。</string>
+    <string name="onboarding_signin_button">登录</string>
+    <string name="onboarding_permissions_title">两个快速授权</string>
+    <string name="onboarding_permissions_subtitle">两者均为可选。你随时可以在“调整”中更改。</string>
+    <string name="onboarding_permission_notifications">通知</string>
+    <string name="onboarding_permission_notifications_desc">更新提醒与安装进度</string>
+    <string name="onboarding_permission_install">安装未知应用</string>
+    <string name="onboarding_permission_install_desc">在 Play 之外安装 APK 所必需</string>
+    <string name="onboarding_permission_granted">已授权</string>
+    <string name="onboarding_permission_allow">允许</string>
+    <string name="onboarding_skip">跳过</string>
+    <string name="onboarding_get_started">开始使用</string>
+    <string name="onboarding_next">下一步</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">贡献活动</string>
+    <string name="dev_profile_contributions_this_year">今年 %1$d 次</string>
+    <string name="dev_profile_contributions_load_failed">无法加载贡献记录。</string>
+    <string name="dev_profile_contributions_less">较少</string>
+    <string name="dev_profile_contributions_more">较多</string>
+    <string name="dev_profile_org_badge">组织</string>
+
+    <!-- Common -->
+    <string name="loading">正在加载…</string>
+    <string name="failed_to_load">加载失败</string>
+    <string name="failed_to_load_details">加载详情失败</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">无法加载许可证。</string>
+    <string name="tweaks_app_info_website">网站</string>
+    <string name="tweaks_clear_downloads_failed">清除下载失败</string>
+    <string name="tweaks_custom_forge_invalid_hostname">请输入有效的主机名（例如 forgejo.example.com）。</string>
+    <string name="tweaks_custom_forge_save_failed">无法保存该主机。请重试。</string>
+    <string name="tweaks_custom_forge_remove_failed">无法移除该主机。请重试。</string>
 </resources>

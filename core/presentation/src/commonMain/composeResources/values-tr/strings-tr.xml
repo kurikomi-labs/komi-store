@@ -1289,4 +1289,42 @@
     <string name="interval_weekly">Haftalık</string>
     <string name="interval_biweekly">2 haftada bir</string>
     <string name="interval_monthly">30 günde bir</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Paletini seç</string>
+    <string name="onboarding_palette_subtitle">Dört palet × Aydınlık, Karanlık, AMOLED, Sistem.</string>
+    <string name="onboarding_signin_subtitle">Yıldızlar, profil ve daha geniş hız sınırı. İsteğe bağlı — anonim gezinmek için atlayın.</string>
+    <string name="onboarding_signin_button">Giriş yap</string>
+    <string name="onboarding_permissions_title">İki hızlı istek</string>
+    <string name="onboarding_permissions_subtitle">İkisi de isteğe bağlı. Bunları daha sonra İnce Ayarlar'dan değiştirebilirsiniz.</string>
+    <string name="onboarding_permission_notifications">Bildirimler</string>
+    <string name="onboarding_permission_notifications_desc">Güncelleme uyarıları ve kurulum ilerlemesi</string>
+    <string name="onboarding_permission_install">Bilinmeyen uygulamaları yükle</string>
+    <string name="onboarding_permission_install_desc">Play dışındaki APK'ları yüklemek için gerekli</string>
+    <string name="onboarding_permission_granted">Verildi</string>
+    <string name="onboarding_permission_allow">İzin ver</string>
+    <string name="onboarding_skip">Atla</string>
+    <string name="onboarding_get_started">Başla</string>
+    <string name="onboarding_next">İleri</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Katkı etkinliği</string>
+    <string name="dev_profile_contributions_this_year">Bu yıl %1$d</string>
+    <string name="dev_profile_contributions_load_failed">Katkılar yüklenemedi.</string>
+    <string name="dev_profile_contributions_less">Az</string>
+    <string name="dev_profile_contributions_more">Çok</string>
+    <string name="dev_profile_org_badge">Kuruluş</string>
+
+    <!-- Common -->
+    <string name="loading">Yükleniyor…</string>
+    <string name="failed_to_load">Yükleme başarısız</string>
+    <string name="failed_to_load_details">Ayrıntılar yüklenemedi</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">Lisanslar yüklenemedi.</string>
+    <string name="tweaks_app_info_website">Web sitesi</string>
+    <string name="tweaks_clear_downloads_failed">İndirmeler temizlenemedi</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Geçerli bir host adı girin (ör. forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">Host kaydedilemedi. Tekrar deneyin.</string>
+    <string name="tweaks_custom_forge_remove_failed">Host kaldırılamadı. Tekrar deneyin.</string>
 </resources>

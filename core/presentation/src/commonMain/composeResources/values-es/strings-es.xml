@@ -1258,4 +1258,42 @@
     <string name="interval_weekly">Semanalmente</string>
     <string name="interval_biweekly">Cada 2 semanas</string>
     <string name="interval_monthly">Cada 30 días</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_palette_title">Elige tu paleta</string>
+    <string name="onboarding_palette_subtitle">Cuatro paletas × Claro, Oscuro, AMOLED, Sistema.</string>
+    <string name="onboarding_signin_subtitle">Estrellas, perfil y un margen extra en el límite de solicitudes. Opcional — omítelo para navegar de forma anónima.</string>
+    <string name="onboarding_signin_button">Iniciar sesión</string>
+    <string name="onboarding_permissions_title">Dos permisos rápidos</string>
+    <string name="onboarding_permissions_subtitle">Ambos son opcionales. Puedes cambiarlos más tarde en Ajustes.</string>
+    <string name="onboarding_permission_notifications">Notificaciones</string>
+    <string name="onboarding_permission_notifications_desc">Avisos de actualización y progreso de instalación</string>
+    <string name="onboarding_permission_install">Instalar apps desconocidas</string>
+    <string name="onboarding_permission_install_desc">Necesario para instalar APK fuera de Play</string>
+    <string name="onboarding_permission_granted">Concedido</string>
+    <string name="onboarding_permission_allow">Permitir</string>
+    <string name="onboarding_skip">Omitir</string>
+    <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_next">Siguiente</string>
+
+    <!-- Developer profile -->
+    <string name="dev_profile_contribution_activity">Actividad de contribuciones</string>
+    <string name="dev_profile_contributions_this_year">%1$d este año</string>
+    <string name="dev_profile_contributions_load_failed">No se pudieron cargar las contribuciones.</string>
+    <string name="dev_profile_contributions_less">Menos</string>
+    <string name="dev_profile_contributions_more">Más</string>
+    <string name="dev_profile_org_badge">Org</string>
+
+    <!-- Common -->
+    <string name="loading">Cargando…</string>
+    <string name="failed_to_load">Error al cargar</string>
+    <string name="failed_to_load_details">Error al cargar los detalles</string>
+
+    <!-- Tweaks: licenses / app info / custom forges -->
+    <string name="tweaks_licenses_load_failed">No se pudieron cargar las licencias.</string>
+    <string name="tweaks_app_info_website">Sitio web</string>
+    <string name="tweaks_clear_downloads_failed">No se pudieron borrar las descargas</string>
+    <string name="tweaks_custom_forge_invalid_hostname">Introduce un hostname válido (p. ej. forgejo.example.com).</string>
+    <string name="tweaks_custom_forge_save_failed">No se pudo guardar el host. Inténtalo de nuevo.</string>
+    <string name="tweaks_custom_forge_remove_failed">No se pudo eliminar el host. Inténtalo de nuevo.</string>
 </resources>
