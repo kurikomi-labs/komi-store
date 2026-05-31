@@ -6,12 +6,16 @@ import java.awt.Toolkit
 import java.util.concurrent.atomic.AtomicBoolean
 
 object A11yCrashGuard {
+    private const val COMPOSE_ACCESSIBILITY_ENABLE = "compose.accessibility.enable"
+
     private val warnedEdt = AtomicBoolean(false)
     private val warnedUncaught = AtomicBoolean(false)
 
     fun install() {
         val osName = System.getProperty("os.name")?.lowercase().orEmpty()
         if (!osName.contains("mac")) return
+
+        disableComposeAccessibilityBridgeByDefault()
 
         Toolkit.getDefaultToolkit().systemEventQueue.push(FilteringEventQueue())
 
@@ -30,6 +34,18 @@ object A11yCrashGuard {
             previous?.uncaughtException(thread, throwable)
                 ?: throwable.printStackTrace(System.err)
         }
+    }
+
+    private fun disableComposeAccessibilityBridgeByDefault() {
+        if (System.getProperty(COMPOSE_ACCESSIBILITY_ENABLE) != null) return
+
+        // Compose MP 1.10.x can still crash on macOS when the AWT accessibility bridge
+        // queries detached Compose components. Keep it off unless a user explicitly opts in.
+        System.setProperty(COMPOSE_ACCESSIBILITY_ENABLE, "false")
+        System.err.println(
+            "[A11yCrashGuard] Disabled Compose accessibility bridge on macOS " +
+                "(known issue, see GitHub-Store#330 / #639 / #640).",
+        )
     }
 
     private fun isComposeA11yNpe(throwable: Throwable): Boolean {
