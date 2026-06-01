@@ -20,6 +20,9 @@ import zed.rainxch.home.presentation.HomeViewModel
 import zed.rainxch.home.presentation.categorylist.CategoryListViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
+import zed.rainxch.repopages.presentation.issuedetail.IssueDetailViewModel
+import zed.rainxch.repopages.presentation.issues.IssuesViewModel
+import zed.rainxch.repopages.presentation.security.SecurityViewModel
 import zed.rainxch.search.presentation.SearchViewModel
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposViewModel
@@ -88,6 +91,28 @@ val viewModelsModule =
             )
         }
         viewModelOf(::DeveloperProfileViewModel)
+        viewModel { params ->
+            IssuesViewModel(
+                owner = params[0],
+                repo = params[1],
+                repository = get(),
+            )
+        }
+        viewModel { params ->
+            IssueDetailViewModel(
+                owner = params[0],
+                repo = params[1],
+                number = params[2],
+                repository = get(),
+            )
+        }
+        viewModel { params ->
+            SecurityViewModel(
+                owner = params[0],
+                repo = params[1],
+                repository = get(),
+            )
+        }
         viewModelOf(::FavouritesViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RecentlyViewedViewModel)

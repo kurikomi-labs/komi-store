@@ -112,6 +112,8 @@ import zed.rainxch.details.presentation.components.sections.releaseChannel
 import zed.rainxch.details.presentation.components.sections.whatsNew
 import zed.rainxch.details.presentation.components.states.ErrorState
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.repo_pages_details_issues_button
+import zed.rainxch.githubstore.core.presentation.res.repo_pages_details_security_button
 import zed.rainxch.githubstore.core.presentation.res.add_to_favourites
 import zed.rainxch.githubstore.core.presentation.res.cancel
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
@@ -157,6 +159,8 @@ fun DetailsRoot(
     onNavigateToSearchByPlatform: (DiscoveryPlatform) -> Unit,
     onNavigateToAbout: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
     onNavigateToWhatsNew: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
+    onNavigateToIssues: (owner: String, repo: String) -> Unit,
+    onNavigateToSecurity: (owner: String, repo: String) -> Unit,
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -257,6 +261,12 @@ fun DetailsRoot(
                     repo.sourceHost,
                 )
             }
+        },
+        onOpenIssues = state.repository?.takeIf { it.sourceHost == null }?.let { repo ->
+            { onNavigateToIssues(repo.owner.login, repo.name) }
+        },
+        onOpenSecurity = state.repository?.takeIf { it.sourceHost == null }?.let { repo ->
+            { onNavigateToSecurity(repo.owner.login, repo.name) }
         },
     )
 
@@ -498,6 +508,8 @@ fun DetailsScreen(
     snackbarHostState: SnackbarHostState,
     onReadMoreAbout: (() -> Unit)? = null,
     onReadMoreWhatsNew: (() -> Unit)? = null,
+    onOpenIssues: (() -> Unit)? = null,
+    onOpenSecurity: (() -> Unit)? = null,
 ) {
     Scaffold(
         topBar = {
@@ -610,6 +622,15 @@ fun DetailsScreen(
                         state = state,
                         onAction = onAction,
                     )
+
+                    if (onOpenIssues != null || onOpenSecurity != null) {
+                        item(key = "repo_pages_actions") {
+                            RepoPagesActionRow(
+                                onOpenIssues = onOpenIssues,
+                                onOpenSecurity = onOpenSecurity,
+                            )
+                        }
+                    }
 
                     if (state.isComingFromUpdate) {
                         state.selectedRelease?.let { release ->
@@ -929,5 +950,33 @@ private fun Preview() {
             onAction = {},
             snackbarHostState = SnackbarHostState(),
         )
+    }
+}
+
+@Composable
+private fun RepoPagesActionRow(
+    onOpenIssues: (() -> Unit)?,
+    onOpenSecurity: (() -> Unit)?,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        onOpenIssues?.let { open ->
+            GhsButton(
+                onClick = open,
+                label = stringResource(Res.string.repo_pages_details_issues_button),
+                variant = GhsButtonVariant.Tonal,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        onOpenSecurity?.let { open ->
+            GhsButton(
+                onClick = open,
+                label = stringResource(Res.string.repo_pages_details_security_button),
+                variant = GhsButtonVariant.Tonal,
+                modifier = Modifier.weight(1f),
+            )
+        }
     }
 }

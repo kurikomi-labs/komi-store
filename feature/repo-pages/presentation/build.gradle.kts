@@ -1,0 +1,28 @@
+plugins {
+    alias(libs.plugins.convention.cmp.feature)
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.collections.immutable)
+
+                implementation(projects.core.domain)
+                implementation(projects.core.presentation)
+                implementation(projects.feature.repoPages.domain)
+                implementation(projects.feature.details.presentation)
+
+                implementation(libs.markdown.renderer)
+                implementation(libs.markdown.renderer.coil3)
+                implementation(libs.bundles.landscapist)
+                implementation(libs.coil3.compose)
+                implementation(libs.coil3.svg)
+
+                implementation(libs.androidx.compose.ui.tooling.preview)
+                implementation(libs.jetbrains.compose.components.resources)
+            }
+        }
+    }
+}

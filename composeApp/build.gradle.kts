@@ -48,6 +48,10 @@ kotlin {
             implementation(projects.feature.devProfile.data)
             implementation(projects.feature.devProfile.presentation)
 
+            implementation(projects.feature.repoPages.domain)
+            implementation(projects.feature.repoPages.data)
+            implementation(projects.feature.repoPages.presentation)
+
             implementation(projects.feature.favourites.domain)
             implementation(projects.feature.favourites.data)
             implementation(projects.feature.favourites.presentation)

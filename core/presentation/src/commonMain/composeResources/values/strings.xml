@@ -1363,4 +1363,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">Enter a valid hostname (e.g. forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">Couldn't save the host. Try again.</string>
     <string name="tweaks_custom_forge_remove_failed">Couldn't remove the host. Try again.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">Issues</string>
+    <string name="repo_pages_issues_filter_open">Open</string>
+    <string name="repo_pages_issues_filter_closed">Closed</string>
+    <string name="repo_pages_issues_empty_open">No open issues.</string>
+    <string name="repo_pages_issues_empty_closed">No closed issues.</string>
+    <string name="repo_pages_issue_comments_section">Comments</string>
+    <string name="repo_pages_issue_no_body">No description provided.</string>
+    <string name="repo_pages_issue_opened_by">opened by %1$s</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">Security</string>
+    <string name="repo_pages_security_advisories_header">Security advisories</string>
+    <string name="repo_pages_security_no_advisories">No published advisories.</string>
+    <string name="repo_pages_security_policy_header">Security policy</string>
+    <string name="repo_pages_security_no_policy">No security policy published.</string>
+    <string name="repo_pages_severity_critical">Critical</string>
+    <string name="repo_pages_severity_high">High</string>
+    <string name="repo_pages_severity_medium">Medium</string>
+    <string name="repo_pages_severity_low">Low</string>
+    <string name="repo_pages_severity_unknown">Unknown</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">Issues</string>
+    <string name="repo_pages_details_security_button">Security</string>
 </resources>

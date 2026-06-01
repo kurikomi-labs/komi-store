@@ -68,6 +68,9 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_updates
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.profile.presentation.ProfileRoot
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
+import zed.rainxch.repopages.presentation.issuedetail.IssueDetailRoot
+import zed.rainxch.repopages.presentation.issues.IssuesRoot
+import zed.rainxch.repopages.presentation.security.SecurityRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
@@ -443,6 +446,16 @@ fun AppNavigation(
                                             ),
                                         )
                                     },
+                                    onNavigateToIssues = { owner, repo ->
+                                        navController.navigate(
+                                            GithubStoreGraph.RepoIssuesScreen(owner = owner, repo = repo),
+                                        )
+                                    },
+                                    onNavigateToSecurity = { owner, repo ->
+                                        navController.navigate(
+                                            GithubStoreGraph.RepoSecurityScreen(owner = owner, repo = repo),
+                                        )
+                                    },
                                     viewModel =
                                         koinViewModel {
                                             parametersOf(
@@ -541,6 +554,43 @@ fun AppNavigation(
                                 owner = args.owner,
                                 repo = args.repo,
                                 sourceHost = args.sourceHost,
+                                onNavigateBack = { navController.navigateUp() },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.RepoIssuesScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<GithubStoreGraph.RepoIssuesScreen>()
+                            IssuesRoot(
+                                owner = args.owner,
+                                repo = args.repo,
+                                onNavigateBack = { navController.navigateUp() },
+                                onOpenIssue = { number ->
+                                    navController.navigate(
+                                        GithubStoreGraph.RepoIssueDetailScreen(
+                                            owner = args.owner,
+                                            repo = args.repo,
+                                            number = number,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.RepoIssueDetailScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<GithubStoreGraph.RepoIssueDetailScreen>()
+                            IssueDetailRoot(
+                                owner = args.owner,
+                                repo = args.repo,
+                                number = args.number,
+                                onNavigateBack = { navController.navigateUp() },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.RepoSecurityScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<GithubStoreGraph.RepoSecurityScreen>()
+                            SecurityRoot(
+                                owner = args.owner,
+                                repo = args.repo,
                                 onNavigateBack = { navController.navigateUp() },
                             )
                         }
