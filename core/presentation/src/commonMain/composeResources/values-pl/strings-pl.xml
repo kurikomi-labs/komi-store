@@ -1325,4 +1325,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">Wpisz prawidłową nazwę hosta (np. forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">Nie można zapisać hosta. Spróbuj ponownie.</string>
     <string name="tweaks_custom_forge_remove_failed">Nie można usunąć hosta. Spróbuj ponownie.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">Zgłoszenia</string>
+    <string name="repo_pages_issues_filter_open">Otwarte</string>
+    <string name="repo_pages_issues_filter_closed">Zamknięte</string>
+    <string name="repo_pages_issues_empty_open">Brak otwartych zgłoszeń.</string>
+    <string name="repo_pages_issues_empty_closed">Brak zamkniętych zgłoszeń.</string>
+    <string name="repo_pages_issue_comments_section">Komentarze</string>
+    <string name="repo_pages_issue_no_body">Brak opisu.</string>
+    <string name="repo_pages_issue_opened_by">otwarte przez %1$s</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">Bezpieczeństwo</string>
+    <string name="repo_pages_security_advisories_header">Zalecenia bezpieczeństwa</string>
+    <string name="repo_pages_security_no_advisories">Brak opublikowanych zaleceń.</string>
+    <string name="repo_pages_security_policy_header">Polityka bezpieczeństwa</string>
+    <string name="repo_pages_security_no_policy">Brak opublikowanej polityki bezpieczeństwa.</string>
+    <string name="repo_pages_severity_critical">Krytyczna</string>
+    <string name="repo_pages_severity_high">Wysoka</string>
+    <string name="repo_pages_severity_medium">Średnia</string>
+    <string name="repo_pages_severity_low">Niska</string>
+    <string name="repo_pages_severity_unknown">Nieznana</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">Zgłoszenia</string>
+    <string name="repo_pages_details_security_button">Bezpieczeństwo</string>
 </resources>

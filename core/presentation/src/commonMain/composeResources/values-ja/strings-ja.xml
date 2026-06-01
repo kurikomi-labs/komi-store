@@ -1286,4 +1286,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">有効なホスト名を入力してください（例: forgejo.example.com）。</string>
     <string name="tweaks_custom_forge_save_failed">ホストを保存できませんでした。再試行してください。</string>
     <string name="tweaks_custom_forge_remove_failed">ホストを削除できませんでした。再試行してください。</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">課題</string>
+    <string name="repo_pages_issues_filter_open">オープン</string>
+    <string name="repo_pages_issues_filter_closed">クローズ</string>
+    <string name="repo_pages_issues_empty_open">オープンな課題はありません。</string>
+    <string name="repo_pages_issues_empty_closed">クローズされた課題はありません。</string>
+    <string name="repo_pages_issue_comments_section">コメント</string>
+    <string name="repo_pages_issue_no_body">説明はありません。</string>
+    <string name="repo_pages_issue_opened_by">%1$s が作成</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">セキュリティ</string>
+    <string name="repo_pages_security_advisories_header">セキュリティアドバイザリ</string>
+    <string name="repo_pages_security_no_advisories">公開されているアドバイザリはありません。</string>
+    <string name="repo_pages_security_policy_header">セキュリティポリシー</string>
+    <string name="repo_pages_security_no_policy">公開されているセキュリティポリシーはありません。</string>
+    <string name="repo_pages_severity_critical">緊急</string>
+    <string name="repo_pages_severity_high">高</string>
+    <string name="repo_pages_severity_medium">中</string>
+    <string name="repo_pages_severity_low">低</string>
+    <string name="repo_pages_severity_unknown">不明</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">課題</string>
+    <string name="repo_pages_details_security_button">セキュリティ</string>
 </resources>

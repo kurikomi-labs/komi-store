@@ -1325,4 +1325,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">Введи корректное имя хоста (например, forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">Не удалось сохранить хост. Попробуй снова.</string>
     <string name="tweaks_custom_forge_remove_failed">Не удалось удалить хост. Попробуй снова.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">Issues</string>
+    <string name="repo_pages_issues_filter_open">Открытые</string>
+    <string name="repo_pages_issues_filter_closed">Закрытые</string>
+    <string name="repo_pages_issues_empty_open">Нет открытых issue.</string>
+    <string name="repo_pages_issues_empty_closed">Нет закрытых issue.</string>
+    <string name="repo_pages_issue_comments_section">Комментарии</string>
+    <string name="repo_pages_issue_no_body">Описание отсутствует.</string>
+    <string name="repo_pages_issue_opened_by">открыл %1$s</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">Безопасность</string>
+    <string name="repo_pages_security_advisories_header">Уведомления о безопасности</string>
+    <string name="repo_pages_security_no_advisories">Нет опубликованных уведомлений.</string>
+    <string name="repo_pages_security_policy_header">Политика безопасности</string>
+    <string name="repo_pages_security_no_policy">Политика безопасности не опубликована.</string>
+    <string name="repo_pages_severity_critical">Критическая</string>
+    <string name="repo_pages_severity_high">Высокая</string>
+    <string name="repo_pages_severity_medium">Средняя</string>
+    <string name="repo_pages_severity_low">Низкая</string>
+    <string name="repo_pages_severity_unknown">Неизвестно</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">Issues</string>
+    <string name="repo_pages_details_security_button">Безопасность</string>
 </resources>

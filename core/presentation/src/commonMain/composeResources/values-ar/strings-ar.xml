@@ -1355,4 +1355,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">أدخل اسم مضيف صالحاً (مثل forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">تعذّر حفظ المضيف. حاول مرة أخرى.</string>
     <string name="tweaks_custom_forge_remove_failed">تعذّر إزالة المضيف. حاول مرة أخرى.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">المشكلات</string>
+    <string name="repo_pages_issues_filter_open">مفتوحة</string>
+    <string name="repo_pages_issues_filter_closed">مغلقة</string>
+    <string name="repo_pages_issues_empty_open">لا توجد مشكلات مفتوحة.</string>
+    <string name="repo_pages_issues_empty_closed">لا توجد مشكلات مغلقة.</string>
+    <string name="repo_pages_issue_comments_section">التعليقات</string>
+    <string name="repo_pages_issue_no_body">لا يوجد وصف.</string>
+    <string name="repo_pages_issue_opened_by">فتحها %1$s</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">الأمان</string>
+    <string name="repo_pages_security_advisories_header">التنبيهات الأمنية</string>
+    <string name="repo_pages_security_no_advisories">لا توجد تنبيهات منشورة.</string>
+    <string name="repo_pages_security_policy_header">سياسة الأمان</string>
+    <string name="repo_pages_security_no_policy">لم تُنشر أي سياسة أمان.</string>
+    <string name="repo_pages_severity_critical">حرج</string>
+    <string name="repo_pages_severity_high">عالٍ</string>
+    <string name="repo_pages_severity_medium">متوسط</string>
+    <string name="repo_pages_severity_low">منخفض</string>
+    <string name="repo_pages_severity_unknown">غير معروف</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">المشكلات</string>
+    <string name="repo_pages_details_security_button">الأمان</string>
 </resources>

@@ -1332,4 +1332,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">मान्य होस्टनेम दर्ज करें (जैसे forgejo.example.com)।</string>
     <string name="tweaks_custom_forge_save_failed">होस्ट सहेजा नहीं जा सका। पुनः प्रयास करें।</string>
     <string name="tweaks_custom_forge_remove_failed">होस्ट हटाया नहीं जा सका। पुनः प्रयास करें।</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">इश्यूज़</string>
+    <string name="repo_pages_issues_filter_open">खुले</string>
+    <string name="repo_pages_issues_filter_closed">बंद</string>
+    <string name="repo_pages_issues_empty_open">कोई खुला इश्यू नहीं।</string>
+    <string name="repo_pages_issues_empty_closed">कोई बंद इश्यू नहीं।</string>
+    <string name="repo_pages_issue_comments_section">टिप्पणियाँ</string>
+    <string name="repo_pages_issue_no_body">कोई विवरण नहीं दिया गया है।</string>
+    <string name="repo_pages_issue_opened_by">%1$s द्वारा खोला गया</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">सुरक्षा</string>
+    <string name="repo_pages_security_advisories_header">सुरक्षा एडवाइज़री</string>
+    <string name="repo_pages_security_no_advisories">कोई प्रकाशित एडवाइज़री नहीं।</string>
+    <string name="repo_pages_security_policy_header">सुरक्षा नीति</string>
+    <string name="repo_pages_security_no_policy">कोई सुरक्षा नीति प्रकाशित नहीं की गई।</string>
+    <string name="repo_pages_severity_critical">गंभीर</string>
+    <string name="repo_pages_severity_high">उच्च</string>
+    <string name="repo_pages_severity_medium">मध्यम</string>
+    <string name="repo_pages_severity_low">निम्न</string>
+    <string name="repo_pages_severity_unknown">अज्ञात</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">इश्यूज़</string>
+    <string name="repo_pages_details_security_button">सुरक्षा</string>
 </resources>

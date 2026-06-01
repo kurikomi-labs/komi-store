@@ -1330,4 +1330,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">Inserisci un hostname valido (es. forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">Impossibile salvare l'host. Riprova.</string>
     <string name="tweaks_custom_forge_remove_failed">Impossibile rimuovere l'host. Riprova.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">Issue</string>
+    <string name="repo_pages_issues_filter_open">Aperte</string>
+    <string name="repo_pages_issues_filter_closed">Chiuse</string>
+    <string name="repo_pages_issues_empty_open">Nessuna issue aperta.</string>
+    <string name="repo_pages_issues_empty_closed">Nessuna issue chiusa.</string>
+    <string name="repo_pages_issue_comments_section">Commenti</string>
+    <string name="repo_pages_issue_no_body">Nessuna descrizione fornita.</string>
+    <string name="repo_pages_issue_opened_by">aperta da %1$s</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">Sicurezza</string>
+    <string name="repo_pages_security_advisories_header">Avvisi di sicurezza</string>
+    <string name="repo_pages_security_no_advisories">Nessun avviso pubblicato.</string>
+    <string name="repo_pages_security_policy_header">Politica di sicurezza</string>
+    <string name="repo_pages_security_no_policy">Nessuna politica di sicurezza pubblicata.</string>
+    <string name="repo_pages_severity_critical">Critico</string>
+    <string name="repo_pages_severity_high">Alto</string>
+    <string name="repo_pages_severity_medium">Medio</string>
+    <string name="repo_pages_severity_low">Basso</string>
+    <string name="repo_pages_severity_unknown">Sconosciuto</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">Issue</string>
+    <string name="repo_pages_details_security_button">Sicurezza</string>
 </resources>

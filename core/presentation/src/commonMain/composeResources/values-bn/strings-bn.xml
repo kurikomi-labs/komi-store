@@ -1317,4 +1317,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">একটি বৈধ হোস্টনেম দিন (যেমন forgejo.example.com)।</string>
     <string name="tweaks_custom_forge_save_failed">হোস্ট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="tweaks_custom_forge_remove_failed">হোস্ট সরানো যায়নি। আবার চেষ্টা করুন।</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">ইস্যু</string>
+    <string name="repo_pages_issues_filter_open">খোলা</string>
+    <string name="repo_pages_issues_filter_closed">বন্ধ</string>
+    <string name="repo_pages_issues_empty_open">কোনো খোলা ইস্যু নেই।</string>
+    <string name="repo_pages_issues_empty_closed">কোনো বন্ধ ইস্যু নেই।</string>
+    <string name="repo_pages_issue_comments_section">মন্তব্য</string>
+    <string name="repo_pages_issue_no_body">কোনো বিবরণ দেওয়া হয়নি।</string>
+    <string name="repo_pages_issue_opened_by">%1$s খুলেছেন</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">সুরক্ষা</string>
+    <string name="repo_pages_security_advisories_header">সুরক্ষা পরামর্শ</string>
+    <string name="repo_pages_security_no_advisories">কোনো প্রকাশিত পরামর্শ নেই।</string>
+    <string name="repo_pages_security_policy_header">সুরক্ষা নীতি</string>
+    <string name="repo_pages_security_no_policy">কোনো সুরক্ষা নীতি প্রকাশিত হয়নি।</string>
+    <string name="repo_pages_severity_critical">গুরুতর</string>
+    <string name="repo_pages_severity_high">উচ্চ</string>
+    <string name="repo_pages_severity_medium">মাঝারি</string>
+    <string name="repo_pages_severity_low">নিম্ন</string>
+    <string name="repo_pages_severity_unknown">অজানা</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">ইস্যু</string>
+    <string name="repo_pages_details_security_button">সুরক্ষা</string>
 </resources>

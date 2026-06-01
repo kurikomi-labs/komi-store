@@ -1316,4 +1316,30 @@
     <string name="tweaks_custom_forge_invalid_hostname">유효한 호스트명을 입력하세요 (예: forgejo.example.com).</string>
     <string name="tweaks_custom_forge_save_failed">호스트를 저장할 수 없습니다. 다시 시도하세요.</string>
     <string name="tweaks_custom_forge_remove_failed">호스트를 제거할 수 없습니다. 다시 시도하세요.</string>
+
+    <!-- Repo pages: issues -->
+    <string name="repo_pages_issues_title">이슈</string>
+    <string name="repo_pages_issues_filter_open">열림</string>
+    <string name="repo_pages_issues_filter_closed">닫힘</string>
+    <string name="repo_pages_issues_empty_open">열린 이슈가 없습니다.</string>
+    <string name="repo_pages_issues_empty_closed">닫힌 이슈가 없습니다.</string>
+    <string name="repo_pages_issue_comments_section">댓글</string>
+    <string name="repo_pages_issue_no_body">설명이 없습니다.</string>
+    <string name="repo_pages_issue_opened_by">%1$s님이 작성</string>
+
+    <!-- Repo pages: security -->
+    <string name="repo_pages_security_title">보안</string>
+    <string name="repo_pages_security_advisories_header">보안 권고</string>
+    <string name="repo_pages_security_no_advisories">게시된 권고가 없습니다.</string>
+    <string name="repo_pages_security_policy_header">보안 정책</string>
+    <string name="repo_pages_security_no_policy">게시된 보안 정책이 없습니다.</string>
+    <string name="repo_pages_severity_critical">심각</string>
+    <string name="repo_pages_severity_high">높음</string>
+    <string name="repo_pages_severity_medium">중간</string>
+    <string name="repo_pages_severity_low">낮음</string>
+    <string name="repo_pages_severity_unknown">알 수 없음</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_issues_button">이슈</string>
+    <string name="repo_pages_details_security_button">보안</string>
 </resources>
