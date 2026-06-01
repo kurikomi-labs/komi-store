@@ -1,0 +1,15 @@
+{
+  "versionCode": 20,
+  "versionName": "1.9.1",
+  "releaseDate": "2026-06-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Sfoglia le Issue di un repository senza uscire dall'app — filtra quelle aperte o chiuse, vedi le etichette a colpo d'occhio e apri i thread completi delle issue con commenti, immagini e Markdown.",
+        "Nuova pagina Sicurezza per ogni repository — avvisi di sicurezza pubblicati con badge di gravità, più la politica SECURITY.md del progetto visualizzata in linea."
+      ]
+    }
+  ]
+}

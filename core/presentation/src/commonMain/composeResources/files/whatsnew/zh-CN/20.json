@@ -1,0 +1,15 @@
+{
+  "versionCode": 20,
+  "versionName": "1.9.1",
+  "releaseDate": "2026-06-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "在应用内浏览仓库的 Issues，无需离开 — 筛选开启或已关闭的条目，一眼查看标签，并打开包含评论、图片和 Markdown 的完整 Issue 讨论串。",
+        "全新的单仓库安全页面 — 展示带有严重程度徽章的已发布安全公告，以及内联渲染的项目 SECURITY.md 策略。"
+      ]
+    }
+  ]
+}

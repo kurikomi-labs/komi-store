@@ -1,0 +1,15 @@
+{
+  "versionCode": 20,
+  "versionName": "1.9.1",
+  "releaseDate": "2026-06-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Parcourez les Issues d'un dépôt sans quitter l'app — filtrez les ouvertes ou les fermées, repérez les étiquettes d'un coup d'œil, et ouvrez les fils complets avec commentaires, images et Markdown.",
+        "Nouvelle page Sécurité par dépôt — les avis de sécurité publiés avec badges de gravité, ainsi que la politique SECURITY.md du projet rendue directement dans l'app."
+      ]
+    }
+  ]
+}

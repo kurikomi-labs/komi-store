@@ -1,0 +1,15 @@
+{
+  "versionCode": 20,
+  "versionName": "1.9.1",
+  "releaseDate": "2026-06-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Przeglądaj zgłoszenia repozytorium bez wychodzenia z aplikacji — filtruj otwarte lub zamknięte, zobacz etykiety na pierwszy rzut oka i otwieraj pełne wątki zgłoszeń z komentarzami, obrazami i Markdown.",
+        "Nowa strona Bezpieczeństwo dla każdego repozytorium — opublikowane zalecenia bezpieczeństwa z oznaczeniami ważności oraz polityka SECURITY.md projektu renderowana bezpośrednio na stronie."
+      ]
+    }
+  ]
+}

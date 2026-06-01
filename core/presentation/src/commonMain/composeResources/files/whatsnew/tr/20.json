@@ -1,0 +1,15 @@
+{
+  "versionCode": 20,
+  "versionName": "1.9.1",
+  "releaseDate": "2026-06-01",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Bir reponun Issue'larına uygulamadan ayrılmadan göz atın — açık veya kapalı olanları filtreleyin, etiketleri bir bakışta görün ve yorumlar, görseller ve Markdown içeren issue başlıklarını tam olarak açın.",
+        "Her repoya özel yeni Güvenlik sayfası — önem rozetli yayımlanmış güvenlik danışma bültenleri ve projenin SECURITY.md politikası satır içinde işlenmiş olarak."
+      ]
+    }
+  ]
+}
