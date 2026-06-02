@@ -22,6 +22,8 @@ class PullsViewModel(
     private val _state = MutableStateFlow(PullsUiState())
     val state = _state.asStateFlow()
 
+    private var requestGeneration = 0
+
     init {
         load(IssueState.OPEN)
     }
@@ -54,10 +56,12 @@ class PullsViewModel(
     fun loadNextPage() {
         val s = _state.value
         if (s.isLoading || s.isLoadingMore || s.endReached || s.errorMessage != null) return
-        loadPage(s.filter, s.page + 1, append = true)
+        loadPage(s.filter, s.page + 1, append = true, generation = requestGeneration)
     }
 
     private fun load(filter: IssueState) {
+        requestGeneration += 1
+        val generation = requestGeneration
         _state.update {
             it.copy(
                 filter = filter,
@@ -67,13 +71,14 @@ class PullsViewModel(
                 errorMessage = null,
             )
         }
-        loadPage(filter, page = 1, append = false)
+        loadPage(filter, page = 1, append = false, generation = generation)
     }
 
     private fun loadPage(
         filter: IssueState,
         page: Int,
         append: Boolean,
+        generation: Int,
     ) {
         viewModelScope.launch {
             _state.update {
@@ -81,6 +86,7 @@ class PullsViewModel(
             }
             repository.getPullRequests(owner, repo, filter, page)
                 .onSuccess { newPulls ->
+                    if (generation != requestGeneration) return@onSuccess
                     _state.update { st ->
                         val merged = if (append) st.pulls + newPulls else newPulls
                         st.copy(
@@ -94,6 +100,7 @@ class PullsViewModel(
                     }
                 }
                 .onFailure { e ->
+                    if (generation != requestGeneration) return@onFailure
                     _state.update {
                         it.copy(
                             isLoading = false,

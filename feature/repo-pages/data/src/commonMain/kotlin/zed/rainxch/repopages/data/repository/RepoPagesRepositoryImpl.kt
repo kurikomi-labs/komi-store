@@ -37,6 +37,7 @@ import zed.rainxch.repopages.data.mappers.toRepoPullRequest
 import zed.rainxch.repopages.data.mappers.toSecurityAdvisory
 import zed.rainxch.repopages.domain.model.IssueComment
 import zed.rainxch.repopages.domain.model.IssueState
+import zed.rainxch.repopages.domain.model.IssuesPage
 import zed.rainxch.repopages.domain.model.RepoIssue
 import zed.rainxch.repopages.domain.model.RepoIssueDetail
 import zed.rainxch.repopages.domain.model.RepoPullRequest
@@ -55,7 +56,7 @@ class RepoPagesRepositoryImpl(
         repo: String,
         state: IssueState,
         page: Int,
-    ): Result<List<RepoIssue>> = withContext(Dispatchers.IO) {
+    ): Result<IssuesPage> = withContext(Dispatchers.IO) {
         try {
             val response = httpClient.get("/repos/$owner/$repo/issues") {
                 parameter("state", state.toApiValue())
@@ -71,7 +72,7 @@ class RepoPagesRepositoryImpl(
             }
             val dtos: List<IssueDto> = response.body()
             val issues = dtos.filter { it.pullRequest == null }.map { it.toRepoIssue() }
-            Result.success(issues)
+            Result.success(IssuesPage(issues = issues, hasMore = dtos.size >= PER_PAGE))
         } catch (e: RateLimitException) {
             throw e
         } catch (e: CancellationException) {
@@ -271,22 +272,22 @@ class RepoPagesRepositoryImpl(
         owner: String,
         repo: String,
         number: Int,
-    ): Result<Unit> = postReaction("/repos/$owner/$repo/issues/$number/reactions")
+    ): Result<Boolean> = postReaction("/repos/$owner/$repo/issues/$number/reactions")
 
     override suspend fun reactToComment(
         owner: String,
         repo: String,
         commentId: Long,
-    ): Result<Unit> = postReaction("/repos/$owner/$repo/issues/comments/$commentId/reactions")
+    ): Result<Boolean> = postReaction("/repos/$owner/$repo/issues/comments/$commentId/reactions")
 
-    private suspend fun postReaction(path: String): Result<Unit> = withContext(Dispatchers.IO) {
+    private suspend fun postReaction(path: String): Result<Boolean> = withContext(Dispatchers.IO) {
         try {
             val response = httpClient.post(path) {
                 contentType(ContentType.Application.Json)
                 setBody(CreateReactionRequest(content = "+1"))
             }
             if (response.status.isSuccess()) {
-                Result.success(Unit)
+                Result.success(response.status == HttpStatusCode.Created)
             } else {
                 Result.failure(authAwareError(response.status.value, "Failed to add reaction"))
             }
@@ -331,10 +332,10 @@ class RepoPagesRepositoryImpl(
     }
 
     private fun authAwareError(statusCode: Int, fallback: String): Exception =
-        if (statusCode == 401 || statusCode == 403) {
-            Exception("Authentication required. Please sign in with GitHub.")
-        } else {
-            Exception(fallback)
+        when (statusCode) {
+            401 -> Exception("Authentication required. Please sign in with GitHub.")
+            403 -> Exception("$fallback (forbidden — you may lack permission or be rate-limited).")
+            else -> Exception(fallback)
         }
 
     companion object {

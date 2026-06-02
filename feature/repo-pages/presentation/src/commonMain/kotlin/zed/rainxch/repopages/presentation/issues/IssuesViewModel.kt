@@ -32,6 +32,8 @@ class IssuesViewModel(
     private val _events = Channel<IssuesEvent>()
     val events = _events.receiveAsFlow()
 
+    private var requestGeneration = 0
+
     init {
         load(IssueState.OPEN)
         viewModelScope.launch {
@@ -82,7 +84,7 @@ class IssuesViewModel(
     fun loadNextPage() {
         val s = _state.value
         if (s.isLoading || s.isLoadingMore || s.endReached || s.errorMessage != null) return
-        loadPage(s.filter, s.page + 1, append = true)
+        loadPage(s.filter, s.page + 1, append = true, generation = requestGeneration)
     }
 
     fun openNewIssue() {
@@ -133,6 +135,8 @@ class IssuesViewModel(
     }
 
     private fun load(filter: IssueState) {
+        requestGeneration += 1
+        val generation = requestGeneration
         _state.update {
             it.copy(
                 filter = filter,
@@ -142,33 +146,36 @@ class IssuesViewModel(
                 errorMessage = null,
             )
         }
-        loadPage(filter, page = 1, append = false)
+        loadPage(filter, page = 1, append = false, generation = generation)
     }
 
     private fun loadPage(
         filter: IssueState,
         page: Int,
         append: Boolean,
+        generation: Int,
     ) {
         viewModelScope.launch {
             _state.update {
                 if (append) it.copy(isLoadingMore = true) else it.copy(isLoading = true, errorMessage = null)
             }
             repository.getIssues(owner, repo, filter, page)
-                .onSuccess { newIssues ->
+                .onSuccess { result ->
+                    if (generation != requestGeneration) return@onSuccess
                     _state.update { st ->
-                        val merged = if (append) st.issues + newIssues else newIssues
+                        val merged = if (append) st.issues + result.issues else result.issues
                         st.copy(
                             isLoading = false,
                             isLoadingMore = false,
                             issues = merged.toPersistentList(),
                             page = page,
-                            endReached = newIssues.size < PER_PAGE,
+                            endReached = !result.hasMore,
                             errorMessage = null,
                         )
                     }
                 }
                 .onFailure { e ->
+                    if (generation != requestGeneration) return@onFailure
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -178,9 +185,5 @@ class IssuesViewModel(
                     }
                 }
         }
-    }
-
-    companion object {
-        private const val PER_PAGE = 30
     }
 }

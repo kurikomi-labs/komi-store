@@ -272,11 +272,12 @@ private fun IssuesList(
     val listState = rememberLazyListState()
     val shouldLoadMore by remember {
         derivedStateOf {
-            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            state.issues.isNotEmpty() && last >= state.issues.size - 4
+            val info = listState.layoutInfo
+            val last = info.visibleItemsInfo.lastOrNull()?.index ?: -1
+            info.totalItemsCount > 0 && last >= info.totalItemsCount - 4
         }
     }
-    androidx.compose.runtime.LaunchedEffect(shouldLoadMore) {
+    LaunchedEffect(shouldLoadMore) {
         if (shouldLoadMore) onLoadMore()
     }
 

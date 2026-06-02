@@ -29,7 +29,7 @@ class IssueDetailViewModel(
     private val repository: RepoPagesRepository,
     private val userSessionRepository: UserSessionRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(IssueDetailUiState())
+    private val _state = MutableStateFlow(IssueDetailUiState(issueNumber = issueNumber))
     val state = _state.asStateFlow()
 
     private val _events = Channel<IssueDetailEvent>()
@@ -136,8 +136,19 @@ class IssueDetailViewModel(
                         )
                     )
                 }
-                .onSuccess {
-                    _state.update { it.copy(isReactingIssue = false) }
+                .onSuccess { created ->
+                    _state.update { st ->
+                        st.copy(
+                            isReactingIssue = false,
+                            detail = if (created) {
+                                st.detail
+                            } else {
+                                st.detail?.copy(
+                                    reactionThumbsUp = (st.detail.reactionThumbsUp - 1).coerceAtLeast(0),
+                                )
+                            },
+                        )
+                    }
                 }
         }
     }
@@ -169,8 +180,13 @@ class IssueDetailViewModel(
                         )
                     )
                 }
-                .onSuccess {
-                    _state.update { st -> st.copy(reactingCommentIds = st.reactingCommentIds - commentId) }
+                .onSuccess { created ->
+                    _state.update { st ->
+                        st.copy(
+                            reactingCommentIds = st.reactingCommentIds - commentId,
+                            detail = if (created) st.detail else st.detail?.bumpComment(commentId, -1),
+                        )
+                    }
                 }
         }
     }

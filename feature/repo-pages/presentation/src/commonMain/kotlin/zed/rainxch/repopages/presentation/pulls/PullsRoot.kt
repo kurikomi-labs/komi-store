@@ -138,8 +138,9 @@ private fun PullsList(
     val listState = rememberLazyListState()
     val shouldLoadMore by remember {
         derivedStateOf {
-            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            state.pulls.isNotEmpty() && last >= state.pulls.size - 4
+            val info = listState.layoutInfo
+            val last = info.visibleItemsInfo.lastOrNull()?.index ?: -1
+            info.totalItemsCount > 0 && last >= info.totalItemsCount - 4
         }
     }
     LaunchedEffect(shouldLoadMore) {

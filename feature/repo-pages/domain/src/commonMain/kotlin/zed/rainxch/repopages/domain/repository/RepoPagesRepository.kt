@@ -2,7 +2,7 @@ package zed.rainxch.repopages.domain.repository
 
 import zed.rainxch.repopages.domain.model.IssueComment
 import zed.rainxch.repopages.domain.model.IssueState
-import zed.rainxch.repopages.domain.model.RepoIssue
+import zed.rainxch.repopages.domain.model.IssuesPage
 import zed.rainxch.repopages.domain.model.RepoIssueDetail
 import zed.rainxch.repopages.domain.model.RepoPullRequest
 import zed.rainxch.repopages.domain.model.SecurityOverview
@@ -13,7 +13,7 @@ interface RepoPagesRepository {
         repo: String,
         state: IssueState,
         page: Int,
-    ): Result<List<RepoIssue>>
+    ): Result<IssuesPage>
 
     suspend fun getIssueDetail(
         owner: String,
@@ -44,13 +44,13 @@ interface RepoPagesRepository {
         owner: String,
         repo: String,
         number: Int,
-    ): Result<Unit>
+    ): Result<Boolean>
 
     suspend fun reactToComment(
         owner: String,
         repo: String,
         commentId: Long,
-    ): Result<Unit>
+    ): Result<Boolean>
 
     suspend fun getPullRequests(
         owner: String,
