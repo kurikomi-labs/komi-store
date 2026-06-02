@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -87,6 +88,24 @@ fun IssuesRoot(
         }
     }
 
+    if (state.showNewIssueSheet) {
+        NewIssueSheet(
+            state = state,
+            onDismiss = {
+                viewModel.onAction(IssuesAction.OnDismissNewIssue)
+            },
+            onTitleChange = {
+                viewModel.onAction(IssuesAction.OnNewIssueTitleChange(it))
+            },
+            onBodyChange = {
+                viewModel.onAction(IssuesAction.OnNewIssueBodyChange(it))
+            },
+            onSubmit = {
+                viewModel.onAction(IssuesAction.OnSubmitNewIssue)
+            },
+        )
+    }
+
     IssuesScreen(
         state = state,
         snackbarHostState = snackbarHostState,
@@ -107,20 +126,47 @@ private fun IssuesScreen(
     snackbarHostState: SnackbarHostState,
     onAction: (IssuesAction) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .systemBarsPadding(),
-        ) {
+    Scaffold(
+        topBar = {
             RepoPagesTopBar(
                 title = stringResource(Res.string.repo_pages_issues_title),
                 onBack = {
                     onAction(IssuesAction.OnBackClick)
                 },
             )
-
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+            )
+        },
+        floatingActionButton = {
+            if (!state.isLoading && state.errorMessage == null) {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        onAction(IssuesAction.OnOpenNewIssue)
+                    },
+                    text = {
+                        Text(
+                            text = stringResource(Res.string.repo_pages_new_issue)
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                    },
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -172,43 +218,6 @@ private fun IssuesScreen(
                     },
                 )
             }
-        }
-
-        if (!state.isLoading && state.errorMessage == null) {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    onAction(IssuesAction.OnOpenNewIssue)
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .systemBarsPadding()
-                    .padding(16.dp),
-                text = { Text(stringResource(Res.string.repo_pages_new_issue)) },
-                icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            )
-        }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        )
-
-        if (state.showNewIssueSheet) {
-            NewIssueSheet(
-                state = state,
-                onDismiss = {
-                    onAction(IssuesAction.OnDismissNewIssue)
-                },
-                onTitleChange = {
-                    onAction(IssuesAction.OnNewIssueTitleChange(it))
-                },
-                onBodyChange = {
-                    onAction(IssuesAction.OnNewIssueBodyChange(it))
-                },
-                onSubmit = {
-                    onAction(IssuesAction.OnSubmitNewIssue)
-                },
-            )
         }
     }
 }

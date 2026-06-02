@@ -1,17 +1,17 @@
 package zed.rainxch.repopages.presentation.security
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,31 +64,40 @@ private fun SecurityScreen(
     state: SecurityUiState,
     onAction: (SecurityAction) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding(),
-    ) {
-        RepoPagesTopBar(
-            title = stringResource(Res.string.repo_pages_security_title),
-            onBack = { onAction(SecurityAction.OnBackClick) },
-        )
+    Scaffold(
+        topBar = {
+            RepoPagesTopBar(
+                title = stringResource(Res.string.repo_pages_security_title),
+                onBack = { onAction(SecurityAction.OnBackClick) },
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { innerPadding ->
+        val contentModifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
         when {
-            state.isLoading -> RepoPagesLoading()
+            state.isLoading -> RepoPagesLoading(modifier = contentModifier)
             state.errorMessage != null -> RepoPagesError(
                 message = state.errorMessage,
                 onRetry = { onAction(SecurityAction.OnRetry) },
+                modifier = contentModifier,
             )
-            state.overview != null -> SecurityContent(overview = state.overview)
+            state.overview != null -> SecurityContent(
+                overview = state.overview,
+                modifier = contentModifier,
+            )
         }
     }
 }
 
 @Composable
-private fun SecurityContent(overview: SecurityOverview) {
+private fun SecurityContent(
+    overview: SecurityOverview,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {

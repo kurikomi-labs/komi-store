@@ -265,7 +265,11 @@ private fun ThumbChip(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "👍", style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = "👍",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
             if (count > 0) {
                 Text(
                     text = count.toString(),
