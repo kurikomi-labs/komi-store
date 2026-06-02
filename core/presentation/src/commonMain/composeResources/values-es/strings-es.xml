@@ -1327,9 +1327,9 @@
     <string name="repo_pages_details_pulls_button">Pull requests</string>
 
     <!-- Repo interactions: star -->
-    <string name="star_added">Destacado</string>
+    <string name="star_added">Con estrella</string>
     <string name="star_removed">Estrella quitada</string>
-    <string name="star_sign_in_required">Inicia sesión para destacar repositorios.</string>
+    <string name="star_sign_in_required">Inicia sesión para marcar repositorios con estrella.</string>
 
     <!-- Repo interactions: comments -->
     <string name="repo_pages_comment_hint">Añade un comentario…</string>

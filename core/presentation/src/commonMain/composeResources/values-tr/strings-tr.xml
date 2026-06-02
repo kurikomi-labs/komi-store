@@ -1329,11 +1329,11 @@
     <string name="tweaks_custom_forge_remove_failed">Host kaldırılamadı. Tekrar deneyin.</string>
 
     <!-- Repo pages: issues -->
-    <string name="repo_pages_issues_title">Issue&apos;lar</string>
+    <string name="repo_pages_issues_title">Sorunlar</string>
     <string name="repo_pages_issues_filter_open">Açık</string>
     <string name="repo_pages_issues_filter_closed">Kapalı</string>
-    <string name="repo_pages_issues_empty_open">Açık issue yok.</string>
-    <string name="repo_pages_issues_empty_closed">Kapalı issue yok.</string>
+    <string name="repo_pages_issues_empty_open">Açık sorun yok.</string>
+    <string name="repo_pages_issues_empty_closed">Kapalı sorun yok.</string>
     <string name="repo_pages_issue_comments_section">Yorumlar</string>
     <string name="repo_pages_issue_no_body">Açıklama sağlanmadı.</string>
     <string name="repo_pages_issue_opened_by">%1$s tarafından açıldı</string>
@@ -1351,7 +1351,7 @@
     <string name="repo_pages_severity_unknown">Bilinmiyor</string>
 
     <!-- Repo pages: details entry -->
-    <string name="repo_pages_details_issues_button">Issue&apos;lar</string>
+    <string name="repo_pages_details_issues_button">Sorunlar</string>
     <string name="repo_pages_details_security_button">Güvenlik</string>
 
     <!-- Repo pages: details entry -->
@@ -1370,13 +1370,13 @@
     <string name="repo_pages_comment_posted">Yorum gönderildi</string>
 
     <!-- Repo interactions: new issue -->
-    <string name="repo_pages_new_issue">Yeni issue</string>
+    <string name="repo_pages_new_issue">Yeni sorun</string>
     <string name="repo_pages_new_issue_title_hint">Başlık</string>
     <string name="repo_pages_new_issue_body_hint">Sorunu açıklayın…</string>
     <string name="repo_pages_new_issue_submit">Oluştur</string>
-    <string name="repo_pages_new_issue_sign_in">Issue açmak için giriş yapın.</string>
-    <string name="repo_pages_new_issue_failed">Issue oluşturulamadı.</string>
-    <string name="repo_pages_new_issue_created">Issue oluşturuldu</string>
+    <string name="repo_pages_new_issue_sign_in">Sorun açmak için giriş yapın.</string>
+    <string name="repo_pages_new_issue_failed">Sorun oluşturulamadı.</string>
+    <string name="repo_pages_new_issue_created">Sorun oluşturuldu</string>
 
     <!-- Repo interactions: reactions -->
     <string name="repo_pages_react_sign_in">Tepki vermek için giriş yapın.</string>

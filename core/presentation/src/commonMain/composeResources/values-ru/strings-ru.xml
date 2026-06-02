@@ -1356,9 +1356,9 @@
     <string name="repo_pages_details_pulls_button">Pull requests</string>
 
     <!-- Repo interactions: star -->
-    <string name="star_added">В избранном</string>
-    <string name="star_removed">Удалено из избранного</string>
-    <string name="star_sign_in_required">Войди, чтобы добавлять репозитории в избранное.</string>
+    <string name="star_added">Помечено звездой</string>
+    <string name="star_removed">Звезда убрана</string>
+    <string name="star_sign_in_required">Войди, чтобы отмечать репозитории звездой.</string>
 
     <!-- Repo interactions: comments -->
     <string name="repo_pages_comment_hint">Добавь комментарий…</string>

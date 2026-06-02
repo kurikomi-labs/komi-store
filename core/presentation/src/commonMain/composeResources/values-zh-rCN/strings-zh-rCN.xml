@@ -1320,9 +1320,9 @@
     <string name="repo_pages_details_pulls_button">拉取请求</string>
 
     <!-- Repo interactions: star -->
-    <string name="star_added">已收藏</string>
-    <string name="star_removed">已取消收藏</string>
-    <string name="star_sign_in_required">登录后即可收藏仓库。</string>
+    <string name="star_added">已加星</string>
+    <string name="star_removed">已取消加星</string>
+    <string name="star_sign_in_required">登录后即可为仓库加星。</string>
 
     <!-- Repo interactions: comments -->
     <string name="repo_pages_comment_hint">添加评论…</string>
