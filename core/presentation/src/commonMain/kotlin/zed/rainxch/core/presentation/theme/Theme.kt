@@ -49,7 +49,7 @@ fun GithubStoreTheme(
 
     CompositionLocalProvider(
         LocalPalette provides palette,
-        LocalStatusColors provides defaultStatusColors,
+        LocalStatusColors provides if (isDarkTheme) darkStatusColors else defaultStatusColors,
         LocalThresholds provides defaultThresholds,
         LocalMotion provides defaultMotion,
         LocalSpacing provides defaultSpacing,

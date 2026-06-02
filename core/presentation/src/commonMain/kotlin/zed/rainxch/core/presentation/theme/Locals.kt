@@ -28,6 +28,16 @@ data class StatusColors(
     val trendRising: androidx.compose.ui.graphics.Color,
     val trendFlat: androidx.compose.ui.graphics.Color,
     val trendFalling: androidx.compose.ui.graphics.Color,
+    val issueOpen: androidx.compose.ui.graphics.Color,
+    val issueClosed: androidx.compose.ui.graphics.Color,
+    val pullOpen: androidx.compose.ui.graphics.Color,
+    val pullMerged: androidx.compose.ui.graphics.Color,
+    val pullClosed: androidx.compose.ui.graphics.Color,
+    val severityCritical: androidx.compose.ui.graphics.Color,
+    val severityHigh: androidx.compose.ui.graphics.Color,
+    val severityMedium: androidx.compose.ui.graphics.Color,
+    val severityLow: androidx.compose.ui.graphics.Color,
+    val severityUnknown: androidx.compose.ui.graphics.Color,
 )
 
 data class ThresholdSet(
@@ -75,6 +85,29 @@ internal val defaultStatusColors = StatusColors(
     trendRising = Tokens.Status.Trend.rising,
     trendFlat = Tokens.Status.Trend.flat,
     trendFalling = Tokens.Status.Trend.falling,
+    issueOpen = Tokens.Status.IssueState.openLight,
+    issueClosed = Tokens.Status.IssueState.closedLight,
+    pullOpen = Tokens.Status.IssueState.openLight,
+    pullMerged = Tokens.Status.IssueState.closedLight,
+    pullClosed = Tokens.Status.IssueState.prClosedLight,
+    severityCritical = Tokens.Status.Severity.criticalLight,
+    severityHigh = Tokens.Status.Severity.highLight,
+    severityMedium = Tokens.Status.Severity.mediumLight,
+    severityLow = Tokens.Status.Severity.lowLight,
+    severityUnknown = Tokens.Status.Severity.unknownLight,
+)
+
+internal val darkStatusColors = defaultStatusColors.copy(
+    issueOpen = Tokens.Status.IssueState.openDark,
+    issueClosed = Tokens.Status.IssueState.closedDark,
+    pullOpen = Tokens.Status.IssueState.openDark,
+    pullMerged = Tokens.Status.IssueState.closedDark,
+    pullClosed = Tokens.Status.IssueState.prClosedDark,
+    severityCritical = Tokens.Status.Severity.criticalDark,
+    severityHigh = Tokens.Status.Severity.highDark,
+    severityMedium = Tokens.Status.Severity.mediumDark,
+    severityLow = Tokens.Status.Severity.lowDark,
+    severityUnknown = Tokens.Status.Severity.unknownDark,
 )
 
 internal val defaultThresholds = ThresholdSet(

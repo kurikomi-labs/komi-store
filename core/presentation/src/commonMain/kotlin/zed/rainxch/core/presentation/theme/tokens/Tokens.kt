@@ -217,6 +217,26 @@ object Tokens {
             val flat = Color(0xFF8E8E8E)
             val falling = Color(0xFFB83A2C)
         }
+        object IssueState {
+            val openLight = Color(0xFF2DA44E)
+            val openDark = Color(0xFF3FB950)
+            val closedLight = Color(0xFF8957E5)
+            val closedDark = Color(0xFFA371F7)
+            val prClosedLight = Color(0xFFCF222E)
+            val prClosedDark = Color(0xFFF85149)
+        }
+        object Severity {
+            val criticalLight = Color(0xFFCF222E)
+            val criticalDark = Color(0xFFF85149)
+            val highLight = Color(0xFFBC4C00)
+            val highDark = Color(0xFFDB6D28)
+            val mediumLight = Color(0xFF9A6700)
+            val mediumDark = Color(0xFFD29922)
+            val lowLight = Color(0xFF1A7F37)
+            val lowDark = Color(0xFF3FB950)
+            val unknownLight = Color(0xFF6E7781)
+            val unknownDark = Color(0xFF8B949E)
+        }
     }
 
     object Thresholds {
