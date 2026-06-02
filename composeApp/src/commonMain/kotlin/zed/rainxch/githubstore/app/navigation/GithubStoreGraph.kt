@@ -138,11 +138,17 @@ sealed interface GithubStoreGraph {
     data class RepoIssueDetailScreen(
         val owner: String,
         val repo: String,
-        val number: Int,
+        val issueNumber: Int,
     ) : GithubStoreGraph
 
     @Serializable
     data class RepoSecurityScreen(
+        val owner: String,
+        val repo: String,
+    ) : GithubStoreGraph
+
+    @Serializable
+    data class RepoPullsScreen(
         val owner: String,
         val repo: String,
     ) : GithubStoreGraph

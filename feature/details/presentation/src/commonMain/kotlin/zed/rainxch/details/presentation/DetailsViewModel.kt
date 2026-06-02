@@ -79,6 +79,10 @@ import zed.rainxch.details.presentation.model.SigningKeyWarning
 import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.failed_to_load
+import zed.rainxch.githubstore.core.presentation.res.star_added
+import zed.rainxch.githubstore.core.presentation.res.star_removed
+import zed.rainxch.githubstore.core.presentation.res.star_sign_in_required
 import zed.rainxch.githubstore.core.presentation.res.added_to_favourites
 import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_failure
 import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_success
@@ -292,6 +296,10 @@ class DetailsViewModel(
 
             DetailsAction.OnToggleFavorite -> {
                 toggleFavourite()
+            }
+
+            DetailsAction.OnToggleStar -> {
+                toggleStar()
             }
 
             DetailsAction.OnShareClick -> {
@@ -1358,6 +1366,34 @@ class DetailsViewModel(
             } catch (t: Throwable) {
                 logger.error("Failed to toggle favorite: ${t.message}")
             }
+        }
+    }
+
+    private fun toggleStar() {
+        viewModelScope.launch {
+            val repo = _state.value.repository ?: return@launch
+            if (!userSessionRepository.isCurrentlyUserLoggedIn()) {
+                _events.send(DetailsEvent.OnMessage(getString(Res.string.star_sign_in_required)))
+                return@launch
+            }
+            val target = !_state.value.isStarred
+            _state.update { it.copy(isStarred = target) }
+            starredRepository
+                .setStarred(repo.owner.login, repo.name, target)
+                .onSuccess {
+                    _events.send(
+                        DetailsEvent.OnMessage(
+                            getString(if (target) Res.string.star_added else Res.string.star_removed),
+                        ),
+                    )
+                    runCatching { starredRepository.syncStarredRepos(forceRefresh = true) }
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(isStarred = !target) }
+                    _events.send(
+                        DetailsEvent.OnMessage(e.message ?: getString(Res.string.failed_to_load)),
+                    )
+                }
         }
     }
 

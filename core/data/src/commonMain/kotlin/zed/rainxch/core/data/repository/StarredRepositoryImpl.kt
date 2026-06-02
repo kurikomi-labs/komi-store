@@ -5,9 +5,11 @@ package zed.rainxch.core.data.repository
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.request.put
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -53,6 +55,37 @@ class StarredRepositoryImpl(
             .map { it.map { entity -> entity.toDomain() } }
 
     override suspend fun isStarred(repoId: Long): Boolean = starredRepoDao.isStarred(repoId)
+
+    override suspend fun setStarred(
+        owner: String,
+        repo: String,
+        starred: Boolean,
+    ): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    if (starred) {
+                        httpClient.put("/user/starred/$owner/$repo") {
+                            header("Content-Length", "0")
+                        }
+                    } else {
+                        httpClient.delete("/user/starred/$owner/$repo")
+                    }
+                when {
+                    response.status.isSuccess() -> Result.success(Unit)
+                    response.status.value == 401 ->
+                        Result.failure(Exception("Authentication required. Please sign in with GitHub."))
+                    else ->
+                        Result.failure(Exception("Failed to update star: ${response.status.description}"))
+                }
+            } catch (e: RateLimitException) {
+                throw e
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
 
     override suspend fun getLastSyncTime(): Long? = starredRepoDao.getLastSyncTime()
 

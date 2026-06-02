@@ -23,7 +23,16 @@ class SecurityViewModel(
         load()
     }
 
-    fun retry() = load()
+    fun onAction(action: SecurityAction) {
+        when (action) {
+            SecurityAction.OnBackClick -> {
+                // Handled in composable
+            }
+            SecurityAction.OnRetry -> {
+                load()
+            }
+        }
+    }
 
     private fun load() {
         viewModelScope.launch {

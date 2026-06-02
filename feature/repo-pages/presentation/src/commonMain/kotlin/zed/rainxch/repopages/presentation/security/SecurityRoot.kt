@@ -17,13 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
+import zed.rainxch.core.presentation.theme.LocalStatusColors
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_security_advisories_header
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_security_no_advisories
@@ -45,24 +43,26 @@ import zed.rainxch.repopages.presentation.components.RepoPagesTopBar
 
 @Composable
 fun SecurityRoot(
-    owner: String,
-    repo: String,
     onNavigateBack: () -> Unit,
-    viewModel: SecurityViewModel = koinViewModel { parametersOf(owner, repo) },
+    viewModel: SecurityViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     SecurityScreen(
         state = state,
-        onBack = onNavigateBack,
-        onRetry = viewModel::retry,
+        onAction = { action ->
+            when (action) {
+                SecurityAction.OnBackClick -> onNavigateBack()
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }
 
 @Composable
 private fun SecurityScreen(
     state: SecurityUiState,
-    onBack: () -> Unit,
-    onRetry: () -> Unit,
+    onAction: (SecurityAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -70,10 +70,16 @@ private fun SecurityScreen(
             .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding(),
     ) {
-        RepoPagesTopBar(title = stringResource(Res.string.repo_pages_security_title), onBack = onBack)
+        RepoPagesTopBar(
+            title = stringResource(Res.string.repo_pages_security_title),
+            onBack = { onAction(SecurityAction.OnBackClick) },
+        )
         when {
             state.isLoading -> RepoPagesLoading()
-            state.errorMessage != null -> RepoPagesError(message = state.errorMessage, onRetry = onRetry)
+            state.errorMessage != null -> RepoPagesError(
+                message = state.errorMessage,
+                onRetry = { onAction(SecurityAction.OnRetry) },
+            )
             state.overview != null -> SecurityContent(overview = state.overview)
         }
     }
@@ -179,12 +185,13 @@ private fun AdvisoryCard(advisory: SecurityAdvisory) {
 
 @Composable
 private fun SeverityBadge(severity: AdvisorySeverity) {
+    val statusColors = LocalStatusColors.current
     val color = when (severity) {
-        AdvisorySeverity.CRITICAL -> Color(0xFFCF222E)
-        AdvisorySeverity.HIGH -> Color(0xFFBC4C00)
-        AdvisorySeverity.MEDIUM -> Color(0xFF9A6700)
-        AdvisorySeverity.LOW -> Color(0xFF1A7F37)
-        AdvisorySeverity.UNKNOWN -> Color(0xFF6E7781)
+        AdvisorySeverity.CRITICAL -> statusColors.severityCritical
+        AdvisorySeverity.HIGH -> statusColors.severityHigh
+        AdvisorySeverity.MEDIUM -> statusColors.severityMedium
+        AdvisorySeverity.LOW -> statusColors.severityLow
+        AdvisorySeverity.UNKNOWN -> statusColors.severityUnknown
     }
     val label = when (severity) {
         AdvisorySeverity.CRITICAL -> stringResource(Res.string.repo_pages_severity_critical)

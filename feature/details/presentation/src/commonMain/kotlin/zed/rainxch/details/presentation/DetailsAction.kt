@@ -67,6 +67,8 @@ sealed interface DetailsAction {
 
     data object OnToggleFavorite : DetailsAction
 
+    data object OnToggleStar : DetailsAction
+
     data object OnShareClick : DetailsAction
 
     data object UpdateApp : DetailsAction

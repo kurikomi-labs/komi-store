@@ -1,7 +1,7 @@
 package zed.rainxch.repopages.domain.model
 
 data class RepoIssue(
-    val number: Int,
+    val issueId: Int,
     val title: String,
     val state: IssueState,
     val authorLogin: String,
@@ -11,12 +11,3 @@ data class RepoIssue(
     val labels: List<IssueLabel>,
 )
 
-data class IssueLabel(
-    val name: String,
-    val color: String,
-)
-
-enum class IssueState {
-    OPEN,
-    CLOSED,
-}

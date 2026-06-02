@@ -55,21 +55,12 @@ import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_subtitle
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_title
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_appearance
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_connection
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_install_method
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_language
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_privacy
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_sources
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_storage
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_translation
-import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_updates
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.profile.presentation.ProfileRoot
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.repopages.presentation.issuedetail.IssueDetailRoot
 import zed.rainxch.repopages.presentation.issues.IssuesRoot
+import zed.rainxch.repopages.presentation.pulls.PullsRoot
 import zed.rainxch.repopages.presentation.security.SecurityRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
@@ -78,7 +69,6 @@ import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.appearance.TweaksAppearanceRoot
 import zed.rainxch.tweaks.presentation.appinfo.TweaksAppInfoRoot
-import zed.rainxch.tweaks.presentation.components.TweaksStubScreen
 import zed.rainxch.tweaks.presentation.connection.TweaksConnectionRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
@@ -240,8 +230,10 @@ fun AppNavigation(
                                 zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope provides animatedScope,
                             ) {
                                 val listDetailState = rememberAdaptiveListDetailState()
-                                val pickRepoTitle = stringResource(Res.string.adaptive_pick_repo_title)
-                                val pickRepoSubtitle = stringResource(Res.string.adaptive_pick_repo_subtitle)
+                                val pickRepoTitle =
+                                    stringResource(Res.string.adaptive_pick_repo_title)
+                                val pickRepoSubtitle =
+                                    stringResource(Res.string.adaptive_pick_repo_subtitle)
                                 AdaptiveListDetailScaffold(
                                     state = listDetailState,
                                     emptyPaneTitle = pickRepoTitle,
@@ -287,7 +279,11 @@ fun AppNavigation(
                                         AdaptiveDetailPaneContent(
                                             args = args,
                                             navController = navController,
-                                            onCrossNavToRepo = { newArgs -> listDetailState.select(newArgs) },
+                                            onCrossNavToRepo = { newArgs ->
+                                                listDetailState.select(
+                                                    newArgs,
+                                                )
+                                            },
                                             onClearPane = { listDetailState.clear() },
                                         )
                                     },
@@ -325,7 +321,8 @@ fun AppNavigation(
                                 }
                             val listDetailState = rememberAdaptiveListDetailState()
                             val pickRepoTitle = stringResource(Res.string.adaptive_pick_repo_title)
-                            val pickRepoSubtitle = stringResource(Res.string.adaptive_pick_repo_subtitle)
+                            val pickRepoSubtitle =
+                                stringResource(Res.string.adaptive_pick_repo_subtitle)
                             val searchViewModel: zed.rainxch.search.presentation.SearchViewModel =
                                 koinViewModel {
                                     parametersOf(initialPlatform)
@@ -387,7 +384,11 @@ fun AppNavigation(
                                     AdaptiveDetailPaneContent(
                                         args = detailArgs,
                                         navController = navController,
-                                        onCrossNavToRepo = { newArgs -> listDetailState.select(newArgs) },
+                                        onCrossNavToRepo = { newArgs ->
+                                            listDetailState.select(
+                                                newArgs,
+                                            )
+                                        },
                                         onClearPane = { listDetailState.clear() },
                                     )
                                 },
@@ -448,12 +449,26 @@ fun AppNavigation(
                                     },
                                     onNavigateToIssues = { owner, repo ->
                                         navController.navigate(
-                                            GithubStoreGraph.RepoIssuesScreen(owner = owner, repo = repo),
+                                            GithubStoreGraph.RepoIssuesScreen(
+                                                owner = owner,
+                                                repo = repo,
+                                            ),
                                         )
                                     },
                                     onNavigateToSecurity = { owner, repo ->
                                         navController.navigate(
-                                            GithubStoreGraph.RepoSecurityScreen(owner = owner, repo = repo),
+                                            GithubStoreGraph.RepoSecurityScreen(
+                                                owner = owner,
+                                                repo = repo,
+                                            ),
+                                        )
+                                    },
+                                    onNavigateToPulls = { owner, repo ->
+                                        navController.navigate(
+                                            GithubStoreGraph.RepoPullsScreen(
+                                                owner = owner,
+                                                repo = repo,
+                                            ),
                                         )
                                     },
                                     viewModel =
@@ -548,7 +563,8 @@ fun AppNavigation(
                                 )
                             },
                         ) { backStackEntry ->
-                            val args = backStackEntry.toRoute<GithubStoreGraph.DetailsWhatsNewScreen>()
+                            val args =
+                                backStackEntry.toRoute<GithubStoreGraph.DetailsWhatsNewScreen>()
                             WhatsNewRoot(
                                 repositoryId = args.repositoryId,
                                 owner = args.owner,
@@ -561,42 +577,64 @@ fun AppNavigation(
                         composable<GithubStoreGraph.RepoIssuesScreen> { backStackEntry ->
                             val args = backStackEntry.toRoute<GithubStoreGraph.RepoIssuesScreen>()
                             IssuesRoot(
-                                owner = args.owner,
-                                repo = args.repo,
                                 onNavigateBack = { navController.navigateUp() },
-                                onOpenIssue = { number ->
+                                onOpenIssue = { issueNumber ->
                                     navController.navigate(
                                         GithubStoreGraph.RepoIssueDetailScreen(
                                             owner = args.owner,
                                             repo = args.repo,
-                                            number = number,
+                                            issueNumber = issueNumber,
                                         ),
                                     )
                                 },
+                                viewModel = koinViewModel { parametersOf(args.owner, args.repo) },
                             )
                         }
 
                         composable<GithubStoreGraph.RepoIssueDetailScreen> { backStackEntry ->
-                            val args = backStackEntry.toRoute<GithubStoreGraph.RepoIssueDetailScreen>()
+                            val args =
+                                backStackEntry.toRoute<GithubStoreGraph.RepoIssueDetailScreen>()
                             IssueDetailRoot(
-                                owner = args.owner,
-                                repo = args.repo,
-                                number = args.number,
                                 onNavigateBack = { navController.navigateUp() },
+                                viewModel =
+                                    koinViewModel {
+                                        parametersOf(
+                                            args.owner,
+                                            args.repo,
+                                            args.issueNumber,
+                                        )
+                                    },
                             )
                         }
 
                         composable<GithubStoreGraph.RepoSecurityScreen> { backStackEntry ->
                             val args = backStackEntry.toRoute<GithubStoreGraph.RepoSecurityScreen>()
                             SecurityRoot(
-                                owner = args.owner,
-                                repo = args.repo,
                                 onNavigateBack = { navController.navigateUp() },
+                                viewModel = koinViewModel { parametersOf(args.owner, args.repo) },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.RepoPullsScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<GithubStoreGraph.RepoPullsScreen>()
+                            PullsRoot(
+                                onNavigateBack = { navController.navigateUp() },
+                                onOpenPull = { number ->
+                                    navController.navigate(
+                                        GithubStoreGraph.RepoIssueDetailScreen(
+                                            owner = args.owner,
+                                            repo = args.repo,
+                                            issueNumber = number,
+                                        ),
+                                    )
+                                },
+                                viewModel = koinViewModel { parametersOf(args.owner, args.repo) },
                             )
                         }
 
                         composable<GithubStoreGraph.DeveloperProfileScreen> { backStackEntry ->
-                            val args = backStackEntry.toRoute<GithubStoreGraph.DeveloperProfileScreen>()
+                            val args =
+                                backStackEntry.toRoute<GithubStoreGraph.DeveloperProfileScreen>()
                             DeveloperProfileRoot(
                                 onNavigateBack = {
                                     navController.navigateUp()
@@ -982,7 +1020,8 @@ fun AppNavigation(
                             }
                             val listDetailState = rememberAdaptiveListDetailState()
                             val pickRepoTitle = stringResource(Res.string.adaptive_pick_repo_title)
-                            val pickRepoSubtitle = stringResource(Res.string.adaptive_pick_repo_subtitle)
+                            val pickRepoSubtitle =
+                                stringResource(Res.string.adaptive_pick_repo_subtitle)
                             AdaptiveListDetailScaffold(
                                 state = listDetailState,
                                 emptyPaneTitle = pickRepoTitle,
@@ -1029,7 +1068,11 @@ fun AppNavigation(
                                     AdaptiveDetailPaneContent(
                                         args = detailArgs,
                                         navController = navController,
-                                        onCrossNavToRepo = { newArgs -> listDetailState.select(newArgs) },
+                                        onCrossNavToRepo = { newArgs ->
+                                            listDetailState.select(
+                                                newArgs,
+                                            )
+                                        },
                                         onClearPane = { listDetailState.clear() },
                                     )
                                 },

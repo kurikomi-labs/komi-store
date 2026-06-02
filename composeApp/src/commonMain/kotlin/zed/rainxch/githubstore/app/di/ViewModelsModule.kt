@@ -22,6 +22,7 @@ import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
 import zed.rainxch.repopages.presentation.issuedetail.IssueDetailViewModel
 import zed.rainxch.repopages.presentation.issues.IssuesViewModel
+import zed.rainxch.repopages.presentation.pulls.PullsViewModel
 import zed.rainxch.repopages.presentation.security.SecurityViewModel
 import zed.rainxch.search.presentation.SearchViewModel
 import zed.rainxch.search.presentation.model.SearchPlatformUi
@@ -96,18 +97,27 @@ val viewModelsModule =
                 owner = params[0],
                 repo = params[1],
                 repository = get(),
+                userSessionRepository = get(),
             )
         }
         viewModel { params ->
             IssueDetailViewModel(
                 owner = params[0],
                 repo = params[1],
-                number = params[2],
+                issueNumber = params[2],
                 repository = get(),
+                userSessionRepository = get(),
             )
         }
         viewModel { params ->
             SecurityViewModel(
+                owner = params[0],
+                repo = params[1],
+                repository = get(),
+            )
+        }
+        viewModel { params ->
+            PullsViewModel(
                 owner = params[0],
                 repo = params[1],
                 repository = get(),

@@ -13,25 +13,7 @@ data class IssueDto(
     val comments: Int = 0,
     val body: String? = null,
     val labels: List<LabelDto> = emptyList(),
+    val reactions: ReactionsDto? = null,
     @SerialName("created_at") val createdAt: String = "",
     @SerialName("pull_request") val pullRequest: JsonElement? = null,
-)
-
-@Serializable
-data class GithubUserDto(
-    val login: String = "",
-    @SerialName("avatar_url") val avatarUrl: String? = null,
-)
-
-@Serializable
-data class LabelDto(
-    val name: String = "",
-    val color: String = "888888",
-)
-
-@Serializable
-data class IssueCommentDto(
-    val user: GithubUserDto? = null,
-    val body: String? = null,
-    @SerialName("created_at") val createdAt: String = "",
 )

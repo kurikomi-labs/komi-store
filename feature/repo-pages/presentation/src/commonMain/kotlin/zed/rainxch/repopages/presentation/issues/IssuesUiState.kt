@@ -13,4 +13,9 @@ data class IssuesUiState(
     val page: Int = 1,
     val endReached: Boolean = false,
     val errorMessage: String? = null,
+    val isLoggedIn: Boolean = false,
+    val showNewIssueSheet: Boolean = false,
+    val newIssueTitle: String = "",
+    val newIssueBody: String = "",
+    val isCreatingIssue: Boolean = false,
 )

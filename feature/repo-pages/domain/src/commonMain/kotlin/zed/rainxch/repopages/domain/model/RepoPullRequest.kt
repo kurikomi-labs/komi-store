@@ -1,14 +1,13 @@
 package zed.rainxch.repopages.domain.model
 
-data class RepoIssueDetail(
+data class RepoPullRequest(
     val number: Int,
     val title: String,
-    val state: IssueState,
+    val state: PullRequestState,
     val authorLogin: String,
     val authorAvatarUrl: String?,
-    val bodyMarkdown: String,
+    val isDraft: Boolean,
+    val commentCount: Int,
     val createdAt: String,
     val labels: List<IssueLabel>,
-    val comments: List<IssueComment>,
-    val reactionThumbsUp: Int = 0,
 )

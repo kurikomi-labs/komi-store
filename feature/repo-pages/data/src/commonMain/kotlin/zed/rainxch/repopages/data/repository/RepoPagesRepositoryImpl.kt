@@ -4,7 +4,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -16,8 +20,12 @@ import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.repopages.data.dto.CreateCommentRequest
+import zed.rainxch.repopages.data.dto.CreateIssueRequest
+import zed.rainxch.repopages.data.dto.CreateReactionRequest
 import zed.rainxch.repopages.data.dto.IssueCommentDto
 import zed.rainxch.repopages.data.dto.IssueDto
+import zed.rainxch.repopages.data.dto.PullRequestDto
 import zed.rainxch.repopages.data.dto.RepoContentDto
 import zed.rainxch.repopages.data.dto.SecurityAdvisoryDto
 import zed.rainxch.repopages.data.mappers.toApiValue
@@ -25,10 +33,13 @@ import zed.rainxch.repopages.data.mappers.toIssueComment
 import zed.rainxch.repopages.data.mappers.toIssueLabel
 import zed.rainxch.repopages.data.mappers.toIssueState
 import zed.rainxch.repopages.data.mappers.toRepoIssue
+import zed.rainxch.repopages.data.mappers.toRepoPullRequest
 import zed.rainxch.repopages.data.mappers.toSecurityAdvisory
+import zed.rainxch.repopages.domain.model.IssueComment
 import zed.rainxch.repopages.domain.model.IssueState
 import zed.rainxch.repopages.domain.model.RepoIssue
 import zed.rainxch.repopages.domain.model.RepoIssueDetail
+import zed.rainxch.repopages.domain.model.RepoPullRequest
 import zed.rainxch.repopages.domain.model.SecurityAdvisory
 import zed.rainxch.repopages.domain.model.SecurityOverview
 import zed.rainxch.repopages.domain.repository.RepoPagesRepository
@@ -114,6 +125,7 @@ class RepoPagesRepositoryImpl(
                         createdAt = issueDto.createdAt,
                         labels = issueDto.labels.map { it.toIssueLabel() },
                         comments = comments,
+                        reactionThumbsUp = issueDto.reactions?.plusOne ?: 0,
                     ),
                 )
             }
@@ -198,6 +210,132 @@ class RepoPagesRepositoryImpl(
         }
         return null
     }
+
+    override suspend fun addIssueComment(
+        owner: String,
+        repo: String,
+        number: Int,
+        body: String,
+    ): Result<IssueComment> = withContext(Dispatchers.IO) {
+        try {
+            val response = httpClient.post("/repos/$owner/$repo/issues/$number/comments") {
+                contentType(ContentType.Application.Json)
+                setBody(CreateCommentRequest(body = body))
+            }
+            if (!response.status.isSuccess()) {
+                return@withContext Result.failure(
+                    authAwareError(response.status.value, "Failed to post comment"),
+                )
+            }
+            val dto: IssueCommentDto = response.body()
+            Result.success(dto.toIssueComment())
+        } catch (e: RateLimitException) {
+            throw e
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to post comment on $owner/$repo#$number: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun createIssue(
+        owner: String,
+        repo: String,
+        title: String,
+        body: String,
+    ): Result<Int> = withContext(Dispatchers.IO) {
+        try {
+            val response = httpClient.post("/repos/$owner/$repo/issues") {
+                contentType(ContentType.Application.Json)
+                setBody(CreateIssueRequest(title = title, body = body))
+            }
+            if (!response.status.isSuccess()) {
+                return@withContext Result.failure(
+                    authAwareError(response.status.value, "Failed to create issue"),
+                )
+            }
+            val dto: IssueDto = response.body()
+            Result.success(dto.number)
+        } catch (e: RateLimitException) {
+            throw e
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to create issue on $owner/$repo: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun reactToIssue(
+        owner: String,
+        repo: String,
+        number: Int,
+    ): Result<Unit> = postReaction("/repos/$owner/$repo/issues/$number/reactions")
+
+    override suspend fun reactToComment(
+        owner: String,
+        repo: String,
+        commentId: Long,
+    ): Result<Unit> = postReaction("/repos/$owner/$repo/issues/comments/$commentId/reactions")
+
+    private suspend fun postReaction(path: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val response = httpClient.post(path) {
+                contentType(ContentType.Application.Json)
+                setBody(CreateReactionRequest(content = "+1"))
+            }
+            if (response.status.isSuccess()) {
+                Result.success(Unit)
+            } else {
+                Result.failure(authAwareError(response.status.value, "Failed to add reaction"))
+            }
+        } catch (e: RateLimitException) {
+            throw e
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getPullRequests(
+        owner: String,
+        repo: String,
+        state: IssueState,
+        page: Int,
+    ): Result<List<RepoPullRequest>> = withContext(Dispatchers.IO) {
+        try {
+            val response = httpClient.get("/repos/$owner/$repo/pulls") {
+                parameter("state", state.toApiValue())
+                parameter("per_page", PER_PAGE)
+                parameter("page", page)
+                parameter("sort", "created")
+                parameter("direction", "desc")
+            }
+            if (!response.status.isSuccess()) {
+                return@withContext Result.failure(
+                    Exception("Failed to fetch pull requests: ${response.status.description}"),
+                )
+            }
+            val dtos: List<PullRequestDto> = response.body()
+            Result.success(dtos.map { it.toRepoPullRequest() })
+        } catch (e: RateLimitException) {
+            throw e
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to fetch pull requests for $owner/$repo: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    private fun authAwareError(statusCode: Int, fallback: String): Exception =
+        if (statusCode == 401 || statusCode == 403) {
+            Exception("Authentication required. Please sign in with GitHub.")
+        } else {
+            Exception(fallback)
+        }
 
     companion object {
         private const val PER_PAGE = 30

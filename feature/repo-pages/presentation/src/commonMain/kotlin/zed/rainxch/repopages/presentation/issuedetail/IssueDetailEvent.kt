@@ -1,5 +1,5 @@
-package zed.rainxch.repopages.presentation.issues
+package zed.rainxch.repopages.presentation.issuedetail
 
-sealed interface IssuesEvent {
-    data class OnMessage(val message: String) : IssuesEvent
+sealed interface IssueDetailEvent {
+    data class OnMessage(val message: String) : IssueDetailEvent
 }

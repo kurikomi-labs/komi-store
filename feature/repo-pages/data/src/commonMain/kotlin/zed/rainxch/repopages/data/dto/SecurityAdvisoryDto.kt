@@ -13,9 +13,3 @@ data class SecurityAdvisoryDto(
     @SerialName("published_at") val publishedAt: String? = null,
     @SerialName("html_url") val htmlUrl: String? = null,
 )
-
-@Serializable
-data class RepoContentDto(
-    val content: String? = null,
-    val encoding: String? = null,
-)
