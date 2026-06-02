@@ -8,7 +8,9 @@
       "type": "NEW",
       "bullets": [
         "Browse a repository's Issues without leaving the app — filter open or closed, see labels at a glance, and open full issue threads with comments, images, and Markdown.",
-        "New per-repository Security page — published security advisories with severity badges, plus the project's SECURITY.md policy rendered inline."
+        "New per-repository Security page — published security advisories with severity badges, plus the project's SECURITY.md policy rendered inline.",
+        "Sign in to interact directly — star a repo, comment on issues, open new issues, and react with 👍.",
+        "Browse a repository's Pull requests with open and closed filters."
       ]
     }
   ]

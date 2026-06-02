@@ -1358,4 +1358,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">इश्यूज़</string>
     <string name="repo_pages_details_security_button">सुरक्षा</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">पुल रिक्वेस्ट</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">स्टार किया गया</string>
+    <string name="star_removed">स्टार हटाया गया</string>
+    <string name="star_sign_in_required">रिपॉजिटरी को स्टार करने के लिए साइन इन करें।</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">टिप्पणी जोड़ें…</string>
+    <string name="repo_pages_comment_send">भेजें</string>
+    <string name="repo_pages_comment_sign_in">टिप्पणी करने के लिए साइन इन करें।</string>
+    <string name="repo_pages_comment_failed">टिप्पणी पोस्ट नहीं हो सकी।</string>
+    <string name="repo_pages_comment_posted">टिप्पणी पोस्ट की गई</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">नया इश्यू</string>
+    <string name="repo_pages_new_issue_title_hint">शीर्षक</string>
+    <string name="repo_pages_new_issue_body_hint">इश्यू का वर्णन करें…</string>
+    <string name="repo_pages_new_issue_submit">बनाएँ</string>
+    <string name="repo_pages_new_issue_sign_in">इश्यू खोलने के लिए साइन इन करें।</string>
+    <string name="repo_pages_new_issue_failed">इश्यू नहीं बनाया जा सका।</string>
+    <string name="repo_pages_new_issue_created">इश्यू बनाया गया</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">रिएक्ट करने के लिए साइन इन करें।</string>
+    <string name="repo_pages_react_failed">रिएक्शन नहीं जोड़ा जा सका।</string>
+    <string name="cd_thumbs_up">थम्स अप</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">पुल रिक्वेस्ट</string>
+    <string name="repo_pages_pulls_empty_open">कोई खुली पुल रिक्वेस्ट नहीं।</string>
+    <string name="repo_pages_pulls_empty_closed">कोई बंद पुल रिक्वेस्ट नहीं।</string>
+    <string name="repo_pages_pr_state_merged">मर्ज किया गया</string>
+    <string name="repo_pages_pr_draft">ड्राफ्ट</string>
 </resources>

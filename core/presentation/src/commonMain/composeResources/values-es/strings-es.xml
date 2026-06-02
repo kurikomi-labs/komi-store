@@ -1322,4 +1322,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">Issues</string>
     <string name="repo_pages_details_security_button">Seguridad</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">Pull requests</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">Destacado</string>
+    <string name="star_removed">Estrella quitada</string>
+    <string name="star_sign_in_required">Inicia sesión para destacar repositorios.</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">Añade un comentario…</string>
+    <string name="repo_pages_comment_send">Enviar</string>
+    <string name="repo_pages_comment_sign_in">Inicia sesión para comentar.</string>
+    <string name="repo_pages_comment_failed">No se pudo publicar el comentario.</string>
+    <string name="repo_pages_comment_posted">Comentario publicado</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">Nuevo issue</string>
+    <string name="repo_pages_new_issue_title_hint">Título</string>
+    <string name="repo_pages_new_issue_body_hint">Describe el issue…</string>
+    <string name="repo_pages_new_issue_submit">Crear</string>
+    <string name="repo_pages_new_issue_sign_in">Inicia sesión para abrir issues.</string>
+    <string name="repo_pages_new_issue_failed">No se pudo crear el issue.</string>
+    <string name="repo_pages_new_issue_created">Issue creado</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">Inicia sesión para reaccionar.</string>
+    <string name="repo_pages_react_failed">No se pudo añadir la reacción.</string>
+    <string name="cd_thumbs_up">Me gusta</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">Pull requests</string>
+    <string name="repo_pages_pulls_empty_open">No hay pull requests abiertos.</string>
+    <string name="repo_pages_pulls_empty_closed">No hay pull requests cerrados.</string>
+    <string name="repo_pages_pr_state_merged">Fusionado</string>
+    <string name="repo_pages_pr_draft">Borrador</string>
 </resources>

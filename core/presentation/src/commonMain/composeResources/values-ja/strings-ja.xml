@@ -1312,4 +1312,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">課題</string>
     <string name="repo_pages_details_security_button">セキュリティ</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">プルリクエスト</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">スターを付けました</string>
+    <string name="star_removed">スターを解除しました</string>
+    <string name="star_sign_in_required">リポジトリにスターを付けるにはサインインしてください。</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">コメントを追加…</string>
+    <string name="repo_pages_comment_send">送信</string>
+    <string name="repo_pages_comment_sign_in">コメントするにはサインインしてください。</string>
+    <string name="repo_pages_comment_failed">コメントを投稿できませんでした。</string>
+    <string name="repo_pages_comment_posted">コメントを投稿しました</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">新しい課題</string>
+    <string name="repo_pages_new_issue_title_hint">タイトル</string>
+    <string name="repo_pages_new_issue_body_hint">課題の内容を記入…</string>
+    <string name="repo_pages_new_issue_submit">作成</string>
+    <string name="repo_pages_new_issue_sign_in">課題を作成するにはサインインしてください。</string>
+    <string name="repo_pages_new_issue_failed">課題を作成できませんでした。</string>
+    <string name="repo_pages_new_issue_created">課題を作成しました</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">リアクションするにはサインインしてください。</string>
+    <string name="repo_pages_react_failed">リアクションを追加できませんでした。</string>
+    <string name="cd_thumbs_up">いいね</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">プルリクエスト</string>
+    <string name="repo_pages_pulls_empty_open">オープンなプルリクエストはありません。</string>
+    <string name="repo_pages_pulls_empty_closed">クローズされたプルリクエストはありません。</string>
+    <string name="repo_pages_pr_state_merged">マージ済み</string>
+    <string name="repo_pages_pr_draft">ドラフト</string>
 </resources>

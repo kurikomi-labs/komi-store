@@ -8,7 +8,9 @@
       "type": "NEW",
       "bullets": [
         "Parcourez les Issues d'un dépôt sans quitter l'app — filtrez les ouvertes ou les fermées, repérez les étiquettes d'un coup d'œil, et ouvrez les fils complets avec commentaires, images et Markdown.",
-        "Nouvelle page Sécurité par dépôt — les avis de sécurité publiés avec badges de gravité, ainsi que la politique SECURITY.md du projet rendue directement dans l'app."
+        "Nouvelle page Sécurité par dépôt — les avis de sécurité publiés avec badges de gravité, ainsi que la politique SECURITY.md du projet rendue directement dans l'app.",
+        "Connectez-vous pour interagir directement — étoilez un dépôt, commentez des issues, ouvrez de nouvelles issues et réagissez avec 👍.",
+        "Parcourez les pull requests d'un dépôt avec les filtres ouvertes et fermées."
       ]
     }
   ]

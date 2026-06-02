@@ -1353,4 +1353,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">Issue&apos;lar</string>
     <string name="repo_pages_details_security_button">Güvenlik</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">Pull request&apos;ler</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">Yıldızlandı</string>
+    <string name="star_removed">Yıldız kaldırıldı</string>
+    <string name="star_sign_in_required">Repoları yıldızlamak için giriş yapın.</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">Yorum ekle…</string>
+    <string name="repo_pages_comment_send">Gönder</string>
+    <string name="repo_pages_comment_sign_in">Yorum yapmak için giriş yapın.</string>
+    <string name="repo_pages_comment_failed">Yorum gönderilemedi.</string>
+    <string name="repo_pages_comment_posted">Yorum gönderildi</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">Yeni issue</string>
+    <string name="repo_pages_new_issue_title_hint">Başlık</string>
+    <string name="repo_pages_new_issue_body_hint">Sorunu açıklayın…</string>
+    <string name="repo_pages_new_issue_submit">Oluştur</string>
+    <string name="repo_pages_new_issue_sign_in">Issue açmak için giriş yapın.</string>
+    <string name="repo_pages_new_issue_failed">Issue oluşturulamadı.</string>
+    <string name="repo_pages_new_issue_created">Issue oluşturuldu</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">Tepki vermek için giriş yapın.</string>
+    <string name="repo_pages_react_failed">Tepki eklenemedi.</string>
+    <string name="cd_thumbs_up">Beğen</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">Pull request&apos;ler</string>
+    <string name="repo_pages_pulls_empty_open">Açık pull request yok.</string>
+    <string name="repo_pages_pulls_empty_closed">Kapalı pull request yok.</string>
+    <string name="repo_pages_pr_state_merged">Birleştirildi</string>
+    <string name="repo_pages_pr_draft">Taslak</string>
 </resources>

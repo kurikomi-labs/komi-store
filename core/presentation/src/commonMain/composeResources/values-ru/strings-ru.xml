@@ -1351,4 +1351,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">Issues</string>
     <string name="repo_pages_details_security_button">Безопасность</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">Pull requests</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">В избранном</string>
+    <string name="star_removed">Удалено из избранного</string>
+    <string name="star_sign_in_required">Войди, чтобы добавлять репозитории в избранное.</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">Добавь комментарий…</string>
+    <string name="repo_pages_comment_send">Отправить</string>
+    <string name="repo_pages_comment_sign_in">Войди, чтобы комментировать.</string>
+    <string name="repo_pages_comment_failed">Не удалось отправить комментарий.</string>
+    <string name="repo_pages_comment_posted">Комментарий отправлен</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">Новый issue</string>
+    <string name="repo_pages_new_issue_title_hint">Заголовок</string>
+    <string name="repo_pages_new_issue_body_hint">Опиши проблему…</string>
+    <string name="repo_pages_new_issue_submit">Создать</string>
+    <string name="repo_pages_new_issue_sign_in">Войди, чтобы создавать issue.</string>
+    <string name="repo_pages_new_issue_failed">Не удалось создать issue.</string>
+    <string name="repo_pages_new_issue_created">Issue создан</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">Войди, чтобы оставить реакцию.</string>
+    <string name="repo_pages_react_failed">Не удалось добавить реакцию.</string>
+    <string name="cd_thumbs_up">Палец вверх</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">Pull requests</string>
+    <string name="repo_pages_pulls_empty_open">Нет открытых pull request.</string>
+    <string name="repo_pages_pulls_empty_closed">Нет закрытых pull request.</string>
+    <string name="repo_pages_pr_state_merged">Влит</string>
+    <string name="repo_pages_pr_draft">Черновик</string>
 </resources>

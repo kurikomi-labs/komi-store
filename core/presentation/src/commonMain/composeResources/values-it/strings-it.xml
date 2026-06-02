@@ -1356,4 +1356,40 @@
     <!-- Repo pages: details entry -->
     <string name="repo_pages_details_issues_button">Issue</string>
     <string name="repo_pages_details_security_button">Sicurezza</string>
+
+    <!-- Repo pages: details entry -->
+    <string name="repo_pages_details_pulls_button">Pull request</string>
+
+    <!-- Repo interactions: star -->
+    <string name="star_added">Stella aggiunta</string>
+    <string name="star_removed">Stella rimossa</string>
+    <string name="star_sign_in_required">Accedi per aggiungere una stella ai repository.</string>
+
+    <!-- Repo interactions: comments -->
+    <string name="repo_pages_comment_hint">Aggiungi un commento…</string>
+    <string name="repo_pages_comment_send">Invia</string>
+    <string name="repo_pages_comment_sign_in">Accedi per commentare.</string>
+    <string name="repo_pages_comment_failed">Impossibile pubblicare il commento.</string>
+    <string name="repo_pages_comment_posted">Commento pubblicato</string>
+
+    <!-- Repo interactions: new issue -->
+    <string name="repo_pages_new_issue">Nuova issue</string>
+    <string name="repo_pages_new_issue_title_hint">Titolo</string>
+    <string name="repo_pages_new_issue_body_hint">Descrivi la issue…</string>
+    <string name="repo_pages_new_issue_submit">Crea</string>
+    <string name="repo_pages_new_issue_sign_in">Accedi per aprire issue.</string>
+    <string name="repo_pages_new_issue_failed">Impossibile creare la issue.</string>
+    <string name="repo_pages_new_issue_created">Issue creata</string>
+
+    <!-- Repo interactions: reactions -->
+    <string name="repo_pages_react_sign_in">Accedi per reagire.</string>
+    <string name="repo_pages_react_failed">Impossibile aggiungere la reazione.</string>
+    <string name="cd_thumbs_up">Mi piace</string>
+
+    <!-- Repo pages: pull requests -->
+    <string name="repo_pages_pulls_title">Pull request</string>
+    <string name="repo_pages_pulls_empty_open">Nessuna pull request aperta.</string>
+    <string name="repo_pages_pulls_empty_closed">Nessuna pull request chiusa.</string>
+    <string name="repo_pages_pr_state_merged">Merge effettuato</string>
+    <string name="repo_pages_pr_draft">Bozza</string>
 </resources>
