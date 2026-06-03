@@ -18,6 +18,7 @@ artifacts that are not needed for the Desktop/Flatpak build.
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import urllib.request
 import ssl
@@ -32,25 +33,24 @@ SSL_CTX = ssl.create_default_context()
 ALL_REPOS = [
     "https://repo1.maven.org/maven2",
     "https://dl.google.com/dl/android/maven2",
-    "https://maven.pkg.jetbrains.space/public/p/compose/dev",
+    "https://jitpack.io",
     "https://plugins.gradle.org/m2",
 ]
 
 
 def get_repos_for_group(group):
-    """Get ordered list of repos to try for a given group."""
     g = group.lower()
     if any(g.startswith(p) for p in ["androidx.", "com.android.", "com.google.android.",
             "com.google.firebase", "com.google.gms", "com.google.testing."]):
-        return ["https://dl.google.com/dl/android/maven2", "https://repo1.maven.org/maven2",
-                "https://maven.pkg.jetbrains.space/public/p/compose/dev"]
-    if g.startswith("org.jetbrains.compose"):
-        return ["https://maven.pkg.jetbrains.space/public/p/compose/dev",
-                "https://repo1.maven.org/maven2", "https://plugins.gradle.org/m2"]
+        return ["https://dl.google.com/dl/android/maven2", "https://repo1.maven.org/maven2"]
+    if g.startswith("com.github."):
+        return ["https://jitpack.io", "https://repo1.maven.org/maven2"]
     if g.startswith("org.gradle.") or g.startswith("gradle.plugin."):
         return ["https://plugins.gradle.org/m2", "https://repo1.maven.org/maven2"]
+    # org.jetbrains.compose resolves from Maven Central here; compose/dev is excluded
+    # because Space serves byte-different POMs for the same coordinate -> sha512 mismatch.
     return ["https://repo1.maven.org/maven2", "https://dl.google.com/dl/android/maven2",
-            "https://maven.pkg.jetbrains.space/public/p/compose/dev", "https://plugins.gradle.org/m2"]
+            "https://plugins.gradle.org/m2"]
 
 
 def sha512_file(filepath):
@@ -200,6 +200,12 @@ def main():
     print(f"  TOTAL:      {len(all_entries)}")
     print(f"\nWritten to {output}")
 
+    print("\nVerifying every pinned URL serves its recorded sha512...")
+    rc = subprocess.call([sys.executable, str(OUTPUT_DIR / "verify-sources.py"), str(output)])
+    if rc != 0:
+        print("ERROR: verification failed — sources are NOT safe to commit (see above).", file=sys.stderr)
+        sys.exit(1)
+
 
 def add_plugin_markers(artifacts, entries, seen):
     count = 0
@@ -239,7 +245,7 @@ def add_plugin_markers(artifacts, entries, seen):
     markers.append(("io.github.jwharm.flatpak-gradle-generator", "1.7.0"))
 
     repos = ["https://plugins.gradle.org/m2", "https://dl.google.com/dl/android/maven2",
-             "https://maven.pkg.jetbrains.space/public/p/compose/dev", "https://repo1.maven.org/maven2"]
+             "https://repo1.maven.org/maven2"]
 
     for pid, ver in markers:
         gp = pid.replace(".", "/")

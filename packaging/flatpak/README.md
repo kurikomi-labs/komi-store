@@ -56,6 +56,16 @@ This creates `flatpak-sources.json` in the project root. Move it to this directo
 mv flatpak-sources.json packaging/flatpak/
 ```
 
+Prefer the plugin above — it records only this build's resolved dependencies with the exact repo URL each was fetched from. The fallback `generate-all-sources.py` scans all of `~/.gradle/caches`, so run it only against a **clean cache** (`rm -rf ~/.gradle/caches`, then one build) or it pins stale, unused versions with rotted hashes.
+
+Always verify before committing — every pinned URL must serve its recorded sha512:
+
+```bash
+python3 packaging/flatpak/verify-sources.py packaging/flatpak/flatpak-sources.json
+```
+
+`generate-all-sources.py` runs this check automatically and aborts if any source is wrong (e.g. a Maven Central artifact pinned with a `compose/dev` URL).
+
 ### 2. Verify SHA256 hashes
 
 The manifest uses pre-computed SHA256 hashes. To verify or update them:
