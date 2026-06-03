@@ -135,5 +135,10 @@ modules:
         sha256: bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531
         dest: gradle/wrapper
         dest-filename: gradle-bin.zip
-      # Pre-downloaded Gradle/Maven dependencies for offline build
+      # Pre-downloaded Gradle/Maven dependencies for offline build.
+      # flatpak-sources.json            = project deps (generate-all-sources.py)
+      # flatpak-sources-convention.json = build-logic classpath, incl buildscript
+      #   transitives (e.g. gson) the cache scan can't see. Produced by build-logic's
+      #   own task: ./gradlew -p build-logic :convention:flatpakGradleGenerator
       - flatpak-sources.json
+      - flatpak-sources-convention.json
