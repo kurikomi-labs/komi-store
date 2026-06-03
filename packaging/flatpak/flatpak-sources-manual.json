@@ -1,1 +1,23 @@
-[]
+[
+    {
+        "type": "file",
+        "url": "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.8.9/gson-2.8.9.pom",
+        "sha512": "1b32f3407e7bf92341b0223113e807a4bea7da2bbc0485eb6d5ba090b77df4af3f9e547a5181ef1e440e011257b1ea37e1c304c8524ca6a3609e70be1fda960b",
+        "dest": "offline-repository/com/google/code/gson/gson/2.8.9",
+        "dest-filename": "gson-2.8.9.pom"
+    },
+    {
+        "type": "file",
+        "url": "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar",
+        "sha512": "46501e4dd34c9a6f33ff63aeeec45b049579365c5273490e5dfd5ea4effaeced907d0fc728204c619aa136e867ad826204582ff9ba3080d06693c1c675c8473f",
+        "dest": "offline-repository/com/google/code/gson/gson/2.8.9",
+        "dest-filename": "gson-2.8.9.jar"
+    },
+    {
+        "type": "file",
+        "url": "https://repo1.maven.org/maven2/com/google/code/gson/gson-parent/2.8.9/gson-parent-2.8.9.pom",
+        "sha512": "921e2ffed05e5dc8ec622d2546641f351f0189c275578b7cd7e5e291244545980c5c946cd90b87402bb0eb03ee4a7c0e2257a9d3af3fbd00cfa2c53ae2ae05aa",
+        "dest": "offline-repository/com/google/code/gson/gson-parent/2.8.9",
+        "dest-filename": "gson-parent-2.8.9.pom"
+    }
+]

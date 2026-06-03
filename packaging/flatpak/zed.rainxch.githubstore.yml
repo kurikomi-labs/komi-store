@@ -142,3 +142,7 @@ modules:
       #   own task: ./gradlew -p build-logic :convention:flatpakGradleGenerator
       - flatpak-sources.json
       - flatpak-sources-convention.json
+      # Hand-pinned artifacts neither generator captures: evicted-version POMs
+      # (e.g. gson 2.8.9, declared by kotlin-build-statistics but conflict-upgraded)
+      # that offline resolution still needs to evaluate the version conflict.
+      - flatpak-sources-manual.json
