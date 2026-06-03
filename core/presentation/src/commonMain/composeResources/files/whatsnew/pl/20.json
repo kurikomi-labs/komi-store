@@ -12,6 +12,12 @@
         "Zaloguj się, aby działać bezpośrednio — oznacz repozytorium gwiazdką, komentuj zgłoszenia, otwieraj nowe zgłoszenia i reaguj za pomocą 👍.",
         "Przeglądaj pull requesty repozytorium z filtrami otwartych i zamkniętych."
       ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Debian 12 / Ubuntu 22.04 znów mogą zainstalować pakiet .deb — nie wymaga już bibliotek time64 'libasound2t64' / 'libpng16-16t64', które istnieją tylko w Debianie 13+, więc jeden .deb instaluje się na wszystkich generacjach Debiana."
+      ]
     }
   ]
 }

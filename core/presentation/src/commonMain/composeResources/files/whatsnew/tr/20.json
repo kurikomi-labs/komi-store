@@ -12,6 +12,12 @@
         "Doğrudan etkileşim için giriş yapın — bir repoyu yıldızlayın, sorunlara yorum yapın, yeni issue'lar açın ve 👍 ile tepki verin.",
         "Bir deponun Pull request'lerine açık ve kapalı filtreleriyle göz atın."
       ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Debian 12 / Ubuntu 22.04 artık .deb paketini yeniden kurabiliyor — paket, yalnızca Debian 13+ üzerinde bulunan time64 'libasound2t64' / 'libpng16-16t64' kitaplıklarını artık istemiyor, böylece tek bir .deb tüm Debian sürümlerine kuruluyor."
+      ]
     }
   ]
 }

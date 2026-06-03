@@ -12,6 +12,12 @@
         "Inicia sesión para interactuar directamente — marca un repo con estrella, comenta en los issues, abre nuevos issues y reacciona con 👍.",
         "Explora los Pull requests de un repositorio con filtros de abiertos y cerrados."
       ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Debian 12 / Ubuntu 22.04 ya pueden instalar el .deb de nuevo — el paquete ya no exige las bibliotecas time64 'libasound2t64' / 'libpng16-16t64', que solo existen en Debian 13+, así que un único .deb se instala en todas las generaciones de Debian."
+      ]
     }
   ]
 }

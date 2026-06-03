@@ -365,7 +365,7 @@ jobs:
           ls -lh "$OUTPUT" "$OUTPUT.zsync"
         shell: bash
 
-      - name: Patch deb (headless compat + native-launcher bypass GH#563)
+      - name: Patch deb (headless compat + t64 deps GH#124 + native-launcher bypass GH#563)
         run: |
           set -euo pipefail
           WRAPPER="$(pwd)/packaging/linux/github-store-launcher.sh"
@@ -381,6 +381,25 @@ jobs:
               # so install/remove succeeds in headless environments (WSL, containers, servers)
               sed -i '/xdg-desktop-menu\|xdg-icon-resource\|xdg-mime/{/|| true$/!s/$/ || true/}' "$script"
             done
+
+            # GH#124: glibc time64 ("t64") library rename. jpackage/dpkg-shlibdeps
+            # emits host-derived deps: t64 names on Ubuntu 24.04+/Debian 13, bare
+            # names on Ubuntu 22.04/Debian 12. Neither single name installs on both.
+            # Rewrite to alternative-dependency form so one .deb covers every distro.
+            control="$tmpdir/DEBIAN/control"
+            if [ -f "$control" ]; then
+              if grep -q 'libasound2t64' "$control"; then
+                sed -i 's/\blibasound2t64\b/libasound2 | libasound2t64/g' "$control"
+              elif grep -q 'libasound2' "$control"; then
+                sed -i 's/\blibasound2\b/libasound2 | libasound2t64/g' "$control"
+              fi
+              if grep -q 'libpng16-16t64' "$control"; then
+                sed -i 's/\blibpng16-16t64\b/libpng16-16 | libpng16-16t64/g' "$control"
+              elif grep -q 'libpng16-16' "$control"; then
+                sed -i 's/\blibpng16-16\b/libpng16-16 | libpng16-16t64/g' "$control"
+              fi
+              echo "Depends after t64 rewrite:"; grep -i '^Depends' "$control" || true
+            fi
 
             # Replace the jpackage native launcher with the JVM-direct wrapper.
             # The native launcher crashes in glibc setenv() on glibc >= 2.42
