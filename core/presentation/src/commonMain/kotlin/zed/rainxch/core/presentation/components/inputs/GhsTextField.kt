@@ -1,5 +1,6 @@
 package zed.rainxch.core.presentation.components.inputs
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,8 +77,7 @@ fun GhsTextField(
                 .fillMaxWidth()
                 .clip(Radii.chip),
             shape = Radii.chip,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            border = androidx.compose.foundation.BorderStroke(
+            border = BorderStroke(
                 width = if (focused) 1.5.dp else 1.dp,
                 color = borderColor,
             ),
@@ -112,6 +112,7 @@ fun GhsTextField(
                             },
                         )
                     }
+
                     Box(contentAlignment = Alignment.CenterStart) {
                         if (value.isEmpty() && !focused) {
                             val showText = label ?: placeholder
@@ -175,7 +176,10 @@ fun GhsPasswordVisibilityIcon(
     visible: Boolean,
     onToggle: () -> Unit,
 ) {
-    IconButton(onClick = onToggle, modifier = Modifier.size(36.dp)) {
+    IconButton(
+        onClick = onToggle,
+        modifier = Modifier.size(36.dp)
+    ) {
         Icon(
             imageVector = if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
             contentDescription = null,
@@ -185,5 +189,8 @@ fun GhsPasswordVisibilityIcon(
     }
 }
 
-fun passwordVisualTransformation(visible: Boolean): VisualTransformation =
-    if (visible) VisualTransformation.None else PasswordVisualTransformation()
+fun passwordVisualTransformation(visible: Boolean): VisualTransformation = if (visible) {
+    VisualTransformation.None
+} else {
+    PasswordVisualTransformation()
+}

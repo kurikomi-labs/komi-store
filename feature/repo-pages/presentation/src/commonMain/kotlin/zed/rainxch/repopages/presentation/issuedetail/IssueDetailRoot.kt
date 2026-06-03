@@ -1,6 +1,5 @@
 package zed.rainxch.repopages.presentation.issuedetail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,28 +12,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_hint
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_send
@@ -43,6 +40,8 @@ import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_comments_s
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_no_body
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
 import zed.rainxch.repopages.domain.model.IssueComment
+import zed.rainxch.repopages.domain.model.IssueLabel
+import zed.rainxch.repopages.domain.model.IssueState
 import zed.rainxch.repopages.domain.model.RepoIssueDetail
 import zed.rainxch.repopages.presentation.components.RepoMarkdown
 import zed.rainxch.repopages.presentation.components.RepoPagesError
@@ -290,7 +289,7 @@ private fun CommentComposer(
     onSend: () -> Unit,
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 2.dp,
     ) {
         Column(
@@ -311,15 +310,15 @@ private fun CommentComposer(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    OutlinedTextField(
+                    GhsTextField(
                         value = text,
                         onValueChange = onTextChange,
-                        modifier = Modifier.weight(1f)
-                            .background(MaterialTheme.colorScheme.surface),
-                        placeholder = { Text(stringResource(Res.string.repo_pages_comment_hint)) },
+                        modifier = Modifier.weight(1f),
+                        placeholder = stringResource(Res.string.repo_pages_comment_hint),
                         maxLines = 4,
                         enabled = !isPosting,
                     )
+
                     GhsButton(
                         onClick = onSend,
                         label = stringResource(Res.string.repo_pages_comment_send),
@@ -329,5 +328,52 @@ private fun CommentComposer(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun IssueDetailScreenPreview() {
+    GithubStoreTheme {
+        IssueDetailScreen(
+            state = IssueDetailUiState(
+                issueNumber = 123,
+                detail = RepoIssueDetail(
+                    number = 123,
+                    title = "Sample Issue Title",
+                    state = IssueState.OPEN,
+                    authorLogin = "sampleuser",
+                    authorAvatarUrl = null,
+                    bodyMarkdown = "This is a sample issue body with **markdown** support.",
+                    createdAt = "2023-10-27T10:00:00Z",
+                    labels = listOf(
+                        IssueLabel(name = "bug", color = "ff0000"),
+                        IssueLabel(name = "high priority", color = "00ff00")
+                    ),
+                    comments = listOf(
+                        IssueComment(
+                            id = 1,
+                            authorLogin = "commenter1",
+                            authorAvatarUrl = null,
+                            bodyMarkdown = "This is a comment.",
+                            createdAt = "2023-10-27T11:00:00Z",
+                            reactionThumbsUp = 5
+                        ),
+                        IssueComment(
+                            id = 2,
+                            authorLogin = "commenter2",
+                            authorAvatarUrl = null,
+                            bodyMarkdown = "Another comment with `code`.",
+                            createdAt = "2023-10-27T12:00:00Z",
+                            reactionThumbsUp = 2
+                        )
+                    ),
+                    reactionThumbsUp = 10
+                ),
+                isLoggedIn = true
+            ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {}
+        )
     }
 }
