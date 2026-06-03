@@ -1,24 +1,10 @@
 # Flatpak Packaging for GitHub Store
 
-## Sandbox limitations (read first)
+## Sandbox limitations
 
-GitHub Store's job is to download and **install/launch** other artifacts on the
-host. The Flatpak sandbox confines that, so the Flatpak build is intentionally a
-**browse-and-download** experience, not a host installer:
+The sandbox can't exec or install host binaries, so the Flatpak is browse-and-download only: files land in `~/Downloads` (`--filesystem=xdg-download:rw`); the user installs them manually outside.
 
-- The app can write downloads to `~/Downloads` (`--filesystem=xdg-download:rw`)
-  but cannot `chmod +x` and exec an arbitrary host binary, nor drive the host's
-  `dpkg` / `rpm` / `pacman`. The user installs the downloaded file manually
-  outside the sandbox, or via the desktop's default handler.
-- Android silent-install paths (Shizuku / root) are Android-only and do not
-  apply to the desktop Flatpak.
-- Permissions are deliberately tight. Do **not** broaden to `--filesystem=host`
-  or `--talk-name=org.freedesktop.Flatpak` (host `flatpak-spawn --host`) without
-  a tested host-spawn path: Flathub reviewers reject unjustified host access.
-
-Users who want full host integration (install + auto-update without manual
-steps) should prefer the **AppImage**, **`.deb` / `.rpm`**, or **Arch** builds,
-which ship from the same release and run unconfined.
+Don't add `--filesystem=host` or `--talk-name=org.freedesktop.Flatpak` without a tested host-spawn path — Flathub rejects unjustified host access. For install + auto-update, use the AppImage / deb / rpm / Arch builds.
 
 ## Prerequisites
 
