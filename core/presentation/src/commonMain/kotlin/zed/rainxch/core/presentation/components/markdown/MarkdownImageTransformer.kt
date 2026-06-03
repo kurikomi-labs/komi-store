@@ -1,6 +1,5 @@
-package zed.rainxch.details.presentation.utils
+package zed.rainxch.core.presentation.components.markdown
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
@@ -14,6 +13,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
@@ -24,6 +25,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.mikepenz.markdown.model.ImageData
 import com.mikepenz.markdown.model.ImageTransformer
+import com.mikepenz.markdown.model.PlaceholderConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.request.head
 import io.ktor.client.statement.HttpResponse
@@ -142,10 +144,10 @@ class MarkdownImageTransformer(
     override fun intrinsicSize(painter: Painter): Size = painter.intrinsicSize
 
     override fun placeholderConfig(
-        density: androidx.compose.ui.unit.Density,
+        density: Density,
         containerSize: Size,
         intrinsicImageSize: Size,
-    ): com.mikepenz.markdown.model.PlaceholderConfig {
+    ): PlaceholderConfig {
         val (widthSp, heightSp) = when {
             intrinsicImageSize.isUnspecified ||
                 intrinsicImageSize.width <= 0f ||
@@ -174,9 +176,9 @@ class MarkdownImageTransformer(
                 targetWidth.toSp().value to targetHeight.toSp().value
             }
         }
-        return com.mikepenz.markdown.model.PlaceholderConfig(
+        return PlaceholderConfig(
             size = Size(widthSp, heightSp),
-            verticalAlign = androidx.compose.ui.text.PlaceholderVerticalAlign.Center,
+            verticalAlign = PlaceholderVerticalAlign.Center,
         )
     }
 

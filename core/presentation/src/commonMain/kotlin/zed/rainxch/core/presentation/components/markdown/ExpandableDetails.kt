@@ -1,4 +1,4 @@
-package zed.rainxch.details.presentation.markdown
+package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -33,8 +33,6 @@ import com.mikepenz.markdown.compose.components.MarkdownComponentModel
 import com.mikepenz.markdown.model.ImageTransformer
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
-import zed.rainxch.details.presentation.utils.rememberMarkdownColors
-import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 
 private const val DETAILS_INFO_PREFIX = "ghs-details"
 

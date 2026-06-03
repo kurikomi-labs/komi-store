@@ -1,4 +1,4 @@
-package zed.rainxch.details.presentation.markdown
+package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.compose.components.MarkdownComponentModel
 import dev.snipme.highlights.Highlights
@@ -149,7 +150,7 @@ private fun buildHighlighted(
 
                 is BoldHighlight ->
                     addStyle(
-                        SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                        SpanStyle(fontWeight = FontWeight.Bold),
                         highlight.location.start,
                         highlight.location.end.coerceAtMost(code.length),
                     )

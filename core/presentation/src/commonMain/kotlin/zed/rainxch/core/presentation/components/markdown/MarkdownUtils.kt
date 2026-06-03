@@ -1,4 +1,4 @@
-package zed.rainxch.details.presentation.utils
+package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

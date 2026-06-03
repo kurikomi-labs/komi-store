@@ -1,4 +1,4 @@
-package zed.rainxch.details.presentation.markdown
+package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,10 +28,9 @@ import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.compose.components.MarkdownComponentModel
 import com.mikepenz.markdown.compose.elements.MarkdownBlockQuote
 import com.mikepenz.markdown.model.ImageTransformer
+import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.details.presentation.utils.rememberMarkdownColors
-import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 import zed.rainxch.githubstore.core.presentation.res.*
 
 enum class GithubAlertKind(val token: String) {
@@ -120,7 +119,7 @@ fun AlertBlockQuote(
     }
 }
 
-private fun org.intellij.markdown.ast.ASTNode.text(content: String): String =
+private fun ASTNode.text(content: String): String =
     content.substring(startOffset, endOffset)
 
 private data class AlertPalette(val container: Color, val content: Color, val accent: Color)

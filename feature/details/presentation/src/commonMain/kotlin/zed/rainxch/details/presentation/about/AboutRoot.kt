@@ -36,13 +36,13 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import zed.rainxch.core.presentation.components.buttons.IconButton
+import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
+import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
+import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
+import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
-import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
-import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
-import zed.rainxch.details.presentation.utils.rememberMarkdownColors
-import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cd_back
 import zed.rainxch.githubstore.core.presentation.res.details_about_screen_title

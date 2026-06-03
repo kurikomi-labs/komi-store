@@ -2,6 +2,7 @@ package zed.rainxch.details.presentation.whatsnew
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,14 +41,14 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import zed.rainxch.core.presentation.components.buttons.IconButton
+import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
+import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
+import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
+import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
-import zed.rainxch.details.presentation.markdown.githubStoreMarkdownComponents
-import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
-import zed.rainxch.details.presentation.utils.rememberMarkdownColors
-import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cd_back
 import zed.rainxch.githubstore.core.presentation.res.details_whats_new_screen_title
@@ -86,7 +87,7 @@ private fun WhatsNewScreen(
     onDismissLanguagePicker: () -> Unit,
     onClearTranslation: () -> Unit,
 ) {
-    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val isDark = isSystemInDarkTheme()
     val probeClient = koinInject<HttpClient>(qualifier = named("test"))
     val imageTransformer = remember(probeClient) { MarkdownImageTransformer(probeClient) }
     val colors = rememberMarkdownColors()

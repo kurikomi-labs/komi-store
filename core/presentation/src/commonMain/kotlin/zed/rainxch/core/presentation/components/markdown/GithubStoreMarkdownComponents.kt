@@ -1,9 +1,10 @@
-package zed.rainxch.details.presentation.markdown
+package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import com.mikepenz.markdown.compose.components.MarkdownComponents
 import com.mikepenz.markdown.compose.components.markdownComponents
@@ -56,7 +57,7 @@ private fun LinkAwareMarkdownImage(
     val outerHref = findEnclosingLinkDestination(node, content)
     val imageData = imageTransformer.transform(imageSrc) ?: return
 
-    val blockModifier = androidx.compose.ui.Modifier.fillMaxWidth()
+    val blockModifier = Modifier.fillMaxWidth()
 
     if (outerHref != null) {
         val uriHandler = LocalUriHandler.current
