@@ -3,4 +3,5 @@
     <string name="shortcut_library">ライブラリ</string>
     <string name="shortcut_favourites">お気に入り</string>
     <string name="shortcut_recently_viewed">最近閲覧した</string>
+    <string name="shortcut_recent_short">最近</string>
 </resources>

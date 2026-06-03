@@ -2,6 +2,7 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:shortcutId="search"
+        android:icon="@drawable/ic_shortcut_search"
         android:shortcutShortLabel="@string/shortcut_search"
         android:shortcutLongLabel="@string/shortcut_search">
         <intent
@@ -13,6 +14,7 @@
 
     <shortcut
         android:shortcutId="library"
+        android:icon="@drawable/ic_shortcut_library"
         android:shortcutShortLabel="@string/shortcut_library"
         android:shortcutLongLabel="@string/shortcut_library">
         <intent
@@ -24,6 +26,7 @@
 
     <shortcut
         android:shortcutId="favourites"
+        android:icon="@drawable/ic_shortcut_favourites"
         android:shortcutShortLabel="@string/shortcut_favourites"
         android:shortcutLongLabel="@string/shortcut_favourites">
         <intent
@@ -35,7 +38,8 @@
 
     <shortcut
         android:shortcutId="recent"
-        android:shortcutShortLabel="@string/shortcut_recently_viewed"
+        android:icon="@drawable/ic_shortcut_recent"
+        android:shortcutShortLabel="@string/shortcut_recent_short"
         android:shortcutLongLabel="@string/shortcut_recently_viewed">
         <intent
             android:action="android.intent.action.VIEW"

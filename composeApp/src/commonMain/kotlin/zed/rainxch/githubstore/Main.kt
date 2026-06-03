@@ -134,13 +134,21 @@ fun App(deepLinkUri: String? = null) {
 
                 DeepLinkDestination.Favourites -> {
                     navController.navigate(GithubStoreGraph.FavouritesScreen) {
+                        popUpTo(GithubStoreGraph.HomeScreen) {
+                            saveState = true
+                        }
                         launchSingleTop = true
+                        restoreState = true
                     }
                 }
 
                 DeepLinkDestination.RecentlyViewed -> {
                     navController.navigate(GithubStoreGraph.RecentlyViewedScreen) {
+                        popUpTo(GithubStoreGraph.HomeScreen) {
+                            saveState = true
+                        }
                         launchSingleTop = true
+                        restoreState = true
                     }
                 }
 

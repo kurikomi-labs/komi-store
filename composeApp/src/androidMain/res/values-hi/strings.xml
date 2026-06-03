@@ -3,4 +3,5 @@
     <string name="shortcut_library">लाइब्रेरी</string>
     <string name="shortcut_favourites">पसंदीदा</string>
     <string name="shortcut_recently_viewed">हाल ही में देखा गया</string>
+    <string name="shortcut_recent_short">हाल का</string>
 </resources>

@@ -3,4 +3,5 @@
     <string name="shortcut_library">应用库</string>
     <string name="shortcut_favourites">收藏</string>
     <string name="shortcut_recently_viewed">最近查看</string>
+    <string name="shortcut_recent_short">最近</string>
 </resources>

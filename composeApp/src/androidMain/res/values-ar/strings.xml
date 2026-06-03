@@ -3,4 +3,5 @@
     <string name="shortcut_library">المكتبة</string>
     <string name="shortcut_favourites">المفضلة</string>
     <string name="shortcut_recently_viewed">تمت مشاهدته مؤخرًا</string>
+    <string name="shortcut_recent_short">الأخيرة</string>
 </resources>

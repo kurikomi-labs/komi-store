@@ -3,4 +3,5 @@
     <string name="shortcut_library">라이브러리</string>
     <string name="shortcut_favourites">즐겨찾기</string>
     <string name="shortcut_recently_viewed">최근 본 항목</string>
+    <string name="shortcut_recent_short">최근</string>
 </resources>

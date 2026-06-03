@@ -3,4 +3,5 @@
     <string name="shortcut_library">Kütüphane</string>
     <string name="shortcut_favourites">Favoriler</string>
     <string name="shortcut_recently_viewed">Son görüntülenenler</string>
+    <string name="shortcut_recent_short">Geçmiş</string>
 </resources>

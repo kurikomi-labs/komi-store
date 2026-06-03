@@ -3,4 +3,5 @@
     <string name="shortcut_library">Biblioteca</string>
     <string name="shortcut_favourites">Favoritos</string>
     <string name="shortcut_recently_viewed">Vistos recientemente</string>
+    <string name="shortcut_recent_short">Recientes</string>
 </resources>

@@ -3,4 +3,5 @@
     <string name="shortcut_library">লাইব্রেরি</string>
     <string name="shortcut_favourites">প্রিয়</string>
     <string name="shortcut_recently_viewed">সাম্প্রতিক দেখা</string>
+    <string name="shortcut_recent_short">সাম্প্রতিক</string>
 </resources>
