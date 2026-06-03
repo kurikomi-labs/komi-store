@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="search"
+        android:shortcutShortLabel="@string/shortcut_search"
+        android:shortcutLongLabel="@string/shortcut_search">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="githubstore://search"
+            android:targetPackage="zed.rainxch.githubstore"
+            android:targetClass="zed.rainxch.githubstore.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="library"
+        android:shortcutShortLabel="@string/shortcut_library"
+        android:shortcutLongLabel="@string/shortcut_library">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="githubstore://apps"
+            android:targetPackage="zed.rainxch.githubstore"
+            android:targetClass="zed.rainxch.githubstore.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="favourites"
+        android:shortcutShortLabel="@string/shortcut_favourites"
+        android:shortcutLongLabel="@string/shortcut_favourites">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="githubstore://favourites"
+            android:targetPackage="zed.rainxch.githubstore"
+            android:targetClass="zed.rainxch.githubstore.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="recent"
+        android:shortcutShortLabel="@string/shortcut_recently_viewed"
+        android:shortcutLongLabel="@string/shortcut_recently_viewed">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="githubstore://recent"
+            android:targetPackage="zed.rainxch.githubstore"
+            android:targetClass="zed.rainxch.githubstore.MainActivity" />
+    </shortcut>
+</shortcuts>

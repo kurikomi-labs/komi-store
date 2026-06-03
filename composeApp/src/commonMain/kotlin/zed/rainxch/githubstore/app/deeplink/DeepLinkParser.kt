@@ -24,6 +24,12 @@ sealed interface DeepLinkDestination {
 
     data object TweaksLicenses : DeepLinkDestination
 
+    data object Search : DeepLinkDestination
+
+    data object Favourites : DeepLinkDestination
+
+    data object RecentlyViewed : DeepLinkDestination
+
     data object None : DeepLinkDestination
 }
 
@@ -115,6 +121,18 @@ object DeepLinkParser {
 
             uri == "githubstore://tweaks/licenses" -> {
                 DeepLinkDestination.TweaksLicenses
+            }
+
+            uri == "githubstore://search" || uri == "githubstore://search/" -> {
+                DeepLinkDestination.Search
+            }
+
+            uri == "githubstore://favourites" || uri == "githubstore://favourites/" -> {
+                DeepLinkDestination.Favourites
+            }
+
+            uri == "githubstore://recent" || uri == "githubstore://recent/" -> {
+                DeepLinkDestination.RecentlyViewed
             }
 
             uri.startsWith("https://github-store.org/app/") -> {

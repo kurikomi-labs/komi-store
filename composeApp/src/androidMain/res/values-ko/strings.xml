@@ -1,0 +1,6 @@
+<resources>
+    <string name="shortcut_search">검색</string>
+    <string name="shortcut_library">라이브러리</string>
+    <string name="shortcut_favourites">즐겨찾기</string>
+    <string name="shortcut_recently_viewed">최근 본 항목</string>
+</resources>

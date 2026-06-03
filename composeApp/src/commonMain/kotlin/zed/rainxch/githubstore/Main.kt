@@ -120,6 +120,30 @@ fun App(deepLinkUri: String? = null) {
                     }
                 }
 
+                DeepLinkDestination.Search -> {
+                    if (currentScreen !is GithubStoreGraph.SearchScreen) {
+                        navController.navigate(GithubStoreGraph.SearchScreen()) {
+                            popUpTo(GithubStoreGraph.HomeScreen) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
+
+                DeepLinkDestination.Favourites -> {
+                    navController.navigate(GithubStoreGraph.FavouritesScreen) {
+                        launchSingleTop = true
+                    }
+                }
+
+                DeepLinkDestination.RecentlyViewed -> {
+                    navController.navigate(GithubStoreGraph.RecentlyViewedScreen) {
+                        launchSingleTop = true
+                    }
+                }
+
                 DeepLinkDestination.None -> {
                 }
             }

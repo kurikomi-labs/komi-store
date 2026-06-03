@@ -10,7 +10,8 @@
         "Explora los Issues de un repositorio sin salir de la app — filtra por abiertos o cerrados, ve las etiquetas de un vistazo y abre hilos completos con comentarios, imágenes y Markdown.",
         "Nueva página de Seguridad por repositorio — avisos de seguridad publicados con distintivos de gravedad, además de la política SECURITY.md del proyecto renderizada en línea.",
         "Inicia sesión para interactuar directamente — marca un repo con estrella, comenta en los issues, abre nuevos issues y reacciona con 👍.",
-        "Explora los Pull requests de un repositorio con filtros de abiertos y cerrados."
+        "Explora los Pull requests de un repositorio con filtros de abiertos y cerrados.",
+        "Accesos directos en la pantalla de inicio de Android — mantén pulsado el icono de la app para ir directo a Buscar, tu Biblioteca, Favoritos o Vistos recientemente, y arrastra cualquiera como un icono independiente."
       ]
     }
   ]
