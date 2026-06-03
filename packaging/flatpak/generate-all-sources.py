@@ -37,15 +37,21 @@ ALL_REPOS = [
     "https://plugins.gradle.org/m2",
 ]
 
+# Generation-only; disable-android-for-flatpak.sh strips this plugin, so the
+# Flatpak build never resolves it. Pinning it only adds a flaky source.
+EXCLUDED_GROUPS = {"io.github.jwharm.flatpak-gradle-generator"}
+
 
 def get_repos_for_group(group):
     g = group.lower()
-    if any(g.startswith(p) for p in ["androidx.", "com.android.", "com.google.android.",
-            "com.google.firebase", "com.google.gms", "com.google.testing."]):
+    if g == "com.android" or any(g.startswith(p) for p in ["androidx.", "com.android.",
+            "com.google.android.", "com.google.firebase", "com.google.gms", "com.google.testing."]):
         return ["https://dl.google.com/dl/android/maven2", "https://repo1.maven.org/maven2"]
-    if g.startswith("com.github."):
+    # jitpack only hosts com.github.topjohnwu (see settings.gradle.kts); every other
+    # com.github.* coordinate (clikt, landscapist, …) publishes to Maven Central.
+    if g == "com.github.topjohnwu" or g.startswith("com.github.topjohnwu."):
         return ["https://jitpack.io", "https://repo1.maven.org/maven2"]
-    if g.startswith("org.gradle.") or g.startswith("gradle.plugin."):
+    if g.startswith("org.gradle.") or g.startswith("gradle.plugin.") or g.startswith("org.jlleitschuh."):
         return ["https://plugins.gradle.org/m2", "https://repo1.maven.org/maven2"]
     # org.jetbrains.compose resolves from Maven Central here; compose/dev is excluded
     # because Space serves byte-different POMs for the same coordinate -> sha512 mismatch.
@@ -122,6 +128,9 @@ def main():
     for idx, ((group, artifact, version), files) in enumerate(sorted(artifacts.items())):
         if (idx + 1) % 200 == 0:
             print(f"  [{idx+1}/{total}] {stats}")
+
+        if group in EXCLUDED_GROUPS:
+            continue
 
         group_path = group.replace(".", "/")
         base_name = f"{artifact}-{version}"
@@ -242,7 +251,6 @@ def add_plugin_markers(artifacts, entries, seen):
         markers.append(("androidx.room", pv["room"]))
     if "kotlin-dsl" in pv:
         markers.append(("org.gradle.kotlin.kotlin-dsl", pv["kotlin-dsl"]))
-    markers.append(("io.github.jwharm.flatpak-gradle-generator", "1.7.0"))
 
     repos = ["https://plugins.gradle.org/m2", "https://dl.google.com/dl/android/maven2",
              "https://repo1.maven.org/maven2"]
