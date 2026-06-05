@@ -46,7 +46,12 @@ class MirrorRepositoryImpl(
     private val appScope: CoroutineScope,
 ) : MirrorRepository {
     private val json = Json { ignoreUnknownKeys = true }
-    private val cacheTtlMs = 24L * 60 * 60 * 1000
+    // 1h not 24h. Backend probes mirrors hourly, so 24h cache held stale
+    // DOWN states for an entire day after a transient backend probe flap —
+    // the user-facing symptom in OpenHub-Store/GitHub-Store#698 where
+    // ghfast.top kept showing as 不可用 even after recovery. With 1h TTL,
+    // a single bad backend probe clears within one app foreground.
+    private val cacheTtlMs = 60L * 60 * 1000
 
     private val _catalog = MutableStateFlow<List<MirrorConfig>>(emptyList())
     private val _removedNotices = MutableSharedFlow<MirrorRemoved>(
