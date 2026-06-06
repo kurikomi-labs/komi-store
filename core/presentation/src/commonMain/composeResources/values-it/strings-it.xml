@@ -253,7 +253,7 @@
 
     <string name="sign_in_required">Accesso richiesto</string>
     <string name="no_starred_repos">Nessun repository preferito</string>
-    <string name="sign_in_with_github_for_stars">Accedi con GitHub per vedere i repository preferiti</string>
+    <string name="sign_in_with_github_for_stars">Accedi con GitHub per vedere i repository con stella</string>
     <string name="star_repos_hint">Aggiungi repository con release installabili su GitHub per vederli qui</string>
     <string name="last_synced">Ultima sincronizzazione</string>
     <string name="just_now">Poco fa</string>
@@ -261,7 +261,7 @@
     <string name="hours_ago">%1$d h fa</string>
     <string name="days_ago">%1$d g fa</string>
     <string name="dismiss">Chiudi</string>
-    <string name="sync_starred_failed">Impossibile sincronizzare i repository preferiti</string>
+    <string name="sync_starred_failed">Impossibile sincronizzare i repository con stella</string>
 
 
     <!-- Developer Profile - General -->
@@ -381,8 +381,8 @@
     <string name="profile_sign_in_description">Sblocca l'esperienza completa. Gestisci le tue app, sincronizza le preferenze e naviga più velocemente.</string>
     <string name="profile_repos">Repo</string>
     <string name="profile_login">Accedi</string>
-    <string name="profile_stars_description">I tuoi repository preferiti su GitHub</string>
-    <string name="profile_favourites_description">I tuoi repository preferiti salvati localmente</string>
+    <string name="profile_stars_description">I tuoi repository con stella su GitHub</string>
+    <string name="profile_favourites_description">I tuoi repository con stella salvati localmente</string>
 
     <!-- Session expired dialog -->
     <string name="session_expired_title">Sessione scaduta</string>
@@ -972,19 +972,19 @@
     <string name="starred_picker_sort_recent">Recentemente preferiti</string>
     <string name="starred_picker_sort_stars">Più stelle</string>
     <string name="starred_picker_star_dedup_tooltip">Rimuovere la stella su GitHub non smetterà di tracciare l'app.</string>
-    <string name="import_stars_title">Importa repository preferiti per nome utente</string>
-    <string name="import_stars_subtitle">Inserisci un qualsiasi nome utente GitHub per sfogliare i suoi repository preferiti pubblici e aggiungerli ai tuoi preferiti. Nessun accesso richiesto.</string>
+    <string name="import_stars_title">Importa repository con stella per nome utente</string>
+    <string name="import_stars_subtitle">Inserisci un qualsiasi nome utente GitHub per sfogliare i suoi repository con stella pubblici e aggiungerli ai tuoi preferiti. Nessun accesso richiesto.</string>
     <string name="import_stars_hint">Nome utente GitHub</string>
-    <string name="import_stars_button">Visualizza repository preferiti</string>
-    <string name="import_stars_header_count">@%1$s · %2$d repository preferiti</string>
+    <string name="import_stars_button">Visualizza repository con stella</string>
+    <string name="import_stars_header_count">@%1$s · %2$d repository con stella</string>
     <string name="import_stars_search_hint">Cerca proprietario / repo / descrizione</string>
     <string name="import_stars_add_all">Aggiungi %1$d ai preferiti</string>
-    <string name="import_stars_empty">@%1$s non ha repository preferiti.</string>
+    <string name="import_stars_empty">@%1$s non ha repository con stella.</string>
     <string name="import_stars_no_match">Nessun risultato.</string>
     <string name="import_stars_add">Aggiungi ai preferiti</string>
     <string name="import_stars_added">Già nei preferiti</string>
     <string name="import_stars_try_another">Prova un altro</string>
-    <string name="import_stars_entry">Importa repository preferiti per nome utente</string>
+    <string name="import_stars_entry">Importa repository con stella per nome utente</string>
     <string name="starred_picker_title">Aggiungi dai preferiti</string>
     <string name="whats_new_cta_dismiss">Capito</string>
     <string name="whats_new_cta_history">Vedi versioni precedenti</string>
