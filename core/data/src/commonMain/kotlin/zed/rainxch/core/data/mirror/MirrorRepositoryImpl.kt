@@ -175,14 +175,16 @@ class MirrorRepositoryImpl(
         }.getOrDefault("")
 
         return if (cachedJson.isBlank()) {
-            BundledMirrors.ALL
+            BundledMirrors.ALL.sortedBy { it.status.ordinal }
         } else {
             runCatching {
                 json.decodeFromString(
                     deserializer = MirrorListResponse.serializer(),
                     string = cachedJson
-                ).mirrors.map { it.toDomain() }
-            }.getOrElse { BundledMirrors.ALL }
+                ).mirrors
+                    .map { it.toDomain() }
+                    .sortedBy { it.status.ordinal }
+            }.getOrElse { BundledMirrors.ALL.sortedBy { it.status.ordinal } }
         }
     }
 

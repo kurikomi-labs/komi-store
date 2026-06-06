@@ -81,10 +81,9 @@ class MirrorPickerViewModel(
 
     private fun selectMirror(mirror: MirrorConfig) {
         viewModelScope.launch {
-            val pref =
-                if (mirror.id == "direct") MirrorPreference.Direct else MirrorPreference.Selected(
-                    mirror.id
-                )
+            val pref = if (mirror.id == "direct") {
+                MirrorPreference.Direct
+            } else MirrorPreference.Selected(mirror.id)
             mirrorRepository.setPreference(pref)
         }
     }
@@ -119,9 +118,8 @@ class MirrorPickerViewModel(
     private fun runTest() {
         viewModelScope.launch {
             _state.update { it.copy(isTesting = true, testResult = null) }
-            val pref = state.value.preference
             val template =
-                when (pref) {
+                when (val pref = state.value.preference) {
                     MirrorPreference.Direct -> null
                     is MirrorPreference.Custom -> pref.template
                     is MirrorPreference.Selected ->
