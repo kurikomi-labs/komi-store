@@ -110,10 +110,25 @@ class MirrorPickerViewModel(
                     is MirrorPreference.Selected ->
                         state.value.mirrors.firstOrNull { it.id == pref.id }?.urlTemplate
                 }
-            val probeUrl = "https://raw.githubusercontent.com/octocat/Hello-World/master/README"
+            // Two template shapes exist today:
+            //   - Whole-URL proxy: contains "{url}" — substitute the entire
+            //     GitHub URL (ghfast.top, gh-proxy.com, ghps.cc, etc.).
+            //   - Path-based: contains "{owner}/{repo}@{ref}/{path}" with no
+            //     "{url}" (jsDelivr's /gh/ endpoint). The old single-branch
+            //     replace("{url}", …) left the {owner} etc. placeholders
+            //     untouched on this shape, so the test request hit jsDelivr
+            //     with the literal braces in the path and got back HTTP 400.
+            val wholeUrlProbe = "https://raw.githubusercontent.com/octocat/Hello-World/master/README"
             val targetUrl =
-                if (template == null) probeUrl
-                else template.replace("{url}", probeUrl)
+                when {
+                    template == null -> wholeUrlProbe
+                    template.contains("{url}") -> template.replace("{url}", wholeUrlProbe)
+                    else -> template
+                        .replace("{owner}", "cli")
+                        .replace("{repo}", "cli")
+                        .replace("{ref}", "v2.40.0")
+                        .replace("{path}", "LICENSE")
+                }
             val result =
                 withTimeoutOrNull(5_000L) {
                     runCatching {
