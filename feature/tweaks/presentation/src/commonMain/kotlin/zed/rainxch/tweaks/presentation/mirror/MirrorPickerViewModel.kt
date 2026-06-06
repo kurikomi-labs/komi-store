@@ -21,6 +21,7 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.error_unknown
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_validation_https
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_validation_template
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 
 class MirrorPickerViewModel(
@@ -53,14 +54,22 @@ class MirrorPickerViewModel(
 
     fun onAction(action: MirrorPickerAction) {
         when (action) {
-            MirrorPickerAction.OnNavigateBack -> {   }
+            MirrorPickerAction.OnNavigateBack -> {}
             is MirrorPickerAction.OnSelectMirror -> selectMirror(action.mirror)
             MirrorPickerAction.OnCustomMirrorClicked ->
-                _state.update { it.copy(isCustomDialogVisible = true, customDraft = "", customDraftError = null) }
+                _state.update {
+                    it.copy(
+                        isCustomDialogVisible = true,
+                        customDraft = "",
+                        customDraftError = null
+                    )
+                }
+
             is MirrorPickerAction.OnCustomDraftChanged -> updateDraft(action.value)
             MirrorPickerAction.OnCustomMirrorConfirm -> confirmCustom()
             MirrorPickerAction.OnCustomMirrorDismiss ->
                 _state.update { it.copy(isCustomDialogVisible = false) }
+
             MirrorPickerAction.OnTestConnection -> runTest()
             MirrorPickerAction.OnRefreshCatalog -> refresh()
             MirrorPickerAction.OnDeployYourOwnClicked ->
@@ -73,7 +82,9 @@ class MirrorPickerViewModel(
     private fun selectMirror(mirror: MirrorConfig) {
         viewModelScope.launch {
             val pref =
-                if (mirror.id == "direct") MirrorPreference.Direct else MirrorPreference.Selected(mirror.id)
+                if (mirror.id == "direct") MirrorPreference.Direct else MirrorPreference.Selected(
+                    mirror.id
+                )
             mirrorRepository.setPreference(pref)
         }
     }
@@ -95,7 +106,13 @@ class MirrorPickerViewModel(
         if (draft.isBlank() || error != null) return
         viewModelScope.launch {
             mirrorRepository.setPreference(MirrorPreference.Custom(draft))
-            _state.update { it.copy(isCustomDialogVisible = false, customDraft = "", customDraftError = null) }
+            _state.update {
+                it.copy(
+                    isCustomDialogVisible = false,
+                    customDraft = "",
+                    customDraftError = null
+                )
+            }
         }
     }
 
@@ -110,44 +127,47 @@ class MirrorPickerViewModel(
                     is MirrorPreference.Selected ->
                         state.value.mirrors.firstOrNull { it.id == pref.id }?.urlTemplate
                 }
-            // Two template shapes exist today:
-            //   - Whole-URL proxy: contains "{url}" — substitute the entire
-            //     GitHub URL (ghfast.top, gh-proxy.com, ghps.cc, etc.).
-            //   - Path-based: contains "{owner}/{repo}@{ref}/{path}" with no
-            //     "{url}" (jsDelivr's /gh/ endpoint). The old single-branch
-            //     replace("{url}", …) left the {owner} etc. placeholders
-            //     untouched on this shape, so the test request hit jsDelivr
-            //     with the literal braces in the path and got back HTTP 400.
-            val wholeUrlProbe = "https://raw.githubusercontent.com/octocat/Hello-World/master/README"
-            val targetUrl =
-                when {
-                    template == null -> wholeUrlProbe
-                    template.contains("{url}") -> template.replace("{url}", wholeUrlProbe)
-                    else -> template
-                        .replace("{owner}", "cli")
-                        .replace("{repo}", "cli")
-                        .replace("{ref}", "v2.40.0")
-                        .replace("{path}", "LICENSE")
+            val wholeUrlProbe =
+                "https://raw.githubusercontent.com/octocat/Hello-World/master/README"
+
+            val targetUrl = when {
+                template == null -> wholeUrlProbe
+                template.contains("{url}") -> template.replace("{url}", wholeUrlProbe)
+                template.contains("{owner}") -> template
+                    .replace("{owner}", "cli")
+                    .replace("{repo}", "cli")
+                    .replace("{ref}", "v2.40.0")
+                    .replace("{path}", "LICENSE")
+
+                else -> wholeUrlProbe
+            }
+
+            val result = withTimeoutOrNull(5_000L.milliseconds) {
+                runCatching {
+                    val mark = TimeSource.Monotonic.markNow()
+                    val response = testHttpClient.get(targetUrl)
+                    val elapsedMs = mark.elapsedNow().inWholeMilliseconds
+                    response.status.value to elapsedMs
                 }
-            val result =
-                withTimeoutOrNull(5_000L) {
-                    runCatching {
-                        val mark = TimeSource.Monotonic.markNow()
-                        val response = testHttpClient.get(targetUrl)
-                        val elapsedMs = mark.elapsedNow().inWholeMilliseconds
-                        response.status.value to elapsedMs
-                    }
+            }
+
+            val testResult: TestResult = when {
+                result == null -> TestResult.Timeout
+
+                result.isSuccess -> {
+                    val (status, ms) = result.getOrThrow()
+                    if (status in 200..299) {
+                        TestResult.Success(ms)
+                    } else TestResult.HttpError(status)
                 }
-            val testResult: TestResult =
-                when {
-                    result == null -> TestResult.Timeout
-                    result.isSuccess -> {
-                        val (status, ms) = result.getOrThrow()
-                        if (status in 200..299) TestResult.Success(ms) else TestResult.HttpError(status)
-                    }
-                    result.exceptionOrNull() is UnresolvedAddressException -> TestResult.DnsFailure
-                    else -> TestResult.Other(result.exceptionOrNull()?.message ?: getString(Res.string.error_unknown))
-                }
+
+                result.exceptionOrNull() is UnresolvedAddressException -> TestResult.DnsFailure
+
+                else -> TestResult.Other(
+                    result.exceptionOrNull()?.message ?: getString(Res.string.error_unknown)
+                )
+            }
+
             _state.update { it.copy(isTesting = false, testResult = testResult) }
         }
     }

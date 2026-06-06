@@ -43,7 +43,7 @@ class MirrorRepositoryImpl(
     private val ksafe: KSafe,
     private val legacyDataStore: DataStore<Preferences>,
     private val apiClient: MirrorApiClient,
-    private val appScope: CoroutineScope,
+    appScope: CoroutineScope,
 ) : MirrorRepository {
     private val json = Json { ignoreUnknownKeys = true }
     private val cacheTtlMs = 60L * 60 * 1000
@@ -64,12 +64,30 @@ class MirrorRepositoryImpl(
                     ksafe = ksafe,
                     markerKey = MIGRATION_MARKER,
                     entries = listOf(
-                        MigrationEntry(stringPreferencesKey("mirror_preferred_id"), K_PREFERRED),
-                        MigrationEntry(stringPreferencesKey("mirror_custom_template"), K_CUSTOM_TEMPLATE),
-                        MigrationEntry(stringPreferencesKey("mirror_cached_list_json"), K_CACHED_JSON),
-                        MigrationEntry(longPreferencesKey("mirror_cached_list_at"), K_CACHED_AT),
-                        MigrationEntry(longPreferencesKey("mirror_auto_suggest_snooze_until"), K_SUGGEST_SNOOZE),
-                        MigrationEntry(booleanPreferencesKey("mirror_auto_suggest_dismissed"), K_SUGGEST_DISMISSED),
+                        MigrationEntry(
+                            legacyKey = stringPreferencesKey("mirror_preferred_id"),
+                            ksafeKey = K_PREFERRED
+                        ),
+                        MigrationEntry(
+                            legacyKey = stringPreferencesKey("mirror_custom_template"),
+                            ksafeKey = K_CUSTOM_TEMPLATE
+                        ),
+                        MigrationEntry(
+                            legacyKey = stringPreferencesKey("mirror_cached_list_json"),
+                            ksafeKey = K_CACHED_JSON
+                        ),
+                        MigrationEntry(
+                            legacyKey = longPreferencesKey("mirror_cached_list_at"),
+                            ksafeKey = K_CACHED_AT
+                        ),
+                        MigrationEntry(
+                            legacyKey = longPreferencesKey("mirror_auto_suggest_snooze_until"),
+                            ksafeKey = K_SUGGEST_SNOOZE
+                        ),
+                        MigrationEntry(
+                            legacyKey = booleanPreferencesKey("mirror_auto_suggest_dismissed"),
+                            ksafeKey = K_SUGGEST_DISMISSED
+                        ),
                     ),
                 )
             }
@@ -91,7 +109,10 @@ class MirrorRepositoryImpl(
                 val configs = response.mirrors.map { it.toDomain() }
                 val previousCatalog = _catalog.value
                 _catalog.value = configs
-                ksafe.safePut(K_CACHED_JSON, json.encodeToString(MirrorListResponse.serializer(), response))
+                ksafe.safePut(
+                    K_CACHED_JSON,
+                    json.encodeToString(MirrorListResponse.serializer(), response)
+                )
                 ksafe.safePut(K_CACHED_AT, Clock.System.now().toEpochMilliseconds())
                 checkSelectedMirrorStillExists(fresh = configs, previous = previousCatalog)
             }.map { }
@@ -106,7 +127,10 @@ class MirrorRepositoryImpl(
                 when (id) {
                     DIRECT_MIRROR_ID -> MirrorPreference.Direct
                     CUSTOM_MIRROR_ID_SENTINEL ->
-                        if (template.isBlank()) MirrorPreference.Direct else MirrorPreference.Custom(template)
+                        if (template.isBlank()) MirrorPreference.Direct else MirrorPreference.Custom(
+                            template
+                        )
+
                     else -> MirrorPreference.Selected(id)
                 }
             },
@@ -120,10 +144,12 @@ class MirrorRepositoryImpl(
                 ksafe.safePut(K_PREFERRED, DIRECT_MIRROR_ID)
                 ksafe.safeDelete(K_CUSTOM_TEMPLATE)
             }
+
             is MirrorPreference.Selected -> {
                 ksafe.safePut(K_PREFERRED, pref.id)
                 ksafe.safeDelete(K_CUSTOM_TEMPLATE)
             }
+
             is MirrorPreference.Custom -> {
                 ksafe.safePut(K_PREFERRED, CUSTOM_MIRROR_ID_SENTINEL)
                 ksafe.safePut(K_CUSTOM_TEMPLATE, pref.template)
@@ -144,12 +170,18 @@ class MirrorRepositoryImpl(
     }
 
     private suspend fun readCachedCatalogOrBundled(): List<MirrorConfig> {
-        val cachedJson = runCatching { ksafe.safeGet(K_CACHED_JSON, "") }.getOrDefault("")
+        val cachedJson = runCatching {
+            ksafe.safeGet(key = K_CACHED_JSON, defaultValue = "")
+        }.getOrDefault("")
+
         return if (cachedJson.isBlank()) {
             BundledMirrors.ALL
         } else {
             runCatching {
-                json.decodeFromString(MirrorListResponse.serializer(), cachedJson).mirrors.map { it.toDomain() }
+                json.decodeFromString(
+                    deserializer = MirrorListResponse.serializer(),
+                    string = cachedJson
+                ).mirrors.map { it.toDomain() }
             }.getOrElse { BundledMirrors.ALL }
         }
     }
