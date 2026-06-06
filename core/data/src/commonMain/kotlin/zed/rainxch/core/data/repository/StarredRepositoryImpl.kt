@@ -130,7 +130,9 @@ class StarredRepositoryImpl(
                     allRepos.map { repo ->
                         async {
                             semaphore.withPermit {
-                                val release = checkForValidAssets(repo.owner.login, repo.name)
+                                val release =
+                                    checkForValidAssets(repo.owner.login, repo.name, ::matchesAnyPlatform)
+                                        ?: return@withPermit null
                                 val installedApps = installedAppsDao.getAppsByRepoId(repo.id)
                                 val firstInstalled =
                                     installedApps.firstOrNull { !it.isPendingInstall }
@@ -147,8 +149,8 @@ class StarredRepositoryImpl(
                                     openIssuesCount = repo.openIssuesCount,
                                     isInstalled = firstInstalled != null,
                                     installedPackageName = firstInstalled?.packageName,
-                                    latestVersion = release?.version,
-                                    latestReleaseUrl = release?.url,
+                                    latestVersion = release.version,
+                                    latestReleaseUrl = release.url,
                                     starredAt = repo.starredAt?.let {
                                         Instant.parse(it).toEpochMilliseconds()
                                     },
@@ -157,7 +159,7 @@ class StarredRepositoryImpl(
                                 )
                             }
                         }
-                    }.awaitAll()
+                    }.awaitAll().filterNotNull()
                 }
 
                 Result.success(results)
@@ -290,9 +292,17 @@ class StarredRepositoryImpl(
         }
     }
 
+    private fun matchesAnyPlatform(assetName: String): Boolean {
+        val name = assetName.lowercase()
+        return name.endsWith(".apk") || name.endsWith(".msi") || name.endsWith(".exe") ||
+            name.endsWith(".dmg") || name.endsWith(".pkg") || name.endsWith(".appimage") ||
+            name.endsWith(".deb") || name.endsWith(".rpm") || name.endsWith(".pkg.tar.zst")
+    }
+
     private suspend fun checkForValidAssets(
         owner: String,
         repo: String,
+        matcher: (String) -> Boolean = ::matchesPlatform,
     ): StableReleaseInfo? {
         val backendResult = backendApiClient.getReleases(owner, repo, perPage = 10)
         backendResult.fold(
@@ -300,7 +310,7 @@ class StarredRepositoryImpl(
                 val stable = releases.firstOrNull { it.draft != true && it.prerelease != true }
                     ?: return null
                 if (stable.assets.isEmpty()) return null
-                return if (stable.assets.any { asset -> matchesPlatform(asset.name) }) {
+                return if (stable.assets.any { asset -> matcher(asset.name) }) {
                     StableReleaseInfo(version = stable.tagName, url = stable.htmlUrl)
                 } else {
                     null
@@ -334,27 +344,7 @@ class StarredRepositoryImpl(
             }
 
             val relevantAssets =
-                stableRelease.assets.filter { asset ->
-                    val name = asset.name.lowercase()
-                    when (platform) {
-                        Platform.ANDROID -> {
-                            name.endsWith(".apk")
-                        }
-
-                        Platform.WINDOWS -> {
-                            name.endsWith(".msi") || name.endsWith(".exe")
-                        }
-
-                        Platform.MACOS -> {
-                            name.endsWith(".dmg") || name.endsWith(".pkg")
-                        }
-
-                        Platform.LINUX -> {
-                            name.endsWith(".appimage") || name.endsWith(".deb") ||
-                                name.endsWith(".rpm") || name.endsWith(".pkg.tar.zst")
-                        }
-                    }
-                }
+                stableRelease.assets.filter { asset -> matcher(asset.name) }
 
             if (relevantAssets.isNotEmpty()) {
                 StableReleaseInfo(version = stableRelease.tagName, url = stableRelease.htmlUrl)
