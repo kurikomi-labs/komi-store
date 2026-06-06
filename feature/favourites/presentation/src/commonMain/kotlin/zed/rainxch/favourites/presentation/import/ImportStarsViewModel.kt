@@ -191,7 +191,8 @@ class ImportStarsViewModel(
                 lastSyncedAt = now,
             )
 
-            favouritesRepository.toggleFavorite(favourite)
+            val toggled = runCatching { favouritesRepository.toggleFavorite(favourite) }.isSuccess
+            if (!toggled) return@launch
 
             _state.update { current ->
                 val updated = current.candidates.map { candidateUi ->
