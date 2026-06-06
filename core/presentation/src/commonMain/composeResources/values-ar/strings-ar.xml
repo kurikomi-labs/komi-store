@@ -981,11 +981,11 @@
     <string name="starred_picker_sort_recent">المميّزة مؤخراً</string>
     <string name="starred_picker_sort_stars">الأكثر نجوماً</string>
     <string name="starred_picker_star_dedup_tooltip">إزالة النجمة من GitHub لن تُلغي تتبّع التطبيق.</string>
-    <string name="import_stars_title">استيراد النجوم باسم المستخدم</string>
+    <string name="import_stars_title">استيراد المستودعات المميّزة بنجمة باسم المستخدم</string>
     <string name="import_stars_subtitle">أدخل أي اسم مستخدم على GitHub لتصفّح مستودعاته العامة المميّزة بنجمة وإضافتها إلى المفضلة. لا حاجة لتسجيل الدخول.</string>
     <string name="import_stars_hint">اسم المستخدم على GitHub</string>
-    <string name="import_stars_button">جلب النجوم</string>
-    <string name="import_stars_header_count">@%1$s · %2$d مميّز بنجمة</string>
+    <string name="import_stars_button">عرض المستودعات المميّزة بنجمة</string>
+    <string name="import_stars_header_count">@%1$s · %2$d مستودع مميّز بنجمة</string>
     <string name="import_stars_search_hint">ابحث في المالك / المستودع / الوصف</string>
     <string name="import_stars_add_all">إضافة %1$d إلى المفضلة</string>
     <string name="import_stars_empty">‏@%1$s ليس لديه مستودعات مميّزة بنجمة.</string>
@@ -993,7 +993,7 @@
     <string name="import_stars_add">إضافة إلى المفضلة</string>
     <string name="import_stars_added">موجود بالفعل في المفضلة</string>
     <string name="import_stars_try_another">جرّب اسماً آخر</string>
-    <string name="import_stars_entry">استيراد النجوم باسم المستخدم</string>
+    <string name="import_stars_entry">استيراد المستودعات المميّزة بنجمة باسم المستخدم</string>
     <string name="starred_picker_title">إضافة من المميزة بنجمة</string>
     <string name="whats_new_cta_dismiss">فهمت</string>
     <string name="whats_new_cta_history">عرض الإصدارات السابقة</string>

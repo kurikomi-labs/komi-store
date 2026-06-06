@@ -939,11 +939,11 @@
     <string name="starred_picker_sort_recent">Étoilés récemment</string>
     <string name="starred_picker_sort_stars">Plus d'étoiles</string>
     <string name="starred_picker_star_dedup_tooltip">Retirer l'étoile sur GitHub n'arrêtera pas le suivi de l'app.</string>
-    <string name="import_stars_title">Importer les étoiles par nom d'utilisateur</string>
+    <string name="import_stars_title">Importer les dépôts étoilés par nom d'utilisateur</string>
     <string name="import_stars_subtitle">Saisissez n'importe quel nom d'utilisateur GitHub pour parcourir ses dépôts étoilés publics et les ajouter à vos favoris. Aucune connexion requise.</string>
     <string name="import_stars_hint">Nom d'utilisateur GitHub</string>
-    <string name="import_stars_button">Récupérer les étoiles</string>
-    <string name="import_stars_header_count">@%1$s · %2$d étoilés</string>
+    <string name="import_stars_button">Voir les dépôts étoilés</string>
+    <string name="import_stars_header_count">@%1$s · %2$d dépôts étoilés</string>
     <string name="import_stars_search_hint">Rechercher propriétaire / dépôt / description</string>
     <string name="import_stars_add_all">Ajouter %1$d aux favoris</string>
     <string name="import_stars_empty">@%1$s n'a aucun dépôt étoilé.</string>
@@ -951,7 +951,7 @@
     <string name="import_stars_add">Ajouter aux favoris</string>
     <string name="import_stars_added">Déjà dans les favoris</string>
     <string name="import_stars_try_another">Essayer un autre</string>
-    <string name="import_stars_entry">Importer les étoiles par nom d'utilisateur</string>
+    <string name="import_stars_entry">Importer les dépôts étoilés par nom d'utilisateur</string>
     <string name="starred_picker_title">Ajouter depuis les dépôts étoilés</string>
     <string name="whats_new_cta_dismiss">Compris</string>
     <string name="whats_new_cta_history">Voir les versions précédentes</string>

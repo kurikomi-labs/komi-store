@@ -933,11 +933,11 @@
     <string name="starred_picker_sort_recent">最近スター付け</string>
     <string name="starred_picker_sort_stars">スター数順</string>
     <string name="starred_picker_star_dedup_tooltip">GitHubでスターを外してもアプリの追跡は解除されません。</string>
-    <string name="import_stars_title">ユーザー名でスターをインポート</string>
+    <string name="import_stars_title">ユーザー名でスター付きリポジトリをインポート</string>
     <string name="import_stars_subtitle">任意のGitHubユーザー名を入力して、公開スター付きリポジトリを見てお気に入りに追加できます。サインイン不要。</string>
     <string name="import_stars_hint">GitHubユーザー名</string>
-    <string name="import_stars_button">スターを取得</string>
-    <string name="import_stars_header_count">@%1$s · スター %2$d 件</string>
+    <string name="import_stars_button">スター付きリポジトリを見る</string>
+    <string name="import_stars_header_count">@%1$s · スター付きリポジトリ %2$d 件</string>
     <string name="import_stars_search_hint">オーナー / リポ / 説明を検索</string>
     <string name="import_stars_add_all">%1$d 件をお気に入りに追加</string>
     <string name="import_stars_empty">@%1$s にはスター付きリポジトリがありません。</string>
@@ -945,7 +945,7 @@
     <string name="import_stars_add">お気に入りに追加</string>
     <string name="import_stars_added">すでにお気に入り</string>
     <string name="import_stars_try_another">別のユーザーを試す</string>
-    <string name="import_stars_entry">ユーザー名でスターをインポート</string>
+    <string name="import_stars_entry">ユーザー名でスター付きリポジトリをインポート</string>
     <string name="starred_picker_title">スター済みから追加</string>
     <string name="whats_new_cta_dismiss">了解</string>
     <string name="whats_new_cta_history">過去のバージョンを表示</string>

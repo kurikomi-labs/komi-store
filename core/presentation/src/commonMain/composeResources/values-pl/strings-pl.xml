@@ -959,11 +959,11 @@
     <string name="starred_picker_sort_recent">Ostatnio z gwiazdką</string>
     <string name="starred_picker_sort_stars">Najwięcej gwiazdek</string>
     <string name="starred_picker_star_dedup_tooltip">Usunięcie gwiazdki na GitHub nie wyłączy śledzenia aplikacji.</string>
-    <string name="import_stars_title">Importuj gwiazdki po nazwie użytkownika</string>
+    <string name="import_stars_title">Importuj repozytoria z gwiazdką po nazwie użytkownika</string>
     <string name="import_stars_subtitle">Wpisz dowolną nazwę użytkownika GitHub, aby przejrzeć jego publiczne repozytoria z gwiazdką i dodać je do ulubionych. Logowanie nie jest wymagane.</string>
     <string name="import_stars_hint">Nazwa użytkownika GitHub</string>
-    <string name="import_stars_button">Pobierz gwiazdki</string>
-    <string name="import_stars_header_count">@%1$s · %2$d z gwiazdką</string>
+    <string name="import_stars_button">Pokaż repozytoria z gwiazdką</string>
+    <string name="import_stars_header_count">@%1$s · %2$d repozytoriów z gwiazdką</string>
     <string name="import_stars_search_hint">Szukaj właściciela / repo / opisu</string>
     <string name="import_stars_add_all">Dodaj %1$d do ulubionych</string>
     <string name="import_stars_empty">@%1$s nie ma żadnych repozytoriów z gwiazdką.</string>
@@ -971,7 +971,7 @@
     <string name="import_stars_add">Dodaj do ulubionych</string>
     <string name="import_stars_added">Już w ulubionych</string>
     <string name="import_stars_try_another">Spróbuj innej</string>
-    <string name="import_stars_entry">Importuj gwiazdki po nazwie użytkownika</string>
+    <string name="import_stars_entry">Importuj repozytoria z gwiazdką po nazwie użytkownika</string>
     <string name="starred_picker_title">Dodaj z oznaczonych gwiazdką</string>
     <string name="whats_new_cta_dismiss">OK</string>
     <string name="whats_new_cta_history">Zobacz poprzednie wersje</string>
