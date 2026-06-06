@@ -645,6 +645,20 @@
     <string name="starred_picker_resume">Resume</string>
     <string name="starred_picker_star_dedup_tooltip">Removing a star on GitHub won't untrack the app.</string>
 
+    <string name="import_stars_title">Import stars by username</string>
+    <string name="import_stars_subtitle">Enter any GitHub username to browse their public starred repositories and add them to your favourites. No sign-in required.</string>
+    <string name="import_stars_hint">GitHub username</string>
+    <string name="import_stars_button">Fetch stars</string>
+    <string name="import_stars_header_count">@%1$s · %2$d starred</string>
+    <string name="import_stars_search_hint">Search owner / repo / description</string>
+    <string name="import_stars_add_all">Add %1$d to favourites</string>
+    <string name="import_stars_empty">@%1$s has no starred repositories.</string>
+    <string name="import_stars_no_match">Nothing matches.</string>
+    <string name="import_stars_add">Add to favourites</string>
+    <string name="import_stars_added">Already in favourites</string>
+    <string name="import_stars_try_another">Try another</string>
+    <string name="import_stars_entry">Import stars by username</string>
+
     <string name="include_pre_releases_title">Default beta channel</string>
     <string name="include_pre_releases_description">Newly tracked apps include beta builds by default. Already-tracked apps keep their own per-app channel setting (toggle it on the app's Details screen).</string>
     <string name="confirm_uninstall_title">Uninstall app?</string>

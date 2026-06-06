@@ -11,7 +11,8 @@
         "New per-repository Security page — published security advisories with severity badges, plus the project's SECURITY.md policy rendered inline.",
         "Sign in to interact directly — star a repo, comment on issues, open new issues, and react with 👍.",
         "Browse a repository's Pull requests with open and closed filters.",
-        "Android home-screen shortcuts — long-press the app icon to jump straight to Search, your Library, Favourites, or Recently Viewed, and drag any of them out as a standalone launcher icon."
+        "Android home-screen shortcuts — long-press the app icon to jump straight to Search, your Library, Favourites, or Recently Viewed, and drag any of them out as a standalone launcher icon.",
+        "Import any GitHub user's starred repositories straight into your favourites — no sign-in needed. Open Favourites, tap the new person-plus icon, type a username, and add the repos you want."
       ]
     },
     {
