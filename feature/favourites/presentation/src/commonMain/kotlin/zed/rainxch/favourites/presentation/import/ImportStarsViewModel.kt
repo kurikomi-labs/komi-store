@@ -212,6 +212,7 @@ class ImportStarsViewModel(
             _state.update { it.copy(isBulkAdding = true) }
 
             val now = Clock.System.now().toEpochMilliseconds()
+            val addedIds = mutableSetOf<Long>()
 
             for (candidate in pending) {
                 val favourite = FavoriteRepo(
@@ -229,10 +230,12 @@ class ImportStarsViewModel(
                 )
 
                 runCatching { favouritesRepository.toggleFavorite(favourite) }
+                    .onSuccess { addedIds += candidate.repoId }
             }
+
             _state.update { current ->
                 val updated = current.candidates.map { candidateUi ->
-                    if (!candidateUi.isAlreadyFavourited) {
+                    if (candidateUi.repoId in addedIds) {
                         candidateUi.copy(isAlreadyFavourited = true)
                     } else candidateUi
                 }
