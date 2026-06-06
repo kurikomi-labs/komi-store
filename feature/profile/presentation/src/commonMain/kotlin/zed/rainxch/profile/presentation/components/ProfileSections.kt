@@ -64,7 +64,9 @@ fun LazyListScope.profileSections(
     if (state.isUserLoggedIn) {
         item(key = "library_header") {
             Spacer(Modifier.height(8.dp))
+
             GhsSectionHeader(text = stringResource(Res.string.profile_section_library))
+
             Spacer(Modifier.height(8.dp))
         }
         item(key = "row_stars") {
@@ -75,32 +77,37 @@ fun LazyListScope.profileSections(
                 accentColor = GhsAccents.Gold,
                 onClick = { onAction(ProfileAction.OnStarredReposClick) },
             )
+
             Spacer(Modifier.height(8.dp))
         }
-        item(key = "row_favourites") {
-            GhsEntryRow(
-                title = stringResource(Res.string.favourites),
-                subtitle = stringResource(Res.string.profile_favourites_description),
-                icon = Icons.Outlined.Favorite,
-                accentColor = GhsAccents.Rose,
-                onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
-            )
-            Spacer(Modifier.height(8.dp))
-        }
-        item(key = "row_recent") {
-            GhsEntryRow(
-                title = stringResource(Res.string.recently_viewed),
-                subtitle = stringResource(Res.string.profile_recently_viewed_description),
-                icon = Icons.Outlined.Schedule,
-                accentColor = GhsAccents.Sky,
-                onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
-            )
-        }
+    }
+
+    item(key = "row_favourites") {
+        GhsEntryRow(
+            title = stringResource(Res.string.favourites),
+            subtitle = stringResource(Res.string.profile_favourites_description),
+            icon = Icons.Outlined.Favorite,
+            accentColor = GhsAccents.Rose,
+            onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
+        )
+
+        Spacer(Modifier.height(8.dp))
+    }
+    item(key = "row_recent") {
+        GhsEntryRow(
+            title = stringResource(Res.string.recently_viewed),
+            subtitle = stringResource(Res.string.profile_recently_viewed_description),
+            icon = Icons.Outlined.Schedule,
+            accentColor = GhsAccents.Sky,
+            onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
+        )
     }
 
     item(key = "updates_header") {
         Spacer(Modifier.height(8.dp))
+
         GhsSectionHeader(text = stringResource(Res.string.profile_section_updates))
+
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_whats_new") {
@@ -112,6 +119,7 @@ fun LazyListScope.profileSections(
             onClick = { onAction(ProfileAction.OnWhatsNewClick) },
             onLongClick = { onAction(ProfileAction.OnWhatsNewLongClick) },
         )
+
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_announcements") {
@@ -132,7 +140,9 @@ fun LazyListScope.profileSections(
 
     item(key = "app_header") {
         Spacer(Modifier.height(8.dp))
+
         GhsSectionHeader(text = stringResource(Res.string.section_app_block))
+
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_tweaks") {
@@ -143,6 +153,7 @@ fun LazyListScope.profileSections(
             accentColor = GhsAccents.Sage,
             onClick = { onAction(ProfileAction.OnTweaksClick) },
         )
+
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_about") {
@@ -158,7 +169,9 @@ fun LazyListScope.profileSections(
     if (state.isUserLoggedIn) {
         item(key = "account_header") {
             Spacer(Modifier.height(8.dp))
+
             GhsSectionHeader(text = stringResource(Res.string.profile_section_account))
+
             Spacer(Modifier.height(8.dp))
         }
         item(key = "row_logout") {
