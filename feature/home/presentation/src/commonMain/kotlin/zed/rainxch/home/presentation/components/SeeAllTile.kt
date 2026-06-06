@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,7 +73,9 @@ fun SeeAllHotTile(
                     modifier = Modifier.size(22.dp),
                 )
             }
+
             Spacer(Modifier.height(12.dp))
+
             Text(
                 text = stringResource(Res.string.home_view_all),
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -118,6 +119,7 @@ fun SeeMoreRow(
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
             )
+
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,

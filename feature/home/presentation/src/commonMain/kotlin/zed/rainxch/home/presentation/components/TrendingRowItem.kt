@@ -126,6 +126,7 @@ private fun RankRowItem(
                         },
                     )
                 }
+
                 if (card.rawRepository.forksCount > 0) {
                     StatChip(
                         label = formatCount(card.rawRepository.forksCount),
@@ -139,6 +140,7 @@ private fun RankRowItem(
                         },
                     )
                 }
+
                 if (card.downloadsCount > 0) {
                     StatChip(
                         label = formatCount(card.downloadsCount),
@@ -152,6 +154,7 @@ private fun RankRowItem(
                         },
                     )
                 }
+
                 if (card.platforms.isNotEmpty()) {
                     PlatformsChip(platforms = card.platforms)
                 }

@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -105,6 +104,7 @@ fun HotCardItem(
                         extractDominantFor = card.ownerAvatarUrl,
                     )
                 }
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = card.ownerLogin,
@@ -115,6 +115,7 @@ fun HotCardItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
                     Text(
                         text = card.name,
                         style = MaterialTheme.typography.titleMedium.copy(
@@ -126,6 +127,7 @@ fun HotCardItem(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
@@ -140,6 +142,7 @@ fun HotCardItem(
                         modifier = Modifier.size(11.dp),
                         tint = Color.White.copy(alpha = flamePulse),
                     )
+
                     Text(
                         text = card.relativeAgoLabel,
                         color = Color.White,
@@ -150,8 +153,10 @@ fun HotCardItem(
                     )
                 }
             }
+
             if (card.description.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
+
                 Text(
                     text = card.description,
                     style = MaterialTheme.typography.bodySmall,
@@ -160,7 +165,9 @@ fun HotCardItem(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+
             Spacer(Modifier.weight(1f))
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -175,6 +182,7 @@ fun HotCardItem(
                         modifier = Modifier.size(12.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+
                     Text(
                         text = formatCount(card.starsCount),
                         style = MaterialTheme.typography.labelSmall.copy(
@@ -184,6 +192,7 @@ fun HotCardItem(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
+
                 if (card.downloadsCount > 0) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -195,6 +204,7 @@ fun HotCardItem(
                             modifier = Modifier.size(12.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+
                         Text(
                             text = formatCount(card.downloadsCount),
                             style = MaterialTheme.typography.labelSmall.copy(
@@ -206,13 +216,17 @@ fun HotCardItem(
                     }
                 }
             }
+
             if (card.topics.isNotEmpty() || card.platforms.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
+
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outlineVariant,
                     thickness = 0.5.dp,
                 )
+
                 Spacer(Modifier.height(8.dp))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -221,7 +235,9 @@ fun HotCardItem(
                     card.topics.take(2).forEach { topic ->
                         TopicGlyph(topic = topic, sizeDp = 14)
                     }
+
                     Box(Modifier.weight(1f))
+
                     card.platforms.forEach { kind ->
                         PlatformGlyph(kind = kind, supported = true, sizeDp = 14)
                     }

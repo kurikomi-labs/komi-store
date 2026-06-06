@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -121,6 +119,7 @@ fun LeadCard(
                         extractDominantFor = card.ownerAvatarUrl,
                     )
                 }
+
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -137,7 +136,9 @@ fun LeadCard(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f),
                         )
+
                         Spacer(Modifier.size(6.dp))
+
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
@@ -155,11 +156,13 @@ fun LeadCard(
                                     letterSpacing = 0.8.sp,
                                 ),
                             )
+
                             Text(
                                 text = "·",
                                 color = Color.White.copy(alpha = 0.7f),
                                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                             )
+
                             Text(
                                 text = card.relativeAgoLabel,
                                 color = Color.White,
@@ -170,6 +173,7 @@ fun LeadCard(
                             )
                         }
                     }
+
                     Text(
                         text = card.name,
                         style = MaterialTheme.typography.headlineMedium.copy(
@@ -183,7 +187,9 @@ fun LeadCard(
                     )
                 }
             }
+
             Spacer(Modifier.height(10.dp))
+
             if (card.description.isNotBlank()) {
                 Text(
                     text = card.description,
@@ -192,8 +198,10 @@ fun LeadCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 Spacer(Modifier.height(10.dp))
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -209,6 +217,7 @@ fun LeadCard(
                         tint = inkColor.copy(alpha = statAlpha),
                         modifier = Modifier.size(15.dp),
                     )
+
                     Text(
                         text = formatCount(card.starsCount),
                         style = MaterialTheme.typography.labelLarge.copy(
@@ -218,6 +227,7 @@ fun LeadCard(
                         color = inkColor.copy(alpha = statAlpha),
                     )
                 }
+
                 if (card.downloadsCount > 0) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -229,6 +239,7 @@ fun LeadCard(
                             tint = inkColor.copy(alpha = statAlpha),
                             modifier = Modifier.size(15.dp),
                         )
+
                         Text(
                             text = formatCount(card.downloadsCount),
                             style = MaterialTheme.typography.labelLarge.copy(
@@ -239,7 +250,9 @@ fun LeadCard(
                         )
                     }
                 }
+
                 Box(modifier = Modifier.weight(1f))
+
                 if (card.platforms.isNotEmpty()) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -251,7 +264,9 @@ fun LeadCard(
                     }
                 }
             }
+
             Spacer(Modifier.weight(1f))
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

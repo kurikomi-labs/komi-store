@@ -61,6 +61,7 @@ fun RepositoryActionsSheet(
                 imageModel = { repository.owner.avatarUrl },
                 modifier = Modifier.size(36.dp).clip(CircleShape),
             )
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = repository.fullName,
@@ -70,6 +71,7 @@ fun RepositoryActionsSheet(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 repository.description?.let {
                     Text(
                         text = it,
@@ -81,25 +83,32 @@ fun RepositoryActionsSheet(
                 }
             }
         }
+
         Spacer(Modifier.height(4.dp))
+
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
         SheetRow(
             label = stringResource(Res.string.share_repository),
             icon = Icons.Default.Share,
             onClick = onShare,
         )
+
         SheetRow(
             label = stringResource(Res.string.open_on_github),
             icon = Icons.Default.OpenInBrowser,
             onClick = onOpenOnGithub,
         )
+
         SheetRow(
             label = if (isSeen) stringResource(Res.string.mark_as_unviewed)
             else stringResource(Res.string.mark_as_viewed),
             icon = Icons.Outlined.Visibility,
             onClick = onToggleSeen,
         )
+
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
         SheetRow(
             label = stringResource(Res.string.hide_repository),
             icon = Icons.Default.VisibilityOff,
@@ -125,6 +134,7 @@ private fun SheetRow(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Icon(imageVector = icon, contentDescription = null, tint = tint)
+
         Text(
             text = label,
             color = tint,

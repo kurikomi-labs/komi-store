@@ -138,7 +138,9 @@ private fun HomeScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator()
+
                         Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
                             text = stringResource(Res.string.home_finding_repositories),
                             style = MaterialTheme.typography.titleMedium,
@@ -160,6 +162,7 @@ private fun HomeScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
+
                         GhsButton(
                             onClick = { onAction(HomeAction.OnRetry) },
                             label = stringResource(Res.string.home_retry),
@@ -205,6 +208,7 @@ private fun HomeScreen(
                                     onSeeAll = { onAction(HomeAction.OnSeeAllHot) },
                                 )
                             }
+
                             item(key = "hot_row") {
                                 LazyRow(
                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -218,6 +222,7 @@ private fun HomeScreen(
                                             modifier = Modifier.animateItem(),
                                         )
                                     }
+
                                     item(key = "hot_see_all") {
                                         SeeAllHotTile(
                                             onClick = { onAction(HomeAction.OnSeeAllHot) },
@@ -235,6 +240,7 @@ private fun HomeScreen(
                                     onSeeAll = { onAction(HomeAction.OnSeeAllTrending) },
                                 )
                             }
+
                             itemsIndexed(
                                 items = state.trending,
                                 key = { _, card -> "trending_${card.id}" },
@@ -247,6 +253,7 @@ private fun HomeScreen(
                                     modifier = Modifier.animateItem(),
                                 )
                             }
+
                             item(key = "trending_see_more") {
                                 SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllTrending) })
                             }
@@ -260,6 +267,7 @@ private fun HomeScreen(
                                     onSeeAll = { onAction(HomeAction.OnSeeAllPopular) },
                                 )
                             }
+
                             itemsIndexed(
                                 items = state.popular,
                                 key = { _, card -> "popular_${card.id}" },
@@ -272,6 +280,7 @@ private fun HomeScreen(
                                     modifier = Modifier.animateItem(),
                                 )
                             }
+
                             item(key = "popular_see_more") {
                                 SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllPopular) })
                             }
@@ -285,6 +294,7 @@ private fun HomeScreen(
                                     onSeeAll = { onAction(HomeAction.OnSeeAllStarred) },
                                 )
                             }
+
                             items(items = state.starred, key = { "starred_${it.id}" }) { card ->
                                 StarredRowItem(
                                     card = card,
@@ -293,6 +303,7 @@ private fun HomeScreen(
                                     modifier = Modifier.animateItem(),
                                 )
                             }
+
                             item(key = "starred_see_more") {
                                 SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllStarred) })
                             }

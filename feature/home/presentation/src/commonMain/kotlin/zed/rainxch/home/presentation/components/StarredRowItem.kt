@@ -64,6 +64,7 @@ fun StarredRowItem(
                     modifier = Modifier.size(36.dp).clip(CircleShape),
                 )
             }
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = card.name,
@@ -74,6 +75,7 @@ fun StarredRowItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -84,9 +86,11 @@ fun StarredRowItem(
                         tint = StarredTint,
                         modifier = Modifier.size(12.dp),
                     )
+
                     StarTier(stars = card.starsCount, size = 10)
                 }
             }
+
             if (card.platforms.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -97,6 +101,7 @@ fun StarredRowItem(
                     }
                 }
             }
+
             GhsButton(
                 onClick = onClick,
                 label = stringResource(
