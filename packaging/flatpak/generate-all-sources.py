@@ -11,8 +11,10 @@ FAST approach:
 6. Output flatpak-sources.json
 
 Files that Gradle stores under internal names (e.g., "animation.aar" instead of
-"animation-android-1.10.0.aar") are SKIPPED — they are Android/iOS platform
-artifacts that are not needed for the Desktop/Flatpak build.
+"animation-android-1.10.0.aar") are SKIPPED for non-JAR types. For JARs with
+non-standard cache names, the standard-named version is downloaded from Maven —
+KMP desktop platform JARs (landscapist-*-desktop, components-*-desktop, etc.)
+are stored with short/internal names by Gradle but required by the Flatpak build.
 """
 
 import hashlib
@@ -144,8 +146,15 @@ def main():
                 continue
             if not fname.endswith((".jar", ".pom", ".module", ".klib", ".aar")):
                 continue
-            # SKIP files with non-standard names (Gradle internal cache names)
+            # Non-standard Gradle cache name — for JARs, add the standard-named
+            # version so it gets downloaded from Maven (KMP desktop platform JARs
+            # like landscapist-*-desktop are stored with internal short names but
+            # the offline build needs them under their Maven coordinates).
             if not is_standard_filename(artifact, version, fname):
+                if fname.endswith(".jar"):
+                    standard_jar = f"{base_name}.jar"
+                    needed.add(standard_jar)
+                    has_jar_or_aar = True
                 stats["skipped"] += 1
                 continue
             needed.add(fname)
