@@ -698,6 +698,9 @@ fun AppNavigation(
                                         ),
                                     )
                                 },
+                                onNavigateToImportStars = {
+                                    navController.navigate(GithubStoreGraph.ImportStarsScreen)
+                                },
                             )
                         }
 
@@ -730,6 +733,21 @@ fun AppNavigation(
 
                         composable<GithubStoreGraph.StarredPickerScreen> {
                             zed.rainxch.apps.presentation.starred.StarredPickerRoot(
+                                onNavigateBack = { navController.navigateUp() },
+                                onNavigateToDetails = { repoId, owner, repo ->
+                                    navController.navigate(
+                                        GithubStoreGraph.DetailsScreen(
+                                            repositoryId = repoId,
+                                            owner = owner,
+                                            repo = repo,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.ImportStarsScreen> {
+                            zed.rainxch.favourites.presentation.import.ImportStarsRoot(
                                 onNavigateBack = { navController.navigateUp() },
                                 onNavigateToDetails = { repoId, owner, repo ->
                                     navController.navigate(

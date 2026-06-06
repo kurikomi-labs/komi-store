@@ -100,6 +100,10 @@ class FavouritesViewModel(
                 // Handled in composable
             }
 
+            FavouritesAction.OnImportStarsClick -> {
+                // Handled in composable
+            }
+
             is FavouritesAction.OnSearchChange -> {
                 _state.update { it.copy(searchQuery = action.query) }
             }

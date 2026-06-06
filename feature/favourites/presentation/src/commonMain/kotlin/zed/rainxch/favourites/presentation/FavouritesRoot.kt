@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -59,6 +60,7 @@ fun FavouritesRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
+    onNavigateToImportStars: () -> Unit,
     viewModel: FavouritesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -77,6 +79,10 @@ fun FavouritesRoot(
 
                 is FavouritesAction.OnDeveloperProfileClick -> {
                     onNavigateToDeveloperProfile(action.username)
+                }
+
+                FavouritesAction.OnImportStarsClick -> {
+                    onNavigateToImportStars()
                 }
 
                 else -> {
@@ -216,6 +222,12 @@ private fun FavouritesTopbar(
             }
         },
         actions = {
+            IconButton(onClick = { onAction(FavouritesAction.OnImportStarsClick) }) {
+                Icon(
+                    imageVector = Icons.Filled.PersonAdd,
+                    contentDescription = stringResource(Res.string.import_stars_entry),
+                )
+            }
             if (hasRepos) {
                 Box {
                     IconButton(onClick = { showSortMenu = true }) {

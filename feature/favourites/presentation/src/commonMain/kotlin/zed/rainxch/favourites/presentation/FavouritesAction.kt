@@ -25,4 +25,6 @@ sealed interface FavouritesAction {
     data class OnSortRuleSelected(
         val sortRule: FavouritesSortRule,
     ) : FavouritesAction
+
+    data object OnImportStarsClick : FavouritesAction
 }
