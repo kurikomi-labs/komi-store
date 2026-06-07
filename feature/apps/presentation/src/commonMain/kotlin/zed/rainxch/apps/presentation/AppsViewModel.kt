@@ -26,6 +26,7 @@ import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.apps.presentation.model.InstalledAppUi
+import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
@@ -51,6 +52,7 @@ import zed.rainxch.core.domain.utils.BrowserHelper
 import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.githubstore.core.presentation.res.*
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 class AppsViewModel(
     private val appsRepository: AppsRepository,
@@ -761,7 +763,7 @@ class AppsViewModel(
         advancedPreviewJob?.cancel()
         advancedPreviewJob =
             viewModelScope.launch {
-                delay(350)
+                delay(350.milliseconds)
                 refreshAdvancedPreview()
             }
     }
@@ -1783,7 +1785,6 @@ class AppsViewModel(
                             showLinkSheet = false,
                         )
                     }
-                    _events.send(AppsEvent.AppLinkedSuccessfully(selectedApp.appName))
                     _events.send(
                         AppsEvent.ShowSuccess(
                             getString(
@@ -1812,7 +1813,6 @@ class AppsViewModel(
                             showLinkSheet = false,
                         )
                     }
-                    _events.send(AppsEvent.AppLinkedSuccessfully(selectedApp.appName))
                     _events.send(
                         AppsEvent.ShowSuccess(
                             getString(
@@ -1903,7 +1903,6 @@ class AppsViewModel(
                         showLinkSheet = false,
                     )
                 }
-                _events.send(AppsEvent.AppLinkedSuccessfully(selectedApp.appName))
                 _events.send(
                     AppsEvent.ShowSuccess(
                         getString(
@@ -1989,7 +1988,6 @@ class AppsViewModel(
         try {
             val result = appsRepository.importApps(json)
             _state.update { it.copy(importSummary = result) }
-            _events.send(AppsEvent.ImportComplete(result))
         } catch (e: Exception) {
             logger.error("Import failed: ${e.message}")
             _events.send(AppsEvent.ShowError(getString(Res.string.import_failed, e.message ?: "")))
