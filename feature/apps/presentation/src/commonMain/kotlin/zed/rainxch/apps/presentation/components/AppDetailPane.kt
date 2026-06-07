@@ -109,14 +109,19 @@ fun AppDetailPane(
             .verticalScroll(rememberScrollState()),
     ) {
         Spacer(Modifier.height(8.dp))
+
         DetailHeader(appItem = appItem)
 
         Spacer(Modifier.height(16.dp))
+
         SectionLabel(stringResource(Res.string.apps_two_pane_detail_section_status))
+
         StatusBlock(appItem = appItem)
 
         Spacer(Modifier.height(20.dp))
+
         SectionLabel(stringResource(Res.string.apps_two_pane_detail_section_actions))
+
         PrimaryActionsRow(
             appItem = appItem,
             isBusy = isBusy,
@@ -128,6 +133,7 @@ fun AppDetailPane(
         )
 
         Spacer(Modifier.height(10.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -139,6 +145,7 @@ fun AppDetailPane(
                 leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
                 modifier = Modifier.weight(1f),
             )
+
             GhsButton(
                 onClick = onUninstall,
                 label = stringResource(Res.string.uninstall),
@@ -149,7 +156,9 @@ fun AppDetailPane(
         }
 
         Spacer(Modifier.height(20.dp))
+
         SectionLabel(stringResource(Res.string.apps_two_pane_detail_section_settings))
+
         SettingsBlock(
             appItem = appItem,
             onTogglePreReleases = onTogglePreReleases,
@@ -180,7 +189,9 @@ private fun DetailHeader(appItem: AppItem) {
                 modifier = Modifier.size(56.dp),
             )
         }
+
         Spacer(Modifier.width(14.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = app.appName,
@@ -192,6 +203,7 @@ private fun DetailHeader(appItem: AppItem) {
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Text(
                 text = app.packageName,
                 style = MaterialTheme.typography.bodySmall,
@@ -199,7 +211,9 @@ private fun DetailHeader(appItem: AppItem) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Spacer(Modifier.height(2.dp))
+
             Text(
                 text = "${app.repoOwner}/${app.repoName}",
                 style = MaterialTheme.typography.bodySmall,
@@ -225,19 +239,23 @@ private fun StatusBlock(appItem: AppItem) {
                 label = stringResource(Res.string.apps_two_pane_installed_label),
                 value = app.installedVersion,
             )
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
                 modifier = Modifier.padding(vertical = 10.dp),
             )
+
             StatusRow(
                 label = stringResource(Res.string.apps_two_pane_latest_label),
                 value = app.latestVersion ?: "—",
             )
+
             if (app.preferredAssetVariant != null) {
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
                     modifier = Modifier.padding(vertical = 10.dp),
                 )
+
                 StatusRow(
                     label = stringResource(Res.string.variant_label_inline),
                     value = app.preferredAssetVariant,
@@ -247,6 +265,7 @@ private fun StatusBlock(appItem: AppItem) {
             when (val state = appItem.updateState) {
                 is UpdateState.Downloading -> {
                     Spacer(Modifier.height(14.dp))
+
                     StatusProgress(
                         label = stringResource(Res.string.downloading),
                         progress = null,
@@ -254,6 +273,7 @@ private fun StatusBlock(appItem: AppItem) {
                 }
                 is UpdateState.Installing -> {
                     Spacer(Modifier.height(14.dp))
+
                     StatusProgress(
                         label = stringResource(Res.string.installing),
                         progress = null,
@@ -261,6 +281,7 @@ private fun StatusBlock(appItem: AppItem) {
                 }
                 is UpdateState.Error -> {
                     Spacer(Modifier.height(10.dp))
+
                     Text(
                         text = stringResource(Res.string.error_with_message, state.message),
                         style = MaterialTheme.typography.bodySmall,
@@ -280,6 +301,7 @@ private fun StatusBlock(appItem: AppItem) {
             }
             if (pills.isNotEmpty()) {
                 Spacer(Modifier.height(12.dp))
+
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     pills.forEach { label ->
                         StatusPill(label)
@@ -305,6 +327,7 @@ private fun StatusRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f),
         )
+
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
@@ -326,7 +349,9 @@ private fun StatusProgress(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
         Spacer(Modifier.height(6.dp))
+
         if (progress != null) {
             LinearWavyProgressIndicator(
                 progress = { progress },
@@ -389,6 +414,7 @@ private fun PrimaryActionsRow(
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
+
                     GhsButton(
                         onClick = onDiscardPending,
                         label = stringResource(Res.string.discard_pending_install),
@@ -438,18 +464,24 @@ private fun SettingsBlock(
                 checked = app.includePreReleases,
                 onCheckedChange = onTogglePreReleases,
             )
+
             DividerThin()
+
             SettingsToggleRow(
                 title = stringResource(Res.string.apps_ignore_updates),
                 checked = !app.updateCheckEnabled,
                 onCheckedChange = { onToggleUpdateCheck(!it) },
             )
+
             DividerThin()
+
             SettingsActionRow(
                 title = stringResource(Res.string.apps_two_pane_pick_variant),
                 onClick = onPickVariant,
             )
+
             DividerThin()
+
             SettingsActionRow(
                 title = stringResource(Res.string.apps_two_pane_advanced_settings),
                 onClick = onOpenAdvancedSettings,
@@ -476,6 +508,7 @@ private fun SettingsToggleRow(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f),
         )
+
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
@@ -503,13 +536,16 @@ private fun SettingsActionRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
+
             Spacer(Modifier.width(12.dp))
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
+
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                 contentDescription = null,
@@ -553,14 +589,18 @@ private fun EmptyDetailPane(modifier: Modifier = Modifier) {
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.size(48.dp),
             )
+
             Spacer(Modifier.height(12.dp))
+
             Text(
                 text = stringResource(Res.string.apps_two_pane_empty_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
+
             Spacer(Modifier.height(4.dp))
+
             Text(
                 text = stringResource(Res.string.apps_two_pane_empty_subtitle),
                 style = MaterialTheme.typography.bodyMedium,

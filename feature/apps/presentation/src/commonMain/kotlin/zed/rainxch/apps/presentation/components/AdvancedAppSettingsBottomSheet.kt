@@ -73,13 +73,16 @@ fun AdvancedAppSettingsBottomSheet(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                 )
+
                 Spacer(Modifier.width(12.dp))
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(Res.string.advanced_settings_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
+
                     Text(
                         text = "${app.repoOwner}/${app.repoName}",
                         style = MaterialTheme.typography.bodySmall,
@@ -142,12 +145,14 @@ fun AdvancedAppSettingsBottomSheet(
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                     )
+
                     Text(
                         text = stringResource(Res.string.fallback_older_releases_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+
                 Switch(
                     checked = state.advancedFallbackDraft,
                     onCheckedChange = { onAction(AppsAction.OnAdvancedFallbackToggled(it)) },
@@ -156,9 +161,11 @@ fun AdvancedAppSettingsBottomSheet(
             }
 
             Spacer(Modifier.height(16.dp))
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
             )
+
             Spacer(Modifier.height(16.dp))
 
             Text(
@@ -166,7 +173,9 @@ fun AdvancedAppSettingsBottomSheet(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+
             Spacer(Modifier.height(8.dp))
+
             VariantRow(
                 pinnedVariant = app.preferredAssetVariant,
                 isStale = app.preferredVariantStale,
@@ -174,9 +183,11 @@ fun AdvancedAppSettingsBottomSheet(
             )
 
             Spacer(Modifier.height(16.dp))
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
             )
+
             Spacer(Modifier.height(16.dp))
 
             PreviewSection(
@@ -200,6 +211,7 @@ fun AdvancedAppSettingsBottomSheet(
                     enabled = !state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
                 )
+
                 GhsButton(
                     onClick = { onAction(AppsAction.OnAdvancedSaveFilter) },
                     label = stringResource(Res.string.advanced_save),
@@ -230,13 +242,16 @@ private fun PreviewSection(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(18.dp),
         )
+
         Spacer(Modifier.width(8.dp))
+
         Text(
             text = stringResource(Res.string.advanced_preview_title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(1f),
         )
+
         IconButton(onClick = onRefresh, enabled = !isLoading) {
             Icon(
                 imageVector = Icons.Default.Refresh,
@@ -303,8 +318,10 @@ private fun PreviewSection(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium,
                 )
+
                 Spacer(Modifier.height(6.dp))
             }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -323,7 +340,9 @@ private fun PreviewSection(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp),
                         )
+
                         Spacer(Modifier.width(10.dp))
+
                         Text(
                             text = asset.name,
                             style = MaterialTheme.typography.bodySmall,
@@ -331,6 +350,7 @@ private fun PreviewSection(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
+
                         Text(
                             text = formatPreviewSize(asset.size),
                             style = MaterialTheme.typography.labelSmall,
@@ -367,13 +387,16 @@ private fun VariantRow(
                 },
             modifier = Modifier.size(20.dp),
         )
+
         Spacer(Modifier.width(12.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(Res.string.variant_picker_title),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
+
             Text(
                 text =
                     when {
@@ -393,6 +416,7 @@ private fun VariantRow(
                     },
             )
         }
+
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,

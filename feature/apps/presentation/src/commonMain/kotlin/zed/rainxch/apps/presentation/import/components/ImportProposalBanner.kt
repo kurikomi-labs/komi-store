@@ -72,6 +72,7 @@ fun ImportProposalBanner(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
+
                 Text(
                     text = stringResource(Res.string.external_import_proposal_banner_body),
                     style = MaterialTheme.typography.bodySmall,

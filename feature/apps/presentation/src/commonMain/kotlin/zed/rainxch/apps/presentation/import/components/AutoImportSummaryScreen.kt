@@ -102,6 +102,7 @@ fun AutoImportSummaryScreen(
                     label = stringResource(Res.string.external_import_auto_summary_undo_all),
                     variant = GhsButtonVariant.Outline,
                 )
+
                 GhsButton(
                     onClick = onContinue,
                     label = stringResource(Res.string.external_import_auto_summary_continue),
@@ -124,6 +125,7 @@ private fun AutoLinkedChipRow(autoLinkedLabels: ImmutableList<String>) {
         visible.forEach { label ->
             ChipSurface(text = label)
         }
+
         if (overflow > 0) {
             ChipSurface(
                 text = stringResource(

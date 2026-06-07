@@ -101,7 +101,9 @@ fun UpdatesBanner(
                         }
                     }
                 }
+
                 Spacer(Modifier.width(12.dp))
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
@@ -113,6 +115,7 @@ fun UpdatesBanner(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
                     Text(
                         text = stringResource(Res.string.apps_updates_banner_subtitle),
                         style = MaterialTheme.typography.bodySmall,
@@ -121,6 +124,7 @@ fun UpdatesBanner(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+
                 Icon(
                     imageVector = Icons.Default.ExpandMore,
                     contentDescription = null,
@@ -133,12 +137,14 @@ fun UpdatesBanner(
 
             if (isUpdatingAll && updateAllProgress != null) {
                 Spacer(Modifier.height(14.dp))
+
                 UpdateAllInlineProgress(
                     progress = updateAllProgress,
                     onCancel = onCancelUpdateAll,
                 )
             } else {
                 Spacer(Modifier.height(14.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -151,6 +157,7 @@ fun UpdatesBanner(
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
+
                     GhsButton(
                         onClick = onToggleExpanded,
                         label = if (isExpanded) {
@@ -189,6 +196,7 @@ private fun UpdateAllInlineProgress(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
+
                 Text(
                     text = stringResource(
                         Res.string.currently_updating,
@@ -200,6 +208,7 @@ private fun UpdateAllInlineProgress(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+
             GhsButton(
                 onClick = onCancel,
                 label = stringResource(Res.string.cancel),
@@ -209,7 +218,9 @@ private fun UpdateAllInlineProgress(
                 contentColorOverride = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
+
         Spacer(Modifier.height(10.dp))
+
         LinearWavyProgressIndicator(
             progress = { progress.current.toFloat() / progress.total.coerceAtLeast(1) },
             modifier = Modifier.fillMaxWidth(),

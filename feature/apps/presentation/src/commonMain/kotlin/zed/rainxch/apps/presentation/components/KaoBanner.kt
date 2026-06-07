@@ -69,6 +69,7 @@ fun KaoBanner(
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
+
                     Text(
                         text = stringResource(Res.string.kao_banner_body),
                         style = MaterialTheme.typography.bodySmall,

@@ -54,6 +54,7 @@ fun EmptyStateScreen(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(64.dp),
                 )
+
                 Text(
                     text = stringResource(Res.string.external_import_empty_all_matched),
                     style = MaterialTheme.typography.titleLarge,
@@ -61,11 +62,13 @@ fun EmptyStateScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                 )
+
                 GhsButton(
                     onClick = onExit,
                     label = stringResource(Res.string.external_import_empty_done),
                     variant = GhsButtonVariant.Primary,
                 )
+
                 GhsButton(
                     onClick = onAddManually,
                     label = stringResource(Res.string.external_import_empty_add_manually),
@@ -78,6 +81,7 @@ fun EmptyStateScreen(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(72.dp),
                 )
+
                 Text(
                     text = stringResource(Res.string.external_import_empty_no_apps_title),
                     style = MaterialTheme.typography.titleLarge,
@@ -85,24 +89,28 @@ fun EmptyStateScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                 )
+
                 Text(
                     text = stringResource(Res.string.external_import_empty_no_apps_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
+
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     GhsButton(
                         onClick = onExit,
                         label = stringResource(Res.string.external_import_empty_ok),
                         variant = GhsButtonVariant.Outline,
                     )
+
                     GhsButton(
                         onClick = onRequestPermission,
                         label = stringResource(Res.string.external_import_empty_grant_permission),
                         variant = GhsButtonVariant.Primary,
                     )
                 }
+
                 GhsButton(
                     onClick = onAddManually,
                     label = stringResource(Res.string.external_import_empty_add_manually),

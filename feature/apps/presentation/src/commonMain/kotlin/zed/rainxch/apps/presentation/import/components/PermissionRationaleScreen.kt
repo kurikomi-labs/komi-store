@@ -77,6 +77,7 @@ fun PermissionRationaleScreen(
                     label = stringResource(Res.string.external_import_permission_not_now),
                     variant = GhsButtonVariant.Outline,
                 )
+
                 GhsButton(
                     onClick = {
                         scope.launch {

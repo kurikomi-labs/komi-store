@@ -131,6 +131,7 @@ fun ExternalImportRoot(
                                         contentDescription = stringResource(Res.string.external_import_overflow_more),
                                     )
                                 }
+
                                 GhsDropdownMenu(
                                     expanded = menuOpen,
                                     onDismissRequest = { menuOpen = false },

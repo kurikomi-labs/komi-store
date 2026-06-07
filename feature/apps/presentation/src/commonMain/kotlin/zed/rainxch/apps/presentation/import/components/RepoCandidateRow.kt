@@ -71,6 +71,7 @@ fun RepoCandidateRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -89,6 +90,7 @@ fun RepoCandidateRow(
 
                 SuggestionHostChip(suggestion.sourceHost)
             }
+
             if (!suggestion.description.isNullOrBlank()) {
                 Text(
                     text = suggestion.description,
@@ -98,6 +100,7 @@ fun RepoCandidateRow(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+
             if (suggestion.stars != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -106,7 +109,9 @@ fun RepoCandidateRow(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(12.dp),
                     )
+
                     Spacer(Modifier.width(4.dp))
+
                     Text(
                         text = formatStars(suggestion.stars),
                         style = MaterialTheme.typography.labelSmall,

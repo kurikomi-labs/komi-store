@@ -60,7 +60,9 @@ fun VariantPickerDialog(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )
+
                 Spacer(Modifier.height(2.dp))
+
                 Text(
                     text = app.appName,
                     style = MaterialTheme.typography.bodySmall,
@@ -74,6 +76,7 @@ fun VariantPickerDialog(
             Column(modifier = Modifier.fillMaxWidth()) {
                 if (app.preferredVariantStale) {
                     StaleVariantBanner(currentVariant = state.variantPickerCurrentVariant)
+
                     Spacer(Modifier.height(12.dp))
                 }
 
@@ -146,7 +149,6 @@ fun VariantPickerDialog(
             }
         },
         confirmButton = {
-
             GhsButton(
                 onClick = {
                     onAction(AppsAction.OnDismissVariantPicker)
@@ -156,6 +158,7 @@ fun VariantPickerDialog(
                 variant = GhsButtonVariant.Text,
                 size = GhsButtonSize.Sm,
             )
+
             GhsButton(
                 onClick = { onAction(AppsAction.OnDismissVariantPicker) },
                 label = stringResource(Res.string.cancel),
@@ -186,7 +189,9 @@ private fun StaleVariantBanner(
             tint = MaterialTheme.colorScheme.onErrorContainer,
             modifier = Modifier.size(20.dp),
         )
+
         Spacer(Modifier.width(10.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(Res.string.variant_picker_stale_title),
@@ -194,6 +199,7 @@ private fun StaleVariantBanner(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
+
             if (currentVariant != null) {
                 Text(
                     text = stringResource(Res.string.variant_picker_stale_was, currentVariant),
@@ -218,7 +224,6 @@ private fun VariantOptionList(
             .heightIn(min = 0.dp, max = 280.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-
         item {
             VariantRow(
                 isSelected = current == null,
@@ -227,13 +232,13 @@ private fun VariantOptionList(
                 leadingIcon = Icons.Default.AutoAwesome,
                 onClick = onResetAuto,
             )
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
             )
         }
 
         items(state.variantPickerOptions, key = { it.id }) { asset ->
-
             val variant = AssetVariant.extract(asset.name)
             if (variant.isNullOrEmpty()) return@items
             val isCurrent = variant.equals(current, ignoreCase = true)
@@ -277,7 +282,9 @@ private fun VariantRow(
                 },
             modifier = Modifier.size(20.dp),
         )
+
         Spacer(Modifier.width(12.dp))
+
         if (leadingIcon != null) {
             Icon(
                 imageVector = leadingIcon,
@@ -285,8 +292,10 @@ private fun VariantRow(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp),
             )
+
             Spacer(Modifier.width(8.dp))
         }
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
@@ -295,6 +304,7 @@ private fun VariantRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
@@ -303,6 +313,7 @@ private fun VariantRow(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,

@@ -82,6 +82,7 @@ fun StarredCandidateRow(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 if (!candidate.description.isNullOrBlank()) {
                     Text(
                         text = candidate.description,
@@ -91,7 +92,9 @@ fun StarredCandidateRow(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+
                 Spacer(Modifier.height(2.dp))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -103,13 +106,16 @@ fun StarredCandidateRow(
                             tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(14.dp),
                         )
+
                         Spacer(Modifier.width(2.dp))
+
                         Text(
                             text = formatStars(candidate.stargazersCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+
                     candidate.latestReleaseTag?.let { tag ->
                         Text(
                             text = tag,
@@ -129,6 +135,7 @@ fun StarredCandidateRow(
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
+
             if (candidate.isAlreadyTracked) {
                 Badge(
                     icon = Icons.Outlined.CheckCircle,
@@ -150,7 +157,9 @@ private fun Badge(icon: androidx.compose.ui.graphics.vector.ImageVector, label: 
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(imageVector = icon, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+
         Spacer(Modifier.width(4.dp))
+
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = color)
     }
 }

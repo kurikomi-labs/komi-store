@@ -141,6 +141,7 @@ fun CandidateCard(
                             variant = GhsButtonVariant.Outline,
                             modifier = Modifier.weight(1f),
                         )
+
                         GhsButton(
                             onClick = onToggleExpanded,
                             label = stringResource(Res.string.external_import_card_action_less),
@@ -173,6 +174,7 @@ private fun CollapsedActions(
                 modifier = Modifier.weight(1f),
             )
         }
+
         GhsButton(
             onClick = onExpand,
             label = stringResource(Res.string.external_import_card_action_more),
@@ -208,6 +210,7 @@ private fun CandidateHeader(candidate: CandidateUi) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Text(
                 text = candidate.packageName,
                 style = MaterialTheme.typography.bodySmall,
@@ -215,6 +218,7 @@ private fun CandidateHeader(candidate: CandidateUi) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             InstallerChip(installerLabel = candidate.installerLabel)
         }
     }
@@ -272,6 +276,7 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                     style = MaterialTheme.typography.labelSmall,
                     color = contentColor,
                 )
+
                 Text(
                     text = suggestion.repo,
                     style = MaterialTheme.typography.titleMedium,
@@ -280,6 +285,7 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -295,6 +301,7 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f, fill = false),
                     )
+
                     Text(
                         text = stringResource(
                             Res.string.external_import_match_confidence_chip,

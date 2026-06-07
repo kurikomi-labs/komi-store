@@ -95,6 +95,7 @@ fun AppsSectionHeader(
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
+
             Text(
                 text = stringResource(Res.string.apps_section_count_suffix, count),
                 style = MaterialTheme.typography.labelMedium.copy(
@@ -104,6 +105,7 @@ fun AppsSectionHeader(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
             )
+
             if (collapsible) {
                 Icon(
                     imageVector = Icons.Default.ExpandMore,
@@ -115,6 +117,7 @@ fun AppsSectionHeader(
                 )
             }
         }
+
         Squiggle()
     }
 }

@@ -196,18 +196,22 @@ private fun UnknownFormatSheet(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.tertiary,
                 )
+
                 Spacer(Modifier.width(8.dp))
+
                 Text(
                     text = stringResource(Res.string.import_summary_unknown_format),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
+
             Text(
                 text = stringResource(Res.string.import_summary_unknown_caption),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+
             if (!preview.isNullOrBlank()) {
                 SelectionContainer {
                     Text(
@@ -221,12 +225,14 @@ private fun UnknownFormatSheet(
                     )
                 }
             }
+
             GhsButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.import_summary_close),
                 variant = GhsButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
             )
+
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -249,13 +255,16 @@ private fun SummaryBucket(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(imageVector = icon, contentDescription = null, tint = tint)
+
             Spacer(Modifier.width(8.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                 )
+
                 if (!caption.isNullOrBlank()) {
                     Text(
                         text = caption,
@@ -264,6 +273,7 @@ private fun SummaryBucket(
                     )
                 }
             }
+
             if (items.isNotEmpty()) {
                 val expandLabel = stringResource(
                     if (expanded) Res.string.import_summary_collapse else Res.string.import_summary_expand,
@@ -279,6 +289,7 @@ private fun SummaryBucket(
 
         if (expanded && items.isNotEmpty()) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()

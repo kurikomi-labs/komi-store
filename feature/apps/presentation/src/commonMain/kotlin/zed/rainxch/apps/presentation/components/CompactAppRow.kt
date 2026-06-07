@@ -143,6 +143,7 @@ fun CompactAppRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 app.sourceHost?.let { SourceChip(host = it) }
+
                 Text(
                     text = app.installedVersion,
                     style = MaterialTheme.typography.bodySmall,
@@ -151,12 +152,12 @@ fun CompactAppRow(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
+
                 StatusDotCluster(flags = flags)
             }
         }
 
         if (app.pendingInstallFilePath != null) {
-
             GhsButton(
                 onClick = onInstallPendingClick,
                 label = stringResource(Res.string.install),
@@ -165,11 +166,10 @@ fun CompactAppRow(
                 enabled = !isBusy,
                 leadingIcon = Icons.Default.Update,
             )
+
             Spacer(Modifier.width(4.dp))
         } else if (app.isPendingInstall) {
-
         } else if (!isBusy) {
-
             IconButton(
                 onClick = onOpenClick,
                 modifier = Modifier.size(40.dp),
@@ -240,6 +240,7 @@ private fun CompactRowOverflow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+
         GhsDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -251,6 +252,7 @@ private fun CompactRowOverflow(
                     onAdvancedSettingsClick()
                 },
             )
+
             GhsDropdownMenuItem(
                 text = stringResource(Res.string.variant_picker_open),
                 onClick = {
@@ -258,6 +260,7 @@ private fun CompactRowOverflow(
                     onPickVariantClick()
                 },
             )
+
             run {
                 val baseLabel = stringResource(Res.string.pre_release_badge)
                 GhsDropdownMenuItem(
@@ -268,6 +271,7 @@ private fun CompactRowOverflow(
                     },
                 )
             }
+
             run {
                 val baseLabel = stringResource(Res.string.apps_ignore_updates)
                 GhsDropdownMenuItem(
@@ -278,6 +282,7 @@ private fun CompactRowOverflow(
                     },
                 )
             }
+
             if (hasSkippedReleaseTag) {
                 GhsDropdownMenuItem(
                     text = stringResource(Res.string.apps_skip_version_unskip),
@@ -287,6 +292,7 @@ private fun CompactRowOverflow(
                     },
                 )
             }
+
             if (isPending) {
                 GhsDropdownMenuItem(
                     text = stringResource(Res.string.discard_pending_install),
