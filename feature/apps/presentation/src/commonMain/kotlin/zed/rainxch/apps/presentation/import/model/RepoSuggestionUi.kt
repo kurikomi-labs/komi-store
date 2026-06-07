@@ -7,16 +7,5 @@ data class RepoSuggestionUi(
     val source: SuggestionSource,
     val stars: Int? = null,
     val description: String? = null,
-
     val sourceHost: String? = null,
-) {
-    val ownerSlashRepo: String get() = "$owner/$repo"
-}
-
-enum class SuggestionSource {
-    MANIFEST,
-    SEARCH,
-    FINGERPRINT,
-    MANUAL,
-    STARRED,
-}
+)

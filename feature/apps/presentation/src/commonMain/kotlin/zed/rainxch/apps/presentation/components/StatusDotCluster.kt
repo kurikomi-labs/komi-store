@@ -17,6 +17,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.AppItem
+import zed.rainxch.apps.presentation.model.CompactStatusFlags
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_filter_active
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pending_install
@@ -25,16 +26,6 @@ import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_ready_t
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_updates_ignored
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_pinned
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_stale
-
-data class CompactStatusFlags(
-    val filterActive: Boolean = false,
-    val variantPinned: Boolean = false,
-    val variantStale: Boolean = false,
-    val preReleaseOn: Boolean = false,
-    val pendingInstall: Boolean = false,
-    val readyToInstall: Boolean = false,
-    val updatesIgnored: Boolean = false,
-)
 
 @Composable
 fun rememberCompactStatusFlags(appItem: AppItem): CompactStatusFlags {

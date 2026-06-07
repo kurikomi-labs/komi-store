@@ -3,16 +3,14 @@ package zed.rainxch.apps.presentation
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import zed.rainxch.apps.domain.model.GithubRepoInfo
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.DeviceAppUi
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.apps.presentation.model.GithubRepoInfoUi
 import zed.rainxch.apps.presentation.model.InstalledAppUi
+import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
-import zed.rainxch.core.domain.model.DeviceApp
-import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.system.RepoMatchSuggestion
 
 data class AppsState(
@@ -119,11 +117,4 @@ data class AppsState(
                 .filter { regex.containsMatchIn(it.name) }
                 .toImmutableList()
         }
-}
-
-enum class LinkStep {
-    PickApp,
-    SmartMatch,
-    EnterUrl,
-    PickAsset,
 }
