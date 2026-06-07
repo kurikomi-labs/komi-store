@@ -30,7 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.coil3.CoilImage
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.starred.StarredCandidateUi
 import zed.rainxch.core.presentation.components.ExpressiveCard
@@ -67,7 +67,7 @@ fun StarredCandidateRow(
                     .size(40.dp)
                     .clip(CircleShape),
             ) {
-                CoilImage(
+                GitHubStoreImage(
                     imageModel = { candidate.ownerAvatarUrl },
                     modifier = Modifier.fillMaxWidth(),
                 )

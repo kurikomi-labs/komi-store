@@ -46,7 +46,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
 import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
@@ -82,7 +81,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.coil3.CoilImage
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.coroutines.launch
@@ -1042,20 +1041,12 @@ fun AppItemCard(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        CoilImage(
+                        GitHubStoreImage(
                             imageModel = { app.repoOwnerAvatarUrl },
                             modifier =
                                 Modifier
                                     .size(18.dp)
                                     .clip(CircleShape),
-                            loading = {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    CircularWavyProgressIndicator()
-                                }
-                            },
                         )
 
                         Spacer(Modifier.width(6.dp))
