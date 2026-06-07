@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -24,6 +25,7 @@ import zed.rainxch.apps.presentation.mappers.toDomain
 import zed.rainxch.apps.presentation.mappers.toUi
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
+import zed.rainxch.apps.presentation.model.DeviceAppUi
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.LinkStep
@@ -94,11 +96,58 @@ class AppsViewModel(
                     observeKaoBannerDismissed()
                     hasLoadedInitialData = true
                 }
-            }.stateIn(
+            }
+            .map { it.withDerived() }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = AppsState(),
             )
+
+    private fun AppsState.withDerived(): AppsState {
+        val searchedDevice = if (deviceAppSearchQuery.isBlank()) {
+            deviceApps
+        } else {
+            deviceApps.filter {
+                it.appName.contains(deviceAppSearchQuery, ignoreCase = true) ||
+                    it.packageName.contains(deviceAppSearchQuery, ignoreCase = true)
+            }
+        }
+        val sortedDevice = searchedDevice.sortedWith(
+            compareBy<DeviceAppUi> { it.installerCategory.sortPriority }
+                .thenBy { it.appName.lowercase() }
+                .thenBy { it.packageName },
+        ).toImmutableList()
+
+        val linkAssets = run {
+            val raw = linkAssetFilter.trim()
+            if (raw.isEmpty()) return@run linkInstallableAssets
+            val regex = runCatching { Regex(raw, RegexOption.IGNORE_CASE) }.getOrNull()
+                ?: return@run linkInstallableAssets
+            linkInstallableAssets.filter { regex.containsMatchIn(it.name) }.toImmutableList()
+        }
+
+        val pending = filteredApps.filter {
+            it.installedApp.isPendingInstall && it.installedApp.pendingInstallFilePath != null
+        }.toImmutableList()
+        val updates = filteredApps.filter {
+            it.installedApp.isUpdateAvailable &&
+                it.installedApp.updateCheckEnabled &&
+                !it.installedApp.isPendingInstall
+        }.toImmutableList()
+        val idle = filteredApps.filter {
+            (!it.installedApp.isUpdateAvailable || !it.installedApp.updateCheckEnabled) &&
+                !it.installedApp.isPendingInstall
+        }.toImmutableList()
+
+        return copy(
+            filteredDeviceApps = sortedDevice,
+            filteredLinkAssets = linkAssets,
+            pendingApps = pending,
+            updateApps = updates,
+            idleApps = idle,
+        )
+    }
 
     private fun observeKaoBannerDismissed() {
         viewModelScope.launch {

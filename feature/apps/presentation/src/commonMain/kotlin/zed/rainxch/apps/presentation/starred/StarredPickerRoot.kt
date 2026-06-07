@@ -123,9 +123,6 @@ private fun ContentBody(
     state: StarredPickerState,
     onAction: (StarredPickerAction) -> Unit,
 ) {
-    val apkCount = state.candidates.count { it.hasApkRelease }
-    val trackedCount = state.candidates.count { it.isAlreadyTracked }
-
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Spacer(Modifier.height(8.dp))
 
@@ -133,8 +130,8 @@ private fun ContentBody(
             text = stringResource(
                 Res.string.starred_picker_header_counts,
                 state.totalStarred,
-                apkCount,
-                trackedCount,
+                state.apkCount,
+                state.trackedCount,
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -234,8 +231,7 @@ private fun ContentBody(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        val visible = filterAndSort(state)
-        if (visible.isEmpty()) {
+        if (state.visibleCandidates.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 contentAlignment = Alignment.Center,
@@ -253,7 +249,7 @@ private fun ContentBody(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(items = visible, key = { it.repoId }) { candidate ->
+                items(items = state.visibleCandidates, key = { it.repoId }) { candidate ->
                     StarredCandidateRow(
                         candidate = candidate,
                         onClick = { onAction(StarredPickerAction.OnCandidateClick(candidate)) },
@@ -318,21 +314,3 @@ private fun CenteredProgress() {
     }
 }
 
-private fun filterAndSort(state: StarredPickerState): List<StarredCandidateUi> {
-    val query = state.searchQuery.trim().lowercase()
-    val filtered = state.candidates.filter { candidate ->
-        if (!state.showWithoutApk && !candidate.hasApkRelease) return@filter false
-        if (query.isBlank()) return@filter true
-        candidate.owner.lowercase().contains(query) ||
-            candidate.name.lowercase().contains(query) ||
-            (candidate.description?.lowercase()?.contains(query) == true)
-    }
-    return when (state.sortRule) {
-        StarredPickerSortRule.RecentlyStarred ->
-            filtered.sortedByDescending { it.starredAt ?: 0L }
-        StarredPickerSortRule.Alphabetical ->
-            filtered.sortedBy { "${it.owner}/${it.name}".lowercase() }
-        StarredPickerSortRule.MostStars ->
-            filtered.sortedByDescending { it.stargazersCount }
-    }
-}

@@ -573,23 +573,6 @@ fun AppsScreen(
                             val listState = rememberLazyListState()
                             val isScrollbarEnabled = LocalScrollbarEnabled.current
 
-                            val pendingGroup =
-                                state.filteredApps.filter {
-                                    it.installedApp.isPendingInstall &&
-                                            it.installedApp.pendingInstallFilePath != null
-                                }
-                            val updatesGroup =
-                                state.filteredApps.filter {
-                                    it.installedApp.isUpdateAvailable &&
-                                            it.installedApp.updateCheckEnabled &&
-                                            !it.installedApp.isPendingInstall
-                                }
-                            val idleGroup =
-                                state.filteredApps.filter {
-                                    (!it.installedApp.isUpdateAvailable || !it.installedApp.updateCheckEnabled) &&
-                                            !it.installedApp.isPendingInstall
-                                }
-
                             val onRowSelect: (zed.rainxch.apps.presentation.model.InstalledAppUi) -> Unit =
                                 { app ->
                                     onAction(
@@ -642,11 +625,11 @@ fun AppsScreen(
                                         }
                                     }
 
-                                    if (pendingGroup.isNotEmpty()) {
+                                    if (state.pendingApps.isNotEmpty()) {
                                         item(key = "header-pending-installs") {
                                             AppsSectionHeader(
                                                 title = stringResource(Res.string.apps_section_pending_installs),
-                                                count = pendingGroup.size,
+                                                count = state.pendingApps.size,
                                                 isExpanded = true,
                                                 collapsible = false,
                                                 onToggle = {},
@@ -654,7 +637,7 @@ fun AppsScreen(
                                         }
 
                                         items(
-                                            items = pendingGroup,
+                                            items = state.pendingApps,
                                             key = { "pending-${it.installedApp.packageName}" },
                                         ) { appItem ->
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -759,7 +742,7 @@ fun AppsScreen(
                                         }
                                     }
 
-                                    if (updatesGroup.isNotEmpty() || state.isUpdatingAll) {
+                                    if (state.updateApps.isNotEmpty() || state.isUpdatingAll) {
                                         item(key = "updates-banner") {
                                             Box(
                                                 modifier = Modifier.padding(
@@ -768,7 +751,7 @@ fun AppsScreen(
                                                 )
                                             ) {
                                                 UpdatesBanner(
-                                                    count = updatesGroup.size,
+                                                    count = state.updateApps.size,
                                                     isExpanded = state.isUpdatesSectionExpanded,
                                                     isUpdatingAll = state.isUpdatingAll,
                                                     updateAllProgress = state.updateAllProgress,
@@ -781,9 +764,9 @@ fun AppsScreen(
                                         }
                                     }
 
-                                    if (updatesGroup.isNotEmpty() && state.isUpdatesSectionExpanded) {
+                                    if (state.updateApps.isNotEmpty() && state.isUpdatesSectionExpanded) {
                                         items(
-                                            items = updatesGroup,
+                                            items = state.updateApps,
                                             key = { "rich-${it.installedApp.packageName}" },
                                         ) { appItem ->
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -888,11 +871,11 @@ fun AppsScreen(
                                         }
                                     }
 
-                                    if (idleGroup.isNotEmpty()) {
+                                    if (state.idleApps.isNotEmpty()) {
                                         item(key = "header-up-to-date") {
                                             AppsSectionHeader(
                                                 title = stringResource(Res.string.apps_section_up_to_date),
-                                                count = idleGroup.size,
+                                                count = state.idleApps.size,
                                                 isExpanded = state.isUpToDateSectionExpanded,
                                                 collapsible = true,
                                                 onToggle = {
@@ -903,7 +886,7 @@ fun AppsScreen(
 
                                         if (state.isUpToDateSectionExpanded) {
                                             items(
-                                                items = idleGroup,
+                                                items = state.idleApps,
                                                 key = { "compact-${it.installedApp.packageName}" },
                                             ) { appItem ->
                                                 Box(modifier = Modifier.padding(horizontal = 8.dp)) {

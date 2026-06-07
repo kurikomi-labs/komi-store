@@ -15,6 +15,9 @@ data class StarredPickerState(
     val isAuthenticated: Boolean = true,
     val errorMessage: String? = null,
     val rateLimited: Boolean = false,
+    val apkCount: Int = 0,
+    val trackedCount: Int = 0,
+    val visibleCandidates: ImmutableList<StarredCandidateUi> = persistentListOf(),
 ) {
     enum class Phase {
         LoadingStars,
