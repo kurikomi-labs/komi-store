@@ -36,7 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.skydoves.landscapist.coil3.CoilImage
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.buttons.GhsButton
@@ -299,7 +299,7 @@ private fun CandidateRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        CoilImage(
+        GitHubStoreImage(
             imageModel = { candidate.ownerAvatarUrl },
             modifier = Modifier
                 .size(40.dp)
