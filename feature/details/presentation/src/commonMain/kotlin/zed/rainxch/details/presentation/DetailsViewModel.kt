@@ -178,6 +178,8 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 installer.uninstall(installedApp.packageName)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to request uninstall for ${installedApp.packageName}: ${e.message}")
                 _events.send(
@@ -895,6 +897,8 @@ class DetailsViewModel(
                 _state.update {
                     it.copy(isRetryingReleases = false, releasesLoadFailed = true)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
 
                 logger.warn("Retry failed to load releases: ${t.message}")
@@ -990,90 +994,91 @@ class DetailsViewModel(
 
     private fun installViaExternalApp() {
         currentDownloadJob?.cancel()
-        val job =
-            viewModelScope.launch {
-                try {
-                    val primary = _state.value.primaryAsset
-                    val release = _state.value.selectedRelease
+        val job = viewModelScope.launch {
+            try {
+                val primary = _state.value.primaryAsset
+                val release = _state.value.selectedRelease
 
-                    if (primary != null && release != null) {
-                        currentAssetName = primary.name
+                if (primary != null && release != null) {
+                    currentAssetName = primary.name
 
-                        appendLog(
-                            assetName = primary.name,
-                            size = primary.size,
-                            tag = release.tagName,
-                            result = LogResult.DownloadStarted,
-                        )
+                    appendLog(
+                        assetName = primary.name,
+                        size = primary.size,
+                        tag = release.tagName,
+                        result = LogResult.DownloadStarted,
+                    )
 
-                        _state.value =
-                            _state.value.copy(
-                                downloadError = null,
-                                installError = null,
-                                downloadProgressPercent = null,
-                                downloadStage = DownloadStage.DOWNLOADING,
-                            )
-
-                        downloader
-                            .download(primary.downloadUrl, primary.name)
-                            .collect { p ->
-                                _state.value =
-                                    _state.value.copy(downloadProgressPercent = p.percent)
-                                if (p.percent == 100) {
-                                    _state.value =
-                                        _state.value.copy(downloadStage = DownloadStage.VERIFYING)
-                                }
-                            }
-
-                        val filePath =
-                            downloader.getDownloadedFilePath(primary.name)
-                                ?: throw IllegalStateException("Downloaded file not found")
-
-                        appendLog(
-                            assetName = primary.name,
-                            size = primary.size,
-                            tag = release.tagName,
-                            result = LogResult.Downloaded,
-                        )
-
-                        _state.value = _state.value.copy(downloadStage = DownloadStage.IDLE)
-                        currentAssetName = null
-
-                        installer.openWithExternalInstaller(filePath)
-
-                        appendLog(
-                            assetName = primary.name,
-                            size = primary.size,
-                            tag = release.tagName,
-                            result = LogResult.OpenedInExternalInstaller,
-                        )
-                    }
-                } catch (e: CancellationException) {
-                    logger.debug("Install with external app cancelled")
-                    _state.value = _state.value.copy(downloadStage = DownloadStage.IDLE)
-                    currentAssetName = null
-                    throw e
-                } catch (t: Throwable) {
-                    logger.error("Failed to install with external app: ${t.message}")
                     _state.value =
                         _state.value.copy(
-                            downloadStage = DownloadStage.IDLE,
-                            installError = t.message,
+                            downloadError = null,
+                            installError = null,
+                            downloadProgressPercent = null,
+                            downloadStage = DownloadStage.DOWNLOADING,
                         )
+
+                    downloader
+                        .download(primary.downloadUrl, primary.name)
+                        .collect { p ->
+                            _state.value =
+                                _state.value.copy(downloadProgressPercent = p.percent)
+                            if (p.percent == 100) {
+                                _state.value =
+                                    _state.value.copy(downloadStage = DownloadStage.VERIFYING)
+                            }
+                        }
+
+                    val filePath =
+                        downloader.getDownloadedFilePath(primary.name)
+                            ?: throw IllegalStateException("Downloaded file not found")
+
+                    appendLog(
+                        assetName = primary.name,
+                        size = primary.size,
+                        tag = release.tagName,
+                        result = LogResult.Downloaded,
+                    )
+
+                    _state.value = _state.value.copy(downloadStage = DownloadStage.IDLE)
                     currentAssetName = null
 
-                    _state.value.primaryAsset?.let { asset ->
-                        _state.value.selectedRelease?.let { release ->
-                            appendLog(
-                                assetName = asset.name,
-                                size = asset.size,
-                                tag = release.tagName,
-                                result = Error(t.message),
-                            )
-                        }
+                    installer.openWithExternalInstaller(filePath)
+
+                    appendLog(
+                        assetName = primary.name,
+                        size = primary.size,
+                        tag = release.tagName,
+                        result = LogResult.OpenedInExternalInstaller,
+                    )
+                }
+            } catch (e: CancellationException) {
+                logger.debug("Install with external app cancelled")
+                _state.value = _state.value.copy(downloadStage = DownloadStage.IDLE)
+                currentAssetName = null
+                throw e
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                logger.error("Failed to install with external app: ${t.message}")
+                _state.value =
+                    _state.value.copy(
+                        downloadStage = DownloadStage.IDLE,
+                        installError = t.message,
+                    )
+                currentAssetName = null
+
+                _state.value.primaryAsset?.let { asset ->
+                    _state.value.selectedRelease?.let { release ->
+                        appendLog(
+                            assetName = asset.name,
+                            size = asset.size,
+                            tag = release.tagName,
+                            result = Error(t.message),
+                        )
                     }
                 }
             }
+        }
 
         currentDownloadJob = job
         job.invokeOnCompletion {
@@ -1102,6 +1107,8 @@ class DetailsViewModel(
                         )
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Failed to open with external installer: ${t.message}")
                 _state.value = _state.value.copy(installError = t.message)
@@ -1202,6 +1209,8 @@ class DetailsViewModel(
                         result = LogResult.OpenedInAppManager,
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Failed to open in AppManager: ${t.message}")
                 _state.value =
@@ -1351,6 +1360,8 @@ class DetailsViewModel(
                                 ),
                         ),
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Failed to toggle favorite: ${t.message}")
             }
@@ -1428,6 +1439,8 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 installer.uninstall(installedApp.packageName)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to request uninstall for ${installedApp.packageName}: ${e.message}")
                 _events.send(
@@ -1500,6 +1513,8 @@ class DetailsViewModel(
                 val installOutcome =
                     try {
                         installer.install(warning.pendingFilePath, ext)
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Throwable) {
                         if (gatePackageName != null) {
                             systemInstallSerializer.markCompleted(gatePackageName)
@@ -1527,6 +1542,8 @@ class DetailsViewModel(
                     tag = warning.pendingReleaseTag,
                     result = if (warning.pendingIsUpdate) LogResult.Updated else LogResult.Installed,
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Install after override failed: ${t.message}")
                 _state.value =
@@ -1568,41 +1585,40 @@ class DetailsViewModel(
         val parkedFilePath = parkedFilePathIfMatches(releaseTag, assetName)
         if (parkedFilePath != null) {
             logger.debug("Reusing parked file for $releaseTag / $assetName")
-            currentDownloadJob =
-                viewModelScope.launch {
-                    try {
-                        appendLog(
-                            assetName = assetName,
-                            size = sizeBytes,
-                            tag = releaseTag,
-                            result = LogResult.Downloaded,
+            currentDownloadJob = viewModelScope.launch {
+                try {
+                    appendLog(
+                        assetName = assetName,
+                        size = sizeBytes,
+                        tag = releaseTag,
+                        result = LogResult.Downloaded,
+                    )
+                    installAsset(
+                        isUpdate = isUpdate,
+                        filePath = parkedFilePath,
+                        assetName = assetName,
+                        downloadUrl = downloadUrl,
+                        sizeBytes = sizeBytes,
+                        releaseTag = releaseTag,
+                    )
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    throw e
+                } catch (t: Throwable) {
+                    logger.error("Install of parked file failed: ${t.message}")
+                    _state.value =
+                        _state.value.copy(
+                            downloadStage = DownloadStage.IDLE,
+                            installError = t.message,
                         )
-                        installAsset(
-                            isUpdate = isUpdate,
-                            filePath = parkedFilePath,
-                            assetName = assetName,
-                            downloadUrl = downloadUrl,
-                            sizeBytes = sizeBytes,
-                            releaseTag = releaseTag,
-                        )
-                    } catch (e: kotlinx.coroutines.CancellationException) {
-                        throw e
-                    } catch (t: Throwable) {
-                        logger.error("Install of parked file failed: ${t.message}")
-                        _state.value =
-                            _state.value.copy(
-                                downloadStage = DownloadStage.IDLE,
-                                installError = t.message,
-                            )
-                        currentAssetName = null
-                        appendLog(
-                            assetName = assetName,
-                            size = sizeBytes,
-                            tag = releaseTag,
-                            result = Error(t.message),
-                        )
-                    }
+                    currentAssetName = null
+                    appendLog(
+                        assetName = assetName,
+                        size = sizeBytes,
+                        tag = releaseTag,
+                        result = Error(t.message),
+                    )
                 }
+            }
             return
         }
 
@@ -1618,75 +1634,74 @@ class DetailsViewModel(
                 },
         )
 
-        currentDownloadJob =
-            viewModelScope.launch {
-                try {
-                    val installerType =
-                        try {
-                            tweaksRepository.getInstallerType().first()
-                        } catch (e: kotlinx.coroutines.CancellationException) {
-                            throw e
-                        } catch (_: Exception) {
-                            InstallerType.DEFAULT
-                        }
-                    val policy =
-                        when {
-                            platform != Platform.ANDROID -> InstallPolicy.AlwaysInstall
-                            installerType == InstallerType.SHIZUKU -> InstallPolicy.AlwaysInstall
-                            installerType == InstallerType.DHIZUKU -> InstallPolicy.AlwaysInstall
-                            else -> InstallPolicy.InstallWhileForeground
-                        }
+        currentDownloadJob = viewModelScope.launch {
+            try {
+                val installerType =
+                    try {
+                        tweaksRepository.getInstallerType().first()
+                    } catch (e: kotlinx.coroutines.CancellationException) {
+                        throw e
+                    } catch (_: Exception) {
+                        InstallerType.DEFAULT
+                    }
+                val policy =
+                    when {
+                        platform != Platform.ANDROID -> InstallPolicy.AlwaysInstall
+                        installerType == InstallerType.SHIZUKU -> InstallPolicy.AlwaysInstall
+                        installerType == InstallerType.DHIZUKU -> InstallPolicy.AlwaysInstall
+                        else -> InstallPolicy.InstallWhileForeground
+                    }
 
-                    downloadOrchestrator.enqueue(
-                        DownloadSpec(
-                            packageName = packageKey,
-                            repoOwner = repository.owner.login,
-                            repoName = repository.name,
-                            asset = asset,
-                            displayAppName = repository.name,
-                            installPolicy = policy,
-                            releaseTag = releaseTag,
-                        ),
-                    )
-
-                    _state.value =
-                        _state.value.copy(
-                            downloadError = null,
-                            installError = null,
-                            downloadProgressPercent = null,
-                            downloadStage = DownloadStage.DOWNLOADING,
-                            downloadedBytes = 0L,
-                            totalBytes = sizeBytes,
-                            attestationStatus = AttestationStatus.UNCHECKED,
-                        )
-
-                    observeOrchestratorEntry(
-                        packageKey = packageKey,
-                        downloadUrl = downloadUrl,
-                        assetName = assetName,
-                        sizeBytes = sizeBytes,
+                downloadOrchestrator.enqueue(
+                    DownloadSpec(
+                        packageName = packageKey,
+                        repoOwner = repository.owner.login,
+                        repoName = repository.name,
+                        asset = asset,
+                        displayAppName = repository.name,
+                        installPolicy = policy,
                         releaseTag = releaseTag,
-                        isUpdate = isUpdate,
+                    ),
+                )
+
+                _state.value =
+                    _state.value.copy(
+                        downloadError = null,
+                        installError = null,
+                        downloadProgressPercent = null,
+                        downloadStage = DownloadStage.DOWNLOADING,
+                        downloadedBytes = 0L,
+                        totalBytes = sizeBytes,
+                        attestationStatus = AttestationStatus.UNCHECKED,
                     )
-                } catch (e: kotlinx.coroutines.CancellationException) {
-                    throw e
-                } catch (t: Throwable) {
-                    logger.error("Install failed: ${t.message}")
-                    t.printStackTrace()
-                    _state.value =
-                        _state.value.copy(
-                            downloadStage = DownloadStage.IDLE,
-                            installError = t.message,
-                        )
-                    currentAssetName = null
-                    appendLog(
-                        assetName = assetName,
-                        size = sizeBytes,
-                        tag = releaseTag,
-                        result = Error(t.message),
+
+                observeOrchestratorEntry(
+                    packageKey = packageKey,
+                    downloadUrl = downloadUrl,
+                    assetName = assetName,
+                    sizeBytes = sizeBytes,
+                    releaseTag = releaseTag,
+                    isUpdate = isUpdate,
+                )
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                logger.error("Install failed: ${t.message}")
+                t.printStackTrace()
+                _state.value =
+                    _state.value.copy(
+                        downloadStage = DownloadStage.IDLE,
+                        installError = t.message,
                     )
-                }
+                currentAssetName = null
+                appendLog(
+                    assetName = assetName,
+                    size = sizeBytes,
+                    tag = releaseTag,
+                    result = Error(t.message),
+                )
             }
+        }
     }
 
     private fun parkedFilePathIfMatches(
@@ -1703,6 +1718,8 @@ class DetailsViewModel(
         return try {
             val file = File(parkedPath)
             if (file.exists() && file.length() > 0) parkedPath else null
+        } catch (e: CancellationException) {
+            throw e
         } catch (t: Throwable) {
             logger.warn("Failed to stat parked install file: ${t.message}")
             null
@@ -2001,6 +2018,8 @@ class DetailsViewModel(
         val installOutcome =
             try {
                 installer.install(filePath, ext)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 if (gatePackageName != null) {
                     systemInstallSerializer.markCompleted(gatePackageName)
@@ -2157,45 +2176,44 @@ class DetailsViewModel(
                 downloadProgressPercent = null,
             )
 
-        currentDownloadJob =
-            viewModelScope.launch {
-                try {
-                    downloadOrchestrator.enqueue(
-                        DownloadSpec(
-                            packageName = packageKey,
-                            repoOwner = repository.owner.login,
-                            repoName = repository.name,
-                            asset = asset,
-                            displayAppName = repository.name,
-                            installPolicy = InstallPolicy.DeferUntilUserAction,
-                            releaseTag = releaseTag,
-                        ),
-                    )
-                    observeOrchestratorEntry(
-                        packageKey = packageKey,
-                        downloadUrl = downloadUrl,
-                        assetName = assetName,
-                        sizeBytes = sizeBytes,
+        currentDownloadJob = viewModelScope.launch {
+            try {
+                downloadOrchestrator.enqueue(
+                    DownloadSpec(
+                        packageName = packageKey,
+                        repoOwner = repository.owner.login,
+                        repoName = repository.name,
+                        asset = asset,
+                        displayAppName = repository.name,
+                        installPolicy = InstallPolicy.DeferUntilUserAction,
                         releaseTag = releaseTag,
-                        isUpdate = false,
+                    ),
+                )
+                observeOrchestratorEntry(
+                    packageKey = packageKey,
+                    downloadUrl = downloadUrl,
+                    assetName = assetName,
+                    sizeBytes = sizeBytes,
+                    releaseTag = releaseTag,
+                    isUpdate = false,
+                )
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                _state.value =
+                    _state.value.copy(
+                        isDownloading = false,
+                        downloadError = t.message,
                     )
-                } catch (e: kotlinx.coroutines.CancellationException) {
-                    throw e
-                } catch (t: Throwable) {
-                    _state.value =
-                        _state.value.copy(
-                            isDownloading = false,
-                            downloadError = t.message,
-                        )
-                    currentAssetName = null
-                    appendLog(
-                        assetName = assetName,
-                        size = sizeBytes,
-                        tag = releaseTag,
-                        result = Error(t.message),
-                    )
-                }
+                currentAssetName = null
+                appendLog(
+                    assetName = assetName,
+                    size = sizeBytes,
+                    tag = releaseTag,
+                    result = Error(t.message),
+                )
             }
+        }
     }
 
     @OptIn(ExperimentalTime::class)
@@ -2247,6 +2265,8 @@ class DetailsViewModel(
         viewModelScope.launch(NonCancellable) {
             try {
                 downloadOrchestrator.downgradeToDeferred(packageKey)
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Failed to downgrade orchestrator on screen leave: ${t.message}")
             }
@@ -2298,6 +2318,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (t: Throwable) {
                             logger.error("Failed to load if repo is favourite: ${t.localizedMessage}")
                             false
@@ -2310,6 +2332,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (t: Throwable) {
                             logger.error("Failed to load if repo is starred: ${t.localizedMessage}")
                             false
@@ -2340,6 +2364,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             emptyList<GithubRelease>() to true
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (t: Throwable) {
                             logger.warn("Failed to load releases: ${t.message}")
                             emptyList<GithubRelease>() to true
@@ -2357,6 +2383,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (_: Throwable) {
                             null
                         }
@@ -2374,6 +2402,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (_: Throwable) {
                             null
                         }
@@ -2388,6 +2418,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (t: Throwable) {
                             logger.warn("Failed to load user profile: ${t.message}")
                             null
@@ -2416,6 +2448,8 @@ class DetailsViewModel(
                         } catch (_: RateLimitException) {
                             rateLimited.set(true)
                             emptyList()
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (t: Throwable) {
                             logger.error("Failed to load installed apps: ${t.message}")
                             emptyList()
@@ -2517,6 +2551,8 @@ class DetailsViewModel(
                         isLoading = false,
                         errorMessage = message,
                     )
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Details load failed: ${t.message}")
                 _state.value =
@@ -2669,6 +2705,8 @@ class DetailsViewModel(
                         retryAfterSeconds = e.retryAfterSeconds,
                     ),
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.error("Refresh failed: ${t.message}")
                 _state.update { it.copy(isRefreshing = false) }
@@ -2729,54 +2767,53 @@ class DetailsViewModel(
         targetLanguageCode: String,
         updateState: (TranslationState) -> Unit,
         getCurrentState: () -> TranslationState,
-    ): Job =
-        viewModelScope.launch {
-            try {
-                updateState(
-                    getCurrentState().copy(
-                        isTranslating = true,
-                        error = null,
-                        targetLanguageCode = targetLanguageCode,
-                    ),
+    ): Job = viewModelScope.launch {
+        try {
+            updateState(
+                getCurrentState().copy(
+                    isTranslating = true,
+                    error = null,
+                    targetLanguageCode = targetLanguageCode,
+                ),
+            )
+
+            val result =
+                translationRepository.translate(
+                    text = text,
+                    targetLanguage = targetLanguageCode,
                 )
 
-                val result =
-                    translationRepository.translate(
-                        text = text,
-                        targetLanguage = targetLanguageCode,
-                    )
+            val langDisplayName =
+                SupportedLanguages.all
+                    .find { it.code == targetLanguageCode }
+                    ?.displayName
+                    ?: targetLanguageCode
 
-                val langDisplayName =
-                    SupportedLanguages.all
-                        .find { it.code == targetLanguageCode }
-                        ?.displayName
-                        ?: targetLanguageCode
-
-                updateState(
-                    TranslationState(
-                        isTranslating = false,
-                        translatedText = result.translatedText,
-                        isShowingTranslation = true,
-                        targetLanguageCode = targetLanguageCode,
-                        targetLanguageDisplayName = langDisplayName,
-                        detectedSourceLanguage = result.detectedSourceLanguage,
-                    ),
-                )
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                logger.error("Translation failed: ${e.message}")
-                updateState(
-                    getCurrentState().copy(
-                        isTranslating = false,
-                        error = e.message,
-                    ),
-                )
-                _events.send(
-                    DetailsEvent.OnMessage(getString(Res.string.translation_failed)),
-                )
-            }
+            updateState(
+                TranslationState(
+                    isTranslating = false,
+                    translatedText = result.translatedText,
+                    isShowingTranslation = true,
+                    targetLanguageCode = targetLanguageCode,
+                    targetLanguageDisplayName = langDisplayName,
+                    detectedSourceLanguage = result.detectedSourceLanguage,
+                ),
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Translation failed: ${e.message}")
+            updateState(
+                getCurrentState().copy(
+                    isTranslating = false,
+                    error = e.message,
+                ),
+            )
+            _events.send(
+                DetailsEvent.OnMessage(getString(Res.string.translation_failed)),
+            )
         }
+    }
 
     private companion object {
         const val OBTAINIUM_REPO_ID: Long = 523534328
