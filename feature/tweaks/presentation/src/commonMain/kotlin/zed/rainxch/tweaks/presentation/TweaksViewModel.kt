@@ -131,14 +131,13 @@ class TweaksViewModel(
 
     private fun refreshCacheSize() {
         if (cacheSizeJob?.isActive == true) return
-        cacheSizeJob =
-            viewModelScope.launch {
-                cacheRepository.observeCacheSize().collect { sizeBytes ->
-                    _state.update {
-                        it.copy(cacheSize = formatCacheSize(sizeBytes))
-                    }
+        cacheSizeJob = viewModelScope.launch {
+            cacheRepository.observeCacheSize().collect { sizeBytes ->
+                _state.update {
+                    it.copy(cacheSize = formatCacheSize(sizeBytes))
                 }
             }
+        }
     }
 
     private fun formatCacheSize(bytes: Long): String {
@@ -341,6 +340,7 @@ class TweaksViewModel(
                     )
                 }
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 logger.error("TweaksViewModel: failed to persist installer attribution", error)
                 _state.update {
                     it.copy(installerAttributionCustomError = "write_failed")
@@ -483,6 +483,7 @@ class TweaksViewModel(
                         tweaksRepository.getBatteryOptimizationPromptDismissed().firstOrNull()
                     }
                 }.onFailure { error ->
+                    if (error is CancellationException) throw error
                     logger.error(
                         "TweaksViewModel: failed to read battery-opt dismissed flag",
                         error,
@@ -595,6 +596,7 @@ class TweaksViewModel(
                             clearDirty(action.scope)
                             _events.send(TweaksEvent.OnProxySaved)
                         }.onFailure { error ->
+                            if (error is CancellationException) throw error
                             _events.send(
                                 TweaksEvent.OnProxySaveError(
                                     error.message ?: getString(Res.string.failed_to_save_proxy_settings),
@@ -681,6 +683,7 @@ class TweaksViewModel(
                         clearDirty(action.scope)
                         _events.send(TweaksEvent.OnProxySaved)
                     }.onFailure { error ->
+                        if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnProxySaveError(
                                 error.message ?: getString(Res.string.failed_to_save_proxy_settings),
@@ -774,6 +777,7 @@ class TweaksViewModel(
                         }.onSuccess {
                             _state.update { it.copy(installerAttributionCustomError = null) }
                         }.onFailure { error ->
+                            if (error is CancellationException) throw error
                             logger.error("TweaksViewModel: failed to persist installer attribution", error)
                             _state.update { it.copy(installerAttributionCustomError = "write_failed") }
                         }
@@ -851,6 +855,7 @@ class TweaksViewModel(
                         refreshCacheSize()
                         _events.send(TweaksEvent.OnCacheCleared)
                     }.onFailure { error ->
+                        if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnCacheClearError(
                                 error.message ?: getString(Res.string.tweaks_clear_downloads_failed),
@@ -1111,6 +1116,7 @@ class TweaksViewModel(
                     runCatching {
                         tweaksRepository.setBatteryOptimizationPromptDismissed(true)
                     }.onFailure {
+                        if (it is CancellationException) throw it
                         logger.error(
                             "TweaksViewModel: failed to persist battery-opt dismiss",
                             it,
@@ -1234,6 +1240,7 @@ class TweaksViewModel(
                             }
                             _events.send(TweaksEvent.OnProxySaved)
                         }.onFailure { error ->
+                            if (error is CancellationException) throw error
                             _events.send(
                                 TweaksEvent.OnProxySaveError(
                                     error.message
@@ -1295,6 +1302,7 @@ class TweaksViewModel(
                         }
                         _events.send(TweaksEvent.OnProxySaved)
                     }.onFailure { error ->
+                        if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnProxySaveError(
                                 error.message
@@ -1376,6 +1384,7 @@ class TweaksViewModel(
                             }
                         }
                     }.onFailure { error ->
+                        if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnProxySaveError(
                                 error.message
