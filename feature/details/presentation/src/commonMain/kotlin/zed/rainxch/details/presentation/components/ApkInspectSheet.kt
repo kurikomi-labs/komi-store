@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import zed.rainxch.core.domain.model.apk.ApkInspection
 import zed.rainxch.core.domain.model.apk.ApkPermission
 import zed.rainxch.core.domain.model.apk.ProtectionLevel
+import zed.rainxch.core.presentation.theme.LocalStatusColors
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_compatibility
@@ -634,8 +635,8 @@ private fun DangerNote(text: String) {
 @Composable
 private fun protectionStyle(level: ProtectionLevel): Pair<Color, String> {
     val red = MaterialTheme.colorScheme.error
-    val amber = Color(0xFFB87100)
-    val deepAmber = Color(0xFF8E4900)
+    val amber = LocalStatusColors.current.protectionSignature
+    val deepAmber = LocalStatusColors.current.protectionPrivileged
     val neutral = MaterialTheme.colorScheme.onSurfaceVariant
     val muted = MaterialTheme.colorScheme.outline
     return when (level) {

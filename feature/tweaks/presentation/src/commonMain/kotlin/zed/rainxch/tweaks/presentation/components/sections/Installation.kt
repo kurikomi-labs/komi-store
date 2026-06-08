@@ -51,6 +51,7 @@ import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.installation.RootAvailability
 import zed.rainxch.core.domain.model.installation.ShizukuAvailability
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.theme.LocalStatusColors
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
@@ -325,44 +326,6 @@ fun LazyListScope.updatesSection(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun HiddenRepositoriesEntryCard(
-    onClick: () -> Unit,
-) {
-    OutlinedCard(
-        onClick = onClick,
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            ),
-        shape = RoundedCornerShape(32.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(Res.string.hidden_repositories_title),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = stringResource(Res.string.hidden_repositories_entry_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
 private fun SkippedUpdatesEntryCard(
     onClick: () -> Unit,
 ) {
@@ -550,11 +513,11 @@ private fun RootStatusActions(
 private fun RootStatusBadge(availability: RootAvailability) {
     val (color, label) = when (availability) {
         RootAvailability.READY -> Pair(
-            Color(0xFF4CAF50),
+            LocalStatusColors.current.statusReady,
             stringResource(Res.string.root_status_ready),
         )
         RootAvailability.PERMISSION_NEEDED -> Pair(
-            Color(0xFFFF9800),
+            LocalStatusColors.current.statusWarning,
             stringResource(Res.string.root_status_permission_needed),
         )
         RootAvailability.UNAVAILABLE -> Pair(
@@ -714,17 +677,17 @@ private fun ShizukuStatusBadge(
 ) {
     val (color, label) = when (availability) {
         ShizukuAvailability.READY -> Pair(
-            Color(0xFF4CAF50),
+            LocalStatusColors.current.statusReady,
             stringResource(Res.string.shizuku_status_ready)
         )
 
         ShizukuAvailability.PERMISSION_NEEDED -> Pair(
-            Color(0xFFFF9800),
+            LocalStatusColors.current.statusWarning,
             stringResource(Res.string.shizuku_status_permission_needed)
         )
 
         ShizukuAvailability.NOT_RUNNING -> Pair(
-            Color(0xFFFF5722),
+            LocalStatusColors.current.statusError,
             stringResource(Res.string.shizuku_status_not_running)
         )
 
@@ -744,17 +707,17 @@ private fun DhizukuStatusBadge(
 ) {
     val (color, label) = when (availability) {
         DhizukuAvailability.READY -> Pair(
-            Color(0xFF4CAF50),
+            LocalStatusColors.current.statusReady,
             stringResource(Res.string.dhizuku_status_ready)
         )
 
         DhizukuAvailability.PERMISSION_NEEDED -> Pair(
-            Color(0xFFFF9800),
+            LocalStatusColors.current.statusWarning,
             stringResource(Res.string.dhizuku_status_permission_needed)
         )
 
         DhizukuAvailability.NOT_RUNNING -> Pair(
-            Color(0xFFFF5722),
+            LocalStatusColors.current.statusError,
             stringResource(Res.string.dhizuku_status_not_running)
         )
 

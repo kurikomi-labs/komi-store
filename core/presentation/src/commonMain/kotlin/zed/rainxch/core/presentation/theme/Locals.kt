@@ -44,6 +44,11 @@ data class StatusColors(
     val severityMedium: Color,
     val severityLow: Color,
     val severityUnknown: Color,
+    val statusReady: Color,
+    val statusWarning: Color,
+    val statusError: Color,
+    val protectionSignature: Color,
+    val protectionPrivileged: Color,
 )
 
 data class ThresholdSet(
@@ -101,6 +106,11 @@ internal val defaultStatusColors = StatusColors(
     severityMedium = Severity.mediumLight,
     severityLow = Severity.lowLight,
     severityUnknown = Severity.unknownLight,
+    statusReady = Status.Method.readyLight,
+    statusWarning = Status.Method.warningLight,
+    statusError = Status.Method.errorLight,
+    protectionSignature = Status.Protection.signatureLight,
+    protectionPrivileged = Status.Protection.privilegedLight,
 )
 
 internal val darkStatusColors = defaultStatusColors.copy(
@@ -115,6 +125,11 @@ internal val darkStatusColors = defaultStatusColors.copy(
     severityMedium = Severity.mediumDark,
     severityLow = Severity.lowDark,
     severityUnknown = Severity.unknownDark,
+    statusReady = Status.Method.readyDark,
+    statusWarning = Status.Method.warningDark,
+    statusError = Status.Method.errorDark,
+    protectionSignature = Status.Protection.signatureDark,
+    protectionPrivileged = Status.Protection.privilegedDark,
 )
 
 internal val defaultThresholds = ThresholdSet(

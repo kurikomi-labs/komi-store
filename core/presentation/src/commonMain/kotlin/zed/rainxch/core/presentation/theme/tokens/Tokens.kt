@@ -241,6 +241,20 @@ object Tokens {
             val unknownLight = Color(0xFF6E7781)
             val unknownDark = Color(0xFF8B949E)
         }
+        object Method {
+            val readyLight = Color(0xFF4CAF50)
+            val readyDark = Color(0xFF4CAF50)
+            val warningLight = Color(0xFFFF9800)
+            val warningDark = Color(0xFFFF9800)
+            val errorLight = Color(0xFFFF5722)
+            val errorDark = Color(0xFFFF5722)
+        }
+        object Protection {
+            val signatureLight = Color(0xFFB87100)
+            val signatureDark = Color(0xFFB87100)
+            val privilegedLight = Color(0xFF8E4900)
+            val privilegedDark = Color(0xFF8E4900)
+        }
     }
 
     object Thresholds {
