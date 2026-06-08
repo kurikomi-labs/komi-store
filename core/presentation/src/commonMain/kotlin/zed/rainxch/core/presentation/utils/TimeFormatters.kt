@@ -36,6 +36,84 @@ private fun parseIsoInstantLenient(isoInstant: String): Instant? {
 }
 
 @OptIn(ExperimentalTime::class)
+fun daysSinceIso(isoInstant: String?): Int? {
+    val instant = isoInstant?.let { parseIsoInstantLenient(it) } ?: return null
+    return (Clock.System.now() - instant).inWholeDays.toInt()
+}
+
+@OptIn(ExperimentalTime::class)
+fun formatRelativeShort(isoInstant: String?): String {
+    val instant = isoInstant?.let { parseIsoInstantLenient(it) } ?: return ""
+    val diffMs = Clock.System.now().toEpochMilliseconds() - instant.toEpochMilliseconds()
+    if (diffMs <= 0L) return "now"
+    val minutes = diffMs / 60_000L
+    if (minutes < 1L) return "now"
+    if (minutes < 60L) return "${minutes}m"
+    val hours = minutes / 60L
+    if (hours < 24L) return "${hours}h"
+    val days = hours / 24L
+    if (days < 30L) return "${days}d"
+    val months = days / 30L
+    if (months < 12L) return "${months}mo"
+    val years = days / 365L
+    return "${years}y"
+}
+
+@OptIn(ExperimentalTime::class)
+@Composable
+fun formatRelativeLong(isoInstant: String): String {
+    val instant = parseIsoInstantLenient(isoInstant) ?: return isoInstant
+    val duration = Clock.System.now() - instant
+    return when {
+        duration.inWholeDays > 365 ->
+            stringResource(Res.string.time_years_ago, (duration.inWholeDays / 365).toInt())
+
+        duration.inWholeDays > 30 ->
+            stringResource(Res.string.time_months_ago, (duration.inWholeDays / 30).toInt())
+
+        duration.inWholeDays > 0 ->
+            stringResource(Res.string.time_days_ago, duration.inWholeDays.toInt())
+
+        duration.inWholeHours > 0 ->
+            stringResource(Res.string.time_hours_ago, duration.inWholeHours.toInt())
+
+        duration.inWholeMinutes > 0 ->
+            stringResource(Res.string.time_minutes_ago, duration.inWholeMinutes.toInt())
+
+        else -> stringResource(Res.string.just_now)
+    }
+}
+
+@OptIn(ExperimentalTime::class)
+fun formatIsoDate(isoTimestamp: String?): String? {
+    val instant = isoTimestamp?.let { parseIsoInstantLenient(it) } ?: return null
+    return instant.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+}
+
+@OptIn(ExperimentalTime::class)
+fun formatEpochDate(timestamp: Long): String? {
+    if (timestamp <= 0L) return null
+    return Instant
+        .fromEpochMilliseconds(timestamp)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .date
+        .toString()
+}
+
+@OptIn(ExperimentalTime::class)
+@Composable
+fun formatLastChecked(timestamp: Long): String {
+    val diffMs = Clock.System.now().toEpochMilliseconds() - timestamp
+    val minutes = diffMs / 60_000L
+    val hours = diffMs / 3_600_000L
+    return when {
+        minutes < 1 -> stringResource(Res.string.last_checked_just_now)
+        minutes < 60 -> stringResource(Res.string.last_checked_minutes_ago, minutes.toInt())
+        else -> stringResource(Res.string.last_checked_hours_ago, hours.toInt())
+    }
+}
+
+@OptIn(ExperimentalTime::class)
 fun hasWeekNotPassed(isoInstant: String): Boolean {
     val updated = parseIsoInstantLenient(isoInstant) ?: return false
     val now = Clock.System.now()

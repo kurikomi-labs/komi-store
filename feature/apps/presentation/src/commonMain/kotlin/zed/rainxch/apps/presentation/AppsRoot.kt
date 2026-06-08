@@ -30,12 +30,11 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.FileDownload
@@ -44,9 +43,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -58,7 +54,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -67,9 +62,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,88 +71,89 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import zed.rainxch.core.presentation.components.GitHubStoreImage
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.components.AdvancedAppSettingsBottomSheet
 import zed.rainxch.apps.presentation.components.AppsSectionHeader
 import zed.rainxch.apps.presentation.components.CompactAppRow
 import zed.rainxch.apps.presentation.components.InstalledAppIcon
-import zed.rainxch.apps.presentation.components.LinkAppBottomSheet
-import zed.rainxch.apps.presentation.components.VariantPickerDialog
 import zed.rainxch.apps.presentation.components.KaoBanner
+import zed.rainxch.apps.presentation.components.LinkAppBottomSheet
 import zed.rainxch.apps.presentation.components.UpdatesBanner
+import zed.rainxch.apps.presentation.components.VariantPickerDialog
 import zed.rainxch.apps.presentation.import.components.ImportProposalBanner
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
-import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
-import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
 import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
+import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.core.presentation.utils.formatEpochDate
+import zed.rainxch.core.presentation.utils.formatIsoDate
+import zed.rainxch.core.presentation.utils.formatLastChecked
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.add_by_link
 import zed.rainxch.githubstore.core.presentation.res.add_from_starred_title
 import zed.rainxch.githubstore.core.presentation.res.advanced_settings_open
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_more_actions
 import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
 import zed.rainxch.githubstore.core.presentation.res.apps_section_pending_installs
 import zed.rainxch.githubstore.core.presentation.res.apps_section_up_to_date
-import zed.rainxch.githubstore.core.presentation.res.install
-import zed.rainxch.githubstore.core.presentation.res.ready_to_install
-import zed.rainxch.githubstore.core.presentation.res.variant_label_inline
-import zed.rainxch.githubstore.core.presentation.res.variant_picker_open
-import zed.rainxch.githubstore.core.presentation.res.variant_stale_hint
+import zed.rainxch.githubstore.core.presentation.res.apps_skip_version
+import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
+import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
 import zed.rainxch.githubstore.core.presentation.res.cancel
 import zed.rainxch.githubstore.core.presentation.res.check_for_updates
 import zed.rainxch.githubstore.core.presentation.res.checking
 import zed.rainxch.githubstore.core.presentation.res.checking_for_updates
+import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_message
+import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_title
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_title
+import zed.rainxch.githubstore.core.presentation.res.discard_pending_install
 import zed.rainxch.githubstore.core.presentation.res.downloading
 import zed.rainxch.githubstore.core.presentation.res.error_with_message
 import zed.rainxch.githubstore.core.presentation.res.export_apps
 import zed.rainxch.githubstore.core.presentation.res.export_apps_obtainium
 import zed.rainxch.githubstore.core.presentation.res.external_import_rescan_menu
 import zed.rainxch.githubstore.core.presentation.res.import_apps
-import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
+import zed.rainxch.githubstore.core.presentation.res.install
 import zed.rainxch.githubstore.core.presentation.res.installing
 import zed.rainxch.githubstore.core.presentation.res.last_checked
-import zed.rainxch.githubstore.core.presentation.res.last_checked_hours_ago
-import zed.rainxch.githubstore.core.presentation.res.last_checked_just_now
-import zed.rainxch.githubstore.core.presentation.res.last_checked_minutes_ago
 import zed.rainxch.githubstore.core.presentation.res.no_apps_found
 import zed.rainxch.githubstore.core.presentation.res.open
 import zed.rainxch.githubstore.core.presentation.res.pending_install
 import zed.rainxch.githubstore.core.presentation.res.pre_release_badge
+import zed.rainxch.githubstore.core.presentation.res.ready_to_install
 import zed.rainxch.githubstore.core.presentation.res.search_your_apps
 import zed.rainxch.githubstore.core.presentation.res.sort_apps
 import zed.rainxch.githubstore.core.presentation.res.sort_name
 import zed.rainxch.githubstore.core.presentation.res.sort_recently_updated
 import zed.rainxch.githubstore.core.presentation.res.sort_updates_first
 import zed.rainxch.githubstore.core.presentation.res.uninstall
-import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_message
-import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_title
-import zed.rainxch.githubstore.core.presentation.res.discard_pending_install
 import zed.rainxch.githubstore.core.presentation.res.update
 import zed.rainxch.githubstore.core.presentation.res.updated_successfully
+import zed.rainxch.githubstore.core.presentation.res.variant_label_inline
+import zed.rainxch.githubstore.core.presentation.res.variant_picker_open
+import zed.rainxch.githubstore.core.presentation.res.variant_stale_hint
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun AppsRoot(
@@ -1493,43 +1486,6 @@ private fun buildVersionLabel(
             append(it)
             append(")")
         }
-    }
-}
-
-private fun formatIsoDate(isoTimestamp: String?): String? {
-    if (isoTimestamp.isNullOrBlank()) return null
-
-    return try {
-        Instant
-            .parse(isoTimestamp)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-            .toString()
-    } catch (_: IllegalArgumentException) {
-        null
-    }
-}
-
-private fun formatEpochDate(timestamp: Long): String? {
-    if (timestamp <= 0L) return null
-    return Instant
-        .fromEpochMilliseconds(timestamp)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .date
-        .toString()
-}
-
-@Composable
-private fun formatLastChecked(timestamp: Long): String {
-    val now = System.currentTimeMillis()
-    val diff = now - timestamp
-    val minutes = diff / (60 * 1000)
-    val hours = diff / (60 * 60 * 1000)
-
-    return when {
-        minutes < 1 -> stringResource(Res.string.last_checked_just_now)
-        minutes < 60 -> stringResource(Res.string.last_checked_minutes_ago, minutes.toInt())
-        else -> stringResource(Res.string.last_checked_hours_ago, hours.toInt())
     }
 }
 

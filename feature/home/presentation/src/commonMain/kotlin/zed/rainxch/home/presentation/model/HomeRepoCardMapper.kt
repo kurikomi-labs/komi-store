@@ -1,11 +1,10 @@
 package zed.rainxch.home.presentation.model
 
 import kotlinx.collections.immutable.toImmutableList
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.presentation.utils.daysSinceIso
+import zed.rainxch.core.presentation.utils.formatRelativeShort
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
 import zed.rainxch.core.presentation.vocabulary.PlatformKind
@@ -21,7 +20,7 @@ fun toHomeRepoCardUi(
     isCurrentUserOwner: Boolean,
 ): HomeRepoCardUi {
     val ui = repo.toUi()
-    val days = daysSinceIso(repo.updatedAt)
+    val days = daysSinceIso(repo.updatedAt)?.coerceAtLeast(0) ?: Int.MAX_VALUE
     val freshness = freshnessOf(days)
     val accent = AppAccentResolver.resolve(
         backendHex = null,
@@ -38,7 +37,7 @@ fun toHomeRepoCardUi(
         downloadsCount = repo.downloadCount,
         language = repo.language,
         daysSinceUpdate = days,
-        relativeAgoLabel = relativeAgo(repo.updatedAt),
+        relativeAgoLabel = formatRelativeShort(repo.updatedAt),
         freshnessState = freshness.state,
         freshnessFraction = freshness.ringFraction,
         freshnessColor = freshness.color,
@@ -63,34 +62,4 @@ fun toHomeRepoCardUi(
         isCurrentUserOwner = isCurrentUserOwner,
         rawRepository = ui,
     )
-}
-
-@OptIn(ExperimentalTime::class)
-private fun daysSinceIso(isoInstant: String): Int {
-    val trimmed = isoInstant.trim()
-    if (trimmed.isEmpty()) return Int.MAX_VALUE
-    val parsed = runCatching { Instant.parse(trimmed) }.getOrNull() ?: return Int.MAX_VALUE
-    val diffMs = Clock.System.now().toEpochMilliseconds() - parsed.toEpochMilliseconds()
-    if (diffMs <= 0L) return 0
-    return (diffMs / 86_400_000L).toInt()
-}
-
-@OptIn(ExperimentalTime::class)
-private fun relativeAgo(isoInstant: String): String {
-    val trimmed = isoInstant.trim()
-    if (trimmed.isEmpty()) return ""
-    val parsed = runCatching { Instant.parse(trimmed) }.getOrNull() ?: return ""
-    val diffMs = Clock.System.now().toEpochMilliseconds() - parsed.toEpochMilliseconds()
-    if (diffMs <= 0L) return "now"
-    val minutes = diffMs / 60_000L
-    if (minutes < 1L) return "now"
-    if (minutes < 60L) return "${minutes}m"
-    val hours = minutes / 60L
-    if (hours < 24L) return "${hours}h"
-    val days = hours / 24L
-    if (days < 30L) return "${days}d"
-    val months = days / 30L
-    if (months < 12L) return "${months}mo"
-    val years = days / 365L
-    return "${years}y"
 }

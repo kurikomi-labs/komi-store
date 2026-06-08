@@ -54,6 +54,7 @@ import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
+import zed.rainxch.core.presentation.utils.daysSinceIso
 import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.core.domain.utils.VersionMath
 import zed.rainxch.core.domain.helpers.BrowserHelper
@@ -664,19 +665,6 @@ class DetailsViewModel(
             mergedChangelogBaseTag = mergedBase,
             latestStableHasInstallableAsset = latestStableHasInstallableAsset,
         )
-    }
-
-    @OptIn(ExperimentalTime::class)
-    private fun daysSinceIso(isoTimestamp: String?): Int? {
-        if (isoTimestamp.isNullOrBlank()) return null
-        return try {
-            val published = Instant.parse(isoTimestamp)
-            val now = System.now()
-            val diffMs = now.toEpochMilliseconds() - published.toEpochMilliseconds()
-            if (diffMs < 0) null else (diffMs / MILLIS_PER_DAY).toInt()
-        } catch (_: Exception) {
-            null
-        }
     }
 
     private fun toggleIncludeBetas() {
@@ -2794,6 +2782,5 @@ class DetailsViewModel(
         const val OBTAINIUM_REPO_ID: Long = 523534328
         const val APP_MANAGER_REPO_ID: Long = 268006778
         const val STALLED_STABLE_THRESHOLD_DAYS = 180
-        const val MILLIS_PER_DAY = 86_400_000L
     }
 }

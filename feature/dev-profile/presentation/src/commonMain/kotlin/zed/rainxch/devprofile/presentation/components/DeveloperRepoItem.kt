@@ -45,11 +45,11 @@ import zed.rainxch.core.presentation.components.chips.StatChip
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.formatCount
+import zed.rainxch.core.presentation.utils.formatRelativeLong
 import zed.rainxch.devprofile.domain.model.DeveloperRepository
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -91,7 +91,7 @@ fun DeveloperRepoItem(
                         Res.string.updated_on_date to repository.updatedAt
                     }
                     Text(
-                        text = stringResource(label, formatRelativeDate(dateString))
+                        text = stringResource(label, formatRelativeLong(dateString))
                             .replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.labelMedium,
                         overflow = TextOverflow.Ellipsis,
@@ -265,30 +265,6 @@ private fun TonalBadge(text: String, container: Color, content: Color) {
             color = content,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
         )
-    }
-}
-
-@Composable
-private fun formatRelativeDate(dateString: String): String {
-    val instant = try {
-        Instant.parse(dateString)
-    } catch (_: IllegalArgumentException) {
-        return dateString
-    }
-    val now = Clock.System.now()
-    val duration = now - instant
-    return when {
-        duration.inWholeDays > 365 ->
-            stringResource(Res.string.time_years_ago, (duration.inWholeDays / 365).toInt())
-        duration.inWholeDays > 30 ->
-            stringResource(Res.string.time_months_ago, (duration.inWholeDays / 30).toInt())
-        duration.inWholeDays > 0 ->
-            stringResource(Res.string.time_days_ago, duration.inWholeDays.toInt())
-        duration.inWholeHours > 0 ->
-            stringResource(Res.string.time_hours_ago, duration.inWholeHours.toInt())
-        duration.inWholeMinutes > 0 ->
-            stringResource(Res.string.time_minutes_ago, duration.inWholeMinutes.toInt())
-        else -> stringResource(Res.string.just_now)
     }
 }
 
