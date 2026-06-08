@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -163,6 +164,7 @@ class ImportStarsViewModel(
                     }
                 },
                 onFailure = { error ->
+                    if (error is CancellationException) throw error
                     _state.update {
                         it.copy(
                             isImporting = false,

@@ -140,6 +140,7 @@ class StarredReposViewModel(
                         )
                     }
                 }.onFailure { error ->
+                    if (error is CancellationException) throw error
                     _state.update {
                         it.copy(
                             isSyncing = false,
