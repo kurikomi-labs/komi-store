@@ -2,6 +2,7 @@ package zed.rainxch.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,12 +72,11 @@ class ProfileViewModel(
     private fun loadUserProfile() {
         userProfileJob?.cancel()
 
-        userProfileJob =
-            viewModelScope.launch {
-                userSessionRepository.getUser().collect { profile ->
-                    _state.update { it.copy(userProfile = profile) }
-                }
+        userProfileJob = viewModelScope.launch {
+            userSessionRepository.getUser().collect { profile ->
+                _state.update { it.copy(userProfile = profile) }
             }
+        }
     }
 
     fun onAction(action: ProfileAction) {
@@ -97,6 +97,7 @@ class ProfileViewModel(
                         _state.update { it.copy(isLogoutDialogVisible = false, userProfile = null) }
                         _events.send(ProfileEvent.OnLogoutSuccessful)
                     }.onFailure { error ->
+                        if (error is CancellationException) throw error
                         _state.update { it.copy(isLogoutDialogVisible = false) }
                         error.message?.let {
                             _events.send(ProfileEvent.OnLogoutError(it))
