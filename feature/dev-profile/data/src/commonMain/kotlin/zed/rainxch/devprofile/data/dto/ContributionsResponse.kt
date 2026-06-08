@@ -7,10 +7,3 @@ data class ContributionsResponse(
     val total: Map<String, Int> = emptyMap(),
     val contributions: List<ContributionDayResponse> = emptyList(),
 )
-
-@Serializable
-data class ContributionDayResponse(
-    val date: String,
-    val count: Int,
-    val level: Int,
-)

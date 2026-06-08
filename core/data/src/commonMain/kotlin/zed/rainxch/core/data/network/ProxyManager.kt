@@ -19,10 +19,6 @@ import zed.rainxch.core.domain.model.mirror.TrafficKind
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 
-data class MirrorActive(
-    val template: String,
-    val trafficKinds: Set<TrafficKind>,
-)
 
 object ProxyManager {
     private val flows: Map<ProxyScope, MutableStateFlow<ProxyConfig>> =

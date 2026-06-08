@@ -26,16 +26,6 @@ import zed.rainxch.core.data.dto.GithubDeviceStartDto
 import zed.rainxch.core.data.dto.GithubDeviceTokenErrorDto
 import zed.rainxch.core.data.dto.GithubDeviceTokenSuccessDto
 
-class BackendHttpException(
-    val statusCode: Int,
-    message: String,
-) : Exception(message)
-
-sealed interface PatValidation {
-    data object Valid : PatValidation
-    data class Rejected(val kind: RejectedKind) : PatValidation
-    data class Unreachable(val reason: String) : PatValidation
-}
 
 object GitHubAuthApi {
     private val json =

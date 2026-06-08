@@ -5,11 +5,6 @@ import java.security.SecureRandom
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-data class PkceTriplet(
-    val state: String,
-    val codeVerifier: String,
-    val codeChallenge: String,
-)
 
 @OptIn(ExperimentalEncodingApi::class)
 object PkceGenerator {

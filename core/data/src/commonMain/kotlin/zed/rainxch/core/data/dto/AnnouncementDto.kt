@@ -3,12 +3,6 @@ package zed.rainxch.core.data.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class AnnouncementsResponseDto(
-    @SerialName("version") val version: Int = 1,
-    @SerialName("fetchedAt") val fetchedAt: String? = null,
-    @SerialName("items") val items: List<AnnouncementDto> = emptyList(),
-)
 
 @Serializable
 data class AnnouncementDto(
@@ -29,12 +23,4 @@ data class AnnouncementDto(
     @SerialName("installerTypes") val installerTypes: List<String>? = null,
     @SerialName("iconHint") val iconHint: String? = null,
     @SerialName("i18n") val i18n: Map<String, AnnouncementLocaleDto> = emptyMap(),
-)
-
-@Serializable
-data class AnnouncementLocaleDto(
-    @SerialName("title") val title: String? = null,
-    @SerialName("body") val body: String? = null,
-    @SerialName("ctaUrl") val ctaUrl: String? = null,
-    @SerialName("ctaLabel") val ctaLabel: String? = null,
 )

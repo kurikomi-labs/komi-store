@@ -10,9 +10,3 @@ data class RepoInfoNetwork(
     @SerialName("open_issues_count") val openIssues: Int,
     val license: LicenseNetwork? = null,
 )
-
-@Serializable
-data class LicenseNetwork(
-    @SerialName("spdx_id") val spdxId: String? = null,
-    val name: String? = null,
-)

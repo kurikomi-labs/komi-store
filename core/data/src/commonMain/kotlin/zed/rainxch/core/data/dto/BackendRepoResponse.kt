@@ -32,15 +32,3 @@ data class BackendRepoResponse(
     val hasInstallersLinux: Boolean = false,
     val downloadCount: Long = 0,
 )
-
-@Serializable
-data class BackendRepoOwner(
-    val login: String,
-    val avatarUrl: String? = null,
-)
-
-@Serializable
-data class BackendLicense(
-    val spdxId: String? = null,
-    val name: String? = null,
-)

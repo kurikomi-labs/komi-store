@@ -11,9 +11,3 @@ data class WhatsNewEntryDto(
     @SerialName("sections") val sections: List<WhatsNewSectionDto>,
     @SerialName("showAsSheet") val showAsSheet: Boolean = true,
 )
-
-@Serializable
-data class WhatsNewSectionDto(
-    @SerialName("type") val type: String,
-    @SerialName("bullets") val bullets: List<String>,
-)
