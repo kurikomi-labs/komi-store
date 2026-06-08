@@ -1,6 +1,6 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.account.github
 
-import zed.rainxch.core.domain.util.VersionMath
+import zed.rainxch.core.domain.utils.VersionMath
 
 fun GithubRelease.isEffectivelyPreRelease(): Boolean =
     isPrerelease ||

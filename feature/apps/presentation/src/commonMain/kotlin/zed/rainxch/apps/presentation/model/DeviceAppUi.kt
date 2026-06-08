@@ -1,6 +1,6 @@
 package zed.rainxch.apps.presentation.model
 
-import zed.rainxch.core.domain.model.InstallerCategory
+import zed.rainxch.core.domain.model.installation.InstallerCategory
 
 data class DeviceAppUi(
     val packageName: String,

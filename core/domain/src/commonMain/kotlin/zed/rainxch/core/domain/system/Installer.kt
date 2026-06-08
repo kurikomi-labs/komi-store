@@ -1,7 +1,7 @@
 package zed.rainxch.core.domain.system
 
-import zed.rainxch.core.domain.model.GithubAsset
-import zed.rainxch.core.domain.model.SystemArchitecture
+import zed.rainxch.core.domain.model.account.github.GithubAsset
+import zed.rainxch.core.domain.model.system.SystemArchitecture
 
 enum class InstallOutcome {
 

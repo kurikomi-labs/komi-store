@@ -11,9 +11,9 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import zed.rainxch.core.data.network.ProxyManager
-import zed.rainxch.core.domain.model.DownloadProgress
-import zed.rainxch.core.domain.model.ProxyConfig
-import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.domain.model.installation.DownloadProgress
+import zed.rainxch.core.domain.model.settings.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.network.Downloader
 import java.io.File
 import java.net.Authenticator

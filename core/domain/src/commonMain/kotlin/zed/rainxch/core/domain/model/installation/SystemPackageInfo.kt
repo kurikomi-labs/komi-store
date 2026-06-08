@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.installation
 data class SystemPackageInfo(
     val packageName: String,
     val versionName: String,

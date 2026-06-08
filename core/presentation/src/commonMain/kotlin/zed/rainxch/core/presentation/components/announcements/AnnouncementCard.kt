@@ -41,10 +41,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.Announcement
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementIconHint
-import zed.rainxch.core.domain.model.AnnouncementSeverity
+import zed.rainxch.core.domain.model.announcement.Announcement
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementIconHint
+import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledge
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledged

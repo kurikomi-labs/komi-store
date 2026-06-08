@@ -2,11 +2,8 @@ package zed.rainxch.details.presentation.components.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
@@ -16,8 +13,6 @@ import androidx.compose.material.icons.filled.Update
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
 import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
@@ -30,9 +25,8 @@ import zed.rainxch.details.presentation.components.LinkedRepoBanner
 import zed.rainxch.details.presentation.components.ReleaseAssetsPicker
 import zed.rainxch.details.presentation.components.ReleasesStatus
 import zed.rainxch.details.presentation.components.ReleasesStatusCard
-import zed.rainxch.core.domain.model.InstallSource
-import zed.rainxch.core.domain.model.isReallyInstalled
-import zed.rainxch.details.presentation.components.ApkInspectSheet
+import zed.rainxch.core.domain.model.installation.InstallSource
+import zed.rainxch.core.domain.model.installation.isReallyInstalled
 import zed.rainxch.details.presentation.components.InspectApkButton
 import zed.rainxch.details.presentation.components.SmartInstallButton
 import zed.rainxch.details.presentation.components.VersionPicker
@@ -130,7 +124,7 @@ fun LazyListScope.header(
                             state.selectedRelease
                                 ?.assets
                                 ?.filter {
-                                    zed.rainxch.core.domain.util
+                                    zed.rainxch.core.domain.utils
                                         .assetPlatformOf(it.name) != null
                                 }
                                 .orEmpty()
@@ -139,7 +133,7 @@ fun LazyListScope.header(
                     val pinnedVariantLabel =
                         state.installedApp?.preferredAssetVariant?.let { stored ->
                             state.primaryAsset?.name?.let { name ->
-                                zed.rainxch.core.domain.util.AssetVariant.extract(name)
+                                zed.rainxch.core.domain.utils.AssetVariant.extract(name)
                                     ?.takeIf { it.isNotBlank() }
                             } ?: stored
                         }

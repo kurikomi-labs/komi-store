@@ -1,8 +1,8 @@
 package zed.rainxch.details.presentation
 
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.model.isEffectivelyPreRelease
-import zed.rainxch.core.domain.util.VersionMath
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
+import zed.rainxch.core.domain.utils.VersionMath
 import zed.rainxch.details.domain.model.ReleaseCategory
 
 internal fun RawDetailsState.toView(): DetailsState {

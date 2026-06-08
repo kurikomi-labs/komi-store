@@ -1,9 +1,9 @@
 package zed.rainxch.githubstore
 
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.error.RateLimitInfo
 
 data class MainState(
     val isLoggedIn: Boolean = false,

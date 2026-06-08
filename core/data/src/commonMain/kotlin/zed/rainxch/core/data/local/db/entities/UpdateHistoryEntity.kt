@@ -2,7 +2,7 @@ package zed.rainxch.core.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.model.installation.InstallSource
 
 @Entity(tableName = "update_history")
 data class UpdateHistoryEntity(

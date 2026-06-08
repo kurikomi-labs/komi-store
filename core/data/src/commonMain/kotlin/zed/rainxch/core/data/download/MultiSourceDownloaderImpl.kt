@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
 import zed.rainxch.core.data.network.MirrorRewriter
 import zed.rainxch.core.data.network.ProxyManager
-import zed.rainxch.core.domain.model.DownloadProgress
-import zed.rainxch.core.domain.model.TrafficKind
+import zed.rainxch.core.domain.model.installation.DownloadProgress
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.system.MultiSourceDownloader
 

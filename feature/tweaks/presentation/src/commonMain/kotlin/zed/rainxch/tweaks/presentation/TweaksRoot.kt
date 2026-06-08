@@ -66,7 +66,7 @@ import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.RestartBanner
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.presentation.components.hub.GhsEntryRow
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.core.presentation.theme.tokens.GhsAccents

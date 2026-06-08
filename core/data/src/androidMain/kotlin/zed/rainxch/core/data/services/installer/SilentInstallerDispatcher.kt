@@ -14,11 +14,10 @@ import zed.rainxch.core.data.services.root.RootServiceManager
 import zed.rainxch.core.data.services.root.model.RootStatus
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
 import zed.rainxch.core.data.services.shizuku.model.ShizukuStatus
-import kotlinx.coroutines.flow.first
-import zed.rainxch.core.domain.model.GithubAsset
-import zed.rainxch.core.domain.model.InstallerAttribution
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.SystemArchitecture
+import zed.rainxch.core.domain.model.account.github.GithubAsset
+import zed.rainxch.core.domain.model.installation.InstallerAttribution
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.system.SystemArchitecture
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.InstallOutcome
 import zed.rainxch.core.domain.system.Installer

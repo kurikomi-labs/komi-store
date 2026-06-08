@@ -17,8 +17,8 @@ import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.ExternalLinkState
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.system.SystemInstallSerializer
-import zed.rainxch.core.domain.util.VersionVerdict
-import zed.rainxch.core.domain.util.resolveExternalInstallVerdict
+import zed.rainxch.core.domain.utils.VersionVerdict
+import zed.rainxch.core.domain.utils.resolveExternalInstallVerdict
 
 class PackageEventReceiver() :
     BroadcastReceiver(),
@@ -223,7 +223,7 @@ class PackageEventReceiver() :
 
     private suspend fun handleExternalInstall(
         packageName: String,
-        app: zed.rainxch.core.domain.model.InstalledApp,
+        app: zed.rainxch.core.domain.model.installation.InstalledApp,
         repo: InstalledAppsRepository,
         monitor: PackageMonitor,
     ) {

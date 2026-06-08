@@ -27,17 +27,17 @@ import zed.rainxch.core.data.dto.MirrorListResponse
 import zed.rainxch.core.data.network.MirrorApiClient
 import zed.rainxch.core.data.secure.MigrationEntry
 import zed.rainxch.core.data.secure.migrateDataStoreToKSafe
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorPreference
-import zed.rainxch.core.domain.model.MirrorStatus
-import zed.rainxch.core.domain.model.MirrorType
-import zed.rainxch.core.domain.model.TrafficKind
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorPreference
+import zed.rainxch.core.domain.model.mirror.MirrorStatus
+import zed.rainxch.core.domain.model.mirror.MirrorType
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.data.secure.safeDelete
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safeGetFlow
 import zed.rainxch.core.data.secure.safePut
-import zed.rainxch.core.domain.model.MirrorRemoved
+import zed.rainxch.core.domain.model.mirror.MirrorRemoved
 
 class MirrorRepositoryImpl(
     private val ksafe: KSafe,

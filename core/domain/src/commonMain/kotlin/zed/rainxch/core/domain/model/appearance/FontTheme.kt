@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.appearance
 enum class FontTheme(
     val displayName: String,
 ) {

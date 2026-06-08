@@ -1,5 +1,6 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.mirror
 
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 import kotlin.time.Instant
 
 data class MirrorConfig(

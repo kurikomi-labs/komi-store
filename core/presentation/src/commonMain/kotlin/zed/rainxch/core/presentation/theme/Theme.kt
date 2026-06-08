@@ -8,8 +8,8 @@ import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.FontTheme
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
 import zed.rainxch.core.presentation.utils.toTokenPalette

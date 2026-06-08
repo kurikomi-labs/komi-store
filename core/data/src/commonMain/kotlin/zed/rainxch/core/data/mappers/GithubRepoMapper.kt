@@ -1,8 +1,8 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.dto.GithubRepoNetworkModel
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.GithubUser
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.account.github.GithubUser
 
 fun GithubRepoNetworkModel.toSummary(): GithubRepoSummary =
     GithubRepoSummary(

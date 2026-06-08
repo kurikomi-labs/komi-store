@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import zed.rainxch.core.domain.model.ContentWidth
+import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.presentation.locals.LocalContentWidth
 
 private val MIN_CONTENT_DP = 480.dp

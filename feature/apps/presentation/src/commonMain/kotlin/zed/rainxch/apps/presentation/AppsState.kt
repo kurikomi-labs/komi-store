@@ -2,6 +2,7 @@ package zed.rainxch.apps.presentation
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import zed.rainxch.apps.domain.model.ImportResult
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.DeviceAppUi
@@ -71,7 +72,7 @@ data class AppsState(
 
     val isExporting: Boolean = false,
     val isImporting: Boolean = false,
-    val importSummary: zed.rainxch.apps.domain.model.ImportResult? = null,
+    val importSummary: ImportResult? = null,
 
     val appPendingUninstall: InstalledAppUi? = null,
 

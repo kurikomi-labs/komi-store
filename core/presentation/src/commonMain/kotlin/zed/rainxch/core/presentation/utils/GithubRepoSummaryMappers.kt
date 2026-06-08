@@ -1,7 +1,7 @@
 package zed.rainxch.core.presentation.utils
 
 import kotlinx.collections.immutable.toImmutableList
-import zed.rainxch.core.domain.model.GithubRepoSummary
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 
 fun GithubRepoSummary.toUi(): GithubRepoSummaryUi {

@@ -1,13 +1,4 @@
-package zed.rainxch.core.domain.model
-
-enum class RefreshError {
-    COOLDOWN,
-    BUDGET_EXHAUSTED,
-    ARCHIVED,
-    NOT_FOUND,
-    UPSTREAM,
-    GENERIC,
-}
+package zed.rainxch.core.domain.model.error
 
 class RefreshException(
     val kind: RefreshError,

@@ -41,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res

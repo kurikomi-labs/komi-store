@@ -1,6 +1,6 @@
 package zed.rainxch.core.domain.helpers
 
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstalledApp
 
 interface AppLauncher {
     suspend fun launchApp(installedApp: InstalledApp): Result<Unit>

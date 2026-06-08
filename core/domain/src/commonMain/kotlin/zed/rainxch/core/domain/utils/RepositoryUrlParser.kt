@@ -1,7 +1,7 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
-import zed.rainxch.core.domain.model.RepositoryReference
-import zed.rainxch.core.domain.model.RepositorySource
+import zed.rainxch.core.domain.model.repository.RepositoryReference
+import zed.rainxch.core.domain.model.repository.RepositorySource
 
 object RepositoryUrlParser {
     private val urlRegex = Regex(

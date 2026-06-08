@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.mirror
 sealed interface MirrorPreference {
     data object Direct : MirrorPreference
 

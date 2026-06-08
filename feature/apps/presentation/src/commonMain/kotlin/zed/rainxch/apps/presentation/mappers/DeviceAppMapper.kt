@@ -1,7 +1,7 @@
 package zed.rainxch.apps.presentation.mappers
 
 import zed.rainxch.apps.presentation.model.DeviceAppUi
-import zed.rainxch.core.domain.model.DeviceApp
+import zed.rainxch.core.domain.model.installation.DeviceApp
 
 fun DeviceApp.toUi(): DeviceAppUi {
     return DeviceAppUi(

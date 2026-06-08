@@ -1,20 +1,17 @@
 package zed.rainxch.apps.domain.model
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
 data class ImportResult(
     val imported: Int = 0,
     val skipped: Int = 0,
     val failed: Int = 0,
     val nonGitHubSkipped: Int = 0,
-    val importedItems: List<String> = emptyList(),
-    val skippedItems: List<String> = emptyList(),
-    val nonGitHubItems: List<String> = emptyList(),
-    val failedItems: List<String> = emptyList(),
+    val importedItems: ImmutableList<String> = persistentListOf(),
+    val skippedItems: ImmutableList<String> = persistentListOf(),
+    val nonGitHubItems: ImmutableList<String> = persistentListOf(),
+    val failedItems: ImmutableList<String> = persistentListOf(),
     val sourceFormat: ImportFormat = ImportFormat.UNKNOWN,
     val unknownFormatPreview: String? = null,
 )
-
-enum class ImportFormat {
-    NATIVE,
-    OBTAINIUM,
-    UNKNOWN,
-}

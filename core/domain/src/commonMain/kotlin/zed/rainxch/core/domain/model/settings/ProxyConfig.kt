@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.settings
 sealed class ProxyConfig {
     data object None : ProxyConfig()
 

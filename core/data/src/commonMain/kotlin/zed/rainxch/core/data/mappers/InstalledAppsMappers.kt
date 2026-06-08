@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstalledApp
 
 fun InstalledApp.toEntity(): InstalledAppEntity =
     InstalledAppEntity(

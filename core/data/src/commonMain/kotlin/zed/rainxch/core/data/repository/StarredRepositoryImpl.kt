@@ -28,8 +28,8 @@ import zed.rainxch.core.data.local.db.dao.StarredRepoDao
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.mappers.toEntity
 import zed.rainxch.core.data.network.GitHubClientProvider
-import zed.rainxch.core.domain.model.Platform
-import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.repository.StarredRepository
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -49,7 +49,7 @@ class StarredRepositoryImpl(
         private const val SYNC_THRESHOLD_MS = 24 * 60 * 60 * 1000L
     }
 
-    override fun getAllStarred(): Flow<List<zed.rainxch.core.domain.model.StarredRepository>> =
+    override fun getAllStarred(): Flow<List<zed.rainxch.core.domain.model.repository.StarredRepository>> =
         starredRepoDao
             .getAllStarred()
             .map { it.map { entity -> entity.toDomain() } }
@@ -89,7 +89,7 @@ class StarredRepositoryImpl(
 
     override suspend fun fetchStarredForUsername(
         username: String,
-    ): Result<List<zed.rainxch.core.domain.model.StarredRepository>> =
+    ): Result<List<zed.rainxch.core.domain.model.repository.StarredRepository>> =
         withContext(Dispatchers.IO) {
             try {
                 val sanitized = username.trim().trimStart('@')
@@ -136,7 +136,7 @@ class StarredRepositoryImpl(
                                 val installedApps = installedAppsDao.getAppsByRepoId(repo.id)
                                 val firstInstalled =
                                     installedApps.firstOrNull { !it.isPendingInstall }
-                                zed.rainxch.core.domain.model.StarredRepository(
+                                zed.rainxch.core.domain.model.repository.StarredRepository(
                                     repoId = repo.id,
                                     repoName = repo.name,
                                     repoOwner = repo.owner.login,
@@ -221,7 +221,7 @@ class StarredRepositoryImpl(
                 }
 
                 val now = Clock.System.now().toEpochMilliseconds()
-                val starredRepos = mutableListOf<zed.rainxch.core.domain.model.StarredRepository>()
+                val starredRepos = mutableListOf<zed.rainxch.core.domain.model.repository.StarredRepository>()
 
                 coroutineScope {
                     val semaphore = Semaphore(25)
@@ -234,7 +234,7 @@ class StarredRepositoryImpl(
                                     if (release != null) {
                                         val installedApps = installedAppsDao.getAppsByRepoId(repo.id)
                                         val firstInstalled = installedApps.firstOrNull { !it.isPendingInstall }
-                                        zed.rainxch.core.domain.model.StarredRepository(
+                                        zed.rainxch.core.domain.model.repository.StarredRepository(
                                             repoId = repo.id,
                                             repoName = repo.name,
                                             repoOwner = repo.owner.login,

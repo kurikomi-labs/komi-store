@@ -28,7 +28,7 @@ import zed.rainxch.core.domain.system.MultiSourceDownloader
 import zed.rainxch.core.domain.system.OrchestratedDownload
 import zed.rainxch.core.domain.system.PendingInstallNotifier
 import zed.rainxch.core.domain.system.SystemInstallSerializer
-import zed.rainxch.core.domain.util.AssetFileName
+import zed.rainxch.core.domain.utils.AssetFileName
 import kotlin.random.Random
 
 class DefaultDownloadOrchestrator(

@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 

@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +27,6 @@ import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.MaterialTheme
@@ -48,11 +45,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.DhizukuAvailability
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.Platform
-import zed.rainxch.core.domain.model.RootAvailability
-import zed.rainxch.core.domain.model.ShizukuAvailability
+import zed.rainxch.core.domain.model.installation.DhizukuAvailability
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.model.installation.RootAvailability
+import zed.rainxch.core.domain.model.installation.ShizukuAvailability
 import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
@@ -145,18 +142,18 @@ private fun InstallerAttributionCard(
 
             AttributionRadioRow(
                 title = stringResource(Res.string.installer_attribution_preset_system),
-                selected = attribution is zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault,
+                selected = attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault,
                 onClick = { onAction(TweaksAction.OnInstallerAttributionSystemDefault) },
             )
             AttributionRadioRow(
                 title = stringResource(Res.string.installer_attribution_preset_playstore),
                 caption = "com.android.vending",
-                selected = (attribution as? zed.rainxch.core.domain.model.InstallerAttribution.Preset)?.key
-                    == zed.rainxch.core.domain.model.PresetKey.PLAY_STORE,
+                selected = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset)?.key
+                    == zed.rainxch.core.domain.model.installation.PresetKey.PLAY_STORE,
                 onClick = {
                     onAction(
                         TweaksAction.OnInstallerAttributionPresetSelected(
-                            zed.rainxch.core.domain.model.PresetKey.PLAY_STORE,
+                            zed.rainxch.core.domain.model.installation.PresetKey.PLAY_STORE,
                         ),
                     )
                 },
@@ -164,12 +161,12 @@ private fun InstallerAttributionCard(
             AttributionRadioRow(
                 title = stringResource(Res.string.installer_attribution_preset_fdroid),
                 caption = "org.fdroid.fdroid",
-                selected = (attribution as? zed.rainxch.core.domain.model.InstallerAttribution.Preset)?.key
-                    == zed.rainxch.core.domain.model.PresetKey.FDROID,
+                selected = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset)?.key
+                    == zed.rainxch.core.domain.model.installation.PresetKey.FDROID,
                 onClick = {
                     onAction(
                         TweaksAction.OnInstallerAttributionPresetSelected(
-                            zed.rainxch.core.domain.model.PresetKey.FDROID,
+                            zed.rainxch.core.domain.model.installation.PresetKey.FDROID,
                         ),
                     )
                 },
@@ -177,26 +174,26 @@ private fun InstallerAttributionCard(
             AttributionRadioRow(
                 title = stringResource(Res.string.installer_attribution_preset_obtainium),
                 caption = "dev.imranr.obtainium.app",
-                selected = (attribution as? zed.rainxch.core.domain.model.InstallerAttribution.Preset)?.key
-                    == zed.rainxch.core.domain.model.PresetKey.OBTAINIUM,
+                selected = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset)?.key
+                    == zed.rainxch.core.domain.model.installation.PresetKey.OBTAINIUM,
                 onClick = {
                     onAction(
                         TweaksAction.OnInstallerAttributionPresetSelected(
-                            zed.rainxch.core.domain.model.PresetKey.OBTAINIUM,
+                            zed.rainxch.core.domain.model.installation.PresetKey.OBTAINIUM,
                         ),
                     )
                 },
             )
             AttributionRadioRow(
                 title = stringResource(Res.string.installer_attribution_preset_custom),
-                caption = (attribution as? zed.rainxch.core.domain.model.InstallerAttribution.Custom)
+                caption = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom)
                     ?.packageName,
-                selected = attribution is zed.rainxch.core.domain.model.InstallerAttribution.Custom,
+                selected = attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom,
                 onClick = { onAction(TweaksAction.OnInstallerAttributionCustomToggleExpanded) },
             )
 
             if (state.installerAttributionCustomExpanded ||
-                attribution is zed.rainxch.core.domain.model.InstallerAttribution.Custom
+                attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom
             ) {
                 CustomInstallerEditor(state = state, onAction = onAction)
             }

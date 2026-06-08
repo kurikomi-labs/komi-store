@@ -21,16 +21,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.data.secure.MigrationEntry
 import zed.rainxch.core.data.secure.migrateDataStoreToKSafe
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AppLanguages
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.RestartReason
-import zed.rainxch.core.domain.model.ThemeMode
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.settings.AppLanguages
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.system.RestartReason
+import zed.rainxch.core.domain.model.appearance.ThemeMode
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
 import kotlinx.coroutines.flow.combine
 import zed.rainxch.core.data.secure.safeDelete
@@ -130,11 +130,11 @@ class TweaksRepositoryImpl(
         ksafe.safePut(K_INSTALLER_TYPE, type.name)
     }
 
-    override fun getInstallerAttribution(): Flow<zed.rainxch.core.domain.model.InstallerAttribution> =
+    override fun getInstallerAttribution(): Flow<zed.rainxch.core.domain.model.installation.InstallerAttribution> =
         gatedGetFlow(K_INSTALLER_ATTRIBUTION, "").map { decodeInstallerAttribution(it.ifEmpty { null }) }
 
     override suspend fun setInstallerAttribution(
-        attribution: zed.rainxch.core.domain.model.InstallerAttribution,
+        attribution: zed.rainxch.core.domain.model.installation.InstallerAttribution,
     ) {
         migrationDeferred.await()
         ksafe.safePut(K_INSTALLER_ATTRIBUTION, encodeInstallerAttribution(attribution))
@@ -142,38 +142,38 @@ class TweaksRepositoryImpl(
 
     private fun decodeInstallerAttribution(
         raw: String?,
-    ): zed.rainxch.core.domain.model.InstallerAttribution {
-        if (raw.isNullOrBlank()) return zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault
+    ): zed.rainxch.core.domain.model.installation.InstallerAttribution {
+        if (raw.isNullOrBlank()) return zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault
         val parts = raw.split(":", limit = 2)
         return when (parts[0]) {
             "preset" -> {
                 val key = parts.getOrNull(1)?.let {
-                    zed.rainxch.core.domain.model.PresetKey.fromName(it)
+                    zed.rainxch.core.domain.model.installation.PresetKey.fromName(it)
                 }
                 if (key != null) {
-                    zed.rainxch.core.domain.model.InstallerAttribution.Preset(key)
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset(key)
                 } else {
-                    zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault
                 }
             }
             "custom" -> {
                 val name = parts.getOrNull(1).orEmpty()
                 if (name.isNotBlank()) {
-                    zed.rainxch.core.domain.model.InstallerAttribution.Custom(name)
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom(name)
                 } else {
-                    zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault
                 }
             }
-            else -> zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault
+            else -> zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault
         }
     }
 
     private fun encodeInstallerAttribution(
-        attribution: zed.rainxch.core.domain.model.InstallerAttribution,
+        attribution: zed.rainxch.core.domain.model.installation.InstallerAttribution,
     ): String = when (attribution) {
-        zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault -> ""
-        is zed.rainxch.core.domain.model.InstallerAttribution.Preset -> "preset:${attribution.key.name}"
-        is zed.rainxch.core.domain.model.InstallerAttribution.Custom -> "custom:${attribution.packageName.trim()}"
+        zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault -> ""
+        is zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset -> "preset:${attribution.key.name}"
+        is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom -> "custom:${attribution.packageName.trim()}"
     }
 
     override fun getAutoUpdateEnabled(): Flow<Boolean> = gatedGetFlow(K_AUTO_UPDATE, false)

@@ -1,6 +1,6 @@
 package zed.rainxch.home.data.data_source
 
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.home.data.dto.CachedRepoResponse
 import zed.rainxch.home.domain.model.TopicCategory
 

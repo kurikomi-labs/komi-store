@@ -1,6 +1,6 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 
 fun assetPlatformOf(assetName: String): DiscoveryPlatform? {
     val lower = assetName.lowercase()

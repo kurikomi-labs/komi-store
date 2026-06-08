@@ -7,8 +7,8 @@ import android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
 import android.os.Build
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.model.DeviceApp
-import zed.rainxch.core.domain.model.SystemPackageInfo
+import zed.rainxch.core.domain.model.installation.DeviceApp
+import zed.rainxch.core.domain.model.installation.SystemPackageInfo
 import zed.rainxch.core.domain.system.PackageMonitor
 import java.security.MessageDigest
 

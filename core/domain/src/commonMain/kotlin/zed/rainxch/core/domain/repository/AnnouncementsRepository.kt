@@ -1,10 +1,8 @@
 package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.domain.model.Announcement
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementSeverity
-import zed.rainxch.core.domain.model.AnnouncementsFeedSnapshot
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementsFeedSnapshot
 
 interface AnnouncementsRepository {
     fun observeFeed(): Flow<AnnouncementsFeedSnapshot>

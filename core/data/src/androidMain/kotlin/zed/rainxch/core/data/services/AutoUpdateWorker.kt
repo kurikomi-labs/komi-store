@@ -24,8 +24,8 @@ import zed.rainxch.core.data.services.root.RootServiceManager
 import zed.rainxch.core.data.services.root.model.RootStatus
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
 import zed.rainxch.core.data.services.shizuku.model.ShizukuStatus
-import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.model.installation.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository

@@ -11,9 +11,9 @@ import zed.rainxch.core.data.services.root.RootServiceManager
 import zed.rainxch.core.data.services.root.model.RootStatus
 import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
 import zed.rainxch.core.data.services.shizuku.model.ShizukuStatus
-import zed.rainxch.core.domain.model.DhizukuAvailability
-import zed.rainxch.core.domain.model.RootAvailability
-import zed.rainxch.core.domain.model.ShizukuAvailability
+import zed.rainxch.core.domain.model.installation.DhizukuAvailability
+import zed.rainxch.core.domain.model.installation.RootAvailability
+import zed.rainxch.core.domain.model.installation.ShizukuAvailability
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 
 class AndroidInstallerStatusProvider(

@@ -1,6 +1,6 @@
 package zed.rainxch.core.data.utils
 
-import zed.rainxch.core.domain.utils.ClipboardHelper
+import zed.rainxch.core.domain.helpers.ClipboardHelper
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection

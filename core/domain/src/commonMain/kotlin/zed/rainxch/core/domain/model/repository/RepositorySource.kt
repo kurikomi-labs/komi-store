@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.repository
 sealed interface RepositorySource {
     val host: String
 

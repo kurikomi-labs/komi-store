@@ -4,8 +4,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.GithubRepoSummary
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
 import zed.rainxch.core.presentation.vocabulary.PlatformKind

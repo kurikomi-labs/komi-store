@@ -516,7 +516,7 @@ fun preprocessMarkdown(
             "",
         )
 
-    processed = zed.rainxch.core.domain.util.EmojiShortcodes.render(processed)
+    processed = zed.rainxch.core.domain.utils.EmojiShortcodes.render(processed)
 
     processed = joinAdjacentImageLines(processed)
 

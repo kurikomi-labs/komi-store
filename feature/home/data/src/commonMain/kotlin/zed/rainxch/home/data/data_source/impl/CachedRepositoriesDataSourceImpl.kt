@@ -17,7 +17,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.home.data.data_source.CachedRepositoriesDataSource
 import zed.rainxch.home.data.dto.CachedGithubRepoSummary
 import zed.rainxch.home.data.dto.CachedRepoResponse

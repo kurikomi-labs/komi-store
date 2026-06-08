@@ -1,8 +1,7 @@
 package zed.rainxch.details.domain.system
 
-import zed.rainxch.core.domain.model.ApkPackageInfo
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.apk.ApkPackageInfo
+import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.details.domain.model.ApkValidationResult
 import zed.rainxch.details.domain.model.FingerprintCheckResult
 import zed.rainxch.details.domain.model.SaveInstalledAppParams

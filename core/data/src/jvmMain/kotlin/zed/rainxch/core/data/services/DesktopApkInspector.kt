@@ -1,6 +1,6 @@
 package zed.rainxch.core.data.services
 
-import zed.rainxch.core.domain.model.ApkInspection
+import zed.rainxch.core.domain.model.apk.ApkInspection
 import zed.rainxch.core.domain.system.ApkInspector
 
 class DesktopApkInspector : ApkInspector {

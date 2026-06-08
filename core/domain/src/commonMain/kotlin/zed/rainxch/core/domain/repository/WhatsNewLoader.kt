@@ -1,6 +1,6 @@
 package zed.rainxch.core.domain.repository
 
-import zed.rainxch.core.domain.model.WhatsNewEntry
+import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 
 interface WhatsNewLoader {
     suspend fun loadAll(languageTag: String? = null): List<WhatsNewEntry>

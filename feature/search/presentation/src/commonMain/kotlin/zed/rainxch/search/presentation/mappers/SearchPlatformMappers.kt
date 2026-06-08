@@ -1,7 +1,7 @@
 package zed.rainxch.search.presentation.mappers
 
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.DiscoveryPlatform.*
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform.*
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 
 fun SearchPlatformUi.toDomain(): DiscoveryPlatform =

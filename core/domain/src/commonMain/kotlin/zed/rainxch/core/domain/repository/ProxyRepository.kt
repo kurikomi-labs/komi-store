@@ -1,8 +1,8 @@
 package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.domain.model.ProxyConfig
-import zed.rainxch.core.domain.model.ProxyScope
+import zed.rainxch.core.domain.model.settings.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyScope
 
 interface ProxyRepository {
     fun getProxyConfig(scope: ProxyScope): Flow<ProxyConfig>

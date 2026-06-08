@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.network
 
-import zed.rainxch.core.domain.model.RateLimitException
-import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.domain.model.error.RateLimitException
+import zed.rainxch.core.domain.model.error.RateLimitInfo
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 

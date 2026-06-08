@@ -1,11 +1,11 @@
 package zed.rainxch.tweaks.presentation
 
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.ProxyScope
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.settings.ProxyScope
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 sealed interface TweaksAction {
@@ -85,7 +85,7 @@ sealed interface TweaksAction {
     data object OnInstallerAttributionSystemDefault : TweaksAction
 
     data class OnInstallerAttributionPresetSelected(
-        val key: zed.rainxch.core.domain.model.PresetKey,
+        val key: zed.rainxch.core.domain.model.installation.PresetKey,
     ) : TweaksAction
 
     data object OnInstallerAttributionCustomToggleExpanded : TweaksAction
@@ -211,7 +211,7 @@ sealed interface TweaksAction {
     data class OnRemoveCustomForge(val host: String) : TweaksAction
 
     data class OnDiscoveryPlatformToggled(
-        val platform: zed.rainxch.core.domain.model.DiscoveryPlatform,
+        val platform: zed.rainxch.core.domain.model.repository.DiscoveryPlatform,
     ) : TweaksAction
 
     data object OnRestartNowClick : TweaksAction

@@ -3,7 +3,7 @@ package zed.rainxch.home.presentation
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.home.presentation.model.HomeRepoCardUi
 
 @Stable

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import zed.rainxch.core.domain.model.WhatsNewEntry
+import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.repository.WhatsNewLoader
 import zed.rainxch.core.domain.system.AppVersionInfo

@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
-import zed.rainxch.core.domain.model.UpdateHistory
+import zed.rainxch.core.domain.model.installation.UpdateHistory
 
 fun UpdateHistory.toEntity(): UpdateHistoryEntity =
     UpdateHistoryEntity(

@@ -2,7 +2,7 @@ package zed.rainxch.core.domain.system
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import zed.rainxch.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.account.github.GithubAsset
 
 interface DownloadOrchestrator {
 

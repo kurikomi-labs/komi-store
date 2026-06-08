@@ -1,9 +1,6 @@
 package zed.rainxch.core.data.utils
 
-import zed.rainxch.core.domain.utils.ShareManager
-import java.awt.Desktop
-import java.awt.FileDialog
-import java.awt.Frame
+import zed.rainxch.core.domain.helpers.ShareManager
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.io.File

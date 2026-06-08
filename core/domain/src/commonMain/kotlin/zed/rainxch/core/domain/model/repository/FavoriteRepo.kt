@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.repository
 data class FavoriteRepo(
     val repoId: Long,
     val repoName: String,

@@ -25,7 +25,7 @@ import zed.rainxch.apps.presentation.import.model.ImportPhase
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
 import zed.rainxch.apps.presentation.import.model.SuggestionSource
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.DeviceApp
+import zed.rainxch.core.domain.model.installation.DeviceApp
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.ExternalAppCandidate
@@ -377,12 +377,12 @@ class ExternalImportViewModel(
             val customHosts = runCatching {
                 tweaksRepository.getCustomForgeHosts().first()
             }.getOrElse { emptySet() }
-            val parsed = zed.rainxch.core.domain.util.RepositoryUrlParser
+            val parsed = zed.rainxch.core.domain.utils.RepositoryUrlParser
                 .parse(query, customHosts)
             if (parsed != null) {
                 val sourceHost = when (val src = parsed.source) {
-                    zed.rainxch.core.domain.model.RepositorySource.GitHub -> null
-                    is zed.rainxch.core.domain.model.RepositorySource.Forgejo -> src.host
+                    zed.rainxch.core.domain.model.repository.RepositorySource.GitHub -> null
+                    is zed.rainxch.core.domain.model.repository.RepositorySource.Forgejo -> src.host
                 }
                 _state.update {
                     if (it.activeSearchPackage != packageName) it

@@ -1,8 +1,8 @@
 package zed.rainxch.details.domain.repository
 
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.GithubUserProfile
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.account.github.GithubUserProfile
 import zed.rainxch.details.domain.model.RepoStats
 
 typealias ReadmeContent = String

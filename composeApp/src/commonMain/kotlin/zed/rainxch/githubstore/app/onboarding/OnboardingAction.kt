@@ -1,7 +1,7 @@
 package zed.rainxch.githubstore.app.onboarding
 
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ThemeMode
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ThemeMode
 
 sealed interface OnboardingAction {
     data class OnPaletteSelected(

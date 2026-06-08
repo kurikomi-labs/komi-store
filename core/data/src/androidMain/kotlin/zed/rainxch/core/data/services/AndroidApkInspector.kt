@@ -1,6 +1,7 @@
 package zed.rainxch.core.data.services
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
@@ -8,9 +9,9 @@ import android.os.Build
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.model.ApkInspection
-import zed.rainxch.core.domain.model.ApkPermission
-import zed.rainxch.core.domain.model.ProtectionLevel
+import zed.rainxch.core.domain.model.apk.ApkInspection
+import zed.rainxch.core.domain.model.apk.ApkPermission
+import zed.rainxch.core.domain.model.apk.ProtectionLevel
 import zed.rainxch.core.domain.system.ApkInspector
 import java.io.File
 
@@ -134,7 +135,7 @@ class AndroidApkInspector(
             receiverCount = info.receivers?.size ?: 0,
             fileSizeBytes = fileSizeBytes,
             filePath = filePath,
-            debuggable = appInfo?.let { (it.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0 } ?: false,
+            debuggable = appInfo?.let { (it.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0 } ?: false,
             source = source,
         )
     }

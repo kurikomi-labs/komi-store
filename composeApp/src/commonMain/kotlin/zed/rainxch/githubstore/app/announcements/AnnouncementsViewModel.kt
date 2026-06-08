@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import zed.rainxch.core.domain.model.Announcement
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementIconHint
-import zed.rainxch.core.domain.model.AnnouncementSeverity
-import zed.rainxch.core.domain.model.AnnouncementsFeedSnapshot
+import zed.rainxch.core.domain.helpers.BrowserHelper
+import zed.rainxch.core.domain.model.announcement.Announcement
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementIconHint
+import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
+import zed.rainxch.core.domain.model.announcement.AnnouncementsFeedSnapshot
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
-import zed.rainxch.core.domain.utils.BrowserHelper
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 

@@ -1,6 +1,6 @@
 package zed.rainxch.core.data.utils
 
-import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.core.domain.helpers.BrowserHelper
 import java.awt.Desktop
 import java.net.URI
 

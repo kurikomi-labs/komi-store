@@ -27,7 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_mute_locked
 import zed.rainxch.githubstore.core.presentation.res.announcements_mute_settings_title

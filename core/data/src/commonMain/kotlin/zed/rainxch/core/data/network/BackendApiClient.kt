@@ -44,7 +44,7 @@ import zed.rainxch.core.data.dto.MirrorListResponse
 import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.dto.SigningFingerprintSeedResponse
 import zed.rainxch.core.data.dto.UserProfileNetwork
-import zed.rainxch.core.domain.model.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyConfig
 import kotlin.coroutines.cancellation.CancellationException
 
 class BackendApiClient(

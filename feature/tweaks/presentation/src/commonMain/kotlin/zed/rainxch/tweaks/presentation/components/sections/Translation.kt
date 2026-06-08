@@ -47,8 +47,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.SupportedTranslationLanguages
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.settings.SupportedTranslationLanguages
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant

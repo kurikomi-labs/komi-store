@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.model.ForgeKind
-import zed.rainxch.core.domain.model.HostNames
+import zed.rainxch.core.domain.model.account.ForgeKind
+import zed.rainxch.core.domain.model.account.HostNames
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.githubstore.core.presentation.res.Res

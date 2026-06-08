@@ -1,6 +1,6 @@
 package zed.rainxch.apps.presentation.model
 
-import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.model.installation.InstallSource
 
 data class InstalledAppUi(
     val packageName: String,

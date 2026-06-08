@@ -46,10 +46,10 @@ import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.system.PendingInstallNotifier
 import zed.rainxch.core.domain.system.UpdateScheduleManager
-import zed.rainxch.core.domain.utils.AppLauncher
-import zed.rainxch.core.domain.utils.BrowserHelper
-import zed.rainxch.core.domain.utils.ClipboardHelper
-import zed.rainxch.core.domain.utils.ShareManager
+import zed.rainxch.core.domain.helpers.AppLauncher
+import zed.rainxch.core.domain.helpers.BrowserHelper
+import zed.rainxch.core.domain.helpers.ClipboardHelper
+import zed.rainxch.core.domain.helpers.ShareManager
 
 actual val corePlatformModule =
     module {

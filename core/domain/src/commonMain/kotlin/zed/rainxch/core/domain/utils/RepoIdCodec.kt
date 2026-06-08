@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
 object RepoIdCodec {
     private const val HOST_FINGERPRINT_MASK = 0x7FFFFFL

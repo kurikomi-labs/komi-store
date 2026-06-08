@@ -1,7 +1,7 @@
 package zed.rainxch.details.domain.util
 
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.util.VersionMath
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.utils.VersionMath
 
 object VersionHelper {
     fun normalizeVersion(version: String?): String = VersionMath.normalizeVersion(version)

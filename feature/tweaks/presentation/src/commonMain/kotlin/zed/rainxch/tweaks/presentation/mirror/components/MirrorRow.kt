@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorStatus
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorStatus
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_status_degraded
 import zed.rainxch.githubstore.core.presentation.res.mirror_status_down

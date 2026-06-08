@@ -14,12 +14,12 @@ import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.getOsVersion
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.getSystemLocaleTag
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.system.AppVersionInfo
-import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.tweaks.presentation.feedback.model.DiagnosticsInfo
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 import zed.rainxch.tweaks.presentation.feedback.util.FeedbackComposer

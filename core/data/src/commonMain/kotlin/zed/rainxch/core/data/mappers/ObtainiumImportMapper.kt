@@ -6,8 +6,8 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import zed.rainxch.core.domain.model.ExportedApp
-import zed.rainxch.core.domain.model.ObtainiumApp
+import zed.rainxch.core.domain.model.transfer.ExportedApp
+import zed.rainxch.core.domain.model.transfer.ObtainiumApp
 
 data class ObtainiumMapResult(
     val exported: ExportedApp?,

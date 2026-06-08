@@ -1,6 +1,7 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.account.github
 
 import kotlinx.serialization.Serializable
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 
 @Serializable
 data class GithubRepoSummary(

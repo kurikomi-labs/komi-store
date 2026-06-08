@@ -59,8 +59,8 @@
 -keep class zed.rainxch.home.data.dto.** { *; }
 
 # ── Domain Models ──────────────────────────────────────────────────────────
--keep class zed.rainxch.core.domain.model.GithubRepoSummary { *; }
--keep class zed.rainxch.core.domain.model.GithubUser { *; }
+-keep class zed.rainxch.core.domain.model.account.github.GithubRepoSummary { *; }
+-keep class zed.rainxch.core.domain.model.account.github.GithubUser { *; }
 
 # Keep enums used by Room TypeConverters and serialization
 -keep class zed.rainxch.core.domain.model.InstallSource { *; }

@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.system
+package zed.rainxch.core.domain.model.installation
 
 enum class ManifestHintSource {
     META_GITHUB_REPO,

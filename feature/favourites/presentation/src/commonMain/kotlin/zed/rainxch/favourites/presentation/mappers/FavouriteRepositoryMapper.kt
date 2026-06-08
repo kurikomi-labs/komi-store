@@ -1,6 +1,6 @@
 package zed.rainxch.favourites.presentation.mappers
 
-import zed.rainxch.core.domain.model.FavoriteRepo
+import zed.rainxch.core.domain.model.repository.FavoriteRepo
 import zed.rainxch.core.presentation.utils.formatAddedAt
 import zed.rainxch.favourites.presentation.model.FavouriteRepository
 

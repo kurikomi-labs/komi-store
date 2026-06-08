@@ -3,9 +3,9 @@ package zed.rainxch.apps.domain.repository
 import kotlinx.coroutines.flow.Flow
 import zed.rainxch.apps.domain.model.GithubRepoInfo
 import zed.rainxch.apps.domain.model.ImportResult
-import zed.rainxch.core.domain.model.DeviceApp
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.installation.DeviceApp
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.installation.InstalledApp
 
 interface AppsRepository {
     suspend fun getApps(): Flow<List<InstalledApp>>

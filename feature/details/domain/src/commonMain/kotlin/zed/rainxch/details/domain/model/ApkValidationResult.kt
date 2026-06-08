@@ -1,6 +1,6 @@
 package zed.rainxch.details.domain.model
 
-import zed.rainxch.core.domain.model.ApkPackageInfo
+import zed.rainxch.core.domain.model.apk.ApkPackageInfo
 
 sealed interface ApkValidationResult {
 

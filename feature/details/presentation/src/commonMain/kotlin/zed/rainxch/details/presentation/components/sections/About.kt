@@ -49,7 +49,7 @@ import kotlinx.coroutines.withContext
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.util.applyThemeAwareImages
+import zed.rainxch.core.domain.utils.applyThemeAwareImages
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
@@ -150,7 +150,7 @@ fun ExpandableMarkdownContent(
         val processed = withContext(Dispatchers.Default) {
 
             val themed = applyThemeAwareImages(rawMarkdown, isDark)
-            zed.rainxch.core.domain.util.separateAdjacentImageLinks(themed)
+            zed.rainxch.core.domain.utils.separateAdjacentImageLinks(themed)
         }
         val chunks = withContext(Dispatchers.Default) {
             splitMarkdownIntoChunks(processed, targetChunkChars = 4000)

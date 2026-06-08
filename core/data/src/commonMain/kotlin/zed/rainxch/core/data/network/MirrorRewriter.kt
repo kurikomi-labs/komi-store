@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.network
 
 import io.ktor.http.Url
-import zed.rainxch.core.domain.model.TrafficKind
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 
 object MirrorRewriter {
     private val rewriteHosts =

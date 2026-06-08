@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.announcement
 
 import kotlin.time.Instant
 
@@ -20,11 +20,3 @@ data class Announcement(
     val installerTypes: Set<String>?,
     val iconHint: AnnouncementIconHint?,
 )
-
-enum class AnnouncementIconHint {
-    INFO,
-    WARNING,
-    SECURITY,
-    CELEBRATION,
-    CHANGE,
-}

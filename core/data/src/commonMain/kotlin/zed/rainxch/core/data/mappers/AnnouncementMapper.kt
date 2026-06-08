@@ -2,10 +2,10 @@ package zed.rainxch.core.data.mappers
 
 import kotlin.time.Instant
 import zed.rainxch.core.data.dto.AnnouncementDto
-import zed.rainxch.core.domain.model.Announcement
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementIconHint
-import zed.rainxch.core.domain.model.AnnouncementSeverity
+import zed.rainxch.core.domain.model.announcement.Announcement
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementIconHint
+import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
 
 fun AnnouncementDto.toDomain(
     fullLocale: String,

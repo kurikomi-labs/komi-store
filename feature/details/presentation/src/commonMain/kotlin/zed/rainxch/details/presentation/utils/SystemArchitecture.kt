@@ -1,7 +1,7 @@
 package zed.rainxch.details.presentation.utils
 
-import zed.rainxch.core.domain.model.AssetArchitectureMatcher
-import zed.rainxch.core.domain.model.SystemArchitecture
+import zed.rainxch.core.domain.utils.AssetArchitectureMatcher
+import zed.rainxch.core.domain.model.system.SystemArchitecture
 
 fun extractArchitectureFromName(name: String): String? =
     when (AssetArchitectureMatcher.detectArchitecture(name)) {

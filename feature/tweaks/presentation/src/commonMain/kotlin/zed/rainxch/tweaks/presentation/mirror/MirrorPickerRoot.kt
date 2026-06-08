@@ -40,9 +40,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorPreference
-import zed.rainxch.core.domain.model.MirrorType
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorPreference
+import zed.rainxch.core.domain.model.mirror.MirrorType
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.utils.ObserveAsEvents

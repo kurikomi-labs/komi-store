@@ -387,7 +387,7 @@ class ExternalImportRepositoryImpl(
 
     private fun starredMatches(
         candidate: ExternalAppCandidate,
-        starred: List<zed.rainxch.core.domain.model.StarredRepository>,
+        starred: List<zed.rainxch.core.domain.model.repository.StarredRepository>,
     ): List<RepoMatchSuggestion> {
         if (starred.isEmpty()) return emptyList()
         val label = normalizeMatchToken(candidate.appLabel)

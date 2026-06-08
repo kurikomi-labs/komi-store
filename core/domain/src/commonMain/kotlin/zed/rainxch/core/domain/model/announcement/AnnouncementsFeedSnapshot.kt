@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.announcement
 
 data class AnnouncementsFeedSnapshot(
     val items: List<Announcement>,

@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
 fun separateAdjacentImageLinks(content: String): String {
     if (content.isEmpty()) return content

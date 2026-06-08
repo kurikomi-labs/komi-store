@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.repository.TweaksRepository
 
 class OnboardingViewModel(

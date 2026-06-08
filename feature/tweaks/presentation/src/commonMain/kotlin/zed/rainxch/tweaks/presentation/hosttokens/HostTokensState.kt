@@ -1,8 +1,8 @@
 package zed.rainxch.tweaks.presentation.hosttokens
 
 import org.jetbrains.compose.resources.StringResource
-import zed.rainxch.core.domain.model.ForgeKind
-import zed.rainxch.core.domain.model.HostToken
+import zed.rainxch.core.domain.model.account.ForgeKind
+import zed.rainxch.core.domain.model.account.HostToken
 
 data class HostTokensState(
     val tokens: List<HostToken> = emptyList(),

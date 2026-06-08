@@ -26,10 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.WhatsNewEntry
+import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.domain.model.WhatsNewSection
-import zed.rainxch.core.domain.model.WhatsNewSectionType
+import zed.rainxch.core.domain.model.announcement.WhatsNewSection
+import zed.rainxch.core.domain.model.announcement.WhatsNewSectionType
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.whats_new_cta_dismiss
 import zed.rainxch.githubstore.core.presentation.res.whats_new_cta_history

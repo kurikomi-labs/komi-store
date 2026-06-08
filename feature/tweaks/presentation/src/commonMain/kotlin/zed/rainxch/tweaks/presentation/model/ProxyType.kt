@@ -1,6 +1,6 @@
 package zed.rainxch.tweaks.presentation.model
 
-import zed.rainxch.core.domain.model.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyConfig
 
 enum class ProxyType {
     NONE,

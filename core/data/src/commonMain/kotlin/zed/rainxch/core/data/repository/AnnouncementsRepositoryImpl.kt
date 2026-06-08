@@ -12,10 +12,10 @@ import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Announcement
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementsFeedSnapshot
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.announcement.Announcement
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementsFeedSnapshot
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.repository.AnnouncementsCacheStore
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository

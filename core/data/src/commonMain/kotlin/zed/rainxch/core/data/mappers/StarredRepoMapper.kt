@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.local.db.entities.StarredRepositoryEntity
-import zed.rainxch.core.domain.model.StarredRepository
+import zed.rainxch.core.domain.model.repository.StarredRepository
 
 fun StarredRepository.toEntity(): StarredRepositoryEntity =
     StarredRepositoryEntity(

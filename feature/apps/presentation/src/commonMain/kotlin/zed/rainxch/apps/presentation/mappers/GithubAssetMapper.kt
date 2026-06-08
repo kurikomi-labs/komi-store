@@ -2,7 +2,7 @@ package zed.rainxch.apps.presentation.mappers
 
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.apps.presentation.model.GithubUserUi
-import zed.rainxch.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.account.github.GithubAsset
 
 fun GithubAsset.toUi(): GithubAssetUi {
     return GithubAssetUi(

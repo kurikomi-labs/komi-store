@@ -9,8 +9,8 @@ import io.ktor.client.statement.HttpResponsePipeline
 import io.ktor.http.Headers
 import io.ktor.util.AttributeKey
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.RateLimitException
-import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.domain.model.error.RateLimitException
+import zed.rainxch.core.domain.model.error.RateLimitInfo
 import zed.rainxch.core.domain.repository.RateLimitRepository
 
 class RateLimitInterceptor(

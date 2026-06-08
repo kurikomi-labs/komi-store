@@ -4,7 +4,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
 import zed.rainxch.githubstore.core.presentation.res.Res

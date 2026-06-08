@@ -1,7 +1,7 @@
 package zed.rainxch.core.domain.network
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.domain.model.DownloadProgress
+import zed.rainxch.core.domain.model.installation.DownloadProgress
 
 interface Downloader {
     fun download(

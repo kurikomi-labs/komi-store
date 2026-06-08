@@ -19,7 +19,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.repopages.data.dto.CreateCommentRequest
 import zed.rainxch.repopages.data.dto.CreateIssueRequest
 import zed.rainxch.repopages.data.dto.CreateReactionRequest

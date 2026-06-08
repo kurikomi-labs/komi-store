@@ -1,15 +1,15 @@
 package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.RestartReason
-import zed.rainxch.core.domain.model.ThemeMode
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.system.RestartReason
+import zed.rainxch.core.domain.model.appearance.ThemeMode
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 
 interface TweaksRepository {
     fun getThemeColor(): Flow<AppTheme>
@@ -44,9 +44,9 @@ interface TweaksRepository {
 
     suspend fun setInstallerType(type: InstallerType)
 
-    fun getInstallerAttribution(): Flow<zed.rainxch.core.domain.model.InstallerAttribution>
+    fun getInstallerAttribution(): Flow<zed.rainxch.core.domain.model.installation.InstallerAttribution>
 
-    suspend fun setInstallerAttribution(attribution: zed.rainxch.core.domain.model.InstallerAttribution)
+    suspend fun setInstallerAttribution(attribution: zed.rainxch.core.domain.model.installation.InstallerAttribution)
 
     fun getAutoUpdateEnabled(): Flow<Boolean>
 

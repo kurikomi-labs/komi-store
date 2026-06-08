@@ -1,6 +1,6 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.repository
 import kotlinx.serialization.Serializable
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 
 @Serializable
 data class PaginatedDiscoveryRepositories(

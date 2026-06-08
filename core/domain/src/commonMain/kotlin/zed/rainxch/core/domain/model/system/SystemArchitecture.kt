@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.system
 enum class SystemArchitecture {
     X86_64,
     AARCH64,

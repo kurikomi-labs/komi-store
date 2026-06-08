@@ -4,8 +4,8 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.model.ObtainiumApp
+import zed.rainxch.core.domain.model.installation.InstalledApp
+import zed.rainxch.core.domain.model.transfer.ObtainiumApp
 
 fun InstalledApp.toObtainiumApp(): ObtainiumApp {
     val additional: JsonElement = buildJsonObject {

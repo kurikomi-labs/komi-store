@@ -2,9 +2,9 @@ package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.dto.WhatsNewEntryDto
 import zed.rainxch.core.data.dto.WhatsNewSectionDto
-import zed.rainxch.core.domain.model.WhatsNewEntry
-import zed.rainxch.core.domain.model.WhatsNewSection
-import zed.rainxch.core.domain.model.WhatsNewSectionType
+import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
+import zed.rainxch.core.domain.model.announcement.WhatsNewSection
+import zed.rainxch.core.domain.model.announcement.WhatsNewSectionType
 
 fun WhatsNewEntryDto.toDomain(): WhatsNewEntry =
     WhatsNewEntry(

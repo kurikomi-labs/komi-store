@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.services
 
 import co.touchlab.kermit.Logger
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.system.Platform
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission

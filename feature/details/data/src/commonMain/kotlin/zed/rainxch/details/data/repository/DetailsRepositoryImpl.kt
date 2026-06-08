@@ -36,12 +36,13 @@ import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.GithubUser
-import zed.rainxch.core.domain.model.GithubUserProfile
-import zed.rainxch.core.domain.model.RefreshError
-import zed.rainxch.core.domain.model.RefreshException
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.account.github.GithubUser
+import zed.rainxch.core.domain.model.account.github.GithubUserProfile
+import zed.rainxch.core.domain.model.error.RefreshError
+import zed.rainxch.core.domain.model.error.RefreshException
+import zed.rainxch.core.domain.utils.RepoIdCodec
 import zed.rainxch.details.data.utils.ReadmeLocalizationHelper
 import zed.rainxch.details.data.utils.preprocessMarkdown
 import zed.rainxch.details.domain.model.RepoStats
@@ -61,7 +62,7 @@ class DetailsRepositoryImpl(
     private fun zed.rainxch.core.data.dto.ForgejoRepoNetworkModel.toForgejoSummary(
         sourceHost: String,
     ): GithubRepoSummary = GithubRepoSummary(
-        id = zed.rainxch.core.domain.util.RepoIdCodec.encode(sourceHost, id),
+        id = RepoIdCodec.encode(sourceHost, id),
         name = name,
         fullName = fullName ?: "${owner.login}/$name",
         owner = GithubUser(

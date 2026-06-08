@@ -5,7 +5,7 @@ import zed.rainxch.core.data.dto.WhatsNewEntryDto
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.WhatsNewEntry
+import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.core.domain.repository.WhatsNewLoader
 import zed.rainxch.githubstore.core.presentation.res.Res
 

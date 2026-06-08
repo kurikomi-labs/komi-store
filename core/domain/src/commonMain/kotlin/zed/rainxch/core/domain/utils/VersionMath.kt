@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
 object VersionMath {
 

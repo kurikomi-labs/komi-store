@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import zed.rainxch.core.data.local.db.dao.HiddenRepoDao
 import zed.rainxch.core.data.local.db.entities.HiddenRepoEntity
-import zed.rainxch.core.domain.model.HiddenRepo
+import zed.rainxch.core.domain.model.repository.HiddenRepo
 import zed.rainxch.core.domain.repository.HiddenReposRepository
 
 class HiddenReposRepositoryImpl(

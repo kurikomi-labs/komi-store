@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorPreference
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorPreference
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.error_unknown

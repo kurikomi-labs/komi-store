@@ -1,7 +1,7 @@
 package zed.rainxch.tweaks.presentation.hosttokens
 
-import zed.rainxch.core.domain.model.ForgeKind
-import zed.rainxch.core.domain.model.HostToken
+import zed.rainxch.core.domain.model.account.ForgeKind
+import zed.rainxch.core.domain.model.account.HostToken
 
 sealed interface HostTokensAction {
     data object OnNavigateBack : HostTokensAction

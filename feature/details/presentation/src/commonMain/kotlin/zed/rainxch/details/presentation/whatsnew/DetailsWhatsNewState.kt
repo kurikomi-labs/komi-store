@@ -1,6 +1,6 @@
 package zed.rainxch.details.presentation.whatsnew
 
-import zed.rainxch.core.domain.model.GithubRelease
+import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.details.presentation.model.TranslationState
 
 data class DetailsWhatsNewState(

@@ -1,6 +1,6 @@
 package zed.rainxch.home.presentation
 
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 
 sealed interface HomeAction {

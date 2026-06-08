@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import zed.rainxch.core.domain.model.MirrorStatus
+import zed.rainxch.core.domain.model.mirror.MirrorStatus
 
 @Composable
 fun StatusDot(

@@ -3,11 +3,9 @@ package zed.rainxch.auth.data.repository
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
-import kotlinx.coroutines.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
@@ -30,8 +28,8 @@ import zed.rainxch.core.data.mappers.toData
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.network.BACKEND_ORIGIN
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.GithubDeviceStart
-import zed.rainxch.core.domain.model.GithubDeviceTokenSuccess
+import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
+import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
 import java.util.concurrent.TimeoutException
 

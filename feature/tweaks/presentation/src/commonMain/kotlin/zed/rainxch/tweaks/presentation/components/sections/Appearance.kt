@@ -45,10 +45,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
 import zed.rainxch.core.presentation.theme.dynamicColorScheme
 import zed.rainxch.core.presentation.theme.isDynamicColorAvailable

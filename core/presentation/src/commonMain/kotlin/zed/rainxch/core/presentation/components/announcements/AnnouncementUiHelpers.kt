@@ -1,8 +1,8 @@
 package zed.rainxch.core.presentation.components.announcements
 
 import org.jetbrains.compose.resources.StringResource
-import zed.rainxch.core.domain.model.AnnouncementCategory
-import zed.rainxch.core.domain.model.AnnouncementSeverity
+import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_category_news
 import zed.rainxch.githubstore.core.presentation.res.announcements_category_privacy

@@ -27,10 +27,11 @@ import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.PaginatedDiscoveryRepositories
-import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.repository.PaginatedDiscoveryRepositories
+import zed.rainxch.core.domain.model.error.RateLimitException
+import zed.rainxch.core.domain.model.account.github.GithubUser
 import zed.rainxch.domain.model.ExploreResult
 import zed.rainxch.domain.model.ProgrammingLanguage
 import zed.rainxch.domain.model.SortBy
@@ -117,11 +118,11 @@ class SearchRepositoryImpl(
         val result = client.searchRepositories(query = query, page = page, limit = PER_PAGE)
         val repos = result.getOrNull()?.data.orEmpty()
         val summaries = repos.map { repo ->
-            zed.rainxch.core.domain.model.GithubRepoSummary(
-                id = zed.rainxch.core.domain.util.RepoIdCodec.encode(host, repo.id),
+            GithubRepoSummary(
+                id = zed.rainxch.core.domain.utils.RepoIdCodec.encode(host, repo.id),
                 name = repo.name,
                 fullName = repo.fullName ?: "${repo.owner.login}/${repo.name}",
-                owner = zed.rainxch.core.domain.model.GithubUser(
+                owner = GithubUser(
                     id = repo.owner.id,
                     login = repo.owner.login,
                     avatarUrl = repo.owner.avatarUrl,

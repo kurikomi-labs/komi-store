@@ -11,8 +11,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.time.Clock
 import zed.rainxch.core.data.network.ProxyManager
-import zed.rainxch.core.domain.model.DownloadProgress
-import zed.rainxch.core.domain.model.TrafficKind
+import zed.rainxch.core.domain.model.installation.DownloadProgress
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 import zed.rainxch.core.domain.network.SlowDownloadDetector
 import zed.rainxch.core.data.secure.safeGet
 

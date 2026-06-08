@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.domain.model.error.RateLimitInfo
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import kotlin.time.Clock
 

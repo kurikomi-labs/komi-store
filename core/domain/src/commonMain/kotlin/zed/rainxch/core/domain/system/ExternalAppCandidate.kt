@@ -1,5 +1,7 @@
 package zed.rainxch.core.domain.system
 
+import zed.rainxch.core.domain.model.installation.ManifestHint
+
 data class ExternalAppCandidate(
     val packageName: String,
     val appLabel: String,

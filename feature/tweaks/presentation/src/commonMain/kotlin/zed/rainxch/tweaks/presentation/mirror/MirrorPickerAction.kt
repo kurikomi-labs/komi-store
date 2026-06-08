@@ -1,6 +1,6 @@
 package zed.rainxch.tweaks.presentation.mirror
 
-import zed.rainxch.core.domain.model.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
 
 sealed interface MirrorPickerAction {
     data object OnNavigateBack : MirrorPickerAction

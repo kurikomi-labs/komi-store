@@ -1,8 +1,8 @@
 package zed.rainxch.core.data.services.external
 
 import android.os.Bundle
-import zed.rainxch.core.domain.system.ManifestHint
-import zed.rainxch.core.domain.system.ManifestHintSource
+import zed.rainxch.core.domain.model.installation.ManifestHint
+import zed.rainxch.core.domain.model.installation.ManifestHintSource
 
 class ManifestHintExtractor {
     fun extract(metaData: Bundle?): ManifestHint? {

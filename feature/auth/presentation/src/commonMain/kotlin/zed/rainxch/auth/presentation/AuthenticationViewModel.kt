@@ -29,8 +29,8 @@ import zed.rainxch.auth.presentation.mapper.toUi
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.utils.BrowserHelper
-import zed.rainxch.core.domain.utils.ClipboardHelper
+import zed.rainxch.core.domain.helpers.BrowserHelper
+import zed.rainxch.core.domain.helpers.ClipboardHelper
 import zed.rainxch.githubstore.core.presentation.res.*
 
 class AuthenticationViewModel(

@@ -3,7 +3,7 @@ package zed.rainxch.core.data.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import zed.rainxch.core.domain.utils.ClipboardHelper
+import zed.rainxch.core.domain.helpers.ClipboardHelper
 
 class AndroidClipboardHelper(
     private val context: Context,

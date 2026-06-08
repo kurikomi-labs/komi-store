@@ -1,6 +1,6 @@
 package zed.rainxch.starred.presentation.mappers
 
-import zed.rainxch.core.domain.model.StarredRepository
+import zed.rainxch.core.domain.model.repository.StarredRepository
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
 
 fun StarredRepository.toStarredRepositoryUi(

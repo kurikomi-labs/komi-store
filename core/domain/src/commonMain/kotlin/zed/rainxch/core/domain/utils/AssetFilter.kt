@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
 class AssetFilter private constructor(
     val pattern: String,

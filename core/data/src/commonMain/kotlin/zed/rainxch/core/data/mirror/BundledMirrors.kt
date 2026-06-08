@@ -1,9 +1,9 @@
 package zed.rainxch.core.data.mirror
 
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorStatus
-import zed.rainxch.core.domain.model.MirrorType
-import zed.rainxch.core.domain.model.TrafficKind
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorStatus
+import zed.rainxch.core.domain.model.mirror.MirrorType
+import zed.rainxch.core.domain.model.mirror.TrafficKind
 
 object BundledMirrors {
     private val FULL_PROXY_KINDS = setOf(TrafficKind.RELEASE_ASSET, TrafficKind.RAW_FILE)

@@ -1,9 +1,9 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.dto.BackendRepoResponse
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.GithubRepoSummary
-import zed.rainxch.core.domain.model.GithubUser
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.account.github.GithubUser
 
 fun BackendRepoResponse.toSummary(): GithubRepoSummary =
     GithubRepoSummary(

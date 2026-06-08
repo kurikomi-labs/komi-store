@@ -1,7 +1,7 @@
 package zed.rainxch.apps.presentation.mappers
 
 import zed.rainxch.apps.presentation.model.InstalledAppUi
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstalledApp
 
 fun InstalledApp.toUi(): InstalledAppUi =
     InstalledAppUi(

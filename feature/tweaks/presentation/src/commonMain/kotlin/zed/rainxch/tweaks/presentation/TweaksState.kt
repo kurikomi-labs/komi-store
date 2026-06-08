@@ -1,17 +1,17 @@
 package zed.rainxch.tweaks.presentation
 
-import zed.rainxch.core.domain.model.AppTheme
-import zed.rainxch.core.domain.model.ContentWidth
-import zed.rainxch.core.domain.model.DhizukuAvailability
-import zed.rainxch.core.domain.model.DiscoveryPlatform
-import zed.rainxch.core.domain.model.FontTheme
-import zed.rainxch.core.domain.model.InstallerAttribution
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.ProxyScope
-import zed.rainxch.core.domain.model.RestartReason
-import zed.rainxch.core.domain.model.RootAvailability
-import zed.rainxch.core.domain.model.ShizukuAvailability
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.appearance.AppTheme
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.installation.DhizukuAvailability
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.installation.InstallerAttribution
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.settings.ProxyScope
+import zed.rainxch.core.domain.model.system.RestartReason
+import zed.rainxch.core.domain.model.installation.RootAvailability
+import zed.rainxch.core.domain.model.installation.ShizukuAvailability
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 
 data class TweaksState(

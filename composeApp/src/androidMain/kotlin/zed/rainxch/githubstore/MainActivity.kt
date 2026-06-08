@@ -26,9 +26,9 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.ext.android.inject
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.data.utils.AndroidShareManager
+import zed.rainxch.core.domain.helpers.ShareManager
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
-import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
 
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L

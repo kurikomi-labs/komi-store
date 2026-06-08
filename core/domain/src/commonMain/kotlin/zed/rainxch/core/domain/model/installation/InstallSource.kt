@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.installation
 enum class InstallSource {
     THIS_APP,
     OBTAINIUM,

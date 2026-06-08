@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.model.account.github
 
 data class GithubDeviceStart(
     val deviceCode: String,

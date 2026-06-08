@@ -3,9 +3,9 @@ package zed.rainxch.core.data.utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.model.Platform
-import zed.rainxch.core.domain.utils.AppLauncher
+import zed.rainxch.core.domain.model.installation.InstalledApp
+import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.helpers.AppLauncher
 import java.io.File
 
 class DesktopAppLauncher(

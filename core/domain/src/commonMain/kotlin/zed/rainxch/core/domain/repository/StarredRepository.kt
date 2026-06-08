@@ -1,7 +1,7 @@
 package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.domain.model.StarredRepository
+import zed.rainxch.core.domain.model.repository.StarredRepository
 
 interface StarredRepository {
     fun getAllStarred(): Flow<List<StarredRepository>>

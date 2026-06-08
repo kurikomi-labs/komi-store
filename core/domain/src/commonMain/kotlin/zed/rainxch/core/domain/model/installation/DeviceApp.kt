@@ -1,5 +1,4 @@
-package zed.rainxch.core.domain.model
-
+package zed.rainxch.core.domain.model.installation
 data class DeviceApp(
     val packageName: String,
     val appName: String,

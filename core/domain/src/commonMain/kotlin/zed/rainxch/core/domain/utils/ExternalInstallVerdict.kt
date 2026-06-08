@@ -1,6 +1,6 @@
-package zed.rainxch.core.domain.util
+package zed.rainxch.core.domain.utils
 
-import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstalledApp
 
 enum class VersionVerdict {
 

@@ -1,7 +1,7 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.local.db.entities.FavoriteRepoEntity
-import zed.rainxch.core.domain.model.FavoriteRepo
+import zed.rainxch.core.domain.model.repository.FavoriteRepo
 
 fun FavoriteRepo.toEntity(): FavoriteRepoEntity =
     FavoriteRepoEntity(

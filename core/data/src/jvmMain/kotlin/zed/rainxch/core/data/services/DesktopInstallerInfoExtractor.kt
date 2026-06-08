@@ -1,6 +1,6 @@
 package zed.rainxch.core.data.services
 
-import zed.rainxch.core.domain.model.ApkPackageInfo
+import zed.rainxch.core.domain.model.apk.ApkPackageInfo
 import zed.rainxch.core.domain.system.InstallerInfoExtractor
 
 class DesktopInstallerInfoExtractor : InstallerInfoExtractor {

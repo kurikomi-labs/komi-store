@@ -1,8 +1,8 @@
 package zed.rainxch.core.data.mappers
 
 import zed.rainxch.core.data.dto.ReleaseNetwork
-import zed.rainxch.core.domain.model.GithubRelease
-import zed.rainxch.core.domain.model.GithubUser
+import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.account.github.GithubUser
 
 fun ReleaseNetwork.toDomain(): GithubRelease =
     GithubRelease(

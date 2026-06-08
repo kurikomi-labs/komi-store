@@ -1,8 +1,8 @@
 package zed.rainxch.tweaks.presentation.mirror
 
 import org.jetbrains.compose.resources.StringResource
-import zed.rainxch.core.domain.model.MirrorConfig
-import zed.rainxch.core.domain.model.MirrorPreference
+import zed.rainxch.core.domain.model.mirror.MirrorConfig
+import zed.rainxch.core.domain.model.mirror.MirrorPreference
 
 data class MirrorPickerState(
     val mirrors: List<MirrorConfig> = emptyList(),

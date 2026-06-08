@@ -7,7 +7,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.network.TranslationClientProvider
 import zed.rainxch.core.data.services.LocalizationManager
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.details.data.translation.GoogleTranslator
 import zed.rainxch.details.data.translation.Translator

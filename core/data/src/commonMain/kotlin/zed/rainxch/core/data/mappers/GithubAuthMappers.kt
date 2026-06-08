@@ -3,9 +3,9 @@ package zed.rainxch.core.data.mappers
 import zed.rainxch.core.data.dto.GithubDeviceStartDto
 import zed.rainxch.core.data.dto.GithubDeviceTokenErrorDto
 import zed.rainxch.core.data.dto.GithubDeviceTokenSuccessDto
-import zed.rainxch.core.domain.model.GithubDeviceStart
-import zed.rainxch.core.domain.model.GithubDeviceTokenError
-import zed.rainxch.core.domain.model.GithubDeviceTokenSuccess
+import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
+import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenError
+import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 
 fun GithubDeviceStartDto.toDomain() =
     GithubDeviceStart(

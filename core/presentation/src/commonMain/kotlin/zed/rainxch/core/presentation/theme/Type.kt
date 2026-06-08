@@ -10,7 +10,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
-import zed.rainxch.core.domain.model.FontTheme
+import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.geist
 import zed.rainxch.githubstore.core.presentation.res.geist_mono

@@ -2,7 +2,7 @@ package zed.rainxch.core.presentation.model
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import zed.rainxch.core.domain.model.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 
 data class GithubRepoSummaryUi(
     val id: Long,

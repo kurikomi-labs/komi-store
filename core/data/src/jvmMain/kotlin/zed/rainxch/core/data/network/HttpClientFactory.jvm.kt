@@ -3,7 +3,7 @@ package zed.rainxch.core.data.network
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import okhttp3.Credentials
-import zed.rainxch.core.domain.model.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyConfig
 import java.net.Authenticator
 import java.net.InetSocketAddress
 import java.net.PasswordAuthentication

@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
-import zed.rainxch.core.domain.model.InstallerType
+import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
@@ -137,7 +137,7 @@ class UpdateCheckWorker(
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun showUpdateNotification(appsWithUpdates: List<zed.rainxch.core.domain.model.InstalledApp>) {
+    private suspend fun showUpdateNotification(appsWithUpdates: List<zed.rainxch.core.domain.model.installation.InstalledApp>) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted =

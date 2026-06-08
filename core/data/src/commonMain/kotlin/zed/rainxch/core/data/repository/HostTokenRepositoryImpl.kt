@@ -23,9 +23,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
-import zed.rainxch.core.domain.model.HostNames
-import zed.rainxch.core.domain.model.HostToken
-import zed.rainxch.core.domain.model.TokenValidation
+import zed.rainxch.core.domain.model.account.HostNames
+import zed.rainxch.core.domain.model.account.HostToken
+import zed.rainxch.core.domain.model.account.TokenValidation
 import zed.rainxch.core.domain.repository.HostTokenRepository
 
 class HostTokenRepositoryImpl(

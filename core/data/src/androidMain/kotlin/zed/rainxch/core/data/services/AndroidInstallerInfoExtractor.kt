@@ -7,7 +7,7 @@ import android.os.Build
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.model.ApkPackageInfo
+import zed.rainxch.core.domain.model.apk.ApkPackageInfo
 import zed.rainxch.core.domain.system.InstallerInfoExtractor
 import java.io.File
 import java.security.MessageDigest

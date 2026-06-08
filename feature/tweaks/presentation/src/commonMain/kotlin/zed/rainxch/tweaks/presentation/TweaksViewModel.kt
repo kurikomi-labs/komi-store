@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.Platform
-import zed.rainxch.core.domain.model.ProxyConfig
-import zed.rainxch.core.domain.model.ProxyScope
-import zed.rainxch.core.domain.model.TranslationProvider
+import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.model.settings.ProxyConfig
+import zed.rainxch.core.domain.model.settings.ProxyScope
+import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.network.ProxyTestOutcome
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.network.ProxyTester
@@ -328,7 +328,7 @@ class TweaksViewModel(
     }
 
     private fun persistInstallerAttribution(
-        attribution: zed.rainxch.core.domain.model.InstallerAttribution,
+        attribution: zed.rainxch.core.domain.model.installation.InstallerAttribution,
     ) {
         viewModelScope.launch {
             runCatching {
@@ -357,8 +357,8 @@ class TweaksViewModel(
                 }
                 .collect { attribution ->
                     _state.update { current ->
-                        val isCustom = attribution is zed.rainxch.core.domain.model.InstallerAttribution.Custom
-                        val customDraft = (attribution as? zed.rainxch.core.domain.model.InstallerAttribution.Custom)?.packageName
+                        val isCustom = attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom
+                        val customDraft = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom)?.packageName
                             ?: current.installerAttributionCustomDraft
                         current.copy(
                             installerAttribution = attribution,
@@ -731,13 +731,13 @@ class TweaksViewModel(
 
             TweaksAction.OnInstallerAttributionSystemDefault -> {
                 persistInstallerAttribution(
-                    zed.rainxch.core.domain.model.InstallerAttribution.SystemDefault,
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.SystemDefault,
                 )
             }
 
             is TweaksAction.OnInstallerAttributionPresetSelected -> {
                 persistInstallerAttribution(
-                    zed.rainxch.core.domain.model.InstallerAttribution.Preset(action.key),
+                    zed.rainxch.core.domain.model.installation.InstallerAttribution.Preset(action.key),
                 )
             }
 
@@ -761,7 +761,7 @@ class TweaksViewModel(
 
             TweaksAction.OnInstallerAttributionCustomSave -> {
                 val draft = _state.value.installerAttributionCustomDraft.trim()
-                if (!zed.rainxch.core.domain.model.InstallerAttributionDefaults.isValidPackageName(draft)) {
+                if (!zed.rainxch.core.domain.model.installation.InstallerAttributionDefaults.isValidPackageName(draft)) {
                     _state.update {
                         it.copy(installerAttributionCustomError = "invalid")
                     }
@@ -769,7 +769,7 @@ class TweaksViewModel(
                     viewModelScope.launch {
                         runCatching {
                             tweaksRepository.setInstallerAttribution(
-                                zed.rainxch.core.domain.model.InstallerAttribution.Custom(draft),
+                                zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom(draft),
                             )
                         }.onSuccess {
                             _state.update { it.copy(installerAttributionCustomError = null) }
@@ -1078,7 +1078,7 @@ class TweaksViewModel(
                     tweaksRepository.setAppLanguage(action.tag)
                     runCatching {
                         tweaksRepository.addRestartReason(
-                            zed.rainxch.core.domain.model.RestartReason.LANGUAGE,
+                            zed.rainxch.core.domain.model.system.RestartReason.LANGUAGE,
                         )
                     }
                     if (getPlatform() != Platform.ANDROID) {

@@ -9,6 +9,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.collections.immutable)
                 implementation(libs.kotlinx.datetime)
 
                 implementation(projects.core.domain)

@@ -4,10 +4,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.installation.InstalledApp
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.PackageMonitor
+import zed.rainxch.core.domain.utils.executeInTransaction
 
 class SyncInstalledAppsUseCase(
     private val packageMonitor: PackageMonitor,
@@ -227,12 +228,4 @@ class SyncInstalledAppsUseCase(
         val versionCode: Long,
         val source: String,
     )
-}
-
-suspend fun executeInTransaction(block: suspend () -> Unit) {
-    try {
-        block()
-    } catch (e: Exception) {
-        throw e
-    }
 }
