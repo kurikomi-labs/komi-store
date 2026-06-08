@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,11 +31,10 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import zed.rainxch.core.presentation.components.cards.RowCard
+import zed.rainxch.core.presentation.theme.LocalStatusColors
+import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.core.presentation.vocabulary.PlatformGlyph
-import zed.rainxch.core.presentation.vocabulary.StarTier
 import zed.rainxch.home.presentation.model.HomeRepoCardUi
-
-private val StarredTint = Color(0xFFC49652)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,6 +44,7 @@ fun StarredRowItem(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val status = LocalStatusColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -56,7 +55,7 @@ fun StarredRowItem(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(StarredTint.copy(alpha = 0.18f)),
+                    .background(status.starActive.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center,
             ) {
                 GitHubStoreImage(
@@ -83,11 +82,15 @@ fun StarredRowItem(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = StarredTint,
+                        tint = status.starActive,
                         modifier = Modifier.size(12.dp),
                     )
 
-                    StarTier(stars = card.starsCount, size = 10)
+                    Text(
+                        text = formatCompactCount(card.starsCount),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
 

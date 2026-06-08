@@ -1,49 +1,54 @@
 package zed.rainxch.core.presentation.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import zed.rainxch.core.presentation.theme.tokens.Tokens
+import zed.rainxch.core.presentation.theme.tokens.Tokens.Status
+import zed.rainxch.core.presentation.theme.tokens.Tokens.Status.IssueState
+import zed.rainxch.core.presentation.theme.tokens.Tokens.Status.Severity
+import zed.rainxch.core.presentation.theme.tokens.Tokens.Thresholds
 
 val LocalPalette = staticCompositionLocalOf { Tokens.Nord.light }
 
-val LocalStatusColors = staticCompositionLocalOf<StatusColors> { defaultStatusColors }
+val LocalStatusColors = staticCompositionLocalOf { defaultStatusColors }
 
-val LocalThresholds = staticCompositionLocalOf<ThresholdSet> { defaultThresholds }
+val LocalThresholds = staticCompositionLocalOf { defaultThresholds }
 
-val LocalMotion = staticCompositionLocalOf<MotionTokens> { defaultMotion }
+val LocalMotion = staticCompositionLocalOf { defaultMotion }
 
-val LocalSpacing = staticCompositionLocalOf<SpacingTokens> { defaultSpacing }
+val LocalSpacing = staticCompositionLocalOf { defaultSpacing }
 
 data class StatusColors(
-    val freshnessHot: androidx.compose.ui.graphics.Color,
-    val freshnessFresh: androidx.compose.ui.graphics.Color,
-    val freshnessWarm: androidx.compose.ui.graphics.Color,
-    val freshnessCool: androidx.compose.ui.graphics.Color,
-    val freshnessDormant: androidx.compose.ui.graphics.Color,
-    val waxIntact: androidx.compose.ui.graphics.Color,
-    val waxCracked: androidx.compose.ui.graphics.Color,
-    val waxOpen: androidx.compose.ui.graphics.Color,
-    val permLow: androidx.compose.ui.graphics.Color,
-    val permModerate: androidx.compose.ui.graphics.Color,
-    val permHigh: androidx.compose.ui.graphics.Color,
-    val trendRising: androidx.compose.ui.graphics.Color,
-    val trendFlat: androidx.compose.ui.graphics.Color,
-    val trendFalling: androidx.compose.ui.graphics.Color,
-    val issueOpen: androidx.compose.ui.graphics.Color,
-    val issueClosed: androidx.compose.ui.graphics.Color,
-    val pullOpen: androidx.compose.ui.graphics.Color,
-    val pullMerged: androidx.compose.ui.graphics.Color,
-    val pullClosed: androidx.compose.ui.graphics.Color,
-    val severityCritical: androidx.compose.ui.graphics.Color,
-    val severityHigh: androidx.compose.ui.graphics.Color,
-    val severityMedium: androidx.compose.ui.graphics.Color,
-    val severityLow: androidx.compose.ui.graphics.Color,
-    val severityUnknown: androidx.compose.ui.graphics.Color,
+    val freshnessHot: Color,
+    val freshnessFresh: Color,
+    val freshnessWarm: Color,
+    val freshnessCool: Color,
+    val freshnessDormant: Color,
+    val waxIntact: Color,
+    val waxCracked: Color,
+    val waxOpen: Color,
+    val permLow: Color,
+    val permModerate: Color,
+    val permHigh: Color,
+    val trendRising: Color,
+    val trendFlat: Color,
+    val trendFalling: Color,
+    val starActive: Color,
+    val issueOpen: Color,
+    val issueClosed: Color,
+    val pullOpen: Color,
+    val pullMerged: Color,
+    val pullClosed: Color,
+    val severityCritical: Color,
+    val severityHigh: Color,
+    val severityMedium: Color,
+    val severityLow: Color,
+    val severityUnknown: Color,
 )
 
 data class ThresholdSet(
-    val freshness: List<Tokens.Thresholds.FreshnessBucket>,
-    val stars: List<Tokens.Thresholds.StarTier>,
-    val maintenance: List<Tokens.Thresholds.MaintenanceBucket>,
+    val freshness: List<Thresholds.FreshnessBucket>,
+    val maintenance: List<Thresholds.MaintenanceBucket>,
 )
 
 data class MotionTokens(
@@ -71,49 +76,50 @@ data class SpacingTokens(
 )
 
 internal val defaultStatusColors = StatusColors(
-    freshnessHot = Tokens.Status.Freshness.hot,
-    freshnessFresh = Tokens.Status.Freshness.fresh,
-    freshnessWarm = Tokens.Status.Freshness.warm,
-    freshnessCool = Tokens.Status.Freshness.cool,
-    freshnessDormant = Tokens.Status.Freshness.dormant,
-    waxIntact = Tokens.Status.Wax.intact,
-    waxCracked = Tokens.Status.Wax.cracked,
-    waxOpen = Tokens.Status.Wax.open,
-    permLow = Tokens.Status.Perm.low,
-    permModerate = Tokens.Status.Perm.moderate,
-    permHigh = Tokens.Status.Perm.high,
-    trendRising = Tokens.Status.Trend.rising,
-    trendFlat = Tokens.Status.Trend.flat,
-    trendFalling = Tokens.Status.Trend.falling,
-    issueOpen = Tokens.Status.IssueState.openLight,
-    issueClosed = Tokens.Status.IssueState.closedLight,
-    pullOpen = Tokens.Status.IssueState.openLight,
-    pullMerged = Tokens.Status.IssueState.closedLight,
-    pullClosed = Tokens.Status.IssueState.prClosedLight,
-    severityCritical = Tokens.Status.Severity.criticalLight,
-    severityHigh = Tokens.Status.Severity.highLight,
-    severityMedium = Tokens.Status.Severity.mediumLight,
-    severityLow = Tokens.Status.Severity.lowLight,
-    severityUnknown = Tokens.Status.Severity.unknownLight,
+    freshnessHot = Status.Freshness.hot,
+    freshnessFresh = Status.Freshness.fresh,
+    freshnessWarm = Status.Freshness.warm,
+    freshnessCool = Status.Freshness.cool,
+    freshnessDormant = Status.Freshness.dormant,
+    waxIntact = Status.Wax.intact,
+    waxCracked = Status.Wax.cracked,
+    waxOpen = Status.Wax.open,
+    permLow = Status.Perm.low,
+    permModerate = Status.Perm.moderate,
+    permHigh = Status.Perm.high,
+    trendRising = Status.Trend.rising,
+    trendFlat = Status.Trend.flat,
+    trendFalling = Status.Trend.falling,
+    starActive = Status.Star.activeLight,
+    issueOpen = IssueState.openLight,
+    issueClosed = IssueState.closedLight,
+    pullOpen = IssueState.openLight,
+    pullMerged = IssueState.closedLight,
+    pullClosed = IssueState.prClosedLight,
+    severityCritical = Severity.criticalLight,
+    severityHigh = Severity.highLight,
+    severityMedium = Severity.mediumLight,
+    severityLow = Severity.lowLight,
+    severityUnknown = Severity.unknownLight,
 )
 
 internal val darkStatusColors = defaultStatusColors.copy(
-    issueOpen = Tokens.Status.IssueState.openDark,
-    issueClosed = Tokens.Status.IssueState.closedDark,
-    pullOpen = Tokens.Status.IssueState.openDark,
-    pullMerged = Tokens.Status.IssueState.closedDark,
-    pullClosed = Tokens.Status.IssueState.prClosedDark,
-    severityCritical = Tokens.Status.Severity.criticalDark,
-    severityHigh = Tokens.Status.Severity.highDark,
-    severityMedium = Tokens.Status.Severity.mediumDark,
-    severityLow = Tokens.Status.Severity.lowDark,
-    severityUnknown = Tokens.Status.Severity.unknownDark,
+    starActive = Status.Star.activeDark,
+    issueOpen = IssueState.openDark,
+    issueClosed = IssueState.closedDark,
+    pullOpen = IssueState.openDark,
+    pullMerged = IssueState.closedDark,
+    pullClosed = IssueState.prClosedDark,
+    severityCritical = Severity.criticalDark,
+    severityHigh = Severity.highDark,
+    severityMedium = Severity.mediumDark,
+    severityLow = Severity.lowDark,
+    severityUnknown = Severity.unknownDark,
 )
 
 internal val defaultThresholds = ThresholdSet(
-    freshness = Tokens.Thresholds.freshness,
-    stars = Tokens.Thresholds.stars,
-    maintenance = Tokens.Thresholds.maintenance,
+    freshness = Thresholds.freshness,
+    maintenance = Thresholds.maintenance,
 )
 
 internal val defaultMotion = MotionTokens(

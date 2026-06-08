@@ -217,6 +217,10 @@ object Tokens {
             val flat = Color(0xFF8E8E8E)
             val falling = Color(0xFFB83A2C)
         }
+        object Star {
+            val activeLight = Color(0xFFC49652)
+            val activeDark = Color(0xFFD6AB6A)
+        }
         object IssueState {
             val openLight = Color(0xFF2DA44E)
             val openDark = Color(0xFF3FB950)
@@ -252,15 +256,6 @@ object Tokens {
             FreshnessBucket(90, "warm", 0.55f, Status.Freshness.warm),
             FreshnessBucket(365, "cool", 0.30f, Status.Freshness.cool),
             FreshnessBucket(null, "dormant", 0.12f, Status.Freshness.dormant),
-        )
-
-        data class StarTier(val minStars: Int, val tier: Int)
-        val stars = listOf(
-            StarTier(0, 1),
-            StarTier(1000, 2),
-            StarTier(10000, 3),
-            StarTier(50000, 4),
-            StarTier(100000, 5),
         )
 
         data class MaintenanceBucket(
