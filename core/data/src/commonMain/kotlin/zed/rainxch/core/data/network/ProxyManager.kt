@@ -71,32 +71,31 @@ object ProxyManager {
         scope: CoroutineScope,
     ) {
         if (mirrorCollectorJob?.isActive == true) return
-        mirrorCollectorJob =
-            scope.launch {
-                combine(
-                    repository.observePreference(),
-                    repository.observeCatalog(),
-                ) { pref, catalog ->
-                    when (pref) {
-                        MirrorPreference.Direct -> null
-                        is MirrorPreference.Custom ->
-                            MirrorActive(
-                                template = pref.template,
-                                trafficKinds = setOf(TrafficKind.RELEASE_ASSET, TrafficKind.RAW_FILE),
-                            )
-                        is MirrorPreference.Selected -> {
-                            val cfg = catalog.firstOrNull { it.id == pref.id }
-                            val template = cfg?.urlTemplate
-                            if (cfg == null || template == null) {
-                                null
-                            } else {
-                                MirrorActive(template = template, trafficKinds = cfg.trafficKinds)
-                            }
+        mirrorCollectorJob = scope.launch {
+            combine(
+                repository.observePreference(),
+                repository.observeCatalog(),
+            ) { pref, catalog ->
+                when (pref) {
+                    MirrorPreference.Direct -> null
+                    is MirrorPreference.Custom ->
+                        MirrorActive(
+                            template = pref.template,
+                            trafficKinds = setOf(TrafficKind.RELEASE_ASSET, TrafficKind.RAW_FILE),
+                        )
+                    is MirrorPreference.Selected -> {
+                        val cfg = catalog.firstOrNull { it.id == pref.id }
+                        val template = cfg?.urlTemplate
+                        if (cfg == null || template == null) {
+                            null
+                        } else {
+                            MirrorActive(template = template, trafficKinds = cfg.trafficKinds)
                         }
                     }
-                }.collect { active ->
-                    mirror.set(active)
                 }
+            }.collect { active ->
+                mirror.set(active)
             }
+        }
     }
 }

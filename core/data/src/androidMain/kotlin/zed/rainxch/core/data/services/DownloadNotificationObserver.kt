@@ -22,22 +22,21 @@ class DownloadNotificationObserver(
 
     fun start(scope: CoroutineScope) {
         if (job?.isActive == true) return
-        job =
-            scope.launch {
-                try {
-                    orchestrator.downloads.collect { snapshot ->
-                        try {
-                            reconcile(snapshot)
-                        } catch (t: Throwable) {
+        job = scope.launch {
+            try {
+                orchestrator.downloads.collect { snapshot ->
+                    try {
+                        reconcile(snapshot)
+                    } catch (t: Throwable) {
 
-                            Logger.w(t) { "DownloadNotificationObserver: reconcile failed, continuing" }
-                        }
+                        Logger.w(t) { "DownloadNotificationObserver: reconcile failed, continuing" }
                     }
-                } finally {
-
-                    job = null
                 }
+            } finally {
+
+                job = null
             }
+        }
     }
 
     private fun reconcile(snapshot: Map<String, OrchestratedDownload>) {
