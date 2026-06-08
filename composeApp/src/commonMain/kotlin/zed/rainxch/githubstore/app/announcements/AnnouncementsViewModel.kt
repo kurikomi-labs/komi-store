@@ -5,6 +5,7 @@ package zed.rainxch.githubstore.app.announcements
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -70,6 +71,8 @@ class AnnouncementsViewModel(
         viewModelScope.launch {
             try {
                 repository.refresh()
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.e(t) { "Initial announcements refresh failed" }
             }
@@ -79,6 +82,8 @@ class AnnouncementsViewModel(
     suspend fun refresh() {
         try {
             repository.refresh()
+        } catch (e: CancellationException) {
+            throw e
         } catch (t: Throwable) {
             logger.e(t) { "Manual announcements refresh failed" }
         }
@@ -99,6 +104,8 @@ class AnnouncementsViewModel(
                         repository.acknowledge(item.id)
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 if (t is kotlinx.coroutines.CancellationException) throw t
                 logger.e(t) { "Failed to mark routine announcements as seen" }
@@ -114,6 +121,8 @@ class AnnouncementsViewModel(
                 if (!announcement.requiresAcknowledgment) {
                     repository.acknowledge(announcement.id)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.e(t) { "Failed to dismiss ${announcement.id}" }
             }
@@ -125,6 +134,8 @@ class AnnouncementsViewModel(
         viewModelScope.launch {
             try {
                 repository.acknowledge(announcement.id)
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.e(t) { "Failed to acknowledge ${announcement.id}" }
             }
@@ -147,6 +158,8 @@ class AnnouncementsViewModel(
         viewModelScope.launch {
             try {
                 repository.acknowledge(announcement.id)
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.e(t) { "Failed to acknowledge before opening CTA ${announcement.id}" }
             }
@@ -163,6 +176,8 @@ class AnnouncementsViewModel(
         viewModelScope.launch {
             try {
                 repository.setMuted(category, muted)
+            } catch (e: CancellationException) {
+                throw e
             } catch (t: Throwable) {
                 logger.e(t) { "Failed to toggle mute for $category" }
             }
