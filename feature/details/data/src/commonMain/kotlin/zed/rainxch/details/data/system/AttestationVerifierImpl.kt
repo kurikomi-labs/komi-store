@@ -1,5 +1,6 @@
 package zed.rainxch.details.data.system
 
+import kotlinx.coroutines.CancellationException
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.details.domain.system.AttestationVerifier
@@ -21,6 +22,8 @@ class AttestationVerifierImpl(
             val digest = computeSha256(filePath)
             val hasAttestation = detailsRepository.checkAttestations(owner, repoName, digest)
             if (hasAttestation) VerificationResult.Verified else VerificationResult.Unverified
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.debug("Attestation check error: ${e.message}")
             VerificationResult.Error(e.message ?: "Unknown error")

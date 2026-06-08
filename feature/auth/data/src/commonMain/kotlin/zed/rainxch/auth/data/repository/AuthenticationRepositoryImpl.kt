@@ -225,6 +225,8 @@ class AuthenticationRepositoryImpl(
                     throw e
                 } catch (e: TimeoutException) {
                     throw e
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     consecutiveUnknownErrors++
                     logger.debug("❌ Unexpected error ($consecutiveUnknownErrors/5): ${e.message}")

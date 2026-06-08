@@ -1,5 +1,6 @@
 package zed.rainxch.apps.data.repository
 
+import kotlinx.coroutines.CancellationException
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -118,6 +119,8 @@ class AppsRepositoryImpl(
                 ?.toDomain()
         } catch (e: RateLimitException) {
             throw e
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to fetch latest release for $owner/$repo: ${e.message}")
             null
@@ -191,6 +194,8 @@ class AppsRepositoryImpl(
             )
         } catch (e: RateLimitException) {
             throw e
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to fetch repo info for $owner/$repo: ${e.message}")
             null
@@ -233,6 +238,8 @@ class AppsRepositoryImpl(
                 .filter { includePreReleases || it.prerelease != true }
                 .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
                 ?.tagName
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             null
         }

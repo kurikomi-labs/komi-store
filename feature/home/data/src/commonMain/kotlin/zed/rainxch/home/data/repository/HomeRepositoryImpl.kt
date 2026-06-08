@@ -649,6 +649,8 @@ class HomeRepositoryImpl(
             } else {
                 null
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             null
         }

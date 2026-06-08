@@ -1,5 +1,6 @@
 package zed.rainxch.details.data.system
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
@@ -142,6 +143,8 @@ class InstallationManagerImpl(
             val reloaded = installedAppsRepository.getAppByPackage(apkInfo.packageName)
             logger.debug("Successfully saved and reloaded app: ${reloaded?.packageName}")
             reloaded
+        } catch (e: CancellationException) {
+            throw e
         } catch (t: Throwable) {
             logger.error("Failed to save installed app to database: ${t.message}")
             t.printStackTrace()

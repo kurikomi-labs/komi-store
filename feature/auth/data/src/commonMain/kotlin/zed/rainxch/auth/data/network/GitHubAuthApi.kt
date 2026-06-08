@@ -321,6 +321,8 @@ object GitHubAuthApi {
         repeat(maxAttempts - 1) { attempt ->
             try {
                 return block()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 println("⚠️ Attempt ${attempt + 1} failed: ${e.message}")
                 if (attempt == maxAttempts - 2) throw e
