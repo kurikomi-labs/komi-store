@@ -3,16 +3,7 @@ package zed.rainxch.githubstore.app.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.ui.graphics.vector.ImageVector
-import org.jetbrains.compose.resources.StringResource
 import zed.rainxch.githubstore.core.presentation.res.*
-
-data class BottomNavigationItem(
-    val titleRes: StringResource,
-    val iconOutlined: ImageVector,
-    val iconFilled: ImageVector,
-    val screen: GithubStoreGraph,
-)
 
 object BottomNavigationUtils {
     fun items(): List<BottomNavigationItem> =

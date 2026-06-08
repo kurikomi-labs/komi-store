@@ -4,8 +4,6 @@ import androidx.compose.runtime.Stable
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ThemeMode
 
-enum class OnboardingStep { PALETTE, SIGN_IN, PERMISSIONS }
-
 @Stable
 data class OnboardingState(
     val steps: List<OnboardingStep> = listOf(OnboardingStep.PALETTE, OnboardingStep.SIGN_IN),
