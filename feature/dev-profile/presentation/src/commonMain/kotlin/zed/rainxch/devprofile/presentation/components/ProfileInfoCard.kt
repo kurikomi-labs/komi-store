@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -43,9 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil3.CoilImage
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
@@ -77,13 +75,12 @@ fun ProfileInfoCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                CoilImage(
+                GitHubStoreImage(
                     imageModel = { profile.avatarUrl },
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                    imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                 )
                 Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
