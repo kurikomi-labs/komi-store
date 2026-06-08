@@ -32,6 +32,7 @@ import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.helpers.ClipboardHelper
 import zed.rainxch.githubstore.core.presentation.res.*
+import kotlin.time.Duration.Companion.milliseconds
 
 class AuthenticationViewModel(
     private val authenticationRepository: AuthenticationRepository,
@@ -56,35 +57,34 @@ class AuthenticationViewModel(
     private val _events = Channel<AuthenticationEvents>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    val state =
-        _state
-            .onStart {
-                if (!hasLoadedInitialData) {
-                    scope.launch {
-                        authenticationRepository.accessTokenFlow.collect { token ->
-                            _state.update {
-                                it.copy(
-                                    loginState =
-                                        if (token.isNullOrEmpty()) {
-                                            AuthLoginState.LoggedOut
-                                        } else {
-                                            _events.trySend(AuthenticationEvents.OnNavigateToMain)
-                                            AuthLoginState.LoggedIn
-                                        },
-                                )
-                            }
+    val state = _state
+        .onStart {
+            if (!hasLoadedInitialData) {
+                scope.launch {
+                    authenticationRepository.accessTokenFlow.collect { token ->
+                        _state.update {
+                            it.copy(
+                                loginState =
+                                    if (token.isNullOrEmpty()) {
+                                        AuthLoginState.LoggedOut
+                                    } else {
+                                        _events.trySend(AuthenticationEvents.OnNavigateToMain)
+                                        AuthLoginState.LoggedIn
+                                    },
+                            )
                         }
                     }
-
-                    restoreFromSavedState()
-                    observeAuthDeepLinks()
-                    hasLoadedInitialData = true
                 }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = AuthenticationState(),
-            )
+
+                restoreFromSavedState()
+                observeAuthDeepLinks()
+                hasLoadedInitialData = true
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = AuthenticationState(),
+        )
 
     fun onAction(action: AuthenticationAction) {
         when (action) {
@@ -225,11 +225,14 @@ class AuthenticationViewModel(
                         is PatRejectedException -> when (t.kind) {
                             is RejectedKind.BadCredentials ->
                                 getString(Res.string.pat_error_bad_credentials)
+
                             is RejectedKind.InsufficientScope ->
                                 getString(Res.string.pat_error_insufficient_scope)
+
                             is RejectedKind.Other ->
                                 getString(Res.string.pat_error_generic)
                         }
+
                         else -> getString(Res.string.pat_error_generic)
                     }
                     _state.update {
@@ -252,6 +255,7 @@ class AuthenticationViewModel(
                         consumeAuthHandoff(event.handoffId, event.state)
                         AuthDeepLinkBus.resetReplay()
                     }
+
                     is AuthDeepLinkEvent.Error -> {
                         consumeAuthError(event.reason, event.state)
                         AuthDeepLinkBus.resetReplay()
@@ -390,7 +394,8 @@ class AuthenticationViewModel(
         }
         if (expected != state) {
             logger.warn(
-                "Web-auth error state mismatch (ignored). expected=${expected.take(8)} got=${state.take(8)}",
+                "Web-auth error state mismatch (ignored). " +
+                        "expected=${expected.take(8)} got=${state.take(8)}",
             )
             return
         }
@@ -400,11 +405,10 @@ class AuthenticationViewModel(
             _state.update {
                 it.copy(
                     isWebAuthInFlight = false,
-                    loginState =
-                        AuthLoginState.Error(
-                            message = getString(Res.string.error_unknown),
-                            recoveryHint = getString(Res.string.auth_hint_try_again),
-                        ),
+                    loginState = AuthLoginState.Error(
+                        message = getString(Res.string.error_unknown),
+                        recoveryHint = getString(Res.string.auth_hint_try_again),
+                    ),
                 )
             }
         }
@@ -414,6 +418,8 @@ class AuthenticationViewModel(
         viewModelScope.launch(Dispatchers.Main.immediate) {
             try {
                 browserHelper.openUrl(PAT_SETTINGS_URL)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.debug("Failed to open PAT settings page: ${e.message}")
             }
@@ -422,36 +428,34 @@ class AuthenticationViewModel(
 
     private fun startCountdown(remainingSeconds: Int) {
         countdownJob?.cancel()
-        countdownJob =
-            viewModelScope.launch {
-                var remaining = remainingSeconds
-                while (remaining > 0) {
-                    _state.update { currentState ->
-                        val loginState = currentState.loginState
-                        if (loginState is AuthLoginState.DevicePrompt) {
-                            currentState.copy(
-                                loginState = loginState.copy(remainingSeconds = remaining),
-                            )
-                        } else {
-                            return@launch
-                        }
+        countdownJob = viewModelScope.launch {
+            var remaining = remainingSeconds
+            while (remaining > 0) {
+                _state.update { currentState ->
+                    val loginState = currentState.loginState
+                    if (loginState is AuthLoginState.DevicePrompt) {
+                        currentState.copy(
+                            loginState = loginState.copy(remainingSeconds = remaining),
+                        )
+                    } else {
+                        return@launch
                     }
-                    delay(1000L)
-                    remaining--
                 }
-
-                pollingJob?.cancel()
-                clearSavedState()
-                _state.update {
-                    it.copy(
-                        loginState =
-                            AuthLoginState.Error(
-                                message = getString(Res.string.auth_error_code_expired),
-                                recoveryHint = getString(Res.string.auth_hint_try_again),
-                            ),
-                    )
-                }
+                delay(1000L.milliseconds)
+                remaining--
             }
+
+            pollingJob?.cancel()
+            clearSavedState()
+            _state.update {
+                it.copy(
+                    loginState = AuthLoginState.Error(
+                        message = getString(Res.string.auth_error_code_expired),
+                        recoveryHint = getString(Res.string.auth_hint_try_again),
+                    ),
+                )
+            }
+        }
     }
 
     private fun tryPollIfReady() {
@@ -486,10 +490,9 @@ class AuthenticationViewModel(
     private fun startLogin() {
         viewModelScope.launch {
             try {
-                val flowStart =
-                    withContext(Dispatchers.IO) {
-                        authenticationRepository.startDeviceFlow()
-                    }
+                val flowStart = withContext(Dispatchers.IO) {
+                    authenticationRepository.startDeviceFlow()
+                }
 
                 val start = flowStart.start
                 authPath = flowStart.path
@@ -500,11 +503,10 @@ class AuthenticationViewModel(
                 withContext(Dispatchers.Main.immediate) {
                     _state.update {
                         it.copy(
-                            loginState =
-                                AuthLoginState.DevicePrompt(
-                                    start = startUi,
-                                    remainingSeconds = start.expiresInSec,
-                                ),
+                            loginState = AuthLoginState.DevicePrompt(
+                                start = startUi,
+                                remainingSeconds = start.expiresInSec,
+                            ),
                             copied = false,
                         )
                     }
@@ -519,6 +521,8 @@ class AuthenticationViewModel(
                             text = start.userCode.filter { it.isLetterOrDigit() },
                         )
                         _state.update { it.copy(copied = true) }
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         logger.debug("Failed to copy to clipboard: ${e.message}")
                     }
@@ -562,13 +566,12 @@ class AuthenticationViewModel(
 
             pollingIntervalMs = (intervalSec * 1000).toLong() + 1000L
         }
-        pollingJob =
-            viewModelScope.launch {
-                while (isActive) {
-                    delay(pollingIntervalMs)
-                    doPoll(deviceCode)
-                }
+        pollingJob = viewModelScope.launch {
+            while (isActive) {
+                delay(pollingIntervalMs.milliseconds)
+                doPoll(deviceCode)
             }
+        }
     }
 
     private fun pollOnce(deviceCode: String) {
@@ -624,7 +627,8 @@ class AuthenticationViewModel(
                 is DevicePollResult.SlowDown -> {
 
                     val bumped = (pollingIntervalMs + 5000L).coerceAtMost(MAX_POLL_INTERVAL_MS)
-                    val clamped = bumped == MAX_POLL_INTERVAL_MS && pollingIntervalMs >= MAX_POLL_INTERVAL_MS
+                    val clamped =
+                        bumped == MAX_POLL_INTERVAL_MS && pollingIntervalMs >= MAX_POLL_INTERVAL_MS
                     pollingIntervalMs = bumped
                     logger.debug(
                         if (clamped) {
@@ -767,6 +771,8 @@ class AuthenticationViewModel(
                 val url = start.verificationUriComplete
                     ?: buildPrefilledUrl(start.verificationUri, start.userCode)
                 browserHelper.openUrl(url)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.debug("Failed to open browser: ${e.message}")
             }
@@ -795,6 +801,8 @@ class AuthenticationViewModel(
                         copied = true,
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.debug("Failed to copy to clipboard: ${e.message}")
                 _state.update {
