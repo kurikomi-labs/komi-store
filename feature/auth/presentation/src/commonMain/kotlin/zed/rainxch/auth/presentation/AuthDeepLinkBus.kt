@@ -6,18 +6,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-sealed interface AuthDeepLinkEvent {
-    data class Handoff(
-        val handoffId: String,
-        val state: String,
-    ) : AuthDeepLinkEvent
-
-    data class Error(
-        val reason: String,
-        val state: String,
-    ) : AuthDeepLinkEvent
-}
-
 object AuthDeepLinkBus {
     private val _events =
         MutableSharedFlow<AuthDeepLinkEvent>(

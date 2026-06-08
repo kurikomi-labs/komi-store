@@ -164,84 +164,84 @@ fun AuthenticationScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.TopCenter,
         ) {
-        Column(
-            modifier = Modifier
-                .constrainedContentWidth()
-                .fillMaxHeight()
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(Modifier.height(56.dp))
-
-            val iconScale by animateFloatAsState(
-                targetValue = when (state.loginState) {
-                    is AuthLoginState.LoggedIn -> 0.92f
-                    is AuthLoginState.Error -> 0.96f
-                    else -> 1f
-                },
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow,
-                ),
-                label = "icon_scale",
-            )
-
-            Image(
-                painter = painterResource(Res.drawable.app_icon),
-                contentDescription = null,
+            Column(
                 modifier = Modifier
-                    .size(96.dp)
-                    .graphicsLayer {
-                        scaleX = iconScale
-                        scaleY = iconScale
+                    .constrainedContentWidth()
+                    .fillMaxHeight()
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(Modifier.height(56.dp))
+
+                val iconScale by animateFloatAsState(
+                    targetValue = when (state.loginState) {
+                        is AuthLoginState.LoggedIn -> 0.92f
+                        is AuthLoginState.Error -> 0.96f
+                        else -> 1f
+                    },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow,
+                    ),
+                    label = "icon_scale",
+                )
+
+                Image(
+                    painter = painterResource(Res.drawable.app_icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(96.dp)
+                        .graphicsLayer {
+                            scaleX = iconScale
+                            scaleY = iconScale
+                        }
+                        .clip(RoundedCornerShape(24.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                AnimatedContent(
+                    targetState = state.loginState,
+                    transitionSpec = {
+                        val enter = fadeIn(tween(350)) + slideInVertically(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioLowBouncy,
+                                stiffness = Spring.StiffnessMediumLow,
+                            ),
+                            initialOffsetY = { it / 5 },
+                        )
+                        val exit = fadeOut(tween(200))
+                        enter togetherWith exit
+                    },
+                    contentKey = { it::class },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    label = "auth_state",
+                ) { authState ->
+                    when (authState) {
+                        is AuthLoginState.LoggedOut -> StateLoggedOut(onAction = onAction)
+                        is AuthLoginState.DevicePrompt -> StateDevicePrompt(
+                            state = state,
+                            authState = authState,
+                            onAction = onAction,
+                        )
+                        is AuthLoginState.Pending -> StatePending()
+                        is AuthLoginState.LoggedIn -> StateLoggedIn()
+                        is AuthLoginState.Error -> StateError(authState = authState, onAction = onAction)
                     }
-                    .clip(RoundedCornerShape(24.dp)),
-                contentScale = ContentScale.Crop,
-            )
-
-            Spacer(Modifier.height(24.dp))
-
-            AnimatedContent(
-                targetState = state.loginState,
-                transitionSpec = {
-                    val enter = fadeIn(tween(350)) + slideInVertically(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioLowBouncy,
-                            stiffness = Spring.StiffnessMediumLow,
-                        ),
-                        initialOffsetY = { it / 5 },
-                    )
-                    val exit = fadeOut(tween(200))
-                    enter togetherWith exit
-                },
-                contentKey = { it::class },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                label = "auth_state",
-            ) { authState ->
-                when (authState) {
-                    is AuthLoginState.LoggedOut -> StateLoggedOut(onAction = onAction)
-                    is AuthLoginState.DevicePrompt -> StateDevicePrompt(
-                        state = state,
-                        authState = authState,
-                        onAction = onAction,
-                    )
-                    is AuthLoginState.Pending -> StatePending()
-                    is AuthLoginState.LoggedIn -> StateLoggedIn()
-                    is AuthLoginState.Error -> StateError(authState = authState, onAction = onAction)
                 }
             }
-        }
 
-        if (state.isPatSheetVisible) {
-            PatSignInSheet(
-                input = state.patInput,
-                error = state.patError,
-                isSubmitting = state.isPatSubmitting,
-                onAction = onAction,
-            )
-        }
+            if (state.isPatSheetVisible) {
+                PatSignInSheet(
+                    input = state.patInput,
+                    error = state.patError,
+                    isSubmitting = state.isPatSubmitting,
+                    onAction = onAction,
+                )
+            }
         }
     }
 }
