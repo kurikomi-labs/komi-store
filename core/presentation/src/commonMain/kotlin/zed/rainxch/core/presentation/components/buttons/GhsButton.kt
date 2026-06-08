@@ -40,19 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 
-enum class GhsButtonVariant {
-    Primary,
-    Tonal,
-    Outline,
-    Text,
-    Destructive,
-}
-
-enum class GhsButtonSize {
-    Sm,
-    Md,
-    Lg,
-}
 
 @Composable
 fun GhsButton(

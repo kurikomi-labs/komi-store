@@ -1,7 +1,6 @@
 package zed.rainxch.core.presentation.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import zed.rainxch.core.presentation.theme.tokens.Tokens
 import zed.rainxch.core.presentation.theme.tokens.Tokens.Status
 import zed.rainxch.core.presentation.theme.tokens.Tokens.Status.IssueState
@@ -18,67 +17,6 @@ val LocalMotion = staticCompositionLocalOf { defaultMotion }
 
 val LocalSpacing = staticCompositionLocalOf { defaultSpacing }
 
-data class StatusColors(
-    val freshnessHot: Color,
-    val freshnessFresh: Color,
-    val freshnessWarm: Color,
-    val freshnessCool: Color,
-    val freshnessDormant: Color,
-    val waxIntact: Color,
-    val waxCracked: Color,
-    val waxOpen: Color,
-    val permLow: Color,
-    val permModerate: Color,
-    val permHigh: Color,
-    val trendRising: Color,
-    val trendFlat: Color,
-    val trendFalling: Color,
-    val starActive: Color,
-    val issueOpen: Color,
-    val issueClosed: Color,
-    val pullOpen: Color,
-    val pullMerged: Color,
-    val pullClosed: Color,
-    val severityCritical: Color,
-    val severityHigh: Color,
-    val severityMedium: Color,
-    val severityLow: Color,
-    val severityUnknown: Color,
-    val statusReady: Color,
-    val statusWarning: Color,
-    val statusError: Color,
-    val protectionSignature: Color,
-    val protectionPrivileged: Color,
-)
-
-data class ThresholdSet(
-    val freshness: List<Thresholds.FreshnessBucket>,
-    val maintenance: List<Thresholds.MaintenanceBucket>,
-)
-
-data class MotionTokens(
-    val tapHighlightMs: Int,
-    val paletteCrossfadeMs: Int,
-    val sheetSlideMs: Int,
-    val scrimFadeMs: Int,
-    val toastSlideMs: Int,
-    val toastFadeMs: Int,
-    val heartbeatScaleFrom: Float,
-    val heartbeatScaleTo: Float,
-    val heartbeatHaloFromScale: Float,
-    val heartbeatHaloToScale: Float,
-    val heartbeatHaloFromAlpha: Float,
-    val heartbeatHaloToAlpha: Float,
-)
-
-data class SpacingTokens(
-    val xs: Int,
-    val sm: Int,
-    val md: Int,
-    val lg: Int,
-    val xl: Int,
-    val xxl: Int,
-)
 
 internal val defaultStatusColors = StatusColors(
     freshnessHot = Status.Freshness.hot,

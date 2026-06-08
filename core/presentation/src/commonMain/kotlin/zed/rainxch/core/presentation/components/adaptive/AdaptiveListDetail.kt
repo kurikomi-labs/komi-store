@@ -23,12 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -41,30 +37,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-@Immutable
-data class AdaptiveDetailArgs(
-    val repositoryId: Long = -1L,
-    val owner: String? = null,
-    val repo: String? = null,
-    val isComingFromUpdate: Boolean = false,
-    val sourceHost: String? = null,
-)
-
-@Stable
-class AdaptiveListDetailState(
-    initial: AdaptiveDetailArgs? = null,
-) {
-    var currentArgs: AdaptiveDetailArgs? by mutableStateOf(initial)
-        private set
-
-    fun select(args: AdaptiveDetailArgs) {
-        currentArgs = args
-    }
-
-    fun clear() {
-        currentArgs = null
-    }
-}
 
 @Composable
 fun rememberAdaptiveListDetailState(): AdaptiveListDetailState =
