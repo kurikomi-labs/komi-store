@@ -371,6 +371,8 @@ class HomeViewModel(
                 if (result.isFailure) {
                     logger.warn("Initial sync had issues: ${result.exceptionOrNull()?.message}")
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Initial sync failed: ${e.message}")
             }

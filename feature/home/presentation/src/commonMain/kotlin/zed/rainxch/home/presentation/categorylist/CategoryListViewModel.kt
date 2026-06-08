@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -105,6 +106,7 @@ class CategoryListViewModel(
                     }
                 }
                 .onFailure { e ->
+                    if (e is CancellationException) throw e
                     _state.update {
                         it.copy(
                             isLoading = false,
