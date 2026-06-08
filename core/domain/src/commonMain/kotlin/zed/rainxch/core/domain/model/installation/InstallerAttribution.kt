@@ -18,25 +18,3 @@ sealed interface InstallerAttribution {
         is Custom -> packageName.trim().takeIf { it.isNotBlank() }
     }
 }
-
-@Serializable
-enum class PresetKey(val packageName: String) {
-    PLAY_STORE("com.android.vending"),
-    FDROID("org.fdroid.fdroid"),
-    OBTAINIUM("dev.imranr.obtainium.app"),
-    ;
-
-    companion object {
-        fun fromName(name: String?): PresetKey? = entries.find { it.name == name }
-    }
-}
-
-object InstallerAttributionDefaults {
-    val packageNamePattern = Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+\$")
-
-    fun isValidPackageName(name: String): Boolean {
-        val trimmed = name.trim()
-        if (trimmed.isEmpty()) return false
-        return packageNamePattern.matches(trimmed)
-    }
-}

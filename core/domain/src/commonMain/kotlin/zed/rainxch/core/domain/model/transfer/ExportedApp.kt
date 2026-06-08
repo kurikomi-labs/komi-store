@@ -18,11 +18,3 @@ data class ExportedApp(
     val pickedAssetIndex: Int? = null,
     val pickedAssetSiblingCount: Int? = null,
 )
-
-@Serializable
-data class ExportedAppList(
-
-    val version: Int = 4,
-    val exportedAt: Long = 0L,
-    val apps: List<ExportedApp> = emptyList(),
-)

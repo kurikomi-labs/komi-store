@@ -6,15 +6,3 @@ data class WhatsNewEntry(
     val sections: List<WhatsNewSection>,
     val showAsSheet: Boolean = true,
 )
-
-data class WhatsNewSection(
-    val type: WhatsNewSectionType,
-    val bullets: List<String>,
-)
-
-enum class WhatsNewSectionType {
-    NEW,
-    IMPROVED,
-    FIXED,
-    HEADS_UP,
-}

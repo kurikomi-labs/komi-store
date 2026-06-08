@@ -17,9 +17,3 @@ sealed interface RepositorySource {
             }
     }
 }
-
-data class RepositoryReference(
-    val source: RepositorySource,
-    val owner: String,
-    val repo: String,
-)

@@ -38,28 +38,3 @@ data class ApkInspection(
         INSTALLED,
     }
 }
-
-data class ApkPermission(
-
-    val name: String,
-
-    val displayName: String,
-
-    val description: String?,
-    val protectionLevel: ProtectionLevel,
-
-    val granted: Boolean?,
-)
-
-enum class ProtectionLevel {
-
-    NORMAL,
-
-    DANGEROUS,
-
-    SIGNATURE,
-
-    PRIVILEGED,
-
-    UNKNOWN,
-}
