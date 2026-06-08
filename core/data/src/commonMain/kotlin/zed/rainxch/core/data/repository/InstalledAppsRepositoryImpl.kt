@@ -385,6 +385,8 @@ class InstalledAppsRepositoryImpl(
             }
 
             return isUpdateAvailable
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Logger.e { "Failed to check updates for $packageName: ${e.message}" }
             installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
@@ -399,6 +401,8 @@ class InstalledAppsRepositoryImpl(
             if (app.updateCheckEnabled) {
                 try {
                     checkForUpdates(app.packageName)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     Logger.w { "Failed to check updates for ${app.packageName}: ${e.message}" }
                 }

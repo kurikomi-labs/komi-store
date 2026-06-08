@@ -1,5 +1,6 @@
 package zed.rainxch.core.data.cache
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,6 +51,8 @@ class CacheManager(
             if (expiresAt > currentTime) {
                 return try {
                     json.decodeFromString(serializer<T>(), jsonData)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (_: Exception) {
                     memoryCacheMutex.withLock {
                         if (memoryCache[key] == cached) memoryCache.remove(key)
@@ -71,6 +74,8 @@ class CacheManager(
 
         return try {
             json.decodeFromString(serializer<T>(), entry.jsonData)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             cacheDao.deleteIfMatches(key, entry.cachedAt)
             memoryCacheMutex.withLock {
@@ -84,6 +89,8 @@ class CacheManager(
         val entry = cacheDao.getAny(key) ?: return null
         return try {
             json.decodeFromString(serializer<T>(), entry.jsonData)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             null
         }

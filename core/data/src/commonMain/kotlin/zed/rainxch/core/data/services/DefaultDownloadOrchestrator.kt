@@ -370,6 +370,8 @@ class DefaultDownloadOrchestrator(
                 }
                 try {
                     pendingInstallNotifier.clearPending(packageName)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     Logger.w(e) { "Orchestrator: failed to clear notification on cancel" }
                 }
