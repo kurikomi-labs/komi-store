@@ -1,5 +1,6 @@
 package zed.rainxch.apps.presentation.components
 
+import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,7 +56,7 @@ import zed.rainxch.apps.presentation.AppsState
 import zed.rainxch.apps.presentation.model.DeviceAppUi
 import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.GithubAssetUi
-import zed.rainxch.core.domain.model.InstallerCategory
+import zed.rainxch.core.domain.model.installation.InstallerCategory
 import zed.rainxch.core.domain.system.RepoMatchSource
 import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -139,7 +140,7 @@ fun LinkAppBottomSheet(
 
 @Composable
 private fun PickAppStep(
-    deviceApps: List<DeviceAppUi>,
+    deviceApps: ImmutableList<DeviceAppUi>,
     searchQuery: String,
     onSearchChange: (String) -> Unit,
     onAppSelected: (DeviceAppUi) -> Unit,
@@ -152,6 +153,7 @@ private fun PickAppStep(
         Text(
             text = stringResource(Res.string.link_app_title),
             style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
         )
 
@@ -235,6 +237,7 @@ private fun DeviceAppItem(
             Text(
                 text = app.appName,
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -342,6 +345,7 @@ private fun SmartMatchStep(
             Text(
                 text = stringResource(Res.string.link_smart_search_title),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -355,6 +359,7 @@ private fun SmartMatchStep(
             Text(
                 text = selectedApp.appName,
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -503,6 +508,7 @@ private fun SuggestionRow(
             Text(
                 text = "${suggestion.owner}/${suggestion.repo}",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 softWrap = false,
@@ -643,6 +649,7 @@ private fun EnterUrlStep(
             Text(
                 text = stringResource(Res.string.link_app_title),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -661,6 +668,7 @@ private fun EnterUrlStep(
                     Text(
                         text = selectedApp.appName,
                         style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.SemiBold,
                     )
 
@@ -724,8 +732,8 @@ private fun EnterUrlStep(
 
 @Composable
 private fun PickAssetStep(
-    allAssets: List<GithubAssetUi>,
-    visibleAssets: List<GithubAssetUi>,
+    allAssets: ImmutableList<GithubAssetUi>,
+    visibleAssets: ImmutableList<GithubAssetUi>,
     selectedAsset: GithubAssetUi?,
     downloadProgress: Int?,
     validationStatus: String?,
@@ -759,6 +767,7 @@ private fun PickAssetStep(
             Text(
                 text = stringResource(Res.string.select_asset_title),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -813,6 +822,7 @@ private fun PickAssetStep(
                 Text(
                     text = stringResource(Res.string.fallback_older_releases_title),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium,
                 )
 
@@ -864,6 +874,7 @@ private fun PickAssetStep(
                         Text(
                             text = asset.name,
                             style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
@@ -951,10 +962,3 @@ private fun PickAssetStep(
     }
 }
 
-private fun formatFileSize(bytes: Long): String =
-    when {
-        bytes >= 1_073_741_824 -> "%.1f GB".format(bytes / 1_073_741_824.0)
-        bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-        bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
-        else -> "$bytes B"
-    }

@@ -1,4 +1,4 @@
-package zed.rainxch.core.domain.utils
+package zed.rainxch.core.domain.helpers
 
 interface BrowserHelper {
     fun openUrl(

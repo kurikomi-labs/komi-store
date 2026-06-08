@@ -6,8 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -1155,6 +1153,7 @@ fun AppItemCard(
                 Text(
                     text = app.repoDescription,
                     style = MaterialTheme.typography.bodyMediumEmphasized,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -1300,12 +1299,14 @@ fun AppItemCard(
                             Text(
                                 text = stringResource(Res.string.downloading),
                                 style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
 
                             if (appItem.downloadProgress != null) {
                                 Text(
                                     text = "${appItem.downloadProgress}%",
                                     style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -1332,6 +1333,7 @@ fun AppItemCard(
                         Text(
                             text = stringResource(Res.string.installing),
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -1349,6 +1351,7 @@ fun AppItemCard(
                         Text(
                             text = stringResource(Res.string.checking),
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }

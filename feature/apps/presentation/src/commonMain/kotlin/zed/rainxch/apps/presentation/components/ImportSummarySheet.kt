@@ -46,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.domain.model.ImportFormat
 import zed.rainxch.apps.domain.model.ImportResult
@@ -98,6 +99,7 @@ fun ImportSummarySheet(
             Text(
                 text = stringResource(Res.string.import_summary_title, formatLabel),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
             )
 
@@ -113,6 +115,8 @@ fun ImportSummarySheet(
                 .joinToString(", ")
             Text(
                 text = "",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .height(0.dp)
                     .semantics {
@@ -124,7 +128,6 @@ fun ImportSummarySheet(
             SummaryBucket(
                 icon = Icons.Outlined.CheckCircle,
                 tint = MaterialTheme.colorScheme.primary,
-                count = summary.imported,
                 title = stringResource(Res.string.import_summary_imported, summary.imported),
                 items = summary.importedItems,
             )
@@ -133,7 +136,6 @@ fun ImportSummarySheet(
                 SummaryBucket(
                     icon = Icons.Outlined.RemoveCircleOutline,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    count = summary.skipped,
                     title = stringResource(Res.string.import_summary_already_tracked, summary.skipped),
                     items = summary.skippedItems,
                 )
@@ -143,7 +145,6 @@ fun ImportSummarySheet(
                 SummaryBucket(
                     icon = Icons.Outlined.WarningAmber,
                     tint = MaterialTheme.colorScheme.tertiary,
-                    count = summary.nonGitHubSkipped,
                     title = stringResource(Res.string.import_summary_non_github, summary.nonGitHubSkipped),
                     caption = stringResource(Res.string.import_summary_non_github_caption),
                     items = summary.nonGitHubItems,
@@ -154,7 +155,6 @@ fun ImportSummarySheet(
                 SummaryBucket(
                     icon = Icons.Outlined.ErrorOutline,
                     tint = MaterialTheme.colorScheme.error,
-                    count = summary.failed,
                     title = stringResource(Res.string.import_summary_failed, summary.failed),
                     items = summary.failedItems,
                 )
@@ -202,6 +202,7 @@ private fun UnknownFormatSheet(
                 Text(
                     text = stringResource(Res.string.import_summary_unknown_format),
                     style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -242,10 +243,9 @@ private fun UnknownFormatSheet(
 private fun SummaryBucket(
     icon: ImageVector,
     tint: Color,
-    count: Int,
     title: String,
     caption: String? = null,
-    items: List<String>,
+    items: ImmutableList<String>,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -262,6 +262,7 @@ private fun SummaryBucket(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium,
                 )
 

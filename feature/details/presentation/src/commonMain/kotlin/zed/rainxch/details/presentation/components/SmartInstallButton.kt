@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation.components
 
+import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -50,8 +51,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.GithubAsset
-import zed.rainxch.core.domain.util.VersionMath
+import zed.rainxch.core.domain.model.account.github.GithubAsset
+import zed.rainxch.core.domain.utils.VersionMath
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.model.AttestationStatus
@@ -614,10 +615,3 @@ private data class AttestationVisual(
     val label: String,
 )
 
-private fun formatFileSize(bytes: Long): String =
-    when {
-        bytes >= 1_073_741_824 -> "%.1f GB".format(bytes / 1_073_741_824.0)
-        bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-        bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
-        else -> "$bytes B"
-    }

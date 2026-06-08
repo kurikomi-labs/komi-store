@@ -29,6 +29,7 @@ import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
 import zed.rainxch.apps.presentation.import.model.SuggestionSource
+import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_card_owner_byline
 import zed.rainxch.githubstore.core.presentation.res.external_import_match_confidence_a11y
@@ -113,7 +114,7 @@ fun RepoCandidateRow(
                     Spacer(Modifier.width(4.dp))
 
                     Text(
-                        text = formatStars(suggestion.stars),
+                        text = formatCompactCount(suggestion.stars),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -142,13 +143,6 @@ fun RepoCandidateRow(
         }
     }
 }
-
-private fun formatStars(stars: Int): String =
-    when {
-        stars >= 1_000_000 -> "${(stars / 100_000) / 10.0}M"
-        stars >= 1_000 -> "${(stars / 100) / 10.0}k"
-        else -> stars.toString()
-    }
 
 @Composable
 private fun SuggestionHostChip(sourceHost: String?) {

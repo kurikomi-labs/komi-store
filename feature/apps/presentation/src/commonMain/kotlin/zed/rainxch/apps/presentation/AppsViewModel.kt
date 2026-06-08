@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,9 +33,9 @@ import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
-import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.model.InstallerType
-import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.core.domain.model.installation.InstalledApp
+import zed.rainxch.core.domain.model.installation.InstallerType
+import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -48,10 +49,10 @@ import zed.rainxch.core.domain.system.SystemInstallSerializer
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
-import zed.rainxch.core.domain.util.AssetFilter
-import zed.rainxch.core.domain.util.AssetVariant
-import zed.rainxch.core.domain.utils.BrowserHelper
-import zed.rainxch.core.domain.utils.ShareManager
+import zed.rainxch.core.domain.utils.AssetFilter
+import zed.rainxch.core.domain.utils.AssetVariant
+import zed.rainxch.core.domain.helpers.BrowserHelper
+import zed.rainxch.core.domain.helpers.ShareManager
 import zed.rainxch.githubstore.core.presentation.res.*
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
@@ -227,6 +228,8 @@ class AppsViewModel(
 
                     filterApps()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to load apps: ${e.message}")
                 _state.update {
@@ -729,6 +732,8 @@ class AppsViewModel(
             try {
                 installedAppsRepository.setIncludePreReleases(packageName, enabled)
                 installedAppsRepository.checkForUpdates(packageName)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to toggle pre-releases for $packageName: ${e.message}")
             }
@@ -810,8 +815,7 @@ class AppsViewModel(
 
     private fun schedulePreviewRefresh() {
         advancedPreviewJob?.cancel()
-        advancedPreviewJob =
-            viewModelScope.launch {
+        advancedPreviewJob = viewModelScope.launch {
                 delay(350.milliseconds)
                 refreshAdvancedPreview()
             }
@@ -837,8 +841,7 @@ class AppsViewModel(
         }
 
         advancedPreviewJob?.cancel()
-        advancedPreviewJob =
-            viewModelScope.launch {
+        advancedPreviewJob = viewModelScope.launch {
                 _state.update { it.copy(advancedPreviewLoading = true) }
                 try {
                     val preview =
@@ -1035,6 +1038,8 @@ class AppsViewModel(
             try {
                 installer.uninstall(app.packageName)
                 logger.debug("Requested uninstall for ${app.packageName}")
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to request uninstall for ${app.packageName}: ${e.message}")
                 _events.send(
@@ -1064,6 +1069,8 @@ class AppsViewModel(
                         }
                     },
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to open app: ${e.message}")
                 _events.send(
@@ -1096,6 +1103,8 @@ class AppsViewModel(
                                 repo = app.repoName,
                                 includePreReleases = app.includePreReleases,
                             )
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             logger.error("Failed to fetch latest release: ${e.message}")
                             throw IllegalStateException("Failed to fetch latest release: ${e.message}")
@@ -1152,6 +1161,8 @@ class AppsViewModel(
                                 val deleted = file.delete()
                                 logger.debug("Deleted mismatched existing file ($normalizedExisting != $normalizedLatest): $deleted")
                             }
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             logger.debug("Failed to extract APK info for existing file: ${e.message}")
                             val deleted = file.delete()
@@ -1236,6 +1247,8 @@ class AppsViewModel(
                     try {
                         systemInstallSerializer.awaitFreeAndMarkPending(app.packageName)
                         installer.install(filePath, ext)
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         systemInstallSerializer.markCompleted(app.packageName)
                         installedAppsRepository.updatePendingStatus(app.packageName, false)
@@ -1275,6 +1288,8 @@ class AppsViewModel(
                     _events.send(
                         AppsEvent.ShowError(getString(Res.string.rate_limit_exceeded)),
                     )
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     logger.error("Update failed for ${app.packageName}: ${e.message}")
                     cleanupUpdate(app.packageName, app.latestAssetName)
@@ -1310,8 +1325,7 @@ class AppsViewModel(
             return
         }
 
-        updateAllJob =
-            viewModelScope.launch {
+        updateAllJob = viewModelScope.launch {
                 try {
                     _state.update { it.copy(isUpdatingAll = true) }
 
@@ -1350,7 +1364,7 @@ class AppsViewModel(
                         updateSingleApp(appItem.installedApp)
                         activeUpdates[appItem.installedApp.packageName]?.join()
 
-                        delay(1000)
+                        delay(1000.milliseconds)
                     }
 
                     logger.debug("Update all completed successfully")
@@ -1592,6 +1606,8 @@ class AppsViewModel(
                 val deleted = downloader.cancelDownload(assetName)
                 logger.debug("Cleanup for $packageName - file deleted: $deleted")
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Cleanup failed for $packageName: ${e.message}")
         }
@@ -1683,6 +1699,8 @@ class AppsViewModel(
                         .toImmutableList()
 
                 _state.update { it.copy(deviceApps = deviceApps) }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to load device apps: ${e.message}")
                 _events.send(AppsEvent.ShowError(getString(Res.string.failed_to_load_apps)))
@@ -1772,7 +1790,7 @@ class AppsViewModel(
             val customHosts = runCatching {
                 tweaksRepository.getCustomForgeHosts().first()
             }.getOrElse { emptySet() }
-            val parsedRef = zed.rainxch.core.domain.util.RepositoryUrlParser.parse(url, customHosts)
+            val parsedRef = zed.rainxch.core.domain.utils.RepositoryUrlParser.parse(url, customHosts)
             if (parsedRef == null) {
                 _state.update { it.copy(repoValidationError = getString(Res.string.invalid_github_url)) }
                 return@launch
@@ -1781,8 +1799,8 @@ class AppsViewModel(
             val owner = parsedRef.owner
             val repo = parsedRef.repo
             val sourceHost: String? = when (val src = parsedRef.source) {
-                zed.rainxch.core.domain.model.RepositorySource.GitHub -> null
-                is zed.rainxch.core.domain.model.RepositorySource.Forgejo -> src.host
+                zed.rainxch.core.domain.model.repository.RepositorySource.GitHub -> null
+                is zed.rainxch.core.domain.model.repository.RepositorySource.Forgejo -> src.host
             }
             _state.update {
                 it.copy(
@@ -1819,6 +1837,8 @@ class AppsViewModel(
                     try {
                         appsRepository.getLatestRelease(owner, repo, sourceHost = sourceHost)
                     } catch (e: RateLimitException) {
+                        throw e
+                    } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
                         logger.debug("Could not fetch release for validation: ${e.message}")
@@ -1901,6 +1921,8 @@ class AppsViewModel(
                         repoValidationError = getString(Res.string.rate_limit_try_again),
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to link app: ${e.message}")
                 _state.update {
@@ -1962,6 +1984,8 @@ class AppsViewModel(
                         ),
                     ),
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to link app: ${e.message}")
                 _state.update {
@@ -2006,6 +2030,8 @@ class AppsViewModel(
                 val json = appsRepository.exportApps()
                 val fileName = "github-store-apps-${System.currentTimeMillis()}.json"
                 shareManager.shareFile(fileName, json)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Export failed: ${e.message}")
                 _events.send(
@@ -2037,6 +2063,8 @@ class AppsViewModel(
         try {
             val result = appsRepository.importApps(json)
             _state.update { it.copy(importSummary = result) }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Import failed: ${e.message}")
             _events.send(AppsEvent.ShowError(getString(Res.string.import_failed, e.message ?: "")))
@@ -2052,6 +2080,8 @@ class AppsViewModel(
                 val json = appsRepository.exportObtainium()
                 val fileName = "github-store-obtainium-${System.currentTimeMillis()}.json"
                 shareManager.shareFile(fileName, json)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Obtainium export failed: ${e.message}")
                 _events.send(
@@ -2072,10 +2102,12 @@ class AppsViewModel(
         val packageNames = activeUpdates.keys.toList()
         activeUpdates.values.forEach { it.cancel() }
 
-        viewModelScope.launch(kotlinx.coroutines.NonCancellable) {
+        viewModelScope.launch(NonCancellable) {
             for (packageName in packageNames) {
                 try {
                     downloadOrchestrator.downgradeToDeferred(packageName)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (t: Throwable) {
                     logger.error("Failed to downgrade orchestrator for $packageName: ${t.message}")
                 }

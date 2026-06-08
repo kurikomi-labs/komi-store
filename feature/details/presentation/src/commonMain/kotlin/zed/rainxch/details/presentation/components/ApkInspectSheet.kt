@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation.components
 
+import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -58,9 +59,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.draw.clip
-import zed.rainxch.core.domain.model.ApkInspection
-import zed.rainxch.core.domain.model.ApkPermission
-import zed.rainxch.core.domain.model.ProtectionLevel
+import zed.rainxch.core.domain.model.apk.ApkInspection
+import zed.rainxch.core.domain.model.apk.ApkPermission
+import zed.rainxch.core.domain.model.apk.ProtectionLevel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_compatibility
@@ -512,7 +513,7 @@ private fun FileSection(inspection: ApkInspection) {
         inspection.fileSizeBytes?.let { size ->
             InspectRow(
                 label = stringResource(Res.string.apk_inspect_size),
-                value = formatBytes(size),
+                value = formatFileSize(size),
             )
         }
         inspection.filePath?.let { path ->
@@ -661,10 +662,3 @@ private fun Modifier.copyableOnLongPress(value: String): Modifier {
     )
 }
 
-private fun formatBytes(bytes: Long): String =
-    when {
-        bytes >= 1_073_741_824 -> "%.1f GB".format(bytes / 1_073_741_824.0)
-        bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-        bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
-        else -> "$bytes B"
-    }

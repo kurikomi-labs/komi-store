@@ -1,4 +1,6 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.core.domain.util
+
+import zed.rainxch.core.domain.model.SystemArchitecture
 
 object AssetArchitectureMatcher {
     private val universalRegex =

@@ -1,6 +1,6 @@
 package zed.rainxch.core.domain.util
 
-import zed.rainxch.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.account.github.GithubAsset
 
 object AssetVariant {
 

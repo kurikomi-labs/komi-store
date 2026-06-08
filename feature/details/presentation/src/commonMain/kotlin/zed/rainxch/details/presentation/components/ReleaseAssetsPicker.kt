@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation.components
 
+import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,7 +36,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -46,8 +46,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,9 +53,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.model.GithubAsset
-import zed.rainxch.core.domain.model.GithubUser
-import zed.rainxch.core.domain.util.AssetVariant
+import zed.rainxch.core.domain.model.account.github.GithubAsset
+import zed.rainxch.core.domain.model.account.github.GithubUser
+import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
@@ -267,7 +265,7 @@ private fun ReleaseAssetsItemsPicker(
             val groups = remember(crossPlatformAssets) {
                 crossPlatformAssets
                     .groupBy {
-                        zed.rainxch.core.domain.util.assetPlatformOf(it.name)
+                        zed.rainxch.core.domain.utils.assetPlatformOf(it.name)
                     }
                     .filterKeys { it != null }
                     .mapKeys { it.key!! }
@@ -285,10 +283,10 @@ private fun ReleaseAssetsItemsPicker(
 
                     val sectionOrder =
                         listOf(
-                            zed.rainxch.core.domain.model.DiscoveryPlatform.Android to Res.string.platform_section_android,
-                            zed.rainxch.core.domain.model.DiscoveryPlatform.Windows to Res.string.platform_section_windows,
-                            zed.rainxch.core.domain.model.DiscoveryPlatform.Macos to Res.string.platform_section_macos,
-                            zed.rainxch.core.domain.model.DiscoveryPlatform.Linux to Res.string.platform_section_linux,
+                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Android to Res.string.platform_section_android,
+                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Windows to Res.string.platform_section_windows,
+                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Macos to Res.string.platform_section_macos,
+                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Linux to Res.string.platform_section_linux,
                         ).sortedByDescending { (platform, _) ->
                             groups[platform]?.any { it.id in installableIds } == true
                         }
@@ -458,13 +456,6 @@ private fun ReleaseAssetItem(
     }
 }
 
-private fun formatFileSize(bytes: Long): String =
-    when {
-        bytes >= 1_073_741_824 -> "%.1f GB".format(bytes / 1_073_741_824.0)
-        bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-        bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
-        else -> "$bytes B"
-    }
 
 @Preview
 @Composable

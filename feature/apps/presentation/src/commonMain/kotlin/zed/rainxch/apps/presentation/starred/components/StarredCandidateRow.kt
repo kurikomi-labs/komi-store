@@ -34,6 +34,7 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.starred.StarredCandidateUi
 import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.starred_picker_already_tracked
 import zed.rainxch.githubstore.core.presentation.res.starred_picker_apk_badge
@@ -110,7 +111,7 @@ fun StarredCandidateRow(
                         Spacer(Modifier.width(2.dp))
 
                         Text(
-                            text = formatStars(candidate.stargazersCount),
+                            text = formatCompactCount(candidate.stargazersCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -162,10 +163,4 @@ private fun Badge(icon: androidx.compose.ui.graphics.vector.ImageVector, label: 
 
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = color)
     }
-}
-
-private fun formatStars(count: Int): String = when {
-    count >= 1_000_000 -> "${count / 100_000 / 10.0}M"
-    count >= 1_000 -> "${count / 100 / 10.0}k"
-    else -> count.toString()
 }

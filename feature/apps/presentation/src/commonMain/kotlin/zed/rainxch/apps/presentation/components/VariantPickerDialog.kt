@@ -1,5 +1,6 @@
 package zed.rainxch.apps.presentation.components
 
+import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.AppsAction
 import zed.rainxch.apps.presentation.AppsState
-import zed.rainxch.core.domain.util.AssetVariant
+import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -245,7 +246,7 @@ private fun VariantOptionList(
             VariantRow(
                 isSelected = isCurrent,
                 title = variant,
-                subtitle = asset.name + "  ·  " + formatBytes(asset.size),
+                subtitle = asset.name + "  ·  " + formatFileSize(asset.size),
                 onClick = { onPick(variant) },
             )
         }
@@ -300,6 +301,7 @@ private fun VariantRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -325,10 +327,3 @@ private fun VariantRow(
     }
 }
 
-private fun formatBytes(bytes: Long): String =
-    when {
-        bytes >= 1_073_741_824 -> "%.1f GB".format(bytes / 1_073_741_824.0)
-        bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-        bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
-        else -> "$bytes B"
-    }

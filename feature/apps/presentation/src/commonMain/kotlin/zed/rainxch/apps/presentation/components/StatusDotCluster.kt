@@ -57,16 +57,16 @@ fun StatusDotCluster(
     flags: CompactStatusFlags,
     modifier: Modifier = Modifier,
 ) {
-    val cs = MaterialTheme.colorScheme
+    val colorScheme = MaterialTheme.colorScheme
 
     val items = buildList {
-        if (flags.readyToInstall) add(StatusItem(DotShape.Ring, cs.primary))
-        if (flags.pendingInstall) add(StatusItem(DotShape.Chevron, cs.tertiary))
-        if (flags.variantStale) add(StatusItem(DotShape.Triangle, cs.error))
-        if (flags.variantPinned) add(StatusItem(DotShape.Diamond, cs.primary))
-        if (flags.filterActive) add(StatusItem(DotShape.Square, cs.primary))
-        if (flags.preReleaseOn) add(StatusItem(DotShape.Circle, cs.tertiary))
-        if (flags.updatesIgnored) add(StatusItem(DotShape.Bar, cs.outline))
+        if (flags.readyToInstall) add(StatusItem(DotShape.Ring, colorScheme.primary))
+        if (flags.pendingInstall) add(StatusItem(DotShape.Chevron, colorScheme.tertiary))
+        if (flags.variantStale) add(StatusItem(DotShape.Triangle, colorScheme.error))
+        if (flags.variantPinned) add(StatusItem(DotShape.Diamond, colorScheme.primary))
+        if (flags.filterActive) add(StatusItem(DotShape.Square, colorScheme.primary))
+        if (flags.preReleaseOn) add(StatusItem(DotShape.Circle, colorScheme.tertiary))
+        if (flags.updatesIgnored) add(StatusItem(DotShape.Bar, colorScheme.outline))
     }
 
     if (items.isEmpty()) return
