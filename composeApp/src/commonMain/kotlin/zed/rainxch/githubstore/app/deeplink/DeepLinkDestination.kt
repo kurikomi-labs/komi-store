@@ -6,6 +6,8 @@ sealed interface DeepLinkDestination {
         val repo: String,
     ) : DeepLinkDestination
 
+    data object Home : DeepLinkDestination
+
     data object Apps : DeepLinkDestination
 
     data class AuthHandoff(
@@ -19,6 +21,8 @@ sealed interface DeepLinkDestination {
     ) : DeepLinkDestination
 
     data object Tweaks : DeepLinkDestination
+
+    data object Feedback : DeepLinkDestination
 
     data object About : DeepLinkDestination
 

@@ -32,9 +32,14 @@ import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.navigation.getCurrentScreen
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
+import zed.rainxch.tweaks.presentation.TweaksDeepLinkBus
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun App(deepLinkUri: String? = null) {
+fun App(
+    deepLinkUri: String? = null,
+    onDeepLinkConsumed: () -> Unit = {},
+) {
     setSingletonImageLoaderFactory { context ->
         ImageLoader
             .Builder(context)
@@ -68,6 +73,15 @@ fun App(deepLinkUri: String? = null) {
                             repo = destination.repo,
                         ),
                     )
+                }
+
+                DeepLinkDestination.Home -> {
+                    if (currentScreen !is GithubStoreGraph.HomeScreen) {
+                        navController.navigate(GithubStoreGraph.HomeScreen) {
+                            popUpTo(GithubStoreGraph.HomeScreen) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
                 }
 
                 DeepLinkDestination.Apps -> {
@@ -106,6 +120,13 @@ fun App(deepLinkUri: String? = null) {
                     navController.navigate(GithubStoreGraph.TweaksScreen) {
                         launchSingleTop = true
                     }
+                }
+
+                DeepLinkDestination.Feedback -> {
+                    navController.navigate(GithubStoreGraph.TweaksScreen) {
+                        launchSingleTop = true
+                    }
+                    TweaksDeepLinkBus.requestOpenFeedback()
                 }
 
                 DeepLinkDestination.About -> {
@@ -155,6 +176,7 @@ fun App(deepLinkUri: String? = null) {
                 DeepLinkDestination.None -> {
                 }
             }
+            onDeepLinkConsumed()
         }
     }
 
@@ -231,7 +253,7 @@ fun App(deepLinkUri: String? = null) {
         var debouncedReady by remember { mutableStateOf(false) }
         LaunchedEffect(canShowWhatsNew) {
             if (canShowWhatsNew) {
-                delay(600)
+                delay(600.milliseconds)
                 debouncedReady = true
             } else {
                 debouncedReady = false

@@ -14,7 +14,8 @@
         "Android home-screen shortcuts — long-press the app icon to jump straight to Search, your Library, Favourites, or Recently Viewed, and drag any of them out as a standalone launcher icon.",
         "Import any GitHub user's starred repositories straight into your favourites — no sign-in needed. Open Favourites, tap the new person-plus icon, type a username, and add the repos you want.",
         "You can now select and copy a repository's name, description, and stats on its detail page — long-press the text to copy it and look it up elsewhere.",
-        "Windows: a portable version is now available — unzip it and run GitHub-Store.exe directly, with no installation needed."
+        "Windows: a portable version is now available — unzip it and run GitHub-Store.exe directly, with no installation needed.",
+        "Desktop: a richer top menu bar — new File and Go menus let you jump to Home, Search, Library, Favourites, or Recently Viewed, open settings, or quit, straight from the menu."
       ]
     },
     {

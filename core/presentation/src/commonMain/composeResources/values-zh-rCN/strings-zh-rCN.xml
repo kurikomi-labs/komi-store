@@ -1092,6 +1092,9 @@
     <string name="menubar_help_about">关于 GitHub Store</string>
     <string name="menubar_help_feedback">发送反馈…</string>
     <string name="menubar_help_licenses">开源许可证</string>
+    <string name="menubar_file_menu">文件</string>
+    <string name="menubar_go_menu">前往</string>
+    <string name="menubar_file_quit">退出</string>
     <string name="menubar_help_menu">帮助</string>
     <string name="menubar_help_privacy">隐私政策</string>
     <string name="profile_tweaks_description">应用设置、主题、网络、翻译、高级选项。</string>

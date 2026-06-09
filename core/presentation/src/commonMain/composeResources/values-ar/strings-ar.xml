@@ -1148,6 +1148,9 @@
     <string name="menubar_help_about">حول GitHub Store</string>
     <string name="menubar_help_feedback">إرسال ملاحظات…</string>
     <string name="menubar_help_licenses">تراخيص المصادر المفتوحة</string>
+    <string name="menubar_file_menu">ملف</string>
+    <string name="menubar_go_menu">انتقال</string>
+    <string name="menubar_file_quit">إنهاء</string>
     <string name="menubar_help_menu">مساعدة</string>
     <string name="menubar_help_privacy">سياسة الخصوصية</string>
     <string name="profile_tweaks_description">إعدادات التطبيق، السمة، الشبكة، الترجمة، الخيارات المتقدمة.</string>

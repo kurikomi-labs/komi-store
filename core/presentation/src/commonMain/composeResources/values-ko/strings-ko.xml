@@ -1119,6 +1119,9 @@
     <string name="menubar_help_about">GitHub Store 정보</string>
     <string name="menubar_help_feedback">피드백 보내기…</string>
     <string name="menubar_help_licenses">오픈 소스 라이선스</string>
+    <string name="menubar_file_menu">파일</string>
+    <string name="menubar_go_menu">이동</string>
+    <string name="menubar_file_quit">종료</string>
     <string name="menubar_help_menu">도움말</string>
     <string name="menubar_help_privacy">개인정보처리방침</string>
     <string name="profile_tweaks_description">앱 설정, 테마, 네트워크, 번역, 고급 옵션.</string>

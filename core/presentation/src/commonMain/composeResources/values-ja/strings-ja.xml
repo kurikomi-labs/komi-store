@@ -1089,6 +1089,9 @@
     <string name="menubar_help_about">GitHub Store について</string>
     <string name="menubar_help_feedback">フィードバックを送る…</string>
     <string name="menubar_help_licenses">オープンソースライセンス</string>
+    <string name="menubar_file_menu">ファイル</string>
+    <string name="menubar_go_menu">移動</string>
+    <string name="menubar_file_quit">終了</string>
     <string name="menubar_help_menu">ヘルプ</string>
     <string name="menubar_help_privacy">プライバシーポリシー</string>
     <string name="profile_tweaks_description">アプリ設定、テーマ、ネットワーク、翻訳、詳細オプション。</string>

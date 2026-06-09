@@ -1124,6 +1124,9 @@
     <string name="menubar_help_about">GitHub Store के बारे में</string>
     <string name="menubar_help_feedback">फ़ीडबैक भेजें…</string>
     <string name="menubar_help_licenses">ओपन सोर्स लाइसेंस</string>
+    <string name="menubar_file_menu">फ़ाइल</string>
+    <string name="menubar_go_menu">जाएँ</string>
+    <string name="menubar_file_quit">बाहर निकलें</string>
     <string name="menubar_help_menu">सहायता</string>
     <string name="menubar_help_privacy">गोपनीयता नीति</string>
     <string name="profile_tweaks_description">ऐप सेटिंग्स, थीम, नेटवर्क, अनुवाद, उन्नत विकल्प।</string>

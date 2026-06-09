@@ -1126,6 +1126,9 @@
     <string name="menubar_help_about">GitHub Store সম্পর্কে</string>
     <string name="menubar_help_feedback">ফিডব্যাক পাঠান…</string>
     <string name="menubar_help_licenses">ওপেন সোর্স লাইসেন্স</string>
+    <string name="menubar_file_menu">ফাইল</string>
+    <string name="menubar_go_menu">যান</string>
+    <string name="menubar_file_quit">প্রস্থান</string>
     <string name="menubar_help_menu">সহায়তা</string>
     <string name="menubar_help_privacy">গোপনীয়তা নীতি</string>
     <string name="profile_tweaks_description">অ্যাপ সেটিংস, থিম, নেটওয়ার্ক, অনুবাদ, উন্নত বিকল্প।</string>

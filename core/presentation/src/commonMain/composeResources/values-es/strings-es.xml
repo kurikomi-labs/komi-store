@@ -1097,6 +1097,9 @@
     <string name="menubar_help_about">Acerca de GitHub Store</string>
     <string name="menubar_help_feedback">Enviar comentarios…</string>
     <string name="menubar_help_licenses">Licencias de código abierto</string>
+    <string name="menubar_file_menu">Archivo</string>
+    <string name="menubar_go_menu">Ir</string>
+    <string name="menubar_file_quit">Salir</string>
     <string name="menubar_help_menu">Ayuda</string>
     <string name="menubar_help_privacy">Política de privacidad</string>
     <string name="profile_tweaks_description">Ajustes de la app, tema, red, traducción, opciones avanzadas.</string>

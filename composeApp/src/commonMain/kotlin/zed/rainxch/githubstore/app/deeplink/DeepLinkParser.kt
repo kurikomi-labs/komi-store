@@ -45,6 +45,10 @@ object DeepLinkParser {
 
     fun parse(uri: String): DeepLinkDestination {
         return when {
+            uri == "githubstore://home" || uri == "githubstore://home/" -> {
+                DeepLinkDestination.Home
+            }
+
             uri == "githubstore://apps" || uri == "githubstore://apps/" || uri.startsWith("githubstore://apps?") -> {
                 DeepLinkDestination.Apps
             }
@@ -76,6 +80,10 @@ object DeepLinkParser {
                     }
                 }
                 DeepLinkDestination.None
+            }
+
+            uri == "githubstore://tweaks/feedback" || uri == "githubstore://feedback" -> {
+                DeepLinkDestination.Feedback
             }
 
             uri == "githubstore://tweaks" || uri == "githubstore://tweaks/" -> {

@@ -36,11 +36,20 @@ import zed.rainxch.githubstore.app.di.initKoin
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.app_name
+import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
+import zed.rainxch.githubstore.core.presentation.res.bottom_nav_home_title
+import zed.rainxch.githubstore.core.presentation.res.bottom_nav_search_title
+import zed.rainxch.githubstore.core.presentation.res.favourites
+import zed.rainxch.githubstore.core.presentation.res.menubar_file_menu
+import zed.rainxch.githubstore.core.presentation.res.menubar_file_quit
+import zed.rainxch.githubstore.core.presentation.res.menubar_go_menu
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_about
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_feedback
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_licenses
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_menu
 import zed.rainxch.githubstore.core.presentation.res.menubar_help_privacy
+import zed.rainxch.githubstore.core.presentation.res.recently_viewed
+import zed.rainxch.githubstore.core.presentation.res.tweaks_title
 import zed.rainxch.githubstore.desktop.WindowStateStore
 import zed.rainxch.githubstore.desktop.applyMacosWindowAppearance
 import zed.rainxch.githubstore.desktop.applyWindowsImmersiveDarkMode
@@ -49,7 +58,7 @@ import java.awt.Desktop
 import java.net.URI
 import kotlin.system.exitProcess
 
-private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy"
+private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
 
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
@@ -164,6 +173,42 @@ fun main(args: Array<String>) {
                 applyMacosWindowAppearance(window, isOsDark)
             }
             MenuBar {
+                Menu(text = stringResource(Res.string.menubar_file_menu)) {
+                    Item(
+                        text = stringResource(Res.string.tweaks_title),
+                        onClick = { deepLinkUri = "githubstore://tweaks" },
+                    )
+                    Separator()
+                    Item(
+                        text = stringResource(Res.string.menubar_file_quit),
+                        onClick = {
+                            WindowStateStore.save(windowState)
+                            exitApplication()
+                        },
+                    )
+                }
+                Menu(text = stringResource(Res.string.menubar_go_menu)) {
+                    Item(
+                        text = stringResource(Res.string.bottom_nav_home_title),
+                        onClick = { deepLinkUri = "githubstore://home" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.bottom_nav_search_title),
+                        onClick = { deepLinkUri = "githubstore://search" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.bottom_nav_apps_title),
+                        onClick = { deepLinkUri = "githubstore://apps" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.favourites),
+                        onClick = { deepLinkUri = "githubstore://favourites" },
+                    )
+                    Item(
+                        text = stringResource(Res.string.recently_viewed),
+                        onClick = { deepLinkUri = "githubstore://recent" },
+                    )
+                }
                 Menu(text = stringResource(Res.string.menubar_help_menu)) {
                     Item(
                         text = stringResource(Res.string.menubar_help_about),
@@ -171,7 +216,7 @@ fun main(args: Array<String>) {
                     )
                     Item(
                         text = stringResource(Res.string.menubar_help_feedback),
-                        onClick = { deepLinkUri = "githubstore://tweaks" },
+                        onClick = { deepLinkUri = "githubstore://tweaks/feedback" },
                     )
                     Item(
                         text = stringResource(Res.string.menubar_help_licenses),
@@ -191,7 +236,10 @@ fun main(args: Array<String>) {
                     )
                 }
             }
-            App(deepLinkUri = deepLinkUri)
+            App(
+                deepLinkUri = deepLinkUri,
+                onDeepLinkConsumed = { deepLinkUri = null },
+            )
         }
     }
 }
