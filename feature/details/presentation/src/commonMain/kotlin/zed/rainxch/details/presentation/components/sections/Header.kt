@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Security
@@ -46,26 +47,28 @@ fun LazyListScope.header(
 ) {
     item {
         if (state.repository != null) {
-            AppHeader(
-                author = state.userProfile,
-                release = state.selectedRelease,
-                repository = state.repository,
-                installedApp = state.installedApp,
-                stats = state.stats,
-                downloadStage = state.downloadStage,
-                downloadProgress = state.downloadProgressPercent,
-                isCurrentUserOwner = state.isCurrentUserOwner,
-                onPlatformClick = { platform ->
-                    onAction(DetailsAction.OnPlatformChipClick(platform))
-                },
-                onOwnerClick = {
-                    onAction(
-                        DetailsAction.OpenDeveloperProfile(
-                            state.repository.owner.login,
-                        ),
-                    )
-                },
-            )
+            SelectionContainer {
+                AppHeader(
+                    author = state.userProfile,
+                    release = state.selectedRelease,
+                    repository = state.repository,
+                    installedApp = state.installedApp,
+                    stats = state.stats,
+                    downloadStage = state.downloadStage,
+                    downloadProgress = state.downloadProgressPercent,
+                    isCurrentUserOwner = state.isCurrentUserOwner,
+                    onPlatformClick = { platform ->
+                        onAction(DetailsAction.OnPlatformChipClick(platform))
+                    },
+                    onOwnerClick = {
+                        onAction(
+                            DetailsAction.OpenDeveloperProfile(
+                                state.repository.owner.login,
+                            ),
+                        )
+                    },
+                )
+            }
         }
     }
 
