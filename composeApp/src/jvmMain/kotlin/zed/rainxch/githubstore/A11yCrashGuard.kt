@@ -21,11 +21,11 @@ object A11yCrashGuard {
 
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            if (isComposeA11yNpe(throwable)) {
+            if (isComposeA11yCrash(throwable)) {
                 if (warnedUncaught.compareAndSet(false, true)) {
                     System.err.println(
-                        "[A11yCrashGuard] Suppressed Compose a11y NPE via uncaught-exception path " +
-                            "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
+                        "[A11yCrashGuard] Suppressed Compose a11y crash via uncaught-exception path " +
+                            "(known issue, see GitHub-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
                     )
                 }
                 return@setDefaultUncaughtExceptionHandler
@@ -48,14 +48,12 @@ object A11yCrashGuard {
         )
     }
 
-    private fun isComposeA11yNpe(throwable: Throwable): Boolean {
-        if (throwable !is NullPointerException) return false
+    private fun isComposeA11yCrash(throwable: Throwable): Boolean {
         var current: Throwable? = throwable
         while (current != null) {
             if (current.stackTrace.any { frame ->
                     frame.className.startsWith("androidx.compose.ui.platform.a11y") ||
-
-                        frame.className.startsWith("sun.lwawt.macosx.CAccessible\$AXChangeNotifier")
+                        frame.className.startsWith("sun.lwawt.macosx.CAccessib")
                 }
             ) {
                 return true
@@ -69,17 +67,17 @@ object A11yCrashGuard {
         override fun dispatchEvent(event: AWTEvent) {
             try {
                 super.dispatchEvent(event)
-            } catch (npe: NullPointerException) {
-                if (isComposeA11yNpe(npe)) {
+            } catch (ex: RuntimeException) {
+                if (isComposeA11yCrash(ex)) {
                     if (warnedEdt.compareAndSet(false, true)) {
                         System.err.println(
-                            "[A11yCrashGuard] Suppressed Compose a11y NPE on macOS " +
-                                "(known issue, see GitHub-Store#330 / #640). Further occurrences silenced.",
+                            "[A11yCrashGuard] Suppressed Compose a11y crash on macOS " +
+                                "(known issue, see GitHub-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
                         )
                     }
                     return
                 }
-                throw npe
+                throw ex
             }
         }
     }

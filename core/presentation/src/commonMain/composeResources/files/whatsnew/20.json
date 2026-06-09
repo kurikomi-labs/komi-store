@@ -21,7 +21,8 @@
       "bullets": [
         "Debian 12 / Ubuntu 22.04 can now install the .deb again — the package no longer demands the time64 'libasound2t64' / 'libpng16-16t64' libraries that only exist on Debian 13+, so a single .deb installs across every Debian generation.",
         "Desktop sign-in no longer gets stuck on “Waiting for authorization…” — if the browser hand-off doesn't come back, it now times out so you can retry or switch to a device code or token.",
-        "Windows: “Open in GitHub Store” links now reliably open the app — the githubstore:// handler is registered more robustly and re-registered after updates, so links no longer fail with “no application associated”."
+        "Windows: “Open in GitHub Store” links now reliably open the app — the githubstore:// handler is registered more robustly and re-registered after updates, so links no longer fail with “no application associated”.",
+        "macOS: the app no longer quits unexpectedly when you open your Profile or switch between windows."
       ]
     }
   ]
