@@ -18,7 +18,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Debian 12 / Ubuntu 22.04 现在可以重新安装 .deb 了 — 软件包不再要求仅存在于 Debian 13+ 的 time64 库 'libasound2t64' / 'libpng16-16t64'，因此单个 .deb 即可在所有 Debian 版本上安装。"
+        "Debian 12 / Ubuntu 22.04 现在可以重新安装 .deb 了 — 软件包不再要求仅存在于 Debian 13+ 的 time64 库 'libasound2t64' / 'libpng16-16t64'，因此单个 .deb 即可在所有 Debian 版本上安装。",
+        "桌面端登录不再卡在“正在等待授权…”——如果浏览器没有返回结果，现在会超时，方便你重试或改用设备码或令牌。"
       ]
     }
   ]

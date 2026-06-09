@@ -18,7 +18,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Debian 12 / Ubuntu 22.04 znów mogą zainstalować pakiet .deb — nie wymaga już bibliotek time64 'libasound2t64' / 'libpng16-16t64', które istnieją tylko w Debianie 13+, więc jeden .deb instaluje się na wszystkich generacjach Debiana."
+        "Debian 12 / Ubuntu 22.04 znów mogą zainstalować pakiet .deb — nie wymaga już bibliotek time64 'libasound2t64' / 'libpng16-16t64', które istnieją tylko w Debianie 13+, więc jeden .deb instaluje się na wszystkich generacjach Debiana.",
+        "Logowanie na komputerze nie zacina się już na „Oczekiwanie na autoryzację…” — jeśli przeglądarka nie odeśle odpowiedzi, następuje teraz przekroczenie limitu czasu, więc możesz spróbować ponownie lub użyć kodu urządzenia albo tokena."
       ]
     }
   ]

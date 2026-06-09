@@ -46,6 +46,7 @@ class AuthenticationViewModel(
     private var countdownJob: Job? = null
     private var pollingJob: Job? = null
     private var patSubmissionJob: Job? = null
+    private var webAuthWatchdogJob: Job? = null
     private var pollingIntervalMs: Long = DEFAULT_POLL_INTERVAL_SEC * 1000L
     private var authPath: AuthPath = AuthPath.Backend
 
@@ -267,6 +268,7 @@ class AuthenticationViewModel(
 
     private fun startWebAuth() {
         if (_state.value.isWebAuthInFlight) return
+        webAuthWatchdogJob?.cancel()
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -280,6 +282,7 @@ class AuthenticationViewModel(
                     savedStateHandle[KEY_WEB_AUTH_STATE] = registration.state
                     browserHelper.openUrl(registration.authUrl) { error ->
                         logger.warn("Failed to open auth URL: $error")
+                        webAuthWatchdogJob?.cancel()
                         savedStateHandle.remove<String>(KEY_WEB_AUTH_STATE)
                         viewModelScope.launch {
                             val (message, hint) =
@@ -297,6 +300,7 @@ class AuthenticationViewModel(
                         }
                     }
                     _state.update { it.copy(isWebAuthInFlight = false) }
+                    startWebAuthWatchdog()
                 }
                 .onFailure { error ->
                     val rootClass = error::class.simpleName ?: "Throwable"
@@ -344,6 +348,7 @@ class AuthenticationViewModel(
             }
             return
         }
+        webAuthWatchdogJob?.cancel()
         savedStateHandle.remove<String>(KEY_WEB_AUTH_STATE)
 
         viewModelScope.launch {
@@ -399,9 +404,30 @@ class AuthenticationViewModel(
             )
             return
         }
+        webAuthWatchdogJob?.cancel()
         savedStateHandle.remove<String>(KEY_WEB_AUTH_STATE)
         logger.warn("Web-auth flow returned error: $reason")
         viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isWebAuthInFlight = false,
+                    loginState = AuthLoginState.Error(
+                        message = getString(Res.string.error_unknown),
+                        recoveryHint = getString(Res.string.auth_hint_try_again),
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun startWebAuthWatchdog() {
+        webAuthWatchdogJob?.cancel()
+        webAuthWatchdogJob = viewModelScope.launch {
+            delay(WEB_AUTH_TIMEOUT_MS.milliseconds)
+            if (savedStateHandle.get<String>(KEY_WEB_AUTH_STATE) == null) return@launch
+            if (_state.value.loginState !is AuthLoginState.Pending) return@launch
+            savedStateHandle.remove<String>(KEY_WEB_AUTH_STATE)
+            logger.warn("Web-auth timed out waiting for callback")
             _state.update {
                 it.copy(
                     isWebAuthInFlight = false,
@@ -828,6 +854,16 @@ class AuthenticationViewModel(
         private const val KEY_START_TIME_MILLIS = "auth_start_time_millis"
         private const val KEY_AUTH_PATH = "auth_path"
         private const val KEY_WEB_AUTH_STATE = "auth_web_state"
+
+        // 11 min. Sits 60s past the server-side OAuth ceiling (600s for both
+        // the CF Worker's VERIFIER_TTL_SECONDS and the backend's STATE_TTL
+        // on `oauth_ephemeral`). The watchdog must outlive the longest
+        // legitimate slow sign-in the server will still accept; otherwise it
+        // false-cuts a flow the server would have completed. Only after
+        // both server ceilings have passed do we treat the absence of a
+        // deep-link callback as a genuine delivery failure (the Windows
+        // browser-handler case from GitHub-Store#730) and surface a retry.
+        private const val WEB_AUTH_TIMEOUT_MS = 660_000L
         private const val DEFAULT_POLL_INTERVAL_SEC = 5
 
         private const val MIN_MANUAL_POLL_SPACING_MS = 2_000L

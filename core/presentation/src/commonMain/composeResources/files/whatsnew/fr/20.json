@@ -18,7 +18,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Debian 12 / Ubuntu 22.04 peuvent à nouveau installer le .deb — le paquet n'exige plus les bibliothèques time64 'libasound2t64' / 'libpng16-16t64', qui n'existent que sur Debian 13+, donc un seul .deb s'installe sur toutes les générations de Debian."
+        "Debian 12 / Ubuntu 22.04 peuvent à nouveau installer le .deb — le paquet n'exige plus les bibliothèques time64 'libasound2t64' / 'libpng16-16t64', qui n'existent que sur Debian 13+, donc un seul .deb s'installe sur toutes les générations de Debian.",
+        "La connexion sur ordinateur ne reste plus bloquée sur « En attente d'autorisation… » : si le navigateur ne renvoie rien, elle expire désormais pour vous laisser réessayer ou utiliser un code d'appareil ou un jeton."
       ]
     }
   ]
