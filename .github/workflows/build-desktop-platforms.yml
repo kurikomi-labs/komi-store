@@ -60,7 +60,7 @@ jobs:
               n=$((n+1)); echo "Retrying in ${delay}s..."; sleep $delay; delay=$((delay*2))
             done
           }
-          retry ./gradlew :composeApp:packageExe :composeApp:packageMsi
+          retry ./gradlew :composeApp:packageExe :composeApp:packageMsi :composeApp:createDistributable
         shell: bash
 
       # Flatten .exe + .msi into a single directory so the uploaded artifact
@@ -87,6 +87,33 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
+
+      # Portable build: zip the jpackage app-image (launcher + bundled JRE) so
+      # users can unzip and run GitHub-Store.exe with no installer (#700). The
+      # launcher is unsigned — it ships as its own artifact and never passes
+      # through the SignPath job, which signs only the .exe/.msi installers.
+      - name: Stage Windows portable (zip app-image)
+        shell: pwsh
+        run: |
+          $line = (Select-String -Path 'gradle/libs.versions.toml' -Pattern 'projectVersionName' | Select-Object -First 1).Line
+          $version = [regex]::Match($line, '"(.*?)"').Groups[1].Value
+          if ([string]::IsNullOrWhiteSpace($version)) { Write-Error "Could not read projectVersionName"; exit 1 }
+          $appDir = "composeApp/build/compose/binaries/main/app/GitHub-Store"
+          if (-not (Test-Path $appDir)) { $appDir = "composeApp/build/compose/binaries/main/app-image/GitHub-Store" }
+          if (-not (Test-Path $appDir)) { Write-Error "app-image directory not found"; exit 1 }
+          New-Item -ItemType Directory -Force -Path windows-portable | Out-Null
+          $zip = "windows-portable/GitHub-Store-$version-windows-portable.zip"
+          Compress-Archive -Path $appDir -DestinationPath $zip -Force
+          Get-Item $zip | Format-List
+
+      - name: Upload Windows portable
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-portable
+          path: windows-portable/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
 
   sign-windows:
     name: Sign Windows installers (SignPath)
@@ -648,6 +675,7 @@ jobs:
           }
 
           windows_count=0
+          windows_portable_count=0
           macos_x64_count=0
           macos_arm64_count=0
           linux_modern_count=0
@@ -662,6 +690,13 @@ jobs:
             [ -n "$f" ] || continue
             stage "$f" "$(basename "$f")" && windows_count=$((windows_count + 1)) || true
           done < <(find artifacts/windows-installers-signed -type f \( -name '*.exe' -o -name '*.msi' \) 2>/dev/null)
+
+          # Windows portable — app-image zip from build-windows (unsigned, not
+          # routed through SignPath). Filename already carries version + arch.
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            stage "$f" "$(basename "$f")" && windows_portable_count=$((windows_portable_count + 1)) || true
+          done < <(find artifacts/windows-portable -type f -name '*.zip' 2>/dev/null)
 
           # macOS — disambiguate x64 vs arm64 (Compose outputs identical filenames per arch)
           while IFS= read -r f; do
@@ -711,7 +746,7 @@ jobs:
           echo "Final staged files:"
           ls -la release-files/
           echo
-          echo "Per-group counts: windows=$windows_count macos-x64=$macos_x64_count macos-arm64=$macos_arm64_count linux-modern=$linux_modern_count linux-debian12=$linux_debian12_count linux-appimage=$linux_appimage_count linux-arch=$linux_arch_count"
+          echo "Per-group counts: windows=$windows_count windows-portable=$windows_portable_count macos-x64=$macos_x64_count macos-arm64=$macos_arm64_count linux-modern=$linux_modern_count linux-debian12=$linux_debian12_count linux-appimage=$linux_appimage_count linux-arch=$linux_arch_count"
 
           # Completeness guard: refuse to ship an incomplete release. Each
           # group must produce >= 1 staged file. Without this guard, a build
@@ -720,6 +755,7 @@ jobs:
           # it only when users complained.
           missing=()
           [ "$windows_count" -eq 0 ] && missing+=("Windows installers (.exe/.msi)")
+          [ "$windows_portable_count" -eq 0 ] && missing+=("Windows portable (.zip)")
           [ "$macos_x64_count" -eq 0 ] && missing+=("macOS x64 (.dmg/.pkg)")
           [ "$macos_arm64_count" -eq 0 ] && missing+=("macOS arm64 (.dmg/.pkg)")
           [ "$linux_modern_count" -eq 0 ] && missing+=("Linux modern (.deb/.rpm)")
