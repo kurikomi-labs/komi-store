@@ -21,16 +21,11 @@ object DesktopDeepLink {
     }
 
     private fun registerWindows() {
-        val checkResult =
-            runCommand(
-                "reg",
-                "query",
-                "HKCU\\SOFTWARE\\Classes\\$SCHEME",
-                "/ve",
-            )
-        if (checkResult != null && checkResult.contains("URL:")) return
-
         val exePath = resolveExePath() ?: return
+
+        val commandKey = "HKCU\\SOFTWARE\\Classes\\$SCHEME\\shell\\open\\command"
+        val existing = runCommand("reg", "query", commandKey, "/ve")
+        if (existing != null && existing.contains(exePath, ignoreCase = true)) return
 
         runCommand(
             "reg",
@@ -63,7 +58,7 @@ object DesktopDeepLink {
         runCommand(
             "reg",
             "add",
-            "HKCU\\SOFTWARE\\Classes\\$SCHEME\\shell\\open\\command",
+            commandKey,
             "/ve",
             "/d",
             "\"$exePath\" \"%1\"",
@@ -135,16 +130,22 @@ object DesktopDeepLink {
 
     private fun isLinux(): Boolean = System.getProperty("os.name")?.lowercase()?.contains("linux") == true
 
-    private fun resolveExePath(): String? =
-        try {
+    private fun resolveExePath(): String? {
+        System
+            .getProperty("jpackage.app-path")
+            ?.takeIf { it.isNotBlank() }
+            ?.let { return it }
+        return try {
             ProcessHandle
                 .current()
                 .info()
                 .command()
                 .orElse(null)
+                ?.takeIf { it.isNotBlank() }
         } catch (_: Exception) {
             null
         }
+    }
 
     private fun runCommand(vararg cmd: String): String? =
         try {
