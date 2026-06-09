@@ -34,8 +34,9 @@ class WhatsNewLoaderImpl(
         languageTag: String?,
     ): WhatsNewEntry? {
         val candidates = candidatePaths(versionCode, languageTag)
-        for (path in candidates) {
-            val parsed = readEntry(path)
+        candidates.forEachIndexed { index, path ->
+            val isDefault = index == candidates.lastIndex
+            val parsed = readEntry(path, warnOnMissing = isDefault)
             if (parsed != null) return parsed
         }
         return null
@@ -59,7 +60,10 @@ class WhatsNewLoaderImpl(
         return paths.toList()
     }
 
-    private suspend fun readEntry(path: String): WhatsNewEntry? =
+    private suspend fun readEntry(
+        path: String,
+        warnOnMissing: Boolean,
+    ): WhatsNewEntry? =
         try {
             val bytes = Res.readBytes(path)
             val text = bytes.decodeToString()
@@ -67,7 +71,17 @@ class WhatsNewLoaderImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (t: Throwable) {
-            tagged.warn("Failed to load what's-new entry at $path: ${t.message}")
+            if (isMissingResource(t)) {
+                if (warnOnMissing) {
+                    tagged.warn("Missing what's-new entry at $path: ${t.message}")
+                }
+            } else {
+                tagged.warn("Failed to parse what's-new entry at $path: ${t.message}")
+            }
             null
         }
+
+    private fun isMissingResource(t: Throwable): Boolean =
+        t::class.simpleName == "MissingResourceException" ||
+            t.message?.contains("Missing resource", ignoreCase = true) == true
 }
