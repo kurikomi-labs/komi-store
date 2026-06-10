@@ -1,4 +1,4 @@
-GitHub Store is an open "app store" for GitHub, Codeberg, Forgejo, and Gitea releases. Discover repositories that ship real installers and keep them updated — no scraping, no waiting on stores.
+Komi Store is an open "app store" for GitHub, Codeberg, Forgejo, and Gitea releases. Discover repositories that ship real installers and keep them updated — no scraping, no waiting on stores.
 
 Browse Trending, Hot Releases, Most Popular, and topic feeds (Privacy, Media, Productivity, Networking, Dev Tools). Search across GitHub or any forge host you trust. Tap an APK and install it — the app handles the rest.
 

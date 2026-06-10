@@ -67,7 +67,7 @@ class DesktopFileLocationsProvider(
     }
 
     override fun userDownloadsDir(): String {
-        val appSubdirName = "GitHub Store Downloads"
+        val appSubdirName = "Komi Store Downloads"
         val downloadsDir =
             when (platform) {
                 Platform.WINDOWS -> {

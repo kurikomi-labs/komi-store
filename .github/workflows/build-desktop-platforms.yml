@@ -98,11 +98,11 @@ jobs:
           $line = (Select-String -Path 'gradle/libs.versions.toml' -Pattern 'projectVersionName' | Select-Object -First 1).Line
           $version = [regex]::Match($line, '"(.*?)"').Groups[1].Value
           if ([string]::IsNullOrWhiteSpace($version)) { Write-Error "Could not read projectVersionName"; exit 1 }
-          $appDir = "composeApp/build/compose/binaries/main/app/GitHub-Store"
-          if (-not (Test-Path $appDir)) { $appDir = "composeApp/build/compose/binaries/main/app-image/GitHub-Store" }
+          $appDir = "composeApp/build/compose/binaries/main/app/Komi-Store"
+          if (-not (Test-Path $appDir)) { $appDir = "composeApp/build/compose/binaries/main/app-image/Komi-Store" }
           if (-not (Test-Path $appDir)) { Write-Error "app-image directory not found"; exit 1 }
           New-Item -ItemType Directory -Force -Path windows-portable | Out-Null
-          $zip = "windows-portable/GitHub-Store-$version-windows-portable.zip"
+          $zip = "windows-portable/Komi-Store-$version-windows-portable.zip"
           Compress-Archive -Path $appDir -DestinationPath $zip -Force
           Get-Item $zip | Format-List
 
@@ -321,14 +321,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Find the directory containing the app launcher (bin/GitHub-Store)
+          # Find the directory containing the app launcher (bin/Komi-Store)
           APP_ROOT=""
           for candidate in \
-            composeApp/build/compose/binaries/main/app-image/GitHub-Store \
-            composeApp/build/compose/binaries/main/app/GitHub-Store \
+            composeApp/build/compose/binaries/main/app-image/Komi-Store \
+            composeApp/build/compose/binaries/main/app/Komi-Store \
             composeApp/build/compose/binaries/main/app-image \
             composeApp/build/compose/binaries/main/app; do
-            if [ -f "$candidate/bin/GitHub-Store" ]; then
+            if [ -f "$candidate/bin/Komi-Store" ]; then
               APP_ROOT="$candidate"
               echo "Found app root at: $candidate"
               break
@@ -336,8 +336,8 @@ jobs:
           done
 
           if [ -z "$APP_ROOT" ]; then
-            echo "ERROR: Could not find app launcher (bin/GitHub-Store)"
-            find composeApp/build/compose/binaries/main -type f -name "GitHub-Store" 2>/dev/null || true
+            echo "ERROR: Could not find app launcher (bin/Komi-Store)"
+            find composeApp/build/compose/binaries/main -type f -name "Komi-Store" 2>/dev/null || true
             exit 1
           fi
 
@@ -346,7 +346,7 @@ jobs:
           chmod +x appimagetool-x86_64.AppImage
 
           # Create AppDir from Compose output
-          APPDIR="GitHub-Store.AppDir"
+          APPDIR="Komi-Store.AppDir"
           mv "$APP_ROOT" "$APPDIR"
 
           # Install the JVM-direct launcher that bypasses the jpackage native
@@ -367,18 +367,18 @@ jobs:
           cat > "$APPDIR/github-store.desktop" << 'EOF'
           [Desktop Entry]
           Type=Application
-          Name=GitHub Store
-          Exec=GitHub-Store
+          Name=Komi Store
+          Exec=Komi-Store
           Icon=github-store
           Categories=Development;
           Comment=Cross-platform app store for GitHub releases
           EOF
 
           # Copy icon to AppDir root (required by appimagetool)
-          cp "$APPDIR/lib/GitHub-Store.png" "$APPDIR/github-store.png"
+          cp "$APPDIR/lib/Komi-Store.png" "$APPDIR/github-store.png"
 
           # Build .AppImage
-          OUTPUT="composeApp/build/compose/binaries/main/GitHub-Store-x86_64.AppImage"
+          OUTPUT="composeApp/build/compose/binaries/main/Komi-Store-x86_64.AppImage"
           UPINFO="gh-releases-zsync|rainxchzed|Github-Store|latest|*x86_64.AppImage.zsync"
           ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./appimagetool-x86_64.AppImage -u "$UPINFO" "$APPDIR" "$OUTPUT"
 
@@ -432,7 +432,7 @@ jobs:
             # The native launcher crashes in glibc setenv() on glibc >= 2.42
             # before the JVM maps (GH#563). The installed .desktop Exec path is
             # unchanged, so it transparently runs the wrapper instead.
-            launcher="$(find "$tmpdir/opt" -type f -path '*/bin/GitHub-Store' 2>/dev/null | head -n1 || true)"
+            launcher="$(find "$tmpdir/opt" -type f -path '*/bin/Komi-Store' 2>/dev/null | head -n1 || true)"
             if [ -n "$launcher" ] && head -c4 "$launcher" | grep -q $'\x7fELF'; then
               echo "Swapping native launcher: $launcher"
               mv "$launcher" "${launcher}.bin"
@@ -467,7 +467,7 @@ jobs:
             echo "Patching: $rpm"
             # Overwrite the native launcher in-place with the JVM-direct wrapper.
             # Keeps the %files manifest path intact, swaps ELF -> script.
-            if rpmrebuild --change-files="cp '$WRAPPER' ./opt/github-store/bin/GitHub-Store; chmod 0755 ./opt/github-store/bin/GitHub-Store" \
+            if rpmrebuild --change-files="cp '$WRAPPER' ./opt/komi-store/bin/Komi-Store; chmod 0755 ./opt/komi-store/bin/Komi-Store" \
                  -p -n -d "$OUTDIR" "$rpm"; then
               rebuilt="$(find "$OUTDIR" -name '*.rpm' -newer "$WRAPPER" | head -n1 || true)"
               if [ -n "$rebuilt" ]; then
@@ -503,8 +503,8 @@ jobs:
         with:
           name: linux-appimage
           path: |
-            composeApp/build/compose/binaries/main/GitHub-Store-x86_64.AppImage
-            composeApp/build/compose/binaries/main/GitHub-Store-x86_64.AppImage.zsync
+            composeApp/build/compose/binaries/main/Komi-Store-x86_64.AppImage
+            composeApp/build/compose/binaries/main/Komi-Store-x86_64.AppImage.zsync
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
@@ -521,17 +521,17 @@ jobs:
           # Find the app directory produced by packageAppImage
           APP_ROOT=""
           for candidate in \
-            composeApp/build/compose/binaries/main/app/GitHub-Store \
-            composeApp/build/compose/binaries/main/app-image/GitHub-Store; do
-            if [ -f "$candidate/bin/GitHub-Store" ]; then
+            composeApp/build/compose/binaries/main/app/Komi-Store \
+            composeApp/build/compose/binaries/main/app-image/Komi-Store; do
+            if [ -f "$candidate/bin/Komi-Store" ]; then
               APP_ROOT="$candidate"
               break
             fi
           done
 
           # Fall back to the AppDir we created earlier if still present
-          if [ -z "$APP_ROOT" ] && [ -f "GitHub-Store.AppDir/bin/GitHub-Store" ]; then
-            APP_ROOT="GitHub-Store.AppDir"
+          if [ -z "$APP_ROOT" ] && [ -f "Komi-Store.AppDir/bin/Komi-Store" ]; then
+            APP_ROOT="Komi-Store.AppDir"
           fi
 
           if [ -z "$APP_ROOT" ]; then
@@ -557,7 +557,7 @@ jobs:
           cat > "$PKG_DIR/usr/share/applications/github-store.desktop" << 'EOF'
           [Desktop Entry]
           Type=Application
-          Name=GitHub Store
+          Name=Komi Store
           Exec=/opt/github-store/bin/github-store-launcher.sh
           Icon=github-store
           Categories=Development;
@@ -567,9 +567,9 @@ jobs:
           sed -i 's/^          //' "$PKG_DIR/usr/share/applications/github-store.desktop"
 
           # Icon
-          if [ -f "$PKG_DIR/opt/github-store/lib/GitHub-Store.png" ]; then
+          if [ -f "$PKG_DIR/opt/github-store/lib/Komi-Store.png" ]; then
             mkdir -p "$PKG_DIR/usr/share/icons/hicolor/256x256/apps"
-            cp "$PKG_DIR/opt/github-store/lib/GitHub-Store.png" \
+            cp "$PKG_DIR/opt/github-store/lib/Komi-Store.png" \
                "$PKG_DIR/usr/share/icons/hicolor/256x256/apps/github-store.png"
           fi
 

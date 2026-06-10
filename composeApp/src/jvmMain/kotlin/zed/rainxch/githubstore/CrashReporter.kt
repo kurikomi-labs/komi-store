@@ -31,7 +31,7 @@ object CrashReporter {
         }
 
         if (teed != null) {
-            println("=== GitHub Store session ${Instant.now()} ===")
+            println("=== Komi Store session ${Instant.now()} ===")
             println(
                 "OS=${System.getProperty("os.name")} ${System.getProperty("os.version")} " +
                     "(${System.getProperty("os.arch")})",
@@ -49,7 +49,7 @@ object CrashReporter {
     ) {
         val file = File(logDir, "crash-${timestamp()}.log")
         PrintWriter(file, Charsets.UTF_8).use { writer ->
-            writer.println("=== GitHub Store crash ===")
+            writer.println("=== Komi Store crash ===")
             writer.println("Time: ${Instant.now()}")
             writer.println("Thread: ${thread.name}")
             writer.println(

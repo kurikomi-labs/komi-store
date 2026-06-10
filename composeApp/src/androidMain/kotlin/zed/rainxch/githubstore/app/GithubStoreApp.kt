@@ -201,7 +201,7 @@ class GithubStoreApp : Application() {
                         latestAssetName = null,
                         latestAssetUrl = null,
                         latestAssetSize = null,
-                        appName = "GitHub Store",
+                        appName = "Komi Store",
                         installSource = InstallSource.THIS_APP,
                         installedAt = now,
                         lastCheckedAt = 0L,
@@ -218,9 +218,9 @@ class GithubStoreApp : Application() {
                     )
 
                 repo.saveInstalledApp(selfApp)
-                Logger.i("GitHub Store App: App added")
+                Logger.i("Komi Store App: App added")
             } catch (e: Exception) {
-                Logger.e(e) { "GitHub Store App: Failed to register self as installed app" }
+                Logger.e(e) { "Komi Store App: Failed to register self as installed app" }
             }
         }
     }

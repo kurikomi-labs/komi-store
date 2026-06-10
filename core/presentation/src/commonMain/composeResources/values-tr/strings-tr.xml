@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Apps feature - App -->
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">Geri git</string>
     <string name="check_for_updates">Güncellemeleri kontrol et</string>
@@ -451,7 +451,7 @@
     <string name="update_check_enabled_title">Arka planda güncelleme kontrolü</string>
     <string name="update_check_enabled_description">Arka planda düzenli aralıklarla güncellemeleri kontrol eder. Pil tasarrufu için kapatın — her zaman uygulamanın detay ekranından manuel olarak kontrol edebilirsiniz.</string>
     <string name="battery_optimization_card_title">Arka planda güncellemelere izin ver</string>
-    <string name="battery_optimization_card_description">Cihazın arka plan görevlerini agresif şekilde kapatıyor. GitHub Store'u pil optimizasyonundan hariç tut ki zamanlanmış güncelleme kontrolleri ve sessiz kurulumlar güvenilir biçimde çalışsın.</string>
+    <string name="battery_optimization_card_description">Cihazın arka plan görevlerini agresif şekilde kapatıyor. Komi Store'u pil optimizasyonundan hariç tut ki zamanlanmış güncelleme kontrolleri ve sessiz kurulumlar güvenilir biçimde çalışsın.</string>
     <string name="battery_optimization_card_open">Ayarları aç</string>
     <string name="battery_optimization_card_dismiss">Sonra</string>
 
@@ -563,7 +563,7 @@
     <string name="variant_picker_stale_title">Varyant değişti — tekrar seçin</string>
     <string name="variant_picker_stale_was">Önceki: %1$s</string>
     <string name="variant_picker_auto_title">Otomatik</string>
-    <string name="variant_picker_auto_subtitle">Cihazınız için en iyi varyantı GitHub Store seçsin</string>
+    <string name="variant_picker_auto_subtitle">Cihazınız için en iyi varyantı Komi Store seçsin</string>
     <string name="markdown_alert_note">Not</string>
     <string name="markdown_alert_tip">İpucu</string>
     <string name="markdown_alert_important">Önemli</string>
@@ -712,7 +712,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">Tarayıcı</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">Bilinmeyen kaynak</string>
     <string name="external_import_undo_linked">%1$s bağlandı.</string>
     <string name="external_import_undo_skipped">%1$s atlandı.</string>
@@ -930,13 +930,13 @@
     <string name="import_summary_collapse">Ayrıntıları gizle</string>
     <string name="import_summary_expand">Ayrıntıları göster</string>
     <string name="import_summary_failed">%1$d başarısız</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d içe aktarıldı</string>
     <string name="import_summary_non_github">%1$d GitHub değil</string>
     <string name="import_summary_non_github_caption">Henüz GitLab, F-Droid veya HTML kaynaklarını takip etmiyoruz.</string>
     <string name="import_summary_title">İçe aktarma sonuçları — %1$s</string>
-    <string name="import_summary_unknown_caption">Bu, bir GitHub Store veya Obtainium dışa aktarımına benzemiyor. Dosyanın başlangıcı şöyle:</string>
+    <string name="import_summary_unknown_caption">Bu, bir Komi Store veya Obtainium dışa aktarımına benzemiyor. Dosyanın başlangıcı şöyle:</string>
     <string name="import_summary_unknown_format">Bu dosya okunamadı</string>
     <string name="installer_attribution_custom_apply">Uygula</string>
     <string name="installer_attribution_custom_error">Geçerli bir Android paket adı kullanın (ör. com.example.installer)</string>
@@ -1032,7 +1032,7 @@
     <string name="section_chip_your_device">Cihazınız</string>
     <string name="section_chip_for_transfer">Aktarım için</string>
     <string name="kao_banner_title">Android'i Açık Tutun</string>
-    <string name="kao_banner_body">Google'ın geliştirici doğrulama politikası açık Android dağıtımını tehdit ediyor. GitHub Store koalisyonu destekliyor.</string>
+    <string name="kao_banner_body">Google'ın geliştirici doğrulama politikası açık Android dağıtımını tehdit ediyor. Komi Store koalisyonu destekliyor.</string>
     <string name="kao_banner_cta">Daha fazla bilgi</string>
     <string name="kao_banner_dismiss_cd">Banner'ı kapat</string>
 
@@ -1133,7 +1133,7 @@
     <string name="host_tokens_validation_host_required">Host gerekli</string>
     <string name="host_tokens_validation_token_required">Token gerekli</string>
     <string name="host_tokens_validation_token_short">Token çok kısa</string>
-    <string name="menubar_help_about">GitHub Store Hakkında</string>
+    <string name="menubar_help_about">Komi Store Hakkında</string>
     <string name="menubar_help_feedback">Geri bildirim gönder…</string>
     <string name="menubar_help_licenses">Açık kaynak lisansları</string>
     <string name="menubar_file_menu">Dosya</string>
@@ -1197,7 +1197,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">Uygulamada kullanılan kütüphaneler.</string>
     <string name="tweaks_app_info_licenses_title">Açık kaynak lisansları</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">github-store.org üzerinde gör.</string>
@@ -1251,7 +1251,7 @@
     <string name="tweaks_install_method_desktop_empty_title">Kurulum yöntemi yalnızca Android</string>
     <string name="tweaks_language_intro_body">Dili değiştirdiğinizde uygulama yeniden başlar.</string>
     <string name="tweaks_licenses_intro_body">Proje sayfasını açmak için herhangi bir girişe dokunun.</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store bu kütüphaneler üzerinde yükselir.</string>
+    <string name="tweaks_licenses_intro_title">Komi Store bu kütüphaneler üzerinde yükselir.</string>
     <string name="tweaks_licenses_title">Açık kaynak lisansları</string>
     <string name="tweaks_privacy_browsing_history_section">Tarama geçmişi</string>
     <string name="tweaks_privacy_clear_viewed_body">Hangi repoları açtığınızı unut.</string>

@@ -4,7 +4,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-GitHub Store is a cross-platform app store for GitHub releases built with **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**. It targets **Android** (min API 26, target 36) and **Desktop** (Windows, macOS, Linux via JVM).
+Komi Store is a cross-platform app store for GitHub releases built with **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**. It targets **Android** (min API 26, target 36) and **Desktop** (Windows, macOS, Linux via JVM).
 
 Package: `zed.rainxch.githubstore`
 

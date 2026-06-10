@@ -21,7 +21,7 @@
       "bullets": [
         "Debian 12 / Ubuntu 22.04 artık .deb paketini yeniden kurabiliyor — paket, yalnızca Debian 13+ üzerinde bulunan time64 'libasound2t64' / 'libpng16-16t64' kitaplıklarını artık istemiyor, böylece tek bir .deb tüm Debian sürümlerine kuruluyor.",
         "Masaüstünde oturum açma artık «Yetkilendirme bekleniyor…» ekranında takılıp kalmıyor — tarayıcıdan yanıt gelmezse artık zaman aşımına uğruyor; böylece yeniden deneyebilir ya da cihaz kodu veya belirteç kullanabilirsiniz.",
-        "Windows: «GitHub Store'da Aç» bağlantıları artık uygulamayı güvenilir şekilde açıyor — githubstore:// işleyicisi daha sağlam biçimde ve güncellemelerden sonra yeniden kaydediliyor, böylece bağlantılar artık «ilişkili uygulama yok» hatasıyla başarısız olmuyor."
+        "Windows: «Komi Store'da Aç» bağlantıları artık uygulamayı güvenilir şekilde açıyor — githubstore:// işleyicisi daha sağlam biçimde ve güncellemelerden sonra yeniden kaydediliyor, böylece bağlantılar artık «ilişkili uygulama yok» hatasıyla başarısız olmuyor."
       ]
     }
   ]

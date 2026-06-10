@@ -1,8 +1,8 @@
 <div align="center">
   <br/>
-  <img src="media-resources/app_icon.png" width="200" alt="GitHub Store app icon" />
+  <img src="media-resources/app_icon.png" width="200" alt="Komi Store app icon" />
 
-# GitHub Store
+# Komi Store
 
 </div>
 
@@ -44,9 +44,9 @@
 
 <div align="center">
 
-## 🗺️ Project Overview
+## Project Overview 🗺️
 
-GitHub Store is a cross-platform app store for GitHub releases, designed to simplify discovering and installing open-source software. It automatically detects installable binaries (APK, EXE, DMG, AppImage, DEB, RPM), provides one-click installation, tracks updates, and presents repository information in a clean, app-store style interface.
+Komi Store is a cross-platform app store for GitHub releases, designed to simplify discovering and installing open-source software.
 
 Built with Kotlin Multiplatform and Compose Multiplatform for Android and Desktop platforms.
 
@@ -67,19 +67,15 @@ Built with Kotlin Multiplatform and Compose Multiplatform for Android and Deskto
   <img src="media-resources/banner.jpeg" width="99%" />
 </p>
 
-| 1 | 2 | 3 |
-| --- | --- | --- |
-| ![](media-resources/screenshots/mobile/01.jpg) | ![](media-resources/screenshots/mobile/02.jpg) | ![](media-resources/screenshots/mobile/03.jpg) |
-
-| 4 | 5 | 6 |
-| --- | --- | --- |
-| ![](media-resources/screenshots/mobile/04.jpg) | ![](media-resources/screenshots/mobile/05.jpg) | ![](media-resources/screenshots/mobile/06.jpg) |
+| 1 | 2 | 3 | 4 | 5 | 6 |
+| --- | --- | --- | --- | --- | --- |
+| ![](media-resources/screenshots/mobile/01.jpg) | ![](media-resources/screenshots/mobile/02.jpg) | ![](media-resources/screenshots/mobile/03.jpg) | ![](media-resources/screenshots/mobile/04.jpg) | ![](media-resources/screenshots/mobile/05.jpg) | ![](media-resources/screenshots/mobile/06.jpg) |
 
 ---
 
 <div align="center">
 
-## 🔃 Download
+## Download
 
 </div>
 
@@ -95,15 +91,12 @@ Built with Kotlin Multiplatform and Compose Multiplatform for Android and Deskto
     <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" height="55" alt="Get it on Obtainium" />
   </a>
   <a href="https://github-store.org/app?repo=OpenHub-Store/GitHub-Store">
-    <img src="media-resources/ghs_download_badge.png" alt="Get it on GitHub Store" height="58" />
+    <img src="media-resources/ghs_download_badge.png" alt="Get it on Komi Store" height="58" />
   </a>
 </p>
 
 > [!IMPORTANT]
-> **macOS Users:** You may see a warning that Apple cannot verify GitHub Store. This happens because the app is distributed outside the App Store and is not notarized yet. Allow it via System Settings → Privacy & Security → Open Anyway.
-
-> [!TIP]
-> **Windows Users:** Install GitHub Store with your preferred package manager.
+> **macOS Users:** You may see a warning that Apple cannot verify Komi Store. This happens because the app is distributed outside the App Store and is not notarized yet. Allow it via System Settings → Privacy & Security → Open Anyway.
 
 **Scoop**
 
@@ -112,14 +105,14 @@ scoop bucket add scoop-bucket https://github.com/OpenHub-Store/scoop-bucket
 scoop install scoop-bucket/github-store
 ```
 
-**Winget**
+**WinGet**
 
 ```powershell
 winget install zed.rainxch.githubstore
 ```
 
 > [!TIP]
-> **macOS Users:** Install GitHub Store with Homebrew.
+> **macOS Users:** Install Komi Store with Homebrew.
 
 **Homebrew**
 
@@ -129,19 +122,19 @@ brew install --cask github-store
 xattr -dr com.apple.quarantine /Applications/GitHub-Store.app
 ```
 
-The final `xattr` command is required until the app is signed and notarized; without it, macOS Gatekeeper blocks the app with a "damaged" or "cannot be opened" error. Adjust the path if you installed the Cask with a custom `--appdir` (the default is `/Applications`).
+The final `xattr` command is required until the app is signed and notarized; without it, macOS Gatekeeper blocks the app with a "damaged" or "cannot be opened" error.
 
 ---
 
 <div align="center">
   
-## 🚀 Features
+## Features
 
 </div>
 
 - **Smart discovery**
     - Home sections for "Trending", "Hot Release", and "Most Popular" projects with time‑based filters.
-    - Curated discovery layer through the GitHub Store backend, with the live GitHub passthrough as a backup so freshness is honest.
+    - Curated discovery layer through the Komi Store backend, with the live GitHub passthrough as a backup so freshness is honest.
     - Only repos with valid installable assets are shown.
     - Platform‑aware topic scoring so Android/desktop users see relevant apps first.
     - Search with filters for platform, programming language, and sort order — including **Recently Updated** (repo activity) and **Recently Released** (latest stable release date) sorts backed by the curated index.
@@ -178,10 +171,10 @@ The final `xattr` command is required until the app is signed and notarized; wit
     - **Per‑app variant pinning + asset filter regex** — pin the asset variant you actually want (`-arm64`, `-stable`, `-no-jvm`, etc.) and write a glob/regex filter so updates always pick the right artifact even when the publisher reshuffles asset names.
 
 - **App management**
-    - Open, uninstall, and downgrade installed apps directly from GitHub Store.
+    - Open, uninstall, and downgrade installed apps directly from Komi Store.
     - **Library Imports** (Android) — recognises GitHub‑sourced apps already on the device (Obtainium, sideload, F‑Droid). Three match strategies (manifest hint, signing fingerprint, backend lookup); high‑confidence matches link silently, the rest land in a one‑tap review wizard. Run on demand from Apps overflow → Scan for GitHub apps.
     - **Obtainium import / export** (Android) — bring your library over from Obtainium with one tap, or export back to Obtainium any time. Round‑trip preserved via a discriminator on the export.
-    - **Link apps** — connect any app already installed on your device to its GitHub repository so GitHub Store can track updates for it. A guided flow lets you pick the app, enter the repo URL, and select the matching release asset.
+    - **Link apps** — connect any app already installed on your device to its GitHub repository so Komi Store can track updates for it. A guided flow lets you pick the app, enter the repo URL, and select the matching release asset.
     - **Sectioned Apps screen** — updates, pending installs, and installed apps grouped so you see what needs attention first.
     - Android: APK architecture matching (armv7/armv8), package monitoring, and update tracking.
     - Android: Shizuku and Sui silent installation — install and update apps without prompts (requires [Shizuku](https://shizuku.rikka.app/) or Sui running with ADB or root).
@@ -232,11 +225,11 @@ The final `xattr` command is required until the app is signed and notarized; wit
 </div>
 
 <details>
-<summary><strong>🔍 How does my app appear in GitHub Store?</strong></summary>
+<summary><strong>🔍 How does my app appear in Komi Store?</strong></summary>
 
 <br/>
 
-GitHub Store does not use any private indexing or manual curation rules.
+Komi Store does not use any private indexing or manual curation rules.
 Your project can appear automatically if it follows these conditions:
 
 1. **Public repository on GitHub**
@@ -248,7 +241,7 @@ Your project can appear automatically if it follows these conditions:
         - Windows: `.exe`, `.msi`
         - macOS: `.dmg`, `.pkg`
         - Linux: `.deb`, `.rpm`, `.AppImage`, `.pkg.tar.zst`
-    - GitHub Store ignores GitHub's auto‑generated source artifacts (`Source code (zip)` /
+    - Komi Store ignores GitHub's auto‑generated source artifacts (`Source code (zip)` /
       `Source code (tar.gz)`).
 
 3. **Discoverable by search / topics**
@@ -259,13 +252,13 @@ Your project can appear automatically if it follows these conditions:
           `electron`.
     - Having at least a few stars makes it more likely to appear under Trending/Hot Release/Most Popular sections.
 
-If your repo meets these conditions, GitHub Store can find it through search and show it
+If your repo meets these conditions, Komi Store can find it through search and show it
 automatically—no manual submission required.
 
 </details>
 
 <details>
-<summary><strong>✅ Pros / Why use GitHub Store?</strong></summary>
+<summary><strong>✅ Pros / Why use Komi Store?</strong></summary>
 
 <br/>
 
@@ -273,7 +266,7 @@ automatically—no manual submission required.
   See only repos that actually ship binaries for your platform.
 
 - **Knows what you installed**
-  Tracks apps installed via GitHub Store (Android) and highlights when new releases are available, so you can update them without hunting through GitHub again.
+  Tracks apps installed via Komi Store (Android) and highlights when new releases are available, so you can update them without hunting through GitHub again.
 
 - **Always up to date**
   Installs default to the latest published release, with the option to browse and install from
@@ -320,11 +313,11 @@ automatically—no manual submission required.
 
 </div> 
 
-I made a video introducing myself and sharing what's next for GitHub Store.
+I made a video introducing myself and sharing what's next for Komi Store.
 
 **[Watch on YouTube →](https://www.youtube.com/watch?v=iT1cok4-Txs)** | **[Watch on Bilibili →](https://www.bilibili.tv/en/video/4799266946423296)**
 
-Help shape the future of GitHub Store — take this 2-minute survey:
+Help shape the future of Komi Store — take this 2-minute survey:
 
 **[📋 Take the Survey →](https://tally.so/r/q4Ed88)**
 
@@ -348,11 +341,11 @@ You can submit any feedback in our [discord server](https://discord.github-store
 
 <div align="center">
   
-## 🔐 GitHub Store APK Signing Certificate
+## 🔐 Komi Store APK Signing Certificate
 
 </div>
 
-All official GitHub Store releases are signed with the following certificate fingerprint:
+All official Komi Store releases are signed with the following certificate fingerprint:
 
 SHA-256:
 `B7:F2:8E:19:8E:48:C1:93:B0:38:C6:5D:92:DD:F7:BC:07:7B:0D:B5:9E:BC:9B:25:0A:6D:AC:48:C1:18:03:CA`
@@ -382,7 +375,7 @@ Go to:
 
 | Field                          | Value                                       |
 | ------------------------------ | ------------------------------------------- |
-| **Application name**           | Anything you like (e.g. *GitHub Store Dev*) |
+| **Application name**           | Anything you like (e.g. *Komi Store Dev*) |
 | **Homepage URL** | `https://github.com/username/repo_name`                   |
 | **Authorization callback URL** | `githubstore://callback`                    |
 
@@ -421,7 +414,7 @@ Sync the project and run the app. You should now be able to sign in with GitHub.
 
 </div>
 
-Check out GitHub Store [Wiki](https://github.com/OpenHub-Store/GitHub-Store/wiki) for FAQ and useful information
+Check out Komi Store [Wiki](https://github.com/OpenHub-Store/GitHub-Store/wiki) for FAQ and useful information
 
 🌐 **Website:** [github-store.org](https://github-store.org)
 💬 **Discord:** [Join the community](https://discord.github-store.org)
@@ -435,7 +428,7 @@ Check out GitHub Store [Wiki](https://github.com/OpenHub-Store/GitHub-Store/wiki
 
 </div>
 
-GitHub Store is 100% free. No ads. No tracking.
+Komi Store is 100% free. No ads. No tracking.
 
 - ⭐ **[Star](https://github.com/OpenHub-Store/GitHub-Store/star)** this repository
 - 🐛 **[Report](https://github.com/OpenHub-Store/GitHub-Store/issues)** bugs and issues
@@ -450,7 +443,7 @@ GitHub Store is 100% free. No ads. No tracking.
 
 </div>
 
-GitHub Store is open to partnerships, sponsorships, and integrations.
+Komi Store is open to partnerships, sponsorships, and integrations.
 
 If you're interested in working together, reach out:
 
@@ -465,7 +458,7 @@ If you're interested in working together, reach out:
 
 </div>
 
-GitHub Store is an independent, open-source project not affiliated with GitHub, Inc.
+Komi Store is an independent, open-source project not affiliated with GitHub, Inc.
 The name describes the app's functionality (discovering GitHub releases) and does not imply trademark ownership.
 GitHub® is a registered trademark of GitHub, Inc.
 
@@ -476,12 +469,12 @@ GitHub® is a registered trademark of GitHub, Inc.
 ## ⚠️ Disclaimer
 
 </div>
-GitHub Store only helps you discover and download release assets that are already published on
+Komi Store only helps you discover and download release assets that are already published on
 GitHub by third‑party developers.
 The contents, safety, and behavior of those downloads are entirely the responsibility of their
 respective authors and distributors, not this project.
 
-By using GitHub Store, you understand and agree that you install and run any downloaded software at
+By using Komi Store, you understand and agree that you install and run any downloaded software at
 your own risk.
 This project does not review, validate, or guarantee that any installer is safe, free of malware, or
 fit for any particular purpose.
@@ -512,7 +505,7 @@ fit for any particular purpose.
 
 </div>
 
-GitHub Store is released under the **Apache License, Version 2.0**.
+Komi Store is released under the **Apache License, Version 2.0**.
 
 ```
 Copyright 2025-2026 rainxchzed

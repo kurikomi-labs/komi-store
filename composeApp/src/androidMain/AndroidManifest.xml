@@ -21,7 +21,7 @@
         Whitelisted use: aggressive-OEM ROMs (Oppo / OnePlus / Realme /
         Xiaomi / vivo / Honor) routinely kill background WorkManager
         tasks even when the user has scheduled a periodic update check
-        through GitHub Store's own settings. Surfaced via a one-time
+        through Komi Store's own settings. Surfaced via a one-time
         prompt — never required, never re-nagged after dismissal.
     -->
     <uses-permission

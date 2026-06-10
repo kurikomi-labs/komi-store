@@ -7,7 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
-        "Backend GitHub Store : authentification, recherche et découverte fonctionnent en Chine.",
+        "Backend Komi Store : authentification, recherche et découverte fonctionnent en Chine.",
         "Import de bibliothèque : détection automatique des apps GitHub déjà installées.",
         "Système de miroirs de téléchargement : course multi-source avec vérification SHA-256.",
         "Connexion par Personal Access Token pour les réseaux qui bloquent le flux OAuth navigateur."

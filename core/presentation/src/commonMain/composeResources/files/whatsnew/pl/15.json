@@ -7,7 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
-        "Własny backend GitHub Store: logowanie, wyszukiwanie i odkrywanie działają również w Chinach.",
+        "Własny backend Komi Store: logowanie, wyszukiwanie i odkrywanie działają również w Chinach.",
         "Import biblioteki: automatyczne wykrywanie aplikacji z GitHuba zainstalowanych na urządzeniu.",
         "System mirrorów pobierania: wyścig z wielu źródeł i weryfikacja SHA-256.",
         "Logowanie przez Personal Access Token dla sieci, w których przeglądarkowy OAuth jest zablokowany."

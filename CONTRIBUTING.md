@@ -1,4 +1,4 @@
-# Contributing to GitHub Store
+# Contributing to Komi Store
 
 Thanks for your interest in helping out. This document covers everything you need to ship a change — from setting up the project locally to landing a clean PR.
 
@@ -259,7 +259,7 @@ We use Kotlin's official style (`kotlin.code.style=official`). CI lints every PR
 
 ## Translations
 
-GitHub Store ships in 13 languages. String resources live in:
+Komi Store ships in 13 languages. String resources live in:
 
 ```
 core/presentation/src/commonMain/composeResources/
@@ -320,4 +320,4 @@ We treat token leaks, install-flow exploits, and signing-bypass paths as critica
 - **Stuck on local setup:** open a draft PR with what you have and ask for help in the description — we'd rather help you finish than have you give up silently.
 - **Sibling repos:** [backend](https://github.com/OpenHub-Store/backend) and [api](https://github.com/OpenHub-Store/api) have their own contributing notes.
 
-Thanks for making GitHub Store better.
+Thanks for making Komi Store better.

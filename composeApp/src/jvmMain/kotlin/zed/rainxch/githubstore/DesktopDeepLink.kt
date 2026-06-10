@@ -33,7 +33,7 @@ object DesktopDeepLink {
             "HKCU\\SOFTWARE\\Classes\\$SCHEME",
             "/ve",
             "/d",
-            "URL:GitHub Store Protocol",
+            "URL:Komi Store Protocol",
             "/f",
         )
         runCommand(
@@ -80,7 +80,7 @@ object DesktopDeepLink {
             """
             [Desktop Entry]
             Type=Application
-            Name=GitHub Store
+            Name=Komi Store
             Exec="$exePath" %u
             Terminal=false
             MimeType=x-scheme-handler/$SCHEME;

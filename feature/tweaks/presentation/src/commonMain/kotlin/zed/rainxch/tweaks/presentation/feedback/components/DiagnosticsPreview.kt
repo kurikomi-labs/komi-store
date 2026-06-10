@@ -77,7 +77,7 @@ fun DiagnosticsPreview(
 
 private fun formatDiagnostics(d: DiagnosticsInfo, channel: FeedbackChannel): String {
     val sb = StringBuilder()
-    sb.append("- App: GitHub Store v").append(d.appVersion).append('\n')
+    sb.append("- App: Komi Store v").append(d.appVersion).append('\n')
     sb.append("- Platform: ").append(d.platform).append(' ').append(d.osVersion).append('\n')
     sb.append("- Locale: ").append(d.locale).append('\n')
     sb.append("- Theme: ").append(d.themePalette).append(" / ").append(d.themeMode)

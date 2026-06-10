@@ -48,7 +48,7 @@ object FeedbackComposer {
         if (state.attachDiagnostics) {
             state.diagnostics?.let { d ->
                 builder.append("\n\n---\n**Diagnostics**\n")
-                builder.append("- App: GitHub Store v").append(d.appVersion).append('\n')
+                builder.append("- App: Komi Store v").append(d.appVersion).append('\n')
                 builder.append("- Platform: ").append(d.platform).append(' ').append(d.osVersion).append('\n')
                 builder.append("- Locale: ").append(d.locale).append('\n')
                 builder.append("- Theme: ").append(d.themePalette).append(" / ").append(d.themeMode).append('\n')

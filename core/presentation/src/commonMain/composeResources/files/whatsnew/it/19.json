@@ -24,7 +24,7 @@
         "La barra del titolo Windows 11 ora rispetta la modalità scura di sistema invece di restare bianca.",
         "L'installazione silenziosa via root attiva correttamente il prompt dei permessi Magisk / KernelSU su Android 14+ invece di riportare subito 'Nessun root'; il percorso root è stato riscritto su libsu.",
         "Collegare un'app installata a un repo GitHub mostra subito 'Aggiorna a X' quando la versione installata è più vecchia, invece del fuorviante 'Installa vX' fino al prossimo controllo.",
-        "Il drawer laterale desktop mostra ora il vero logo di GitHub Store invece del placeholder 'G'.",
+        "Il drawer laterale desktop mostra ora il vero logo di Komi Store invece del placeholder 'G'.",
         "La larghezza del contenuto su desktop (Home, Dettagli, Auth) si ridimensiona ora come frazione della finestra — Compatta / Larga / Extra larga si adattano al monitor invece di essere fissate in pixel.",
         "Il desktop Linux non va più in crash all'avvio su glibc 2.42+ (Fedora 43, Ubuntu 26.04, Debian 13, Bazzite) — AppImage, deb, rpm e Arch ora bypassano il launcher impacchettato difettoso e avviano la JVM direttamente."
       ]

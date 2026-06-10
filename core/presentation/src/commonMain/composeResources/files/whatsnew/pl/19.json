@@ -24,7 +24,7 @@
         "Pasek tytułu Windows 11 dopasowuje się teraz do trybu ciemnego systemu zamiast pozostawać biały.",
         "Cicha instalacja przez root prawidłowo wyzwala teraz prompt uprawnień Magisk / KernelSU na Androidzie 14+ zamiast natychmiast zgłaszać 'Brak roota'; ścieżka roota została przepisana na libsu.",
         "Powiązanie zainstalowanej aplikacji z repo GitHub pokazuje teraz od razu 'Aktualizuj do X', gdy zainstalowana wersja jest starsza, zamiast mylącego 'Instaluj vX' do następnego sprawdzenia aktualizacji.",
-        "Boczna szuflada desktop pokazuje teraz prawdziwe logo GitHub Store zamiast placeholdera 'G'.",
+        "Boczna szuflada desktop pokazuje teraz prawdziwe logo Komi Store zamiast placeholdera 'G'.",
         "Szerokość zawartości na desktopie (Home, Szczegóły, Auth) skaluje się teraz jako ułamek okna — Kompaktowa / Szeroka / Bardzo szeroka dostosowują się do monitora zamiast być ograniczone do stałych szerokości w pikselach.",
         "Desktop Linux nie ulega już awarii przy uruchamianiu na glibc 2.42+ (Fedora 43, Ubuntu 26.04, Debian 13, Bazzite) — AppImage, deb, rpm i Arch omijają teraz wadliwy dołączony launcher i uruchamiają JVM bezpośrednio."
       ]

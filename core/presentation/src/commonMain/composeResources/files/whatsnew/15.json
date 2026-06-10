@@ -7,7 +7,7 @@
     {
       "type": "NEW",
       "bullets": [
-        "GitHub Store backend — auth, search, and discovery work in China.",
+        "Komi Store backend — auth, search, and discovery work in China.",
         "Library Imports — auto-detects GitHub apps you already have on device.",
         "Download Mirror System — multi-source race plus SHA-256 verification.",
         "Personal Access Token sign-in for networks blocking the OAuth browser flow."

@@ -195,7 +195,7 @@ class AnnouncementsViewModel(
                     category = AnnouncementCategory.NEWS,
                     title = "Preview: backing Keep Android Open",
                     body =
-                        "GitHub Store supports the Keep Android Open initiative. " +
+                        "Komi Store supports the Keep Android Open initiative. " +
                             "Google's proposed sideloading restrictions would make this app — " +
                             "and Obtainium, F-Droid, and others — much harder to use.",
                     ctaUrl = "https://github-store.org",

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Apps feature - App -->
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">পেছনে যান</string>
     <string name="check_for_updates">আপডেট পরীক্ষা করুন</string>
@@ -453,7 +453,7 @@
     <string name="update_check_enabled_title">ব্যাকগ্রাউন্ড আপডেট চেক</string>
     <string name="update_check_enabled_description">নিয়মিত ব্যাকগ্রাউন্ডে আপডেট খোঁজে। ব্যাটারি বাঁচাতে বন্ধ করুন — আপনি যেকোনো অ্যাপের ডিটেইলস স্ক্রিন থেকে ম্যানুয়ালি চেক করতে পারবেন।</string>
     <string name="battery_optimization_card_title">ব্যাকগ্রাউন্ড আপডেট অনুমতি দিন</string>
-    <string name="battery_optimization_card_description">আপনার ডিভাইস ব্যাকগ্রাউন্ড টাস্কগুলো আক্রমণাত্মকভাবে বন্ধ করে। GitHub Store-কে ব্যাটারি অপটিমাইজেশন থেকে হোয়াইটলিস্ট করুন যাতে নির্ধারিত আপডেট চেক এবং সাইলেন্ট ইনস্টল নির্ভরযোগ্যভাবে চলে।</string>
+    <string name="battery_optimization_card_description">আপনার ডিভাইস ব্যাকগ্রাউন্ড টাস্কগুলো আক্রমণাত্মকভাবে বন্ধ করে। Komi Store-কে ব্যাটারি অপটিমাইজেশন থেকে হোয়াইটলিস্ট করুন যাতে নির্ধারিত আপডেট চেক এবং সাইলেন্ট ইনস্টল নির্ভরযোগ্যভাবে চলে।</string>
     <string name="battery_optimization_card_open">সেটিংস খুলুন</string>
     <string name="battery_optimization_card_dismiss">পরে</string>
 
@@ -565,7 +565,7 @@
     <string name="variant_picker_stale_title">ভ্যারিয়েন্ট পরিবর্তিত — আবার বেছে নিন</string>
     <string name="variant_picker_stale_was">ছিল: %1$s</string>
     <string name="variant_picker_auto_title">স্বয়ংক্রিয়</string>
-    <string name="variant_picker_auto_subtitle">GitHub Store-কে আপনার ডিভাইসের জন্য সেরা ভ্যারিয়েন্ট বাছাই করতে দিন</string>
+    <string name="variant_picker_auto_subtitle">Komi Store-কে আপনার ডিভাইসের জন্য সেরা ভ্যারিয়েন্ট বাছাই করতে দিন</string>
     <string name="markdown_alert_note">নোট</string>
     <string name="markdown_alert_tip">টিপ</string>
     <string name="markdown_alert_important">গুরুত্বপূর্ণ</string>
@@ -709,7 +709,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">ব্রাউজার</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">অজানা উৎস</string>
     <string name="external_import_undo_linked">%1$s লিঙ্ক করা হয়েছে।</string>
     <string name="external_import_undo_skipped">%1$s বাদ দেওয়া হয়েছে।</string>
@@ -920,13 +920,13 @@
     <string name="import_summary_collapse">বিস্তারিত লুকান</string>
     <string name="import_summary_expand">বিস্তারিত দেখান</string>
     <string name="import_summary_failed">%1$d ব্যর্থ</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d আমদানিকৃত</string>
     <string name="import_summary_non_github">%1$d GitHub নয়</string>
     <string name="import_summary_non_github_caption">আমরা এখনো GitLab, F-Droid বা HTML উৎস ট্র্যাক করি না।</string>
     <string name="import_summary_title">আমদানির ফলাফল — %1$s</string>
-    <string name="import_summary_unknown_caption">এটি GitHub Store বা Obtainium এক্সপোর্টের মতো দেখাচ্ছে না। ফাইলের শুরুটি এখানে:</string>
+    <string name="import_summary_unknown_caption">এটি Komi Store বা Obtainium এক্সপোর্টের মতো দেখাচ্ছে না। ফাইলের শুরুটি এখানে:</string>
     <string name="import_summary_unknown_format">এই ফাইলটি পড়া যায়নি</string>
     <string name="installer_attribution_custom_apply">প্রয়োগ করুন</string>
     <string name="installer_attribution_custom_error">একটি বৈধ Android প্যাকেজ নাম ব্যবহার করুন (যেমন com.example.installer)</string>
@@ -1022,7 +1022,7 @@
     <string name="section_chip_your_device">আপনার ডিভাইস</string>
     <string name="section_chip_for_transfer">ট্রান্সফারের জন্য</string>
     <string name="kao_banner_title">Android-কে উন্মুক্ত রাখুন</string>
-    <string name="kao_banner_body">Google-এর ডেভেলপার-যাচাইকরণ নীতি উন্মুক্ত Android বিতরণকে হুমকির মুখে ফেলেছে। GitHub Store কোয়ালিশনের পাশে।</string>
+    <string name="kao_banner_body">Google-এর ডেভেলপার-যাচাইকরণ নীতি উন্মুক্ত Android বিতরণকে হুমকির মুখে ফেলেছে। Komi Store কোয়ালিশনের পাশে।</string>
     <string name="kao_banner_cta">আরও জানুন</string>
     <string name="kao_banner_dismiss_cd">ব্যানার বন্ধ করুন</string>
 
@@ -1123,7 +1123,7 @@
     <string name="host_tokens_validation_host_required">হোস্ট প্রয়োজন</string>
     <string name="host_tokens_validation_token_required">টোকেন প্রয়োজন</string>
     <string name="host_tokens_validation_token_short">টোকেন খুব ছোট</string>
-    <string name="menubar_help_about">GitHub Store সম্পর্কে</string>
+    <string name="menubar_help_about">Komi Store সম্পর্কে</string>
     <string name="menubar_help_feedback">ফিডব্যাক পাঠান…</string>
     <string name="menubar_help_licenses">ওপেন সোর্স লাইসেন্স</string>
     <string name="menubar_file_menu">ফাইল</string>
@@ -1187,7 +1187,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">অ্যাপে ব্যবহৃত লাইব্রেরি।</string>
     <string name="tweaks_app_info_licenses_title">ওপেন সোর্স লাইসেন্স</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">github-store.org এ দেখুন।</string>
@@ -1241,7 +1241,7 @@
     <string name="tweaks_install_method_desktop_empty_title">ইনস্টলের পদ্ধতি শুধু Android-এর জন্য</string>
     <string name="tweaks_language_intro_body">ভাষা পরিবর্তন করলে অ্যাপ পুনরায় চালু হবে।</string>
     <string name="tweaks_licenses_intro_body">প্রকল্প পৃষ্ঠা খুলতে যেকোনো এন্ট্রিতে চাপুন।</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store এই লাইব্রেরিগুলির উপর দাঁড়িয়ে।</string>
+    <string name="tweaks_licenses_intro_title">Komi Store এই লাইব্রেরিগুলির উপর দাঁড়িয়ে।</string>
     <string name="tweaks_licenses_title">ওপেন সোর্স লাইসেন্স</string>
     <string name="tweaks_privacy_browsing_history_section">ব্রাউজিং ইতিহাস</string>
     <string name="tweaks_privacy_clear_viewed_body">আপনি কোন রিপো খুলেছেন তা ভুলে যান।</string>

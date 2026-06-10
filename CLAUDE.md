@@ -1,4 +1,4 @@
-# GitHub Store
+# Komi Store
 
 Cross-platform app store for GitHub + Codeberg + Forgejo releases. **Kotlin Multiplatform** + **Compose Multiplatform**. Android (min API 26) + Desktop (JVM: Win/macOS/Linux). Package `zed.rainxch.githubstore`. Version 1.8.3 (code 18). Target SDK 36.
 

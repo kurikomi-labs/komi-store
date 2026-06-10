@@ -113,7 +113,7 @@ compose.desktop {
     application {
         mainClass = "zed.rainxch.githubstore.DesktopAppKt"
         nativeDistributions {
-            packageName = "GitHub-Store"
+            packageName = "Komi-Store"
             packageVersion =
                 libs.versions.projectVersionName
                     .get()
@@ -134,7 +134,7 @@ compose.desktop {
             )
             windows {
                 iconFile.set(project.file("src/jvmMain/resources/logo/app_icon.ico"))
-                menuGroup = "Github Store"
+                menuGroup = "Komi Store"
                 shortcut = true
                 perUserInstall = true
             }
@@ -149,7 +149,7 @@ compose.desktop {
                         <array>
                             <dict>
                                 <key>CFBundleURLName</key>
-                                <string>GitHub Store Deep Link</string>
+                                <string>Komi Store Deep Link</string>
                                 <key>CFBundleURLSchemes</key>
                                 <array>
                                     <string>githubstore</string>

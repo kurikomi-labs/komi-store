@@ -24,7 +24,7 @@
         "Windows 11 标题栏现在与系统深色模式一致，不再保持刺眼的白色。",
         "通过 root 静默安装现在在 Android 14+ 上正确触发 Magisk / KernelSU 权限提示，而不是立即报告「无 root」；root 路径在 libsu 之上重写。",
         "将已安装应用链接到 GitHub 仓库时，若已安装版本较旧，现在立即显示「更新到 X」而非误导性的「安装 vX」直到下次更新检查。",
-        "桌面侧边抽屉现在显示真实的 GitHub Store 标志而非「G」占位符。",
+        "桌面侧边抽屉现在显示真实的 Komi Store 标志而非「G」占位符。",
         "桌面内容宽度(Home、详情、Auth)现在按窗口比例缩放 — 紧凑/宽/超宽适应显示器尺寸，而非被限定为固定像素宽度。",
         "Linux 桌面端在 glibc 2.42+ (Fedora 43、Ubuntu 26.04、Debian 13、Bazzite) 上启动时不再崩溃 — AppImage、deb、rpm 和 Arch 构建现在绕过损坏的捆绑启动器，直接启动 JVM。"
       ]

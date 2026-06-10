@@ -24,7 +24,7 @@
         "La barra de título de Windows 11 ahora coincide con el modo oscuro del sistema en lugar de quedarse blanca.",
         "La instalación silenciosa con root ahora dispara correctamente el prompt de permisos de Magisk / KernelSU en Android 14+ en vez de reportar 'Sin root' al instante; el camino de root fue reescrito sobre libsu.",
         "Vincular una app instalada a un repo de GitHub muestra inmediatamente 'Actualizar a X' cuando la versión instalada es más antigua, en lugar del engañoso 'Instalar vX' hasta la siguiente comprobación de actualizaciones.",
-        "El cajón lateral del escritorio ahora muestra el logo real de GitHub Store en lugar del placeholder 'G'.",
+        "El cajón lateral del escritorio ahora muestra el logo real de Komi Store en lugar del placeholder 'G'.",
         "El ancho de contenido en escritorio (Home, Detalles, Auth) ahora se escala como fracción de la ventana — Compacto / Ancho / Extra ancho se adaptan al tamaño del monitor en vez de estar limitados a anchos fijos en píxeles.",
         "El escritorio Linux ya no se bloquea al iniciar en glibc 2.42+ (Fedora 43, Ubuntu 26.04, Debian 13, Bazzite) — AppImage, deb, rpm y Arch ahora omiten el lanzador empaquetado defectuoso e inician la JVM directamente."
       ]

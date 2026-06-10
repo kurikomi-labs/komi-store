@@ -589,7 +589,7 @@ class DesktopInstaller(
         try {
             ProcessBuilder(
                 "notify-send",
-                "--app-name=GitHub Store",
+                "--app-name=Komi Store",
                 title,
                 message,
                 "-u",

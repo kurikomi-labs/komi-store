@@ -79,8 +79,8 @@ import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
 private const val SOURCE_CODE_URL = "https://github.com/OpenHub-Store/GitHub-Store"
 
-private const val TELEGRAM_URL = "https://t.me/githubstore"
-private const val DISCORD_URL = "https://discord.gg/githubstore"
+private const val TELEGRAM_URL = "https://t.me/komistoreapp"
+private const val DISCORD_URL = "https://discord.github-store.org"
 private const val MASTODON_URL = "https://mastodon.social/@githubstore"
 private const val REDDIT_URL = "https://reddit.com/r/githubstore"
 private const val GITHUB_ORG_URL = "https://github.com/OpenHub-Store"

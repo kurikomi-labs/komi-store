@@ -24,7 +24,7 @@
         "La barre de titre Windows 11 correspond maintenant au mode sombre du système au lieu de rester blanche.",
         "L'installation silencieuse via root déclenche maintenant correctement la demande de permission Magisk / KernelSU sur Android 14+ au lieu de signaler 'Pas de root' immédiatement ; le chemin root a été réécrit sur libsu.",
         "Lier une app installée à un repo GitHub affiche désormais immédiatement 'Mettre à jour vers X' quand la version installée est plus ancienne, au lieu du trompeur 'Installer vX' jusqu'à la prochaine vérification.",
-        "Le tiroir latéral du bureau affiche maintenant le vrai logo GitHub Store au lieu du placeholder 'G'.",
+        "Le tiroir latéral du bureau affiche maintenant le vrai logo Komi Store au lieu du placeholder 'G'.",
         "La largeur de contenu sur bureau (Home, Détails, Auth) se redimensionne maintenant en fraction de la fenêtre — Compact / Large / Extra large s'adaptent à la taille du moniteur au lieu d'être bloqués à des largeurs fixes en pixels.",
         "Le bureau Linux ne plante plus au démarrage sur glibc 2.42+ (Fedora 43, Ubuntu 26.04, Debian 13, Bazzite) — AppImage, deb, rpm et Arch contournent désormais le lanceur empaqueté défectueux et démarrent la JVM directement."
       ]

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">戻る</string>
     <string name="check_for_updates">更新を確認</string>
@@ -422,7 +422,7 @@
     <string name="update_check_enabled_title">バックグラウンド更新確認</string>
     <string name="update_check_enabled_description">バックグラウンドで定期的に更新を確認します。バッテリー節約のためオフにできます — 各アプリの詳細画面から手動で確認できます。</string>
     <string name="battery_optimization_card_title">バックグラウンド更新を許可</string>
-    <string name="battery_optimization_card_description">このデバイスはバックグラウンドタスクを積極的に終了します。バッテリー最適化からGitHub Storeを除外して、定期的な更新チェックとサイレントインストールが確実に動作するようにしましょう。</string>
+    <string name="battery_optimization_card_description">このデバイスはバックグラウンドタスクを積極的に終了します。バッテリー最適化からKomi Storeを除外して、定期的な更新チェックとサイレントインストールが確実に動作するようにしましょう。</string>
     <string name="battery_optimization_card_open">設定を開く</string>
     <string name="battery_optimization_card_dismiss">後で</string>
 
@@ -532,7 +532,7 @@
     <string name="variant_picker_stale_title">バリアントが変更されました — もう一度選択してください</string>
     <string name="variant_picker_stale_was">以前: %1$s</string>
     <string name="variant_picker_auto_title">自動</string>
-    <string name="variant_picker_auto_subtitle">GitHub Storeにデバイスに最適なバリアントを選ばせる</string>
+    <string name="variant_picker_auto_subtitle">Komi Storeにデバイスに最適なバリアントを選ばせる</string>
     <string name="markdown_alert_note">メモ</string>
     <string name="markdown_alert_tip">ヒント</string>
     <string name="markdown_alert_important">重要</string>
@@ -679,7 +679,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">ブラウザ</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">不明なソース</string>
     <string name="external_import_undo_linked">%1$s をリンクしました。</string>
     <string name="external_import_undo_skipped">%1$s をスキップしました。</string>
@@ -894,13 +894,13 @@
     <string name="import_summary_collapse">詳細を非表示</string>
     <string name="import_summary_expand">詳細を表示</string>
     <string name="import_summary_failed">%1$d 件失敗</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d 件インポート</string>
     <string name="import_summary_non_github">%1$d 件はGitHub以外</string>
     <string name="import_summary_non_github_caption">GitLab、F-Droid、HTMLソースはまだ追跡できません。</string>
     <string name="import_summary_title">インポート結果 — %1$s</string>
-    <string name="import_summary_unknown_caption">GitHub StoreまたはObtainiumのエクスポートには見えません。ファイルの先頭はこちらです:</string>
+    <string name="import_summary_unknown_caption">Komi StoreまたはObtainiumのエクスポートには見えません。ファイルの先頭はこちらです:</string>
     <string name="import_summary_unknown_format">このファイルを読み込めませんでした</string>
     <string name="installer_attribution_custom_apply">適用</string>
     <string name="installer_attribution_custom_error">有効なAndroidパッケージ名を使用してください (例: com.example.installer)</string>
@@ -996,7 +996,7 @@
     <string name="section_chip_your_device">このデバイス</string>
     <string name="section_chip_for_transfer">転送用</string>
     <string name="kao_banner_title">Android をオープンに</string>
-    <string name="kao_banner_body">Google の開発者検証ポリシーが Android のオープンな配布を脅かしています。GitHub Store は連合を支持します。</string>
+    <string name="kao_banner_body">Google の開発者検証ポリシーが Android のオープンな配布を脅かしています。Komi Store は連合を支持します。</string>
     <string name="kao_banner_cta">詳しく見る</string>
     <string name="kao_banner_dismiss_cd">バナーを閉じる</string>
 
@@ -1086,7 +1086,7 @@
     <string name="host_tokens_validation_host_required">ホストは必須です</string>
     <string name="host_tokens_validation_token_required">トークンは必須です</string>
     <string name="host_tokens_validation_token_short">トークンが短すぎます</string>
-    <string name="menubar_help_about">GitHub Store について</string>
+    <string name="menubar_help_about">Komi Store について</string>
     <string name="menubar_help_feedback">フィードバックを送る…</string>
     <string name="menubar_help_licenses">オープンソースライセンス</string>
     <string name="menubar_file_menu">ファイル</string>
@@ -1153,7 +1153,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">アプリで使用しているライブラリ。</string>
     <string name="tweaks_app_info_licenses_title">オープンソースライセンス</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">github-store.org で表示。</string>
@@ -1207,7 +1207,7 @@
     <string name="tweaks_install_method_desktop_empty_title">インストール方法は Android 専用です</string>
     <string name="tweaks_language_intro_body">言語を切り替えるとアプリが再起動します。</string>
     <string name="tweaks_licenses_intro_body">いずれかの項目をタップするとプロジェクトページが開きます。</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store はこれらのライブラリに支えられています。</string>
+    <string name="tweaks_licenses_intro_title">Komi Store はこれらのライブラリに支えられています。</string>
     <string name="tweaks_licenses_title">オープンソースライセンス</string>
     <string name="tweaks_privacy_browsing_history_section">閲覧履歴</string>
     <string name="tweaks_privacy_clear_viewed_body">開いたことのあるリポジトリの記録を消去します。</string>

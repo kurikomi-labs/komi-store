@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Apps feature - App -->
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">Navigate back</string>
     <string name="check_for_updates">Check for updates</string>
@@ -591,7 +591,7 @@
     <string name="interval_monthly">Every 30 days</string>
 
     <string name="battery_optimization_card_title">Allow background updates</string>
-    <string name="battery_optimization_card_description">Your device aggressively kills background tasks. Whitelist GitHub Store from battery optimization so scheduled update checks and silent installs can run reliably.</string>
+    <string name="battery_optimization_card_description">Your device aggressively kills background tasks. Whitelist Komi Store from battery optimization so scheduled update checks and silent installs can run reliably.</string>
     <string name="battery_optimization_card_open">Open settings</string>
     <string name="battery_optimization_card_dismiss">Maybe later</string>
 
@@ -614,7 +614,7 @@
     <string name="import_apps">Import from file</string>
 
     <string name="import_summary_title">Import results — %1$s</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d imported</string>
     <string name="import_summary_already_tracked">%1$d already tracked</string>
@@ -625,7 +625,7 @@
     <string name="import_summary_expand">Show details</string>
     <string name="import_summary_collapse">Hide details</string>
     <string name="import_summary_unknown_format">Couldn't read this file</string>
-    <string name="import_summary_unknown_caption">It doesn't look like a GitHub Store or Obtainium export. Here's the start of the file:</string>
+    <string name="import_summary_unknown_caption">It doesn't look like a Komi Store or Obtainium export. Here's the start of the file:</string>
 
     <string name="add_from_starred_title">Add from starred</string>
     <string name="starred_picker_title">Add from starred</string>
@@ -773,7 +773,7 @@
     <string name="variant_picker_stale_title">Variant changed — pick again</string>
     <string name="variant_picker_stale_was">Was: %1$s</string>
     <string name="variant_picker_auto_title">Automatic</string>
-    <string name="variant_picker_auto_subtitle">Let GitHub Store pick the best variant for your device</string>
+    <string name="variant_picker_auto_subtitle">Let Komi Store pick the best variant for your device</string>
     <string name="markdown_alert_note">Note</string>
     <string name="markdown_alert_tip">Tip</string>
     <string name="markdown_alert_important">Important</string>
@@ -884,7 +884,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">Browser</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">Unknown source</string>
     <string name="external_import_search_placeholder_url">Paste a github.com URL or search…</string>
     <string name="external_import_undo_linked">Linked %1$s.</string>
@@ -1126,7 +1126,7 @@
     <string name="menubar_go_menu">Go</string>
     <string name="menubar_file_quit">Quit</string>
     <string name="menubar_help_menu">Help</string>
-    <string name="menubar_help_about">About GitHub Store</string>
+    <string name="menubar_help_about">About Komi Store</string>
     <string name="menubar_help_feedback">Send feedback…</string>
     <string name="menubar_help_licenses">Open source licenses</string>
     <string name="menubar_help_privacy">Privacy policy</string>
@@ -1211,7 +1211,7 @@
     <string name="skipped_updates_unskipped_snackbar">Update prompt enabled for %1$s</string>
     <string name="skipped_updates_unskip_failure">Couldn't update skip preference</string>
     <string name="kao_banner_title">Keep Android Open</string>
-    <string name="kao_banner_body">Google's developer-verification policy threatens open Android distribution. GitHub Store stands with the coalition.</string>
+    <string name="kao_banner_body">Google's developer-verification policy threatens open Android distribution. Komi Store stands with the coalition.</string>
     <string name="kao_banner_cta">Learn more</string>
     <string name="kao_banner_dismiss_cd">Dismiss banner</string>
 
@@ -1321,7 +1321,7 @@
     <string name="tweaks_storage_downloaded_apks_clear">Clear</string>
     <string name="tweaks_storage_empty_size">0 B</string>
 
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_tagline">Cross-platform app store for GitHub, Codeberg, and Forgejo releases.</string>
     <string name="tweaks_app_info_community_section">Connect</string>
     <string name="tweaks_app_info_community_title">Join the community</string>
@@ -1341,7 +1341,7 @@
     <string name="tweaks_language_intro_body">The app restarts when you switch language.</string>
 
     <string name="tweaks_licenses_title">Open source licenses</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store stands on these libraries.</string>
+    <string name="tweaks_licenses_intro_title">Komi Store stands on these libraries.</string>
     <string name="tweaks_licenses_intro_body">Tap any entry to open its project page.</string>
 
     <!-- Onboarding -->

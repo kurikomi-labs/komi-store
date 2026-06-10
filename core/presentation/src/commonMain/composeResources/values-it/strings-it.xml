@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Apps feature - App -->
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">Indietro</string>
     <string name="check_for_updates">Controlla Aggiornamenti</string>
@@ -453,7 +453,7 @@
     <string name="update_check_enabled_title">Verifica aggiornamenti in background</string>
     <string name="update_check_enabled_description">Verifica periodicamente gli aggiornamenti in background. Disattiva per risparmiare batteria — puoi sempre verificare manualmente dalla schermata dettagli di qualsiasi app.</string>
     <string name="battery_optimization_card_title">Consenti aggiornamenti in background</string>
-    <string name="battery_optimization_card_description">Il tuo dispositivo chiude in modo aggressivo le attività in background. Esenta GitHub Store dall'ottimizzazione della batteria affinché i controlli pianificati e le installazioni silenziose funzionino in modo affidabile.</string>
+    <string name="battery_optimization_card_description">Il tuo dispositivo chiude in modo aggressivo le attività in background. Esenta Komi Store dall'ottimizzazione della batteria affinché i controlli pianificati e le installazioni silenziose funzionino in modo affidabile.</string>
     <string name="battery_optimization_card_open">Apri impostazioni</string>
     <string name="battery_optimization_card_dismiss">Più tardi</string>
 
@@ -565,7 +565,7 @@
     <string name="variant_picker_stale_title">Variante cambiata — scegli di nuovo</string>
     <string name="variant_picker_stale_was">Era: %1$s</string>
     <string name="variant_picker_auto_title">Automatica</string>
-    <string name="variant_picker_auto_subtitle">Lascia che GitHub Store scelga la variante migliore per il tuo dispositivo</string>
+    <string name="variant_picker_auto_subtitle">Lascia che Komi Store scelga la variante migliore per il tuo dispositivo</string>
     <string name="markdown_alert_note">Nota</string>
     <string name="markdown_alert_tip">Suggerimento</string>
     <string name="markdown_alert_important">Importante</string>
@@ -715,7 +715,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">Browser</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">Fonte sconosciuta</string>
     <string name="external_import_undo_linked">%1$s collegata.</string>
     <string name="external_import_undo_skipped">%1$s saltata.</string>
@@ -933,13 +933,13 @@
     <string name="import_summary_collapse">Nascondi dettagli</string>
     <string name="import_summary_expand">Mostra dettagli</string>
     <string name="import_summary_failed">%1$d falliti</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d importati</string>
     <string name="import_summary_non_github">%1$d non GitHub</string>
     <string name="import_summary_non_github_caption">Non tracciamo ancora GitLab, F-Droid o sorgenti HTML.</string>
     <string name="import_summary_title">Risultati import — %1$s</string>
-    <string name="import_summary_unknown_caption">Non sembra un'esportazione di GitHub Store o Obtainium. Ecco l'inizio del file:</string>
+    <string name="import_summary_unknown_caption">Non sembra un'esportazione di Komi Store o Obtainium. Ecco l'inizio del file:</string>
     <string name="import_summary_unknown_format">Impossibile leggere questo file</string>
     <string name="installer_attribution_custom_apply">Applica</string>
     <string name="installer_attribution_custom_error">Usa un nome di pacchetto Android valido (es. com.example.installer)</string>
@@ -1035,7 +1035,7 @@
     <string name="section_chip_your_device">Il tuo dispositivo</string>
     <string name="section_chip_for_transfer">Da trasferire</string>
     <string name="kao_banner_title">Mantieni Android aperto</string>
-    <string name="kao_banner_body">La policy di verifica degli sviluppatori di Google minaccia la distribuzione aperta di Android. GitHub Store sostiene la coalizione.</string>
+    <string name="kao_banner_body">La policy di verifica degli sviluppatori di Google minaccia la distribuzione aperta di Android. Komi Store sostiene la coalizione.</string>
     <string name="kao_banner_cta">Scopri di più</string>
     <string name="kao_banner_dismiss_cd">Chiudi banner</string>
 
@@ -1128,7 +1128,7 @@
     <string name="host_tokens_validation_host_required">Host obbligatorio</string>
     <string name="host_tokens_validation_token_required">Token obbligatorio</string>
     <string name="host_tokens_validation_token_short">Token troppo corto</string>
-    <string name="menubar_help_about">Informazioni su GitHub Store</string>
+    <string name="menubar_help_about">Informazioni su Komi Store</string>
     <string name="menubar_help_feedback">Invia feedback…</string>
     <string name="menubar_help_licenses">Licenze open source</string>
     <string name="menubar_file_menu">File</string>
@@ -1196,7 +1196,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">Librerie usate nell'app.</string>
     <string name="tweaks_app_info_licenses_title">Licenze open source</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">Vedi su github-store.org.</string>
@@ -1250,7 +1250,7 @@
     <string name="tweaks_install_method_desktop_empty_title">Il metodo di installazione è solo Android</string>
     <string name="tweaks_language_intro_body">L'app si riavvia quando cambi lingua.</string>
     <string name="tweaks_licenses_intro_body">Tocca una voce per aprirne la pagina del progetto.</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store si basa su queste librerie.</string>
+    <string name="tweaks_licenses_intro_title">Komi Store si basa su queste librerie.</string>
     <string name="tweaks_licenses_title">Licenze open source</string>
     <string name="tweaks_privacy_browsing_history_section">Cronologia di navigazione</string>
     <string name="tweaks_privacy_clear_viewed_body">Dimentica quali repo hai già aperto.</string>

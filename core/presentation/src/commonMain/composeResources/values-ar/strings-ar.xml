@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Apps feature - App -->
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">العودة</string>
     <string name="check_for_updates">التحقق من التحديثات</string>
@@ -453,7 +453,7 @@
     <string name="update_check_enabled_title">التحقق التلقائي من التحديثات</string>
     <string name="update_check_enabled_description">يبحث عن التحديثات في الخلفية بشكل دوري. أوقفه لتوفير البطارية — يمكنك دائماً التحقق يدوياً من شاشة تفاصيل أي تطبيق.</string>
     <string name="battery_optimization_card_title">السماح بالتحديثات في الخلفية</string>
-    <string name="battery_optimization_card_description">جهازك يوقف المهام الخلفية بقوة. أضف GitHub Store إلى قائمة الاستثناء من تحسين البطارية حتى تعمل عمليات فحص التحديثات والتثبيت الصامت بشكل موثوق.</string>
+    <string name="battery_optimization_card_description">جهازك يوقف المهام الخلفية بقوة. أضف Komi Store إلى قائمة الاستثناء من تحسين البطارية حتى تعمل عمليات فحص التحديثات والتثبيت الصامت بشكل موثوق.</string>
     <string name="battery_optimization_card_open">فتح الإعدادات</string>
     <string name="battery_optimization_card_dismiss">ربما لاحقاً</string>
 
@@ -565,7 +565,7 @@
     <string name="variant_picker_stale_title">تغير النوع — اختر مرة أخرى</string>
     <string name="variant_picker_stale_was">كان: %1$s</string>
     <string name="variant_picker_auto_title">تلقائي</string>
-    <string name="variant_picker_auto_subtitle">دع GitHub Store يختار أفضل نوع لجهازك</string>
+    <string name="variant_picker_auto_subtitle">دع Komi Store يختار أفضل نوع لجهازك</string>
     <string name="markdown_alert_note">ملاحظة</string>
     <string name="markdown_alert_tip">نصيحة</string>
     <string name="markdown_alert_important">مهم</string>
@@ -720,7 +720,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">المتصفح</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">مصدر غير معروف</string>
     <string name="external_import_undo_linked">تم ربط %1$s.</string>
     <string name="external_import_undo_skipped">تم تخطي %1$s.</string>
@@ -942,13 +942,13 @@
     <string name="import_summary_collapse">إخفاء التفاصيل</string>
     <string name="import_summary_expand">عرض التفاصيل</string>
     <string name="import_summary_failed">%1$d فشل</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d تم استيراده</string>
     <string name="import_summary_non_github">%1$d ليست GitHub</string>
     <string name="import_summary_non_github_caption">لا نتتبّع GitLab أو F-Droid أو مصادر HTML بعد.</string>
     <string name="import_summary_title">نتائج الاستيراد — %1$s</string>
-    <string name="import_summary_unknown_caption">لا يبدو أنه ملف تصدير من GitHub Store أو Obtainium. هذه بداية الملف:</string>
+    <string name="import_summary_unknown_caption">لا يبدو أنه ملف تصدير من Komi Store أو Obtainium. هذه بداية الملف:</string>
     <string name="import_summary_unknown_format">تعذّر قراءة هذا الملف</string>
     <string name="installer_attribution_custom_apply">تطبيق</string>
     <string name="installer_attribution_custom_error">استخدم اسم حزمة Android صالحاً (مثل com.example.installer)</string>
@@ -1044,7 +1044,7 @@
     <string name="section_chip_your_device">جهازك</string>
     <string name="section_chip_for_transfer">للنقل</string>
     <string name="kao_banner_title">أبقِ أندرويد مفتوحًا</string>
-    <string name="kao_banner_body">سياسة التحقق من المطورين من Google تهدد التوزيع المفتوح لأندرويد. GitHub Store يدعم التحالف.</string>
+    <string name="kao_banner_body">سياسة التحقق من المطورين من Google تهدد التوزيع المفتوح لأندرويد. Komi Store يدعم التحالف.</string>
     <string name="kao_banner_cta">اعرف المزيد</string>
     <string name="kao_banner_dismiss_cd">إغلاق البانر</string>
 
@@ -1145,7 +1145,7 @@
     <string name="host_tokens_validation_host_required">المضيف مطلوب</string>
     <string name="host_tokens_validation_token_required">الرمز مطلوب</string>
     <string name="host_tokens_validation_token_short">الرمز قصير جداً</string>
-    <string name="menubar_help_about">حول GitHub Store</string>
+    <string name="menubar_help_about">حول Komi Store</string>
     <string name="menubar_help_feedback">إرسال ملاحظات…</string>
     <string name="menubar_help_licenses">تراخيص المصادر المفتوحة</string>
     <string name="menubar_file_menu">ملف</string>
@@ -1217,7 +1217,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">المكتبات المستخدمة في التطبيق.</string>
     <string name="tweaks_app_info_licenses_title">تراخيص المصادر المفتوحة</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">العرض على github-store.org.</string>
@@ -1271,7 +1271,7 @@
     <string name="tweaks_install_method_desktop_empty_title">طريقة التثبيت لـ Android فقط</string>
     <string name="tweaks_language_intro_body">يُعاد تشغيل التطبيق عند تبديل اللغة.</string>
     <string name="tweaks_licenses_intro_body">انقر على أي إدخال لفتح صفحة مشروعه.</string>
-    <string name="tweaks_licenses_intro_title">يقوم GitHub Store على هذه المكتبات.</string>
+    <string name="tweaks_licenses_intro_title">يقوم Komi Store على هذه المكتبات.</string>
     <string name="tweaks_licenses_title">تراخيص المصادر المفتوحة</string>
     <string name="tweaks_privacy_browsing_history_section">سجل التصفّح</string>
     <string name="tweaks_privacy_clear_viewed_body">انسَ المستودعات التي فتحتها سابقاً.</string>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GitHub Store</string>
+    <string name="app_name">Komi Store</string>
 
     <string name="navigate_back">返回</string>
     <string name="check_for_updates">检查更新</string>
@@ -423,7 +423,7 @@
     <string name="update_check_enabled_title">后台检查更新</string>
     <string name="update_check_enabled_description">在后台周期性检查更新。可关闭以节省电量 — 你随时可在任意应用的详情页手动检查。</string>
     <string name="battery_optimization_card_title">允许后台更新</string>
-    <string name="battery_optimization_card_description">你的设备会积极结束后台任务。把 GitHub Store 加入电池优化白名单，定时更新检查和静默安装才能稳定运行。</string>
+    <string name="battery_optimization_card_description">你的设备会积极结束后台任务。把 Komi Store 加入电池优化白名单，定时更新检查和静默安装才能稳定运行。</string>
     <string name="battery_optimization_card_open">打开设置</string>
     <string name="battery_optimization_card_dismiss">稍后</string>
 
@@ -533,7 +533,7 @@
     <string name="variant_picker_stale_title">变体已更改 — 请重新选择</string>
     <string name="variant_picker_stale_was">原为：%1$s</string>
     <string name="variant_picker_auto_title">自动</string>
-    <string name="variant_picker_auto_subtitle">让 GitHub Store 为您的设备选择最佳变体</string>
+    <string name="variant_picker_auto_subtitle">让 Komi Store 为您的设备选择最佳变体</string>
     <string name="markdown_alert_note">备注</string>
     <string name="markdown_alert_tip">提示</string>
     <string name="markdown_alert_important">重要</string>
@@ -681,7 +681,7 @@
     <string name="external_import_installer_fdroid">F-Droid</string>
     <string name="external_import_installer_browser">浏览器</string>
     <string name="external_import_installer_sideload">Sideload</string>
-    <string name="external_import_installer_self">GitHub Store</string>
+    <string name="external_import_installer_self">Komi Store</string>
     <string name="external_import_installer_unknown">未知来源</string>
     <string name="external_import_undo_linked">%1$s 已关联。</string>
     <string name="external_import_undo_skipped">%1$s 已跳过。</string>
@@ -896,13 +896,13 @@
     <string name="import_summary_collapse">隐藏详情</string>
     <string name="import_summary_expand">显示详情</string>
     <string name="import_summary_failed">%1$d 个失败</string>
-    <string name="import_summary_format_native">GitHub Store</string>
+    <string name="import_summary_format_native">Komi Store</string>
     <string name="import_summary_format_obtainium">Obtainium</string>
     <string name="import_summary_imported">%1$d 个已导入</string>
     <string name="import_summary_non_github">%1$d 个非 GitHub</string>
     <string name="import_summary_non_github_caption">我们暂不追踪 GitLab、F-Droid 或 HTML 来源。</string>
     <string name="import_summary_title">导入结果 — %1$s</string>
-    <string name="import_summary_unknown_caption">这看起来不是 GitHub Store 或 Obtainium 的导出文件。文件开头如下：</string>
+    <string name="import_summary_unknown_caption">这看起来不是 Komi Store 或 Obtainium 的导出文件。文件开头如下：</string>
     <string name="import_summary_unknown_format">无法读取该文件</string>
     <string name="installer_attribution_custom_apply">应用</string>
     <string name="installer_attribution_custom_error">请使用有效的 Android 包名（如 com.example.installer）</string>
@@ -998,7 +998,7 @@
     <string name="section_chip_your_device">你的设备</string>
     <string name="section_chip_for_transfer">用于转移</string>
     <string name="kao_banner_title">保持 Android 开放</string>
-    <string name="kao_banner_body">Google 的开发者验证政策威胁 Android 的开放分发。GitHub Store 与联盟同行。</string>
+    <string name="kao_banner_body">Google 的开发者验证政策威胁 Android 的开放分发。Komi Store 与联盟同行。</string>
     <string name="kao_banner_cta">了解更多</string>
     <string name="kao_banner_dismiss_cd">关闭横幅</string>
 
@@ -1089,7 +1089,7 @@
     <string name="host_tokens_validation_host_required">必须填写主机</string>
     <string name="host_tokens_validation_token_required">必须填写令牌</string>
     <string name="host_tokens_validation_token_short">令牌太短</string>
-    <string name="menubar_help_about">关于 GitHub Store</string>
+    <string name="menubar_help_about">关于 Komi Store</string>
     <string name="menubar_help_feedback">发送反馈…</string>
     <string name="menubar_help_licenses">开源许可证</string>
     <string name="menubar_file_menu">文件</string>
@@ -1156,7 +1156,7 @@
     <string name="translation_provider_deepl">DeepL</string>
     <string name="translation_provider_libre">LibreTranslate</string>
     <string name="translation_provider_microsoft">Microsoft</string>
-    <string name="tweaks_app_info_app_name">GitHub Store</string>
+    <string name="tweaks_app_info_app_name">Komi Store</string>
     <string name="tweaks_app_info_licenses_subtitle">应用使用的开源库。</string>
     <string name="tweaks_app_info_licenses_title">开源许可证</string>
     <string name="tweaks_app_info_privacy_policy_subtitle">在 github-store.org 上查看。</string>
@@ -1210,7 +1210,7 @@
     <string name="tweaks_install_method_desktop_empty_title">安装方式仅限 Android</string>
     <string name="tweaks_language_intro_body">切换语言时应用会重启。</string>
     <string name="tweaks_licenses_intro_body">点按任意条目以打开其项目页面。</string>
-    <string name="tweaks_licenses_intro_title">GitHub Store 依托于这些开源库。</string>
+    <string name="tweaks_licenses_intro_title">Komi Store 依托于这些开源库。</string>
     <string name="tweaks_licenses_title">开源许可证</string>
     <string name="tweaks_privacy_browsing_history_section">浏览记录</string>
     <string name="tweaks_privacy_clear_viewed_body">忘记你打开过哪些仓库。</string>

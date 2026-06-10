@@ -234,7 +234,7 @@ class AutoUpdateWorker(
             NotificationCompat
                 .Builder(applicationContext, UPDATE_SERVICE_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle("GitHub Store")
+                .setContentTitle("Komi Store")
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
