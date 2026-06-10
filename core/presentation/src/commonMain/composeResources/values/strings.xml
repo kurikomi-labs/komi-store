@@ -689,6 +689,7 @@
 
     <string name="seen_history_cleared">Seen history cleared</string>
     <string name="seen_badge">Viewed</string>
+    <string name="repo_card_details">Details</string>
     <string name="self_owned_badge">You own this repo</string>
     <string name="hide_repository">Hide repository</string>
     <string name="open_on_github">Open on GitHub</string>

@@ -22,6 +22,8 @@ fun GithubRepoSummary.toUi(): GithubRepoSummaryUi {
         isFork = isFork,
         availablePlatforms = availablePlatforms.toImmutableList(),
         downloadCount = downloadCount,
+        latestReleaseDate = latestReleaseDate,
+        latestReleaseTag = latestReleaseTag,
         sourceHost = sourceHost,
     )
 }

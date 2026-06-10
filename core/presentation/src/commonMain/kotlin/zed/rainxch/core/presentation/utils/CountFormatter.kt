@@ -22,9 +22,14 @@ fun formatCount(count: Long): String =
 
 fun formatCompactCount(count: Long): String =
     when {
-        count >= 1_000_000L -> "${count / 100_000L / 10.0}M"
-        count >= 1_000L -> "${count / 100L / 10.0}k"
+        count >= 1_000_000L -> "${trimTrailingZero(count / 100_000L / 10.0)}M"
+        count >= 1_000L -> "${trimTrailingZero(count / 100L / 10.0)}k"
         else -> count.toString()
     }
 
 fun formatCompactCount(count: Int): String = formatCompactCount(count.toLong())
+
+private fun trimTrailingZero(value: Double): String {
+    val text = value.toString()
+    return if (text.endsWith(".0")) text.dropLast(2) else text
+}

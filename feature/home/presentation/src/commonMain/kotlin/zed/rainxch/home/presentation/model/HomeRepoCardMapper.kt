@@ -3,12 +3,24 @@ package zed.rainxch.home.presentation.model
 import kotlinx.collections.immutable.toImmutableList
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.core.presentation.utils.daysSinceIso
 import zed.rainxch.core.presentation.utils.formatRelativeShort
 import zed.rainxch.core.presentation.utils.toUi
 import zed.rainxch.core.presentation.vocabulary.AppAccentResolver
 import zed.rainxch.core.presentation.vocabulary.PlatformKind
 import zed.rainxch.core.presentation.vocabulary.freshnessOf
+
+fun HomeRepoCardUi.toDiscoveryUi(): DiscoveryRepositoryUi =
+    DiscoveryRepositoryUi(
+        isInstalled = isInstalled,
+        isUpdateAvailable = isUpdateAvailable,
+        isFavourite = isFavourite,
+        isStarred = isStarred,
+        isSeen = isSeen,
+        isCurrentUserOwner = isCurrentUserOwner,
+        repository = rawRepository,
+    )
 
 fun toHomeRepoCardUi(
     repo: GithubRepoSummary,

@@ -41,11 +41,12 @@ import zed.rainxch.githubstore.core.presentation.res.home_section_hot_releases
 import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
 import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
 import zed.rainxch.core.presentation.components.buttons.IconButton
+import zed.rainxch.core.presentation.components.RepoRankChip
+import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.home.domain.model.HomeCategory
-import zed.rainxch.home.presentation.components.PopularRowItem
-import zed.rainxch.home.presentation.components.TrendingRowItem
+import zed.rainxch.home.presentation.model.toDiscoveryUi
 
 @Composable
 fun CategoryListRoot(
@@ -115,21 +116,17 @@ fun CategoryListScreen(
                         items = state.cards,
                         key = { _, card -> card.id },
                     ) { index, card ->
-                        when (state.category) {
-                            HomeCategory.MOST_POPULAR -> PopularRowItem(
-                                rank = index + 1,
-                                card = card,
-                                onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
-                                onLongClick = { },
-                            )
-
-                            else -> TrendingRowItem(
-                                rank = index + 1,
-                                card = card,
-                                onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
-                                onLongClick = { },
-                            )
-                        }
+                        RepositoryCard(
+                            discoveryRepositoryUi = card.toDiscoveryUi(),
+                            onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
+                            onShareClick = { },
+                            onDeveloperClick = { },
+                            trailingBadge = if (state.category == HomeCategory.MOST_POPULAR) {
+                                { RepoRankChip(rank = index + 1) }
+                            } else {
+                                null
+                            },
+                        )
                     }
 
                     if (state.isLoadingMore) {

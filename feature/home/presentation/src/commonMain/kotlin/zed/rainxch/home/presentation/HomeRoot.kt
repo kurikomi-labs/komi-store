@@ -49,14 +49,14 @@ import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
 import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.components.HomeTopBar
+import zed.rainxch.core.presentation.components.RepoRankChip
+import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.home.presentation.components.HotCardItem
 import zed.rainxch.home.presentation.components.LeadCard
-import zed.rainxch.home.presentation.components.PopularRowItem
 import zed.rainxch.home.presentation.components.RepositoryActionsSheet
 import zed.rainxch.home.presentation.components.SeeAllHotTile
 import zed.rainxch.home.presentation.components.SeeMoreRow
-import zed.rainxch.home.presentation.components.StarredRowItem
-import zed.rainxch.home.presentation.components.TrendingRowItem
+import zed.rainxch.home.presentation.model.toDiscoveryUi
 
 @Composable
 fun HomeRoot(
@@ -241,14 +241,15 @@ private fun HomeScreen(
                                 )
                             }
 
-                            itemsIndexed(
+                            items(
                                 items = state.trending,
-                                key = { _, card -> "trending_${card.id}" },
-                            ) { index, card ->
-                                TrendingRowItem(
-                                    card = card,
-                                    rank = index + 1,
+                                key = { card -> "trending_${card.id}" },
+                            ) { card ->
+                                RepositoryCard(
+                                    discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
+                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
+                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                     modifier = Modifier.animateItem(),
                                 )
@@ -272,11 +273,13 @@ private fun HomeScreen(
                                 items = state.popular,
                                 key = { _, card -> "popular_${card.id}" },
                             ) { index, card ->
-                                PopularRowItem(
-                                    card = card,
-                                    rank = index + 1,
+                                RepositoryCard(
+                                    discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
+                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
+                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    trailingBadge = { RepoRankChip(rank = index + 1) },
                                     modifier = Modifier.animateItem(),
                                 )
                             }
@@ -296,9 +299,11 @@ private fun HomeScreen(
                             }
 
                             items(items = state.starred, key = { "starred_${it.id}" }) { card ->
-                                StarredRowItem(
-                                    card = card,
+                                RepositoryCard(
+                                    discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
+                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
+                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
                                     onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                     modifier = Modifier.animateItem(),
                                 )
