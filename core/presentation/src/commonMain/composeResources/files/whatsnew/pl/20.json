@@ -13,7 +13,9 @@
         "Przeglądaj pull requesty repozytorium z filtrami otwartych i zamkniętych.",
         "Skróty na ekranie głównym Androida — przytrzymaj ikonę aplikacji, aby przejść od razu do Szukaj, Biblioteki, Ulubionych lub Ostatnio oglądanych, i przeciągnij dowolny jako osobną ikonę.",
         "Importuj oznaczone gwiazdką repozytoria dowolnego użytkownika GitHuba prosto do swoich ulubionych — bez logowania. Otwórz Ulubione, dotknij nowej ikony dodawania osoby, wpisz nazwę użytkownika i dodaj wybrane repozytoria.",
-        "Możesz teraz zaznaczyć i skopiować nazwę, opis oraz statystyki repozytorium na jego stronie szczegółów — przytrzymaj tekst, aby go skopiować i wyszukać gdzie indziej."
+        "Możesz teraz zaznaczyć i skopiować nazwę, opis oraz statystyki repozytorium na jego stronie szczegółów — przytrzymaj tekst, aby go skopiować i wyszukać gdzie indziej.",
+        "Windows: dostępna jest teraz wersja przenośna — rozpakuj i uruchom Komi-Store.exe bezpośrednio, bez instalacji.",
+        "Pulpit: bogatszy górny pasek menu — nowe menu Plik i Idź pozwalają przejść do ekranu głównego, wyszukiwania, biblioteki, ulubionych lub ostatnio oglądanych, otworzyć ustawienia albo zamknąć aplikację, bezpośrednio z menu."
       ]
     },
     {
@@ -21,7 +23,8 @@
       "bullets": [
         "Debian 12 / Ubuntu 22.04 znów mogą zainstalować pakiet .deb — nie wymaga już bibliotek time64 'libasound2t64' / 'libpng16-16t64', które istnieją tylko w Debianie 13+, więc jeden .deb instaluje się na wszystkich generacjach Debiana.",
         "Logowanie na komputerze nie zacina się już na „Oczekiwanie na autoryzację…” — jeśli przeglądarka nie odeśle odpowiedzi, następuje teraz przekroczenie limitu czasu, więc możesz spróbować ponownie lub użyć kodu urządzenia albo tokena.",
-        "Windows: linki „Otwórz w Komi Store” niezawodnie otwierają aplikację — obsługa githubstore:// jest rejestrowana solidniej i ponownie po aktualizacjach, więc linki nie kończą się już błędem „brak skojarzonej aplikacji”."
+        "Windows: linki „Otwórz w Komi Store” niezawodnie otwierają aplikację — obsługa githubstore:// jest rejestrowana solidniej i ponownie po aktualizacjach, więc linki nie kończą się już błędem „brak skojarzonej aplikacji”.",
+        "macOS: aplikacja nie zamyka się już nieoczekiwanie po otwarciu profilu lub przełączaniu okien."
       ]
     }
   ]

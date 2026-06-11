@@ -13,7 +13,9 @@
         "Bir deponun Pull request'lerine açık ve kapalı filtreleriyle göz atın.",
         "Android ana ekran kısayolları — uygulama simgesine uzun basarak doğrudan Ara, Kütüphane, Favoriler veya Son görüntülenenlere geç ve herhangi birini bağımsız bir simge olarak sürükle.",
         "Herhangi bir GitHub kullanıcısının yıldızladığı depoları doğrudan favorilerinize aktarın — giriş yapmaya gerek yok. Favoriler'i açın, yeni kişi-ekle simgesine dokunun, bir kullanıcı adı yazın ve istediğiniz depoları ekleyin.",
-        "Artık bir deponun ayrıntı sayfasında adını, açıklamasını ve istatistiklerini seçip kopyalayabilirsiniz — metni uzun basılı tutarak kopyalayın ve başka bir yerde aratın."
+        "Artık bir deponun ayrıntı sayfasında adını, açıklamasını ve istatistiklerini seçip kopyalayabilirsiniz — metni uzun basılı tutarak kopyalayın ve başka bir yerde aratın.",
+        "Windows: artık taşınabilir bir sürüm mevcut — arşivden çıkarıp Komi-Store.exe'yi doğrudan çalıştırın, kuruluma gerek yok.",
+        "Masaüstü: daha zengin bir üst menü çubuğu — yeni Dosya ve Git menüleriyle doğrudan menüden Ana Sayfa, Arama, Kütüphane, Favoriler veya Son Görüntülenenler'e gidin, ayarları açın ya da çıkın."
       ]
     },
     {
@@ -21,7 +23,8 @@
       "bullets": [
         "Debian 12 / Ubuntu 22.04 artık .deb paketini yeniden kurabiliyor — paket, yalnızca Debian 13+ üzerinde bulunan time64 'libasound2t64' / 'libpng16-16t64' kitaplıklarını artık istemiyor, böylece tek bir .deb tüm Debian sürümlerine kuruluyor.",
         "Masaüstünde oturum açma artık «Yetkilendirme bekleniyor…» ekranında takılıp kalmıyor — tarayıcıdan yanıt gelmezse artık zaman aşımına uğruyor; böylece yeniden deneyebilir ya da cihaz kodu veya belirteç kullanabilirsiniz.",
-        "Windows: «Komi Store'da Aç» bağlantıları artık uygulamayı güvenilir şekilde açıyor — githubstore:// işleyicisi daha sağlam biçimde ve güncellemelerden sonra yeniden kaydediliyor, böylece bağlantılar artık «ilişkili uygulama yok» hatasıyla başarısız olmuyor."
+        "Windows: «Komi Store'da Aç» bağlantıları artık uygulamayı güvenilir şekilde açıyor — githubstore:// işleyicisi daha sağlam biçimde ve güncellemelerden sonra yeniden kaydediliyor, böylece bağlantılar artık «ilişkili uygulama yok» hatasıyla başarısız olmuyor.",
+        "macOS: profilinizi açtığınızda veya pencereler arasında geçiş yaptığınızda uygulama artık beklenmedik şekilde kapanmıyor."
       ]
     }
   ]

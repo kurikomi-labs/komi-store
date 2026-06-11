@@ -13,7 +13,9 @@
         "Explora los Pull requests de un repositorio con filtros de abiertos y cerrados.",
         "Accesos directos en la pantalla de inicio de Android — mantén pulsado el icono de la app para ir directo a Buscar, tu Biblioteca, Favoritos o Vistos recientemente, y arrastra cualquiera como un icono independiente.",
         "Importa los repositorios destacados de cualquier usuario de GitHub directamente a tus favoritos — sin necesidad de iniciar sesión. Abre Favoritos, toca el nuevo icono de añadir persona, escribe un nombre de usuario y añade los repos que quieras.",
-        "Ahora puedes seleccionar y copiar el nombre, la descripción y las estadísticas de un repositorio en su página de detalles: mantén pulsado el texto para copiarlo y buscarlo en otro sitio."
+        "Ahora puedes seleccionar y copiar el nombre, la descripción y las estadísticas de un repositorio en su página de detalles: mantén pulsado el texto para copiarlo y buscarlo en otro sitio.",
+        "Windows: ya hay una versión portátil — descomprímela y ejecuta Komi-Store.exe directamente, sin necesidad de instalar.",
+        "Escritorio: una barra de menú superior más completa — los nuevos menús Archivo e Ir te llevan a Inicio, Búsqueda, Biblioteca, Favoritos o Vistos recientemente, abren los ajustes o cierran la app, directamente desde el menú."
       ]
     },
     {
@@ -21,7 +23,8 @@
       "bullets": [
         "Debian 12 / Ubuntu 22.04 ya pueden instalar el .deb de nuevo — el paquete ya no exige las bibliotecas time64 'libasound2t64' / 'libpng16-16t64', que solo existen en Debian 13+, así que un único .deb se instala en todas las generaciones de Debian.",
         "El inicio de sesión en el escritorio ya no se queda bloqueado en «Esperando autorización…»: si el navegador no completa el proceso, ahora caduca para que puedas reintentarlo o usar un código de dispositivo o un token.",
-        "Windows: los enlaces «Abrir en Komi Store» ahora abren la app de forma fiable: el controlador githubstore:// se registra de manera más robusta y se vuelve a registrar tras las actualizaciones, por lo que ya no fallan con «no hay ninguna aplicación asociada»."
+        "Windows: los enlaces «Abrir en Komi Store» ahora abren la app de forma fiable: el controlador githubstore:// se registra de manera más robusta y se vuelve a registrar tras las actualizaciones, por lo que ya no fallan con «no hay ninguna aplicación asociada».",
+        "macOS: la app ya no se cierra de forma inesperada al abrir tu perfil o cambiar entre ventanas."
       ]
     }
   ]
