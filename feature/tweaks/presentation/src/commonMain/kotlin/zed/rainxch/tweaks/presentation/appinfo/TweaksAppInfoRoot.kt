@@ -1,6 +1,7 @@
 package zed.rainxch.tweaks.presentation.appinfo
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.Public
-import androidx.compose.material.icons.outlined.Store
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,11 +45,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.theme.tokens.GhsAccents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.core.presentation.components.buttons.GhsButton
 import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
 import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
@@ -77,15 +79,15 @@ import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 
 private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
-private const val SOURCE_CODE_URL = "https://github.com/OpenHub-Store/GitHub-Store"
+private const val SOURCE_CODE_URL = "https://github.com/kurikomi-labs/komi-store"
 
 private const val TELEGRAM_URL = "https://t.me/komistoreapp"
 private const val DISCORD_URL = "https://discord.github-store.org"
-private const val MASTODON_URL = "https://mastodon.social/@githubstore"
+private const val MASTODON_URL = "https://fosstodon.org/@komistore"
 private const val REDDIT_URL = "https://reddit.com/r/githubstore"
-private const val GITHUB_ORG_URL = "https://github.com/OpenHub-Store"
+private const val GITHUB_ORG_URL = "https://github.com/kurikomi-labs"
 private const val WEBSITE_URL = "https://github-store.org"
-private const val BUSINESS_EMAIL = "mailto:hello@github-store.org"
+private const val BUSINESS_EMAIL = "mailto:hello@komistore.app"
 
 @Composable
 fun TweaksAppInfoRoot(
@@ -183,20 +185,13 @@ private fun AppIdentityCard(versionName: String) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Box(
+            Image(
+                painter = painterResource(Res.drawable.app_icon),
+                contentDescription = null,
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(Radii.cardSm)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Store,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(28.dp),
-                )
-            }
+                    .clip(Radii.cardSm),
+            )
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
