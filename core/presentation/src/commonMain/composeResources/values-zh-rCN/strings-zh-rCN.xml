@@ -204,23 +204,23 @@
     <string name="added_days_ago">%1$d 天前添加</string>
     <string name="added_on_date">%1$s 添加</string>
 
-    <string name="starred_repositories">已收藏的仓库</string>
-    <string name="repository_starred">仓库已收藏</string>
-    <string name="repository_not_starred">仓库未收藏</string>
-    <string name="star_from_github">你可以在 GitHub 上收藏该仓库</string>
-    <string name="unstar_from_github">你可以在 GitHub 上取消收藏该仓库</string>
+    <string name="starred_repositories">已星标的仓库</string>
+    <string name="repository_starred">仓库已加星标</string>
+    <string name="repository_not_starred">仓库未加星标</string>
+    <string name="star_from_github">你可以在 GitHub 上给该仓库加星标</string>
+    <string name="unstar_from_github">你可以在 GitHub 上取消该仓库的星标</string>
 
     <string name="sign_in_required">需要登录</string>
-    <string name="no_starred_repos">没有收藏的仓库</string>
-    <string name="sign_in_with_github_for_stars">使用 GitHub 登录以查看收藏的仓库</string>
-    <string name="star_repos_hint">在 GitHub 上收藏有可安装版本的仓库以在此查看</string>
+    <string name="no_starred_repos">没有加星标的仓库</string>
+    <string name="sign_in_with_github_for_stars">使用 GitHub 登录以查看加星标的仓库</string>
+    <string name="star_repos_hint">在 GitHub 上，给存在可安装版本的仓库加星标以在此查看</string>
     <string name="last_synced">上次同步</string>
     <string name="just_now">刚刚</string>
     <string name="minutes_ago">%1$d 分钟前</string>
     <string name="hours_ago">%1$d 小时前</string>
     <string name="days_ago">%1$d 天前</string>
     <string name="dismiss">关闭</string>
-    <string name="sync_starred_failed">同步收藏的仓库失败</string>
+    <string name="sync_starred_failed">同步加星标仓库失败</string>
 
 
     <!-- Developer Profile - General -->
@@ -352,7 +352,7 @@
     <string name="profile_sign_in_description">解锁完整体验。管理您的应用、同步偏好设置，更快地浏览。</string>
     <string name="profile_repos">仓库</string>
     <string name="profile_login">登录</string>
-    <string name="profile_stars_description">您在 GitHub 上收藏的仓库</string>
+    <string name="profile_stars_description">您在 GitHub 上加了星标的仓库</string>
     <string name="profile_favourites_description">本地保存的收藏仓库</string>
 
     <!-- Session expired dialog -->
@@ -748,16 +748,16 @@
     <string name="feedback_field_title">标题</string>
     <string name="feedback_field_description">描述</string>
     <string name="feedback_field_steps">重现步骤</string>
-    <string name="feedback_field_expected_actual">预期与实际</string>
+    <string name="feedback_field_expected_actual">预期与实际情况</string>
     <string name="feedback_field_use_case">使用场景</string>
     <string name="feedback_field_proposed_solution">建议解决方案</string>
     <string name="feedback_field_current_behaviour">当前行为</string>
     <string name="feedback_field_desired_behaviour">期望行为</string>
     <string name="feedback_diagnostics_header">诊断信息</string>
     <string name="feedback_diagnostics_include">包含诊断信息</string>
-    <string name="feedback_send_via_email">通过邮件发送</string>
-    <string name="feedback_send_via_github">作为 GitHub Issue 打开</string>
-    <string name="feedback_send_success_email">感谢您 — 正在打开邮件客户端。</string>
+    <string name="feedback_send_via_email">通过电子邮件发送</string>
+    <string name="feedback_send_via_github">新增 GitHub Issue</string>
+    <string name="feedback_send_success_email">感谢您 — 正在打开电子邮件客户端。</string>
     <string name="feedback_send_success_github">感谢您 — 正在打开浏览器。</string>
     <string name="feedback_send_error">无法打开反馈渠道：%1$s</string>
 
@@ -765,11 +765,11 @@
          E5 — Mirror feature
          ═══════════════════════════════════════════════════════════════ -->
     <!-- Tweaks - Custom forges -->
-    <string name="custom_forges_entry_label">自定义代码托管</string>
-    <string name="custom_forges_dialog_title">自定义代码托管</string>
+    <string name="custom_forges_entry_label">自定义代码托管平台</string>
+    <string name="custom_forges_dialog_title">自定义代码托管平台</string>
     <string name="custom_forges_dialog_help">输入 Forgejo 或 Gitea 实例的主机名（例如 git.example.com）。在手动关联表单中，GHS 将接受这些主机的链接。</string>
     <string name="custom_forges_add_button">添加</string>
-    <string name="custom_forges_empty">尚无自定义代码托管。</string>
+    <string name="custom_forges_empty">尚无自定义代码托管平台。</string>
     <string name="done">完成</string>
 
     <string name="mirror_picker_title">下载镜像</string>
@@ -792,7 +792,7 @@
     <string name="mirror_test_timeout">5s 后超时</string>
     <string name="mirror_test_dns_fail">无法解析主机</string>
     <string name="mirror_test_other">失败：%1$s</string>
-    <string name="mirror_deploy_your_own_hint">所有镜像都无法使用？您可以在 5 分钟内自行托管 — 请参阅文档。</string>
+    <string name="mirror_deploy_your_own_hint">所有镜像都不能用？可以用五分钟来自行托管一个，点按查看文档。</string>
     <string name="mirror_removed_toast">%1$s 已不再可用，已切换到直连 GitHub。</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
@@ -944,8 +944,8 @@
     <string name="import_stars_add_all">添加 %1$d 个到收藏</string>
     <string name="import_stars_empty">@%1$s 没有星标的仓库。</string>
     <string name="import_stars_no_match">没有匹配项。</string>
-    <string name="import_stars_add">添加到收藏</string>
-    <string name="import_stars_added">已在收藏中</string>
+    <string name="import_stars_add">添加星标</string>
+    <string name="import_stars_added">已加星标</string>
     <string name="import_stars_try_another">换一个试试</string>
     <string name="import_stars_entry">按用户名导入星标仓库</string>
     <string name="starred_picker_title">从星标添加</string>
@@ -969,7 +969,7 @@
     <string name="apps_skip_version_error">无法更新偏好设置</string>
     <string name="apps_unskip_version_error">无法恢复更新提示</string>
     <string name="skipped_updates_entry_title">已跳过的更新</string>
-    <string name="skipped_updates_entry_description">你选择忽略的版本</string>
+    <string name="skipped_updates_entry_description">你已选择忽略的版本</string>
     <string name="skipped_updates_title">已跳过的更新</string>
     <string name="skipped_updates_empty_title">没有跳过的版本</string>
     <string name="skipped_updates_empty_description">在应用页面跳过更新后，条目会显示在这里，可随时撤销。</string>
@@ -1168,7 +1168,7 @@
     <string name="tweaks_app_info_whats_new_title">更新内容</string>
     <string name="tweaks_connection_applies_to_all">除非下方覆盖，否则适用于全部流量。</string>
     <string name="tweaks_connection_custom">自定义</string>
-    <string name="tweaks_connection_intro_body">从下方选择一种连接模式。大多数人保持\"不使用代理\"即可。</string>
+    <string name="tweaks_connection_intro_body">从下方选择一种连接模式。大多数人保持 不使用代理 即可。</string>
     <string name="tweaks_connection_intro_title">应用如何连接到互联网</string>
     <string name="tweaks_connection_main_section">主连接</string>
     <string name="tweaks_connection_mode_http">HTTP/HTTPS</string>
@@ -1177,7 +1177,7 @@
     <string name="tweaks_connection_mode_socks">SOCKS5</string>
     <string name="tweaks_connection_mode_socks_caption">Tor、SSH 隧道。</string>
     <string name="tweaks_connection_mode_system">系统</string>
-    <string name="tweaks_connection_overrides_body">每个范围默认使用主连接。选择\"自定义\"以保留各自的设置。</string>
+    <string name="tweaks_connection_overrides_body">每个范围默认使用主连接。选择 自定义 以保留各自的设置。</string>
     <string name="tweaks_connection_overrides_section">分范围覆盖</string>
     <string name="tweaks_connection_paste_url">粘贴完整 URL</string>
     <string name="tweaks_connection_paste_url_body">粘贴完整代理 URL，我们会自动填入表单。</string>
@@ -1214,13 +1214,13 @@
     <string name="tweaks_licenses_title">开源许可证</string>
     <string name="tweaks_privacy_browsing_history_section">浏览记录</string>
     <string name="tweaks_privacy_clear_viewed_body">忘记你打开过哪些仓库。</string>
-    <string name="tweaks_privacy_clear_viewed_dialog_body">这不会取消任何星标或收藏。</string>
+    <string name="tweaks_privacy_clear_viewed_dialog_body">这不会取消任何星标或收藏状态。</string>
     <string name="tweaks_privacy_clear_viewed_dialog_confirm">清除</string>
     <string name="tweaks_privacy_clear_viewed_dialog_title">清除浏览记录？</string>
     <string name="tweaks_privacy_clear_viewed_title">清除浏览记录</string>
     <string name="tweaks_privacy_clipboard_body">当你复制 github.com 或 codeberg.org 链接时，我们会提示你打开。</string>
     <string name="tweaks_privacy_clipboard_title">检测剪贴板中的仓库链接</string>
-    <string name="tweaks_privacy_hidden_repos_body">你从信息流和搜索中静音的仓库。</string>
+    <string name="tweaks_privacy_hidden_repos_body">你选择从信息流和搜索中排除的仓库。</string>
     <string name="tweaks_privacy_hidden_repos_title">已隐藏的仓库</string>
     <string name="tweaks_privacy_hide_seen_body">在信息流和搜索中跳过已查看的仓库。</string>
     <string name="tweaks_privacy_hide_seen_title">隐藏我已查看过的仓库</string>    <string name="tweaks_privacy_telemetry_collect_no_identifiers">不收集标识符。</string>    <string name="tweaks_privacy_telemetry_collect_os">操作系统和平台。</string>    <string name="tweaks_search_empty">没有设置匹配 '%1$s'。</string>
@@ -1255,8 +1255,8 @@
     <string name="theme_dynamic">动态</string>
     <string name="auth_more_signin_options">更多登录方式</string>
     <string name="auth_hide_signin_options">隐藏选项</string>
-    <string name="tweaks_sources_platforms_title">发现平台</string>
-    <string name="tweaks_sources_platforms_body">按平台筛选首页内容。全部关闭则显示全部。</string>
+    <string name="tweaks_sources_platforms_title">发现哪些平台</string>
+    <string name="tweaks_sources_platforms_body">按平台过滤首页内容。全部关闭则不限平台。</string>
     <string name="profile_entry_about_title">关于</string>
     <string name="profile_entry_about_subtitle">版本、社区、法律</string>
     <string name="filter_with_installable">可在此安装</string>
