@@ -5,10 +5,10 @@ cask "github-store" do
   sha256 arm:   "ad0c532873c0400736b7ea706a33604f7ef93b2479a4a6f32673a789b18ccd8e",
          intel: "faf002283c301db2a97f7a32193778f678d42ed71551a623711cd170d6fde16a"
 
-  url "https://github.com/OpenHub-Store/GitHub-Store/releases/download/v#{version}/GitHub-Store-#{version}-#{arch}.dmg"
+  url "https://github.com/kurikomi-labs/komi-store/releases/download/v#{version}/GitHub-Store-#{version}-#{arch}.dmg"
   name "GitHub Store"
   desc "Cross-platform app store for GitHub releases"
-  homepage "https://github.com/OpenHub-Store/GitHub-Store"
+  homepage "https://github.com/kurikomi-labs/komi-store"
 
   livecheck do
     url :url
