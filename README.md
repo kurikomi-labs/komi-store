@@ -21,10 +21,10 @@
   <img src="https://api.github-store.org/v1/badge/kurikomi-labs/komi-store/downloads/5/2?label=Downloads%20:" alt="Downloads"/>
 </a>
 <a href="https://github.com/kurikomi-labs/komi-store/stargazers">
-  <img src="https://m3-markdown-badges.vercel.app/stars/3/2/kurikomi-labs/komi-store" alt="Stars"/>
+  <img src="https://img.shields.io/github/stars/kurikomi-labs/komi-store?style=for-the-badge&logo=github&label=Stars" alt="Stars"/>
 </a>
 <a href="https://github.com/kurikomi-labs/komi-store/issues">
-  <img src="https://m3-markdown-badges.vercel.app/issues/1/2/kurikomi-labs/komi-store" alt="Issues"/>
+  <img src="https://img.shields.io/github/issues/kurikomi-labs/komi-store?style=for-the-badge&logo=github&label=Issues" alt="Issues"/>
 </a>
 <a href="https://github.com/kurikomi-labs/komi-store/releases/latest">
   <img src="https://api.github-store.org/v1/badge/kurikomi-labs/komi-store/release/9/1?label=Latest%20version%20:" alt="Latest release"/>
