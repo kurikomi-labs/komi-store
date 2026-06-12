@@ -219,77 +219,6 @@ The final `xattr` command is required until the app is signed and notarized; wit
 ---
 
 <div align="center">
-
-  ## FAQ
-  
-</div>
-
-<details>
-<summary><strong>🔍 How does my app appear in Komi Store?</strong></summary>
-
-<br/>
-
-Komi Store does not use any private indexing or manual curation rules.
-Your project can appear automatically if it follows these conditions:
-
-1. **Public repository on GitHub**
-    - Visibility must be `public`.
-
-2. **Installable assets in the latest release**
-    - The latest release must contain at least one asset file with a supported extension:
-        - Android: `.apk`
-        - Windows: `.exe`, `.msi`
-        - macOS: `.dmg`, `.pkg`
-        - Linux: `.deb`, `.rpm`, `.AppImage`, `.pkg.tar.zst`
-    - Komi Store ignores GitHub's auto‑generated source artifacts (`Source code (zip)` /
-      `Source code (tar.gz)`).
-
-3. **Discoverable by search / topics**
-    - Repositories are fetched via the public GitHub Search API.
-    - Topic, language, and description help the ranking:
-        - Android apps: topics like `android`, `mobile`, `apk`.
-        - Desktop apps: topics like `desktop`, `windows`, `linux`, `macos`, `compose-desktop`,
-          `electron`.
-    - Having at least a few stars makes it more likely to appear under Trending/Hot Release/Most Popular sections.
-
-If your repo meets these conditions, Komi Store can find it through search and show it
-automatically—no manual submission required.
-
-</details>
-
-<details>
-<summary><strong>✅ Pros / Why use Komi Store?</strong></summary>
-
-<br/>
-
-- **No more hunting through GitHub releases**
-  See only repos that actually ship binaries for your platform.
-
-- **Knows what you installed**
-  Tracks apps installed via Komi Store (Android) and highlights when new releases are available, so you can update them without hunting through GitHub again.
-
-- **Always up to date**
-  Installs default to the latest published release, with the option to browse and install from
-  any previous release via the release picker. Background update checks notify you when new versions drop.
-
-- **Hands‑free updates (Android)**
-  Enable Shizuku or Sui silent install + auto‑update and never touch an install prompt again.
-
-- **Your library, your way**
-  Star, favourite, and track recently viewed repos — all synced locally with no account required for favourites and history.
-
-- **Fully customizable**
-  Theme colors, AMOLED mode, fonts, liquid glass effects, proxy settings, and more — all in one Tweaks screen.
-
-- **Open source & extensible**
-  Written in KMP with a clear separation between networking, domain logic, and UI—easy to fork,
-  extend, or adapt.
-
-</details>
-
----
-
-<div align="center">
   
 ## 🏆 Featured In
 
@@ -373,11 +302,11 @@ SHA-256:
 Go to:
 **GitHub → Settings → Developer settings → OAuth Apps → New OAuth App**
 
-| Field                          | Value                                       |
-| ------------------------------ | ------------------------------------------- |
-| **Application name**           | Anything you like (e.g. *Komi Store Dev*) |
-| **Homepage URL** | `https://github.com/username/repo_name`                   |
-| **Authorization callback URL** | `githubstore://callback`                    |
+| Field                          | Value                                                     |
+| ------------------------------ | --------------------------------------------------------- |
+| **Application name**           | Anything you like (e.g. *Komi Store Dev*)                 |
+| **Homepage URL**               | `https://github.com/OpenHub-Store/GitHub-Store`           |
+| **Authorization callback URL** | `githubstore://callback`                                  |
 
 Then click **Create application**.
 
