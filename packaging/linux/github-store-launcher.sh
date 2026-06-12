@@ -23,8 +23,18 @@ APPDIR="$ROOTDIR/lib/app"
 RUNTIME="$ROOTDIR/lib/runtime"
 JAVA="$RUNTIME/bin/java"
 
+# Compose strips native commands from the bundled runtime, so some packages ship
+# no bin/java. Fall back to a system JVM so the app still launches (GH#746).
 if [ ! -x "$JAVA" ]; then
-  echo "github-store: bundled JVM not found at $JAVA" >&2
+  if [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+    JAVA="$JAVA_HOME/bin/java"
+  else
+    JAVA="$(command -v java || true)"
+  fi
+fi
+
+if [ -z "$JAVA" ] || [ ! -x "$JAVA" ]; then
+  echo "github-store: no bundled or system Java 21+ runtime found" >&2
   exit 1
 fi
 
