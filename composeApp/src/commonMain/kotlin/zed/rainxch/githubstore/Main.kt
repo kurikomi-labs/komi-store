@@ -207,7 +207,7 @@ fun App(
         isAmoledTheme = state.isAmoledTheme,
         isDarkTheme = resolvedDarkTheme,
     ) {
-        ApplyAndroidSystemBars(state.isDarkTheme)
+        ApplyAndroidSystemBars(resolvedDarkTheme)
 
         val onAuthScreen = currentScreen is GithubStoreGraph.AuthenticationScreen
         LaunchedEffect(onAuthScreen, state.showRateLimitDialog) {
