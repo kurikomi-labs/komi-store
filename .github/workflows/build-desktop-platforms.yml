@@ -354,6 +354,17 @@ jobs:
           cp packaging/linux/github-store-launcher.sh "$APPDIR/bin/github-store-launcher.sh"
           chmod +x "$APPDIR/bin/github-store-launcher.sh"
 
+          # Compose strips native commands from the bundled runtime (no bin/java).
+          # The AppRun -> launcher wrapper execs "lib/runtime/bin/java", so restore
+          # that launcher from the build JDK; the runtime bundles libjli.so / libjvm.so,
+          # resolved via $ORIGIN/../lib (GH#746). This AppDir is also the source for the
+          # Arch package below, so both pick up the fix.
+          if [ ! -x "$APPDIR/lib/runtime/bin/java" ]; then
+            mkdir -p "$APPDIR/lib/runtime/bin"
+            cp "$JAVA_HOME/bin/java" "$APPDIR/lib/runtime/bin/java"
+            chmod +x "$APPDIR/lib/runtime/bin/java"
+          fi
+
           # Create AppRun entry point
           cat > "$APPDIR/AppRun" << 'EOF'
           #!/bin/bash
@@ -442,6 +453,18 @@ jobs:
               echo "WARNING: native launcher not found or already a script in $deb"
             fi
 
+            # Compose strips native commands from the bundled runtime, so it ships no
+            # bin/java. The wrapper above execs "$ROOTDIR/lib/runtime/bin/java"; restore
+            # that launcher from the build JDK (libjli.so / libjvm.so are bundled and
+            # resolve via $ORIGIN/../lib, GH#746).
+            runtime="$(find "$tmpdir/opt" -maxdepth 4 -type d -name runtime | head -n1 || true)"
+            if [ -n "$runtime" ] && [ ! -x "$runtime/bin/java" ]; then
+              mkdir -p "$runtime/bin"
+              cp "$JAVA_HOME/bin/java" "$runtime/bin/java"
+              chmod 0755 "$runtime/bin/java"
+              echo "Restored bundled java launcher at $runtime/bin/java"
+            fi
+
             dpkg-deb -b "$tmpdir" "$deb"
             rm -rf "$tmpdir"
             echo "Patched successfully: $deb"
@@ -465,9 +488,10 @@ jobs:
           OUTDIR="$(mktemp -d)"
           for rpm in "${rpms[@]}"; do
             echo "Patching: $rpm"
-            # Overwrite the native launcher in-place with the JVM-direct wrapper.
-            # Keeps the %files manifest path intact, swaps ELF -> script.
-            if rpmrebuild --change-files="cp '$WRAPPER' ./opt/komi-store/bin/Komi-Store; chmod 0755 ./opt/komi-store/bin/Komi-Store" \
+            # Overwrite the native launcher in-place with the JVM-direct wrapper, and
+            # restore bin/java (Compose strips native commands from the runtime, GH#746).
+            # rpmrebuild repopulates %files from the buildroot, so the new file ships.
+            if rpmrebuild --change-files="cp '$WRAPPER' ./opt/komi-store/bin/Komi-Store; chmod 0755 ./opt/komi-store/bin/Komi-Store; mkdir -p ./opt/komi-store/lib/runtime/bin; cp '$JAVA_HOME/bin/java' ./opt/komi-store/lib/runtime/bin/java; chmod 0755 ./opt/komi-store/lib/runtime/bin/java" \
                  -p -n -d "$OUTDIR" "$rpm"; then
               rebuilt="$(find "$OUTDIR" -name '*.rpm' -newer "$WRAPPER" | head -n1 || true)"
               if [ -n "$rebuilt" ]; then
