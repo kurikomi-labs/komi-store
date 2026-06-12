@@ -28,7 +28,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient {
                     proxy =
                         Proxy(
                             Proxy.Type.HTTP,
-                            InetSocketAddress(proxyConfig.host, proxyConfig.port),
+                            InetSocketAddress.createUnresolved(proxyConfig.host, proxyConfig.port),
                         )
                     if (proxyConfig.username != null) {
                         config {
@@ -51,7 +51,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient {
                     proxy =
                         Proxy(
                             Proxy.Type.SOCKS,
-                            InetSocketAddress(proxyConfig.host, proxyConfig.port),
+                            InetSocketAddress.createUnresolved(proxyConfig.host, proxyConfig.port),
                         )
 
                     if (proxyConfig.username != null) {

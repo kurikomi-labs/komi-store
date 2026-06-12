@@ -31,7 +31,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient =
                     }
 
                     is ProxyConfig.Http -> {
-                        proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyConfig.host, proxyConfig.port)))
+                        proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(proxyConfig.host, proxyConfig.port)))
                         val username = proxyConfig.username
                         val password = proxyConfig.password
                         if (!username.isNullOrEmpty() && !password.isNullOrEmpty()) {
@@ -47,7 +47,7 @@ actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient =
                     }
 
                     is ProxyConfig.Socks -> {
-                        proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyConfig.host, proxyConfig.port)))
+                        proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(proxyConfig.host, proxyConfig.port)))
                         val username = proxyConfig.username
                         val password = proxyConfig.password
                         val proxyHost = proxyConfig.host

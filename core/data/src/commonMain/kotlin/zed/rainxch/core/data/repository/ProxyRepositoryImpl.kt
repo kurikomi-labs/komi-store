@@ -188,6 +188,10 @@ class ProxyRepositoryImpl(
 
     override suspend fun setMasterProxyConfig(config: ProxyConfig) {
         migrationDeferred.await()
+        writeMasterConfig(config)
+    }
+
+    private suspend fun writeMasterConfig(config: ProxyConfig) {
         when (config) {
             is ProxyConfig.None -> {
                 ksafe.safePut(MasterKeys.TYPE, "none")
@@ -223,6 +227,10 @@ class ProxyRepositoryImpl(
 
     override suspend fun setUseMaster(scope: ProxyScope, useMaster: Boolean) {
         migrationDeferred.await()
+        writeUseMaster(scope, useMaster)
+    }
+
+    private suspend fun writeUseMaster(scope: ProxyScope, useMaster: Boolean) {
         ksafe.safePut(useMasterKeyFor(scope), useMaster)
     }
 
@@ -321,8 +329,6 @@ class ProxyRepositoryImpl(
             scope to readScopeConfigDirect(scope)
         }
 
-        // Plurality vote: most common scope config becomes the master.
-        // Tie-break: Download > Discovery > Translation (most-common scope usage order).
         val tieBreakOrder = listOf(ProxyScope.DOWNLOAD, ProxyScope.DISCOVERY, ProxyScope.TRANSLATION)
         val counts = configs.groupBy { it.second }.mapValues { it.value.size }
         val maxCount = counts.values.maxOrNull() ?: 0
@@ -331,11 +337,11 @@ class ProxyRepositoryImpl(
             configs.firstOrNull { it.first == scope && it.second in winners }?.second
         } ?: configs.first().second
 
-        runCatching { setMasterProxyConfig(winnerConfig) }
+        runCatching { writeMasterConfig(winnerConfig) }
 
         configs.forEach { (scope, config) ->
             val matches = config == winnerConfig
-            runCatching { setUseMaster(scope, matches) }
+            runCatching { writeUseMaster(scope, matches) }
         }
 
         runCatching { ksafe.safePut(MIGRATION_MARKER_MASTER_V2, true) }
