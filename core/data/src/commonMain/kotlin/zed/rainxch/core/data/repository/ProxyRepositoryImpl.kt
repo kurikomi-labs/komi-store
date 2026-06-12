@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.settings.ProxyConfig
@@ -137,34 +138,38 @@ class ProxyRepositoryImpl(
 
     override suspend fun setProxyConfig(scope: ProxyScope, config: ProxyConfig) {
         migrationDeferred.await()
-        val keys = keysFor(scope)
-        when (config) {
-            is ProxyConfig.None -> {
-                ksafe.safePut(keys.type, "none")
-                ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
-                ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
+        // KSafe encrypt + disk writes are blocking; keep them off the caller's thread
+        // (the save handler runs on the main dispatcher) so saving doesn't freeze the UI.
+        withContext(Dispatchers.IO) {
+            val keys = keysFor(scope)
+            when (config) {
+                is ProxyConfig.None -> {
+                    ksafe.safePut(keys.type, "none")
+                    ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
+                    ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
+                }
+                is ProxyConfig.System -> {
+                    ksafe.safePut(keys.type, "system")
+                    ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
+                    ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
+                }
+                is ProxyConfig.Http -> {
+                    ksafe.safePut(keys.type, "http")
+                    ksafe.safePut(keys.host, config.host)
+                    ksafe.safePut(keys.port, config.port)
+                    writeOrClear(keys.username, config.username)
+                    writeOrClear(keys.password, config.password)
+                }
+                is ProxyConfig.Socks -> {
+                    ksafe.safePut(keys.type, "socks")
+                    ksafe.safePut(keys.host, config.host)
+                    ksafe.safePut(keys.port, config.port)
+                    writeOrClear(keys.username, config.username)
+                    writeOrClear(keys.password, config.password)
+                }
             }
-            is ProxyConfig.System -> {
-                ksafe.safePut(keys.type, "system")
-                ksafe.safeDelete(keys.host); ksafe.safeDelete(keys.port)
-                ksafe.safeDelete(keys.username); ksafe.safeDelete(keys.password)
-            }
-            is ProxyConfig.Http -> {
-                ksafe.safePut(keys.type, "http")
-                ksafe.safePut(keys.host, config.host)
-                ksafe.safePut(keys.port, config.port)
-                writeOrClear(keys.username, config.username)
-                writeOrClear(keys.password, config.password)
-            }
-            is ProxyConfig.Socks -> {
-                ksafe.safePut(keys.type, "socks")
-                ksafe.safePut(keys.host, config.host)
-                ksafe.safePut(keys.port, config.port)
-                writeOrClear(keys.username, config.username)
-                writeOrClear(keys.password, config.password)
-            }
+            ProxyManager.setConfig(scope, config)
         }
-        ProxyManager.setConfig(scope, config)
     }
 
     private suspend fun writeOrClear(key: String, value: String?) {
@@ -191,7 +196,7 @@ class ProxyRepositoryImpl(
         writeMasterConfig(config)
     }
 
-    private suspend fun writeMasterConfig(config: ProxyConfig) {
+    private suspend fun writeMasterConfig(config: ProxyConfig) = withContext(Dispatchers.IO) {
         when (config) {
             is ProxyConfig.None -> {
                 ksafe.safePut(MasterKeys.TYPE, "none")
@@ -231,7 +236,7 @@ class ProxyRepositoryImpl(
     }
 
     private suspend fun writeUseMaster(scope: ProxyScope, useMaster: Boolean) {
-        ksafe.safePut(useMasterKeyFor(scope), useMaster)
+        withContext(Dispatchers.IO) { ksafe.safePut(useMasterKeyFor(scope), useMaster) }
     }
 
     private suspend fun migrateIfNeeded() {
