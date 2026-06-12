@@ -1,6 +1,5 @@
 package zed.rainxch.githubstore
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,7 +55,9 @@ import zed.rainxch.githubstore.desktop.applyWindowsImmersiveDarkMode
 import zed.rainxch.githubstore.desktop.installMacosSystemAppearance
 import java.awt.Desktop
 import java.net.URI
+import java.security.Security
 import kotlin.system.exitProcess
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
 
@@ -70,8 +71,8 @@ fun main(args: Array<String>) {
 
     selectLinuxRenderBackendIfRequested()
 
-    java.security.Security.setProperty("networkaddress.cache.ttl", "30")
-    java.security.Security.setProperty("networkaddress.cache.negative.ttl", "5")
+    Security.setProperty("networkaddress.cache.ttl", "30")
+    Security.setProperty("networkaddress.cache.negative.ttl", "5")
 
     initKoin()
 
@@ -79,14 +80,13 @@ fun main(args: Array<String>) {
         val koin = GlobalContext.get()
         val tweaksRepo = koin.get<TweaksRepository>()
         val localization = koin.get<LocalizationManager>()
-        val tag =
-            try {
-                withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS) {
-                    tweaksRepo.getAppLanguage().first()
-                }
-            } catch (_: Exception) {
-                null
+        val tag = try {
+            withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
+                tweaksRepo.getAppLanguage().first()
             }
+        } catch (_: Exception) {
+            null
+        }
         localization.setActiveLanguageTag(tag)
     }
 
@@ -115,7 +115,7 @@ fun main(args: Array<String>) {
             snapshotFlow {
                 Triple(windowState.placement, windowState.position, windowState.size)
             }.distinctUntilChanged()
-                .debounce(500)
+                .debounce(500.milliseconds)
                 .collect {
                     withContext(Dispatchers.IO) {
                         WindowStateStore.save(windowState)
@@ -167,10 +167,11 @@ fun main(args: Array<String>) {
                 }
             },
         ) {
-            val isOsDark = isSystemInDarkTheme()
-            LaunchedEffect(window, isOsDark) {
-                applyWindowsImmersiveDarkMode(window, isOsDark)
-                applyMacosWindowAppearance(window, isOsDark)
+            var resolvedDark by remember { mutableStateOf<Boolean?>(null) }
+            LaunchedEffect(window, resolvedDark) {
+                val dark = resolvedDark ?: return@LaunchedEffect
+                applyWindowsImmersiveDarkMode(window, dark)
+                applyMacosWindowAppearance(window, dark)
             }
             MenuBar {
                 Menu(text = stringResource(Res.string.menubar_file_menu)) {
@@ -239,6 +240,7 @@ fun main(args: Array<String>) {
             App(
                 deepLinkUri = deepLinkUri,
                 onDeepLinkConsumed = { deepLinkUri = null },
+                onResolvedDarkTheme = { resolvedDark = it },
             )
         }
     }

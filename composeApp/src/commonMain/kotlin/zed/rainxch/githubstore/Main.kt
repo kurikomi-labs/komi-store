@@ -39,6 +39,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun App(
     deepLinkUri: String? = null,
     onDeepLinkConsumed: () -> Unit = {},
+    onResolvedDarkTheme: (Boolean) -> Unit = {},
 ) {
     setSingletonImageLoaderFactory { context ->
         ImageLoader
@@ -197,11 +198,14 @@ fun App(
         }
     }
 
+    val resolvedDarkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
+    LaunchedEffect(resolvedDarkTheme) { onResolvedDarkTheme(resolvedDarkTheme) }
+
     GithubStoreTheme(
         fontTheme = state.currentFontTheme,
         appTheme = state.currentColorTheme,
         isAmoledTheme = state.isAmoledTheme,
-        isDarkTheme = state.isDarkTheme ?: isSystemInDarkTheme(),
+        isDarkTheme = resolvedDarkTheme,
     ) {
         ApplyAndroidSystemBars(state.isDarkTheme)
 
