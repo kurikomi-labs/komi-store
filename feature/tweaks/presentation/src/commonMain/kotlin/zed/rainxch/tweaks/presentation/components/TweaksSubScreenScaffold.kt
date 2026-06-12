@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,7 +74,9 @@ fun TweaksSubScreenScaffold(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarState,
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
+                modifier = Modifier
+                    .imePadding()
+                    .padding(bottom = bottomNavHeight + 16.dp),
             )
         },
         containerColor = MaterialTheme.colorScheme.background,

@@ -103,14 +103,24 @@ fun TweaksConnectionRoot(
     val snackbarState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var pasteSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var masterSaving by remember { mutableStateOf(false) }
+    var savingScope by remember { mutableStateOf<ProxyScope?>(null) }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            TweaksEvent.OnProxySaved -> coroutineScope.launch {
-                snackbarState.showSnackbar(getString(Res.string.proxy_saved))
+            TweaksEvent.OnProxySaved -> {
+                masterSaving = false
+                savingScope = null
+                coroutineScope.launch {
+                    snackbarState.showSnackbar(getString(Res.string.proxy_saved))
+                }
             }
-            is TweaksEvent.OnProxySaveError -> coroutineScope.launch {
-                snackbarState.showSnackbar(event.message)
+            is TweaksEvent.OnProxySaveError -> {
+                masterSaving = false
+                savingScope = null
+                coroutineScope.launch {
+                    snackbarState.showSnackbar(event.message)
+                }
             }
             is TweaksEvent.OnProxyTestSuccess -> coroutineScope.launch {
                 snackbarState.showSnackbar(
@@ -149,7 +159,11 @@ fun TweaksConnectionRoot(
         item(key = "main_card") {
             MainConnectionCard(
                 form = state.masterProxyForm,
-                onAction = { viewModel.onAction(it) },
+                isSaving = masterSaving,
+                onAction = {
+                    if (it is TweaksAction.OnMasterProxySave) masterSaving = true
+                    viewModel.onAction(it)
+                },
                 onPasteUrl = { pasteSheetOpen = true },
             )
             Spacer(Modifier.height(16.dp))
@@ -158,7 +172,11 @@ fun TweaksConnectionRoot(
         item(key = "overrides_card") {
             OverridesCard(
                 state = state,
-                onAction = { viewModel.onAction(it) },
+                savingScope = savingScope,
+                onAction = {
+                    if (it is TweaksAction.OnProxySave) savingScope = it.scope
+                    viewModel.onAction(it)
+                },
             )
         }
     }
@@ -211,6 +229,7 @@ private fun IntroCard() {
 @Composable
 private fun MainConnectionCard(
     form: ProxyScopeFormState,
+    isSaving: Boolean,
     onAction: (TweaksAction) -> Unit,
     onPasteUrl: () -> Unit,
 ) {
@@ -279,6 +298,8 @@ private fun MainConnectionCard(
                             label = stringResource(Res.string.proxy_save),
                             variant = GhsButtonVariant.Primary,
                             leadingIcon = Icons.Default.Save,
+                            enabled = !isSaving && !form.isTestInProgress,
+                            loading = isSaving,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -410,6 +431,7 @@ private fun ModePillSegment(
 @Composable
 private fun OverridesCard(
     state: TweaksState,
+    savingScope: ProxyScope?,
     onAction: (TweaksAction) -> Unit,
 ) {
     Surface(
@@ -440,6 +462,7 @@ private fun OverridesCard(
                     scope = scope,
                     useMain = state.useMain(scope),
                     scopeForm = state.formFor(scope),
+                    isSaving = savingScope == scope,
                     onToggle = { useMain ->
                         onAction(TweaksAction.OnScopeUseMainToggled(scope, useMain))
                     },
@@ -455,6 +478,7 @@ private fun ScopeOverrideRow(
     scope: ProxyScope,
     useMain: Boolean,
     scopeForm: ProxyScopeFormState,
+    isSaving: Boolean,
     onToggle: (Boolean) -> Unit,
     onAction: (TweaksAction) -> Unit,
 ) {
@@ -549,6 +573,8 @@ private fun ScopeOverrideRow(
                                     label = stringResource(Res.string.proxy_save),
                                     variant = GhsButtonVariant.Tonal,
                                     leadingIcon = Icons.Default.Save,
+                                    enabled = !isSaving && !scopeForm.isTestInProgress,
+                                    loading = isSaving,
                                     modifier = Modifier.weight(1f),
                                 )
                             }
