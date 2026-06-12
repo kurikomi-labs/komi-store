@@ -65,6 +65,25 @@ class SyncInstalledAppsUseCase(
                     }
                 }
 
+                // Guard against a visibility-restricted package scan wiping the library (GH#748).
+                // getAllInstalledPackageNames() is filtered by Android package visibility; on some
+                // OEM ROMs it returns little more than this app itself, which would flag every
+                // tracked app as uninstalled. Real uninstalls are handled in real time by
+                // PackageEventReceiver, so if the scan recognises fewer than half of the tracked
+                // apps it is untrustworthy, not a genuine mass-uninstall — skip the catch-up deletes.
+                val nonPendingCount = appsInDb.count { !it.isPendingInstall }
+                val recognizedCount = appsInDb.count {
+                    !it.isPendingInstall && installedPackageNames.contains(it.packageName)
+                }
+                if (nonPendingCount >= 2 && recognizedCount * 2 < nonPendingCount) {
+                    logger.error(
+                        "Installed-apps sync: package scan recognised only $recognizedCount of " +
+                            "$nonPendingCount tracked apps (visibility restricted?). Skipping " +
+                            "${toDelete.size} deletions to avoid wiping the library (GH#748).",
+                    )
+                    toDelete.clear()
+                }
+
                 executeInTransaction {
                     toDelete.forEach { packageName ->
                         try {
