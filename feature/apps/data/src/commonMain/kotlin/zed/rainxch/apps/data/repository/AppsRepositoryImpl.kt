@@ -279,11 +279,22 @@ class AppsRepositoryImpl(
         val resolvedGlob = assetGlobPattern ?: freshFingerprint?.glob
         val resolvedSiblingCount = pickedAssetSiblingCount.takeIf { it > 0 }
 
+        // Store the release tag (not the APK versionName) when the two can't be reconciled,
+        // so update checks compare tag-vs-tag instead of false-nagging (GH#729).
+        val reconcilable =
+            VersionMath.versionsReconcilable(deviceApp.versionName, repoInfo.latestReleaseTag)
         val initialIsUpdateAvailable =
-            VersionMath.isVersionNewer(
-                candidate = repoInfo.latestReleaseTag,
-                current = deviceApp.versionName,
-            )
+            reconcilable &&
+                VersionMath.isVersionNewer(
+                    candidate = repoInfo.latestReleaseTag,
+                    current = deviceApp.versionName,
+                )
+        val initialInstalledVersion =
+            if (reconcilable) {
+                deviceApp.versionName ?: "unknown"
+            } else {
+                repoInfo.latestReleaseTag ?: deviceApp.versionName ?: "unknown"
+            }
 
         val installedApp =
             InstalledApp(
@@ -295,7 +306,7 @@ class AppsRepositoryImpl(
                 repoDescription = repoInfo.description,
                 primaryLanguage = repoInfo.language,
                 repoUrl = repoInfo.htmlUrl,
-                installedVersion = deviceApp.versionName ?: "unknown",
+                installedVersion = initialInstalledVersion,
                 installedAssetName = null,
                 installedAssetUrl = null,
                 latestVersion = repoInfo.latestReleaseTag,

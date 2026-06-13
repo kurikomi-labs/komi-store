@@ -335,10 +335,16 @@ class InstalledAppsRepositoryImpl(
                 installedAppsDao.setSkippedReleaseTag(packageName, null)
             }
 
+            // If the installed version can't be reconciled with the release tag (e.g. tag
+            // 2.0.9.1 vs APK versionName 2.0.9-<githash>), numeric comparison is misleading.
+            // Pin to the current tag (below) and track by release tag from here on (GH#729).
+            val reconcilable =
+                VersionMath.versionsReconcilable(app.installedVersion, matchedRelease.tagName)
             val isUpdateAvailable =
                 when {
                     codesAlreadyMatch -> false
                     matchesSkipped -> false
+                    !reconcilable -> false
                     else ->
                         VersionMath.isVersionNewer(
                             candidate = matchedRelease.tagName,
@@ -376,7 +382,7 @@ class InstalledAppsRepositoryImpl(
                 latestReleasePublishedAt = matchedRelease.publishedAt,
             )
 
-            if (codesAlreadyMatch &&
+            if ((codesAlreadyMatch || !reconcilable) &&
                 app.installedVersion != matchedRelease.tagName
             ) {
                 installedAppsDao.updateInstalledVersion(
