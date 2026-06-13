@@ -1374,4 +1374,11 @@
     <string name="repo_pages_pulls_empty_closed">No hay pull requests cerrados.</string>
     <string name="repo_pages_pr_state_merged">Fusionado</string>
     <string name="repo_pages_pr_draft">Borrador</string>
+    <string name="bottom_nav_for_you_title">Para ti</string>
+    <string name="for_you_title">Para ti</string>
+    <string name="for_you_filter_all">Todo</string>
+    <string name="for_you_empty_title">Aún no hay nada aquí</string>
+    <string name="for_you_empty_subtitle">Desliza para actualizar, o marca con estrella e instala algunas apps para que podamos ajustar este feed a ti.</string>
+    <string name="for_you_offline">Sin conexión — mostrando un feed guardado</string>
+    <string name="for_you_failed_to_load">No se pudo cargar tu feed</string>
 </resources>

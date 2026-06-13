@@ -1405,4 +1405,11 @@
     <string name="repo_pages_pulls_empty_closed">Kapalı pull request yok.</string>
     <string name="repo_pages_pr_state_merged">Birleştirildi</string>
     <string name="repo_pages_pr_draft">Taslak</string>
+    <string name="bottom_nav_for_you_title">Senin İçin</string>
+    <string name="for_you_title">Senin İçin</string>
+    <string name="for_you_filter_all">Tümü</string>
+    <string name="for_you_empty_title">Burada henüz bir şey yok</string>
+    <string name="for_you_empty_subtitle">Yenilemek için çekin ya da birkaç uygulamayı yıldızlayıp kurun; böylece bu akışı size göre ayarlayabilelim.</string>
+    <string name="for_you_offline">Çevrimdışı — kaydedilmiş bir akış gösteriliyor</string>
+    <string name="for_you_failed_to_load">Akışınız yüklenemedi</string>
 </resources>

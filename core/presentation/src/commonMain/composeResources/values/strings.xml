@@ -305,6 +305,13 @@
     <string name="home_retry">Retry</string>
     <string name="home_failed_to_load_repositories">Failed to load repositories</string>
 
+    <string name="for_you_title">For You</string>
+    <string name="for_you_filter_all">All</string>
+    <string name="for_you_empty_title">Nothing here yet</string>
+    <string name="for_you_empty_subtitle">Pull to refresh, or star and install a few apps so we can tune this feed to you.</string>
+    <string name="for_you_offline">Offline — showing a saved feed</string>
+    <string name="for_you_failed_to_load">Couldn't load your feed</string>
+
     <string name="home_topbar_discover">Discover</string>
     <string name="home_section_hot_releases">Hot releases</string>
     <string name="home_section_trending_now">Trending now</string>
@@ -427,6 +434,7 @@
     <string name="released_days_ago">Released %1$d day(s) ago</string>
     <string name="released_on_date">Released on %1$s</string>
 
+    <string name="bottom_nav_for_you_title">For You</string>
     <string name="bottom_nav_home_title">Home</string>
     <string name="bottom_nav_search_title">Search</string>
     <string name="bottom_nav_apps_title">Library</string>

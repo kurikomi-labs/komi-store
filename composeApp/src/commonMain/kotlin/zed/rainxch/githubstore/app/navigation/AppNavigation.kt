@@ -117,7 +117,7 @@ fun AppNavigation(
                     currentScreen = desktopDrawerCurrent,
                     onNavigate = { target ->
                         navController.navigate(target) {
-                            popUpTo(GithubStoreGraph.HomeScreen) {
+                            popUpTo(GithubStoreGraph.ForYouScreen) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -146,7 +146,7 @@ fun AppNavigation(
                     val sharedScope = this
                     NavHost(
                         navController = navController,
-                        startDestination = GithubStoreGraph.HomeScreen,
+                        startDestination = GithubStoreGraph.ForYouScreen,
                         modifier = Modifier.background(MaterialTheme.colorScheme.background),
                         enterTransition = {
                             val from = initialState.bottomNavIndex()
@@ -223,6 +223,61 @@ fun AppNavigation(
                                 )
                         },
                     ) {
+                        composable<GithubStoreGraph.ForYouScreen> {
+                            val animatedScope = this
+                            CompositionLocalProvider(
+                                zed.rainxch.core.presentation.locals.LocalSharedTransitionScope provides sharedScope,
+                                zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope provides animatedScope,
+                            ) {
+                                val listDetailState = rememberAdaptiveListDetailState()
+                                val pickRepoTitle =
+                                    stringResource(Res.string.adaptive_pick_repo_title)
+                                val pickRepoSubtitle =
+                                    stringResource(Res.string.adaptive_pick_repo_subtitle)
+                                AdaptiveListDetailScaffold(
+                                    state = listDetailState,
+                                    emptyPaneTitle = pickRepoTitle,
+                                    emptyPaneSubtitle = pickRepoSubtitle,
+                                    list = { isExpanded ->
+                                        zed.rainxch.feed.presentation.FeedRoot(
+                                            onNavigateToSearch = {
+                                                navController.navigate(GithubStoreGraph.SearchScreen())
+                                            },
+                                            onNavigateToSettings = {
+                                                navController.navigate(GithubStoreGraph.ProfileScreen)
+                                            },
+                                            onNavigateToDetails = { repoId ->
+                                                if (isExpanded) {
+                                                    listDetailState.select(
+                                                        AdaptiveDetailArgs(repositoryId = repoId),
+                                                    )
+                                                } else {
+                                                    navController.navigate(
+                                                        GithubStoreGraph.DetailsScreen(repositoryId = repoId),
+                                                    )
+                                                }
+                                            },
+                                            onNavigateToDeveloperProfile = { username ->
+                                                navController.navigate(
+                                                    GithubStoreGraph.DeveloperProfileScreen(username = username),
+                                                )
+                                            },
+                                        )
+                                    },
+                                    detail = { args ->
+                                        AdaptiveDetailPaneContent(
+                                            args = args,
+                                            navController = navController,
+                                            onCrossNavToRepo = { newArgs ->
+                                                listDetailState.select(newArgs)
+                                            },
+                                            onClearPane = { listDetailState.clear() },
+                                        )
+                                    },
+                                )
+                            }
+                        }
+
                         composable<GithubStoreGraph.HomeScreen> {
                             val animatedScope = this
                             CompositionLocalProvider(
@@ -661,7 +716,7 @@ fun AppNavigation(
                         composable<GithubStoreGraph.AuthenticationScreen> {
                             AuthenticationRoot(
                                 onNavigateToHome = {
-                                    navController.navigate(GithubStoreGraph.HomeScreen) {
+                                    navController.navigate(GithubStoreGraph.ForYouScreen) {
                                         popUpTo(0) {
                                             inclusive = true
                                         }
@@ -676,7 +731,7 @@ fun AppNavigation(
                                     navController.navigate(GithubStoreGraph.AuthenticationScreen)
                                 },
                                 onNavigateToHome = {
-                                    navController.navigate(GithubStoreGraph.HomeScreen) {
+                                    navController.navigate(GithubStoreGraph.ForYouScreen) {
                                         popUpTo(0) { inclusive = true }
                                     }
                                 },
@@ -1129,7 +1184,7 @@ fun AppNavigation(
                         currentScreen = currentScreen,
                         onNavigate = {
                             navController.navigate(it) {
-                                popUpTo(GithubStoreGraph.HomeScreen) {
+                                popUpTo(GithubStoreGraph.ForYouScreen) {
                                     saveState = true
                                 }
 

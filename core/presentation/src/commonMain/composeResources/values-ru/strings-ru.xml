@@ -1403,4 +1403,11 @@
     <string name="repo_pages_pulls_empty_closed">Нет закрытых pull request.</string>
     <string name="repo_pages_pr_state_merged">Влит</string>
     <string name="repo_pages_pr_draft">Черновик</string>
+    <string name="bottom_nav_for_you_title">Для вас</string>
+    <string name="for_you_title">Для вас</string>
+    <string name="for_you_filter_all">Все</string>
+    <string name="for_you_empty_title">Здесь пока пусто</string>
+    <string name="for_you_empty_subtitle">Потяните, чтобы обновить, или отметьте звездой и установите несколько приложений, чтобы мы настроили эту ленту под вас.</string>
+    <string name="for_you_offline">Нет сети — показана сохранённая лента</string>
+    <string name="for_you_failed_to_load">Не удалось загрузить вашу ленту</string>
 </resources>

@@ -1403,4 +1403,11 @@
     <string name="repo_pages_pulls_empty_closed">Brak zamkniętych pull requestów.</string>
     <string name="repo_pages_pr_state_merged">Scalony</string>
     <string name="repo_pages_pr_draft">Wersja robocza</string>
+    <string name="bottom_nav_for_you_title">Dla Ciebie</string>
+    <string name="for_you_title">Dla Ciebie</string>
+    <string name="for_you_filter_all">Wszystko</string>
+    <string name="for_you_empty_title">Jeszcze nic tu nie ma</string>
+    <string name="for_you_empty_subtitle">Pociągnij, aby odświeżyć, albo oznacz gwiazdką i zainstaluj kilka aplikacji, byśmy mogli dopasować ten kanał do Ciebie.</string>
+    <string name="for_you_offline">Offline — pokazujemy zapisany kanał</string>
+    <string name="for_you_failed_to_load">Nie udało się wczytać Twojego kanału</string>
 </resources>

@@ -6,10 +6,11 @@ import androidx.navigation.toRoute
 fun NavBackStackEntry?.bottomNavIndex(): Int? {
     val route = this?.destination?.route ?: return null
     return when {
-        route.contains("HomeScreen") -> 0
-        route.contains("SearchScreen") -> 1
-        route.contains("AppsScreen") -> 2
-        route.contains("ProfileScreen") -> 3
+        route.contains("ForYouScreen") -> 0
+        route.contains("HomeScreen") -> 1
+        route.contains("SearchScreen") -> 2
+        route.contains("AppsScreen") -> 3
+        route.contains("ProfileScreen") -> 4
         else -> null
     }
 }
@@ -19,6 +20,7 @@ fun NavBackStackEntry?.getCurrentScreen(): GithubStoreGraph? {
     val route = destination.route ?: return null
 
     return when {
+        route.contains("ForYouScreen") -> GithubStoreGraph.ForYouScreen
         route.contains("HomeScreen") -> GithubStoreGraph.HomeScreen
         route.contains("SearchScreen") -> toRoute<GithubStoreGraph.SearchScreen>()
         route.contains("AuthenticationScreen") -> GithubStoreGraph.AuthenticationScreen

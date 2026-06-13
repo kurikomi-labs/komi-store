@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nueva pestaña «Para ti» — un feed de descubrimiento personalizado que destaca lanzamientos recientes y joyas ocultas ajustadas a tus gustos. Se abre de forma predeterminada, con Descubrir a un solo toque.",
+        "Tu feed se personaliza por completo en tu dispositivo, a partir de los repositorios que marcas con estrella e instalas. Nada de lo que te gusta sale nunca de tu teléfono."
+      ]
+    }
+  ]
+}

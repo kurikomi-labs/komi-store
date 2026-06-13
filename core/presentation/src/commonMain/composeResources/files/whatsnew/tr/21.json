@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Yeni «Senin İçin» sekmesi — zevkine göre ayarlanmış yeni sürümleri ve gizli cevherleri öne çıkaran kişiselleştirilmiş bir keşif akışı. Varsayılan olarak açılır, Keşfet ise yalnızca bir dokunuş uzakta.",
+        "Akışın tamamen cihazında, yıldızladığın ve kurduğun depolardan kişiselleştirilir. Neyi sevdiğine dair hiçbir şey telefonundan asla dışarı çıkmaz."
+      ]
+    }
+  ]
+}

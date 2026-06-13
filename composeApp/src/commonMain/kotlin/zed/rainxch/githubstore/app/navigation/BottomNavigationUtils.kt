@@ -9,6 +9,12 @@ object BottomNavigationUtils {
     fun items(): List<BottomNavigationItem> =
         listOf(
             BottomNavigationItem(
+                titleRes = Res.string.bottom_nav_for_you_title,
+                iconOutlined = Icons.Outlined.AutoAwesome,
+                iconFilled = Icons.Filled.AutoAwesome,
+                screen = GithubStoreGraph.ForYouScreen,
+            ),
+            BottomNavigationItem(
                 titleRes = Res.string.bottom_nav_home_title,
                 iconOutlined = Icons.Outlined.Home,
                 iconFilled = Icons.Filled.Home,
