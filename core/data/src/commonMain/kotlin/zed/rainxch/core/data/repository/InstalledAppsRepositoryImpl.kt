@@ -321,7 +321,8 @@ class InstalledAppsRepositoryImpl(
                 installedCode > 0L &&
                         latestCode != null &&
                         latestCode > 0L &&
-                        installedCode == latestCode
+                        installedCode == latestCode &&
+                        matchedRelease.tagName == app.latestVersion
 
             val skippedTag = app.skippedReleaseTag
             val matchesSkipped =
@@ -361,12 +362,12 @@ class InstalledAppsRepositoryImpl(
                         "isUpdate=$isUpdateAvailable, variantLost=$variantWasLost"
             }
 
+            // Keep the latest release's known code only while the tag is unchanged. A new
+            // tag means a new (still-unknown) code, so reset to null — otherwise
+            // codesAlreadyMatch would freeze on a stale code and mask the new release.
+            // The real code is set on install (updateAppVersion); the poll never invents it.
             val resolvedLatestVersionCode =
-                when {
-                    !isUpdateAvailable && installedCode > 0L -> installedCode
-                    matchedRelease.tagName == app.latestVersion -> app.latestVersionCode
-                    else -> null
-                }
+                if (matchedRelease.tagName == app.latestVersion) app.latestVersionCode else null
 
             installedAppsDao.updateVersionInfo(
                 packageName = packageName,
