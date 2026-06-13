@@ -1,5 +1,6 @@
 package zed.rainxch.core.data.services.root
 
+import android.content.Context
 import co.touchlab.kermit.Logger
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
@@ -13,8 +14,21 @@ import zed.rainxch.core.data.services.root.model.RootStatus
 import java.io.File
 
 class RootServiceManager(
+    private val context: Context,
     private val scope: CoroutineScope,
 ) {
+    private val prefs by lazy {
+        context.getSharedPreferences(ROOT_PREFS, Context.MODE_PRIVATE)
+    }
+
+    private fun wasGrantedBefore(): Boolean = prefs.getBoolean(KEY_GRANTED_BEFORE, false)
+
+    private fun rememberGranted(granted: Boolean) {
+        if (prefs.getBoolean(KEY_GRANTED_BEFORE, false) != granted) {
+            prefs.edit().putBoolean(KEY_GRANTED_BEFORE, granted).apply()
+        }
+    }
+
     private val _status = MutableStateFlow(RootStatus.NOT_AVAILABLE)
     val status: StateFlow<RootStatus> = _status.asStateFlow()
 
@@ -125,15 +139,34 @@ class RootServiceManager(
 
     private fun computeStatus(): RootStatus {
         Shell.getCachedShell()?.let { shell ->
+            rememberGranted(shell.isRoot)
             return if (shell.isRoot) RootStatus.READY else RootStatus.NOT_AVAILABLE
         }
         return when (Shell.isAppGrantedRoot()) {
-            true -> RootStatus.READY
-            false, null -> RootStatus.PERMISSION_NEEDED
+            true -> {
+                rememberGranted(true)
+                RootStatus.READY
+            }
+            // false/null on a fresh process (no shell created yet) is unreliable. If root
+            // was granted before, trust the su manager's persistent grant instead of
+            // re-prompting on every launch (GH#705). A real revoke is caught lazily when
+            // an install actually spawns the shell (isRootGranted below).
+            else -> if (wasGrantedBefore()) RootStatus.READY else RootStatus.PERMISSION_NEEDED
         }
     }
 
-    private fun isRootGranted(): Boolean = Shell.isAppGrantedRoot() == true
+    // Establishes the root shell and reports whether root is actually granted. With a
+    // persistent su grant this is silent (no prompt); if the grant was revoked the shell
+    // comes back non-root and we forget the remembered grant so the status corrects.
+    private fun isRootGranted(): Boolean =
+        try {
+            val granted = Shell.getShell().isRoot
+            rememberGranted(granted)
+            granted
+        } catch (e: Exception) {
+            Logger.w(TAG) { "isRootGranted() — getShell failed: ${e.message}" }
+            false
+        }
 
     private fun configureDefaultShell() {
         if (configured) return
@@ -155,6 +188,8 @@ class RootServiceManager(
 
     companion object {
         private const val TAG = "RootServiceManager"
+        private const val ROOT_PREFS = "ghs_root_prefs"
+        private const val KEY_GRANTED_BEFORE = "root_granted_before"
         private const val STATUS_SUCCESS = 0
         private const val STATUS_FAILURE = -1
         private const val SHELL_TIMEOUT_SECONDS = 10L
