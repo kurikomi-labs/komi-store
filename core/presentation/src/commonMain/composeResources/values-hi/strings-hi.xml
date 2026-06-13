@@ -1410,4 +1410,11 @@
     <string name="repo_pages_pulls_empty_closed">कोई बंद पुल रिक्वेस्ट नहीं।</string>
     <string name="repo_pages_pr_state_merged">मर्ज किया गया</string>
     <string name="repo_pages_pr_draft">ड्राफ्ट</string>
+    <string name="bottom_nav_for_you_title">आपके लिए</string>
+    <string name="for_you_title">आपके लिए</string>
+    <string name="for_you_filter_all">सभी</string>
+    <string name="for_you_empty_title">यहाँ अभी कुछ नहीं है</string>
+    <string name="for_you_empty_subtitle">रिफ़्रेश करने के लिए खींचें, या कुछ ऐप्स स्टार और इंस्टॉल करें ताकि हम इस फ़ीड को आपके अनुसार ढाल सकें।</string>
+    <string name="for_you_offline">ऑफ़लाइन — एक सहेजी गई फ़ीड दिखाई जा रही है</string>
+    <string name="for_you_failed_to_load">आपकी फ़ीड लोड नहीं हो सकी</string>
 </resources>

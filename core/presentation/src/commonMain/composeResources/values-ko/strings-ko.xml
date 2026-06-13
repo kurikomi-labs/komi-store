@@ -1394,4 +1394,11 @@
     <string name="repo_pages_pulls_empty_closed">닫힌 풀 리퀘스트가 없습니다.</string>
     <string name="repo_pages_pr_state_merged">병합됨</string>
     <string name="repo_pages_pr_draft">초안</string>
+    <string name="bottom_nav_for_you_title">추천</string>
+    <string name="for_you_title">추천</string>
+    <string name="for_you_filter_all">전체</string>
+    <string name="for_you_empty_title">아직 아무것도 없습니다</string>
+    <string name="for_you_empty_subtitle">당겨서 새로고침하거나, 몇 개의 앱을 별표하고 설치하면 이 피드를 취향에 맞게 다듬을 수 있어요.</string>
+    <string name="for_you_offline">오프라인 — 저장된 피드를 표시하는 중</string>
+    <string name="for_you_failed_to_load">피드를 불러오지 못했습니다</string>
 </resources>

@@ -1395,4 +1395,11 @@
     <string name="repo_pages_pulls_empty_closed">কোনো বন্ধ পুল রিকোয়েস্ট নেই।</string>
     <string name="repo_pages_pr_state_merged">মার্জ করা হয়েছে</string>
     <string name="repo_pages_pr_draft">খসড়া</string>
+    <string name="bottom_nav_for_you_title">আপনার জন্য</string>
+    <string name="for_you_title">আপনার জন্য</string>
+    <string name="for_you_filter_all">সব</string>
+    <string name="for_you_empty_title">এখানে এখনো কিছু নেই</string>
+    <string name="for_you_empty_subtitle">রিফ্রেশ করতে টানুন, অথবা কয়েকটি অ্যাপ স্টার ও ইনস্টল করুন যাতে আমরা এই ফিডটি আপনার জন্য সাজাতে পারি।</string>
+    <string name="for_you_offline">অফলাইন — একটি সংরক্ষিত ফিড দেখানো হচ্ছে</string>
+    <string name="for_you_failed_to_load">আপনার ফিড লোড করা যায়নি</string>
 </resources>

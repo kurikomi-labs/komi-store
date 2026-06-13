@@ -13,6 +13,7 @@ import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.details.data.di.detailsModule
 import zed.rainxch.devprofile.data.di.devProfileModule
+import zed.rainxch.feed.data.di.feedModule
 import zed.rainxch.home.data.di.homeModule
 import zed.rainxch.repopages.data.di.repoPagesModule
 import zed.rainxch.search.data.di.searchModule
@@ -34,6 +35,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
                 detailsModule,
                 devProfileModule,
                 homeModule,
+                feedModule,
                 repoPagesModule,
                 searchModule,
             )

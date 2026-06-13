@@ -1433,4 +1433,11 @@
     <string name="repo_pages_pulls_empty_closed">لا توجد طلبات سحب مغلقة.</string>
     <string name="repo_pages_pr_state_merged">مُدمَج</string>
     <string name="repo_pages_pr_draft">مسودة</string>
+    <string name="bottom_nav_for_you_title">المخصّص لك</string>
+    <string name="for_you_title">المخصّص لك</string>
+    <string name="for_you_filter_all">الكل</string>
+    <string name="for_you_empty_title">لا شيء هنا بعد</string>
+    <string name="for_you_empty_subtitle">اسحب للتحديث، أو ميّز بنجمة وثبّت بعض التطبيقات حتى نضبط هذا الموجز على ذوقك.</string>
+    <string name="for_you_offline">غير متصل — يُعرض موجز محفوظ</string>
+    <string name="for_you_failed_to_load">تعذّر تحميل موجزك</string>
 </resources>

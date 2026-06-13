@@ -1376,4 +1376,11 @@
     <string name="repo_pages_pulls_empty_closed">Aucune pull request fermée.</string>
     <string name="repo_pages_pr_state_merged">Fusionnée</string>
     <string name="repo_pages_pr_draft">Brouillon</string>
+    <string name="bottom_nav_for_you_title">Pour vous</string>
+    <string name="for_you_title">Pour vous</string>
+    <string name="for_you_filter_all">Tout</string>
+    <string name="for_you_empty_title">Rien ici pour l'instant</string>
+    <string name="for_you_empty_subtitle">Tirez pour actualiser, ou étoilez et installez quelques applis pour que nous puissions accorder ce fil à vos goûts.</string>
+    <string name="for_you_offline">Hors ligne — affichage d'un fil enregistré</string>
+    <string name="for_you_failed_to_load">Impossible de charger votre fil</string>
 </resources>

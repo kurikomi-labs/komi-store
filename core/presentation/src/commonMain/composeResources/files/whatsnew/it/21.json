@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nuova scheda «Per te» — un feed di scoperta personalizzato che mette in evidenza le nuove uscite e le gemme nascoste su misura per i tuoi gusti. Si apre per impostazione predefinita, con Esplora a un solo tocco.",
+        "Il tuo feed è personalizzato interamente sul tuo dispositivo, a partire dai repository a cui aggiungi una stella e che installi. Nulla di ciò che ti piace lascia mai il tuo telefono."
+      ]
+    }
+  ]
+}

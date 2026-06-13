@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nouvel onglet « Pour vous » — un fil de découverte personnalisé qui met en avant les nouvelles versions et les pépites cachées accordées à vos goûts. Il s'ouvre par défaut, avec Découvrir à un seul toucher.",
+        "Votre fil est entièrement personnalisé sur votre appareil, à partir des dépôts que vous étoilez et installez. Rien de ce que vous aimez ne quitte jamais votre téléphone."
+      ]
+    }
+  ]
+}

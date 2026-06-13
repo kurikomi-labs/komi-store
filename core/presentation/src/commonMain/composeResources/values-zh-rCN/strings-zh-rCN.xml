@@ -1367,4 +1367,11 @@
     <string name="repo_pages_pulls_empty_closed">没有已关闭的拉取请求。</string>
     <string name="repo_pages_pr_state_merged">已合并</string>
     <string name="repo_pages_pr_draft">草稿</string>
+    <string name="bottom_nav_for_you_title">为你推荐</string>
+    <string name="for_you_title">为你推荐</string>
+    <string name="for_you_filter_all">全部</string>
+    <string name="for_you_empty_title">这里还空空如也</string>
+    <string name="for_you_empty_subtitle">下拉刷新，或者给几个应用加星标并安装，让我们把这个信息流调成你喜欢的样子。</string>
+    <string name="for_you_offline">离线——正在显示已保存的信息流</string>
+    <string name="for_you_failed_to_load">无法加载你的信息流</string>
 </resources>

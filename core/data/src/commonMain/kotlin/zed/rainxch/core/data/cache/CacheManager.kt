@@ -143,6 +143,7 @@ class CacheManager(
 
     companion object CacheTtl {
         val HOME_REPOS = 24.hours.inWholeMilliseconds
+        val FEED = 3.hours.inWholeMilliseconds
         val REPO_DETAILS = 6.hours.inWholeMilliseconds
         val RELEASES = 6.hours.inWholeMilliseconds
         val README = 12.hours.inWholeMilliseconds

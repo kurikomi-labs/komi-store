@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nowa karta „Dla Ciebie” — spersonalizowany kanał odkryć, który wyławia nowe wydania i ukryte perełki dopasowane do Twojego gustu. Otwiera się domyślnie, a Odkrywaj jest o jedno dotknięcie dalej.",
+        "Twój kanał jest personalizowany w całości na Twoim urządzeniu, na podstawie repozytoriów, które oznaczasz gwiazdką i instalujesz. Nic z tego, co lubisz, nigdy nie opuszcza Twojego telefonu."
+      ]
+    }
+  ]
+}

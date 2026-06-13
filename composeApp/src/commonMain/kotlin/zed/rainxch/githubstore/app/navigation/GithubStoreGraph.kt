@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface GithubStoreGraph {
     @Serializable
+    data object ForYouScreen : GithubStoreGraph
+
+    @Serializable
     data object HomeScreen : GithubStoreGraph
 
     @Serializable

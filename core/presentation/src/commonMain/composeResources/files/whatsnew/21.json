@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-13",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "New \"For You\" tab — a personalized discovery feed that surfaces fresh releases and hidden gems tuned to your taste. It opens by default, with Discover one tap away.",
+        "Your feed is personalized entirely on your device, from the repositories you star and install. Nothing about what you like ever leaves your phone."
+      ]
+    }
+  ]
+}
