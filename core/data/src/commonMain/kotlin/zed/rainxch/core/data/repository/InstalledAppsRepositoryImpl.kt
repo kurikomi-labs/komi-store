@@ -74,7 +74,8 @@ class InstalledAppsRepositoryImpl(
             .getAppByPackage(packageName)
             ?.toDomain()
 
-    override suspend fun getAppByRepoId(repoId: Long): InstalledApp? = installedAppsDao.getAppByRepoId(repoId)?.toDomain()
+    override suspend fun getAppByRepoId(repoId: Long): InstalledApp? =
+        installedAppsDao.getAppByRepoId(repoId)?.toDomain()
 
     override fun getAppByRepoIdAsFlow(repoId: Long): Flow<InstalledApp?> =
         installedAppsDao.getAppByRepoIdAsFlow(repoId).map { it?.toDomain() }
@@ -85,7 +86,8 @@ class InstalledAppsRepositoryImpl(
     override fun getAppsByRepoIdAsFlow(repoId: Long): Flow<List<InstalledApp>> =
         installedAppsDao.getAppsByRepoIdAsFlow(repoId).map { list -> list.map { it.toDomain() } }
 
-    override suspend fun isAppInstalled(repoId: Long): Boolean = installedAppsDao.getAppByRepoId(repoId) != null
+    override suspend fun isAppInstalled(repoId: Long): Boolean =
+        installedAppsDao.getAppByRepoId(repoId) != null
 
     override suspend fun saveInstalledApp(app: InstalledApp) {
         installedAppsDao.insertApp(app.toEntity())
@@ -143,13 +145,13 @@ class InstalledAppsRepositoryImpl(
                     val flagSays = release.isPrerelease
                     val tagSays =
                         VersionMath.isPreReleaseTag(release.tagName) ||
-                            VersionMath.isPreReleaseTag(release.name)
+                                VersionMath.isPreReleaseTag(release.name)
                     if (flagSays != tagSays) {
                         Logger.w {
                             "Pre-release flag/tag mismatch for $owner/$repo " +
-                                "release '${release.tagName}' (name='${release.name}'): " +
-                                "apiFlag=$flagSays, tagMarker=$tagSays — " +
-                                "treating as pre-release=${flagSays || tagSays}"
+                                    "release '${release.tagName}' (name='${release.name}'): " +
+                                    "apiFlag=$flagSays, tagMarker=$tagSays — " +
+                                    "treating as pre-release=${true}"
                         }
                     }
                 }
@@ -193,8 +195,8 @@ class InstalledAppsRepositoryImpl(
 
         val hasAnyPin =
             preferredVariant != null ||
-                preferredTokens.isNotEmpty() ||
-                !preferredGlob.isNullOrBlank()
+                    preferredTokens.isNotEmpty() ||
+                    !preferredGlob.isNullOrBlank()
 
         for (release in candidates) {
             val installableForPlatform =
@@ -284,28 +286,27 @@ class InstalledAppsRepositoryImpl(
                     ?.onFailure { error ->
                         Logger.w {
                             "Invalid asset filter for $packageName " +
-                                "(${app.assetFilterRegex}): ${error.message} — ignoring"
+                                    "(${app.assetFilterRegex}): ${error.message} — ignoring"
                         }
                     }?.getOrNull()
 
-            val resolved =
-                resolveTrackedRelease(
-                    releases = releases,
-                    filter = compiledFilter,
-                    fallbackToOlderReleases = app.fallbackToOlderReleases,
-                    preferredVariant = app.preferredAssetVariant,
-                    preferredTokens = AssetVariant.deserializeTokens(app.preferredAssetTokens),
-                    preferredGlob = app.assetGlobPattern,
-                    pickedIndex = app.pickedAssetIndex,
-                    pickedSiblingCount = app.pickedAssetSiblingCount,
-                    trackedPackageName = app.packageName,
-                    installedAssetName = app.installedAssetName,
-                )
+            val resolved = resolveTrackedRelease(
+                releases = releases,
+                filter = compiledFilter,
+                fallbackToOlderReleases = app.fallbackToOlderReleases,
+                preferredVariant = app.preferredAssetVariant,
+                preferredTokens = AssetVariant.deserializeTokens(app.preferredAssetTokens),
+                preferredGlob = app.assetGlobPattern,
+                pickedIndex = app.pickedAssetIndex,
+                pickedSiblingCount = app.pickedAssetSiblingCount,
+                trackedPackageName = app.packageName,
+                installedAssetName = app.installedAssetName,
+            )
 
             if (resolved == null) {
                 Logger.d {
                     "No matching release found for ${app.appName} in window of ${releases.size}; " +
-                        "filter=${app.assetFilterRegex}, fallback=${app.fallbackToOlderReleases}"
+                            "filter=${app.assetFilterRegex}, fallback=${app.fallbackToOlderReleases}"
                 }
 
                 installedAppsDao.clearUpdateMetadata(packageName, System.currentTimeMillis())
@@ -318,26 +319,33 @@ class InstalledAppsRepositoryImpl(
             val latestCode = app.latestVersionCode
             val codesAlreadyMatch =
                 installedCode > 0L &&
-                    latestCode != null &&
-                    latestCode > 0L &&
-                    installedCode == latestCode
+                        latestCode != null &&
+                        latestCode > 0L &&
+                        installedCode == latestCode &&
+                        matchedRelease.tagName == app.latestVersion
 
             val skippedTag = app.skippedReleaseTag
             val matchesSkipped =
                 skippedTag != null &&
-                    VersionMath.isExactSameVersion(matchedRelease.tagName, skippedTag)
+                        VersionMath.isExactSameVersion(matchedRelease.tagName, skippedTag)
             val skipBecameStale =
                 skippedTag != null &&
-                    !matchesSkipped &&
-                    VersionMath.isVersionNewer(matchedRelease.tagName, skippedTag)
+                        !matchesSkipped &&
+                        VersionMath.isVersionNewer(matchedRelease.tagName, skippedTag)
             if (skipBecameStale) {
                 installedAppsDao.setSkippedReleaseTag(packageName, null)
             }
 
+            // If the installed version can't be reconciled with the release tag (e.g. tag
+            // 2.0.9.1 vs APK versionName 2.0.9-<githash>), numeric comparison is misleading.
+            // Pin to the current tag (below) and track by release tag from here on (GH#729).
+            val reconcilable =
+                VersionMath.versionsReconcilable(app.installedVersion, matchedRelease.tagName)
             val isUpdateAvailable =
                 when {
                     codesAlreadyMatch -> false
                     matchesSkipped -> false
+                    !reconcilable -> false
                     else ->
                         VersionMath.isVersionNewer(
                             candidate = matchedRelease.tagName,
@@ -347,12 +355,19 @@ class InstalledAppsRepositoryImpl(
 
             Logger.d {
                 "Update check for ${app.appName}: " +
-                    "installedTag=${app.installedVersion}, " +
-                    "matchedTag=${matchedRelease.tagName}, " +
-                    "matchedAsset=${primaryAsset.name}, " +
-                    "codesMatch=$codesAlreadyMatch, " +
-                    "isUpdate=$isUpdateAvailable, variantLost=$variantWasLost"
+                        "installedTag=${app.installedVersion}, " +
+                        "matchedTag=${matchedRelease.tagName}, " +
+                        "matchedAsset=${primaryAsset.name}, " +
+                        "codesMatch=$codesAlreadyMatch, " +
+                        "isUpdate=$isUpdateAvailable, variantLost=$variantWasLost"
             }
+
+            // Keep the latest release's known code only while the tag is unchanged. A new
+            // tag means a new (still-unknown) code, so reset to null — otherwise
+            // codesAlreadyMatch would freeze on a stale code and mask the new release.
+            // The real code is set on install (updateAppVersion); the poll never invents it.
+            val resolvedLatestVersionCode =
+                if (matchedRelease.tagName == app.latestVersion) app.latestVersionCode else null
 
             installedAppsDao.updateVersionInfo(
                 packageName = packageName,
@@ -364,11 +379,11 @@ class InstalledAppsRepositoryImpl(
                 releaseNotes = matchedRelease.description ?: "",
                 timestamp = System.currentTimeMillis(),
                 latestVersionName = matchedRelease.tagName,
-                latestVersionCode = null,
+                latestVersionCode = resolvedLatestVersionCode,
                 latestReleasePublishedAt = matchedRelease.publishedAt,
             )
 
-            if (codesAlreadyMatch &&
+            if ((codesAlreadyMatch || !reconcilable) &&
                 app.installedVersion != matchedRelease.tagName
             ) {
                 installedAppsDao.updateInstalledVersion(
@@ -443,7 +458,7 @@ class InstalledAppsRepositoryImpl(
         val snapshotLatestVersion = app.latestVersion
         val isUpdateStillAvailable =
             !snapshotLatestVersion.isNullOrBlank() &&
-                VersionMath.isVersionNewer(snapshotLatestVersion, newTag)
+                    VersionMath.isVersionNewer(snapshotLatestVersion, newTag)
 
         installedAppsDao.updateApp(
             app.copy(
@@ -453,6 +468,7 @@ class InstalledAppsRepositoryImpl(
                 installedVersionName = newVersionName,
                 installedVersionCode = newVersionCode,
                 isUpdateAvailable = isUpdateStillAvailable,
+                latestVersionCode = if (isUpdateStillAvailable) app.latestVersionCode else newVersionCode,
                 isPendingInstall = isPendingInstall,
                 lastUpdatedAt = System.currentTimeMillis(),
                 lastCheckedAt = System.currentTimeMillis(),
@@ -542,7 +558,7 @@ class InstalledAppsRepositoryImpl(
         } catch (e: Exception) {
             Logger.w {
                 "Saved new asset filter for $packageName but immediate " +
-                    "re-check failed: ${e.message}"
+                        "re-check failed: ${e.message}"
             }
         }
     }
@@ -574,7 +590,7 @@ class InstalledAppsRepositoryImpl(
         } catch (e: Exception) {
             Logger.w {
                 "Saved new variant for $packageName but immediate " +
-                    "re-check failed: ${e.message}"
+                        "re-check failed: ${e.message}"
             }
         }
     }

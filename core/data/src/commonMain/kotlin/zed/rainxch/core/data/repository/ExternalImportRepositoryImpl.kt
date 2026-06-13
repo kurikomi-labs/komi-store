@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlin.time.Clock
 import zed.rainxch.core.data.dto.ExternalMatchRequest
 import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
+import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.SigningFingerprintDao
 import zed.rainxch.core.data.local.db.entities.ExternalLinkEntity
 import zed.rainxch.core.data.local.db.entities.SigningFingerprintEntity
@@ -44,6 +45,7 @@ import zed.rainxch.core.domain.system.InstallerKind
 class ExternalImportRepositoryImpl(
     private val scanner: ExternalAppScanner,
     private val externalLinkDao: ExternalLinkDao,
+    private val installedAppDao: InstalledAppDao,
     private val signingFingerprintDao: SigningFingerprintDao,
     private val ksafe: KSafe,
     private val legacyDataStore: DataStore<Preferences>,
@@ -84,12 +86,19 @@ class ExternalImportRepositoryImpl(
         val started = nowMillis()
         val granted = scanner.isPermissionGranted()
         val rawCandidates = scanner.snapshot()
+        // Apps already tracked by the store are not link candidates — offering them
+        // would let the user re-link an already-managed app and create a conflicting
+        // entry (GH#729). prunePendingReviewNotIn below also clears any stale rows.
+        val trackedPackages =
+            runCatching { installedAppDao.getTrackedPackageNames().toSet() }.getOrDefault(emptySet())
         val candidates =
-            if (includeUnverified) {
-                rawCandidates
-            } else {
-                rawCandidates.filter { hasPositiveEvidence(it) }
-            }
+            (
+                if (includeUnverified) {
+                    rawCandidates
+                } else {
+                    rawCandidates.filter { hasPositiveEvidence(it) }
+                }
+            ).filterNot { it.packageName in trackedPackages }
         candidateSnapshot.update { candidates.associateBy { it.packageName } }
 
         val now = nowMillis()
@@ -129,10 +138,17 @@ class ExternalImportRepositoryImpl(
         var newCandidates = 0
         var pendingReview = 0
         val deltaCandidates = mutableListOf<ExternalAppCandidate>()
+        val trackedPackages =
+            runCatching { installedAppDao.getTrackedPackageNames().toSet() }.getOrDefault(emptySet())
 
         changedPackageNames.forEach { pkg ->
             val rawCandidate = scanner.snapshotSingle(pkg)
             val existing = externalLinkDao.get(pkg)
+
+            if (pkg in trackedPackages) {
+                if (existing != null) externalLinkDao.deleteByPackageName(pkg)
+                return@forEach
+            }
 
             if (rawCandidate == null) {
                 if (existing != null) {

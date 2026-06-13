@@ -97,6 +97,22 @@ object VersionMath {
         return compareNormalized(normCandidate, normCurrent) > 0
     }
 
+    // Whether two versions can be compared meaningfully by number. False when one is
+    // unparseable, or when exactly one carries a commit-hash-style suffix (e.g. tag
+    // "2.0.9.1" vs APK versionName "2.0.9-1c19925b5") — the hash normalizes to a
+    // pre-release and makes the real build look older. Callers should then track by
+    // release tag instead of nagging on a bogus numeric diff (GH#729).
+    fun versionsReconcilable(installed: String?, latest: String?): Boolean {
+        val a = parseSemanticVersion(normalizeVersion(installed)) ?: return false
+        val b = parseSemanticVersion(normalizeVersion(latest)) ?: return false
+        val aHash = a.preRelease?.let { isCommitHashPreRelease(it) } == true
+        val bHash = b.preRelease?.let { isCommitHashPreRelease(it) } == true
+        return aHash == bHash
+    }
+
+    private fun isCommitHashPreRelease(preRelease: String): Boolean =
+        COMMIT_HASH_PATTERN.matches(preRelease)
+
     fun compareVersions(a: String?, b: String?): Int {
         val normA = normalizeVersion(a)
         val normB = normalizeVersion(b)

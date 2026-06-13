@@ -265,6 +265,7 @@ val coreModule =
             ExternalImportRepositoryImpl(
                 scanner = get<ExternalAppScanner>(),
                 externalLinkDao = get(),
+                installedAppDao = get(),
                 signingFingerprintDao = get(),
                 ksafe = get(qualifier = named("prefs")),
                 legacyDataStore = get(),

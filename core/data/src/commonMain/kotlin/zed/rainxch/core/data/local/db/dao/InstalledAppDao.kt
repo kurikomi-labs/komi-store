@@ -47,6 +47,9 @@ interface InstalledAppDao {
     @Query("DELETE FROM installed_apps WHERE packageName = :packageName")
     suspend fun deleteByPackageName(packageName: String)
 
+    @Query("SELECT packageName FROM installed_apps")
+    suspend fun getTrackedPackageNames(): List<String>
+
     @Query(
         """
     UPDATE installed_apps
