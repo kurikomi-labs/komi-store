@@ -81,6 +81,7 @@ actual val corePlatformModule =
 
         single {
             RootServiceManager(
+                context = androidContext(),
                 scope = get<CoroutineScope>(),
             ).also { it.initialize() }
         }
