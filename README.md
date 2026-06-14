@@ -81,10 +81,10 @@ Built with Kotlin Multiplatform and Compose Multiplatform for Android and Deskto
 
 <p align="center">
   <a href="https://github.com/kurikomi-labs/komi-store/releases">
-    <img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" height="80" />
+    <img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" height="80" alt="Get it on GitHub" />
   </a>
   <a href="https://f-droid.org/en/packages/zed.rainxch.githubstore/">
-    <img src="https://f-droid.org/badge/get-it-on.png" height="80" />
+    <img src="https://f-droid.org/badge/get-it-on.png" height="80" alt="Get it on F-Droid" />
   </a>
   <br/>
   <a href="https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/kurikomi-labs/komi-store/">
