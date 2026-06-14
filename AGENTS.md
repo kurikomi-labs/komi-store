@@ -122,3 +122,6 @@ Each `feature/` directory contains its own `CLAUDE.md` with module structure, ke
 ## Versions
 
 All library versions managed in `gradle/libs.versions.toml`. Key versions: Kotlin 2.3.10, Compose Multiplatform 1.10.3, Ktor 3.4.0, Room 2.8.4, Koin 4.1.1.
+
+
+// AI patch for issue: 触控问题
