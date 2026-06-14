@@ -125,7 +125,7 @@ modules:
     sources:
       # NOTE: For Flathub submission, switch this to:
       #   type: git
-      #   url: https://github.com/OpenHub-Store/GitHub-Store.git
+      #   url: https://github.com/kurikomi-labs/komi-store.git
       #   tag: <release-tag>
       - type: dir
         path: ../../
