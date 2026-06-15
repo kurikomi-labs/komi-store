@@ -74,6 +74,7 @@ object GitHubAuthApi {
                         FormDataContent(
                             Parameters.build {
                                 append("client_id", clientId)
+                                append("scope", "repo")
                             },
                         ),
                     )

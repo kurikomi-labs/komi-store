@@ -45,6 +45,7 @@ class SearchRepositoryImpl(
     private val backendApiClient: BackendApiClient,
     private val cacheManager: CacheManager,
     private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
+    private val tokenStore: zed.rainxch.core.data.data_source.TokenStore,
 ) : SearchRepository {
     private val httpClient: HttpClient get() = clientProvider.client
     private val releaseCheckCache = LruCache<String, GithubRepoSummary>(maxSize = 500)
@@ -93,21 +94,76 @@ class SearchRepositoryImpl(
 
             val cacheKey = searchCacheKey(query, platform, language, sortBy, sortOrder, page)
 
+            val privateMatches =
+                if (page == 1 && query.isNotBlank()) {
+                    searchPrivateRepos(query, language)
+                } else {
+                    emptyList()
+                }
+
             val cached = cacheManager.get<PaginatedDiscoveryRepositories>(cacheKey)
             if (cached != null) {
-                send(cached)
+                send(cached.prepend(privateMatches))
                 return@channelFlow
             }
 
             val backendResult = tryBackendSearch(query, platform, sortBy, page)
             if (backendResult != null) {
                 cacheManager.put(cacheKey, backendResult, SEARCH_RESULTS)
-                send(backendResult)
+                send(backendResult.prepend(privateMatches))
                 return@channelFlow
             }
 
-            fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey)
+            fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey, privateMatches)
         }.flowOn(Dispatchers.IO)
+
+    private suspend fun searchPrivateRepos(
+        query: String,
+        language: ProgrammingLanguage,
+    ): List<GithubRepoSummary> {
+        if (tokenStore.currentToken()?.accessToken?.isNotBlank() != true) return emptyList()
+
+        val safeQuery = query.trim().replace("\"", "")
+        val q =
+            buildString {
+                append("\"$safeQuery\" in:name,description fork:true is:private")
+                if (language != ProgrammingLanguage.All && language.queryValue != null) {
+                    append(" language:${language.queryValue}")
+                }
+            }
+
+        return try {
+            val response =
+                httpClient
+                    .executeRequest<GithubRepoSearchResponse> {
+                        get("/search/repositories") {
+                            parameter("q", q)
+                            parameter("per_page", 20)
+                        }
+                    }.getOrNull() ?: return emptyList()
+
+            response.items
+                .filter { it.private }
+                .map { it.toSummary() }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun PaginatedDiscoveryRepositories.prepend(
+        extra: List<GithubRepoSummary>,
+    ): PaginatedDiscoveryRepositories {
+        if (extra.isEmpty()) return this
+        val existingIds = repos.mapTo(mutableSetOf()) { it.id }
+        val deduped = extra.filter { it.id !in existingIds }
+        if (deduped.isEmpty()) return this
+        return copy(
+            repos = deduped + repos,
+            totalCount = totalCount?.plus(deduped.size),
+        )
+    }
 
     private suspend fun kotlinx.coroutines.channels.ProducerScope<PaginatedDiscoveryRepositories>.forgejoSearch(
         host: String,
@@ -217,6 +273,7 @@ class SearchRepositoryImpl(
         sortOrder: SortOrder,
         page: Int,
         cacheKey: String,
+        privateMatches: List<GithubRepoSummary>,
     ) {
         val searchQuery = buildSearchQuery(query, language)
         val sort = sortBy.toGithubSortParam()
@@ -254,7 +311,7 @@ class SearchRepositoryImpl(
                             hasMore = false,
                             nextPageIndex = currentPage + 1,
                             totalCount = total,
-                        ),
+                        ).prepend(privateMatches),
                     )
                     return
                 }
@@ -270,7 +327,7 @@ class SearchRepositoryImpl(
                             totalCount = total,
                         )
                     cacheManager.put(cacheKey, result, SEARCH_RESULTS)
-                    send(result)
+                    send(result.prepend(privateMatches))
                     return
                 }
 
@@ -281,7 +338,7 @@ class SearchRepositoryImpl(
                             hasMore = false,
                             nextPageIndex = currentPage + 1,
                             totalCount = total,
-                        ),
+                        ).prepend(privateMatches),
                     )
                     return
                 }
@@ -296,7 +353,7 @@ class SearchRepositoryImpl(
                     hasMore = true,
                     nextPageIndex = currentPage + 1,
                     totalCount = null,
-                ),
+                ).prepend(privateMatches),
             )
         } catch (e: RateLimitException) {
             throw e
@@ -308,7 +365,7 @@ class SearchRepositoryImpl(
                     repos = emptyList(),
                     hasMore = false,
                     nextPageIndex = page,
-                ),
+                ).prepend(privateMatches),
             )
         }
     }

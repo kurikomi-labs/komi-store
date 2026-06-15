@@ -24,6 +24,7 @@ import zed.rainxch.details.data.dto.AttestationsResponse
 import zed.rainxch.core.data.dto.BackendRepoResponse
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.mappers.toSummary
+import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.data.network.BackendException
 import zed.rainxch.core.data.network.RateLimitedException
@@ -56,8 +57,18 @@ class DetailsRepositoryImpl(
     private val logger: GitHubStoreLogger,
     private val cacheManager: CacheManager,
     private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
+    private val tokenStore: TokenStore,
 ) : DetailsRepository {
     private val httpClient: HttpClient get() = clientProvider.client
+
+    private suspend fun isSignedIn(): Boolean =
+        try {
+            tokenStore.currentToken()?.accessToken?.trim()?.isNotEmpty() == true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            false
+        }
 
     private fun zed.rainxch.core.data.dto.ForgejoRepoNetworkModel.toForgejoSummary(
         sourceHost: String,
@@ -92,8 +103,8 @@ class DetailsRepositoryImpl(
 
     private val readmeHelper = ReadmeLocalizationHelper(localizationManager)
 
-    private fun shouldFallbackToGithubOrRethrow(cause: Throwable): Boolean =
-        sharedShouldFallback(cause)
+    private fun shouldFallbackToGithubOrRethrow(cause: Throwable, isSignedIn: Boolean): Boolean =
+        sharedShouldFallback(cause, isSignedIn)
 
     private fun BackendRepoResponse.toBackendSummary(): GithubRepoSummary = toSummary()
 
@@ -172,7 +183,7 @@ class DetailsRepositoryImpl(
                 return result
             },
             onFailure = { e ->
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, isSignedIn())) {
 
                     cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for $owner/$name, serving stale cache")
@@ -328,7 +339,7 @@ class DetailsRepositoryImpl(
                 return result
             },
             onFailure = { e ->
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, isSignedIn())) {
                     cacheManager.getStale<List<GithubRelease>>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for releases $owner/$repo, serving stale cache")
                         return stale
@@ -434,7 +445,7 @@ class DetailsRepositoryImpl(
                 logger.debug("Backend readme decode failed for $owner/$repo, falling back to raw URL")
             },
             onFailure = { e ->
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, isSignedIn())) {
                     cacheManager.getStale<CachedReadme>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for readme $owner/$repo, serving stale cache")
                         return Triple(stale.content, stale.languageCode, stale.path)
@@ -545,7 +556,7 @@ class DetailsRepositoryImpl(
                 return result
             },
             onFailure = { e ->
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, isSignedIn())) {
                     cacheManager.getStale<RepoStats>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for stats $owner/$repo, serving stale cache")
                         return stale
@@ -604,7 +615,7 @@ class DetailsRepositoryImpl(
                 return result
             },
             onFailure = { e ->
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, isSignedIn())) {
                     cacheManager.getStale<GithubUserProfile>(cacheKey)?.let { stale ->
                         logger.debug("Backend 4xx for profile $username, serving stale cache")
                         return stale

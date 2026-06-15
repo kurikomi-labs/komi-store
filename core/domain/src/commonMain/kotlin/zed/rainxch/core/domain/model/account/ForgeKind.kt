@@ -11,7 +11,7 @@ enum class ForgeKind(
         displayName = "GitHub",
         tokenCreationUrl =
             "https://github.com/settings/tokens/new" +
-                "?scopes=public_repo,read:user&description=GitHub%20Store",
+                "?scopes=repo,read:user&description=GitHub%20Store",
         tokenTermNoun = "Personal access token",
     ),
     CODEBERG(
