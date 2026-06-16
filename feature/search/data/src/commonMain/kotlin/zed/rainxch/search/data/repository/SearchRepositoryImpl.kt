@@ -96,7 +96,7 @@ class SearchRepositoryImpl(
 
             val privateMatches =
                 if (page == 1 && query.isNotBlank()) {
-                    searchPrivateRepos(query, language)
+                    searchPrivateRepos(query, platform, language)
                 } else {
                     emptyList()
                 }
@@ -117,11 +117,21 @@ class SearchRepositoryImpl(
             fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey, privateMatches)
         }.flowOn(Dispatchers.IO)
 
+    private suspend fun isSignedIn(): Boolean =
+        try {
+            tokenStore.currentToken()?.accessToken?.isNotBlank() == true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            false
+        }
+
     private suspend fun searchPrivateRepos(
         query: String,
+        platform: DiscoveryPlatform,
         language: ProgrammingLanguage,
     ): List<GithubRepoSummary> {
-        if (tokenStore.currentToken()?.accessToken?.isNotBlank() != true) return emptyList()
+        if (!isSignedIn()) return emptyList()
 
         val safeQuery = query.trim().replace("\"", "")
         val q =
@@ -142,9 +152,12 @@ class SearchRepositoryImpl(
                         }
                     }.getOrNull() ?: return emptyList()
 
-            response.items
-                .filter { it.private }
-                .map { it.toSummary() }
+            val privateItems = response.items.filter { it.private }
+            if (platform == DiscoveryPlatform.All) {
+                privateItems.map { it.toSummary() }
+            } else {
+                verifyBatch(privateItems, platform)
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
@@ -234,6 +247,7 @@ class SearchRepositoryImpl(
             SortBy.MostForks -> null
         }
 
+        val signedIn = isSignedIn()
         val offset = (page - 1) * BACKEND_PAGE_SIZE
         val result = backendApiClient.search(
             query = query,
@@ -257,7 +271,7 @@ class SearchRepositoryImpl(
             },
             onFailure = { e ->
 
-                if (!shouldFallbackToGithubOrRethrow(e)) {
+                if (!shouldFallbackToGithubOrRethrow(e, signedIn)) {
                     throw e
                 }
                 null
