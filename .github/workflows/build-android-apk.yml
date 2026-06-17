@@ -1,0 +1,118 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: 'temurin'
+  GRADLE_OPTS: >-
+    -Dorg.gradle.daemon=false
+    -Dorg.gradle.parallel=true
+    -Dorg.gradle.caching=true
+    -Dorg.gradle.vfs.watch=false
+
+jobs:
+  debug:
+    name: Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
+      - name: Build debug APK
+        run: ./gradlew :composeApp:assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: komi-store-debug
+          path: composeApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+  release:
+    name: Release APK
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
+      - name: Check signing config
+        id: signing
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Keystore not configured — skipping signed build."
+            exit 0
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "${{ github.workspace }}/keystore.jks"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "Keystore decoded."
+
+      - name: Build signed release APK
+        if: steps.signing.outputs.skip != 'true'
+        run: |
+          ./gradlew :composeApp:assembleRelease \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks \
+            -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+
+      - name: Upload signed release APK
+        if: steps.signing.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: komi-store-release-signed
+          path: composeApp/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Skip notice
+        if: steps.signing.outputs.skip == 'true'
+        run: |
+          echo "No ANDROID_KEYSTORE_BASE64 secret — skipping signed release."
+          echo "To enable, add these repo secrets:"
+          echo "  ANDROID_KEYSTORE_BASE64   (base64 of .jks)"
+          echo "  ANDROID_KEYSTORE_PASSWORD"
+          echo "  ANDROID_KEY_ALIAS"
+          echo "  ANDROID_KEY_PASSWORD"
