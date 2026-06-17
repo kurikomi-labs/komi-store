@@ -396,6 +396,7 @@ class DetailsRepositoryImpl(
                 preprocessMarkdown(
                     markdown = rawMarkdown,
                     baseUrl = "https://raw.githubusercontent.com/$owner/$repo/$defaultBranch/",
+                    linkBaseUrl = "https://github.com/$owner/$repo/blob/$defaultBranch/",
                 )
             }
 
@@ -478,7 +479,8 @@ class DetailsRepositoryImpl(
         }
         val path = dto.path?.takeIf { it.isNotBlank() } ?: "README.md"
         val baseUrl = "https://raw.githubusercontent.com/$owner/$repo/$defaultBranch/"
-        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl)
+        val linkBaseUrl = "https://github.com/$owner/$repo/blob/$defaultBranch/"
+        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl, linkBaseUrl = linkBaseUrl)
         val detectedLang = readmeHelper.detectReadmeLanguage(processed)
         logger.debug("Fetched README via backend (detected language: ${detectedLang ?: "unknown"})")
         return Triple(processed, detectedLang, path)
@@ -500,7 +502,8 @@ class DetailsRepositoryImpl(
                     }.getOrNull()
 
             if (rawMarkdown != null) {
-                val processed = preprocessMarkdown(markdown = rawMarkdown, baseUrl = baseUrl)
+                val linkBaseUrl = "https://github.com/$owner/$repo/blob/$defaultBranch/"
+                val processed = preprocessMarkdown(markdown = rawMarkdown, baseUrl = baseUrl, linkBaseUrl = linkBaseUrl)
                 val detectedLang = readmeHelper.detectReadmeLanguage(processed)
                 logger.debug("Fetched README.md (detected language: ${detectedLang ?: "unknown"})")
                 Triple(processed, detectedLang, path)
@@ -715,7 +718,8 @@ class DetailsRepositoryImpl(
 
         val normalized = body.replace("\r\n", "\n")
         val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/HEAD/"
-        return preprocessMarkdown(markdown = normalized, baseUrl = baseUrl)
+        val linkBaseUrl = "https://$sourceHost/$owner/$repo/src/branch/HEAD/"
+        return preprocessMarkdown(markdown = normalized, baseUrl = baseUrl, linkBaseUrl = linkBaseUrl)
     }
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -757,7 +761,8 @@ class DetailsRepositoryImpl(
         val path = dto.path?.takeIf { it.isNotBlank() } ?: "README.md"
 
         val baseUrl = "https://$sourceHost/$owner/$repo/raw/branch/$defaultBranch/"
-        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl)
+        val linkBaseUrl = "https://$sourceHost/$owner/$repo/src/branch/$defaultBranch/"
+        val processed = preprocessMarkdown(markdown = decoded, baseUrl = baseUrl, linkBaseUrl = linkBaseUrl)
         val detected = readmeHelper.detectReadmeLanguage(processed)
         cacheManager.put(
             cacheKey,

@@ -3,8 +3,10 @@ package zed.rainxch.details.data.utils
 fun preprocessMarkdown(
     markdown: String,
     baseUrl: String,
+    linkBaseUrl: String = baseUrl,
 ): String {
     val normalizedBaseUrl = if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/"
+    val normalizedLinkBaseUrl = if (linkBaseUrl.endsWith("/")) linkBaseUrl else "$linkBaseUrl/"
 
     var processed = markdown
 
@@ -44,26 +46,31 @@ fun preprocessMarkdown(
 
     fun shouldSkipImage(url: String): Boolean = isBadgeUrl(url)
 
-    fun resolveUrl(path: String): String {
+    fun resolveUrl(path: String, asImage: Boolean): String {
         val trimmed = path.trim()
+        if (trimmed.startsWith("#") && !asImage) return trimmed
+
         val isAbsolute =
             trimmed.startsWith("http://") ||
                 trimmed.startsWith("https://") ||
                 trimmed.startsWith("data:")
+        
+        val baseForPath = if (asImage) normalizedBaseUrl else normalizedLinkBaseUrl
+
         return if (isAbsolute) {
-            normalizeGitHubUrl(trimmed)
+            if (asImage) normalizeGitHubUrl(trimmed) else trimmed
         } else {
             when {
                 trimmed.startsWith("./") -> {
-                    "$normalizedBaseUrl${trimmed.removePrefix("./")}"
+                    "$baseForPath${trimmed.removePrefix("./")}"
                 }
 
                 trimmed.startsWith("/") -> {
-                    "$normalizedBaseUrl${trimmed.removePrefix("/")}"
+                    "$baseForPath${trimmed.removePrefix("/")}"
                 }
 
                 trimmed.startsWith("../") -> {
-                    var base = normalizedBaseUrl.trimEnd('/')
+                    var base = baseForPath.trimEnd('/')
                     var rel = trimmed
                     while (rel.startsWith("../")) {
                         base = base.substringBeforeLast('/', base)
@@ -73,7 +80,7 @@ fun preprocessMarkdown(
                 }
 
                 else -> {
-                    "$normalizedBaseUrl$trimmed"
+                    "$baseForPath$trimmed"
                 }
             }
         }
@@ -94,7 +101,7 @@ fun preprocessMarkdown(
     val skipRefNames =
         referenceMap
             .filter { (_, url) ->
-                shouldSkipImage(resolveUrl(url))
+                shouldSkipImage(resolveUrl(url, asImage = true))
             }.keys
 
     if (skipRefNames.isNotEmpty()) {
@@ -120,7 +127,7 @@ fun preprocessMarkdown(
             val refName = match.groupValues[2].lowercase()
             val url = referenceMap[refName]
             if (url != null) {
-                val resolved = resolveUrl(url)
+                val resolved = resolveUrl(url, asImage = true)
                 "![$alt]($resolved)"
             } else {
                 match.value
@@ -135,7 +142,7 @@ fun preprocessMarkdown(
             val refName = match.groupValues[2].lowercase()
             val url = referenceMap[refName]
             if (url != null) {
-                "[$boldText](${resolveUrl(url)})"
+                "[$boldText](${resolveUrl(url, asImage = false)})"
             } else {
                 boldText
             }
@@ -156,7 +163,7 @@ fun preprocessMarkdown(
             val url = referenceMap[refName]
 
             if (url != null && !text.startsWith("!")) {
-                "[$text](${resolveUrl(url)})"
+                "[$text](${resolveUrl(url, asImage = false)})"
             } else {
                 match.value
             }
@@ -248,7 +255,7 @@ fun preprocessMarkdown(
             val alt = altMatch?.groupValues?.get(2) ?: ""
 
             if (src.isNotEmpty()) {
-                val normalizedSrc = resolveUrl(src)
+                val normalizedSrc = resolveUrl(src, asImage = true)
 
                 if (shouldSkipImage(normalizedSrc)) {
                     if (alt.isNotEmpty()) "**$alt**" else ""
@@ -266,7 +273,7 @@ fun preprocessMarkdown(
         ) { match ->
             val alt = match.groupValues[1]
             val originalPath = match.groupValues[2].trim()
-            val finalUrl = resolveUrl(originalPath)
+            val finalUrl = resolveUrl(originalPath, asImage = true)
 
             if (shouldSkipImage(finalUrl)) {
                 if (alt.isNotEmpty()) "**$alt**" else ""
@@ -277,13 +284,23 @@ fun preprocessMarkdown(
 
     processed =
         processed.replace(
+            Regex("""(?<!\!)\[([^\]]*)\]\(([^)]+)\)"""),
+        ) { match ->
+            val text = match.groupValues[1]
+            val originalPath = match.groupValues[2].trim()
+            val finalUrl = resolveUrl(originalPath, asImage = false)
+            "[$text]($finalUrl)"
+        }
+
+    processed =
+        processed.replace(
             Regex(
                 """<video[^>]*?\ssrc=(["'])([^"']+)\1[^>]*>.*?</video>""",
                 setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
             ),
         ) { match ->
             val src = match.groupValues[2]
-            "[Video](${resolveUrl(src)})"
+            "[Video](${resolveUrl(src, asImage = true)})"
         }
 
     processed =
@@ -294,7 +311,7 @@ fun preprocessMarkdown(
             ),
         ) { match ->
             val src = match.groupValues[2]
-            "[Video](${resolveUrl(src)})"
+            "[Video](${resolveUrl(src, asImage = true)})"
         }
 
     for (level in 1..6) {
@@ -394,7 +411,7 @@ fun preprocessMarkdown(
         ) { match ->
             val url = match.groupValues[2]
             val text = match.groupValues[3].trim()
-            val resolvedUrl = resolveUrl(url)
+            val resolvedUrl = resolveUrl(url, asImage = false)
             if (text.isEmpty()) {
                 "[$resolvedUrl]($resolvedUrl)"
             } else {

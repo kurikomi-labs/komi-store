@@ -175,14 +175,39 @@ private fun AboutScreen(
                 }
                 item(key = "markdown") {
                     Spacer(Modifier.height(4.dp))
-                    Markdown(
-                        content = displayedMarkdown,
-                        colors = colors,
-                        typography = typography,
-                        imageTransformer = imageTransformer,
-                        components = components,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    val defaultUriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+                    val customUriHandler = remember(defaultUriHandler, onTranslate) {
+                        object : androidx.compose.ui.platform.UriHandler {
+                            override fun openUri(uri: String) {
+                                val match = Regex("""(?i)README[-._]([a-z]{2}(?:-[a-z]{2})?)\.md$""").find(uri)
+                                if (match != null) {
+                                    val code = match.groupValues[1]
+                                    val matchedLanguage = zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
+                                        it.code.equals(code, ignoreCase = true) 
+                                    } ?: zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
+                                        it.code.startsWith(code, ignoreCase = true) || code.startsWith(it.code, ignoreCase = true)
+                                    }
+                                    if (matchedLanguage != null) {
+                                        onTranslate(matchedLanguage.code)
+                                        return
+                                    }
+                                }
+                                defaultUriHandler.openUri(uri)
+                            }
+                        }
+                    }
+                    androidx.compose.runtime.CompositionLocalProvider(
+                        androidx.compose.ui.platform.LocalUriHandler provides customUriHandler,
+                    ) {
+                        Markdown(
+                            content = displayedMarkdown,
+                            colors = colors,
+                            typography = typography,
+                            imageTransformer = imageTransformer,
+                            components = components,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
