@@ -59,4 +59,8 @@ sealed interface HomeAction {
     data object OnSeeAllPopular : HomeAction
 
     data object OnSeeAllStarred : HomeAction
+
+    data class OnPlatformToggled(
+        val platform: DiscoveryPlatform,
+    ) : HomeAction
 }

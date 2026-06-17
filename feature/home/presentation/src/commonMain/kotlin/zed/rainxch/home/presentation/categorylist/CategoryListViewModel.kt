@@ -8,11 +8,13 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_load
 import zed.rainxch.home.domain.model.HomeCategory
@@ -22,6 +24,7 @@ import zed.rainxch.home.presentation.model.toHomeRepoCardUi
 class CategoryListViewModel(
     private val category: HomeCategory,
     private val homeRepository: HomeRepository,
+    private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CategoryListState(category = category))
@@ -63,10 +66,13 @@ class CategoryListViewModel(
             _state.update {
                 if (initial) it.copy(isLoading = true) else it.copy(isLoadingMore = true)
             }
+            val platforms = runCatching {
+                tweaksRepository.getDiscoveryPlatforms().first()
+            }.getOrDefault(emptySet())
             val flow = when (category) {
-                HomeCategory.HOT_RELEASE -> homeRepository.getHotReleaseRepositories(emptySet(), nextPage)
-                HomeCategory.TRENDING -> homeRepository.getTrendingRepositories(emptySet(), nextPage)
-                HomeCategory.MOST_POPULAR -> homeRepository.getMostPopular(emptySet(), nextPage)
+                HomeCategory.HOT_RELEASE -> homeRepository.getHotReleaseRepositories(platforms, nextPage)
+                HomeCategory.TRENDING -> homeRepository.getTrendingRepositories(platforms, nextPage)
+                HomeCategory.MOST_POPULAR -> homeRepository.getMostPopular(platforms, nextPage)
             }
             runCatching { flow.firstOrNull() }
                 .onSuccess { paginated ->

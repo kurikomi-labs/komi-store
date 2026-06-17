@@ -205,6 +205,19 @@ class HomeViewModel(
             HomeAction.OnSeeAllTrending,
             HomeAction.OnSeeAllPopular,
             HomeAction.OnSeeAllStarred -> Unit
+
+            is HomeAction.OnPlatformToggled -> {
+                viewModelScope.launch {
+                    val current = tweaksRepository.getDiscoveryPlatforms().first()
+                    val next = if (action.platform in current) {
+                        current - action.platform
+                    } else {
+                        current + action.platform
+                    }
+                    tweaksRepository.setDiscoveryPlatforms(next)
+                    refreshAllSections(isInitial = false)
+                }
+            }
         }
     }
 
