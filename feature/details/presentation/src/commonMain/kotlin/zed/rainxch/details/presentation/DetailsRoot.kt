@@ -675,7 +675,7 @@ fun DetailsScreen(
                                 measuredHeightPx = state.aboutMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
                                 onTranslateLanguage = onTranslateLanguage,
-                                onReadMore = { onReadMoreAbout?.invoke() },
+                                onReadMore = onReadMoreAbout,
                             )
                         }
                     } else {
