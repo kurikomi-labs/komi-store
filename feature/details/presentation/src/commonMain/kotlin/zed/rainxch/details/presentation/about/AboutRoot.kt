@@ -182,10 +182,18 @@ private fun AboutScreen(
                                 val match = Regex("""(?i)README[-._]([a-z]{2}(?:-[a-z]{2})?)\.md$""").find(uri)
                                 if (match != null) {
                                     val code = match.groupValues[1]
+                                    val normalizedCode = when (code.lowercase()) {
+                                        "cn" -> "zh-CN"
+                                        "tw" -> "zh-TW"
+                                        "jp" -> "ja"
+                                        "kr" -> "ko"
+                                        "br" -> "pt-BR"
+                                        else -> code
+                                    }
                                     val matchedLanguage = zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
-                                        it.code.equals(code, ignoreCase = true) 
+                                        it.code.equals(normalizedCode, ignoreCase = true) 
                                     } ?: zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
-                                        it.code.startsWith(code, ignoreCase = true) || code.startsWith(it.code, ignoreCase = true)
+                                        it.code.startsWith(normalizedCode, ignoreCase = true) || normalizedCode.startsWith(it.code, ignoreCase = true)
                                     }
                                     if (matchedLanguage != null) {
                                         onTranslate(matchedLanguage.code)
