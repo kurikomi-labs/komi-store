@@ -427,13 +427,14 @@ fun AppNavigation(
                                             ),
                                         )
                                     },
-                                    onNavigateToAbout = { repoId, owner, repo, sourceHost ->
+                                    onNavigateToAbout = { repoId, owner, repo, sourceHost, translateTo ->
                                         navController.navigate(
                                             GithubStoreGraph.DetailsAboutScreen(
                                                 repositoryId = repoId,
                                                 owner = owner,
                                                 repo = repo,
                                                 sourceHost = sourceHost,
+                                                translateTo = translateTo,
                                             ),
                                         )
                                     },
@@ -525,6 +526,7 @@ fun AppNavigation(
                                 owner = args.owner,
                                 repo = args.repo,
                                 sourceHost = args.sourceHost,
+                                translateTo = args.translateTo,
                                 onNavigateBack = { navController.navigateUp() },
                             )
                         }

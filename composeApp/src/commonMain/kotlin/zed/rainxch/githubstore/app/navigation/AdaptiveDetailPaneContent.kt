@@ -29,6 +29,7 @@ private sealed interface DetailPaneRoute {
         val owner: String,
         val repo: String,
         val sourceHost: String?,
+        val translateTo: String? = null,
     ) : DetailPaneRoute
 
     data class WhatsNew(
@@ -82,8 +83,8 @@ fun AdaptiveDetailPaneContent(
                         navController = navController,
                         onCrossNavToRepo = onCrossNavToRepo,
                         onClearPane = onClearPane,
-                        onOpenAbout = { repoId, owner, repo, sourceHost ->
-                            route = DetailPaneRoute.About(repoId, owner, repo, sourceHost)
+                        onOpenAbout = { repoId, owner, repo, sourceHost, translateTo ->
+                            route = DetailPaneRoute.About(repoId, owner, repo, sourceHost, translateTo)
                         },
                         onOpenWhatsNew = { repoId, owner, repo, sourceHost ->
                             route = DetailPaneRoute.WhatsNew(repoId, owner, repo, sourceHost)
@@ -99,6 +100,7 @@ fun AdaptiveDetailPaneContent(
                         owner = current.owner,
                         repo = current.repo,
                         sourceHost = current.sourceHost,
+                        translateTo = current.translateTo,
                         onNavigateBack = { route = DetailPaneRoute.Main },
                         viewModel =
                             koinViewModel(key = aboutKey) {
@@ -143,7 +145,7 @@ private fun MainDetailPane(
     navController: NavHostController,
     onCrossNavToRepo: (AdaptiveDetailArgs) -> Unit,
     onClearPane: () -> Unit,
-    onOpenAbout: (Long, String, String, String?) -> Unit,
+    onOpenAbout: (Long, String, String, String?, String?) -> Unit,
     onOpenWhatsNew: (Long, String, String, String?) -> Unit,
 ) {
     val vmKey =

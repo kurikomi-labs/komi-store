@@ -54,12 +54,20 @@ fun AboutRoot(
     owner: String,
     repo: String,
     sourceHost: String?,
+    translateTo: String? = null,
     onNavigateBack: () -> Unit,
     viewModel: DetailsAboutViewModel = koinViewModel {
         parametersOf(repositoryId, owner, repo, sourceHost)
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    
+    androidx.compose.runtime.LaunchedEffect(translateTo) {
+        if (translateTo != null) {
+            viewModel.translate(translateTo)
+        }
+    }
+    
     AboutScreen(
         state = state,
         onBack = onNavigateBack,
@@ -175,37 +183,8 @@ private fun AboutScreen(
                 }
                 item(key = "markdown") {
                     Spacer(Modifier.height(4.dp))
-                    val defaultUriHandler = androidx.compose.ui.platform.LocalUriHandler.current
-                    val customUriHandler = remember(defaultUriHandler, onTranslate) {
-                        object : androidx.compose.ui.platform.UriHandler {
-                            override fun openUri(uri: String) {
-                                val match = Regex("""(?i)README[-._]([a-z]{2}(?:-[a-z]{2})?)\.md$""").find(uri)
-                                if (match != null) {
-                                    val code = match.groupValues[1]
-                                    val normalizedCode = when (code.lowercase()) {
-                                        "cn" -> "zh-CN"
-                                        "tw" -> "zh-TW"
-                                        "jp" -> "ja"
-                                        "kr" -> "ko"
-                                        "br" -> "pt-BR"
-                                        else -> code
-                                    }
-                                    val matchedLanguage = zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
-                                        it.code.equals(normalizedCode, ignoreCase = true) 
-                                    } ?: zed.rainxch.details.presentation.model.SupportedLanguages.all.find { 
-                                        it.code.startsWith(normalizedCode, ignoreCase = true) || normalizedCode.startsWith(it.code, ignoreCase = true)
-                                    }
-                                    if (matchedLanguage != null) {
-                                        onTranslate(matchedLanguage.code)
-                                        return
-                                    }
-                                }
-                                defaultUriHandler.openUri(uri)
-                            }
-                        }
-                    }
-                    androidx.compose.runtime.CompositionLocalProvider(
-                        androidx.compose.ui.platform.LocalUriHandler provides customUriHandler,
+                    zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
+                        onTranslate = onTranslate,
                     ) {
                         Markdown(
                             content = displayedMarkdown,
