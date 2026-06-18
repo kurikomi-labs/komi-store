@@ -1,6 +1,7 @@
 package zed.rainxch.tweaks.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
@@ -13,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_search_placeholder
 
@@ -54,7 +55,7 @@ fun TweaksSearchField(
             }
         },
         singleLine = true,
-        shape = WonkySquircleShape.Search,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,

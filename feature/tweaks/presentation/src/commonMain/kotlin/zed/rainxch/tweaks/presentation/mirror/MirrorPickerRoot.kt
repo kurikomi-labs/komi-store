@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,8 +42,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.mirror.MirrorConfig
 import zed.rainxch.core.domain.model.mirror.MirrorPreference
 import zed.rainxch.core.domain.model.mirror.MirrorType
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_label
@@ -180,10 +179,10 @@ fun MirrorPickerRoot(
             }
 
             item {
-                GhsButton(
+                KomiButton(
                     onClick = { viewModel.onAction(MirrorPickerAction.OnTestConnection) },
                     label = stringResource(Res.string.mirror_test_button),
-                    variant = GhsButtonVariant.Primary,
+                    variant = KomiButtonVariant.Primary,
                     enabled = !state.isTesting,
                     loading = state.isTesting,
                     modifier = Modifier.fillMaxWidth(),

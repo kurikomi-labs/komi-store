@@ -13,18 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
-import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.NewReleases
-import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,14 +44,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.theme.tokens.GhsAccents
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
@@ -71,8 +67,6 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_tagline
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
-import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_subtitle
-import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_whats_new_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
@@ -90,7 +84,7 @@ private const val WEBSITE_URL = "https://github-store.org"
 private const val BUSINESS_EMAIL = "mailto:hello@komistore.app"
 
 @Composable
-fun TweaksAppInfoRoot(
+fun AppInfoRoot(
     onNavigateBack: () -> Unit,
     onNavigateToLicenses: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
@@ -114,7 +108,7 @@ fun TweaksAppInfoRoot(
         }
 
         item(key = "community_section_header") {
-            GhsSectionHeader(text = stringResource(Res.string.tweaks_app_info_community_section))
+            KomiText(text = stringResource(Res.string.tweaks_app_info_community_section), role = KomiTextRole.Title)
             Spacer(Modifier.height(8.dp))
         }
 
@@ -136,7 +130,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Code,
                 title = stringResource(Res.string.tweaks_app_info_licenses_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
-                accent = GhsAccents.Sage,
+                accent = MaterialTheme.colorScheme.primary,
                 onClick = onNavigateToLicenses,
             )
             Spacer(Modifier.height(8.dp))
@@ -147,7 +141,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.Outlined.Description,
                 title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
-                accent = GhsAccents.Rose,
+                accent = MaterialTheme.colorScheme.primary,
                 onClick = {
                     runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
                 },
@@ -160,7 +154,7 @@ fun TweaksAppInfoRoot(
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
                 title = stringResource(Res.string.tweaks_app_info_source_code_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
-                accent = GhsAccents.Aqua,
+                accent = MaterialTheme.colorScheme.primary,
                 onClick = {
                     runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
                 },
@@ -174,7 +168,7 @@ fun TweaksAppInfoRoot(
 private fun AppIdentityCard(versionName: String) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -190,7 +184,7 @@ private fun AppIdentityCard(versionName: String) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(Radii.cardSm),
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)),
             )
             Column(
                 modifier = Modifier.weight(1f),
@@ -233,7 +227,7 @@ private fun CommunityCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -265,21 +259,21 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Telegram",
                     iconUrl = "https://cdn.simpleicons.org/telegram/000000",
-                    accent = GhsAccents.Sky,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onTelegram,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Discord",
                     iconUrl = "https://cdn.simpleicons.org/discord/000000",
-                    accent = GhsAccents.Periwinkle,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onDiscord,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Mastodon",
                     iconUrl = "https://cdn.simpleicons.org/mastodon/000000",
-                    accent = GhsAccents.Lavender,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onMastodon,
                     modifier = Modifier.weight(1f),
                 )
@@ -292,21 +286,21 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Reddit",
                     iconUrl = "https://cdn.simpleicons.org/reddit/000000",
-                    accent = GhsAccents.Peach,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onReddit,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "GitHub",
                     iconUrl = "https://cdn.simpleicons.org/github/000000",
-                    accent = GhsAccents.Tan,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onGithub,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = stringResource(Res.string.tweaks_app_info_website),
                     iconFallback = Icons.Outlined.Language,
-                    accent = GhsAccents.Sage,
+                    accent = MaterialTheme.colorScheme.primary,
                     onClick = onWebsite,
                     modifier = Modifier.weight(1f),
                 )
@@ -335,11 +329,11 @@ private fun CommunityCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                GhsButton(
+                KomiButton(
                     onClick = onBusiness,
                     label = stringResource(Res.string.tweaks_app_info_community_business_cta),
-                    variant = GhsButtonVariant.Outline,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Outline,
+                    size = KomiButtonSize.Sm,
                     trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
                 )
             }
@@ -358,9 +352,9 @@ private fun SocialTile(
 ) {
     Surface(
         modifier = modifier
-            .clip(Radii.row)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
             .clickable(onClick = onClick),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = accent.copy(alpha = 0.14f),
         border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
     ) {
@@ -374,7 +368,7 @@ private fun SocialTile(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .background(accent.copy(alpha = 0.22f)),
                 contentAlignment = Alignment.Center,
             ) {
@@ -428,9 +422,9 @@ private fun ActionRow(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(Radii.row)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
             .clickable(onClick = onClick),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -444,7 +438,7 @@ private fun ActionRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .background(tileBg),
                 contentAlignment = Alignment.Center,
             ) {

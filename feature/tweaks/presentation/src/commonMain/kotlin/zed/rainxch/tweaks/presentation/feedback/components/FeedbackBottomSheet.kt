@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -35,10 +36,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.system.Platform
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.domain.isAndroid
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_close
@@ -73,7 +73,7 @@ fun FeedbackBottomSheet(
         onDismiss()
     }
 
-    if (getPlatform() == Platform.ANDROID) {
+    if (isAndroid()) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         ModalBottomSheet(
             onDismissRequest = dismiss,
@@ -97,7 +97,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .widthIn(max = 560.dp)
                     .heightIn(max = 720.dp)
-                    .clip(WonkySquircleShape.Dialog)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
                     .background(MaterialTheme.colorScheme.surface),
             ) {
                 FeedbackContent(
@@ -126,21 +126,20 @@ private fun FeedbackContent(
         FeedbackHeader(onDismiss = onDismiss)
 
         SectionLabel(text = stringResource(Res.string.feedback_field_title) + " *", topGap = 0.dp)
-        GhsTextField(
+        KomiTextField(
             value = state.title,
             onValueChange = { onAction(FeedbackAction.OnTitleChange(it)) },
             label = stringResource(Res.string.feedback_field_title),
-            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
 
         SectionLabel(text = stringResource(Res.string.feedback_field_description) + " *")
-        GhsTextField(
+        KomiTextField(
             value = state.description,
             onValueChange = { onAction(FeedbackAction.OnDescriptionChange(it)) },
             label = stringResource(Res.string.feedback_field_description),
-            singleLine = false,
-            minLines = 4,
+            multiline = true,
+            rows = 4,
             modifier = Modifier.fillMaxWidth(),
         )
 

@@ -18,8 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.model.settings.TranslationProvider
@@ -52,6 +51,7 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_invalid
 import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_remove_failed
 import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_save_failed
 import zed.rainxch.tweaks.presentation.model.ProxyType
+import kotlin.time.Duration.Companion.milliseconds
 
 class TweaksViewModel(
     private val tweaksRepository: TweaksRepository,
@@ -71,15 +71,15 @@ class TweaksViewModel(
         private val IPV4_PATTERN =
             Regex(
                 "^(25[0-5]|2[0-4]\\d|[01]?\\d?\\d)" +
-                    "(\\.(25[0-5]|2[0-4]\\d|[01]?\\d?\\d)){3}$",
+                        "(\\.(25[0-5]|2[0-4]\\d|[01]?\\d?\\d)){3}$",
             )
 
         private val IPV6_PATTERN = Regex("^[0-9A-Fa-f:]+$")
 
         private val HOSTNAME_PATTERN =
             Regex(
-                "^(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)" +
-                    "(?:\\.(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?))*$",
+                "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?" +
+                        "(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$",
             )
     }
 
@@ -87,44 +87,43 @@ class TweaksViewModel(
     private var cacheSizeJob: Job? = null
 
     private val _state = MutableStateFlow(TweaksState())
-    val state =
-        _state
-            .onStart {
-                if (!hasLoadedInitialData) {
-                    loadCurrentTheme()
-                    loadVersionName()
-                    loadProxyConfig()
-                    loadInstallerPreference()
-                    loadAutoUpdatePreference()
-                    loadUpdateCheckInterval()
-                    loadUpdateCheckEnabled()
-                    loadIncludePreReleases()
-                    loadHideSeenEnabled()
-                    loadScrollbarEnabled()
-                    loadContentWidth()
-                    loadTranslationSettings()
-                    loadAppLanguage()
-                    loadAutoTranslate()
+    val state = _state
+        .onStart {
+            if (!hasLoadedInitialData) {
+                loadCurrentTheme()
+                loadVersionName()
+                loadProxyConfig()
+                loadInstallerPreference()
+                loadAutoUpdatePreference()
+                loadUpdateCheckInterval()
+                loadUpdateCheckEnabled()
+                loadIncludePreReleases()
+                loadHideSeenEnabled()
+                loadScrollbarEnabled()
+                loadContentWidth()
+                loadTranslationSettings()
+                loadAppLanguage()
+                loadAutoTranslate()
 
-                    observeShizukuStatus()
-                    observeDhizukuStatus()
-                    observeRootStatus()
-                    observeInstallerAttribution()
-                    observeNeedsRestartReasons()
-                    observeMasterProxyConfig()
-                    observeUseMasterFlags()
-                    observeDiscoveryPlatforms()
+                observeShizukuStatus()
+                observeDhizukuStatus()
+                observeRootStatus()
+                observeInstallerAttribution()
+                observeNeedsRestartReasons()
+                observeMasterProxyConfig()
+                observeUseMasterFlags()
+                observeDiscoveryPlatforms()
 
-                    hasLoadedInitialData = true
-                }
-                refreshCacheSize()
+                hasLoadedInitialData = true
+            }
+            refreshCacheSize()
 
-                evaluateBatteryOptimizationCard()
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = TweaksState(),
-            )
+            evaluateBatteryOptimizationCard()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = TweaksState(),
+        )
 
     private val _events = Channel<TweaksEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
@@ -357,9 +356,11 @@ class TweaksViewModel(
                 }
                 .collect { attribution ->
                     _state.update { current ->
-                        val isCustom = attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom
-                        val customDraft = (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom)?.packageName
-                            ?: current.installerAttributionCustomDraft
+                        val isCustom =
+                            attribution is zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom
+                        val customDraft =
+                            (attribution as? zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom)?.packageName
+                                ?: current.installerAttributionCustomDraft
                         current.copy(
                             installerAttribution = attribution,
                             installerAttributionCustomDraft = customDraft,
@@ -479,7 +480,7 @@ class TweaksViewModel(
         viewModelScope.launch {
             val dismissed =
                 runCatching {
-                    withTimeoutOrNull(BATTERY_OPT_PREF_READ_TIMEOUT_MS) {
+                    withTimeoutOrNull(BATTERY_OPT_PREF_READ_TIMEOUT_MS.milliseconds) {
                         tweaksRepository.getBatteryOptimizationPromptDismissed().firstOrNull()
                     }
                 }.onFailure { error ->
@@ -491,8 +492,8 @@ class TweaksViewModel(
                 }.getOrNull() ?: false
             val show =
                 aggressiveOemDetector.isAggressiveOem() &&
-                    !aggressiveOemDetector.isBatteryOptimizationIgnored() &&
-                    !dismissed
+                        !aggressiveOemDetector.isBatteryOptimizationIgnored() &&
+                        !dismissed
             _state.update { it.copy(showBatteryOptimizationCard = show) }
         }
     }
@@ -599,7 +600,8 @@ class TweaksViewModel(
                             if (error is CancellationException) throw error
                             _events.send(
                                 TweaksEvent.OnProxySaveError(
-                                    error.message ?: getString(Res.string.failed_to_save_proxy_settings),
+                                    error.message
+                                        ?: getString(Res.string.failed_to_save_proxy_settings),
                                 ),
                             )
                         }
@@ -686,7 +688,8 @@ class TweaksViewModel(
                         if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnProxySaveError(
-                                error.message ?: getString(Res.string.failed_to_save_proxy_settings),
+                                error.message
+                                    ?: getString(Res.string.failed_to_save_proxy_settings),
                             ),
                         )
                     }
@@ -764,7 +767,10 @@ class TweaksViewModel(
 
             TweaksAction.OnInstallerAttributionCustomSave -> {
                 val draft = _state.value.installerAttributionCustomDraft.trim()
-                if (!zed.rainxch.core.domain.model.installation.InstallerAttributionDefaults.isValidPackageName(draft)) {
+                if (!zed.rainxch.core.domain.model.installation.InstallerAttributionDefaults.isValidPackageName(
+                        draft
+                    )
+                ) {
                     _state.update {
                         it.copy(installerAttributionCustomError = "invalid")
                     }
@@ -772,13 +778,18 @@ class TweaksViewModel(
                     viewModelScope.launch {
                         runCatching {
                             tweaksRepository.setInstallerAttribution(
-                                zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom(draft),
+                                zed.rainxch.core.domain.model.installation.InstallerAttribution.Custom(
+                                    draft
+                                ),
                             )
                         }.onSuccess {
                             _state.update { it.copy(installerAttributionCustomError = null) }
                         }.onFailure { error ->
                             if (error is CancellationException) throw error
-                            logger.error("TweaksViewModel: failed to persist installer attribution", error)
+                            logger.error(
+                                "TweaksViewModel: failed to persist installer attribution",
+                                error
+                            )
                             _state.update { it.copy(installerAttributionCustomError = "write_failed") }
                         }
                     }
@@ -858,7 +869,8 @@ class TweaksViewModel(
                         if (error is CancellationException) throw error
                         _events.send(
                             TweaksEvent.OnCacheClearError(
-                                error.message ?: getString(Res.string.tweaks_clear_downloads_failed),
+                                error.message
+                                    ?: getString(Res.string.tweaks_clear_downloads_failed),
                             ),
                         )
                     }
@@ -875,6 +887,7 @@ class TweaksViewModel(
 
             TweaksAction.OnFeedbackClick ->
                 _state.update { it.copy(isFeedbackSheetVisible = true) }
+
             TweaksAction.OnFeedbackDismiss ->
                 _state.update { it.copy(isFeedbackSheetVisible = false) }
 
@@ -888,11 +901,12 @@ class TweaksViewModel(
                             _events.send(TweaksEvent.OnTranslationProviderSaved)
                         }
                     }
+
                     TranslationProvider.YOUDAO -> {
                         val current = _state.value
                         val hasCreds =
                             current.youdaoAppKey.isNotBlank() &&
-                                current.youdaoAppSecret.isNotBlank()
+                                    current.youdaoAppSecret.isNotBlank()
                         if (hasCreds) {
                             _state.update { it.copy(draftTranslationProvider = null) }
                             viewModelScope.launch {
@@ -906,6 +920,7 @@ class TweaksViewModel(
                             }
                         }
                     }
+
                     TranslationProvider.LIBRE_TRANSLATE -> {
 
                         _state.update { it.copy(draftTranslationProvider = null) }
@@ -914,6 +929,7 @@ class TweaksViewModel(
                             _events.send(TweaksEvent.OnTranslationProviderSaved)
                         }
                     }
+
                     TranslationProvider.DEEPL -> {
                         val current = _state.value
                         val hasCreds = current.deeplAuthKey.isNotBlank()
@@ -929,6 +945,7 @@ class TweaksViewModel(
                             }
                         }
                     }
+
                     TranslationProvider.MICROSOFT -> {
                         val current = _state.value
                         val hasCreds = current.microsoftTranslatorKey.isNotBlank()
@@ -969,11 +986,11 @@ class TweaksViewModel(
 
                     val shouldActivate =
                         current.youdaoAppKey.isNotBlank() &&
-                            current.youdaoAppSecret.isNotBlank() &&
-                            (
-                                current.translationProvider != TranslationProvider.YOUDAO ||
-                                    current.draftTranslationProvider == TranslationProvider.YOUDAO
-                            )
+                                current.youdaoAppSecret.isNotBlank() &&
+                                (
+                                        current.translationProvider != TranslationProvider.YOUDAO ||
+                                                current.draftTranslationProvider == TranslationProvider.YOUDAO
+                                        )
                     if (shouldActivate) {
                         tweaksRepository.setTranslationProvider(TranslationProvider.YOUDAO)
                     }
@@ -1004,10 +1021,10 @@ class TweaksViewModel(
                     tweaksRepository.setLibreTranslateApiKey(current.libreTranslateApiKey)
                     val shouldActivate =
                         current.libreTranslateBaseUrl.isNotBlank() &&
-                            (
-                                current.translationProvider != TranslationProvider.LIBRE_TRANSLATE ||
-                                    current.draftTranslationProvider == TranslationProvider.LIBRE_TRANSLATE
-                            )
+                                (
+                                        current.translationProvider != TranslationProvider.LIBRE_TRANSLATE ||
+                                                current.draftTranslationProvider == TranslationProvider.LIBRE_TRANSLATE
+                                        )
                     if (shouldActivate) {
                         tweaksRepository.setTranslationProvider(TranslationProvider.LIBRE_TRANSLATE)
                     }
@@ -1032,10 +1049,10 @@ class TweaksViewModel(
                     tweaksRepository.setDeeplAuthKey(current.deeplAuthKey)
                     val shouldActivate =
                         current.deeplAuthKey.isNotBlank() &&
-                            (
-                                current.translationProvider != TranslationProvider.DEEPL ||
-                                    current.draftTranslationProvider == TranslationProvider.DEEPL
-                            )
+                                (
+                                        current.translationProvider != TranslationProvider.DEEPL ||
+                                                current.draftTranslationProvider == TranslationProvider.DEEPL
+                                        )
                     if (shouldActivate) {
                         tweaksRepository.setTranslationProvider(TranslationProvider.DEEPL)
                     }
@@ -1065,10 +1082,10 @@ class TweaksViewModel(
                     tweaksRepository.setMicrosoftTranslatorRegion(current.microsoftTranslatorRegion)
                     val shouldActivate =
                         current.microsoftTranslatorKey.isNotBlank() &&
-                            (
-                                current.translationProvider != TranslationProvider.MICROSOFT ||
-                                    current.draftTranslationProvider == TranslationProvider.MICROSOFT
-                            )
+                                (
+                                        current.translationProvider != TranslationProvider.MICROSOFT ||
+                                                current.draftTranslationProvider == TranslationProvider.MICROSOFT
+                                        )
                     if (shouldActivate) {
                         tweaksRepository.setTranslationProvider(TranslationProvider.MICROSOFT)
                     }
@@ -1086,7 +1103,7 @@ class TweaksViewModel(
                             zed.rainxch.core.domain.model.system.RestartReason.LANGUAGE,
                         )
                     }
-                    if (getPlatform() != Platform.ANDROID) {
+                    if (isDesktop()) {
                         _events.send(TweaksEvent.OnAppLanguageChangeRequiresRestart)
                     }
                 }
@@ -1336,7 +1353,7 @@ class TweaksViewModel(
                         }
                     } catch (e: CancellationException) {
                         throw e
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         Triple<Long?, Long?, Long?>(null, null, null)
                     } finally {
                         _state.update {
@@ -1421,6 +1438,7 @@ class TweaksViewModel(
                     form.password.takeIf { it.isNotBlank() },
                 )
             }
+
             ProxyType.SOCKS -> {
                 val host = form.host.trim().takeIf { it.isNotEmpty() } ?: return null
                 val port = form.port.toIntOrNull() ?: return null
@@ -1453,9 +1471,11 @@ class TweaksViewModel(
                         is ProxyConfig.None -> existing.copy(
                             type = ProxyType.NONE,
                         )
+
                         is ProxyConfig.System -> existing.copy(
                             type = ProxyType.SYSTEM,
                         )
+
                         is ProxyConfig.Http -> existing.copy(
                             type = ProxyType.HTTP,
                             host = config.host,
@@ -1463,6 +1483,7 @@ class TweaksViewModel(
                             username = config.username.orEmpty(),
                             password = config.password.orEmpty(),
                         )
+
                         is ProxyConfig.Socks -> existing.copy(
                             type = ProxyType.SOCKS,
                             host = config.host,

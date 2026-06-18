@@ -2,6 +2,7 @@ package zed.rainxch.tweaks.presentation.licenses
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_title
@@ -94,7 +95,7 @@ fun LicensesRoot(
         item(key = "intro") {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = Radii.row,
+                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             ) {
@@ -155,12 +156,13 @@ fun LicensesRoot(
 
 @Composable
 private fun LibraryRow(library: LibraryEntry, onClick: () -> Unit) {
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(Radii.row)
+            .clip(rowShape)
             .clickable(onClick = onClick),
-        shape = Radii.row,
+        shape = rowShape,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {

@@ -6,15 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +43,7 @@ fun ClearDownloadsDialog(
         modifier =
             modifier
                 .padding(16.dp)
-                .clip(zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog)
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(20.dp),
     ) {
@@ -67,18 +68,18 @@ fun ClearDownloadsDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onDismissRequest,
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = onConfirm,
                     label = stringResource(Res.string.delete_all),
-                    variant = GhsButtonVariant.Destructive,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Destructive,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }

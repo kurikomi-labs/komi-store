@@ -24,10 +24,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -171,7 +172,7 @@ private fun SkippedAppRow(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -214,11 +215,11 @@ private fun SkippedAppRow(
                 }
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onUnskip,
                 label = stringResource(Res.string.skipped_updates_unskip_action),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
     }

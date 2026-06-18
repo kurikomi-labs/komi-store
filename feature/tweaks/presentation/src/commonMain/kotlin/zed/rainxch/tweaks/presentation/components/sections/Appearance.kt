@@ -1,13 +1,10 @@
 package zed.rainxch.tweaks.presentation.components.sections
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,15 +23,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,134 +43,36 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
-import zed.rainxch.core.domain.model.appearance.FontTheme
-import zed.rainxch.core.domain.model.system.Platform
-import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
-import zed.rainxch.core.presentation.theme.dynamicColorScheme
-import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.theme.tokens.Tokens
-import zed.rainxch.core.presentation.theme.tokens.colorSchemeFor
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.displayName
-import zed.rainxch.core.presentation.utils.toTokenPalette
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
-import zed.rainxch.tweaks.presentation.components.ToggleSettingCard
 
-private enum class ModeChoice { LIGHT, DARK, SYSTEM }
+internal enum class ModeChoice { LIGHT, DARK, SYSTEM }
 
-private fun isDarkToChoice(value: Boolean?): ModeChoice = when (value) {
+internal fun isDarkToChoice(value: Boolean?): ModeChoice = when (value) {
     true -> ModeChoice.DARK
     false -> ModeChoice.LIGHT
     null -> ModeChoice.SYSTEM
 }
 
-private fun choiceToIsDark(choice: ModeChoice): Boolean? = when (choice) {
+internal fun choiceToIsDark(choice: ModeChoice): Boolean? = when (choice) {
     ModeChoice.DARK -> true
     ModeChoice.LIGHT -> false
     ModeChoice.SYSTEM -> null
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-fun LazyListScope.appearanceSection(
-    state: TweaksState,
-    onAction: (TweaksAction) -> Unit,
-) {
-    item(key = "mode_header") {
-        GhsSectionHeader(text = stringResource(Res.string.appearance_section_mode))
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "mode_tiles") {
-        ModeTiles(
-            current = isDarkToChoice(state.isDarkTheme),
-            paletteForPreview = state.selectedThemeColor,
-            onSelected = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
-        )
-        Spacer(Modifier.height(16.dp))
-    }
-    item(key = "palette_header") {
-        GhsSectionHeader(text = stringResource(Res.string.theme_color))
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "palette_grid") {
-        PaletteGrid(
-            isDarkTheme = state.isDarkTheme,
-            amoledEnabled = state.isAmoledThemeEnabled,
-            selected = state.selectedThemeColor,
-            onSelected = { onAction(TweaksAction.OnThemeColorSelected(it)) },
-        )
-    }
-    item(key = "amoled_toggle") {
-        val systemDark = isSystemInDarkTheme()
-        val resolvedDark = state.isDarkTheme ?: systemDark
-        AnimatedVisibility(
-            visible = resolvedDark,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Column {
-                Spacer(Modifier.height(8.dp))
-                ToggleSettingCard(
-                    title = stringResource(Res.string.amoled_black_theme),
-                    description = stringResource(Res.string.amoled_black_description),
-                    checked = state.isAmoledThemeEnabled,
-                    onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
-                )
-            }
-        }
-    }
-    item(key = "display_header") {
-        Spacer(Modifier.height(16.dp))
-        GhsSectionHeader(text = stringResource(Res.string.appearance_section_display))
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "system_font") {
-        ToggleSettingCard(
-            title = stringResource(Res.string.system_font),
-            description = stringResource(Res.string.system_font_description),
-            checked = state.selectedFontTheme == FontTheme.SYSTEM,
-            onCheckedChange = { enabled ->
-                onAction(
-                    TweaksAction.OnFontThemeSelected(
-                        if (enabled) FontTheme.SYSTEM else FontTheme.CUSTOM,
-                    ),
-                )
-            },
-        )
-    }
-    if (getPlatform() != Platform.ANDROID) {
-        item(key = "scrollbar") {
-            Spacer(Modifier.height(8.dp))
-            ToggleSettingCard(
-                title = stringResource(Res.string.scrollbar_option_title),
-                description = stringResource(Res.string.scrollbar_option_description),
-                checked = state.isScrollbarEnabled,
-                onCheckedChange = { onAction(TweaksAction.OnScrollbarToggled(it)) },
-            )
-        }
-        item(key = "content_width") {
-            Spacer(Modifier.height(8.dp))
-            ContentWidthCard(
-                selected = state.contentWidth,
-                onSelected = { onAction(TweaksAction.OnContentWidthSelected(it)) },
-            )
-        }
-    }
-}
-
 @Composable
-private fun ModeTiles(
+internal fun ModeTiles(
     current: ModeChoice,
     paletteForPreview: AppTheme,
     onSelected: (ModeChoice) -> Unit,
 ) {
-    val token = paletteForPreview.toTokenPalette()
-    val lightScheme = colorSchemeFor(token, Tokens.Mode.LIGHT)
-    val darkScheme = colorSchemeFor(token, Tokens.Mode.DARK)
+    val lightScheme = previewScheme(isDark = false)
+    val darkScheme = previewScheme(isDark = true)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -233,7 +134,7 @@ private fun ModeTile(
     )
     Column(
         modifier = modifier
-            .clip(Radii.row)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
             .clickable(onClick = onClick)
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -360,7 +261,7 @@ private fun ThemePreviewCanvas(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PaletteGrid(
+internal fun PaletteGrid(
     isDarkTheme: Boolean?,
     amoledEnabled: Boolean,
     selected: AppTheme,
@@ -368,14 +269,9 @@ private fun PaletteGrid(
 ) {
     val systemDark = isSystemInDarkTheme()
     val resolvedDark = isDarkTheme ?: systemDark
-    val previewMode = when {
-        resolvedDark && amoledEnabled -> Tokens.Mode.AMOLED
-        resolvedDark -> Tokens.Mode.DARK
-        else -> Tokens.Mode.LIGHT
-    }
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -386,13 +282,12 @@ private fun PaletteGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            val dynamicAvailable = isDynamicColorAvailable()
             AppTheme.entries
-                .filter { it != AppTheme.DYNAMIC || dynamicAvailable }
+                .filter { it != AppTheme.DYNAMIC }
                 .forEach { palette ->
                     PaletteSwatch(
                         palette = palette,
-                        mode = previewMode,
+                        isDark = resolvedDark,
                         isSelected = palette == selected,
                         onClick = { onSelected(palette) },
                     )
@@ -401,19 +296,29 @@ private fun PaletteGrid(
     }
 }
 
+private fun previewScheme(isDark: Boolean): ColorScheme =
+    if (isDark) darkColorScheme() else lightColorScheme()
+
+private val AppTheme.displayName: String
+    @Composable
+    get() = stringResource(
+        when (this) {
+            AppTheme.DYNAMIC -> Res.string.theme_dynamic
+            AppTheme.NORD -> Res.string.theme_nord
+            AppTheme.CREAM -> Res.string.theme_cream
+            AppTheme.FOREST -> Res.string.theme_forest
+            AppTheme.PLUM -> Res.string.theme_plum
+        },
+    )
+
 @Composable
 private fun PaletteSwatch(
     palette: AppTheme,
-    mode: Tokens.Mode,
+    isDark: Boolean,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val isDark = mode != Tokens.Mode.LIGHT
-    val scheme = if (palette == AppTheme.DYNAMIC) {
-        dynamicColorScheme(isDark = isDark) ?: colorSchemeFor(Tokens.Palette.NORD, mode)
-    } else {
-        colorSchemeFor(palette.toTokenPalette(), mode)
-    }
+    val scheme = previewScheme(isDark)
     val scale by animateFloatAsState(
         targetValue = if (isSelected) 1.0f else 0.96f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -537,13 +442,13 @@ private fun PaletteSwatch(
 }
 
 @Composable
-private fun ContentWidthCard(
+internal fun ContentWidthCard(
     selected: ContentWidth,
     onSelected: (ContentWidth) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {

@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInBrowser
@@ -52,7 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -61,11 +60,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.account.ForgeKind
 import zed.rainxch.core.domain.model.account.HostToken
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_add
@@ -257,7 +256,7 @@ private fun visiblePresetForges(state: HostTokensState): List<ForgeKind> {
 private fun OAuthCoexistenceNote() {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -339,7 +338,7 @@ private fun PresetForgeCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -375,18 +374,18 @@ private fun PresetForgeCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onOpenTokenCreationPage,
                     label = stringResource(Res.string.host_tokens_picker_open_page),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                     leadingIcon = Icons.Default.OpenInBrowser,
                 )
-                GhsButton(
+                KomiButton(
                     onClick = onPick,
                     label = stringResource(Res.string.host_tokens_picker_paste),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }
@@ -398,9 +397,9 @@ private fun OtherForgeCard(onPick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(Radii.row)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
             .clickable(onClick = onPick),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -455,11 +454,11 @@ private fun PickerDialog(
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.host_tokens_action_cancel),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )
@@ -480,7 +479,7 @@ private fun TokenRow(
     var menuOpen by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -607,13 +606,12 @@ private fun AddTokenDialog(
                                     normalized,
                                 )
                             }
-                    GhsTextField(
+                    KomiTextField(
                         value = state.draftHost,
                         onValueChange = { onAction(HostTokensAction.OnDraftHostChanged(it)) },
                         label = stringResource(Res.string.host_tokens_compose_field_forge_address),
-                        singleLine = true,
-                        isError = state.draftHostError != null,
-                        supportingText = hostSupporting,
+                        error = if (state.draftHostError != null) hostSupporting else null,
+                        helper = if (state.draftHostError == null) hostSupporting else null,
                     )
                 }
                 val tokenSupporting = state.draftTokenError?.let { stringResource(it) }
@@ -623,37 +621,35 @@ private fun AddTokenDialog(
                     ?: replacingExisting?.let {
                         stringResource(Res.string.host_tokens_compose_replace_hint)
                     }
-                GhsTextField(
+                KomiTextField(
                     value = state.draftToken,
                     onValueChange = { onAction(HostTokensAction.OnDraftTokenChanged(it)) },
                     label = stringResource(Res.string.host_tokens_field_token),
-                    singleLine = true,
-                    isError = state.draftTokenError != null,
-                    supportingText = tokenSupporting,
-                    visualTransformation = PasswordVisualTransformation(),
+                    error = if (state.draftTokenError != null) tokenSupporting else null,
+                    helper = if (state.draftTokenError == null) tokenSupporting else null,
+                    password = true,
                 )
-                GhsTextField(
+                KomiTextField(
                     value = state.draftDisplayName,
                     onValueChange = { onAction(HostTokensAction.OnDraftDisplayNameChanged(it)) },
                     label = stringResource(Res.string.host_tokens_field_display_name),
-                    singleLine = true,
                 )
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(HostTokensAction.OnAddConfirm) },
                 label = stringResource(Res.string.host_tokens_action_save),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
         dismissButton = {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(HostTokensAction.OnAddDismiss) },
                 label = stringResource(Res.string.host_tokens_action_cancel),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )

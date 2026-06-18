@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -77,12 +77,12 @@ private fun MultilineField(
     label: String,
     onValueChange: (String) -> Unit,
 ) {
-    GhsTextField(
+    KomiTextField(
         value = value,
         onValueChange = onValueChange,
         label = label,
-        singleLine = false,
-        minLines = 3,
+        multiline = true,
+        rows = 3,
         modifier = Modifier.fillMaxWidth(),
     )
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +27,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -45,25 +43,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.text.KeyboardOptions
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.settings.SupportedTranslationLanguages
 import zed.rainxch.core.domain.model.settings.TranslationProvider
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
 
-fun LazyListScope.translationSection(
+@Composable
+fun translationSectionContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    item {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Text(
             text = stringResource(Res.string.translation_intro),
             style = MaterialTheme.typography.bodySmall,
@@ -196,24 +198,11 @@ private fun TranslationProviderCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(TranslationProvider.entries) { provider ->
-                    FilterChip(
+                    KomiChip(
+                        label = providerLabel(provider),
+                        kind = KomiChipKind.Filter,
                         selected = state.displayedTranslationProvider == provider,
                         onClick = { onAction(TweaksAction.OnTranslationProviderSelected(provider)) },
-                        label = {
-                            Text(
-                                text = providerLabel(provider),
-                                fontWeight =
-                                    if (state.displayedTranslationProvider == provider) {
-                                        FontWeight.Bold
-                                    } else {
-                                        FontWeight.Normal
-                                    },
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
                     )
                 }
             }
@@ -375,27 +364,19 @@ private fun YoudaoCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.youdaoAppKey,
             onValueChange = { onAction(TweaksAction.OnYoudaoAppKeyChanged(it)) },
             label = stringResource(Res.string.translation_youdao_app_key),
-            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.youdaoAppSecret,
             onValueChange = { onAction(TweaksAction.OnYoudaoAppSecretChanged(it)) },
             label = stringResource(Res.string.translation_youdao_app_secret),
-            singleLine = true,
-            visualTransformation = passwordVisualTransformation(state.isYoudaoAppSecretVisible),
-            trailingIcon = {
-                GhsPasswordVisibilityIcon(
-                    visible = state.isYoudaoAppSecretVisible,
-                    onToggle = { onAction(TweaksAction.OnYoudaoAppSecretVisibilityToggle) },
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            password = true,
+            keyboardType = KeyboardType.Password,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -403,10 +384,10 @@ private fun YoudaoCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(TweaksAction.OnYoudaoCredentialsSave) },
                 label = stringResource(Res.string.translation_youdao_save),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 enabled = canSave,
                 leadingIcon = Icons.Default.Save,
             )
@@ -432,29 +413,21 @@ private fun LibreTranslateCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.libreTranslateBaseUrl,
             onValueChange = { onAction(TweaksAction.OnLibreTranslateBaseUrlChanged(it)) },
             label = stringResource(Res.string.translation_libre_base_url),
             placeholder = "https://translate.disroot.org",
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            keyboardType = KeyboardType.Uri,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.libreTranslateApiKey,
             onValueChange = { onAction(TweaksAction.OnLibreTranslateApiKeyChanged(it)) },
             label = stringResource(Res.string.translation_libre_api_key),
-            singleLine = true,
-            visualTransformation = passwordVisualTransformation(state.isLibreTranslateApiKeyVisible),
-            trailingIcon = {
-                GhsPasswordVisibilityIcon(
-                    visible = state.isLibreTranslateApiKeyVisible,
-                    onToggle = { onAction(TweaksAction.OnLibreTranslateApiKeyVisibilityToggle) },
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            password = true,
+            keyboardType = KeyboardType.Password,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -462,10 +435,10 @@ private fun LibreTranslateCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(TweaksAction.OnLibreTranslateCredentialsSave) },
                 label = stringResource(Res.string.translation_libre_save),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 enabled = canSave,
                 leadingIcon = Icons.Default.Save,
             )
@@ -491,27 +464,20 @@ private fun DeeplCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        GhsButton(
+        KomiButton(
             onClick = { runCatching { uriHandler.openUri("https://www.deepl.com/pro-api") } },
             label = stringResource(Res.string.translation_deepl_get_free_key),
-            variant = GhsButtonVariant.Text,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
             modifier = Modifier.align(Alignment.Start),
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.deeplAuthKey,
             onValueChange = { onAction(TweaksAction.OnDeeplAuthKeyChanged(it)) },
             label = stringResource(Res.string.translation_deepl_auth_key),
-            singleLine = true,
-            visualTransformation = passwordVisualTransformation(state.isDeeplAuthKeyVisible),
-            trailingIcon = {
-                GhsPasswordVisibilityIcon(
-                    visible = state.isDeeplAuthKeyVisible,
-                    onToggle = { onAction(TweaksAction.OnDeeplAuthKeyVisibilityToggle) },
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            password = true,
+            keyboardType = KeyboardType.Password,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -519,10 +485,10 @@ private fun DeeplCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(TweaksAction.OnDeeplCredentialsSave) },
                 label = stringResource(Res.string.translation_deepl_save),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 enabled = canSave,
                 leadingIcon = Icons.Default.Save,
             )
@@ -548,36 +514,28 @@ private fun MicrosoftCredentialsForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        GhsButton(
+        KomiButton(
             onClick = { runCatching { uriHandler.openUri("https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation") } },
             label = stringResource(Res.string.translation_microsoft_get_free_key),
-            variant = GhsButtonVariant.Text,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
             modifier = Modifier.align(Alignment.Start),
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.microsoftTranslatorKey,
             onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorKeyChanged(it)) },
             label = stringResource(Res.string.translation_microsoft_key),
-            singleLine = true,
-            visualTransformation = passwordVisualTransformation(state.isMicrosoftTranslatorKeyVisible),
-            trailingIcon = {
-                GhsPasswordVisibilityIcon(
-                    visible = state.isMicrosoftTranslatorKeyVisible,
-                    onToggle = { onAction(TweaksAction.OnMicrosoftTranslatorKeyVisibilityToggle) },
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            password = true,
+            keyboardType = KeyboardType.Password,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.microsoftTranslatorRegion,
             onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorRegionChanged(it)) },
             label = stringResource(Res.string.translation_microsoft_region),
             placeholder = "global",
-            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -585,10 +543,10 @@ private fun MicrosoftCredentialsForm(
             modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(TweaksAction.OnMicrosoftTranslatorCredentialsSave) },
                 label = stringResource(Res.string.translation_microsoft_save),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 enabled = canSave,
                 leadingIcon = Icons.Default.Save,
             )

@@ -21,11 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
@@ -37,7 +39,7 @@ fun CustomForgesDialog(
 ) {
     AlertDialog(
         onDismissRequest = { onAction(TweaksAction.OnDismissCustomForgesDialog) },
-        shape = zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         title = { Text(stringResource(Res.string.custom_forges_dialog_title)) },
         text = {
             Column {
@@ -64,19 +66,18 @@ fun CustomForgesDialog(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    GhsTextField(
+                    KomiTextField(
                         value = state.customForgeDraft,
                         onValueChange = { onAction(TweaksAction.OnCustomForgeDraftChanged(it)) },
                         placeholder = "forgejo.example.com",
-                        singleLine = true,
-                        isError = state.customForgeError != null,
+                        error = state.customForgeError,
                         modifier = Modifier.weight(1f),
                     )
-                    GhsButton(
+                    KomiButton(
                         onClick = { onAction(TweaksAction.OnAddCustomForge) },
                         label = stringResource(Res.string.custom_forges_add_button),
-                        variant = GhsButtonVariant.Text,
-                        size = GhsButtonSize.Sm,
+                        variant = KomiButtonVariant.Text,
+                        size = KomiButtonSize.Sm,
                     )
                 }
                 if (state.customForgeError != null) {
@@ -117,11 +118,11 @@ fun CustomForgesDialog(
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(TweaksAction.OnDismissCustomForgesDialog) },
                 label = stringResource(Res.string.done),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )

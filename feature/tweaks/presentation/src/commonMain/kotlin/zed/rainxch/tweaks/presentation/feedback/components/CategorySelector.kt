@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_category_label
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackCategory
@@ -86,7 +87,7 @@ internal fun FeedbackPillChip(
     )
     Box(
         modifier = Modifier
-            .clip(Radii.chip)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
             .background(container)
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 10.dp),

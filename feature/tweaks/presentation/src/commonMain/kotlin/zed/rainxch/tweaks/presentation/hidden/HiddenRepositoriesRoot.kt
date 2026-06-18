@@ -26,9 +26,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +48,6 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import org.jetbrains.compose.resources.pluralStringResource
@@ -129,13 +130,13 @@ fun HiddenRepositoriesRoot(
                 },
                 actions = {
                     if (state.items.isNotEmpty()) {
-                        GhsButton(
+                        KomiButton(
                             onClick = {
                                 viewModel.onAction(HiddenRepositoriesAction.OnUnhideAll)
                             },
                             label = stringResource(Res.string.hidden_repositories_unhide_all),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     }
                 },
@@ -204,7 +205,7 @@ private fun HiddenRepoRow(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -238,11 +239,11 @@ private fun HiddenRepoRow(
                 )
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onUnhide,
                 label = stringResource(Res.string.hidden_repositories_unhide_action),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
     }

@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_cta
@@ -120,19 +120,18 @@ fun PasteProxyUrlSheet(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            GhsTextField(
+            KomiTextField(
                 value = input,
                 onValueChange = {
                     input = it
                     error = null
                 },
                 label = stringResource(Res.string.tweaks_connection_paste_url_placeholder),
-                isError = error != null,
-                supportingText = error,
+                error = error,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(4.dp))
-            GhsButton(
+            KomiButton(
                 onClick = {
                     val parsed = parseProxyUrl(input)
                     if (parsed == null) {
@@ -142,7 +141,7 @@ fun PasteProxyUrlSheet(
                     }
                 },
                 label = stringResource(Res.string.tweaks_connection_paste_url_cta),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = input.isNotBlank(),
             )

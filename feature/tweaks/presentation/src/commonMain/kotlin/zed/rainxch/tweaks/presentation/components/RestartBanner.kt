@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.system.RestartReason
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_body
 import zed.rainxch.githubstore.core.presentation.res.restart_banner_later
@@ -50,7 +51,7 @@ fun RestartBanner(
 
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.tertiaryContainer,
         border = BorderStroke(
             width = 1.dp,
@@ -83,18 +84,18 @@ fun RestartBanner(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onLater,
                     label = stringResource(Res.string.restart_banner_later),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
                 Spacer(Modifier.height(0.dp))
-                GhsButton(
+                KomiButton(
                     onClick = onRestartNow,
                     label = stringResource(Res.string.restart_banner_restart_now),
-                    variant = GhsButtonVariant.Primary,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Primary,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -44,30 +43,34 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.installation.DhizukuAvailability
 import zed.rainxch.core.domain.model.installation.InstallerType
-import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.installation.RootAvailability
 import zed.rainxch.core.domain.model.installation.ShizukuAvailability
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.theme.LocalStatusColors
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.locals.LocalStatusColors
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun LazyListScope.installationSection(
+@Composable
+fun installSectionContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    if (getPlatform() != Platform.ANDROID) return
+    if (isDesktop()) return
 
-    item {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         InstallerTypeCard(
             selectedType = state.installerType,
             shizukuAvailability = state.shizukuAvailability,
@@ -121,7 +124,7 @@ private fun InstallerAttributionCard(
     onAction: (TweaksAction) -> Unit,
 ) {
     val attribution = state.installerAttribution
-    ExpressiveCard {
+    KomiSurface {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,20 +218,18 @@ private fun CustomInstallerEditor(
         val customSupporting = state.installerAttributionCustomError?.let {
             stringResource(Res.string.installer_attribution_custom_error)
         }
-        GhsTextField(
+        KomiTextField(
             value = state.installerAttributionCustomDraft,
             onValueChange = { onAction(TweaksAction.OnInstallerAttributionCustomChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(Res.string.installer_attribution_custom_label),
             placeholder = "com.example.installer",
-            singleLine = true,
-            isError = state.installerAttributionCustomError != null,
-            supportingText = customSupporting,
+            error = customSupporting,
         )
-        GhsButton(
+        KomiButton(
             onClick = { onAction(TweaksAction.OnInstallerAttributionCustomSave) },
             label = stringResource(Res.string.installer_attribution_custom_apply),
-            variant = GhsButtonVariant.Tonal,
+            variant = KomiButtonVariant.Tonal,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -271,13 +272,19 @@ private fun AttributionRadioRow(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun LazyListScope.updatesSection(
+@Composable
+fun updatesSectionContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
+    modifier: Modifier = Modifier,
+    onNavigateToSkippedUpdates: () -> Unit,
 ) {
-    if (getPlatform() != Platform.ANDROID) return
+    if (isDesktop()) return
 
-    item {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         if (state.showBatteryOptimizationCard) {
             BatteryOptimizationCard(
                 onOpenSettings = {
@@ -319,7 +326,7 @@ fun LazyListScope.updatesSection(
         Spacer(Modifier.height(12.dp))
 
         SkippedUpdatesEntryCard(
-            onClick = { onAction(TweaksAction.OnSkippedUpdatesClick) },
+            onClick = onNavigateToSkippedUpdates,
         )
     }
 }
@@ -368,7 +375,7 @@ private fun BackgroundUpdateCheckToggleCard(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
-    ExpressiveCard {
+    KomiSurface {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -412,7 +419,7 @@ private fun InstallerTypeCard(
     onRequestDhizukuPermission: () -> Unit,
     onRequestRootPermission: () -> Unit,
 ) {
-    ExpressiveCard {
+    KomiSurface {
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -494,10 +501,10 @@ private fun RootStatusActions(
 ) {
     when (availability) {
         RootAvailability.PERMISSION_NEEDED -> {
-            GhsButton(
+            KomiButton(
                 onClick = onRequestPermission,
                 label = stringResource(Res.string.root_grant_permission),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -536,10 +543,10 @@ private fun ShizukuStatusActions(
 ) {
     when (availability) {
         ShizukuAvailability.PERMISSION_NEEDED -> {
-            GhsButton(
+            KomiButton(
                 onClick = onRequestPermission,
                 label = stringResource(Res.string.shizuku_grant_permission),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -561,10 +568,10 @@ private fun DhizukuStatusActions(
 ) {
     when (availability) {
         DhizukuAvailability.PERMISSION_NEEDED -> {
-            GhsButton(
+            KomiButton(
                 onClick = onRequestPermission,
                 label = stringResource(Res.string.dhizuku_grant_permission),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -757,7 +764,7 @@ private fun AutoUpdateCard(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
-    ExpressiveCard {
+    KomiSurface {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -826,7 +833,7 @@ private fun UpdateCheckIntervalCard(
     val maxIndex = IntervalStops.lastIndex
     val cs = MaterialTheme.colorScheme
 
-    ExpressiveCard {
+    KomiSurface {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -911,7 +918,7 @@ private fun PreReleaseToggleCard(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
-    ExpressiveCard {
+    KomiSurface {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -959,7 +966,7 @@ private fun BatteryOptimizationCard(
     onOpenSettings: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ExpressiveCard {
+    KomiSurface {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -982,17 +989,17 @@ private fun BatteryOptimizationCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onDismiss,
                     label = stringResource(Res.string.battery_optimization_card_dismiss),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
-                GhsButton(
+                KomiButton(
                     onClick = onOpenSettings,
                     label = stringResource(Res.string.battery_optimization_card_open),
-                    variant = GhsButtonVariant.Tonal,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Tonal,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }
