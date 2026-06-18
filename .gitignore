@@ -42,3 +42,5 @@ roadmap/
 .brain/
 # macOS
 **/.DS_Store
+
+.claude/komi
