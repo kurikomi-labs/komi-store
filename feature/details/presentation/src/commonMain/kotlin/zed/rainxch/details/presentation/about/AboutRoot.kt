@@ -186,6 +186,7 @@ private fun AboutScreen(
                     Spacer(Modifier.height(4.dp))
                     zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
                         onTranslate = onTranslate,
+                        onClearTranslation = onClearTranslation,
                     ) {
                         Markdown(
                             content = displayedMarkdown,
