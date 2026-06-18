@@ -30,10 +30,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.recentlyviewed.presentation.model.RecentlyViewedRepo
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
@@ -45,7 +48,7 @@ fun RecentlyViewedItem(
     onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExpressiveCard(
+    KomiSurface(
         modifier = modifier,
         onClick = onItemClick,
     ) {
@@ -55,7 +58,7 @@ fun RecentlyViewedItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .clickable(onClick = onDevProfileClick)
                     .padding(vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -118,9 +121,11 @@ fun RecentlyViewedItem(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 repo.primaryLanguage?.let { language ->
-                    StatChip(
+                    KomiChip(
                         label = language,
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Default.Code,
                                 contentDescription = null,
@@ -128,14 +133,13 @@ fun RecentlyViewedItem(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         },
-                        background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        border = MaterialTheme.colorScheme.outline,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                StatChip(
+                KomiChip(
                     label = repo.viewedAtFormatted,
-                    leading = {
+                    kind = KomiChipKind.Info,
+                    size = KomiChipSize.Sm,
+                    leadingContent = {
                         Icon(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
@@ -143,9 +147,6 @@ fun RecentlyViewedItem(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
-                    background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = MaterialTheme.colorScheme.outline,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
