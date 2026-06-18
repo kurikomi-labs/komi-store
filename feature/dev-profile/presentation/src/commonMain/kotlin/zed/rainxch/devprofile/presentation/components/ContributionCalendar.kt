@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.devprofile.domain.model.ContributionCalendar
 import zed.rainxch.devprofile.domain.model.ContributionDay
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -53,7 +53,7 @@ fun ContributionCalendarCard(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {

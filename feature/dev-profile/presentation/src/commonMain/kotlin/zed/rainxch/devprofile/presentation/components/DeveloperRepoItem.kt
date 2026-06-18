@@ -41,9 +41,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.core.presentation.utils.formatRelativeLong
 import zed.rainxch.devprofile.domain.model.DeveloperRepository
@@ -61,7 +63,7 @@ fun DeveloperRepoItem(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
             width = 1.dp,
@@ -125,9 +127,11 @@ fun DeveloperRepoItem(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 if (repository.stargazersCount > 0) {
-                    StatChip(
+                    KomiChip(
                         label = formatCount(repository.stargazersCount),
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Outlined.StarOutline,
                                 contentDescription = null,
@@ -138,9 +142,11 @@ fun DeveloperRepoItem(
                     )
                 }
                 if (repository.forksCount > 0) {
-                    StatChip(
+                    KomiChip(
                         label = formatCount(repository.forksCount),
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.CallSplit,
                                 contentDescription = null,
@@ -151,9 +157,11 @@ fun DeveloperRepoItem(
                     )
                 }
                 if (repository.openIssuesCount > 0) {
-                    StatChip(
+                    KomiChip(
                         label = formatCount(repository.openIssuesCount),
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Outlined.WarningAmber,
                                 contentDescription = null,
@@ -164,9 +172,11 @@ fun DeveloperRepoItem(
                     )
                 }
                 repository.language?.takeIf { it.isNotBlank() }?.let { language ->
-                    StatChip(
+                    KomiChip(
                         label = language,
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Outlined.Code,
                                 contentDescription = null,
@@ -271,7 +281,7 @@ private fun TonalBadge(text: String, container: Color, content: Color) {
 @Preview
 @Composable
 private fun PreviewDeveloperRepoItem() {
-    GithubStoreTheme {
+    PersonalityPreview {
         DeveloperRepoItem(
             repository = DeveloperRepository(
                 id = 1,

@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -24,19 +24,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.devprofile.domain.model.RepoFilterType
 import zed.rainxch.devprofile.domain.model.RepoSortType
 import zed.rainxch.devprofile.presentation.DeveloperProfileAction
@@ -68,13 +66,13 @@ fun FilterSortControls(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        GhsTextField(
+        KomiTextField(
             value = searchQuery,
             onValueChange = { onAction(DeveloperProfileAction.OnSearchQueryChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.search_repositories),
             leadingIcon = Icons.Default.Search,
-            trailingIcon = {
+            trailing = {
                 if (searchQuery.isNotBlank()) {
                     IconButton(onClick = { onAction(DeveloperProfileAction.OnSearchQueryChange("")) }) {
                         Icon(
@@ -85,7 +83,6 @@ fun FilterSortControls(
                     }
                 }
             },
-            singleLine = true,
         )
 
         Row(
@@ -155,7 +152,7 @@ private fun FilterPill(
     )
     Box(
         modifier = Modifier
-            .clip(Radii.chip)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
             .background(container)
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 10.dp),
@@ -177,50 +174,32 @@ private fun SortButton(
     currentSort: RepoSortType,
     onSortChange: (RepoSortType) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(Radii.chip)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .clickable { expanded = true },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Sort,
-                contentDescription = stringResource(Res.string.sort),
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        GhsDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            RepoSortType.entries.forEach { sort ->
-                GhsDropdownMenuItem(
-                    text = sort.displayName(),
-                    onClick = {
-                        onSortChange(sort)
-                        expanded = false
-                    },
-                    trailingIcon = if (currentSort == sort) {
-                        {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    } else {
-                        null
-                    },
+    KomiDropdown(
+        entries = RepoSortType.entries
+            .map { sort -> KomiMenuItem(id = sort.name, label = sort.displayName()) }
+            .toImmutableList(),
+        onSelect = { item ->
+            RepoSortType.entries.firstOrNull { it.name == item.id }?.let(onSortChange)
+        },
+        value = currentSort.name,
+        trigger = { onClick ->
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .clickable { onClick() },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                    contentDescription = stringResource(Res.string.sort),
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable

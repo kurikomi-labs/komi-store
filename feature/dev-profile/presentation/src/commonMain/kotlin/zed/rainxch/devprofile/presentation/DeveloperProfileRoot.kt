@@ -29,13 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -45,8 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.devprofile.domain.model.RepoFilterType
@@ -235,13 +233,13 @@ fun DeveloperProfileScreen(
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                     action = {
-                        GhsButton(
+                        KomiButton(
                             onClick = {
                                 onAction(DeveloperProfileAction.OnRetry)
                             },
                             label = stringResource(Res.string.retry),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     },
                     dismissAction = {
@@ -383,8 +381,8 @@ private fun ErrorContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        GithubStoreButton(
-            text = stringResource(Res.string.retry),
+        KomiButton(
+            label = stringResource(Res.string.retry),
             onClick = {
                 onRetry()
             },

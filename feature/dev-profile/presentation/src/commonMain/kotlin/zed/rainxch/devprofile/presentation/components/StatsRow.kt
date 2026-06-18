@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -53,7 +54,7 @@ private fun StatPill(
 ) {
     Surface(
         modifier = modifier,
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
             width = 1.dp,
