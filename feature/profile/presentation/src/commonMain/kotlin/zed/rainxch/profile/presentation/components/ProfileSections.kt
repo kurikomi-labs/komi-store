@@ -1,8 +1,10 @@
 package zed.rainxch.profile.presentation.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Campaign
@@ -33,6 +37,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,13 +46,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.hub.GhsEntryRow
-import zed.rainxch.core.presentation.components.hub.GhsSectionHeader
-import zed.rainxch.core.presentation.theme.tokens.GhsAccents
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.profile.presentation.ProfileAction
@@ -65,16 +70,19 @@ fun LazyListScope.profileSections(
         item(key = "library_header") {
             Spacer(Modifier.height(8.dp))
 
-            GhsSectionHeader(text = stringResource(Res.string.profile_section_library))
+            KomiText(
+                text = stringResource(Res.string.profile_section_library),
+                role = KomiTextRole.Title,
+            )
 
             Spacer(Modifier.height(8.dp))
         }
         item(key = "row_stars") {
-            GhsEntryRow(
+            ProfileEntryRow(
                 title = stringResource(Res.string.stars),
                 subtitle = stringResource(Res.string.profile_stars_description),
                 icon = Icons.Outlined.Star,
-                accentColor = GhsAccents.Gold,
+                accentColor = MaterialTheme.colorScheme.primary,
                 onClick = { onAction(ProfileAction.OnStarredReposClick) },
             )
 
@@ -83,22 +91,22 @@ fun LazyListScope.profileSections(
     }
 
     item(key = "row_favourites") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.favourites),
             subtitle = stringResource(Res.string.profile_favourites_description),
             icon = Icons.Outlined.Favorite,
-            accentColor = GhsAccents.Rose,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
         )
 
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_recent") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.recently_viewed),
             subtitle = stringResource(Res.string.profile_recently_viewed_description),
             icon = Icons.Outlined.Schedule,
-            accentColor = GhsAccents.Sky,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
         )
     }
@@ -106,30 +114,31 @@ fun LazyListScope.profileSections(
     item(key = "updates_header") {
         Spacer(Modifier.height(8.dp))
 
-        GhsSectionHeader(text = stringResource(Res.string.profile_section_updates))
+        KomiText(
+            text = stringResource(Res.string.profile_section_updates),
+            role = KomiTextRole.Title,
+        )
 
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_whats_new") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.whats_new_title),
             subtitle = stringResource(Res.string.whats_new_profile_description),
             icon = Icons.Outlined.Campaign,
-            accentColor = GhsAccents.Mint,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnWhatsNewClick) },
-            onLongClick = { onAction(ProfileAction.OnWhatsNewLongClick) },
         )
 
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_announcements") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.announcements_title),
             subtitle = stringResource(Res.string.announcements_profile_description),
             icon = Icons.Outlined.Notifications,
-            accentColor = GhsAccents.Lavender,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnAnnouncementsClick) },
-            onLongClick = { onAction(ProfileAction.OnAnnouncementsLongClick) },
             badge = if (hasUnreadAnnouncements) {
                 { UnreadDot() }
             } else {
@@ -141,27 +150,30 @@ fun LazyListScope.profileSections(
     item(key = "app_header") {
         Spacer(Modifier.height(8.dp))
 
-        GhsSectionHeader(text = stringResource(Res.string.section_app_block))
+        KomiText(
+            text = stringResource(Res.string.section_app_block),
+            role = KomiTextRole.Title,
+        )
 
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_tweaks") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.tweaks_title),
             subtitle = stringResource(Res.string.profile_tweaks_description),
             icon = Icons.Outlined.Tune,
-            accentColor = GhsAccents.Sage,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnTweaksClick) },
         )
 
         Spacer(Modifier.height(8.dp))
     }
     item(key = "row_about") {
-        GhsEntryRow(
+        ProfileEntryRow(
             title = stringResource(Res.string.profile_entry_about_title),
             subtitle = stringResource(Res.string.profile_entry_about_subtitle),
             icon = Icons.Outlined.Info,
-            accentColor = GhsAccents.Aqua,
+            accentColor = MaterialTheme.colorScheme.primary,
             onClick = { onAction(ProfileAction.OnAboutClick) },
         )
     }
@@ -170,12 +182,15 @@ fun LazyListScope.profileSections(
         item(key = "account_header") {
             Spacer(Modifier.height(8.dp))
 
-            GhsSectionHeader(text = stringResource(Res.string.profile_section_account))
+            KomiText(
+                text = stringResource(Res.string.profile_section_account),
+                role = KomiTextRole.Title,
+            )
 
             Spacer(Modifier.height(8.dp))
         }
         item(key = "row_logout") {
-            GhsEntryRow(
+            ProfileEntryRow(
                 title = stringResource(Res.string.logout),
                 icon = Icons.AutoMirrored.Filled.Logout,
                 destructive = true,
@@ -193,7 +208,7 @@ private fun HeroIdentityCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
@@ -250,11 +265,11 @@ private fun SignedOutContent(onAction: (ProfileAction) -> Unit) {
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(4.dp))
-        GhsButton(
+        KomiButton(
             onClick = { onAction(ProfileAction.OnLoginClick) },
             label = stringResource(Res.string.profile_login),
-            variant = GhsButtonVariant.Primary,
-            size = GhsButtonSize.Lg,
+            variant = KomiButtonVariant.Primary,
+            size = KomiButtonSize.Lg,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -277,7 +292,6 @@ private fun SignedInContent(
                 .size(80.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-            extractDominantFor = profile.imageUrl,
         )
         Column(
             modifier = Modifier.weight(1f),
@@ -338,7 +352,7 @@ private fun MetricsStrip(
             label = stringResource(Res.string.profile_repos),
             modifier = Modifier
                 .weight(1f)
-                .clip(Radii.chip)
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                 .clickable(onClick = onReposClick)
                 .padding(vertical = 6.dp),
         )
@@ -400,6 +414,60 @@ private fun MetricDivider() {
             .height(28.dp)
             .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ProfileEntryRow(
+    title: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    accentColor: Color = Color.Unspecified,
+    onLongClick: (() -> Unit)? = null,
+    badge: (@Composable () -> Unit)? = null,
+    destructive: Boolean = false,
+    trailingChevron: Boolean = true,
+) {
+    val accent = if (destructive) MaterialTheme.colorScheme.error else accentColor
+    val titleColor = if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = accent,
+            modifier = Modifier.size(22.dp),
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            KomiText(text = title, role = KomiTextRole.Label, color = titleColor)
+            subtitle?.let {
+                KomiText(
+                    text = it,
+                    role = KomiTextRole.Body,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        badge?.invoke()
+        if (trailingChevron) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
 }
 
 @Composable

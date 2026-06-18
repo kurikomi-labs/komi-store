@@ -22,39 +22,21 @@ class ProfileViewModel(
     private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(ProfileState())
-    val state =
-        _state
-            .onStart {
-                if (!hasLoadedInitialData) {
-                    observeLoggedInStatus()
+    val state = _state
+        .onStart {
+            if (!hasLoadedInitialData) {
+                observeLoggedInStatus()
 
-                    hasLoadedInitialData = true
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = ProfileState(),
-            )
+                hasLoadedInitialData = true
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = ProfileState(),
+        )
 
     private val _events = Channel<ProfileEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
-
-    private fun formatCacheSize(bytes: Long): String {
-        if (bytes <= 0) return "0 B"
-        val units = arrayOf("B", "KB", "MB", "GB")
-        var size = bytes.toDouble()
-        var unitIndex = 0
-        while (size >= 1024 && unitIndex < units.lastIndex) {
-            size /= 1024
-            unitIndex++
-        }
-        return if (size == size.toLong().toDouble()) {
-            "${size.toLong()} ${units[unitIndex]}"
-        } else {
-            "${"%.1f".format(size)} ${units[unitIndex]}"
-        }
-    }
-
     private fun observeLoggedInStatus() {
         viewModelScope.launch {
             userSessionRepository.isUserLoggedIn()
@@ -114,49 +96,15 @@ class ProfileViewModel(
                 }
             }
 
-            ProfileAction.OnLoginClick -> {
-
-            }
-
-            ProfileAction.OnFavouriteReposClick -> {
-
-            }
-
-            ProfileAction.OnStarredReposClick -> {
-
-            }
-
-            is ProfileAction.OnRepositoriesClick -> {
-
-            }
-
-            ProfileAction.OnRecentlyViewedClick -> {
-
-            }
-
-            ProfileAction.OnWhatsNewClick -> {
-
-            }
-
-            ProfileAction.OnWhatsNewLongClick -> {
-
-            }
-
-            ProfileAction.OnAnnouncementsClick -> {
-
-            }
-
-            ProfileAction.OnAnnouncementsLongClick -> {
-
-            }
-
-            ProfileAction.OnTweaksClick -> {
-
-            }
-
-            ProfileAction.OnAboutClick -> {
-
-            }
+            ProfileAction.OnLoginClick,
+            ProfileAction.OnFavouriteReposClick,
+            ProfileAction.OnStarredReposClick,
+            is ProfileAction.OnRepositoriesClick,
+            ProfileAction.OnRecentlyViewedClick,
+            ProfileAction.OnWhatsNewClick,
+            ProfileAction.OnAnnouncementsClick,
+            ProfileAction.OnTweaksClick,
+            ProfileAction.OnAboutClick -> Unit
         }
     }
 }

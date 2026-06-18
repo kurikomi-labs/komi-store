@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -34,7 +34,7 @@ import zed.rainxch.githubstore.core.presentation.res.whats_new_title
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewHistoryScreen(
-    entries: PersistentList<WhatsNewEntry>,
+    entries: List<WhatsNewEntry>,
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(

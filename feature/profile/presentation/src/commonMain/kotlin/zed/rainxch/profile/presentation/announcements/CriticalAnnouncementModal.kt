@@ -22,7 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.Announcement
-import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledge
 import zed.rainxch.githubstore.core.presentation.res.announcements_view_details
@@ -62,22 +63,22 @@ fun CriticalAnnouncementModal(
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onAcknowledge,
                 label = stringResource(Res.string.announcements_acknowledge),
-                variant = GhsButtonVariant.Destructive,
+                variant = KomiButtonVariant.Destructive,
                 modifier = Modifier.fillMaxWidth(),
             )
         },
         dismissButton =
             if (!announcement.ctaUrl.isNullOrBlank()) {
                 {
-                    GhsButton(
+                    KomiButton(
                         onClick = onOpenDetails,
                         label =
                             announcement.ctaLabel
                                 ?: stringResource(Res.string.announcements_view_details),
-                        variant = GhsButtonVariant.Text,
+                        variant = KomiButtonVariant.Text,
                         modifier =
                             Modifier
                                 .fillMaxWidth()

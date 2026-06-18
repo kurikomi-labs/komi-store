@@ -14,15 +14,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,8 +27,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -53,9 +51,7 @@ fun ProfileRoot(
     onNavigateToFavouriteRepos: () -> Unit,
     onNavigateToRecentlyViewed: () -> Unit,
     onNavigateToWhatsNew: () -> Unit,
-    onPreviewWhatsNewSheet: () -> Unit,
     onNavigateToAnnouncements: () -> Unit,
-    onPreviewAnnouncements: () -> Unit,
     onNavigateToTweaks: () -> Unit,
     onNavigateToAbout: () -> Unit,
     hasUnreadAnnouncements: Boolean,
@@ -142,18 +138,9 @@ fun ProfileRoot(
                     onNavigateToWhatsNew()
                 }
 
-                ProfileAction.OnWhatsNewLongClick -> {
-                    onPreviewWhatsNewSheet()
-                }
-
                 ProfileAction.OnAnnouncementsClick -> {
                     onNavigateToAnnouncements()
                 }
-
-                ProfileAction.OnAnnouncementsLongClick -> {
-                    onPreviewAnnouncements()
-                }
-
                 ProfileAction.OnTweaksClick -> {
                     onNavigateToTweaks()
                 }
@@ -199,7 +186,7 @@ fun ProfileScreen(
             )
         },
         topBar = {
-            GhsHomeTopBar(title = stringResource(Res.string.profile_title))
+            KomiTopBar(title = stringResource(Res.string.profile_title))
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
@@ -235,7 +222,7 @@ fun ProfileScreen(
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         ProfileScreen(
             state = ProfileState(),
             onAction = {},

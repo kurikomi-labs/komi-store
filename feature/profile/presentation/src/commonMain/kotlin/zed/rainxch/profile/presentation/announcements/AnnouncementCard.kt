@@ -42,7 +42,9 @@ import zed.rainxch.core.domain.model.announcement.Announcement
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
 import zed.rainxch.core.domain.model.announcement.AnnouncementIconHint
 import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
-import zed.rainxch.core.presentation.components.buttons.GhsButton
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledge
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledged
@@ -193,11 +195,11 @@ private fun ExpandableBody(body: String) {
             },
         )
         if (!expanded && isOverflowing) {
-            GhsButton(
+            KomiButton(
                 onClick = { expanded = true },
                 label = stringResource(Res.string.announcements_read_more),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
     }
@@ -220,28 +222,28 @@ private fun ActionRow(
             val resolvedLabel =
                 announcement.ctaLabel?.takeIf { it.isNotBlank() }
                     ?: stringResource(Res.string.announcements_read_more)
-            GhsButton(
+            KomiButton(
                 onClick = onCtaClick,
                 label = resolvedLabel,
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
                 leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
             )
         }
         Spacer(Modifier.weight(1f))
         if (announcement.requiresAcknowledgment && !isAcknowledged) {
-            GhsButton(
+            KomiButton(
                 onClick = onAcknowledgeClick,
                 label = stringResource(Res.string.announcements_acknowledge),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         } else if (announcement.dismissible) {
-            GhsButton(
+            KomiButton(
                 onClick = onDismissClick,
                 label = stringResource(Res.string.dismiss),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
     }
