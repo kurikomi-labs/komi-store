@@ -1,4 +1,5 @@
 package zed.rainxch.core.domain.model.repository
+
 enum class DiscoveryPlatform {
     All,
     Android,

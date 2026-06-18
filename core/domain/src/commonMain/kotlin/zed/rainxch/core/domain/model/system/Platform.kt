@@ -4,4 +4,8 @@ enum class Platform {
     WINDOWS,
     MACOS,
     LINUX,
+    ;
+
+    val isMobile: Boolean get() = this == ANDROID
+    val isDesktop: Boolean get() = !isMobile
 }

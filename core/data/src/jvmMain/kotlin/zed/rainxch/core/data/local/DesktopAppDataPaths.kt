@@ -1,18 +1,18 @@
 package zed.rainxch.core.data.local
 
 import java.io.File
+import zed.rainxch.core.domain.system.DesktopOs
 
 object DesktopAppDataPaths {
     private const val APP_DIR_NAME = "GitHub-Store"
 
     fun appDataDir(): File {
         val home = File(System.getProperty("user.home"))
-        val osName = System.getProperty("os.name").orEmpty().lowercase()
         val dir = when {
-            "mac" in osName ->
+            DesktopOs.isMac ->
                 File(home, "Library/Application Support/$APP_DIR_NAME")
 
-            "win" in osName -> {
+            DesktopOs.isWindows -> {
                 val appData = System.getenv("APPDATA")?.let(::File)
                     ?: System.getenv("LOCALAPPDATA")?.let(::File)
                     ?: File(home, "AppData/Roaming")

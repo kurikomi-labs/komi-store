@@ -3,17 +3,16 @@ package zed.rainxch.core.data.utils
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import java.awt.Desktop
 import java.net.URI
+import zed.rainxch.core.domain.system.DesktopOs
 
 class DesktopBrowserHelper : BrowserHelper {
     override fun openUrl(
         url: String,
         onFailure: (error: String) -> Unit,
     ) {
-        val os = System.getProperty("os.name").lowercase()
-
         try {
             when {
-                os.contains("linux") -> {
+                DesktopOs.isLinux -> {
                     val processBuilder = ProcessBuilder("xdg-open", url)
                     processBuilder.redirectErrorStream(true)
                     processBuilder.start()
