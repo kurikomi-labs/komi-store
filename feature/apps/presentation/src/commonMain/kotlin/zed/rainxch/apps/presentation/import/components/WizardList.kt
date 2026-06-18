@@ -5,18 +5,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -92,10 +90,10 @@ fun WizardList(
 
 @Composable
 private fun AddManuallyFooter(onClick: () -> Unit) {
-    GhsButton(
+    KomiButton(
         onClick = onClick,
         label = stringResource(Res.string.external_import_list_add_manually),
-        variant = GhsButtonVariant.Text,
+        variant = KomiButtonVariant.Text,
         trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
         modifier = Modifier.fillMaxWidth(),
     )

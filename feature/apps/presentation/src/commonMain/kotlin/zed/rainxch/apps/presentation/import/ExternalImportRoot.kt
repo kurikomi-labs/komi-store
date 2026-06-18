@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -123,28 +124,28 @@ fun ExternalImportRoot(
                     },
                     actions = {
                         if (state.phase == ImportPhase.AwaitingReview && state.cardsRemaining > 1) {
-                            var menuOpen by remember { mutableStateOf(false) }
-                            Box {
-                                IconButton(onClick = { menuOpen = true }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.MoreVert,
-                                        contentDescription = stringResource(Res.string.external_import_overflow_more),
-                                    )
-                                }
-
-                                GhsDropdownMenu(
-                                    expanded = menuOpen,
-                                    onDismissRequest = { menuOpen = false },
-                                ) {
-                                    GhsDropdownMenuItem(
-                                        text = stringResource(Res.string.external_import_overflow_skip_remaining),
-                                        onClick = {
-                                            menuOpen = false
+                            KomiDropdown(
+                                entries = persistentListOf(
+                                    KomiMenuItem(
+                                        id = "skip_remaining",
+                                        label = stringResource(Res.string.external_import_overflow_skip_remaining),
+                                    ),
+                                ),
+                                onSelect = { item ->
+                                    when (item.id) {
+                                        "skip_remaining" ->
                                             viewModel.onAction(ExternalImportAction.OnSkipRemaining)
-                                        },
-                                    )
-                                }
-                            }
+                                    }
+                                },
+                                trigger = { onClick ->
+                                    IconButton(onClick = onClick) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.MoreVert,
+                                            contentDescription = stringResource(Res.string.external_import_overflow_more),
+                                        )
+                                    }
+                                },
+                            )
                         }
                     },
                 )

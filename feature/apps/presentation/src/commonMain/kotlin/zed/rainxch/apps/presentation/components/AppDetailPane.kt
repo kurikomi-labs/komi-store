@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,8 +44,8 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pending_install
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pre_release_on
@@ -138,18 +137,18 @@ fun AppDetailPane(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            GhsButton(
+            KomiButton(
                 onClick = onOpenRepo,
                 label = stringResource(Res.string.apps_two_pane_open_repo),
-                variant = GhsButtonVariant.Outline,
+                variant = KomiButtonVariant.Outline,
                 leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
                 modifier = Modifier.weight(1f),
             )
 
-            GhsButton(
+            KomiButton(
                 onClick = onUninstall,
                 label = stringResource(Res.string.uninstall),
-                variant = GhsButtonVariant.Destructive,
+                variant = KomiButtonVariant.Destructive,
                 enabled = !isBusy,
                 leadingIcon = Icons.Outlined.DeleteOutline,
             )
@@ -396,43 +395,43 @@ private fun PrimaryActionsRow(
     ) {
         when (appItem.updateState) {
             is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                GhsButton(
+                KomiButton(
                     onClick = onCancelUpdate,
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Destructive,
+                    variant = KomiButtonVariant.Destructive,
                     leadingIcon = Icons.Default.Cancel,
                     modifier = Modifier.weight(1f),
                 )
             }
             else -> {
                 if (app.pendingInstallFilePath != null) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onInstallPending,
                         label = stringResource(Res.string.install),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         enabled = !isBusy,
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
 
-                    GhsButton(
+                    KomiButton(
                         onClick = onDiscardPending,
                         label = stringResource(Res.string.discard_pending_install),
-                        variant = GhsButtonVariant.Outline,
+                        variant = KomiButtonVariant.Outline,
                     )
                 } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onUpdateApp,
                         label = stringResource(Res.string.update),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
                 } else {
-                    GhsButton(
+                    KomiButton(
                         onClick = onOpenApp,
                         label = stringResource(Res.string.open),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         enabled = !isBusy,
                         leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
                         modifier = Modifier.weight(1f),

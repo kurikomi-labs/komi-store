@@ -14,8 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -63,16 +63,16 @@ fun EmptyStateScreen(
                     textAlign = TextAlign.Center,
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = onExit,
                     label = stringResource(Res.string.external_import_empty_done),
-                    variant = GhsButtonVariant.Primary,
+                    variant = KomiButtonVariant.Primary,
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = onAddManually,
                     label = stringResource(Res.string.external_import_empty_add_manually),
-                    variant = GhsButtonVariant.Text,
+                    variant = KomiButtonVariant.Text,
                 )
             } else {
                 Icon(
@@ -98,23 +98,23 @@ fun EmptyStateScreen(
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onExit,
                         label = stringResource(Res.string.external_import_empty_ok),
-                        variant = GhsButtonVariant.Outline,
+                        variant = KomiButtonVariant.Outline,
                     )
 
-                    GhsButton(
+                    KomiButton(
                         onClick = onRequestPermission,
                         label = stringResource(Res.string.external_import_empty_grant_permission),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                     )
                 }
 
-                GhsButton(
+                KomiButton(
                     onClick = onAddManually,
                     label = stringResource(Res.string.external_import_empty_add_manually),
-                    variant = GhsButtonVariant.Text,
+                    variant = KomiButtonVariant.Text,
                 )
             }
         }

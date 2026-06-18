@@ -5,13 +5,11 @@ package zed.rainxch.apps.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,11 +22,12 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.MoreVert
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.overlays.KomiMenuTone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -36,10 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,22 +42,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.advanced_settings_open
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_more_actions
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_filter_active
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pending_install
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pre_release_on
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_ready_to_install
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_pinned
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_variant_stale
 import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
 import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
 import zed.rainxch.githubstore.core.presentation.res.install
@@ -96,16 +85,17 @@ fun CompactAppRow(
 
     val flags = rememberCompactStatusFlags(appItem)
     val rowSemanticName = buildCompactRowSemantics(app.appName, app.installedVersion, flags)
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 68.dp)
-            .clip(Radii.row)
+            .clip(rowShape)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
-                shape = Radii.row,
+                shape = rowShape,
             )
             .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onRowClick)
@@ -158,11 +148,11 @@ fun CompactAppRow(
         }
 
         if (app.pendingInstallFilePath != null) {
-            GhsButton(
+            KomiButton(
                 onClick = onInstallPendingClick,
                 label = stringResource(Res.string.install),
-                variant = GhsButtonVariant.Primary,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Primary,
+                size = KomiButtonSize.Sm,
                 enabled = !isBusy,
                 leadingIcon = Icons.Default.Update,
             )
@@ -219,115 +209,88 @@ private fun CompactRowOverflow(
     onDiscardPendingClick: () -> Unit,
     onUnskipVersionClick: () -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val moreActionsLabel = stringResource(Res.string.apps_compact_more_actions, appName)
 
-    Box {
-        IconButton(
-            onClick = { expanded = true },
-            modifier =
-                Modifier
-                    .size(40.dp)
-                    .semantics {
-                        contentDescription = moreActionsLabel
-                        role = Role.Button
-                    },
-            enabled = !isBusy,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.MoreVert,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    val preReleaseBase = stringResource(Res.string.pre_release_badge)
+    val ignoreUpdatesBase = stringResource(Res.string.apps_ignore_updates)
+    val advancedSettingsLabel = stringResource(Res.string.advanced_settings_open)
+    val variantPickerLabel = stringResource(Res.string.variant_picker_open)
+    val unskipLabel = stringResource(Res.string.apps_skip_version_unskip)
+    val discardLabel = stringResource(Res.string.discard_pending_install)
+    val uninstallLabel = stringResource(Res.string.uninstall)
+
+    val entries = buildList {
+        add(KomiMenuItem(id = "advanced_settings", label = advancedSettingsLabel))
+        add(KomiMenuItem(id = "variant_picker", label = variantPickerLabel))
+        add(
+            KomiMenuItem(
+                id = "toggle_pre_releases",
+                label = if (isPreReleaseEnabled) "$preReleaseBase  ✓" else preReleaseBase,
+            ),
+        )
+        add(
+            KomiMenuItem(
+                id = "toggle_update_check",
+                label = if (!isUpdateCheckEnabled) "$ignoreUpdatesBase  ✓" else ignoreUpdatesBase,
+            ),
+        )
+        if (hasSkippedReleaseTag) {
+            add(KomiMenuItem(id = "unskip_version", label = unskipLabel))
+        }
+        if (isPending) {
+            add(
+                KomiMenuItem(
+                    id = "discard_pending",
+                    label = discardLabel,
+                    icon = Icons.Outlined.DeleteOutline,
+                    tone = KomiMenuTone.Danger,
+                ),
+            )
+        } else {
+            add(
+                KomiMenuItem(
+                    id = "uninstall",
+                    label = uninstallLabel,
+                    icon = Icons.Outlined.DeleteOutline,
+                    tone = KomiMenuTone.Danger,
+                ),
             )
         }
+    }.toImmutableList()
 
-        GhsDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            GhsDropdownMenuItem(
-                text = stringResource(Res.string.advanced_settings_open),
-                onClick = {
-                    expanded = false
-                    onAdvancedSettingsClick()
-                },
-            )
-
-            GhsDropdownMenuItem(
-                text = stringResource(Res.string.variant_picker_open),
-                onClick = {
-                    expanded = false
-                    onPickVariantClick()
-                },
-            )
-
-            run {
-                val baseLabel = stringResource(Res.string.pre_release_badge)
-                GhsDropdownMenuItem(
-                    text = if (isPreReleaseEnabled) "$baseLabel  ✓" else baseLabel,
-                    onClick = {
-                        expanded = false
-                        onTogglePreReleases(!isPreReleaseEnabled)
-                    },
+    KomiDropdown(
+        entries = entries,
+        onSelect = { item ->
+            when (item.id) {
+                "advanced_settings" -> onAdvancedSettingsClick()
+                "variant_picker" -> onPickVariantClick()
+                "toggle_pre_releases" -> onTogglePreReleases(!isPreReleaseEnabled)
+                "toggle_update_check" -> onToggleUpdateCheck(!isUpdateCheckEnabled)
+                "unskip_version" -> onUnskipVersionClick()
+                "discard_pending" -> onDiscardPendingClick()
+                "uninstall" -> onUninstallClick()
+            }
+        },
+        trigger = { onClick ->
+            IconButton(
+                onClick = onClick,
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .semantics {
+                            contentDescription = moreActionsLabel
+                            role = Role.Button
+                        },
+                enabled = !isBusy,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.MoreVert,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-
-            run {
-                val baseLabel = stringResource(Res.string.apps_ignore_updates)
-                GhsDropdownMenuItem(
-                    text = if (!isUpdateCheckEnabled) "$baseLabel  ✓" else baseLabel,
-                    onClick = {
-                        expanded = false
-                        onToggleUpdateCheck(!isUpdateCheckEnabled)
-                    },
-                )
-            }
-
-            if (hasSkippedReleaseTag) {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.apps_skip_version_unskip),
-                    onClick = {
-                        expanded = false
-                        onUnskipVersionClick()
-                    },
-                )
-            }
-
-            if (isPending) {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.discard_pending_install),
-                    contentColor = MaterialTheme.colorScheme.error,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.DeleteOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                        )
-                    },
-                    onClick = {
-                        expanded = false
-                        onDiscardPendingClick()
-                    },
-                )
-            } else {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.uninstall),
-                    contentColor = MaterialTheme.colorScheme.error,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.DeleteOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                        )
-                    },
-                    onClick = {
-                        expanded = false
-                        onUninstallClick()
-                    },
-                )
-            }
-        }
-    }
+        },
+    )
 
     @Suppress("UNUSED_EXPRESSION") isUpdateAvailable
 }

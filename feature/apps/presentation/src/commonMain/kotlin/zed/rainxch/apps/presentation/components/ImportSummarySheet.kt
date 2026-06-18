@@ -2,7 +2,6 @@ package zed.rainxch.apps.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -25,11 +23,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,20 +69,17 @@ fun ImportSummarySheet(
     summary: ImportResult,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     if (summary.sourceFormat == ImportFormat.UNKNOWN) {
         UnknownFormatSheet(
             preview = summary.unknownFormatPreview,
-            sheetState = sheetState,
             onDismiss = onDismiss,
         )
         return
     }
 
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -160,10 +155,10 @@ fun ImportSummarySheet(
                 )
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.import_summary_close),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
@@ -177,12 +172,11 @@ fun ImportSummarySheet(
 @Composable
 private fun UnknownFormatSheet(
     preview: String?,
-    sheetState: androidx.compose.material3.SheetState,
     onDismiss: () -> Unit,
 ) {
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -227,10 +221,10 @@ private fun UnknownFormatSheet(
                 }
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.import_summary_close),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
             )
 

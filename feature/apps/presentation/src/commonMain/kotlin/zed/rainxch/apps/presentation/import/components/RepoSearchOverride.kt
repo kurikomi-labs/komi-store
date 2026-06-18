@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,10 +14,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
@@ -45,15 +42,13 @@ fun RepoSearchOverride(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box {
-            GhsTextField(
+            KomiTextField(
                 value = query,
                 onValueChange = onQueryChange,
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                isError = !searchError.isNullOrBlank(),
-                supportingText = searchError?.takeIf { it.isNotBlank() },
+                error = searchError?.takeIf { it.isNotBlank() },
                 placeholder = stringResource(Res.string.external_import_search_placeholder_url),
-                trailingIcon = {
+                trailing = {
                     IconButton(onClick = onSubmit) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -61,8 +56,7 @@ fun RepoSearchOverride(
                         )
                     }
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { onSubmit() }),
+                onCommit = onSubmit,
             )
 
             if (isSearching) {

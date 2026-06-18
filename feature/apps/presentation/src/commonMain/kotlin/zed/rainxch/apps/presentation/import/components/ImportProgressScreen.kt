@@ -12,8 +12,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,10 +88,10 @@ fun ImportProgressScreen(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onSkip,
                     label = stringResource(Res.string.external_import_progress_skip),
-                    variant = GhsButtonVariant.Text,
+                    variant = KomiButtonVariant.Text,
                 )
             }
         }

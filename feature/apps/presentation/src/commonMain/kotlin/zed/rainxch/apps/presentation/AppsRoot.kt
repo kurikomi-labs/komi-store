@@ -57,11 +57,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,6 +71,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -89,19 +88,22 @@ import zed.rainxch.apps.presentation.import.components.ImportProposalBanner
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -231,12 +233,10 @@ fun AppsScreen(
     snackbarHostState: SnackbarHostState,
 ) {
     val bottomNavHeight = LocalBottomNavigationHeight.current
-    var showOverflowMenu by remember { mutableStateOf(false) }
-    var showSortMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            GhsHomeTopBar(
+            KomiTopBar(
                 title = stringResource(Res.string.bottom_nav_apps_title),
                 actions = {
                     Row(
@@ -250,50 +250,41 @@ fun AppsScreen(
                             ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box {
-                            Box(
-                                modifier = Modifier
-                                    .clickable { showSortMenu = true }
-                                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                                    contentDescription = stringResource(Res.string.sort_apps),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-
-                            GhsDropdownMenu(
-                                expanded = showSortMenu,
-                                onDismissRequest = { showSortMenu = false },
-                            ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_updates_first),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.UpdatesFirst))
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_recently_updated),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.RecentlyUpdated))
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_name),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.Name))
-                                    },
-                                )
-                            }
-                        }
+                        KomiDropdown(
+                            entries = persistentListOf(
+                                KomiMenuItem(
+                                    id = AppSortRule.UpdatesFirst.name,
+                                    label = stringResource(Res.string.sort_updates_first),
+                                ),
+                                KomiMenuItem(
+                                    id = AppSortRule.RecentlyUpdated.name,
+                                    label = stringResource(Res.string.sort_recently_updated),
+                                ),
+                                KomiMenuItem(
+                                    id = AppSortRule.Name.name,
+                                    label = stringResource(Res.string.sort_name),
+                                ),
+                            ),
+                            onSelect = { item ->
+                                onAction(AppsAction.OnSortRuleSelected(AppSortRule.fromName(item.id)))
+                            },
+                            value = state.sortRule.name,
+                            trigger = { onClick ->
+                                Box(
+                                    modifier = Modifier
+                                        .clickable { onClick() }
+                                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Sort,
+                                        contentDescription = stringResource(Res.string.sort_apps),
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
+                            },
+                        )
 
                         Box(
                             modifier = Modifier
@@ -321,84 +312,59 @@ fun AppsScreen(
                                 .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
                         )
 
-                        Box {
-                            Box(
-                                modifier = Modifier
-                                    .clickable { showOverflowMenu = true }
-                                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.MoreVert,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-
-                            GhsDropdownMenu(
-                                expanded = showOverflowMenu,
-                                onDismissRequest = { showOverflowMenu = false },
-                            ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.export_apps),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnExportApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileUpload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.export_apps_obtainium),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnExportObtainium)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileUpload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.import_apps),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnImportApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileDownload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.external_import_rescan_menu),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnRescanForGithubApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.Search, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.add_from_starred_title),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnAddFromStarredClick)
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.Star,
-                                            contentDescription = null,
-                                        )
-                                    },
-                                )
-                            }
-                        }
+                        KomiDropdown(
+                            entries = persistentListOf(
+                                KomiMenuItem(
+                                    id = "export_apps",
+                                    label = stringResource(Res.string.export_apps),
+                                    icon = Icons.Outlined.FileUpload,
+                                ),
+                                KomiMenuItem(
+                                    id = "export_obtainium",
+                                    label = stringResource(Res.string.export_apps_obtainium),
+                                    icon = Icons.Outlined.FileUpload,
+                                ),
+                                KomiMenuItem(
+                                    id = "import_apps",
+                                    label = stringResource(Res.string.import_apps),
+                                    icon = Icons.Outlined.FileDownload,
+                                ),
+                                KomiMenuItem(
+                                    id = "rescan",
+                                    label = stringResource(Res.string.external_import_rescan_menu),
+                                    icon = Icons.Outlined.Search,
+                                ),
+                                KomiMenuItem(
+                                    id = "add_from_starred",
+                                    label = stringResource(Res.string.add_from_starred_title),
+                                    icon = Icons.Filled.Star,
+                                ),
+                            ),
+                            onSelect = { item ->
+                                when (item.id) {
+                                    "export_apps" -> onAction(AppsAction.OnExportApps)
+                                    "export_obtainium" -> onAction(AppsAction.OnExportObtainium)
+                                    "import_apps" -> onAction(AppsAction.OnImportApps)
+                                    "rescan" -> onAction(AppsAction.OnRescanForGithubApps)
+                                    "add_from_starred" -> onAction(AppsAction.OnAddFromStarredClick)
+                                }
+                            },
+                            trigger = { onClick ->
+                                Box(
+                                    modifier = Modifier
+                                        .clickable { onClick() }
+                                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.MoreVert,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
+                            },
+                        )
                     }
                 },
             )
@@ -455,27 +421,61 @@ fun AppsScreen(
         }
 
         state.appPendingUninstall?.let { app ->
-            GhsConfirmDialog(
-                title = stringResource(Res.string.confirm_uninstall_title),
-                body = stringResource(Res.string.confirm_uninstall_message, app.appName),
-                confirmLabel = stringResource(Res.string.uninstall),
-                onConfirm = { onAction(AppsAction.OnUninstallConfirmed(app)) },
+            val confirmLabel = stringResource(Res.string.uninstall)
+            val cancelLabel = stringResource(Res.string.cancel)
+            KomiSheet(
                 onDismiss = { onAction(AppsAction.OnDismissUninstallDialog) },
-                cancelLabel = stringResource(Res.string.cancel),
-                destructive = true,
-            )
+                placement = KomiSheetPlacement.Center,
+                title = stringResource(Res.string.confirm_uninstall_title),
+                footer = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        KomiButton(
+                            onClick = { onAction(AppsAction.OnDismissUninstallDialog) },
+                            label = cancelLabel,
+                            variant = KomiButtonVariant.Text,
+                        )
+                        KomiButton(
+                            onClick = { onAction(AppsAction.OnUninstallConfirmed(app)) },
+                            label = confirmLabel,
+                            variant = KomiButtonVariant.Destructive,
+                        )
+                    }
+                },
+            ) {
+                KomiText(
+                    text = stringResource(Res.string.confirm_uninstall_message, app.appName),
+                    role = KomiTextRole.Body,
+                )
+            }
         }
 
         state.appPendingDiscard?.let { app ->
-            GhsConfirmDialog(
-                title = stringResource(Res.string.confirm_discard_pending_title),
-                body = stringResource(Res.string.confirm_discard_pending_message, app.appName),
-                confirmLabel = stringResource(Res.string.discard_pending_install),
-                onConfirm = { onAction(AppsAction.OnConfirmDiscardPendingInstall(app)) },
+            val confirmLabel = stringResource(Res.string.discard_pending_install)
+            val cancelLabel = stringResource(Res.string.cancel)
+            KomiSheet(
                 onDismiss = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
-                cancelLabel = stringResource(Res.string.cancel),
-                destructive = true,
-            )
+                placement = KomiSheetPlacement.Center,
+                title = stringResource(Res.string.confirm_discard_pending_title),
+                footer = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        KomiButton(
+                            onClick = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
+                            label = cancelLabel,
+                            variant = KomiButtonVariant.Text,
+                        )
+                        KomiButton(
+                            onClick = { onAction(AppsAction.OnConfirmDiscardPendingInstall(app)) },
+                            label = confirmLabel,
+                            variant = KomiButtonVariant.Destructive,
+                        )
+                    }
+                },
+            ) {
+                KomiText(
+                    text = stringResource(Res.string.confirm_discard_pending_message, app.appName),
+                    role = KomiTextRole.Body,
+                )
+            }
         }
 
         PullToRefreshBox(
@@ -492,7 +492,7 @@ fun AppsScreen(
                 Column(
                     modifier = Modifier.constrainedContentWidth().fillMaxHeight(),
                 ) {
-                    GhsTextField(
+                    KomiTextField(
                         value = state.searchQuery,
                         onValueChange = { onAction(AppsAction.OnSearchChange(it)) },
                         leadingIcon = Icons.Default.Search,
@@ -993,7 +993,7 @@ fun AppItemCard(
                 appItem.updateState is UpdateState.Installing ||
                 appItem.updateState is UpdateState.CheckingUpdate
 
-    ExpressiveCard(
+    KomiSurface(
         onClick = onRepoClick,
         modifier = modifier,
     ) {
@@ -1224,59 +1224,52 @@ fun AppItemCard(
                             },
                     )
 
-                    var showRowOverflow by remember { mutableStateOf(false) }
                     val moreActionsLabel =
                         stringResource(Res.string.apps_compact_more_actions, app.appName)
-                    Box {
-                        IconButton(
-                            onClick = { showRowOverflow = true },
-                            enabled = !isBusy,
-                            modifier = Modifier.semantics {
-                                contentDescription = moreActionsLabel
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.MoreVert,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+                    val ignoreUpdatesBase = stringResource(Res.string.apps_ignore_updates)
+                    val unskipLabel = stringResource(Res.string.apps_skip_version_unskip)
+                    val skipLabel = stringResource(Res.string.apps_skip_version)
+                    val canSkipVersion = app.isUpdateAvailable &&
+                        !(app.latestVersion ?: app.latestVersionName).isNullOrBlank()
+                    val rowOverflowEntries = buildList {
+                        add(
+                            KomiMenuItem(
+                                id = "toggle_update_check",
+                                label = if (!app.updateCheckEnabled) "$ignoreUpdatesBase  ✓" else ignoreUpdatesBase,
+                            ),
+                        )
+                        if (app.skippedReleaseTag != null) {
+                            add(KomiMenuItem(id = "unskip_version", label = unskipLabel))
+                        } else if (canSkipVersion) {
+                            add(KomiMenuItem(id = "skip_version", label = skipLabel))
                         }
-                        GhsDropdownMenu(
-                            expanded = showRowOverflow,
-                            onDismissRequest = { showRowOverflow = false },
-                        ) {
-                            run {
-                                val baseLabel = stringResource(Res.string.apps_ignore_updates)
-                                GhsDropdownMenuItem(
-                                    text = if (!app.updateCheckEnabled) "$baseLabel  ✓" else baseLabel,
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onToggleUpdateCheck(!app.updateCheckEnabled)
-                                    },
-                                )
-                            }
+                    }.toImmutableList()
 
-                            if (app.skippedReleaseTag != null) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.apps_skip_version_unskip),
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onUnskipVersionClick()
-                                    },
-                                )
-                            } else if (app.isUpdateAvailable && !(app.latestVersion
-                                    ?: app.latestVersionName).isNullOrBlank()
+                    KomiDropdown(
+                        entries = rowOverflowEntries,
+                        onSelect = { item ->
+                            when (item.id) {
+                                "toggle_update_check" -> onToggleUpdateCheck(!app.updateCheckEnabled)
+                                "unskip_version" -> onUnskipVersionClick()
+                                "skip_version" -> onSkipVersionClick()
+                            }
+                        },
+                        trigger = { onClick ->
+                            IconButton(
+                                onClick = onClick,
+                                enabled = !isBusy,
+                                modifier = Modifier.semantics {
+                                    contentDescription = moreActionsLabel
+                                },
                             ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.apps_skip_version),
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onSkipVersionClick()
-                                    },
+                                Icon(
+                                    imageVector = Icons.Outlined.MoreVert,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                        }
-                    }
+                        },
+                    )
                 }
             }
 
@@ -1400,10 +1393,10 @@ fun AppItemCard(
 
                 when (appItem.updateState) {
                     is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                        GhsButton(
+                        KomiButton(
                             onClick = onCancelClick,
                             label = stringResource(Res.string.cancel),
-                            variant = GhsButtonVariant.Destructive,
+                            variant = KomiButtonVariant.Destructive,
                             leadingIcon = Icons.Default.Cancel,
                             modifier = Modifier.weight(1f),
                         )
@@ -1412,10 +1405,10 @@ fun AppItemCard(
                     else -> {
                         if (app.pendingInstallFilePath != null) {
 
-                            GhsButton(
+                            KomiButton(
                                 onClick = onInstallPendingClick,
                                 label = stringResource(Res.string.install),
-                                variant = GhsButtonVariant.Primary,
+                                variant = KomiButtonVariant.Primary,
                                 leadingIcon = Icons.Default.Update,
                                 enabled = !isBusy,
                                 modifier = Modifier.weight(1f),
@@ -1429,27 +1422,27 @@ fun AppItemCard(
                                 )
                             }
                         } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                            GhsButton(
+                            KomiButton(
                                 onClick = onUpdateClick,
                                 label = stringResource(Res.string.update),
-                                variant = GhsButtonVariant.Primary,
+                                variant = KomiButtonVariant.Primary,
                                 leadingIcon = Icons.Default.Update,
                                 modifier = Modifier.weight(1f),
                             )
                         } else if (app.isPendingInstall) {
 
-                            GhsButton(
+                            KomiButton(
                                 onClick = onDiscardPendingClick,
                                 label = stringResource(Res.string.discard_pending_install),
-                                variant = GhsButtonVariant.Destructive,
+                                variant = KomiButtonVariant.Destructive,
                                 leadingIcon = Icons.Default.Cancel,
                                 modifier = Modifier.weight(1f),
                             )
                         } else {
-                            GhsButton(
+                            KomiButton(
                                 onClick = onOpenClick,
                                 label = stringResource(Res.string.open),
-                                variant = GhsButtonVariant.Primary,
+                                variant = KomiButtonVariant.Primary,
                                 leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
                                 enabled = !isBusy,
                                 modifier = Modifier.weight(1f),
@@ -1492,7 +1485,7 @@ private fun buildVersionLabel(
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         AppsScreen(
             state = AppsState(),
             onAction = {},

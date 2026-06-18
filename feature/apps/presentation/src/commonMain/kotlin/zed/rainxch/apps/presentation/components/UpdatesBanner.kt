@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_hide
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_show
@@ -149,25 +149,24 @@ fun UpdatesBanner(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onUpdateAll,
                         label = stringResource(Res.string.update_all),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         enabled = updateAllEnabled,
                         leadingIcon = Icons.Default.Update,
                         modifier = Modifier.weight(1f),
                     )
 
-                    GhsButton(
+                    KomiButton(
                         onClick = onToggleExpanded,
                         label = if (isExpanded) {
                             stringResource(Res.string.apps_updates_banner_hide)
                         } else {
                             stringResource(Res.string.apps_updates_banner_show)
                         },
-                        variant = GhsButtonVariant.Outline,
+                        variant = KomiButtonVariant.Outline,
                         modifier = Modifier.height(44.dp),
-                        contentColorOverride = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
             }
@@ -209,13 +208,12 @@ private fun UpdateAllInlineProgress(
                 )
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onCancel,
                 label = stringResource(Res.string.cancel),
-                variant = GhsButtonVariant.Outline,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Outline,
+                size = KomiButtonSize.Sm,
                 modifier = Modifier.height(38.dp),
-                contentColorOverride = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
 

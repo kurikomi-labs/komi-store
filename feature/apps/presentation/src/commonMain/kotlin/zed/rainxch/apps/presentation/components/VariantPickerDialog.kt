@@ -29,9 +29,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +54,7 @@ fun VariantPickerDialog(
 
     AlertDialog(
         onDismissRequest = { onAction(AppsAction.OnDismissVariantPicker) },
-        shape = zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape.Dialog,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         title = {
             Column {
                 Text(
@@ -150,21 +151,21 @@ fun VariantPickerDialog(
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = {
                     onAction(AppsAction.OnDismissVariantPicker)
                     onAction(AppsAction.OnOpenAdvancedSettings(app))
                 },
                 label = stringResource(Res.string.variant_picker_open_filter),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
 
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(AppsAction.OnDismissVariantPicker) },
                 label = stringResource(Res.string.cancel),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )

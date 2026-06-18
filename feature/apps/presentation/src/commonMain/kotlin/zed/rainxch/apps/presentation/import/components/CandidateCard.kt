@@ -17,13 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,15 +70,16 @@ fun CandidateCard(
     val expandLabel = stringResource(Res.string.external_import_card_expand_label)
     val collapseLabel = stringResource(Res.string.external_import_card_collapse_label)
     val reducedMotion = LocalReducedMotion.current
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
 
     Surface(
-        shape = Radii.row,
+        shape = rowShape,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
+                .clip(rowShape)
                 .clickable(
                     onClickLabel = if (expanded) collapseLabel else expandLabel,
                     role = Role.Button,
@@ -135,17 +135,17 @@ fun CandidateCard(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        GhsButton(
+                        KomiButton(
                             onClick = onSkip,
                             label = stringResource(Res.string.external_import_card_action_skip),
-                            variant = GhsButtonVariant.Outline,
+                            variant = KomiButtonVariant.Outline,
                             modifier = Modifier.weight(1f),
                         )
 
-                        GhsButton(
+                        KomiButton(
                             onClick = onToggleExpanded,
                             label = stringResource(Res.string.external_import_card_action_less),
-                            variant = GhsButtonVariant.Text,
+                            variant = KomiButtonVariant.Text,
                             trailingIcon = Icons.Default.KeyboardArrowUp,
                         )
                     }
@@ -167,18 +167,18 @@ private fun CollapsedActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (canLink) {
-            GhsButton(
+            KomiButton(
                 onClick = onLink,
                 label = stringResource(Res.string.external_import_card_action_link),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.weight(1f),
             )
         }
 
-        GhsButton(
+        KomiButton(
             onClick = onExpand,
             label = stringResource(Res.string.external_import_card_action_more),
-            variant = GhsButtonVariant.Text,
+            variant = KomiButtonVariant.Text,
             trailingIcon = Icons.Default.KeyboardArrowDown,
             modifier = if (canLink) Modifier else Modifier.weight(1f),
         )

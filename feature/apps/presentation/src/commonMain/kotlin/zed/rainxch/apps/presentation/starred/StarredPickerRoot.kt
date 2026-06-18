@@ -36,11 +36,12 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.starred.components.StarredCandidateRow
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.chips.FilterChip
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
@@ -168,13 +169,12 @@ private fun ContentBody(
 
         Spacer(Modifier.height(12.dp))
 
-        GhsTextField(
+        KomiTextField(
             value = state.searchQuery,
             onValueChange = { onAction(StarredPickerAction.OnSearchChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.starred_picker_search_hint),
             leadingIcon = Icons.Filled.Search,
-            singleLine = true,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -184,21 +184,24 @@ private fun ContentBody(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilterChip(
+            KomiChip(
                 label = stringResource(Res.string.starred_picker_sort_recent),
-                active = state.sortRule == StarredPickerSortRule.RecentlyStarred,
+                kind = KomiChipKind.Filter,
+                selected = state.sortRule == StarredPickerSortRule.RecentlyStarred,
                 onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.RecentlyStarred)) },
             )
 
-            FilterChip(
+            KomiChip(
                 label = stringResource(Res.string.starred_picker_sort_alphabetical),
-                active = state.sortRule == StarredPickerSortRule.Alphabetical,
+                kind = KomiChipKind.Filter,
+                selected = state.sortRule == StarredPickerSortRule.Alphabetical,
                 onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.Alphabetical)) },
             )
 
-            FilterChip(
+            KomiChip(
                 label = stringResource(Res.string.starred_picker_sort_stars),
-                active = state.sortRule == StarredPickerSortRule.MostStars,
+                kind = KomiChipKind.Filter,
+                selected = state.sortRule == StarredPickerSortRule.MostStars,
                 onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.MostStars)) },
             )
         }
@@ -275,11 +278,11 @@ private fun RateLimitedBanner(onResume: () -> Unit) {
             modifier = Modifier.weight(1f),
         )
 
-        GhsButton(
+        KomiButton(
             onClick = onResume,
             label = stringResource(Res.string.starred_picker_resume),
-            variant = GhsButtonVariant.Primary,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Primary,
+            size = KomiButtonSize.Sm,
         )
     }
 }

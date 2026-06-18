@@ -12,8 +12,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -74,10 +74,10 @@ fun CompletionToast(
                 )
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onExit,
                 label = stringResource(Res.string.external_import_completion_action_view_all),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
             )
         }
     }

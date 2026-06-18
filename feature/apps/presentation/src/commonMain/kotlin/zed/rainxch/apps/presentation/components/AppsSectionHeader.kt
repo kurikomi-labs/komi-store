@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_section_collapse
 import zed.rainxch.githubstore.core.presentation.res.apps_section_count_suffix
@@ -117,7 +116,5 @@ fun AppsSectionHeader(
                 )
             }
         }
-
-        Squiggle()
     }
 }

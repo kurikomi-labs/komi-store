@@ -33,14 +33,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,9 +67,9 @@ fun LinkAppBottomSheet(
     state: AppsState,
     onAction: (AppsAction) -> Unit,
 ) {
-    GhsBottomSheet(
-        onDismissRequest = { onAction(AppsAction.OnDismissLinkSheet) },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    KomiSheet(
+        onDismiss = { onAction(AppsAction.OnDismissLinkSheet) },
+        placement = KomiSheetPlacement.Bottom,
     ) {
         AnimatedContent(
             targetState = state.linkStep,
@@ -167,13 +167,12 @@ private fun PickAppStep(
 
         Spacer(Modifier.height(12.dp))
 
-        GhsTextField(
+        KomiTextField(
             value = searchQuery,
             onValueChange = onSearchChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.search_apps_hint),
             leadingIcon = Icons.Default.Search,
-            singleLine = true,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -434,10 +433,10 @@ private fun SmartMatchStep(
 
                 Spacer(Modifier.height(8.dp))
 
-                GhsButton(
+                KomiButton(
                     onClick = onRetry,
                     label = stringResource(Res.string.retry),
-                    variant = GhsButtonVariant.Tonal,
+                    variant = KomiButtonVariant.Tonal,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -482,10 +481,10 @@ private fun SmartMatchStep(
 
         Spacer(Modifier.height(12.dp))
 
-        GhsButton(
+        KomiButton(
             onClick = onEnterUrlManually,
             label = stringResource(Res.string.link_smart_search_enter_manually),
-            variant = GhsButtonVariant.Tonal,
+            variant = KomiButtonVariant.Tonal,
             enabled = !isValidating,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -691,27 +690,25 @@ private fun EnterUrlStep(
 
         Spacer(Modifier.height(16.dp))
 
-        GhsTextField(
+        KomiTextField(
             value = repoUrl,
             onValueChange = onUrlChanged,
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(Res.string.enter_repo_url),
             placeholder = stringResource(Res.string.repo_url_hint),
-            singleLine = true,
-            isError = validationError != null,
-            supportingText = validationError,
+            error = validationError,
         )
 
         Spacer(Modifier.height(20.dp))
 
-        GhsButton(
+        KomiButton(
             onClick = onConfirm,
             label = if (isValidating) {
                 stringResource(Res.string.validating_repo)
             } else {
                 stringResource(Res.string.link_and_track)
             },
-            variant = GhsButtonVariant.Tonal,
+            variant = KomiButtonVariant.Tonal,
             enabled = repoUrl.isNotBlank() && !isValidating,
             loading = isValidating,
             modifier = Modifier.fillMaxWidth(),
@@ -796,16 +793,15 @@ private fun PickAssetStep(
                 )
             else -> stringResource(Res.string.asset_filter_help)
         }
-        GhsTextField(
+        KomiTextField(
             value = filterValue,
             onValueChange = onFilterChanged,
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(Res.string.asset_filter_label),
             placeholder = stringResource(Res.string.asset_filter_placeholder),
             leadingIcon = Icons.Default.FilterAlt,
-            singleLine = true,
-            isError = filterError != null,
-            supportingText = filterSupporting,
+            helper = if (filterError == null) filterSupporting else null,
+            error = if (filterError != null) filterSupporting else null,
             enabled = !isProcessing,
         )
 

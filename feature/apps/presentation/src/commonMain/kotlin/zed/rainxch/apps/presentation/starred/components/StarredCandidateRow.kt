@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.starred.StarredCandidateUi
-import zed.rainxch.core.presentation.components.ExpressiveCard
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.starred_picker_already_tracked
@@ -53,7 +53,7 @@ fun StarredCandidateRow(
         candidate.latestReleaseTag?.let { append(", latest ").append(it) }
     }
 
-    ExpressiveCard {
+    KomiSurface {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

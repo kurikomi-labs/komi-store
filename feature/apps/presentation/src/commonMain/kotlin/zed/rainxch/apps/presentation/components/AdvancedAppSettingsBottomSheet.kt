@@ -29,14 +29,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import androidx.compose.material3.rememberModalBottomSheetState
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,9 +59,9 @@ fun AdvancedAppSettingsBottomSheet(
 ) {
     val app = state.advancedSettingsApp ?: return
 
-    GhsBottomSheet(
-        onDismissRequest = { onAction(AppsAction.OnDismissAdvancedSettings) },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    KomiSheet(
+        onDismiss = { onAction(AppsAction.OnDismissAdvancedSettings) },
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -109,26 +109,25 @@ fun AdvancedAppSettingsBottomSheet(
                     stringResource(Res.string.asset_filter_invalid)
                 else -> stringResource(Res.string.asset_filter_help)
             }
-            GhsTextField(
+            KomiTextField(
                 value = state.advancedFilterDraft,
                 onValueChange = { onAction(AppsAction.OnAdvancedFilterChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(Res.string.asset_filter_label),
                 placeholder = stringResource(Res.string.asset_filter_placeholder),
                 leadingIcon = Icons.Default.FilterAlt,
-                trailingIcon = {
+                trailing = {
                     if (state.advancedFilterDraft.isNotEmpty()) {
-                        GhsButton(
+                        KomiButton(
                             onClick = { onAction(AppsAction.OnAdvancedClearFilter) },
                             label = stringResource(Res.string.clear),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     }
                 },
-                singleLine = true,
-                isError = state.advancedFilterError != null,
-                supportingText = advancedSupporting,
+                helper = if (state.advancedFilterError == null) advancedSupporting else null,
+                error = if (state.advancedFilterError != null) advancedSupporting else null,
                 enabled = !state.advancedSavingFilter,
             )
 
@@ -206,18 +205,18 @@ fun AdvancedAppSettingsBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AppsAction.OnDismissAdvancedSettings) },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     enabled = !state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AppsAction.OnAdvancedSaveFilter) },
                     label = stringResource(Res.string.advanced_save),
-                    variant = GhsButtonVariant.Tonal,
+                    variant = KomiButtonVariant.Tonal,
                     enabled = !state.advancedSavingFilter && state.advancedFilterError == null,
                     loading = state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),

@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_auto_summary_body
 import zed.rainxch.githubstore.core.presentation.res.external_import_auto_summary_continue
@@ -97,16 +97,16 @@ fun AutoImportSummaryScreen(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                GhsButton(
+                KomiButton(
                     onClick = onUndoAll,
                     label = stringResource(Res.string.external_import_auto_summary_undo_all),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = onContinue,
                     label = stringResource(Res.string.external_import_auto_summary_continue),
-                    variant = GhsButtonVariant.Primary,
+                    variant = KomiButtonVariant.Primary,
                 )
             }
         }
