@@ -46,12 +46,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -92,6 +89,7 @@ import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.contentWidthCap
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
@@ -528,19 +526,24 @@ fun DetailsScreen(
     onOpenSecurity: (() -> Unit)? = null,
     onOpenPulls: (() -> Unit)? = null,
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             DetailsTopbar(
                 state = state,
                 onAction = onAction,
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-            )
+        overlay = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+            }
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
 
             if (state.isLoading) {
@@ -551,13 +554,13 @@ fun DetailsScreen(
                     CircularWavyProgressIndicator()
                 }
 
-                return@Scaffold
+                return@KomiScaffold
             }
 
             if (state.errorMessage != null) {
                 ErrorState(state.errorMessage, onAction)
 
-                return@Scaffold
+                return@KomiScaffold
             }
 
             val density = LocalDensity.current

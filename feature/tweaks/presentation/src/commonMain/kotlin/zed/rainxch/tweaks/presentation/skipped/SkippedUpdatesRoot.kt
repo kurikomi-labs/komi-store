@@ -15,21 +15,20 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -56,7 +55,6 @@ import zed.rainxch.githubstore.core.presentation.res.skipped_updates_unskip_acti
 import zed.rainxch.githubstore.core.presentation.res.skipped_updates_unskip_failure
 import zed.rainxch.githubstore.core.presentation.res.skipped_updates_unskipped_snackbar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkippedUpdatesRoot(
     onNavigateBack: () -> Unit,
@@ -83,29 +81,32 @@ fun SkippedUpdatesRoot(
         }
     }
 
-    Scaffold(
+    KomiScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(Res.string.skipped_updates_title),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
+            KomiTopBar(
+                title = stringResource(Res.string.skipped_updates_title),
+                size = KomiTopBarSize.Compact,
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack,
+                        variant = KomiButtonVariant.Text,
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.navigate_back),
-                        )
-                    }
                 },
             )
         },
-        snackbarHost = { SnackbarHost(snackbarState) },
+        overlay = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarState,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+            }
+        },
     ) { padding ->
         Box(
             modifier =

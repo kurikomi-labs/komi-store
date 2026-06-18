@@ -32,10 +32,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -46,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,10 +53,14 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -101,7 +102,7 @@ fun StarredScreen(
 ) {
     val pullRefreshState = rememberPullToRefreshState()
 
-    Scaffold(
+    KomiScaffold(
         topBar = {
             StarredTopBar(
                 lastSyncTime = state.lastSyncTime,
@@ -111,7 +112,6 @@ fun StarredScreen(
                 onAction = onAction,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier =
@@ -282,87 +282,71 @@ private fun StarredTopBar(
 ) {
     var showSortMenu by remember { mutableStateOf(false) }
 
-    Column {
-        TopAppBar(
-            title = {
-                Column {
-                    Text(
-                        text = stringResource(Res.string.starred_repositories),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
+    val subtitle =
+        if (lastSyncTime != null && !isSyncing) {
+            "${stringResource(Res.string.last_synced)}: ${formatRelativeTime(lastSyncTime)}"
+        } else {
+            null
+        }
 
-                    if (lastSyncTime != null && !isSyncing) {
-                        Text(
-                            text =
-                                "${stringResource(Res.string.last_synced)}:" +
-                                    " ${formatRelativeTime(lastSyncTime)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.navigate_back),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            },
-            actions = {
-                if (isSyncing) {
-                    CircularProgressIndicator(
-                        modifier =
-                            Modifier
-                                .size(24.dp)
-                                .padding(end = 12.dp),
-                        strokeWidth = 2.dp,
-                    )
-                }
+    KomiTopBar(
+        title = stringResource(Res.string.starred_repositories),
+        subtitle = subtitle,
+        size = KomiTopBarSize.Compact,
+        leading = {
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.navigate_back),
+                onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
+                variant = KomiButtonVariant.Text,
+            )
+        },
+        actions = {
+            if (isSyncing) {
+                CircularProgressIndicator(
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .padding(end = 12.dp),
+                    strokeWidth = 2.dp,
+                )
+            }
 
-                if (hasRepos) {
-                    Box {
-                        IconButton(onClick = { showSortMenu = true }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Sort,
-                                contentDescription = stringResource(Res.string.sort_label),
+            if (hasRepos) {
+                Box {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.Sort,
+                        contentDescription = stringResource(Res.string.sort_label),
+                        onClick = { showSortMenu = true },
+                        variant = KomiButtonVariant.Text,
+                    )
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false },
+                    ) {
+                        StarredSortRule.entries.forEach { rule ->
+                            val selected = rule == sortRule
+                            DropdownMenuItem(
+                                text = { Text(stringResource(rule.labelRes())) },
+                                leadingIcon = {
+                                    if (selected) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = stringResource(Res.string.sort_selected),
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    showSortMenu = false
+                                    onAction(StarredReposAction.OnSortRuleSelected(rule))
+                                },
                             )
                         }
-                        DropdownMenu(
-                            expanded = showSortMenu,
-                            onDismissRequest = { showSortMenu = false },
-                        ) {
-                            StarredSortRule.entries.forEach { rule ->
-                                val selected = rule == sortRule
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(rule.labelRes())) },
-                                    leadingIcon = {
-                                        if (selected) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = stringResource(Res.string.sort_selected),
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(StarredReposAction.OnSortRuleSelected(rule))
-                                    },
-                                )
-                            }
-                        }
                     }
                 }
-            },
-        )
-    }
+            }
+        },
+    )
 }
 
 private fun StarredSortRule.labelRes() =

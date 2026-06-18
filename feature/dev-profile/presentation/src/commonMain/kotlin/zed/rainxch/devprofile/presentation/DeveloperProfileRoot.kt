@@ -20,31 +20,30 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.FolderOff
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.devprofile.domain.model.RepoFilterType
@@ -104,14 +103,13 @@ fun DeveloperProfileScreen(
     state: DeveloperProfileState,
     onAction: (DeveloperProfileAction) -> Unit,
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             DevProfileTopbar(
                 state = state,
                 onAction = onAction,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier =
@@ -301,51 +299,30 @@ private fun EmptyReposContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DevProfileTopbar(
     state: DeveloperProfileState,
     onAction: (DeveloperProfileAction) -> Unit,
 ) {
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                shapes = IconButtonDefaults.shapes(),
+    KomiTopBar(
+        title = state.username,
+        size = KomiTopBarSize.Compact,
+        leading = {
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.navigate_back),
                 onClick = { onAction(DeveloperProfileAction.OnNavigateBackClick) },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.navigate_back),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        },
-        title = {
-            Text(
-                text = state.username,
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                variant = KomiButtonVariant.Text,
             )
         },
         actions = {
             state.profile?.htmlUrl?.let {
-                IconButton(
-                    shapes = IconButtonDefaults.shapes(),
-                    onClick = {
-                        onAction(DeveloperProfileAction.OnOpenLink(it))
-                    },
-                    colors =
-                        IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.OpenInBrowser,
-                        contentDescription = stringResource(Res.string.open_repository),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
+                KomiIconButton(
+                    icon = Icons.Default.OpenInBrowser,
+                    contentDescription = stringResource(Res.string.open_repository),
+                    onClick = { onAction(DeveloperProfileAction.OnOpenLink(it)) },
+                    variant = KomiButtonVariant.Text,
+                )
             }
         },
     )

@@ -1,9 +1,11 @@
 package zed.rainxch.repopages.presentation.issuedetail
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -12,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -30,6 +31,7 @@ import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -82,7 +84,7 @@ private fun IssueDetailScreen(
     snackbarHostState: SnackbarHostState,
     onAction: (IssueDetailAction) -> Unit
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             RepoPagesTopBar(
                 title = "#${state.issueNumber}",
@@ -91,7 +93,17 @@ private fun IssueDetailScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        overlay = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+            }
+        },
         bottomBar = {
             if (state.detail != null) {
                 CommentComposer(
@@ -107,7 +119,6 @@ private fun IssueDetailScreen(
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val content = Modifier
             .fillMaxWidth()

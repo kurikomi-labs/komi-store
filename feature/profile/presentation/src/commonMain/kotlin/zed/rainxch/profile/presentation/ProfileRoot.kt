@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -28,6 +26,7 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -178,17 +177,21 @@ fun ProfileScreen(
     hasUnreadAnnouncements: Boolean = false,
 ) {
     val bottomNavHeight = LocalBottomNavigationHeight.current
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarState,
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-            )
-        },
+    KomiScaffold(
         topBar = {
             KomiTopBar(title = stringResource(Res.string.profile_title))
         },
-        containerColor = MaterialTheme.colorScheme.background,
+        overlay = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarState,
+                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
+                )
+            }
+        },
     ) { innerPadding ->
         val listState = rememberLazyListState()
         Box(

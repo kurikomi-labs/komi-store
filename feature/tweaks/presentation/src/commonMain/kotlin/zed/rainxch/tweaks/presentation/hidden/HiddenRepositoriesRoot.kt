@@ -17,21 +17,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -62,7 +61,6 @@ import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidde
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_snackbar
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HiddenRepositoriesRoot(
     onNavigateBack: () -> Unit,
@@ -95,38 +93,27 @@ fun HiddenRepositoriesRoot(
         }
     }
 
-    Scaffold(
+    KomiScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = stringResource(Res.string.hidden_repositories_title),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        if (state.items.isNotEmpty()) {
-                            Text(
-                                text = pluralStringResource(
-                                    Res.plurals.hidden_repositories_count,
-                                    state.items.size,
-                                    state.items.size,
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
+            KomiTopBar(
+                title = stringResource(Res.string.hidden_repositories_title),
+                subtitle = if (state.items.isNotEmpty()) {
+                    pluralStringResource(
+                        Res.plurals.hidden_repositories_count,
+                        state.items.size,
+                        state.items.size,
+                    )
+                } else {
+                    null
                 },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.navigate_back),
-                        )
-                    }
+                size = KomiTopBarSize.Compact,
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack,
+                        variant = KomiButtonVariant.Text,
+                    )
                 },
                 actions = {
                     if (state.items.isNotEmpty()) {
@@ -142,7 +129,17 @@ fun HiddenRepositoriesRoot(
                 },
             )
         },
-        snackbarHost = { SnackbarHost(snackbarState) },
+        overlay = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarState,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+            }
+        },
     ) { padding ->
         Box(
             modifier =

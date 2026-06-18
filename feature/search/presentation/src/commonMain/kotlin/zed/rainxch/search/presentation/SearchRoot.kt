@@ -50,7 +50,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -86,6 +85,7 @@ import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
@@ -306,7 +306,7 @@ fun SearchScreen(
         }
     }
 
-    Scaffold(
+    KomiScaffold(
         topBar = {
             SearchTopbar(
                 onAction = onAction,
@@ -314,11 +314,13 @@ fun SearchScreen(
                 focusRequester = focusRequester,
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHost,
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-            )
+        overlay = {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                SnackbarHost(
+                    hostState = snackbarHost,
+                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -346,7 +348,6 @@ fun SearchScreen(
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
