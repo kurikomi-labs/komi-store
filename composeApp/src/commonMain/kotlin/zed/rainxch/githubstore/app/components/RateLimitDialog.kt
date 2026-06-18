@@ -18,10 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.error.RateLimitInfo
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_close
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded
@@ -106,27 +106,27 @@ fun RateLimitDialog(
         },
         confirmButton = {
             if (!isAuthenticated) {
-                GhsButton(
+                KomiButton(
                     onClick = onSignIn,
                     label = stringResource(Res.string.rate_limit_sign_in),
-                    variant = GhsButtonVariant.Primary,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Primary,
+                    size = KomiButtonSize.Sm,
                 )
             } else {
-                GhsButton(
+                KomiButton(
                     onClick = onDismiss,
                     label = stringResource(Res.string.rate_limit_ok),
-                    variant = GhsButtonVariant.Primary,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Primary,
+                    size = KomiButtonSize.Sm,
                 )
             }
         },
         dismissButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.rate_limit_close),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )
@@ -135,7 +135,7 @@ fun RateLimitDialog(
 @Preview
 @Composable
 fun RateLimitDialogPreview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         RateLimitDialog(
             rateLimitInfo =
                 RateLimitInfo(

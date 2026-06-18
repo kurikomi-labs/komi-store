@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.system.DesktopOs
 import java.awt.AWTEvent
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -12,8 +13,7 @@ object A11yCrashGuard {
     private val warnedUncaught = AtomicBoolean(false)
 
     fun install() {
-        val osName = System.getProperty("os.name")?.lowercase().orEmpty()
-        if (!osName.contains("mac")) return
+        if (!DesktopOs.isMac) return
 
         disableComposeAccessibilityBridgeByDefault()
 

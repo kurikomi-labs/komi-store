@@ -8,10 +8,10 @@ import zed.rainxch.profile.presentation.ProfileRoot
 
 fun NavGraphBuilder.profileGraph(
     navController: NavHostController,
-    announcementsUnreadCount: Int
+    announcementsUnreadCount: Int,
 ) {
     navigation<GithubStoreGraph.ProfileGraph>(
-        startDestination = GithubStoreGraph.ProfileGraph.ProfileScreen
+        startDestination = GithubStoreGraph.ProfileGraph.ProfileScreen,
     ) {
         composable<GithubStoreGraph.ProfileGraph.ProfileScreen> {
             ProfileRoot(
@@ -52,6 +52,5 @@ fun NavGraphBuilder.profileGraph(
                 hasUnreadAnnouncements = announcementsUnreadCount > 0,
             )
         }
-
     }
 }

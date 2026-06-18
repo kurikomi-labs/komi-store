@@ -30,7 +30,7 @@ object BottomNavigationUtils {
                 titleRes = Res.string.bottom_nav_profile_title,
                 iconOutlined = Icons.Outlined.Person2,
                 iconFilled = Icons.Filled.Person2,
-                screen = GithubStoreGraph.ProfileScreen,
+                screen = GithubStoreGraph.ProfileGraph.ProfileScreen,
             ),
         )
 

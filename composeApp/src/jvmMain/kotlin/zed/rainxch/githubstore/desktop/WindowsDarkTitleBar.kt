@@ -5,6 +5,7 @@ import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.ptr.IntByReference
 import com.sun.jna.win32.StdCallLibrary
+import zed.rainxch.core.domain.system.DesktopOs
 import java.awt.Window
 
 private interface DwmApi : StdCallLibrary {
@@ -38,14 +39,11 @@ private const val DWMWA_COLOR_DEFAULT = -1
 private const val DARK_TITLE_BAR_COLORREF = 0x001E1E1E
 private const val S_OK = 0
 
-private val osName: String
-    get() = System.getProperty("os.name").orEmpty().lowercase()
-
 private val isWindows: Boolean
-    get() = osName.startsWith("windows")
+    get() = DesktopOs.isWindows
 
 private val isMac: Boolean
-    get() = osName.contains("mac")
+    get() = DesktopOs.isMac
 
 fun installMacosSystemAppearance() {
     if (!isMac) return

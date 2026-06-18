@@ -19,13 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.profile.presentation.whatsnew.SectionBlock
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.whats_new_cta_dismiss
 import zed.rainxch.githubstore.core.presentation.res.whats_new_cta_history
 import zed.rainxch.githubstore.core.presentation.res.whats_new_sheet_heading
 import zed.rainxch.githubstore.core.presentation.res.whats_new_version_label
+import zed.rainxch.profile.presentation.whatsnew.SectionBlock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,18 +59,18 @@ fun WhatsNewSheet(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onDismiss,
                         label = stringResource(Res.string.whats_new_cta_dismiss),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         modifier = Modifier.fillMaxWidth(),
                     )
 
                     if (showHistoryAction) {
-                        GhsButton(
+                        KomiButton(
                             onClick = onViewHistory,
                             label = stringResource(Res.string.whats_new_cta_history),
-                            variant = GhsButtonVariant.Text,
+                            variant = KomiButtonVariant.Text,
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -102,4 +103,3 @@ private fun SheetHeader(entry: WhatsNewEntry) {
         )
     }
 }
-

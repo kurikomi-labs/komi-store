@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.isAndroid
 import zed.rainxch.core.domain.repository.TweaksRepository
 
 class OnboardingViewModel(
     private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
-    private val isAndroid = getPlatform() == Platform.ANDROID
+    private val isAndroid = isAndroid()
 
     private val _state =
         MutableStateFlow(

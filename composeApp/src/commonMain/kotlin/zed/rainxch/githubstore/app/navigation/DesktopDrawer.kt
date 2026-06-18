@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.geist
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.CookieShape
-import zed.rainxch.core.presentation.vocabulary.VersionStack
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.app_name
@@ -67,7 +65,7 @@ fun DesktopDrawer(
                 modifier =
                     Modifier
                         .size(40.dp)
-                        .clip(CookieShape),
+                        .clip(RoundedCornerShape(LocalPersonality.current.shape.corner)),
                 contentScale = ContentScale.Crop,
             )
             Text(
@@ -75,7 +73,6 @@ fun DesktopDrawer(
                 color = cs.onSurface,
                 style =
                     MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = geist,
                         fontWeight = FontWeight.SemiBold,
                     ),
             )
@@ -86,10 +83,10 @@ fun DesktopDrawer(
             val badge: (@Composable () -> Unit)? =
                 when {
                     item.screen == GithubStoreGraph.AppsScreen && isUpdateAvailable -> {
-                        { VersionStack(count = 1, widthDp = 8) }
+                        { UnreadDot(cs.primary) }
                     }
 
-                    item.screen == GithubStoreGraph.ProfileScreen && hasUnreadAnnouncements -> {
+                    item.screen == GithubStoreGraph.ProfileGraph.ProfileScreen && hasUnreadAnnouncements -> {
                         { UnreadDot(cs.error) }
                     }
 
@@ -124,7 +121,7 @@ private fun DrawerNavItem(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 2.dp)
-                .clip(Radii.row)
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
                 .background(bg)
                 .clickable(onClick = onClick)
                 .padding(horizontal = 14.dp, vertical = 10.dp),

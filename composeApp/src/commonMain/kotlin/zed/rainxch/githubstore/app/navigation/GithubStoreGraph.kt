@@ -30,37 +30,19 @@ sealed interface GithubStoreGraph {
     ) : GithubStoreGraph
 
     @Serializable
-    data object ProfileScreen : GithubStoreGraph
+    data object ProfileGraph : GithubStoreGraph {
+        @Serializable
+        data object ProfileScreen : GithubStoreGraph
+
+        @Serializable
+        data object WhatsNewScreen : GithubStoreGraph
+
+        @Serializable
+        data object AnnouncementsScreen : GithubStoreGraph
+    }
 
     @Serializable
     data object TweaksScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksAppearanceScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksLanguageScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksConnectionScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksSourcesScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksTranslationScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksInstallScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksUpdatesScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksStorageScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksPrivacyScreen : GithubStoreGraph
 
     @Serializable
     data object AboutScreen : GithubStoreGraph

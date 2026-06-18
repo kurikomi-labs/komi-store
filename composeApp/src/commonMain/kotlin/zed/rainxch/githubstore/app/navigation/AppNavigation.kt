@@ -1,5 +1,11 @@
 package zed.rainxch.githubstore.app.navigation
 
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,30 +39,34 @@ import zed.rainxch.apps.presentation.AppsRoot
 import zed.rainxch.apps.presentation.AppsViewModel
 import zed.rainxch.apps.presentation.import.EXTERNAL_IMPORT_OPEN_LINK_SHEET_KEY
 import zed.rainxch.apps.presentation.import.ExternalImportRoot
+import zed.rainxch.apps.presentation.starred.StarredPickerRoot
 import zed.rainxch.auth.presentation.AuthenticationRoot
-import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.appearance.ContentWidth
-import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.presentation.components.adaptive.AdaptiveDetailArgs
 import zed.rainxch.core.presentation.components.adaptive.AdaptiveListDetailScaffold
 import zed.rainxch.core.presentation.components.adaptive.rememberAdaptiveListDetailState
-import zed.rainxch.core.presentation.components.announcements.AnnouncementsRoot
-import zed.rainxch.core.presentation.components.whatsnew.WhatsNewHistoryScreen
+import zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
+import zed.rainxch.core.presentation.locals.LocalSharedTransitionScope
 import zed.rainxch.details.presentation.DetailsRoot
 import zed.rainxch.details.presentation.about.AboutRoot
 import zed.rainxch.details.presentation.whatsnew.WhatsNewRoot
 import zed.rainxch.devprofile.presentation.DeveloperProfileRoot
 import zed.rainxch.favourites.presentation.FavouritesRoot
+import zed.rainxch.favourites.presentation.import.ImportStarsRoot
 import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_subtitle
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_title
+import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.HomeRoot
-import zed.rainxch.profile.presentation.ProfileRoot
+import zed.rainxch.home.presentation.categorylist.CategoryListRoot
+import zed.rainxch.profile.presentation.announcements.AnnouncementsRoot
+import zed.rainxch.profile.presentation.whatsnew.WhatsNewHistoryScreen
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.repopages.presentation.issuedetail.IssueDetailRoot
 import zed.rainxch.repopages.presentation.issues.IssuesRoot
@@ -67,21 +77,12 @@ import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
-import zed.rainxch.tweaks.presentation.appearance.TweaksAppearanceRoot
-import zed.rainxch.tweaks.presentation.appinfo.TweaksAppInfoRoot
-import zed.rainxch.tweaks.presentation.connection.TweaksConnectionRoot
+import zed.rainxch.tweaks.presentation.appinfo.AppInfoRoot
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesRoot
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensRoot
-import zed.rainxch.tweaks.presentation.install.TweaksInstallRoot
-import zed.rainxch.tweaks.presentation.language.TweaksLanguageRoot
 import zed.rainxch.tweaks.presentation.licenses.LicensesRoot
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerRoot
-import zed.rainxch.tweaks.presentation.privacy.TweaksPrivacyRoot
 import zed.rainxch.tweaks.presentation.skipped.SkippedUpdatesRoot
-import zed.rainxch.tweaks.presentation.sources.TweaksSourcesRoot
-import zed.rainxch.tweaks.presentation.storage.TweaksStorageRoot
-import zed.rainxch.tweaks.presentation.translation.TweaksTranslationRoot
-import zed.rainxch.tweaks.presentation.updates.TweaksUpdatesRoot
 
 @Composable
 fun AppNavigation(
@@ -99,8 +100,6 @@ fun AppNavigation(
     val announcementsViewModel = koinViewModel<AnnouncementsViewModel>()
     val announcementsUnreadCount by announcementsViewModel.unreadCount.collectAsStateWithLifecycle()
 
-    val isDesktop = getPlatform() != Platform.ANDROID
-
     CompositionLocalProvider(
         LocalBottomNavigationHeight provides bottomNavigationHeight,
         LocalScrollbarEnabled provides isScrollbarEnabled,
@@ -112,7 +111,7 @@ fun AppNavigation(
                     .currentBackStackEntryAsState()
                     .value
                     .getCurrentScreen()
-            if (isDesktop && desktopDrawerCurrent != null) {
+            if (isDesktop() && desktopDrawerCurrent != null) {
                 DesktopDrawer(
                     currentScreen = desktopDrawerCurrent,
                     onNavigate = { target ->
@@ -134,7 +133,7 @@ fun AppNavigation(
 
             Box(
                 modifier =
-                    if (isDesktop) {
+                    if (isDesktop()) {
                         Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -142,8 +141,7 @@ fun AppNavigation(
                         Modifier.fillMaxSize()
                     },
             ) {
-                androidx.compose.animation.SharedTransitionLayout {
-                    val sharedScope = this
+                SharedTransitionLayout {
                     NavHost(
                         navController = navController,
                         startDestination = GithubStoreGraph.HomeScreen,
@@ -153,29 +151,15 @@ fun AppNavigation(
                             val to = targetState.bottomNavIndex()
                             if (from != null && to != null && from != to) {
                                 val sign = if (to > from) 1 else -1
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { it * sign },
-                                    animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(280),
-                                ) +
-                                    androidx.compose.animation.fadeIn(
-                                        animationSpec =
-                                            androidx.compose.animation.core
-                                                .tween(220),
-                                    )
+                                    animationSpec = tween(280),
+                                ) + fadeIn(tween(220))
                             } else {
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { it / 6 },
-                                    animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(280),
-                                ) +
-                                    androidx.compose.animation.fadeIn(
-                                        animationSpec =
-                                            androidx.compose.animation.core
-                                                .tween(220),
-                                    )
+                                    animationSpec = tween(280),
+                                ) + fadeIn(tween(220))
                             }
                         },
                         exitTransition = {
@@ -183,72 +167,38 @@ fun AppNavigation(
                             val to = targetState.bottomNavIndex()
                             if (from != null && to != null && from != to) {
                                 val sign = if (to > from) -1 else 1
-                                androidx.compose.animation.slideOutHorizontally(
+                                slideOutHorizontally(
                                     targetOffsetX = { it * sign },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(280),
-                                ) +
-                                    androidx.compose.animation.fadeOut(
-                                        animationSpec =
-                                            androidx.compose.animation.core
-                                                .tween(220),
-                                    )
+                                        tween(280),
+                                ) + fadeOut(tween(220))
                             } else {
-                                androidx.compose.animation.fadeOut(
-                                    animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(180),
-                                )
+                                fadeOut(tween(180))
                             }
                         },
                         popEnterTransition = {
-                            androidx.compose.animation.fadeIn(
-                                animationSpec =
-                                    androidx.compose.animation.core
-                                        .tween(220),
-                            )
+                            fadeIn(tween(220))
                         },
                         popExitTransition = {
-                            androidx.compose.animation.slideOutHorizontally(
+                            slideOutHorizontally(
                                 targetOffsetX = { it / 6 },
-                                animationSpec =
-                                    androidx.compose.animation.core
-                                        .tween(280),
-                            ) +
-                                androidx.compose.animation.fadeOut(
-                                    animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(220),
-                                )
+                                animationSpec = tween(280),
+                            ) + fadeOut(tween(220))
                         },
                     ) {
                         composable<GithubStoreGraph.HomeScreen> {
-                            val animatedScope = this
                             CompositionLocalProvider(
-                                zed.rainxch.core.presentation.locals.LocalSharedTransitionScope provides sharedScope,
-                                zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope provides animatedScope,
+                                LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                                LocalAnimatedVisibilityScope provides this@composable,
                             ) {
                                 val listDetailState = rememberAdaptiveListDetailState()
-                                val pickRepoTitle =
-                                    stringResource(Res.string.adaptive_pick_repo_title)
-                                val pickRepoSubtitle =
-                                    stringResource(Res.string.adaptive_pick_repo_subtitle)
+
                                 AdaptiveListDetailScaffold(
                                     state = listDetailState,
-                                    emptyPaneTitle = pickRepoTitle,
-                                    emptyPaneSubtitle = pickRepoSubtitle,
+                                    emptyPaneTitle = stringResource(Res.string.adaptive_pick_repo_title),
+                                    emptyPaneSubtitle = stringResource(Res.string.adaptive_pick_repo_subtitle),
                                     list = { isExpanded ->
                                         HomeRoot(
-                                            onNavigateToSearch = {
-                                                navController.navigate(GithubStoreGraph.SearchScreen())
-                                            },
-                                            onNavigateToSettings = {
-                                                navController.navigate(GithubStoreGraph.ProfileScreen)
-                                            },
-                                            onNavigateToApps = {
-                                                navController.navigate(GithubStoreGraph.AppsScreen)
-                                            },
                                             onNavigateToDetails = { repoId ->
                                                 if (isExpanded) {
                                                     listDetailState.select(
@@ -295,12 +245,13 @@ fun AppNavigation(
                             val args = backStackEntry.toRoute<GithubStoreGraph.CategoryListScreen>()
                             val category =
                                 runCatching {
-                                    zed.rainxch.home.domain.model.HomeCategory
+                                    HomeCategory
                                         .valueOf(args.category)
                                 }.getOrDefault(
-                                    zed.rainxch.home.domain.model.HomeCategory.HOT_RELEASE,
+                                    HomeCategory.HOT_RELEASE,
                                 )
-                            zed.rainxch.home.presentation.categorylist.CategoryListRoot(
+
+                            CategoryListRoot(
                                 category = category,
                                 onNavigateBack = { navController.navigateUp() },
                                 onNavigateToDetails = { repoId ->
@@ -398,8 +349,8 @@ fun AppNavigation(
                         composable<GithubStoreGraph.DetailsScreen> { backStackEntry ->
                             val animatedScope = this
                             CompositionLocalProvider(
-                                zed.rainxch.core.presentation.locals.LocalSharedTransitionScope provides sharedScope,
-                                zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope provides animatedScope,
+                                LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                                LocalAnimatedVisibilityScope provides animatedScope,
                             ) {
                                 val args = backStackEntry.toRoute<GithubStoreGraph.DetailsScreen>()
                                 DetailsRoot(
@@ -487,35 +438,31 @@ fun AppNavigation(
 
                         composable<GithubStoreGraph.DetailsAboutScreen>(
                             enterTransition = {
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { fullWidth -> fullWidth },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             exitTransition = {
-                                androidx.compose.animation.slideOutHorizontally(
+                                slideOutHorizontally(
                                     targetOffsetX = { fullWidth -> -fullWidth / 4 },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             popEnterTransition = {
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { fullWidth -> -fullWidth / 4 },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             popExitTransition = {
-                                androidx.compose.animation.slideOutHorizontally(
+                                slideOutHorizontally(
                                     targetOffsetX = { fullWidth -> fullWidth },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                         ) { backStackEntry ->
@@ -531,35 +478,31 @@ fun AppNavigation(
 
                         composable<GithubStoreGraph.DetailsWhatsNewScreen>(
                             enterTransition = {
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { fullWidth -> fullWidth },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             exitTransition = {
-                                androidx.compose.animation.slideOutHorizontally(
+                                slideOutHorizontally(
                                     targetOffsetX = { fullWidth -> -fullWidth / 4 },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             popEnterTransition = {
-                                androidx.compose.animation.slideInHorizontally(
+                                slideInHorizontally(
                                     initialOffsetX = { fullWidth -> -fullWidth / 4 },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                             popExitTransition = {
-                                androidx.compose.animation.slideOutHorizontally(
+                                slideOutHorizontally(
                                     targetOffsetX = { fullWidth -> fullWidth },
                                     animationSpec =
-                                        androidx.compose.animation.core
-                                            .tween(durationMillis = 280),
+                                        tween(durationMillis = 280),
                                 )
                             },
                         ) { backStackEntry ->
@@ -732,7 +675,7 @@ fun AppNavigation(
                         }
 
                         composable<GithubStoreGraph.StarredPickerScreen> {
-                            zed.rainxch.apps.presentation.starred.StarredPickerRoot(
+                            StarredPickerRoot(
                                 onNavigateBack = { navController.navigateUp() },
                                 onNavigateToDetails = { repoId, owner, repo ->
                                     navController.navigate(
@@ -747,7 +690,7 @@ fun AppNavigation(
                         }
 
                         composable<GithubStoreGraph.ImportStarsScreen> {
-                            zed.rainxch.favourites.presentation.import.ImportStarsRoot(
+                            ImportStarsRoot(
                                 onNavigateBack = { navController.navigateUp() },
                                 onNavigateToDetails = { repoId, owner, repo ->
                                     navController.navigate(
@@ -761,53 +704,10 @@ fun AppNavigation(
                             )
                         }
 
-                        composable<GithubStoreGraph.ProfileScreen> {
-                            ProfileRoot(
-                                onNavigateBack = {
-                                    navController.navigateUp()
-                                },
-                                onNavigateToAuthentication = {
-                                    navController.navigate(GithubStoreGraph.AuthenticationScreen)
-                                },
-                                onNavigateToStarredRepos = {
-                                    navController.navigate(GithubStoreGraph.StarredReposScreen)
-                                },
-                                onNavigateToFavouriteRepos = {
-                                    navController.navigate(GithubStoreGraph.FavouritesScreen)
-                                },
-                                onNavigateToRecentlyViewed = {
-                                    navController.navigate(GithubStoreGraph.RecentlyViewedScreen)
-                                },
-                                onNavigateToDevProfile = { username ->
-                                    navController.navigate(
-                                        GithubStoreGraph.DeveloperProfileScreen(
-                                            username,
-                                        ),
-                                    )
-                                },
-                                onNavigateToWhatsNew = {
-                                    navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
-                                },
-                                onPreviewWhatsNewSheet = {
-                                    whatsNewViewModel.forceShowLatest()
-                                    navController.navigateUp()
-                                },
-                                onNavigateToAnnouncements = {
-                                    navController.navigate(GithubStoreGraph.AnnouncementsScreen)
-                                },
-                                onPreviewAnnouncements = {
-                                    announcementsViewModel.previewSampleAnnouncements()
-                                    navController.navigate(GithubStoreGraph.AnnouncementsScreen)
-                                },
-                                onNavigateToTweaks = {
-                                    navController.navigate(GithubStoreGraph.TweaksScreen)
-                                },
-                                onNavigateToAbout = {
-                                    navController.navigate(GithubStoreGraph.AboutScreen)
-                                },
-                                hasUnreadAnnouncements = announcementsUnreadCount > 0,
-                            )
-                        }
+                        profileGraph(
+                            navController = navController,
+                            announcementsUnreadCount = announcementsUnreadCount,
+                        )
 
                         composable<GithubStoreGraph.RecentlyViewedScreen> {
                             RecentlyViewedRoot(
@@ -869,120 +769,21 @@ fun AppNavigation(
                         composable<GithubStoreGraph.TweaksScreen> {
                             TweaksRoot(
                                 onNavigateBack = { navController.popBackStack() },
-                                onNavigateToAppearance = {
-                                    navController.navigate(GithubStoreGraph.TweaksAppearanceScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToLanguage = {
-                                    navController.navigate(GithubStoreGraph.TweaksLanguageScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToConnection = {
-                                    navController.navigate(GithubStoreGraph.TweaksConnectionScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToSources = {
-                                    navController.navigate(GithubStoreGraph.TweaksSourcesScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToTranslation = {
-                                    navController.navigate(GithubStoreGraph.TweaksTranslationScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToInstallMethod = {
-                                    navController.navigate(GithubStoreGraph.TweaksInstallScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToUpdates = {
-                                    navController.navigate(GithubStoreGraph.TweaksUpdatesScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToStorage = {
-                                    navController.navigate(GithubStoreGraph.TweaksStorageScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
-                                onNavigateToPrivacy = {
-                                    navController.navigate(GithubStoreGraph.TweaksPrivacyScreen) {
-                                        launchSingleTop = true
-                                    }
-                                },
                                 onNavigateToHostTokens = {
                                     navController.navigate(GithubStoreGraph.HostTokensScreen) {
                                         launchSingleTop = true
                                     }
                                 },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksAppearanceScreen> {
-                            TweaksAppearanceRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksLanguageScreen> {
-                            TweaksLanguageRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksConnectionScreen> {
-                            TweaksConnectionRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksSourcesScreen> {
-                            TweaksSourcesRoot(
-                                onNavigateBack = { navController.popBackStack() },
                                 onNavigateToMirrorPicker = {
                                     navController.navigate(GithubStoreGraph.MirrorPickerScreen) {
                                         launchSingleTop = true
                                     }
                                 },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksTranslationScreen> {
-                            TweaksTranslationRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksInstallScreen> {
-                            TweaksInstallRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksUpdatesScreen> {
-                            TweaksUpdatesRoot(
-                                onNavigateBack = { navController.popBackStack() },
                                 onNavigateToSkippedUpdates = {
                                     navController.navigate(GithubStoreGraph.SkippedUpdatesScreen) {
                                         launchSingleTop = true
                                     }
                                 },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksStorageScreen> {
-                            TweaksStorageRoot(
-                                onNavigateBack = { navController.popBackStack() },
-                            )
-                        }
-
-                        composable<GithubStoreGraph.TweaksPrivacyScreen> {
-                            TweaksPrivacyRoot(
-                                onNavigateBack = { navController.popBackStack() },
                                 onNavigateToHiddenRepositories = {
                                     navController.navigate(GithubStoreGraph.HiddenRepositoriesScreen) {
                                         launchSingleTop = true
@@ -992,7 +793,7 @@ fun AppNavigation(
                         }
 
                         composable<GithubStoreGraph.AboutScreen> {
-                            TweaksAppInfoRoot(
+                            AppInfoRoot(
                                 onNavigateBack = { navController.popBackStack() },
                                 onNavigateToLicenses = {
                                     navController.navigate(GithubStoreGraph.LicensesScreen) {
@@ -1124,7 +925,7 @@ fun AppNavigation(
                 val currentScreen =
                     navController.currentBackStackEntryAsState().value.getCurrentScreen()
 
-                currentScreen?.takeIf { !isDesktop }?.let {
+                currentScreen?.takeIf { !isDesktop() }?.let {
                     BottomNavigation(
                         currentScreen = currentScreen,
                         onNavigate = {

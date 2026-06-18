@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -57,19 +57,19 @@ fun SessionExpiredDialog(
             }
         },
         confirmButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onSignIn,
                 label = stringResource(Res.string.sign_in_again),
-                variant = GhsButtonVariant.Primary,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Primary,
+                size = KomiButtonSize.Sm,
             )
         },
         dismissButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.continue_as_guest),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.DownloadForOffline
@@ -36,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,16 +45,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ThemeMode
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.geist
-import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.core.presentation.utils.primaryColor
-import zed.rainxch.core.presentation.vocabulary.CookieShape
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.onboarding_get_started
 import zed.rainxch.githubstore.core.presentation.res.onboarding_next
@@ -176,13 +171,11 @@ private fun StepPalette(
             text = stringResource(Res.string.onboarding_palette_title),
             style =
                 MaterialTheme.typography.displaySmall.copy(
-                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
-        Squiggle()
         Text(
             text = stringResource(Res.string.onboarding_palette_subtitle),
             style = MaterialTheme.typography.bodyMedium,
@@ -190,9 +183,8 @@ private fun StepPalette(
             textAlign = TextAlign.Center,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            val dynamicAvailable = isDynamicColorAvailable()
             AppTheme.entries
-                .filter { it != AppTheme.DYNAMIC || dynamicAvailable }
+                .filter { it != AppTheme.DYNAMIC }
                 .forEach { palette ->
                     PaletteSwatch(
                         palette = palette,
@@ -215,6 +207,7 @@ private fun PaletteSwatch(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val swatchShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -224,12 +217,12 @@ private fun PaletteSwatch(
             modifier =
                 Modifier
                     .size(64.dp)
-                    .clip(CookieShape)
-                    .background(palette.primaryColor)
+                    .clip(swatchShape)
+                    .background(palette.swatchColor)
                     .border(
                         width = if (isSelected) 3.dp else 0.dp,
                         color = MaterialTheme.colorScheme.onSurface,
-                        shape = CookieShape,
+                        shape = swatchShape,
                     ),
         )
         Text(
@@ -253,10 +246,11 @@ private fun ModeRow(
     selected: ThemeMode,
     onSelect: (ThemeMode) -> Unit,
 ) {
+    val chipShape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     Row(
         modifier =
             Modifier
-                .clip(Radii.chip)
+                .clip(chipShape)
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -266,7 +260,7 @@ private fun ModeRow(
             Box(
                 modifier =
                     Modifier
-                        .clip(Radii.chip)
+                        .clip(chipShape)
                         .background(if (isActive) MaterialTheme.colorScheme.primary else Color.Transparent)
                         .clickable { onSelect(mode) }
                         .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -296,14 +290,13 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             modifier =
                 Modifier
                     .size(96.dp)
-                    .clip(CookieShape)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
                     .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "G",
                 color = MaterialTheme.colorScheme.onPrimary,
-                fontFamily = geist,
                 fontWeight = FontWeight.Bold,
                 fontSize = 48.sp,
             )
@@ -312,23 +305,21 @@ private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
             text = stringResource(Res.string.sign_in_with_github),
             style =
                 MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
-        Squiggle()
         Text(
             text = stringResource(Res.string.onboarding_signin_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        GhsButton(
+        KomiButton(
             onClick = { onAction(OnboardingAction.OnSignInClick) },
             label = stringResource(Res.string.onboarding_signin_button),
-            variant = GhsButtonVariant.Primary,
+            variant = KomiButtonVariant.Primary,
         )
     }
 }
@@ -345,13 +336,11 @@ private fun StepPermissions(controller: OnboardingPermissionsController) {
             text = stringResource(Res.string.onboarding_permissions_title),
             style =
                 MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = geist,
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
-        Squiggle()
         Text(
             text = stringResource(Res.string.onboarding_permissions_subtitle),
             style = MaterialTheme.typography.bodyMedium,
@@ -388,7 +377,7 @@ private fun PermissionRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clip(Radii.card)
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
                 .background(cs.surfaceContainer)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -438,10 +427,10 @@ private fun PermissionRow(
                 )
             }
         } else {
-            GhsButton(
+            KomiButton(
                 onClick = onAllowClick,
                 label = stringResource(Res.string.onboarding_permission_allow),
-                variant = GhsButtonVariant.Tonal,
+                variant = KomiButtonVariant.Tonal,
             )
         }
     }
@@ -458,18 +447,28 @@ private fun ActionRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (state.currentStep == OnboardingStep.SIGN_IN || state.currentStep == OnboardingStep.PERMISSIONS) {
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(OnboardingAction.OnSkipStepClick) },
                 label = stringResource(Res.string.onboarding_skip),
-                variant = GhsButtonVariant.Outline,
+                variant = KomiButtonVariant.Outline,
             )
         } else {
             Spacer(Modifier.size(80.dp))
         }
-        GhsButton(
+        KomiButton(
             onClick = { onAction(OnboardingAction.OnNextClick) },
             label = if (state.isLast) stringResource(Res.string.onboarding_get_started) else stringResource(Res.string.onboarding_next),
-            variant = GhsButtonVariant.Primary,
+            variant = KomiButtonVariant.Primary,
         )
     }
 }
+
+private val AppTheme.swatchColor: Color
+    get() =
+        when (this) {
+            AppTheme.NORD -> Color(0xFF5E81AC)
+            AppTheme.CREAM -> Color(0xFFB58B5A)
+            AppTheme.FOREST -> Color(0xFF4F7942)
+            AppTheme.PLUM -> Color(0xFF8E6BA8)
+            AppTheme.DYNAMIC -> Color(0xFF6750A4)
+        }

@@ -16,10 +16,8 @@ import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.AuthDeepLinkBus
 import zed.rainxch.auth.presentation.AuthDeepLinkEvent
-import zed.rainxch.core.presentation.components.announcements.CriticalAnnouncementModal
-import zed.rainxch.core.presentation.components.whatsnew.WhatsNewSheet
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.utils.ApplyAndroidSystemBars
+import zed.rainxch.core.presentation.personality.classicPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
 import zed.rainxch.githubstore.app.components.RateLimitDialog
@@ -31,7 +29,9 @@ import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
 import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.navigation.getCurrentScreen
+import zed.rainxch.githubstore.app.whatsnew.WhatsNewSheet
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
+import zed.rainxch.profile.presentation.announcements.CriticalAnnouncementModal
 import zed.rainxch.tweaks.presentation.TweaksDeepLinkBus
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -201,14 +201,7 @@ fun App(
     val resolvedDarkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
     LaunchedEffect(resolvedDarkTheme) { onResolvedDarkTheme(resolvedDarkTheme) }
 
-    GithubStoreTheme(
-        fontTheme = state.currentFontTheme,
-        appTheme = state.currentColorTheme,
-        isAmoledTheme = state.isAmoledTheme,
-        isDarkTheme = resolvedDarkTheme,
-    ) {
-        ApplyAndroidSystemBars(resolvedDarkTheme)
-
+    PersonalityTheme(classicPersonality(dark = resolvedDarkTheme)) {
         val onAuthScreen = currentScreen is GithubStoreGraph.AuthenticationScreen
         LaunchedEffect(onAuthScreen, state.showRateLimitDialog) {
             if (onAuthScreen && state.showRateLimitDialog) {
@@ -254,18 +247,8 @@ fun App(
         val rateLimitCleared = !state.showRateLimitDialog
         val canShowWhatsNew = onHomeScreen && authSettled && rateLimitCleared
 
-        var debouncedReady by remember { mutableStateOf(false) }
-        LaunchedEffect(canShowWhatsNew) {
-            if (canShowWhatsNew) {
-                delay(600.milliseconds)
-                debouncedReady = true
-            } else {
-                debouncedReady = false
-            }
-        }
-
         val entryToShow = pendingEntry
-        if (entryToShow != null && canShowWhatsNew && debouncedReady) {
+        if (entryToShow != null && canShowWhatsNew) {
             WhatsNewSheet(
                 entry = entryToShow,
                 showHistoryAction = hasHistory,
@@ -280,7 +263,7 @@ fun App(
         val announcementsViewModel: AnnouncementsViewModel = koinViewModel()
         val pendingCritical by announcementsViewModel.pendingCriticalAcknowledgment.collectAsStateWithLifecycle()
         val criticalToShow = pendingCritical
-        if (criticalToShow != null && canShowWhatsNew && debouncedReady && entryToShow == null) {
+        if (criticalToShow != null && canShowWhatsNew && entryToShow == null) {
             CriticalAnnouncementModal(
                 announcement = criticalToShow,
                 onAcknowledge = { announcementsViewModel.acknowledge(criticalToShow) },

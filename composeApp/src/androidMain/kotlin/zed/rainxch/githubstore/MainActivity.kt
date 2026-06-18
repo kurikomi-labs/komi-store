@@ -30,6 +30,8 @@ import zed.rainxch.core.domain.helpers.ShareManager
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
+import zed.rainxch.githubstore.utils.updateSystemBars
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
         runBlocking {
             val tag =
                 try {
-                    withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS) {
+                    withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
                         tweaksRepository.getAppLanguage().first()
                     }
                 } catch (_: Exception) {
@@ -81,13 +83,20 @@ class MainActivity : ComponentActivity() {
                     Consumer<Intent> { newIntent ->
                         handleIncomingIntent(newIntent)
                     }
+
                 addOnNewIntentListener(listener)
+
                 onDispose {
                     removeOnNewIntentListener(listener)
                 }
             }
 
-            App(deepLinkUri = deepLinkUri)
+            App(
+                deepLinkUri = deepLinkUri,
+                onResolvedDarkTheme = { isDarkTheme ->
+                    this@MainActivity.updateSystemBars(isDarkTheme)
+                },
+            )
         }
     }
 
@@ -95,7 +104,9 @@ class MainActivity : ComponentActivity() {
         super.onRestart()
         appScope.launch {
             runCatching { syncInstalledAppsUseCase() }
-                .onFailure { Logger.w(it) { "onRestart sync failed" } }
+                .onFailure {
+                    Logger.w(it) { "onRestart sync failed" }
+                }
         }
     }
 

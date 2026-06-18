@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.core.context.GlobalContext
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.repository.TweaksRepository
+import zed.rainxch.core.domain.system.DesktopOs
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
 import zed.rainxch.githubstore.app.di.initKoin
@@ -80,13 +81,14 @@ fun main(args: Array<String>) {
         val koin = GlobalContext.get()
         val tweaksRepo = koin.get<TweaksRepository>()
         val localization = koin.get<LocalizationManager>()
-        val tag = try {
-            withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
-                tweaksRepo.getAppLanguage().first()
+        val tag =
+            try {
+                withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
+                    tweaksRepo.getAppLanguage().first()
+                }
+            } catch (_: Exception) {
+                null
             }
-        } catch (_: Exception) {
-            null
-        }
         localization.setActiveLanguageTag(tag)
     }
 
@@ -247,8 +249,7 @@ fun main(args: Array<String>) {
 }
 
 private fun selectLinuxRenderBackendIfRequested() {
-    val osName = System.getProperty("os.name", "").lowercase()
-    if (!osName.contains("linux")) return
+    if (!DesktopOs.isLinux) return
     if (System.getProperty("skiko.renderApi") != null) return
     val fromEnv = System.getenv("SKIKO_RENDER_API")?.trim().orEmpty()
     if (fromEnv.isEmpty()) return
