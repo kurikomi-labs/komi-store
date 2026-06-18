@@ -103,6 +103,7 @@ sealed interface GithubStoreGraph {
         val owner: String = "",
         val repo: String = "",
         val sourceHost: String? = null,
+        val translateTo: String? = null,
     ) : GithubStoreGraph
 
     @Serializable

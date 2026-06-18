@@ -45,6 +45,7 @@ import zed.rainxch.githubstore.core.presentation.res.platform_section_android
 import zed.rainxch.githubstore.core.presentation.res.platform_section_linux
 import zed.rainxch.githubstore.core.presentation.res.platform_section_macos
 import zed.rainxch.githubstore.core.presentation.res.platform_section_windows
+import zed.rainxch.githubstore.core.presentation.res.platform_section_ios
 import zed.rainxch.githubstore.core.presentation.res.remove_search_history_item
 import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_add_a_host
 import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_added_hosts_section
@@ -235,6 +236,7 @@ private fun DiscoveryPlatform.labelRes() = when (this) {
     DiscoveryPlatform.Macos -> Res.string.platform_section_macos
     DiscoveryPlatform.Windows -> Res.string.platform_section_windows
     DiscoveryPlatform.Linux -> Res.string.platform_section_linux
+    DiscoveryPlatform.Ios -> Res.string.platform_section_ios
     DiscoveryPlatform.All -> Res.string.platform_section_android
 }
 

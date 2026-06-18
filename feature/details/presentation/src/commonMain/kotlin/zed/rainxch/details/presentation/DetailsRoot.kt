@@ -156,7 +156,7 @@ fun DetailsRoot(
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     onOpenRepositoryInApp: (repoId: Long) -> Unit,
     onNavigateToSearchByPlatform: (DiscoveryPlatform) -> Unit,
-    onNavigateToAbout: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
+    onNavigateToAbout: (repoId: Long, owner: String, repo: String, sourceHost: String?, translateTo: String?) -> Unit,
     onNavigateToWhatsNew: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
     onNavigateToIssues: (owner: String, repo: String) -> Unit,
     onNavigateToSecurity: (owner: String, repo: String) -> Unit,
@@ -249,6 +249,18 @@ fun DetailsRoot(
                     repo.owner.login,
                     repo.name,
                     repo.sourceHost,
+                    null,
+                )
+            }
+        },
+        onTranslateLanguage = state.repository?.let { repo ->
+            { code ->
+                onNavigateToAbout(
+                    repo.id,
+                    repo.owner.login,
+                    repo.name,
+                    repo.sourceHost,
+                    code,
                 )
             }
         },
@@ -510,6 +522,7 @@ fun DetailsScreen(
     onAction: (DetailsAction) -> Unit,
     snackbarHostState: SnackbarHostState,
     onReadMoreAbout: (() -> Unit)? = null,
+    onTranslateLanguage: ((String) -> Unit)? = null,
     onReadMoreWhatsNew: (() -> Unit)? = null,
     onOpenIssues: (() -> Unit)? = null,
     onOpenSecurity: (() -> Unit)? = null,
@@ -659,6 +672,7 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.aboutMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
+                                onTranslateLanguage = onTranslateLanguage,
                                 onReadMore = onReadMoreAbout,
                             )
                         }
@@ -672,6 +686,7 @@ fun DetailsScreen(
                                 collapsedHeight = collapsedSectionHeight,
                                 measuredHeightPx = state.aboutMeasuredHeightPx,
                                 onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
+                                onTranslateLanguage = onTranslateLanguage,
                                 onReadMore = onReadMoreAbout,
                             )
                         }

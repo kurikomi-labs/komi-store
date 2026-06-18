@@ -53,12 +53,21 @@ fun AboutRoot(
     owner: String,
     repo: String,
     sourceHost: String?,
+    translateTo: String? = null,
     onNavigateBack: () -> Unit,
     viewModel: DetailsAboutViewModel = koinViewModel {
         parametersOf(repositoryId, owner, repo, sourceHost)
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    
+    val isReadmeLoaded = state.readmeMarkdown.isNotBlank()
+    androidx.compose.runtime.LaunchedEffect(translateTo, isReadmeLoaded) {
+        if (translateTo != null && isReadmeLoaded) {
+            viewModel.translate(translateTo)
+        }
+    }
+    
     AboutScreen(
         state = state,
         onBack = onNavigateBack,
@@ -173,14 +182,18 @@ private fun AboutScreen(
                 }
                 item(key = "markdown") {
                     Spacer(Modifier.height(4.dp))
-                    Markdown(
-                        content = displayedMarkdown,
-                        colors = colors,
-                        typography = typography,
-                        imageTransformer = imageTransformer,
-                        components = components,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
+                        onTranslate = onTranslate,
+                    ) {
+                        Markdown(
+                            content = displayedMarkdown,
+                            colors = colors,
+                            typography = typography,
+                            imageTransformer = imageTransformer,
+                            components = components,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }

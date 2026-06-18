@@ -66,6 +66,7 @@ fun LazyListScope.about(
     collapsedHeight: Dp,
     measuredHeightPx: Float?,
     onMeasured: (Float) -> Unit,
+    onTranslateLanguage: ((String) -> Unit)? = null,
     onReadMore: (() -> Unit)? = null,
 ) {
     item {
@@ -111,18 +112,37 @@ fun LazyListScope.about(
             MarkdownImageTransformer(probeClient)
         }
 
-        ExpandableMarkdownContent(
-            rawMarkdown = raw,
-            isDark = isDark,
-            isExpanded = isExpanded,
-            onToggleExpanded = onReadMore ?: onToggleExpanded,
-            imageTransformer = imageTransformer,
-            collapsedHeight = collapsedHeight,
-            measuredHeightPx = measuredHeightPx,
-            onMeasured = onMeasured,
-            fadeColor = MaterialTheme.colorScheme.background,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        if (onTranslateLanguage != null) {
+            zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
+                onTranslate = onTranslateLanguage,
+            ) {
+                ExpandableMarkdownContent(
+                    rawMarkdown = raw,
+                    isDark = isDark,
+                    isExpanded = isExpanded,
+                    onToggleExpanded = onReadMore ?: onToggleExpanded,
+                    imageTransformer = imageTransformer,
+                    collapsedHeight = collapsedHeight,
+                    measuredHeightPx = measuredHeightPx,
+                    onMeasured = onMeasured,
+                    fadeColor = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        } else {
+            ExpandableMarkdownContent(
+                rawMarkdown = raw,
+                isDark = isDark,
+                isExpanded = isExpanded,
+                onToggleExpanded = onReadMore ?: onToggleExpanded,
+                imageTransformer = imageTransformer,
+                collapsedHeight = collapsedHeight,
+                measuredHeightPx = measuredHeightPx,
+                onMeasured = onMeasured,
+                fadeColor = MaterialTheme.colorScheme.background,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 
