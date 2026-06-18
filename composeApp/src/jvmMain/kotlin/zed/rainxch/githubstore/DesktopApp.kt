@@ -80,13 +80,14 @@ fun main(args: Array<String>) {
         val koin = GlobalContext.get()
         val tweaksRepo = koin.get<TweaksRepository>()
         val localization = koin.get<LocalizationManager>()
-        val tag = try {
-            withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
-                tweaksRepo.getAppLanguage().first()
+        val tag =
+            try {
+                withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
+                    tweaksRepo.getAppLanguage().first()
+                }
+            } catch (_: Exception) {
+                null
             }
-        } catch (_: Exception) {
-            null
-        }
         localization.setActiveLanguageTag(tag)
     }
 

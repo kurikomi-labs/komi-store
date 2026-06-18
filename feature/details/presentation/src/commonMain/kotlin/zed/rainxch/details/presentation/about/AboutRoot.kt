@@ -62,8 +62,9 @@ fun AboutRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     
-    androidx.compose.runtime.LaunchedEffect(translateTo) {
-        if (translateTo != null) {
+    val isReadmeLoaded = state.readmeMarkdown.isNotBlank()
+    androidx.compose.runtime.LaunchedEffect(translateTo, isReadmeLoaded) {
+        if (translateTo != null && isReadmeLoaded) {
             viewModel.translate(translateTo)
         }
     }

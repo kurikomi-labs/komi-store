@@ -700,6 +700,7 @@
     <string name="platform_section_windows">Windows</string>
     <string name="platform_section_macos">macOS</string>
     <string name="platform_section_linux">Linux</string>
+    <string name="platform_section_ios">iOS</string>
     <string name="section_chip_your_device">Your device</string>
     <string name="section_chip_for_transfer">For transfer</string>
     <string name="hidden_repositories_title">Hidden repositories</string>

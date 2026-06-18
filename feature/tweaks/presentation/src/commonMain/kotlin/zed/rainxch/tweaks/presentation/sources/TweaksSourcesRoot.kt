@@ -49,6 +49,7 @@ import zed.rainxch.githubstore.core.presentation.res.platform_section_android
 import zed.rainxch.githubstore.core.presentation.res.platform_section_linux
 import zed.rainxch.githubstore.core.presentation.res.platform_section_macos
 import zed.rainxch.githubstore.core.presentation.res.platform_section_windows
+import zed.rainxch.githubstore.core.presentation.res.platform_section_ios
 import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_platforms_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_sources_platforms_title
 import zed.rainxch.githubstore.core.presentation.res.custom_forges_count
@@ -260,6 +261,7 @@ private fun DiscoveryPlatform.labelRes() = when (this) {
     DiscoveryPlatform.Macos -> Res.string.platform_section_macos
     DiscoveryPlatform.Windows -> Res.string.platform_section_windows
     DiscoveryPlatform.Linux -> Res.string.platform_section_linux
+    DiscoveryPlatform.Ios -> Res.string.platform_section_ios
     DiscoveryPlatform.All -> Res.string.platform_section_android
 }
 

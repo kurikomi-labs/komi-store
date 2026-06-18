@@ -6,6 +6,7 @@ fun assetPlatformOf(assetName: String): DiscoveryPlatform? {
     val lower = assetName.lowercase()
     return when {
         lower.endsWith(".apk") -> DiscoveryPlatform.Android
+        lower.endsWith(".ipa") -> DiscoveryPlatform.Ios
         lower.endsWith(".exe") || lower.endsWith(".msi") -> DiscoveryPlatform.Windows
         lower.endsWith(".dmg") || lower.endsWith(".pkg") -> DiscoveryPlatform.Macos
         lower.endsWith(".deb") ||

@@ -54,6 +54,8 @@ import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.label
+import zed.rainxch.core.presentation.utils.toLabel
+import zed.rainxch.search.presentation.mappers.toDomain
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -124,9 +126,7 @@ fun SearchFiltersSheet(
                 ) {
                     SearchPlatformUi.entries.forEach { platform ->
                         SelectableChip(
-                            text = platform.name
-                                .lowercase()
-                                .replaceFirstChar { it.uppercase() },
+                            text = platform.toDomain().toLabel(),
                             selected = selectedPlatform == platform,
                             onClick = { onPlatformSelected(platform) },
                         )

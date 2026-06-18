@@ -167,6 +167,7 @@ class SearchRepositoryImpl(
             DiscoveryPlatform.Windows -> "windows"
             DiscoveryPlatform.Macos -> "macos"
             DiscoveryPlatform.Linux -> "linux"
+            DiscoveryPlatform.Ios -> return null 
             DiscoveryPlatform.All -> null
         }
 
@@ -387,7 +388,8 @@ class SearchRepositoryImpl(
                     name.endsWith(".msi") || name.endsWith(".exe") ||
                     name.endsWith(".dmg") || name.endsWith(".pkg") ||
                     name.endsWith(".appimage") || name.endsWith(".deb") ||
-                    name.endsWith(".rpm") || name.endsWith(".pkg.tar.zst")
+                    name.endsWith(".rpm") || name.endsWith(".pkg.tar.zst") ||
+                    name.endsWith(".ipa")
             }
 
             DiscoveryPlatform.Android -> {
@@ -405,6 +407,10 @@ class SearchRepositoryImpl(
             DiscoveryPlatform.Linux -> {
                 name.endsWith(".appimage") || name.endsWith(".deb") ||
                     name.endsWith(".rpm") || name.endsWith(".pkg.tar.zst")
+            }
+
+            DiscoveryPlatform.Ios -> {
+                name.endsWith(".ipa")
             }
         }
     }
@@ -500,6 +506,7 @@ class SearchRepositoryImpl(
             DiscoveryPlatform.Windows -> "windows"
             DiscoveryPlatform.Macos -> "macos"
             DiscoveryPlatform.Linux -> "linux"
+            DiscoveryPlatform.Ios -> "ios"
             DiscoveryPlatform.All -> null
         }
 

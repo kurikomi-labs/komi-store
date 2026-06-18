@@ -463,6 +463,7 @@ class CachedRepositoriesDataSourceImpl(
         DiscoveryPlatform.Windows -> "windows"
         DiscoveryPlatform.Macos -> "macos"
         DiscoveryPlatform.Linux -> "linux"
+        DiscoveryPlatform.Ios -> null 
         DiscoveryPlatform.All -> null
     }
 

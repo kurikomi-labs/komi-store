@@ -6,4 +6,5 @@ enum class SearchPlatformUi {
     Windows,
     Macos,
     Linux,
+    Ios,
 }
