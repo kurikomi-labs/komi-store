@@ -53,7 +53,11 @@ fun preprocessMarkdown(
         val isAbsolute =
             trimmed.startsWith("http://") ||
                 trimmed.startsWith("https://") ||
-                trimmed.startsWith("data:")
+                trimmed.startsWith("data:") ||
+                trimmed.startsWith("mailto:") ||
+                trimmed.startsWith("tel:") ||
+                trimmed.startsWith("sms:") ||
+                trimmed.startsWith("intent:")
         
         val baseForPath = if (asImage) normalizedBaseUrl else normalizedLinkBaseUrl
 

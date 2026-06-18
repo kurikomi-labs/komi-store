@@ -36,7 +36,7 @@ fun DiscoveryPlatform.toIcons(): List<ImageVector> =
         }
 
         DiscoveryPlatform.Ios -> {
-            listOf(vectorResource(Res.drawable.ic_platform_macos)) // Fallback to apple icon
+            listOf(vectorResource(Res.drawable.ic_platform_macos))
         }
     }
 
