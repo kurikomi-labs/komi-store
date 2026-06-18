@@ -71,7 +71,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
@@ -260,14 +262,7 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 
         PrimaryPillButton(
             text = stringResource(Res.string.sign_in_with_github),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_github),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
-            },
+            leadingIcon = vectorResource(Res.drawable.ic_github),
             onClick = { onAction(AuthenticationAction.StartWebAuth) },
         )
 
@@ -496,14 +491,7 @@ private fun StateDevicePrompt(
 
         PrimaryPillButton(
             text = stringResource(Res.string.open_github),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_github),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
-            },
+            leadingIcon = vectorResource(Res.drawable.ic_github),
             onClick = { onAction(AuthenticationAction.OpenGitHub(authState.start)) },
         )
 
@@ -675,7 +663,7 @@ private fun StateError(
 private fun PrimaryPillButton(
     text: String,
     onClick: () -> Unit,
-    leadingIcon: (@Composable () -> Unit)? = null,
+    leadingIcon: ImageVector? = null,
     enabled: Boolean = true,
 ) {
     KomiButton(
@@ -685,6 +673,7 @@ private fun PrimaryPillButton(
         variant = KomiButtonVariant.Primary,
         size = KomiButtonSize.Lg,
         fullWidth = true,
+        leadingIcon = leadingIcon,
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
