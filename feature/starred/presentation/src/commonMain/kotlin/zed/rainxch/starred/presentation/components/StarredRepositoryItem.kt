@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Icon
@@ -34,12 +36,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.OfficialBadge
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
@@ -53,7 +56,7 @@ fun StarredRepositoryItem(
     onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExpressiveCard(
+    KomiSurface(
         onClick = onItemClick,
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -100,7 +103,12 @@ fun StarredRepositoryItem(
                             modifier = Modifier.weight(1f, fill = false),
                         )
                         if (repository.isCurrentUserOwner) {
-                            OfficialBadge()
+                            Icon(
+                                imageVector = Icons.Filled.Verified,
+                                contentDescription = stringResource(Res.string.self_owned_badge),
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
                         }
                     }
                 }
@@ -170,9 +178,11 @@ fun StarredRepositoryItem(
 
 @Composable
 private fun StatChipNeutral(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String) {
-    StatChip(
+    KomiChip(
         label = label,
-        leading = {
+        kind = KomiChipKind.Info,
+        size = KomiChipSize.Sm,
+        leadingContent = {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
@@ -180,9 +190,6 @@ private fun StatChipNeutral(icon: androidx.compose.ui.graphics.vector.ImageVecto
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
-        background = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = MaterialTheme.colorScheme.outline,
-        contentColor = MaterialTheme.colorScheme.onSurface,
     )
 }
 
@@ -194,7 +201,7 @@ private fun TonalBadge(
 ) {
     Box(
         modifier = Modifier
-            .clip(Radii.chip)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
             .background(container)
             .padding(horizontal = 10.dp, vertical = 5.dp),
     ) {
@@ -252,7 +259,7 @@ private fun FavoriteToggle(
 @Preview
 @Composable
 private fun PreviewStarredRepoItem() {
-    GithubStoreTheme {
+    PersonalityPreview {
         StarredRepositoryItem(
             repository = StarredRepositoryUi(
                 repoId = 1,

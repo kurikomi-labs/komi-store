@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -32,7 +31,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -57,14 +55,13 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.starred.presentation.components.StarredRepositoryItem
@@ -241,13 +238,13 @@ fun StarredScreen(
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                     action = {
-                        GhsButton(
+                        KomiButton(
                             onClick = {
                                 onAction(StarredReposAction.OnRetrySync)
                             },
                             label = stringResource(Res.string.retry),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     },
                     dismissAction = {
@@ -381,7 +378,7 @@ private fun StarredSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
 ) {
-    GhsTextField(
+    KomiTextField(
         value = query,
         onValueChange = onQueryChange,
         modifier =
@@ -390,7 +387,7 @@ private fun StarredSearchBar(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         placeholder = stringResource(Res.string.search_repositories_hint),
         leadingIcon = Icons.Filled.Search,
-        trailingIcon = {
+        trailing = {
             if (query.isNotEmpty()) {
                 IconButton(onClick = { onQueryChange("") }) {
                     Icon(
@@ -400,7 +397,6 @@ private fun StarredSearchBar(
                 }
             }
         },
-        singleLine = true,
     )
 }
 
@@ -446,10 +442,10 @@ private fun EmptyStateContent(
         if (actionText != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            GhsButton(
+            KomiButton(
                 onClick = onActionClick,
                 label = actionText,
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
             )
         }
     }
@@ -458,7 +454,7 @@ private fun EmptyStateContent(
 @Preview
 @Composable
 private fun PreviewStarred() {
-    GithubStoreTheme {
+    PersonalityPreview {
         StarredScreen(
             state =
                 StarredReposState(
