@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.retry
 
@@ -38,9 +38,11 @@ fun RepoPagesError(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
-            GhsButton(onClick = onRetry, variant = GhsButtonVariant.Tonal) {
-                Text(text = stringResource(Res.string.retry))
-            }
+            KomiButton(
+                onClick = onRetry,
+                label = stringResource(Res.string.retry),
+                variant = KomiButtonVariant.Tonal,
+            )
         }
     }
 }

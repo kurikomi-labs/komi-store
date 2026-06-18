@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.LocalStatusColors
+import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_closed

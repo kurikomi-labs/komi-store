@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_hint
@@ -310,16 +310,17 @@ private fun CommentComposer(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    GhsTextField(
+                    KomiTextField(
                         value = text,
                         onValueChange = onTextChange,
                         modifier = Modifier.weight(1f),
                         placeholder = stringResource(Res.string.repo_pages_comment_hint),
-                        maxLines = 4,
+                        multiline = true,
+                        rows = 4,
                         enabled = !isPosting,
                     )
 
-                    GhsButton(
+                    KomiButton(
                         onClick = onSend,
                         label = stringResource(Res.string.repo_pages_comment_send),
                         enabled = !isPosting && text.isNotBlank(),
@@ -334,7 +335,7 @@ private fun CommentComposer(
 @Preview
 @Composable
 private fun IssueDetailScreenPreview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         IssueDetailScreen(
             state = IssueDetailUiState(
                 issueNumber = 123,

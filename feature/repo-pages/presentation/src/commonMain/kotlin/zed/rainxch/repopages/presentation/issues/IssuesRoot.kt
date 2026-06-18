@@ -47,8 +47,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.theme.LocalStatusColors
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
@@ -261,7 +261,7 @@ private fun NewIssueSheet(
                 minLines = 4,
                 enabled = !state.isCreatingIssue,
             )
-            GhsButton(
+            KomiButton(
                 onClick = onSubmit,
                 label = stringResource(Res.string.repo_pages_new_issue_submit),
                 enabled = !state.isCreatingIssue && state.newIssueTitle.isNotBlank(),
