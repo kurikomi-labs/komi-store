@@ -41,7 +41,6 @@ import zed.rainxch.githubstore.core.presentation.res.cd_image
 class MarkdownImageTransformer(
     private val probeClient: HttpClient,
 ) : ImageTransformer {
-
     @Composable
     override fun transform(link: String): ImageData? {
         if (link.isBlank()) return null
@@ -77,9 +76,10 @@ class MarkdownImageTransformer(
                 probeResult = cached
                 return@LaunchedEffect
             }
-            val result = withContext(Dispatchers.IO) {
-                probeOnce(normalizedLink)
-            }
+            val result =
+                withContext(Dispatchers.IO) {
+                    probeOnce(normalizedLink)
+                }
             probeCache[normalizedLink] = result
             probeResult = result
         }
@@ -88,7 +88,8 @@ class MarkdownImageTransformer(
 
         val context = LocalPlatformContext.current
         val request =
-            ImageRequest.Builder(context)
+            ImageRequest
+                .Builder(context)
                 .data(normalizedLink)
                 .httpHeaders(networkHeaders)
                 .size(MAX_BITMAP_DIMENSION_PX)
@@ -102,17 +103,16 @@ class MarkdownImageTransformer(
         val painter = rememberAsyncImagePainter(model = request)
 
         val isBadgeLike = looksLikeBadge(normalizedLink)
-        val inlineModifier = if (isBadgeLike) {
-
-            Modifier
-                .heightIn(max = BADGE_MAX_HEIGHT_DP.dp)
-                .widthIn(max = BADGE_MAX_WIDTH_DP.dp)
-        } else {
-
-            Modifier
-                .heightIn(max = RASTER_MAX_HEIGHT_DP.dp)
-                .widthIn(max = RASTER_MAX_WIDTH_DP.dp)
-        }
+        val inlineModifier =
+            if (isBadgeLike) {
+                Modifier
+                    .heightIn(max = BADGE_MAX_HEIGHT_DP.dp)
+                    .widthIn(max = BADGE_MAX_WIDTH_DP.dp)
+            } else {
+                Modifier
+                    .heightIn(max = RASTER_MAX_HEIGHT_DP.dp)
+                    .widthIn(max = RASTER_MAX_WIDTH_DP.dp)
+            }
 
         return ImageData(
             painter = painter,
@@ -128,10 +128,11 @@ class MarkdownImageTransformer(
         val pathOnly = lower.substringBefore('?').substringBefore('#')
         if (pathOnly.endsWith(".svg")) return true
 
-        val host = lower
-            .removePrefix("https://")
-            .removePrefix("http://")
-            .substringBefore('/')
+        val host =
+            lower
+                .removePrefix("https://")
+                .removePrefix("http://")
+                .substringBefore('/')
         return host in BADGE_HOSTS ||
 
             "/badge" in pathOnly ||
@@ -148,34 +149,41 @@ class MarkdownImageTransformer(
         containerSize: Size,
         intrinsicImageSize: Size,
     ): PlaceholderConfig {
-        val (widthSp, heightSp) = when {
-            intrinsicImageSize.isUnspecified ||
-                intrinsicImageSize.width <= 0f ||
-                intrinsicImageSize.height <= 0f ->
-                BADGE_DEFAULT_WIDTH_SP to BADGE_DEFAULT_HEIGHT_SP
-            else -> with(density) {
-
-                val containerWidthPx = when {
-                    containerSize.isUnspecified -> intrinsicImageSize.width
-                    containerSize.width <= 0f -> intrinsicImageSize.width
-                    else -> containerSize.width
+        val (widthSp, heightSp) =
+            when {
+                intrinsicImageSize.isUnspecified ||
+                    intrinsicImageSize.width <= 0f ||
+                    intrinsicImageSize.height <= 0f -> {
+                    BADGE_DEFAULT_WIDTH_SP to BADGE_DEFAULT_HEIGHT_SP
                 }
-                val initialWidth = minOf(intrinsicImageSize.width, containerWidthPx)
-                val ratio = intrinsicImageSize.height /
-                    intrinsicImageSize.width.coerceAtLeast(1f)
-                val rawHeight = initialWidth * ratio
 
-                val maxHeightPx = RASTER_MAX_HEIGHT_DP.dp.toPx()
-                val targetHeight = rawHeight.coerceAtMost(maxHeightPx)
+                else -> {
+                    with(density) {
+                        val containerWidthPx =
+                            when {
+                                containerSize.isUnspecified -> intrinsicImageSize.width
+                                containerSize.width <= 0f -> intrinsicImageSize.width
+                                else -> containerSize.width
+                            }
+                        val initialWidth = minOf(intrinsicImageSize.width, containerWidthPx)
+                        val ratio =
+                            intrinsicImageSize.height /
+                                intrinsicImageSize.width.coerceAtLeast(1f)
+                        val rawHeight = initialWidth * ratio
 
-                val targetWidth = if (rawHeight > maxHeightPx && ratio > 0f) {
-                    targetHeight / ratio
-                } else {
-                    initialWidth
+                        val maxHeightPx = RASTER_MAX_HEIGHT_DP.dp.toPx()
+                        val targetHeight = rawHeight.coerceAtMost(maxHeightPx)
+
+                        val targetWidth =
+                            if (rawHeight > maxHeightPx && ratio > 0f) {
+                                targetHeight / ratio
+                            } else {
+                                initialWidth
+                            }
+                        targetWidth.toSp().value to targetHeight.toSp().value
+                    }
                 }
-                targetWidth.toSp().value to targetHeight.toSp().value
             }
-        }
         return PlaceholderConfig(
             size = Size(widthSp, heightSp),
             verticalAlign = PlaceholderVerticalAlign.Center,
@@ -185,18 +193,18 @@ class MarkdownImageTransformer(
     private suspend fun probeOnce(url: String): ProbeResult {
         probeMutex.withLock {
             probeCache[url]?.let { return it }
-            val result = runCatching {
-                val response: HttpResponse = probeClient.head(url)
-                val contentLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
-                when {
-                    contentLength == null -> ProbeResult.Allowed
-                    contentLength > MAX_IMAGE_BYTES -> ProbeResult.Skipped(contentLength)
-                    else -> ProbeResult.Allowed
+            val result =
+                runCatching {
+                    val response: HttpResponse = probeClient.head(url)
+                    val contentLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
+                    when {
+                        contentLength == null -> ProbeResult.Allowed
+                        contentLength > MAX_IMAGE_BYTES -> ProbeResult.Skipped(contentLength)
+                        else -> ProbeResult.Allowed
+                    }
+                }.getOrElse {
+                    ProbeResult.Allowed
                 }
-            }.getOrElse {
-
-                ProbeResult.Allowed
-            }
             probeCache[url] = result
             return result
         }
@@ -204,8 +212,12 @@ class MarkdownImageTransformer(
 
     sealed interface ProbeResult {
         data object Pending : ProbeResult
+
         data object Allowed : ProbeResult
-        data class Skipped(val contentLength: Long) : ProbeResult
+
+        data class Skipped(
+            val contentLength: Long,
+        ) : ProbeResult
     }
 
     companion object {
@@ -226,21 +238,22 @@ class MarkdownImageTransformer(
         private const val RASTER_MAX_HEIGHT_DP = 320
         private const val RASTER_MAX_WIDTH_DP = 480
 
-        private val BADGE_HOSTS = setOf(
-            "img.shields.io",
-            "shields.io",
-            "badgen.net",
-            "badge.fury.io",
-        )
+        private val BADGE_HOSTS =
+            setOf(
+                "img.shields.io",
+                "shields.io",
+                "badgen.net",
+                "badge.fury.io",
+            )
 
         private val networkHeaders =
-            NetworkHeaders.Builder()
+            NetworkHeaders
+                .Builder()
                 .add("User-Agent", BROWSER_UA)
                 .add(
                     "Accept",
                     "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-                )
-                .build()
+                ).build()
 
         private val probeCache = mutableMapOf<String, ProbeResult>()
         private val probeMutex = Mutex()

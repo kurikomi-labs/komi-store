@@ -41,9 +41,10 @@ fun SyntaxHighlightedCode(
     model: MarkdownComponentModel,
     isDark: Boolean,
 ) {
-    val (language, code) = remember(model.node, model.content) {
-        extractFenceContent(model.node, model.content)
-    }
+    val (language, code) =
+        remember(model.node, model.content) {
+            extractFenceContent(model.node, model.content)
+        }
 
     var highlighted by remember(code, language, isDark) {
         mutableStateOf(AnnotatedString(code))
@@ -52,9 +53,10 @@ fun SyntaxHighlightedCode(
         if (code.isEmpty() || language == SyntaxLanguage.DEFAULT) return@LaunchedEffect
 
         if (code.length > MAX_HIGHLIGHTABLE_CHARS) return@LaunchedEffect
-        val result = withContext(Dispatchers.Default) {
-            buildHighlighted(code, language, isDark)
-        }
+        val result =
+            withContext(Dispatchers.Default) {
+                buildHighlighted(code, language, isDark)
+            }
         highlighted = result
     }
 
@@ -75,18 +77,21 @@ fun SyntaxHighlightedCode(
     )
 }
 
-private fun extractFenceContent(node: ASTNode, content: String): Pair<SyntaxLanguage, String> {
-
+private fun extractFenceContent(
+    node: ASTNode,
+    content: String,
+): Pair<SyntaxLanguage, String> {
     var language: SyntaxLanguage = SyntaxLanguage.DEFAULT
     val body = StringBuilder()
     var sawContent = false
     node.children.forEach { child ->
         when (child.type) {
             MarkdownTokenTypes.FENCE_LANG -> {
-                val hint = content
-                    .substring(child.startOffset, child.endOffset)
-                    .trim()
-                    .lowercase()
+                val hint =
+                    content
+                        .substring(child.startOffset, child.endOffset)
+                        .trim()
+                        .lowercase()
                 language = languageOf(hint)
             }
 
@@ -96,29 +101,35 @@ private fun extractFenceContent(node: ASTNode, content: String): Pair<SyntaxLang
                 sawContent = true
             }
 
-            MarkdownTokenTypes.EOL -> if (sawContent) body.append('\n')
-            else -> Unit
+            MarkdownTokenTypes.EOL -> {
+                if (sawContent) body.append('\n')
+            }
+
+            else -> {
+                Unit
+            }
         }
     }
     return language to body.toString()
 }
 
-private fun languageOf(hint: String): SyntaxLanguage = when (hint) {
-    "kt", "kotlin", "kts" -> SyntaxLanguage.KOTLIN
-    "java" -> SyntaxLanguage.JAVA
-    "py", "python" -> SyntaxLanguage.PYTHON
-    "js", "javascript", "node", "nodejs" -> SyntaxLanguage.JAVASCRIPT
-    "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
-    "rs", "rust" -> SyntaxLanguage.RUST
-    "swift" -> SyntaxLanguage.SWIFT
-    "cs", "csharp", "c#" -> SyntaxLanguage.CSHARP
-    "rb", "ruby" -> SyntaxLanguage.RUBY
-    "perl", "pl" -> SyntaxLanguage.PERL
-    "sh", "bash", "zsh", "shell" -> SyntaxLanguage.SHELL
-    "coffee", "coffeescript" -> SyntaxLanguage.COFFEESCRIPT
-    "dart" -> SyntaxLanguage.DART
-    else -> SyntaxLanguage.DEFAULT
-}
+private fun languageOf(hint: String): SyntaxLanguage =
+    when (hint) {
+        "kt", "kotlin", "kts" -> SyntaxLanguage.KOTLIN
+        "java" -> SyntaxLanguage.JAVA
+        "py", "python" -> SyntaxLanguage.PYTHON
+        "js", "javascript", "node", "nodejs" -> SyntaxLanguage.JAVASCRIPT
+        "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
+        "rs", "rust" -> SyntaxLanguage.RUST
+        "swift" -> SyntaxLanguage.SWIFT
+        "cs", "csharp", "c#" -> SyntaxLanguage.CSHARP
+        "rb", "ruby" -> SyntaxLanguage.RUBY
+        "perl", "pl" -> SyntaxLanguage.PERL
+        "sh", "bash", "zsh", "shell" -> SyntaxLanguage.SHELL
+        "coffee", "coffeescript" -> SyntaxLanguage.COFFEESCRIPT
+        "dart" -> SyntaxLanguage.DART
+        else -> SyntaxLanguage.DEFAULT
+    }
 
 private fun buildHighlighted(
     code: String,
@@ -141,19 +152,21 @@ private fun buildHighlighted(
     return buildAnnotatedString(code) {
         tokens.forEach { highlight ->
             when (highlight) {
-                is ColorHighlight ->
+                is ColorHighlight -> {
                     addStyle(
                         SpanStyle(color = Color(0xFF000000 or highlight.rgb.toLong())),
                         highlight.location.start,
                         highlight.location.end.coerceAtMost(code.length),
                     )
+                }
 
-                is BoldHighlight ->
+                is BoldHighlight -> {
                     addStyle(
                         SpanStyle(fontWeight = FontWeight.Bold),
                         highlight.location.start,
                         highlight.location.end.coerceAtMost(code.length),
                     )
+                }
             }
         }
     }
@@ -162,8 +175,7 @@ private fun buildHighlighted(
 private inline fun buildAnnotatedString(
     base: String,
     block: AnnotatedString.Builder.() -> Unit,
-): AnnotatedString =
-    AnnotatedString.Builder(base).apply(block).toAnnotatedString()
+): AnnotatedString = AnnotatedString.Builder(base).apply(block).toAnnotatedString()
 
 @Suppress("UnusedReceiverParameter")
 private fun MarkdownElementTypes.placeholder(): Nothing = error("placeholder")

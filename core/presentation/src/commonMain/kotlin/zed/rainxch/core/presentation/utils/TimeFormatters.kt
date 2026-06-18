@@ -14,23 +14,23 @@ import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 private fun parseIsoInstantLenient(isoInstant: String): Instant? {
-
     val trimmed = isoInstant.trim()
     if (trimmed.isEmpty()) return null
     runCatching { return Instant.parse(trimmed) }
 
-    val normalized = runCatching {
-        val tzStart = trimmed.indexOfAny(charArrayOf('Z', '+', '-'), startIndex = 11)
-        if (tzStart < 0) return@runCatching null
-        val head = trimmed.substring(0, tzStart)
-        val tail = trimmed.substring(tzStart)
-        val colonCount = head.count { it == ':' }
-        when (colonCount) {
-            1 -> head + ":00" + tail
-            0 -> head + ":00:00" + tail
-            else -> null
-        }
-    }.getOrNull() ?: return null
+    val normalized =
+        runCatching {
+            val tzStart = trimmed.indexOfAny(charArrayOf('Z', '+', '-'), startIndex = 11)
+            if (tzStart < 0) return@runCatching null
+            val head = trimmed.substring(0, tzStart)
+            val tail = trimmed.substring(tzStart)
+            val colonCount = head.count { it == ':' }
+            when (colonCount) {
+                1 -> head + ":00" + tail
+                0 -> head + ":00:00" + tail
+                else -> null
+            }
+        }.getOrNull() ?: return null
 
     return runCatching { Instant.parse(normalized) }.getOrNull()
 }
@@ -65,22 +65,29 @@ fun formatRelativeLong(isoInstant: String): String {
     val instant = parseIsoInstantLenient(isoInstant) ?: return isoInstant
     val duration = Clock.System.now() - instant
     return when {
-        duration.inWholeDays > 365 ->
+        duration.inWholeDays > 365 -> {
             stringResource(Res.string.time_years_ago, (duration.inWholeDays / 365).toInt())
+        }
 
-        duration.inWholeDays > 30 ->
+        duration.inWholeDays > 30 -> {
             stringResource(Res.string.time_months_ago, (duration.inWholeDays / 30).toInt())
+        }
 
-        duration.inWholeDays > 0 ->
+        duration.inWholeDays > 0 -> {
             stringResource(Res.string.time_days_ago, duration.inWholeDays.toInt())
+        }
 
-        duration.inWholeHours > 0 ->
+        duration.inWholeHours > 0 -> {
             stringResource(Res.string.time_hours_ago, duration.inWholeHours.toInt())
+        }
 
-        duration.inWholeMinutes > 0 ->
+        duration.inWholeMinutes > 0 -> {
             stringResource(Res.string.time_minutes_ago, duration.inWholeMinutes.toInt())
+        }
 
-        else -> stringResource(Res.string.just_now)
+        else -> {
+            stringResource(Res.string.just_now)
+        }
     }
 }
 
@@ -125,8 +132,9 @@ fun hasWeekNotPassed(isoInstant: String): Boolean {
 @OptIn(ExperimentalTime::class)
 @Composable
 fun formatReleasedAt(isoInstant: String): String {
-    val updated = parseIsoInstantLenient(isoInstant)
-        ?: return isoInstant.trim().substringBefore('T').ifBlank { "" }
+    val updated =
+        parseIsoInstantLenient(isoInstant)
+            ?: return isoInstant.trim().substringBefore('T').ifBlank { "" }
     val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
     val diff: Duration = now - updated
 

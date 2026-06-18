@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -36,7 +36,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
+import zed.rainxch.core.presentation.layout.WindowBreakpoints
 
 @Composable
 fun rememberAdaptiveListDetailState(): AdaptiveListDetailState =
@@ -62,13 +62,14 @@ private val AdaptiveListDetailStateSaver: Saver<AdaptiveListDetailState, Any> =
                 AdaptiveListDetailState(initial = null)
             } else {
                 AdaptiveListDetailState(
-                    initial = AdaptiveDetailArgs(
-                        repositoryId = (saved[1] as? Long) ?: 0L,
-                        owner = (saved[2] as? String)?.takeIf { it.isNotEmpty() },
-                        repo = (saved[3] as? String)?.takeIf { it.isNotEmpty() },
-                        isComingFromUpdate = (saved[4] as? Boolean) ?: false,
-                        sourceHost = (saved[5] as? String)?.takeIf { it.isNotEmpty() },
-                    ),
+                    initial =
+                        AdaptiveDetailArgs(
+                            repositoryId = (saved[1] as? Long) ?: 0L,
+                            owner = (saved[2] as? String)?.takeIf { it.isNotEmpty() },
+                            repo = (saved[3] as? String)?.takeIf { it.isNotEmpty() },
+                            isComingFromUpdate = (saved[4] as? Boolean) ?: false,
+                            sourceHost = (saved[5] as? String)?.takeIf { it.isNotEmpty() },
+                        ),
                 )
             }
         },
@@ -85,7 +86,7 @@ fun AdaptiveListDetailScaffold(
     initialListFraction: Float = 0.46f,
     minListWidthDp: Int = 480,
     minDetailWidthDp: Int = 600,
-    expandedBreakpointDp: Int = 840,
+    expandedBreakpointDp: Int = WindowBreakpoints.Expanded.value.toInt(),
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val totalWidthDp = maxWidth.value
@@ -108,9 +109,10 @@ fun AdaptiveListDetailScaffold(
 
         Row(modifier = Modifier.fillMaxSize()) {
             Box(
-                modifier = Modifier
-                    .width(clamped.dp)
-                    .fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .width(clamped.dp)
+                        .fillMaxHeight(),
             ) {
                 list(true)
             }
@@ -121,9 +123,10 @@ fun AdaptiveListDetailScaffold(
                 },
             )
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
             ) {
                 val args = state.currentArgs
                 if (args == null) {
@@ -140,33 +143,34 @@ fun AdaptiveListDetailScaffold(
 }
 
 @Composable
-private fun PaneResizeHandle(
-    onDrag: (Float) -> Unit,
-) {
+private fun PaneResizeHandle(onDrag: (Float) -> Unit) {
     val draggableState = rememberDraggableState(onDelta = onDrag)
     Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(10.dp)
-            .pointerHoverIcon(PointerIcon.Crosshair)
-            .draggable(
-                state = draggableState,
-                orientation = Orientation.Horizontal,
-            ),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(10.dp)
+                .pointerHoverIcon(PointerIcon.Crosshair)
+                .draggable(
+                    state = draggableState,
+                    orientation = Orientation.Horizontal,
+                ),
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(1.dp)
-                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
         )
         Box(
-            modifier = Modifier
-                .width(4.dp)
-                .height(36.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.85f)),
+            modifier =
+                Modifier
+                    .width(4.dp)
+                    .height(36.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.85f)),
         )
     }
 }

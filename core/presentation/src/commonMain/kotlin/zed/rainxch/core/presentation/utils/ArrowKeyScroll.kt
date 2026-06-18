@@ -30,7 +30,10 @@ fun Modifier.arrowKeyScroll(
     arrowKeyScrollInternal(
         autoFocus = autoFocus,
         scrollBy = { delta -> listState.animateScrollBy(delta) },
-        pageSize = { listState.layoutInfo.viewportSize.height.toFloat() },
+        pageSize = {
+            listState.layoutInfo.viewportSize.height
+                .toFloat()
+        },
         scrollToTop = { listState.animateScrollToItem(0) },
         scrollToBottom = {
             val last = (listState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
@@ -48,7 +51,10 @@ fun Modifier.arrowKeyScroll(
     arrowKeyScrollInternal(
         autoFocus = autoFocus,
         scrollBy = { delta -> gridState.animateScrollBy(delta) },
-        pageSize = { gridState.layoutInfo.viewportSize.height.toFloat() },
+        pageSize = {
+            gridState.layoutInfo.viewportSize.height
+                .toFloat()
+        },
         scrollToTop = { gridState.animateScrollToItem(0) },
         scrollToBottom = {
             val last = (gridState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
@@ -123,7 +129,9 @@ private fun Modifier.arrowKeyScrollInternal(
                     true
                 }
 
-                else -> false
+                else -> {
+                    false
+                }
             }
         }
 }

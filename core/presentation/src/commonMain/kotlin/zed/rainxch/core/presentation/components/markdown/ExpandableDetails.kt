@@ -2,6 +2,7 @@ package zed.rainxch.core.presentation.components.markdown
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.isSystemInDarkTheme
 import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.compose.components.MarkdownComponentModel
 import com.mikepenz.markdown.model.ImageTransformer
@@ -62,10 +62,11 @@ fun ExpandableDetails(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { expanded = !expanded }
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { expanded = !expanded }
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -86,9 +87,10 @@ fun ExpandableDetails(
             AnimatedVisibility(visible = expanded) {
                 val isDark = isSystemInDarkTheme()
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                 ) {
                     Markdown(
                         content = body,
@@ -127,7 +129,6 @@ private fun decodeDetailsSummary(encoded: String): String {
 }
 
 private fun extractFenceBody(model: MarkdownComponentModel): String {
-
     val content = model.content
     val contentNodes = model.node.children.filter { it.type == MarkdownTokenTypes.CODE_FENCE_CONTENT }
     if (contentNodes.isEmpty()) return ""
