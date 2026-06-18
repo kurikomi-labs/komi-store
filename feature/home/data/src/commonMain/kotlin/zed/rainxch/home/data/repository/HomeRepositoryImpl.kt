@@ -556,6 +556,7 @@ class HomeRepositoryImpl(
             DiscoveryPlatform.Windows -> "desktop"
             DiscoveryPlatform.Macos -> "macos"
             DiscoveryPlatform.Linux -> "linux"
+            DiscoveryPlatform.Ios -> "ios"
         }
 
     private fun Set<DiscoveryPlatform>.normalize(): Set<DiscoveryPlatform> {

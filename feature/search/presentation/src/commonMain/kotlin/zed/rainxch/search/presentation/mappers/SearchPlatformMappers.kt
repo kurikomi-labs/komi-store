@@ -11,6 +11,7 @@ fun SearchPlatformUi.toDomain(): DiscoveryPlatform =
         SearchPlatformUi.Windows -> Windows
         SearchPlatformUi.Macos -> Macos
         SearchPlatformUi.Linux -> Linux
+        SearchPlatformUi.Ios -> Ios
     }
 
 fun DiscoveryPlatform.toSearchPlatformUi(): SearchPlatformUi =
@@ -20,4 +21,5 @@ fun DiscoveryPlatform.toSearchPlatformUi(): SearchPlatformUi =
         Windows -> SearchPlatformUi.Windows
         Macos -> SearchPlatformUi.Macos
         Linux -> SearchPlatformUi.Linux
+        Ios -> SearchPlatformUi.Ios
     }

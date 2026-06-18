@@ -34,6 +34,10 @@ fun DiscoveryPlatform.toIcons(): List<ImageVector> =
         DiscoveryPlatform.Linux -> {
             listOf(vectorResource(Res.drawable.ic_platform_linux))
         }
+
+        DiscoveryPlatform.Ios -> {
+            listOf(vectorResource(Res.drawable.ic_platform_macos)) // Fallback to apple icon
+        }
     }
 
 @Composable
@@ -57,5 +61,9 @@ fun DiscoveryPlatform.toLabel(): String =
 
         DiscoveryPlatform.Linux -> {
             "Linux"
+        }
+
+        DiscoveryPlatform.Ios -> {
+            "iOS"
         }
     }

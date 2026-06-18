@@ -456,6 +456,7 @@ private fun platformLabel(platform: DiscoveryPlatform): String =
         DiscoveryPlatform.Windows -> "Windows"
         DiscoveryPlatform.Macos -> "macOS"
         DiscoveryPlatform.Linux -> "Linux"
+        DiscoveryPlatform.Ios -> "iOS"
         DiscoveryPlatform.All -> ""
     }
 

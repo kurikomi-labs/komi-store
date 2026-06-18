@@ -124,7 +124,7 @@ fun SearchFiltersSheet(
                 ) {
                     SearchPlatformUi.entries.forEach { platform ->
                         SelectableChip(
-                            text = platform.name
+                            text = if (platform == SearchPlatformUi.Ios) "iOS" else platform.name
                                 .lowercase()
                                 .replaceFirstChar { it.uppercase() },
                             selected = selectedPlatform == platform,
