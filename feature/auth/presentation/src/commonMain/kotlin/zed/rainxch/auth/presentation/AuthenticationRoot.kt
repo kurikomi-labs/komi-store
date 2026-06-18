@@ -25,7 +25,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
@@ -45,20 +43,14 @@ import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,7 +64,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,15 +77,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
-import androidx.compose.ui.text.style.TextOverflow
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsPasswordVisibilityIcon
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.inputs.passwordVisualTransformation
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.personality.classicPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -284,39 +274,39 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 
         Spacer(Modifier.height(10.dp))
 
-        GhsButton(
+        KomiButton(
             onClick = { onAction(AuthenticationAction.SkipLogin) },
             label = stringResource(Res.string.continue_as_guest),
-            variant = GhsButtonVariant.Text,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
         )
 
-        GhsButton(
+        KomiButton(
             onClick = { showMoreOptions = !showMoreOptions },
             label = if (showMoreOptions) {
                 stringResource(Res.string.auth_hide_signin_options)
             } else {
                 stringResource(Res.string.auth_more_signin_options)
             },
-            variant = GhsButtonVariant.Text,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
             trailingIcon = Icons.Default.ExpandMore,
         )
 
         AnimatedVisibility(visible = showMoreOptions) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(Modifier.height(4.dp))
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AuthenticationAction.OpenPatSheet) },
                     label = stringResource(Res.string.pat_use_token_instead),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AuthenticationAction.StartLogin) },
                     label = stringResource(Res.string.auth_use_device_code_instead),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }
@@ -672,11 +662,11 @@ private fun StateError(
             onClick = { onAction(AuthenticationAction.StartLogin) },
         )
         Spacer(Modifier.height(6.dp))
-        GhsButton(
+        KomiButton(
             onClick = { onAction(AuthenticationAction.SkipLogin) },
             label = stringResource(Res.string.continue_as_guest),
-            variant = GhsButtonVariant.Text,
-            size = GhsButtonSize.Sm,
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
         )
         Spacer(Modifier.weight(2f))
     }
@@ -689,22 +679,17 @@ private fun PrimaryPillButton(
     leadingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
 ) {
-    GhsButton(
+    KomiButton(
         onClick = onClick,
+        label = text,
         enabled = enabled,
-        variant = GhsButtonVariant.Primary,
-        size = GhsButtonSize.Lg,
+        variant = KomiButtonVariant.Primary,
+        size = KomiButtonSize.Lg,
+        fullWidth = true,
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
-    ) {
-        leadingIcon?.invoke()
-        Text(
-            text = text,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
+    )
 }
 
 @Composable
@@ -751,17 +736,9 @@ private fun PatSignInSheet(
     isSubmitting: Boolean,
     onAction: (AuthenticationAction) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            !(isSubmitting && newValue == SheetValue.Hidden)
-        },
-    )
-    var isMasked by remember { mutableStateOf(true) }
-
-    GhsBottomSheet(
-        onDismissRequest = { if (!isSubmitting) onAction(AuthenticationAction.DismissPatSheet) },
-        sheetState = sheetState,
+    KomiSheet(
+        onDismiss = { if (!isSubmitting) onAction(AuthenticationAction.DismissPatSheet) },
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -788,36 +765,17 @@ private fun PatSignInSheet(
                 onClick = { onAction(AuthenticationAction.OpenPatSettingsPage) },
             )
 
-            GhsTextField(
+            KomiTextField(
                 value = input,
                 onValueChange = { onAction(AuthenticationAction.OnPatInputChanged(it)) },
                 label = stringResource(Res.string.pat_input_label),
                 placeholder = stringResource(Res.string.pat_input_placeholder),
-                singleLine = true,
-                visualTransformation = passwordVisualTransformation(!isMasked),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    autoCorrectEnabled = false,
-                    capitalization = KeyboardCapitalization.None,
-                ),
-                isError = error != null,
+                error = error,
+                password = true,
+                keyboardType = KeyboardType.Password,
                 enabled = !isSubmitting,
-                trailingIcon = {
-                    GhsPasswordVisibilityIcon(
-                        visible = !isMasked,
-                        onToggle = { isMasked = !isMasked },
-                    )
-                },
                 modifier = Modifier.fillMaxWidth(),
             )
-
-            if (error != null) {
-                Text(
-                    text = error,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -847,12 +805,12 @@ private fun PatSignInSheet(
                     }
                 }
 
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AuthenticationAction.SubmitPat) },
                     label = stringResource(Res.string.pat_submit),
                     enabled = !isSubmitting && input.isNotBlank(),
                     loading = isSubmitting,
-                    variant = GhsButtonVariant.Primary,
+                    variant = KomiButtonVariant.Primary,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
@@ -865,7 +823,7 @@ private fun PatSignInSheet(
 @Preview
 @Composable
 private fun PreviewError() {
-    GithubStoreTheme {
+    PersonalityPreview {
         AuthenticationScreen(
             state = AuthenticationState(
                 loginState = AuthLoginState.Error(
@@ -881,7 +839,7 @@ private fun PreviewError() {
 @Preview
 @Composable
 private fun PreviewLoggedOut() {
-    GithubStoreTheme {
+    PersonalityPreview(personality = classicPersonality()) {
         AuthenticationScreen(
             state = AuthenticationState(loginState = AuthLoginState.LoggedOut),
             onAction = {},
@@ -892,7 +850,7 @@ private fun PreviewLoggedOut() {
 @Preview
 @Composable
 private fun PreviewDevicePrompt() {
-    GithubStoreTheme {
+    PersonalityPreview {
         AuthenticationScreen(
             state = AuthenticationState(
                 loginState = AuthLoginState.DevicePrompt(
@@ -914,7 +872,7 @@ private fun PreviewDevicePrompt() {
 @Preview
 @Composable
 private fun PreviewLoggedIn() {
-    GithubStoreTheme {
+    PersonalityPreview {
         AuthenticationScreen(
             state = AuthenticationState(loginState = AuthLoginState.LoggedIn),
             onAction = {},
