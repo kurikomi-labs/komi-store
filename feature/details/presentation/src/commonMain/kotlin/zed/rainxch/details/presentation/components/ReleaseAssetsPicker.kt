@@ -56,13 +56,12 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.account.github.GithubUser
 import zed.rainxch.core.domain.utils.AssetVariant
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -107,6 +106,7 @@ fun ReleaseAssetsPicker(
         },
     )
 
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -123,11 +123,11 @@ fun ReleaseAssetsPicker(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
+                .clip(rowShape)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
-                    shape = Radii.row,
+                    shape = rowShape,
                 )
                 .background(MaterialTheme.colorScheme.surface)
                 .clickable(enabled = isPickerEnabled) {
@@ -183,7 +183,8 @@ private fun ReleaseAssetsItemsPicker(
         onDismiss = { showInfoDialog = false },
     )
 
-    GhsBottomSheet(onDismissRequest = onDismiss, modifier = modifier) {
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom, modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f).padding(vertical = 6.dp)) {
@@ -195,7 +196,6 @@ private fun ReleaseAssetsItemsPicker(
                         ),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-                    Squiggle()
                 }
                 IconButton(onClick = { showInfoDialog = true }) {
                     Icon(
@@ -220,11 +220,11 @@ private fun ReleaseAssetsItemsPicker(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
-                    GhsButton(
+                    KomiButton(
                         onClick = onUnpin,
                         label = stringResource(Res.string.variant_picker_unpin),
-                        variant = GhsButtonVariant.Text,
-                        size = GhsButtonSize.Sm,
+                        variant = KomiButtonVariant.Text,
+                        size = KomiButtonSize.Sm,
                     )
                 }
             }
@@ -233,11 +233,11 @@ private fun ReleaseAssetsItemsPicker(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .clip(Radii.row)
+                    .clip(rowShape)
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.outline,
-                        shape = Radii.row,
+                        shape = rowShape,
                     )
                     .background(MaterialTheme.colorScheme.surface)
                     .clickable(onClick = { onToggleShowAllPlatforms(!showAllPlatforms) })
@@ -353,15 +353,16 @@ private fun ReleaseAssetsAboutDialog(
 ) {
     if (!showDialog) return
 
+    val dialogShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     BasicAlertDialog(onDismissRequest = onDismiss, modifier = modifier, properties = properties) {
         Box(
             modifier = Modifier
-                .clip(WonkySquircleShape.Dialog)
+                .clip(dialogShape)
                 .background(MaterialTheme.colorScheme.surface)
                 .border(
                     width = 1.5.dp,
                     color = MaterialTheme.colorScheme.outline,
-                    shape = WonkySquircleShape.Dialog,
+                    shape = dialogShape,
                 )
                 .padding(24.dp),
         ) {
@@ -374,8 +375,6 @@ private fun ReleaseAssetsAboutDialog(
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                Spacer(Modifier.size(6.dp))
-                Squiggle()
                 Spacer(Modifier.size(12.dp))
                 Text(
                     text = stringResource(Res.string.multiple_assets_info_dialog_text),

@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.components.StatItem
 import zed.rainxch.details.presentation.components.TextStatItem
@@ -43,7 +42,6 @@ fun LazyListScope.stats(
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Squiggle()
         }
 
         Row(

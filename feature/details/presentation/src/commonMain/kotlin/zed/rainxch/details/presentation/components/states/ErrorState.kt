@@ -33,9 +33,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.error_state_go_back
@@ -59,7 +59,7 @@ fun ErrorState(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         contentAlignment = Alignment.Center,
     ) {
-        ExpressiveCard(
+        KomiSurface(
             modifier = Modifier.widthIn(max = 480.dp),
         ) {
             Column(
@@ -107,16 +107,16 @@ fun ErrorState(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    GhsButton(
+                    KomiButton(
                         onClick = { onAction(DetailsAction.OnNavigateBackClick) },
                         label = stringResource(Res.string.error_state_go_back),
-                        variant = GhsButtonVariant.Text,
+                        variant = KomiButtonVariant.Text,
                         modifier = Modifier.weight(1f),
                     )
-                    GhsButton(
+                    KomiButton(
                         onClick = { onAction(DetailsAction.Retry) },
                         label = stringResource(Res.string.retry),
-                        variant = GhsButtonVariant.Primary,
+                        variant = KomiButtonVariant.Primary,
                         modifier = Modifier.weight(1f),
                     )
                 }

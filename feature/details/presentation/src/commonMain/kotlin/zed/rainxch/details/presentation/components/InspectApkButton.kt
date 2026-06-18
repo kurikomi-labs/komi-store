@@ -1,27 +1,21 @@
 package zed.rainxch.details.presentation.components
 
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -30,17 +24,16 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,7 +122,7 @@ private fun Coachmark(onDismiss: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.End) {
             Surface(
-                shape = WonkySquircleShape.Toast,
+                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                 color = MaterialTheme.colorScheme.primary,
                 shadowElevation = 6.dp,
                 modifier = Modifier.width(260.dp),
@@ -166,12 +159,11 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        GhsButton(
+                        KomiButton(
                             onClick = onDismiss,
                             label = stringResource(Res.string.apk_inspect_coachmark_dismiss),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
-                            contentColorOverride = MaterialTheme.colorScheme.onPrimary,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     }
                 }

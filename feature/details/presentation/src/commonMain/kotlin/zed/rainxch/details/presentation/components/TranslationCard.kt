@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -227,36 +227,36 @@ private fun ActionRow(
 ) {
     when {
         state.isTranslating -> {
-            GhsButton(
+            KomiButton(
                 onClick = onCancel,
                 label = stringResource(Res.string.translation_card_cancel),
-                variant = GhsButtonVariant.Outline,
+                variant = KomiButtonVariant.Outline,
                 loading = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
 
         state.translatedText != null -> {
-            GhsButton(
+            KomiButton(
                 onClick = onToggle,
                 label = if (state.isShowingTranslation) {
                     stringResource(Res.string.translation_card_show_original)
                 } else {
                     stringResource(Res.string.translation_card_show_translation)
                 },
-                variant = GhsButtonVariant.Outline,
+                variant = KomiButtonVariant.Outline,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
 
         else -> {
-            GhsButton(
+            KomiButton(
                 onClick = { onTranslate(effectiveTargetCode) },
                 label = stringResource(
                     Res.string.translation_card_translate_to,
                     effectiveTargetName,
                 ),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 leadingIcon = Icons.Outlined.Translate,
                 modifier = Modifier.fillMaxWidth(),
             )

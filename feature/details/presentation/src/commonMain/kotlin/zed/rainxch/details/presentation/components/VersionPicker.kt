@@ -40,9 +40,9 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
 import zed.rainxch.core.domain.model.account.github.preReleaseLabel
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.latest_badge
@@ -65,6 +65,7 @@ fun VersionPicker(
         derivedStateOf { filteredReleases.isNotEmpty() }
     }
 
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -81,11 +82,11 @@ fun VersionPicker(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
+                .clip(rowShape)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
-                    shape = Radii.row,
+                    shape = rowShape,
                 )
                 .background(MaterialTheme.colorScheme.surface)
                 .clickable(enabled = isPickerEnabled) {
@@ -129,7 +130,10 @@ fun VersionPicker(
     }
 
     if (isPickerVisible) {
-        GhsBottomSheet(onDismissRequest = { onAction(DetailsAction.ToggleVersionPicker) }) {
+        KomiSheet(
+            onDismiss = { onAction(DetailsAction.ToggleVersionPicker) },
+            placement = KomiSheetPlacement.Bottom,
+        ) {
             Text(
                 text = stringResource(Res.string.versions_title),
                 style = MaterialTheme.typography.titleLarge.copy(
@@ -139,7 +143,6 @@ fun VersionPicker(
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(vertical = 6.dp),
             )
-            Squiggle()
             Spacer(Modifier.size(8.dp))
             if (filteredReleases.isEmpty()) {
                 Text(

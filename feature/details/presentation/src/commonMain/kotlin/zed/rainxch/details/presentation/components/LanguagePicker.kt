@@ -24,11 +24,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,7 +73,7 @@ fun LanguagePicker(
             }
         }
 
-    GhsBottomSheet(onDismissRequest = onDismiss) {
+    KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(Res.string.translate_to),
@@ -82,15 +81,13 @@ fun LanguagePicker(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(vertical = 6.dp),
             )
-            Squiggle()
             Spacer(Modifier.height(8.dp))
 
-            GhsTextField(
+            KomiTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = stringResource(Res.string.search_language),
                 leadingIcon = Icons.Default.Search,
-                singleLine = true,
                 modifier =
                     Modifier
                         .fillMaxWidth()

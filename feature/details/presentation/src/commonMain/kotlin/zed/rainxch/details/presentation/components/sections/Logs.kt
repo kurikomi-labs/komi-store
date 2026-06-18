@@ -11,12 +11,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.geistMono
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.model.LogResult
 import zed.rainxch.details.presentation.utils.asText
@@ -39,7 +38,6 @@ fun LazyListScope.logs(state: DetailsState) {
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Squiggle()
         }
     }
 
@@ -51,7 +49,7 @@ fun LazyListScope.logs(state: DetailsState) {
         Text(
             text = "> ${log.result.asText()}: ${log.assetName}",
             style = MaterialTheme.typography.labelSmall.copy(
-                fontFamily = geistMono,
+                fontFamily = FontFamily.Monospace,
                 fontSize = 11.sp,
             ),
             color = if (log.result is LogResult.Error) {

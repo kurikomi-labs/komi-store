@@ -21,9 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import androidx.compose.foundation.shape.RoundedCornerShape
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.GithubStoreButton
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.loading_releases
 import zed.rainxch.githubstore.core.presentation.res.no_releases_published
@@ -43,7 +44,10 @@ fun ReleasesStatusCard(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(modifier = modifier.fillMaxWidth(), shape = Radii.row) {
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
+    ) {
         Column(
             modifier =
                 Modifier
@@ -72,8 +76,8 @@ fun ReleasesStatusCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(4.dp))
-                    GithubStoreButton(
-                        text = stringResource(Res.string.retry),
+                    KomiButton(
+                        label = stringResource(Res.string.retry),
                         onClick = onRetry,
                     )
                 }

@@ -11,11 +11,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Update
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -200,51 +205,58 @@ fun LazyListScope.header(
                     }
                 }
 
-            GhsDropdownMenu(
+            DropdownMenu(
                 expanded = state.isInstallDropdownExpanded,
                 onDismissRequest = {
                     onAction(DetailsAction.OnToggleInstallDropdown)
                 },
                 offset = DpOffset(x = 0.dp, y = 20.dp),
             ) {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.open_in_obtainium),
+                InstallOptionItem(
+                    title = stringResource(Res.string.open_in_obtainium),
                     subtitle = stringResource(Res.string.obtainium_description),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Update,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
+                    icon = Icons.Default.Update,
                     onClick = { onAction(DetailsAction.OpenInObtainium) },
                 )
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.inspect_with_appmanager),
+                InstallOptionItem(
+                    title = stringResource(Res.string.inspect_with_appmanager),
                     subtitle = stringResource(Res.string.appmanager_description),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Security,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
+                    icon = Icons.Default.Security,
                     onClick = { onAction(DetailsAction.OpenInAppManager) },
                 )
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.open_with_external_installer),
+                InstallOptionItem(
+                    title = stringResource(Res.string.open_with_external_installer),
                     subtitle = stringResource(Res.string.external_installer_description),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
+                    icon = Icons.AutoMirrored.Filled.OpenInNew,
                     onClick = { onAction(DetailsAction.InstallWithExternalApp) },
                 )
             }
         }
     }
     }
+}
+
+@Composable
+private fun InstallOptionItem(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Column {
+                Text(text = title)
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        leadingIcon = {
+            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
+        },
+        onClick = onClick,
+    )
 }

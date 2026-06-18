@@ -54,7 +54,6 @@ import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransforme
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.utils.splitMarkdownIntoChunks
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.math.abs
@@ -98,7 +97,6 @@ fun LazyListScope.about(
                     )
                 }
             }
-            Squiggle()
         }
         Spacer(Modifier.height(8.dp))
     }

@@ -7,8 +7,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
-import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.isDesktop
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -36,11 +35,10 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import kotlinx.collections.immutable.toImmutableList
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -89,14 +87,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.installation.InstallSource
-import zed.rainxch.core.presentation.components.FloatingPill
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.contentWidthCap
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.isPullToRefreshSupported
@@ -280,7 +278,7 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
             },
-            shape = WonkySquircleShape.Dialog,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
                 Text(
                     text = stringResource(Res.string.downgrade_requires_uninstall),
@@ -300,24 +298,24 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
                         viewModel.onAction(DetailsAction.UninstallApp)
                     },
                     label = stringResource(Res.string.uninstall_first),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
             dismissButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
                     },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
         )
@@ -328,7 +326,7 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissSigningKeyWarning)
             },
-            shape = WonkySquircleShape.Dialog,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
                 Text(
                     text = stringResource(Res.string.signing_key_changed_title),
@@ -348,23 +346,23 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnOverrideSigningKeyWarning)
                     },
                     label = stringResource(Res.string.install_anyway),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
             dismissButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissSigningKeyWarning)
                     },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
         )
@@ -376,7 +374,7 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUninstallConfirmation)
             },
-            shape = WonkySquircleShape.Dialog,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
                 Text(
                     text = stringResource(Res.string.confirm_uninstall_title),
@@ -391,23 +389,23 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnConfirmUninstall)
                     },
                     label = stringResource(Res.string.uninstall),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
             dismissButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissUninstallConfirmation)
                     },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
         )
@@ -419,7 +417,7 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUnlinkConfirmation)
             },
-            shape = WonkySquircleShape.Dialog,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
                 Text(
                     text = stringResource(Res.string.details_unlink_external_app_dialog_title),
@@ -434,23 +432,23 @@ fun DetailsRoot(
                 )
             },
             confirmButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnConfirmUnlinkExternalApp)
                     },
                     label = stringResource(Res.string.details_unlink_external_app_dialog_confirm),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
             dismissButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OnDismissUnlinkConfirmation)
                     },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
         )
@@ -461,7 +459,7 @@ fun DetailsRoot(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.DismissExternalInstallerPrompt)
             },
-            shape = WonkySquircleShape.Dialog,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
                 Text(
                     text = stringResource(Res.string.install_permission_unavailable),
@@ -474,23 +472,23 @@ fun DetailsRoot(
                 Text(text = stringResource(Res.string.install_permission_blocked_message))
             },
             confirmButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.OpenWithExternalInstaller)
                     },
                     label = stringResource(Res.string.open_with_external_installer),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
             dismissButton = {
-                GhsButton(
+                KomiButton(
                     onClick = {
                         viewModel.onAction(DetailsAction.DismissExternalInstallerPrompt)
                     },
                     label = stringResource(Res.string.dismiss),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             },
         )
@@ -557,7 +555,7 @@ fun DetailsScreen(
             val contentWidthDp = contentWidthCap()
             val pullEnabled = remember { isPullToRefreshSupported() }
 
-            val isDesktop = remember { getPlatform() != Platform.ANDROID }
+            val isDesktop = remember { isDesktop() }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -749,16 +747,11 @@ private fun DetailsTopbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        FloatingPill(
+        KomiIconButton(
+            icon = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(Res.string.navigate_back),
             onClick = { onAction(DetailsAction.OnNavigateBackClick) },
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.navigate_back),
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(20.dp),
-            )
-        }
+        )
         if (state.repository != null) {
             Row(
                 modifier = Modifier
@@ -806,7 +799,6 @@ private fun DetailsOverflowMenu(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
 ) {
-    var menuOpen by remember { mutableStateOf(false) }
     val cooldownUntilMs = state.refreshCooldownUntilEpochMs
     var nowMs by remember { mutableLongStateOf(Clock.System.now().toEpochMilliseconds()) }
 
@@ -825,122 +817,94 @@ private fun DetailsOverflowMenu(
     val cooldownActive = cooldownSeconds > 0
     val refreshDisabled = cooldownActive || state.isRefreshing
 
-    Box {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .clickable { menuOpen = true }
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = stringResource(Res.string.details_refresh_more_options),
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-        GhsDropdownMenu(
-            expanded = menuOpen,
-            onDismissRequest = { menuOpen = false },
-        ) {
-            GhsDropdownMenuItem(
-                text = stringResource(
+    val entries = buildList {
+        add(
+            KomiMenuItem(
+                id = "star",
+                label = stringResource(
                     if (state.isStarred) Res.string.repository_starred
                     else Res.string.repository_not_starred,
                 ),
-                leadingIcon = {
-                    Icon(
-                        imageVector = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                },
-                onClick = {
-                    menuOpen = false
-                    onAction(DetailsAction.OnToggleStar)
-                },
-            )
-            GhsDropdownMenuItem(
-                text = stringResource(
+                icon = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+            ),
+        )
+        add(
+            KomiMenuItem(
+                id = "favourite",
+                label = stringResource(
                     if (state.isFavourite) Res.string.remove_from_favourites
                     else Res.string.add_to_favourites,
                 ),
-                leadingIcon = {
-                    Icon(
-                        imageVector = if (state.isFavourite) {
-                            Icons.Default.Favorite
-                        } else {
-                            Icons.Default.FavoriteBorder
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                },
-                onClick = {
-                    menuOpen = false
-                    onAction(DetailsAction.OnToggleFavorite)
-                },
+                icon = if (state.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            ),
+        )
+        if (state.repository?.htmlUrl != null) {
+            add(
+                KomiMenuItem(
+                    id = "share",
+                    label = stringResource(Res.string.share_repository),
+                    icon = Icons.Default.Share,
+                ),
             )
-            state.repository?.htmlUrl?.let {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.share_repository),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    },
-                    onClick = {
-                        menuOpen = false
-                        onAction(DetailsAction.OnShareClick)
-                    },
-                )
-            }
-            GhsDropdownMenuItem(
-                enabled = !refreshDisabled,
-                text = if (cooldownActive) {
+        }
+        add(
+            KomiMenuItem(
+                id = "refresh",
+                label = if (cooldownActive) {
                     stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
                 } else {
                     stringResource(Res.string.details_refresh)
                 },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                },
-                onClick = {
-                    menuOpen = false
-                    onAction(DetailsAction.Refresh)
-                },
+                icon = Icons.Default.Refresh,
+                enabled = !refreshDisabled,
+            ),
+        )
+        if (state.installedApp?.installSource == InstallSource.MANUAL) {
+            add(
+                KomiMenuItem(
+                    id = "unlink",
+                    label = stringResource(Res.string.details_unlink_external_app_menu),
+                    icon = Icons.Default.LinkOff,
+                ),
             )
-            if (state.installedApp?.installSource == InstallSource.MANUAL) {
-                GhsDropdownMenuItem(
-                    text = stringResource(Res.string.details_unlink_external_app_menu),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.LinkOff,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    },
-                    onClick = {
-                        menuOpen = false
-                        onAction(DetailsAction.OnUnlinkExternalApp)
-                    },
+        }
+    }.toImmutableList()
+
+    val moreOptionsCd = stringResource(Res.string.details_refresh_more_options)
+    KomiDropdown(
+        entries = entries,
+        onSelect = { item ->
+            when (item.id) {
+                "star" -> onAction(DetailsAction.OnToggleStar)
+                "favourite" -> onAction(DetailsAction.OnToggleFavorite)
+                "share" -> onAction(DetailsAction.OnShareClick)
+                "refresh" -> onAction(DetailsAction.Refresh)
+                "unlink" -> onAction(DetailsAction.OnUnlinkExternalApp)
+            }
+        },
+        trigger = { onClick ->
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .clickable(onClick = onClick)
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = moreOptionsCd,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(18.dp),
                 )
             }
-        }
-    }
+        },
+    )
 }
 
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         DetailsScreen(
             state =
                 DetailsState(
@@ -963,29 +927,29 @@ private fun RepoPagesActionRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         onOpenIssues?.let { open ->
-            GhsButton(
+            KomiButton(
                 onClick = open,
                 label = stringResource(Res.string.repo_pages_details_issues_button),
-                variant = GhsButtonVariant.Tonal,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Tonal,
+                size = KomiButtonSize.Sm,
                 modifier = Modifier.weight(1f),
             )
         }
         onOpenPulls?.let { open ->
-            GhsButton(
+            KomiButton(
                 onClick = open,
                 label = stringResource(Res.string.repo_pages_details_pulls_button),
-                variant = GhsButtonVariant.Tonal,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Tonal,
+                size = KomiButtonSize.Sm,
                 modifier = Modifier.weight(1f),
             )
         }
         onOpenSecurity?.let { open ->
-            GhsButton(
+            KomiButton(
                 onClick = open,
                 label = stringResource(Res.string.repo_pages_details_security_button),
-                variant = GhsButtonVariant.Tonal,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Tonal,
+                size = KomiButtonSize.Sm,
                 modifier = Modifier.weight(1f),
             )
         }

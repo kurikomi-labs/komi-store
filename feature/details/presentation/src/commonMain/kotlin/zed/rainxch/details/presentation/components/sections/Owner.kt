@@ -31,18 +31,9 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubUserProfile
-import zed.rainxch.core.presentation.theme.shapes.CornerRadii
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.*
-
-private val DeveloperCardShape = WonkySquircleShape(
-    topStart = CornerRadii(26.dp, 20.dp),
-    topEnd = CornerRadii(20.dp, 26.dp),
-    bottomEnd = CornerRadii(26.dp, 20.dp),
-    bottomStart = CornerRadii(20.dp, 26.dp),
-)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.author(
@@ -50,6 +41,7 @@ fun LazyListScope.author(
     onAction: (DetailsAction) -> Unit,
 ) {
     item {
+        val developerCardShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
         Spacer(Modifier.height(20.dp))
 
         Column(
@@ -66,17 +58,16 @@ fun LazyListScope.author(
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Squiggle()
         }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(DeveloperCardShape)
+                .clip(developerCardShape)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
-                    shape = DeveloperCardShape,
+                    shape = developerCardShape,
                 )
                 .background(MaterialTheme.colorScheme.surface)
                 .clickable(enabled = author?.login != null) {

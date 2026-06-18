@@ -33,10 +33,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -62,8 +62,8 @@ import androidx.compose.ui.draw.clip
 import zed.rainxch.core.domain.model.apk.ApkInspection
 import zed.rainxch.core.domain.model.apk.ApkPermission
 import zed.rainxch.core.domain.model.apk.ProtectionLevel
-import zed.rainxch.core.presentation.theme.LocalStatusColors
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_compatibility
 import zed.rainxch.githubstore.core.presentation.res.apk_inspect_components
@@ -101,9 +101,9 @@ fun ApkInspectSheet(
     isLoading: Boolean,
     onDismiss: () -> Unit,
 ) {
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         when {
             isLoading -> LoadingState()
@@ -533,12 +533,13 @@ private fun InspectSection(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     content: @Composable () -> Unit,
 ) {
+    val personality = LocalPersonality.current
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(personality.shape.cornerSmall))
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
                 contentAlignment = Alignment.Center,
             ) {
@@ -560,7 +561,7 @@ private fun InspectSection(
         }
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = Radii.row,
+            shape = RoundedCornerShape(personality.shape.corner),
             color = MaterialTheme.colorScheme.surfaceContainerLow,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
@@ -607,7 +608,7 @@ private fun InspectRow(label: String, value: String, monospace: Boolean = false)
 @Composable
 private fun DangerNote(text: String) {
     Surface(
-        shape = Radii.chip,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
         color = MaterialTheme.colorScheme.errorContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.35f)),
     ) {

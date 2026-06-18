@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +14,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 
 @Composable
@@ -31,10 +32,11 @@ fun StatItem(
     stat: Long,
     modifier: Modifier = Modifier,
 ) {
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier
-            .clip(Radii.row)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
+            .clip(rowShape)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = rowShape)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
@@ -66,10 +68,11 @@ fun TextStatItem(
     value: String,
     modifier: Modifier = Modifier,
 ) {
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier
-            .clip(Radii.row)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
+            .clip(rowShape)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = rowShape)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {

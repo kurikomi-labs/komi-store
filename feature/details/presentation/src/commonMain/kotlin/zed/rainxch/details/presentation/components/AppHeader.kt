@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.CallSplit
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.AccountTree
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,28 +56,23 @@ import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.account.github.GithubUserProfile
 import zed.rainxch.core.domain.model.installation.InstalledApp
-import zed.rainxch.core.presentation.color.avatarColorFor
-import zed.rainxch.core.presentation.components.ForkBadge
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.OfficialBadge
-import zed.rainxch.core.presentation.components.PlatformChip
-import zed.rainxch.core.presentation.theme.shapes.CornerRadii
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
+import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.forked_repository
 import zed.rainxch.githubstore.core.presentation.res.installed
 import zed.rainxch.githubstore.core.presentation.res.no_description
 import zed.rainxch.githubstore.core.presentation.res.pending_install
+import zed.rainxch.githubstore.core.presentation.res.self_owned_badge
 import zed.rainxch.githubstore.core.presentation.res.update_available
-
-private val HeaderShape = WonkySquircleShape(
-    topStart = CornerRadii(30.dp, 24.dp),
-    topEnd = CornerRadii(24.dp, 30.dp),
-    bottomEnd = CornerRadii(28.dp, 22.dp),
-    bottomStart = CornerRadii(22.dp, 28.dp),
-)
 
 private fun Color.normalizedForStripe(isDark: Boolean): Color {
     val r = (red * 255f).toInt().coerceIn(0, 255)
@@ -112,7 +109,8 @@ fun AppHeader(
     val isDark = isSystemInDarkTheme()
     val surface = MaterialTheme.colorScheme.surface
     val avatarUrl = author?.avatarUrl ?: repository.owner.avatarUrl
-    val rawAccent = avatarColorFor(avatarUrl, MaterialTheme.colorScheme.primary)
+    val rawAccent = MaterialTheme.colorScheme.primary
+    val headerShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     val normalizedAccent = remember(rawAccent, isDark) { rawAccent.normalizedForStripe(isDark) }
     val tintFraction = if (isDark) 0.10f else 0.06f
     val animatedAccent by animateColorAsState(
@@ -156,9 +154,9 @@ fun AppHeader(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(HeaderShape)
+            .clip(headerShape)
             .background(animatedSurface)
-            .border(1.5.dp, borderColor, HeaderShape),
+            .border(1.5.dp, borderColor, headerShape),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(
@@ -221,7 +219,14 @@ fun AppHeader(
                         .weight(1f, fill = false)
                         .clickable(onClick = onOwnerClick),
                 )
-                if (isCurrentUserOwner) OfficialBadge()
+                if (isCurrentUserOwner) {
+                    Icon(
+                        imageVector = Icons.Filled.Verified,
+                        contentDescription = stringResource(Res.string.self_owned_badge),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
             }
             Row(
                 modifier = Modifier
@@ -247,7 +252,14 @@ fun AppHeader(
                     ),
                     modifier = Modifier.weight(1f, fill = false),
                 )
-                if (repository.isFork) ForkBadge()
+                if (repository.isFork) {
+                    KomiChip(
+                        label = stringResource(Res.string.forked_repository),
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingIcon = Icons.AutoMirrored.Outlined.CallSplit,
+                    )
+                }
             }
             Spacer(Modifier.height(10.dp))
             Row(
@@ -382,8 +394,22 @@ fun AppHeader(
                     modifier = Modifier.padding(horizontal = 20.dp),
                 ) {
                     supportedPlatforms.forEach { platform ->
-                        PlatformChip(
-                            platform = platform,
+                        KomiChip(
+                            label = platform.toLabel(),
+                            kind = KomiChipKind.Info,
+                            size = KomiChipSize.Sm,
+                            leadingContent = {
+                                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    platform.toIcons().forEach { icon ->
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                            tint = MaterialTheme.colorScheme.onSurface,
+                                        )
+                                    }
+                                }
+                            },
                             onClick = onPlatformClick?.let { handler -> { handler(platform) } },
                         )
                     }
@@ -409,7 +435,6 @@ fun AppHeader(
                 GitHubStoreImage(
                     imageModel = { avatarUrl },
                     modifier = Modifier.size(92.dp).clip(CircleShape),
-                    extractDominantFor = avatarUrl,
                 )
             }
             if (downloadStage != DownloadStage.IDLE) {

@@ -48,8 +48,7 @@ import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransforme
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.*
 
 fun LazyListScope.whatsNew(
@@ -78,7 +77,6 @@ fun LazyListScope.whatsNew(
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Squiggle()
         }
 
         Spacer(Modifier.height(10.dp))
@@ -88,7 +86,7 @@ fun LazyListScope.whatsNew(
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    shape = Radii.row,
+                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                 )
                 .padding(horizontal = 14.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),

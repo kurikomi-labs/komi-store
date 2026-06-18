@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,13 +41,12 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
-import zed.rainxch.core.presentation.components.buttons.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -158,7 +158,6 @@ private fun WhatsNewScreen(
                             ),
                             color = MaterialTheme.colorScheme.onBackground,
                         )
-                        Squiggle()
                     }
                 }
 
@@ -174,15 +173,16 @@ private fun WhatsNewScreen(
                 }
 
                 itemsIndexed(items = state.releases, key = { _, item -> item.id }) { index, release ->
+                    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(Radii.row)
+                                .clip(rowShape)
                                 .border(
                                     width = 1.dp,
                                     color = MaterialTheme.colorScheme.outline,
-                                    shape = Radii.row,
+                                    shape = rowShape,
                                 )
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(horizontal = 14.dp, vertical = 10.dp),

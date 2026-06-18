@@ -30,9 +30,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,8 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
-import zed.rainxch.core.presentation.theme.tokens.Radii
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -152,7 +151,7 @@ fun LazyListScope.releaseChannel(
                             containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f),
                             contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         ),
-                    shape = Radii.row,
+                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
@@ -191,7 +190,7 @@ fun LazyListScope.releaseChannel(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                             contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
-                    shape = Radii.row,
+                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
@@ -294,7 +293,7 @@ private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
     ) {
         Surface(
-            shape = WonkySquircleShape.Toast,
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             color = MaterialTheme.colorScheme.primary,
             shadowElevation = 6.dp,
             modifier = Modifier.width(280.dp),
@@ -329,12 +328,11 @@ private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    GhsButton(
+                    KomiButton(
                         onClick = onDismiss,
                         label = stringResource(Res.string.channel_chip_coachmark_dismiss),
-                        variant = GhsButtonVariant.Text,
-                        size = GhsButtonSize.Sm,
-                        contentColorOverride = MaterialTheme.colorScheme.onPrimary,
+                        variant = KomiButtonVariant.Text,
+                        size = KomiButtonSize.Sm,
                     )
                 }
             }
