@@ -46,8 +46,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -277,7 +277,7 @@ private fun FavouritesSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
 ) {
-    GhsTextField(
+    KomiTextField(
         value = query,
         onValueChange = onQueryChange,
         modifier =
@@ -286,7 +286,7 @@ private fun FavouritesSearchBar(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         placeholder = stringResource(Res.string.search_repositories_hint),
         leadingIcon = Icons.Filled.Search,
-        trailingIcon = {
+        trailing = {
             if (query.isNotEmpty()) {
                 IconButton(onClick = { onQueryChange("") }) {
                     Icon(
@@ -296,14 +296,13 @@ private fun FavouritesSearchBar(
                 }
             }
         },
-        singleLine = true,
     )
 }
 
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         FavouritesScreen(
             state = FavouritesState(),
             onAction = {},

@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.NewReleases
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,13 +35,15 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.OfficialBadge
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.favourites.presentation.model.FavouriteRepository
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.remove_from_favourites
+import zed.rainxch.githubstore.core.presentation.res.self_owned_badge
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -50,7 +54,7 @@ fun FavouriteRepositoryItem(
     onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExpressiveCard(
+    KomiSurface(
         modifier = modifier,
         onClick = onItemClick,
     ) {
@@ -60,7 +64,7 @@ fun FavouriteRepositoryItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .clickable(onClick = onDevProfileClick)
                     .padding(vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -83,7 +87,12 @@ fun FavouriteRepositoryItem(
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 if (favouriteRepository.isCurrentUserOwner) {
-                    OfficialBadge()
+                    Icon(
+                        imageVector = Icons.Filled.Verified,
+                        contentDescription = stringResource(Res.string.self_owned_badge),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
                 }
             }
 
@@ -129,9 +138,11 @@ fun FavouriteRepositoryItem(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 favouriteRepository.primaryLanguage?.let { language ->
-                    StatChip(
+                    KomiChip(
                         label = language,
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Default.Code,
                                 contentDescription = null,
@@ -139,15 +150,14 @@ fun FavouriteRepositoryItem(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         },
-                        background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        border = MaterialTheme.colorScheme.outline,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 favouriteRepository.latestRelease?.let { release ->
-                    StatChip(
+                    KomiChip(
                         label = release,
-                        leading = {
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
                             Icon(
                                 imageVector = Icons.Default.NewReleases,
                                 contentDescription = null,
@@ -155,14 +165,13 @@ fun FavouriteRepositoryItem(
                                 tint = MaterialTheme.colorScheme.primary,
                             )
                         },
-                        background = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                        border = MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
-                        contentColor = MaterialTheme.colorScheme.primary,
                     )
                 }
-                StatChip(
+                KomiChip(
                     label = favouriteRepository.addedAtFormatter,
-                    leading = {
+                    kind = KomiChipKind.Info,
+                    size = KomiChipSize.Sm,
+                    leadingContent = {
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = null,
@@ -170,9 +179,6 @@ fun FavouriteRepositoryItem(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
-                    background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = MaterialTheme.colorScheme.outline,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

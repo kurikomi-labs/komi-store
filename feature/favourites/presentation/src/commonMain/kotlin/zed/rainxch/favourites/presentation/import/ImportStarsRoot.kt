@@ -39,10 +39,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.clear_search
@@ -150,12 +150,11 @@ private fun UsernameInputPanel(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        GhsTextField(
+        KomiTextField(
             value = state.usernameQuery,
             onValueChange = { onAction(ImportStarsAction.OnUsernameQueryChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.import_stars_hint),
-            singleLine = true,
         )
 
         if (state.errorMessage != null) {
@@ -166,11 +165,11 @@ private fun UsernameInputPanel(
             )
         }
 
-        GhsButton(
+        KomiButton(
             onClick = { onAction(ImportStarsAction.OnImportClick) },
             label = stringResource(Res.string.import_stars_button),
-            variant = GhsButtonVariant.Primary,
-            size = GhsButtonSize.Md,
+            variant = KomiButtonVariant.Primary,
+            size = KomiButtonSize.Md,
             modifier = Modifier.fillMaxWidth(),
             loading = state.isImporting,
             enabled = state.usernameQuery.trim().isNotEmpty() && !state.isImporting,
@@ -203,22 +202,22 @@ private fun ResultsPanel(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
             )
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(ImportStarsAction.OnResetImport) },
                 label = stringResource(Res.string.import_stars_try_another),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
 
         Spacer(Modifier.height(8.dp))
-        GhsTextField(
+        KomiTextField(
             value = state.searchQuery,
             onValueChange = { onAction(ImportStarsAction.OnSearchChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.import_stars_search_hint),
             leadingIcon = Icons.Filled.Search,
-            trailingIcon = {
+            trailing = {
                 if (state.searchQuery.isNotEmpty()) {
                     IconButton(
                         onClick = { onAction(ImportStarsAction.OnClearSearch) },
@@ -233,16 +232,15 @@ private fun ResultsPanel(
                     }
                 }
             },
-            singleLine = true,
         )
 
         if (state.pendingCount > 0) {
             Spacer(Modifier.height(12.dp))
-            GhsButton(
+            KomiButton(
                 onClick = { onAction(ImportStarsAction.OnAddAll) },
                 label = stringResource(Res.string.import_stars_add_all, state.pendingCount),
-                variant = GhsButtonVariant.Tonal,
-                size = GhsButtonSize.Md,
+                variant = KomiButtonVariant.Tonal,
+                size = KomiButtonSize.Md,
                 modifier = Modifier.fillMaxWidth(),
                 loading = state.isBulkAdding,
                 enabled = !state.isBulkAdding,
