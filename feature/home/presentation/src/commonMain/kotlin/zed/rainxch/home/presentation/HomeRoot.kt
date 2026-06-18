@@ -33,9 +33,10 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.section.SectionHeader
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -49,8 +50,8 @@ import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
 import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.components.HomeTopBar
-import zed.rainxch.core.presentation.components.RepoRankChip
-import zed.rainxch.core.presentation.components.RepositoryCard
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
+import zed.rainxch.core.presentation.components.cards.KomiRepoCardFeed
 import zed.rainxch.home.presentation.components.HotCardItem
 import zed.rainxch.home.presentation.components.LeadCard
 import zed.rainxch.home.presentation.components.RepositoryActionsSheet
@@ -60,9 +61,6 @@ import zed.rainxch.home.presentation.model.toDiscoveryUi
 
 @Composable
 fun HomeRoot(
-    onNavigateToSettings: () -> Unit,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToApps: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
     onNavigateToDeveloperProfile: (username: String) -> Unit,
     onNavigateToCategoryList: (HomeCategory) -> Unit,
@@ -86,9 +84,6 @@ fun HomeRoot(
         snackbarHost = snackbarHost,
         onAction = { action ->
             when (action) {
-                HomeAction.OnSearchClick -> onNavigateToSearch()
-                HomeAction.OnSettingsClick -> onNavigateToSettings()
-                HomeAction.OnAppsClick -> onNavigateToApps()
                 HomeAction.OnSeeAllHot -> onNavigateToCategoryList(HomeCategory.HOT_RELEASE)
                 HomeAction.OnSeeAllTrending -> onNavigateToCategoryList(HomeCategory.TRENDING)
                 HomeAction.OnSeeAllPopular -> onNavigateToCategoryList(HomeCategory.MOST_POPULAR)
@@ -163,10 +158,10 @@ private fun HomeScreen(
                             color = MaterialTheme.colorScheme.onSurface,
                         )
 
-                        GhsButton(
+                        KomiButton(
                             onClick = { onAction(HomeAction.OnRetry) },
                             label = stringResource(Res.string.home_retry),
-                            variant = GhsButtonVariant.Outline,
+                            variant = KomiButtonVariant.Outline,
                         )
                     }
                 }
@@ -202,10 +197,9 @@ private fun HomeScreen(
 
                         if (state.hot.isNotEmpty()) {
                             item(key = "hot_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_hot_releases),
-                                    subCount = state.hot.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllHot) },
+                                KomiText(
+                                    text = stringResource(Res.string.home_section_hot_releases),
+                                    role = KomiTextRole.Title,
                                 )
                             }
 
@@ -234,10 +228,9 @@ private fun HomeScreen(
 
                         if (state.trending.isNotEmpty()) {
                             item(key = "trending_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_trending_now),
-                                    subCount = state.trending.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllTrending) },
+                                KomiText(
+                                    text = stringResource(Res.string.home_section_trending_now),
+                                    role = KomiTextRole.Title,
                                 )
                             }
 
@@ -245,12 +238,13 @@ private fun HomeScreen(
                                 items = state.trending,
                                 key = { card -> "trending_${card.id}" },
                             ) { card ->
-                                RepositoryCard(
+                                DiscoveryRepoCard(
                                     discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
                                     onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    onLongPress = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    feed = KomiRepoCardFeed.Trending,
                                     modifier = Modifier.animateItem(),
                                 )
                             }
@@ -262,10 +256,9 @@ private fun HomeScreen(
 
                         if (state.popular.isNotEmpty()) {
                             item(key = "popular_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_most_popular),
-                                    subCount = state.popular.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllPopular) },
+                                KomiText(
+                                    text = stringResource(Res.string.home_section_most_popular),
+                                    role = KomiTextRole.Title,
                                 )
                             }
 
@@ -273,13 +266,14 @@ private fun HomeScreen(
                                 items = state.popular,
                                 key = { _, card -> "popular_${card.id}" },
                             ) { index, card ->
-                                RepositoryCard(
+                                DiscoveryRepoCard(
                                     discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
                                     onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
-                                    trailingBadge = { RepoRankChip(rank = index + 1) },
+                                    onLongPress = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    rank = index + 1,
+                                    feed = KomiRepoCardFeed.Popular,
                                     modifier = Modifier.animateItem(),
                                 )
                             }
@@ -291,20 +285,19 @@ private fun HomeScreen(
 
                         if (state.isUserSignedIn && state.starred.isNotEmpty()) {
                             item(key = "starred_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_from_your_stars),
-                                    subCount = state.starred.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllStarred) },
+                                KomiText(
+                                    text = stringResource(Res.string.home_section_from_your_stars),
+                                    role = KomiTextRole.Title,
                                 )
                             }
 
                             items(items = state.starred, key = { "starred_${it.id}" }) { card ->
-                                RepositoryCard(
+                                DiscoveryRepoCard(
                                     discoveryRepositoryUi = card.toDiscoveryUi(),
                                     onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
                                     onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
                                     onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                                    onLongPress = { onAction(HomeAction.OnRepoLongClick(card.id)) },
                                     modifier = Modifier.animateItem(),
                                 )
                             }

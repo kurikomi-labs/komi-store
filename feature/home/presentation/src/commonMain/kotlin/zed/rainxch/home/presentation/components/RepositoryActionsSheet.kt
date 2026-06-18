@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.hide_repository
@@ -40,7 +40,6 @@ import zed.rainxch.githubstore.core.presentation.res.mark_as_viewed
 import zed.rainxch.githubstore.core.presentation.res.open_on_github
 import zed.rainxch.githubstore.core.presentation.res.share_repository
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepositoryActionsSheet(
     repository: GithubRepoSummaryUi,
@@ -51,7 +50,7 @@ fun RepositoryActionsSheet(
     onToggleSeen: () -> Unit,
     onHide: () -> Unit,
 ) {
-    GhsBottomSheet(onDismissRequest = onDismiss) {
+    KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,

@@ -25,31 +25,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.shapes.CornerRadii
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.home_view_all
 import zed.rainxch.githubstore.core.presentation.res.home_view_more
-
-private val SeeAllHotShape = WonkySquircleShape(
-    topStart = CornerRadii(24.dp, 18.dp),
-    topEnd = CornerRadii(18.dp, 24.dp),
-    bottomEnd = CornerRadii(24.dp, 18.dp),
-    bottomStart = CornerRadii(18.dp, 24.dp),
-)
 
 @Composable
 fun SeeAllHotTile(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val seeAllHotShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Box(
         modifier = modifier
             .size(width = 130.dp, height = 186.dp)
-            .clip(SeeAllHotShape)
+            .clip(seeAllHotShape)
             .background(MaterialTheme.colorScheme.surface)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = SeeAllHotShape)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = seeAllHotShape)
             .clickable(onClick = onClick),
     ) {
         Column(

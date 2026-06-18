@@ -8,12 +8,6 @@ sealed interface HomeAction {
 
     data object OnRetry : HomeAction
 
-    data object OnSearchClick : HomeAction
-
-    data object OnSettingsClick : HomeAction
-
-    data object OnAppsClick : HomeAction
-
     data object OnPlatformPopupOpen : HomeAction
 
     data object OnPlatformPopupDismiss : HomeAction

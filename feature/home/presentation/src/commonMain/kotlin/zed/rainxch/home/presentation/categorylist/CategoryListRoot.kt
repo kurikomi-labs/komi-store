@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,11 +39,10 @@ import zed.rainxch.githubstore.core.presentation.res.cd_back
 import zed.rainxch.githubstore.core.presentation.res.home_section_hot_releases
 import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
 import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
-import zed.rainxch.core.presentation.components.buttons.IconButton
-import zed.rainxch.core.presentation.components.RepoRankChip
-import zed.rainxch.core.presentation.components.RepositoryCard
+import androidx.compose.material3.IconButton
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
+import zed.rainxch.core.presentation.components.cards.KomiRepoCardFeed
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.model.toDiscoveryUi
 
@@ -116,15 +114,16 @@ fun CategoryListScreen(
                         items = state.cards,
                         key = { _, card -> card.id },
                     ) { index, card ->
-                        RepositoryCard(
+                        DiscoveryRepoCard(
                             discoveryRepositoryUi = card.toDiscoveryUi(),
                             onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
                             onShareClick = { },
                             onDeveloperClick = { },
-                            trailingBadge = if (state.category == HomeCategory.MOST_POPULAR) {
-                                { RepoRankChip(rank = index + 1) }
+                            rank = index + 1,
+                            feed = if (state.category == HomeCategory.MOST_POPULAR) {
+                                KomiRepoCardFeed.Popular
                             } else {
-                                null
+                                KomiRepoCardFeed.Plain
                             },
                         )
                     }
@@ -180,10 +179,6 @@ private fun CategoryListTopBar(category: HomeCategory, onBack: () -> Unit) {
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
             )
-
-            Spacer(Modifier.size(4.dp))
-
-            Squiggle()
         }
     }
 }

@@ -19,12 +19,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.installation.InstalledApp
-import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.installation.hasActualUpdate
 import zed.rainxch.core.domain.model.installation.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -136,7 +135,7 @@ class HomeViewModel(
                     return@launch
                 }
 
-                if (getPlatform() != Platform.ANDROID) {
+                if (isDesktop()) {
                     _events.send(HomeEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
                 }
             }
@@ -196,9 +195,6 @@ class HomeViewModel(
                 }
             }
 
-            HomeAction.OnSearchClick,
-            HomeAction.OnSettingsClick,
-            HomeAction.OnAppsClick,
             is HomeAction.OnRepoClick,
             is HomeAction.OnDeveloperClick,
             HomeAction.OnSeeAllHot,
