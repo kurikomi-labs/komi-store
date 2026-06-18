@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -50,11 +50,11 @@ fun SearchHistorySection(
                 fontWeight = FontWeight.Medium,
             )
 
-            GhsButton(
+            KomiButton(
                 onClick = onClearAll,
                 label = stringResource(Res.string.clear_all_history),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         }
 

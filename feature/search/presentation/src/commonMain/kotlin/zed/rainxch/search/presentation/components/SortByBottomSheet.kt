@@ -12,9 +12,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -39,11 +39,11 @@ fun SortByBottomSheet(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
         dismissButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onDismissRequest,
                 label = stringResource(Res.string.close),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
         title = {
@@ -59,17 +59,12 @@ fun SortByBottomSheet(
             ) {
                 SortByUi.entries.forEach { option ->
                     val isSelected = option == selectedSortBy
-                    GhsButton(
+                    KomiButton(
                         onClick = { onSortBySelected(option) },
                         label = stringResource(option.label()) + if (isSelected) "  ✓" else "",
-                        variant = GhsButtonVariant.Text,
-                        size = GhsButtonSize.Sm,
+                        variant = KomiButtonVariant.Text,
+                        size = KomiButtonSize.Sm,
                         modifier = Modifier.fillMaxWidth(),
-                        contentColorOverride = if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
                     )
                 }
 

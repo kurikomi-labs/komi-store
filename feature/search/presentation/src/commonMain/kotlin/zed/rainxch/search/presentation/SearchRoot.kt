@@ -23,9 +23,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -45,13 +42,10 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.TravelExplore
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -87,14 +81,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GithubStoreButton
-import zed.rainxch.core.presentation.components.RepositoryCard
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -457,8 +452,8 @@ fun SearchScreen(
 
                             Spacer(Modifier.height(8.dp))
 
-                            GithubStoreButton(
-                                text = stringResource(Res.string.retry),
+                            KomiButton(
+                                label = stringResource(Res.string.retry),
                                 onClick = {
                                     onAction(SearchAction.Retry)
                                 },
@@ -531,8 +526,8 @@ fun SearchScreen(
 
                             Spacer(Modifier.height(8.dp))
 
-                            GithubStoreButton(
-                                text = stringResource(Res.string.show_all_results),
+                            KomiButton(
+                                label = stringResource(Res.string.show_all_results),
                                 onClick = {
                                     onAction(SearchAction.OnDisableHideSeenForResults)
                                 },
@@ -570,7 +565,7 @@ fun SearchScreen(
                                 items = state.visibleRepos,
                                 key = { it.repository.id },
                             ) { discoveryRepository ->
-                                RepositoryCard(
+                                DiscoveryRepoCard(
                                     discoveryRepositoryUi = discoveryRepository,
                                     onClick = {
                                         onAction(SearchAction.OnRepositoryClick(discoveryRepository.repository))
@@ -638,7 +633,7 @@ private fun ClipboardBanner(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
-        shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = androidx.compose.foundation.BorderStroke(
             width = 1.dp,
@@ -728,7 +723,7 @@ private fun DetectedLinksSection(
                     .fillMaxWidth()
                     .padding(vertical = 3.dp),
                 onClick = { onOpenLink(link) },
-                shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
+                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 border = androidx.compose.foundation.BorderStroke(
                     width = 1.dp,
@@ -1015,19 +1010,19 @@ private fun ExploreFromGithubButton(
     ) {
         when (status) {
             SearchState.ExploreStatus.IDLE -> {
-                GhsButton(
+                KomiButton(
                     onClick = onExplore,
                     label = stringResource(Res.string.fetch_more_from_github),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     leadingIcon = Icons.Outlined.TravelExplore,
                 )
             }
 
             SearchState.ExploreStatus.LOADING -> {
-                GhsButton(
+                KomiButton(
                     onClick = {},
                     label = stringResource(Res.string.fetching_from_github),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     enabled = false,
                     loading = true,
                 )
@@ -1047,7 +1042,7 @@ private fun ExploreFromGithubButton(
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         SearchScreen(
             state = SearchState(),
             snackbarHost = SnackbarHostState(),

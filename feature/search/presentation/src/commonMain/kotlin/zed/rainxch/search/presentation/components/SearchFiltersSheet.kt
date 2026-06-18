@@ -27,7 +27,6 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,10 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.search_filters_apply
 import zed.rainxch.githubstore.core.presentation.res.search_filters_reset
@@ -70,10 +70,9 @@ fun SearchFiltersSheet(
     onReset: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -94,11 +93,11 @@ fun SearchFiltersSheet(
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
                 )
-                GhsButton(
+                KomiButton(
                     onClick = onReset,
                     label = stringResource(Res.string.search_filters_reset),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             }
 
@@ -152,11 +151,11 @@ fun SearchFiltersSheet(
 
             Spacer(Modifier.height(4.dp))
 
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.search_filters_apply),
-                variant = GhsButtonVariant.Primary,
-                size = GhsButtonSize.Lg,
+                variant = KomiButtonVariant.Primary,
+                size = KomiButtonSize.Lg,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
