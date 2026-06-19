@@ -32,7 +32,7 @@ import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.model.error.RateLimitException
@@ -63,7 +63,7 @@ class AppsViewModel(
     private val downloader: Downloader,
     private val installedAppsRepository: InstalledAppsRepository,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val shareManager: ShareManager,
     private val tweaksRepository: TweaksRepository,
     private val downloadOrchestrator: DownloadOrchestrator,

@@ -14,12 +14,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,9 +65,9 @@ fun ExternalImportRoot(
     viewModel: ExternalImportViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val scope = rememberCoroutineScope()
-    var confettiTrigger by remember { mutableStateOf(0) }
+    var confettiTrigger by remember { mutableIntStateOf(0) }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -74,22 +75,23 @@ fun ExternalImportRoot(
             is ExternalImportEvent.NavigateToDetails -> onNavigateToDetails(event.repoId)
             ExternalImportEvent.NavigateBackAndOpenManualLink -> onAddManually()
             is ExternalImportEvent.ShowError -> {
-                scope.launch { snackbarHostState.showSnackbar(event.message) }
+                scope.launch { toastState.danger(event.message) }
             }
+
             ExternalImportEvent.PlayConfetti -> confettiTrigger++
             is ExternalImportEvent.ShowUndoSnackbar -> {
 
-                snackbarHostState.currentSnackbarData?.dismiss()
+                toastState.toasts.clear()
                 scope.launch {
                     val undoLabel = getString(Res.string.external_import_undo_action)
-                    val result = snackbarHostState.showSnackbar(
+                    toastState.show(
                         message = event.message,
                         actionLabel = undoLabel,
-                        withDismissAction = true,
+                        dismissible = true,
+                        onAction = {
+                            viewModel.onAction(ExternalImportAction.OnUndoLast)
+                        },
                     )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onAction(ExternalImportAction.OnUndoLast)
-                    }
                 }
             }
         }
@@ -145,17 +147,7 @@ fun ExternalImportRoot(
                     },
                 )
             },
-            overlay = {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter,
-                ) {
-                    SnackbarHost(
-                        hostState = snackbarHostState,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                    )
-                }
-            },
+            toastState = toastState,
         ) { padding ->
             Box(modifier = Modifier.fillMaxSize().padding(padding)) {
                 when (state.phase) {
@@ -164,8 +156,8 @@ fun ExternalImportRoot(
                             phase = state.phase,
                             totalCandidates = state.totalCandidates,
                             canSkip = state.isSkipAvailable &&
-                                (state.phase == ImportPhase.Scanning ||
-                                    state.phase == ImportPhase.AutoImporting),
+                                    (state.phase == ImportPhase.Scanning ||
+                                            state.phase == ImportPhase.AutoImporting),
                             onSkip = {
                                 viewModel.onAction(ExternalImportAction.OnSkipLongScan)
                             },

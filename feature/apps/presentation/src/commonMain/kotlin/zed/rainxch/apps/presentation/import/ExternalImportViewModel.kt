@@ -24,7 +24,7 @@ import zed.rainxch.apps.presentation.import.model.CandidateUi
 import zed.rainxch.apps.presentation.import.model.ImportPhase
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
 import zed.rainxch.apps.presentation.import.model.SuggestionSource
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.DeviceApp
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -53,7 +53,7 @@ class ExternalImportViewModel(
     private val externalImportRepository: ExternalImportRepository,
     private val appsRepository: AppsRepository,
     private val installedAppsRepository: InstalledAppsRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
 ) : ViewModel() {
     private var candidatesByPackage: Map<String, ExternalAppCandidate> = emptyMap()

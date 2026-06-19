@@ -51,12 +51,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +93,7 @@ import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
@@ -101,7 +102,6 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
 import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -166,7 +166,7 @@ fun AppsRoot(
     viewModel: AppsViewModel = koinViewModel(),
     state: AppsState,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -189,13 +189,13 @@ fun AppsRoot(
 
             is AppsEvent.ShowError -> {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar(event.message)
+                    toastState.danger(event.message)
                 }
             }
 
             is AppsEvent.ShowSuccess -> {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar(event.message)
+                    toastState.success(event.message)
                 }
             }
 
@@ -222,7 +222,7 @@ fun AppsRoot(
                 }
             }
         },
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
     )
 }
 
@@ -230,10 +230,8 @@ fun AppsRoot(
 fun AppsScreen(
     state: AppsState,
     onAction: (AppsAction) -> Unit,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
 ) {
-    val bottomNavHeight = LocalBottomNavigationHeight.current
-
     KomiScaffold(
         topBar = {
             KomiTopBar(
@@ -370,32 +368,16 @@ fun AppsScreen(
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { onAction(AppsAction.OnAddByLinkClick) },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                    )
+            KomiIconButton(
+                onClick = {
+                    onAction(AppsAction.OnAddByLinkClick)
                 },
-                text = { Text(stringResource(Res.string.add_by_link)) },
-                modifier =
-                    Modifier
-                        .navigationBarsPadding()
-                        .padding(bottom = bottomNavHeight),
+                contentDescription = stringResource(Res.string.add_by_link),
+                icon = Icons.Default.Add,
+                variant = KomiButtonVariant.Primary
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.padding(bottomNavHeight + 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
     ) { innerPadding ->
         if (state.showLinkSheet) {
             LinkAppBottomSheet(
@@ -961,7 +943,7 @@ fun AppsScreen(
                                     }
 
                                     item {
-                                        Spacer(Modifier.height(bottomNavHeight + 32.dp))
+                                        Spacer(Modifier.height(32.dp))
                                     }
                                 }
                             }
@@ -1494,7 +1476,7 @@ private fun Preview() {
         AppsScreen(
             state = AppsState(),
             onAction = {},
-            snackbarHostState = SnackbarHostState(),
+            toastState = rememberKomiToastState(),
         )
     }
 }
