@@ -9,7 +9,6 @@ val whatsNewModule =
     module {
         single<WhatsNewLoader> {
             WhatsNewLoaderImpl(
-                knownVersionCodes = KnownWhatsNewVersionCodes.ALL,
                 localizationManager = get(),
                 logger = get(),
             )

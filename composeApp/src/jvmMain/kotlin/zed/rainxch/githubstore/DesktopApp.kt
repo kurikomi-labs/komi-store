@@ -16,6 +16,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -27,7 +28,10 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.context.GlobalContext
+import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.data.services.LocalizationManager
+import zed.rainxch.core.domain.logging.KomiStoreLogger
+import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.DesktopOs
 import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
@@ -91,6 +95,8 @@ fun main(args: Array<String>) {
             }
         localization.setActiveLanguageTag(tag)
     }
+
+    bootstrapProxy()
 
     val deepLinkArg = args.firstOrNull()
 
@@ -245,6 +251,22 @@ fun main(args: Array<String>) {
                 onResolvedDarkTheme = { resolvedDark = it },
             )
         }
+    }
+}
+
+private fun bootstrapProxy() {
+    val koin = GlobalContext.get()
+    val appScope = koin.get<CoroutineScope>()
+    val proxyRepository = koin.get<ProxyRepository>()
+    val logger = koin.get<KomiStoreLogger>()
+
+    runCatching {
+        ProxyManager.bootstrap(
+            repository = proxyRepository,
+            appScope = appScope,
+        )
+    }.onFailure {
+        logger.warn("$it - Proxy bootstrap failed")
     }
 }
 

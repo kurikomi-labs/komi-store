@@ -47,7 +47,6 @@ import zed.rainxch.core.presentation.components.adaptive.AdaptiveDetailArgs
 import zed.rainxch.core.presentation.components.adaptive.AdaptiveListDetailScaffold
 import zed.rainxch.core.presentation.components.adaptive.rememberAdaptiveListDetailState
 import zed.rainxch.core.presentation.locals.LocalAnimatedVisibilityScope
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalContentWidth
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.locals.LocalSharedTransitionScope
@@ -89,12 +88,9 @@ import zed.rainxch.tweaks.presentation.skipped.SkippedUpdatesRoot
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    isScrollbarEnabled: Boolean = false,
-    contentWidth: ContentWidth = ContentWidth.COMPACT,
+    isScrollbarEnabled: Boolean,
+    contentWidth: ContentWidth,
 ) {
-    var bottomNavigationHeight by remember { mutableStateOf(0.dp) }
-    val density = LocalDensity.current
-
     val appsViewModel = koinViewModel<AppsViewModel>()
     val appsState by appsViewModel.state.collectAsStateWithLifecycle()
 
@@ -103,7 +99,6 @@ fun AppNavigation(
     val announcementsUnreadCount by announcementsViewModel.unreadCount.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(
-        LocalBottomNavigationHeight provides bottomNavigationHeight,
         LocalScrollbarEnabled provides isScrollbarEnabled,
         LocalContentWidth provides contentWidth,
     ) {
@@ -113,6 +108,7 @@ fun AppNavigation(
                     .currentBackStackEntryAsState()
                     .value
                     .getCurrentScreen()
+
             if (isDesktop() && desktopDrawerCurrent != null) {
                 DesktopDrawer(
                     currentScreen = desktopDrawerCurrent,
@@ -125,11 +121,7 @@ fun AppNavigation(
                             restoreState = true
                         }
                     },
-                    isUpdateAvailable =
-                        appsState.apps.any {
-                            it.installedApp.isUpdateAvailable
-                        } || appsState.showImportProposalBanner,
-                    hasUnreadAnnouncements = announcementsUnreadCount > 0,
+                    unreadAnnouncementsCount = announcementsUnreadCount,
                 )
             }
 
@@ -968,19 +960,8 @@ fun AppNavigation(
                                 restoreState = true
                             }
                         },
-                        isUpdateAvailable =
-                            appsState.apps.any { it.installedApp.isUpdateAvailable } ||
-                                appsState.showImportProposalBanner,
+                        isUpdateAvailable = appsState.apps.any { it.installedApp.isUpdateAvailable },
                         hasUnreadAnnouncements = announcementsUnreadCount > 0,
-                        modifier =
-                            Modifier
-                                .align(Alignment.BottomCenter)
-                                .navigationBarsPadding()
-                                .padding(bottom = 24.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    bottomNavigationHeight =
-                                        with(density) { coordinates.size.height.toDp() }
-                                },
                     )
                 }
             }

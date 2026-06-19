@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.badge.KomiBadge
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
@@ -38,8 +39,7 @@ import zed.rainxch.githubstore.core.presentation.res.app_name
 fun DesktopDrawer(
     currentScreen: GithubStoreGraph?,
     onNavigate: (GithubStoreGraph) -> Unit,
-    isUpdateAvailable: Boolean,
-    hasUnreadAnnouncements: Boolean,
+    unreadAnnouncementsCount: Int,
     modifier: Modifier = Modifier,
 ) {
     val cs = MaterialTheme.colorScheme
@@ -82,12 +82,18 @@ fun DesktopDrawer(
             val isSelected = item.screen::class == currentScreen?.let { it::class }
             val badge: (@Composable () -> Unit)? =
                 when {
-                    item.screen == GithubStoreGraph.AppsScreen && isUpdateAvailable -> {
-                        { UnreadDot(cs.primary) }
-                    }
-
-                    item.screen == GithubStoreGraph.ProfileGraph.ProfileScreen && hasUnreadAnnouncements -> {
-                        { UnreadDot(cs.error) }
+                    item.screen == GithubStoreGraph.ProfileGraph.ProfileScreen -> {
+                        {
+                            KomiBadge(
+                                count =
+                                    if (unreadAnnouncementsCount > 0) {
+                                        unreadAnnouncementsCount
+                                    } else {
+                                        null
+                                    },
+                                dot = unreadAnnouncementsCount > 0,
+                            )
+                        }
                     }
 
                     else -> {
@@ -145,15 +151,4 @@ private fun DrawerNavItem(
         )
         trailing?.invoke()
     }
-}
-
-@Composable
-private fun UnreadDot(color: Color) {
-    Box(
-        modifier =
-            Modifier
-                .size(8.dp)
-                .clip(CircleShape)
-                .background(color),
-    )
 }

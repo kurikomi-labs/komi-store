@@ -41,7 +41,6 @@ val viewModelsModule =
         viewModelOf(::ExternalImportViewModel)
         viewModelOf(::AuthenticationViewModel)
         viewModel { params ->
-
             DetailsViewModel(
                 repositoryId = params[0],
                 ownerParam = params[1],
@@ -174,11 +173,7 @@ val viewModelsModule =
         viewModel {
             MirrorPickerViewModel(
                 mirrorRepository = get(),
-                testHttpClient =
-                    get(
-                        qualifier =
-                            named("test"),
-                    ),
+                testHttpClient = get(qualifier = named("test")),
             )
         }
     }

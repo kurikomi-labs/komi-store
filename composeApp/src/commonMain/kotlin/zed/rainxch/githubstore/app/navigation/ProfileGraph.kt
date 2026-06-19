@@ -15,9 +15,6 @@ fun NavGraphBuilder.profileGraph(
     ) {
         composable<GithubStoreGraph.ProfileGraph.ProfileScreen> {
             ProfileRoot(
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
                 onNavigateToAuthentication = {
                     navController.navigate(GithubStoreGraph.AuthenticationScreen)
                 },

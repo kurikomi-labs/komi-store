@@ -17,12 +17,10 @@ import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.model.announcement.Announcement
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
-import zed.rainxch.core.domain.model.announcement.AnnouncementIconHint
 import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
 import zed.rainxch.core.domain.model.announcement.AnnouncementsFeedSnapshot
 import zed.rainxch.core.domain.repository.AnnouncementsRepository
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 class AnnouncementsViewModel(
     private val repository: AnnouncementsRepository,
@@ -53,19 +51,31 @@ class AnnouncementsViewModel(
     val displayedItems: StateFlow<List<Announcement>> =
         combine(feed, previewItems) { snapshot, preview ->
             (preview + snapshot.visibleItems).distinctBy { it.id }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
+        )
 
     val unreadCount: StateFlow<Int> =
         feed
             .map { it.unreadCount }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = 0,
+            )
 
     val pendingCriticalAcknowledgment: StateFlow<Announcement?> =
         combine(feed, previewItems) { snapshot, preview ->
             preview.firstOrNull {
                 it.severity == AnnouncementSeverity.CRITICAL && it.requiresAcknowledgment
             } ?: snapshot.pendingCriticalAcknowledgment
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null,
+        )
 
     init {
         viewModelScope.launch {
@@ -106,9 +116,6 @@ class AnnouncementsViewModel(
                 }
             } catch (e: CancellationException) {
                 throw e
-            } catch (t: Throwable) {
-                if (t is kotlinx.coroutines.CancellationException) throw t
-                logger.e(t) { "Failed to mark routine announcements as seen" }
             }
         }
     }
@@ -149,10 +156,6 @@ class AnnouncementsViewModel(
         return true
     }
 
-    fun previewSampleAnnouncements() {
-        _previewItems.value = SamplePreviewItems
-    }
-
     fun openCta(announcement: Announcement) {
         val url = announcement.ctaUrl ?: return
         viewModelScope.launch {
@@ -182,71 +185,5 @@ class AnnouncementsViewModel(
                 logger.e(t) { "Failed to toggle mute for $category" }
             }
         }
-    }
-
-    private companion object {
-        val SamplePreviewItems =
-            listOf(
-                Announcement(
-                    id = "preview-info-news",
-                    publishedAt = Instant.parse("2026-05-03T00:00:00Z"),
-                    expiresAt = null,
-                    severity = AnnouncementSeverity.INFO,
-                    category = AnnouncementCategory.NEWS,
-                    title = "Preview: backing Keep Android Open",
-                    body =
-                        "Komi Store supports the Keep Android Open initiative. " +
-                            "Google's proposed sideloading restrictions would make this app — " +
-                            "and Obtainium, F-Droid, and others — much harder to use.",
-                    ctaUrl = "https://github-store.org",
-                    ctaLabel = "Read more",
-                    dismissible = true,
-                    requiresAcknowledgment = false,
-                    minVersionCode = null,
-                    maxVersionCode = null,
-                    platforms = null,
-                    installerTypes = null,
-                    iconHint = AnnouncementIconHint.CHANGE,
-                ),
-                Announcement(
-                    id = "preview-important-survey",
-                    publishedAt = Instant.parse("2026-05-02T00:00:00Z"),
-                    expiresAt = null,
-                    severity = AnnouncementSeverity.IMPORTANT,
-                    category = AnnouncementCategory.SURVEY,
-                    title = "Preview: five-minute survey shaping 1.9",
-                    body = "Mostly multiple choice. Your answers shape what ships next quarter.",
-                    ctaUrl = "https://github-store.org",
-                    ctaLabel = "Open survey",
-                    dismissible = true,
-                    requiresAcknowledgment = false,
-                    minVersionCode = null,
-                    maxVersionCode = null,
-                    platforms = null,
-                    installerTypes = null,
-                    iconHint = AnnouncementIconHint.INFO,
-                ),
-                Announcement(
-                    id = "preview-critical-security",
-                    publishedAt = Instant.parse("2026-05-01T00:00:00Z"),
-                    expiresAt = null,
-                    severity = AnnouncementSeverity.CRITICAL,
-                    category = AnnouncementCategory.SECURITY,
-                    title = "Preview: critical security advisory",
-                    body =
-                        "This is a sample critical advisory for testing the modal flow. " +
-                            "In the real channel, only download-integrity, killswitch, or " +
-                            "credential-exposure events would carry this severity.",
-                    ctaUrl = "https://github-store.org",
-                    ctaLabel = "View advisory",
-                    dismissible = false,
-                    requiresAcknowledgment = true,
-                    minVersionCode = null,
-                    maxVersionCode = null,
-                    platforms = null,
-                    installerTypes = null,
-                    iconHint = AnnouncementIconHint.SECURITY,
-                ),
-            )
     }
 }

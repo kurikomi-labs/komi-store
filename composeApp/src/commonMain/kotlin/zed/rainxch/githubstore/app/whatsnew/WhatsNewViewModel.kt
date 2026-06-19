@@ -2,15 +2,14 @@ package zed.rainxch.githubstore.app.whatsnew
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.repository.WhatsNewLoader
@@ -20,9 +19,8 @@ class WhatsNewViewModel(
     private val tweaksRepository: TweaksRepository,
     private val appVersionInfo: AppVersionInfo,
     private val whatsNewLoader: WhatsNewLoader,
+    private val logger: KomiStoreLogger,
 ) : ViewModel() {
-    private val logger = Logger.withTag("WhatsNewViewModel")
-
     private val _pendingEntry = MutableStateFlow<WhatsNewEntry?>(null)
     val pendingEntry: StateFlow<WhatsNewEntry?> = _pendingEntry.asStateFlow()
 
@@ -50,7 +48,7 @@ class WhatsNewViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
-                logger.e(t) { "Failed to observe app-language for what's-new reloads" }
+                logger.error("${t.message} - Failed to observe app-language for what's-new reloads")
             }
         }
     }
@@ -63,7 +61,7 @@ class WhatsNewViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (t: Throwable) {
-            logger.e(t) { "Failed to load what's-new history" }
+            logger.error("${t.message} - Failed to load what's-new history")
         }
     }
 
@@ -73,7 +71,7 @@ class WhatsNewViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (t: Throwable) {
-            logger.e(t) { "Failed to evaluate what's-new state" }
+            logger.error("${t.message} - Failed to evaluate what's-new state")
         }
     }
 
@@ -101,25 +99,7 @@ class WhatsNewViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
-                logger.e(t) { "Failed to persist lastSeenWhatsNewVersionCode=${entry.versionCode}" }
-            }
-        }
-    }
-
-    fun forceShowLatest() {
-        viewModelScope.launch {
-            try {
-                val tag = lastLanguageTag
-                val current = appVersionInfo.versionCode
-                val entry =
-                    whatsNewLoader.forVersionCode(current, tag)
-                        ?: whatsNewLoader.loadAll(tag).firstOrNull()
-                        ?: return@launch
-                _pendingEntry.value = entry
-            } catch (e: CancellationException) {
-                throw e
-            } catch (t: Throwable) {
-                logger.e(t) { "Failed to force-show latest what's-new entry" }
+                logger.error("${t.message} - Failed to persist lastSeenWhatsNewVersionCode=${entry.versionCode}")
             }
         }
     }
