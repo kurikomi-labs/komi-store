@@ -1,14 +1,16 @@
 package zed.rainxch.tweaks.presentation
 
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableMap
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.installation.DhizukuAvailability
-import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerAttribution
 import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.model.settings.ProxyScope
-import zed.rainxch.core.domain.model.system.RestartReason
 import zed.rainxch.core.domain.model.installation.RootAvailability
 import zed.rainxch.core.domain.model.installation.ShizukuAvailability
 import zed.rainxch.core.domain.model.settings.TranslationProvider
@@ -20,8 +22,8 @@ data class TweaksState(
     val isAmoledThemeEnabled: Boolean = false,
     val isDarkTheme: Boolean? = null,
     val versionName: String = "",
-    val proxyForms: Map<ProxyScope, ProxyScopeFormState> =
-        ProxyScope.entries.associateWith { ProxyScopeFormState() },
+    val proxyForms: ImmutableMap<ProxyScope, ProxyScopeFormState> =
+        ProxyScope.entries.associateWith { ProxyScopeFormState() }.toImmutableMap(),
     val autoDetectClipboardLinks: Boolean = true,
     val cacheSize: String = "",
     val isClearDownloadsDialogVisible: Boolean = false,
@@ -61,24 +63,17 @@ data class TweaksState(
     val isFeedbackSheetVisible: Boolean = false,
 
     val showBatteryOptimizationCard: Boolean = false,
-    val customForgeHosts: Set<String> = emptySet(),
+    val customForgeHosts: ImmutableSet<String> = persistentSetOf(),
     val showCustomForgesDialog: Boolean = false,
     val customForgeDraft: String = "",
     val customForgeError: String? = null,
-    val needsRestartReasons: Set<RestartReason> = emptySet(),
     val restartBannerSessionDismissed: Boolean = false,
     val masterProxyForm: ProxyScopeFormState = ProxyScopeFormState(),
-    val useMasterByScope: Map<ProxyScope, Boolean> =
-        ProxyScope.entries.associateWith { false },
+    val useMasterByScope: ImmutableMap<ProxyScope, Boolean> =
+        ProxyScope.entries.associateWith { false }.toImmutableMap(),
     val isClearSeenHistoryDialogVisible: Boolean = false,
-    val selectedDiscoveryPlatforms: Set<DiscoveryPlatform> = emptySet(),
 ) {
-
-    val restartBannerVisible: Boolean
-        get() = needsRestartReasons.isNotEmpty() && !restartBannerSessionDismissed
-
     fun useMain(scope: ProxyScope): Boolean = useMasterByScope[scope] ?: false
-
 
     val displayedTranslationProvider: TranslationProvider
         get() = draftTranslationProvider ?: translationProvider

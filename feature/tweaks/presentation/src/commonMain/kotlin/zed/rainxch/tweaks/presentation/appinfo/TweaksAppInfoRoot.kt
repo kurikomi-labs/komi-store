@@ -24,12 +24,11 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,15 +71,15 @@ import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 
-private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
+private const val PRIVACY_POLICY_URL = "https://komistore.app/privacy-policy"
 private const val SOURCE_CODE_URL = "https://github.com/kurikomi-labs/komi-store"
 
 private const val TELEGRAM_URL = "https://t.me/komistoreapp"
-private const val DISCORD_URL = "https://discord.github-store.org"
+private const val DISCORD_URL = "https://discord.komistore.app"
 private const val MASTODON_URL = "https://fosstodon.org/@komistore"
 private const val REDDIT_URL = "https://reddit.com/r/githubstore"
 private const val GITHUB_ORG_URL = "https://github.com/kurikomi-labs"
-private const val WEBSITE_URL = "https://github-store.org"
+private const val WEBSITE_URL = "https://komistore.app"
 private const val BUSINESS_EMAIL = "mailto:hello@komistore.app"
 
 @Composable
@@ -90,17 +89,13 @@ fun AppInfoRoot(
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val snackbarState = rememberKomiToastState()
     val uriHandler = LocalUriHandler.current
 
     TweaksSubScreenScaffold(
         title = stringResource(Res.string.tweaks_entry_app_info),
         onNavigateBack = onNavigateBack,
-        snackbarState = snackbarState,
-        restartReasons = state.needsRestartReasons,
-        onRestartNow = { viewModel.onAction(TweaksAction.OnRestartNowClick) },
-        onRestartLater = { viewModel.onAction(TweaksAction.OnRestartLaterClick) },
-        showRestartBanner = state.restartBannerVisible,
+        toastState = snackbarState,
     ) {
         item(key = "app_identity") {
             AppIdentityCard(versionName = state.versionName)

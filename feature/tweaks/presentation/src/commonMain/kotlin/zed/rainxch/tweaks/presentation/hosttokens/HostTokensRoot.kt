@@ -34,9 +34,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -109,28 +107,25 @@ fun HostTokensRoot(
     viewModel: HostTokensViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is HostTokensEvent.Message ->
-                coroutineScope.launch { snackbarState.showSnackbar(event.text) }
+                coroutineScope.launch { toastState.show(event.text) }
             is HostTokensEvent.OpenUrl ->
                 runCatching { uriHandler.openUri(event.url) }
             is HostTokensEvent.TokenDeletedWithUndo ->
                 coroutineScope.launch {
-                    val result = snackbarState.showSnackbar(
+                    toastState.warning(
                         message = getString(Res.string.host_tokens_undo_snackbar, event.deleted.host),
                         actionLabel = getString(Res.string.host_tokens_undo_action),
-                        withDismissAction = true,
+                        onAction = {
+                            viewModel.onAction(HostTokensAction.OnUndoDelete)
+                        }
                     )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onAction(HostTokensAction.OnUndoDelete)
-                    } else {
-                        viewModel.onAction(HostTokensAction.OnDismissUndoDelete)
-                    }
                 }
         }
     }
@@ -150,17 +145,7 @@ fun HostTokensRoot(
                 },
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
         floatingActionButton = {
             if (state.tokens.isNotEmpty()) {
                 FloatingActionButton(onClick = { viewModel.onAction(HostTokensAction.OnAddClicked) }) {

@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +66,7 @@ fun LicensesRoot(
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val snackbarState = rememberKomiToastState()
     val uriHandler = LocalUriHandler.current
 
     var libraries by remember { mutableStateOf<List<LibraryEntry>?>(null) }
@@ -86,11 +86,7 @@ fun LicensesRoot(
     TweaksSubScreenScaffold(
         title = stringResource(Res.string.tweaks_licenses_title),
         onNavigateBack = onNavigateBack,
-        snackbarState = snackbarState,
-        restartReasons = state.needsRestartReasons,
-        onRestartNow = { viewModel.onAction(TweaksAction.OnRestartNowClick) },
-        onRestartLater = { viewModel.onAction(TweaksAction.OnRestartLaterClick) },
-        showRestartBanner = state.restartBannerVisible,
+        toastState = snackbarState,
     ) {
         item(key = "intro") {
             Surface(

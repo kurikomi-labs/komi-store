@@ -210,13 +210,6 @@ sealed interface TweaksAction {
     data object OnAddCustomForge : TweaksAction
     data class OnRemoveCustomForge(val host: String) : TweaksAction
 
-    data class OnDiscoveryPlatformToggled(
-        val platform: zed.rainxch.core.domain.model.repository.DiscoveryPlatform,
-    ) : TweaksAction
-
-    data object OnRestartNowClick : TweaksAction
-    data object OnRestartLaterClick : TweaksAction
-
     data class OnMasterProxyTypeSelected(val type: ProxyType) : TweaksAction
     data class OnMasterProxyHostChanged(val host: String) : TweaksAction
     data class OnMasterProxyPortChanged(val port: String) : TweaksAction

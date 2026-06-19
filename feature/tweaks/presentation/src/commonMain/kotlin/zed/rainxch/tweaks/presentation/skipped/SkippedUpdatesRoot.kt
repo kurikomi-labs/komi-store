@@ -16,8 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +30,6 @@ import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,20 +59,20 @@ fun SkippedUpdatesRoot(
     viewModel: SkippedUpdatesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SkippedUpdatesEvent.Unskipped ->
                 coroutineScope.launch {
-                    snackbarState.showSnackbar(
+                    toastState.info(
                         getString(Res.string.skipped_updates_unskipped_snackbar, event.appName),
                     )
                 }
             is SkippedUpdatesEvent.Failure ->
                 coroutineScope.launch {
-                    snackbarState.showSnackbar(
+                    toastState.danger(
                         getString(Res.string.skipped_updates_unskip_failure),
                     )
                 }
@@ -96,17 +94,7 @@ fun SkippedUpdatesRoot(
                 },
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
     ) { padding ->
         Box(
             modifier =

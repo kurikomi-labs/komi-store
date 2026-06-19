@@ -2,6 +2,8 @@ package zed.rainxch.tweaks.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -23,13 +25,12 @@ import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.network.ProxyTestOutcome
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.network.ProxyTester
 import zed.rainxch.core.domain.repository.CacheRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
-import zed.rainxch.core.domain.repository.UserSessionRepository
 import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.system.InstallerStatusProvider
@@ -61,7 +62,7 @@ class TweaksViewModel(
     private val proxyTester: ProxyTester,
     private val updateScheduleManager: UpdateScheduleManager,
     private val seenReposRepository: SeenReposRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val aggressiveOemDetector: AggressiveOemDetector,
     private val cacheRepository: CacheRepository,
 ) : ViewModel() {
@@ -109,10 +110,8 @@ class TweaksViewModel(
                 observeDhizukuStatus()
                 observeRootStatus()
                 observeInstallerAttribution()
-                observeNeedsRestartReasons()
                 observeMasterProxyConfig()
                 observeUseMasterFlags()
-                observeDiscoveryPlatforms()
 
                 hasLoadedInitialData = true
             }
@@ -202,7 +201,7 @@ class TweaksViewModel(
 
         viewModelScope.launch {
             tweaksRepository.getCustomForgeHosts().collect { hosts ->
-                _state.update { it.copy(customForgeHosts = hosts) }
+                _state.update { it.copy(customForgeHosts = hosts.toImmutableSet()) }
             }
         }
     }
@@ -244,7 +243,7 @@ class TweaksViewModel(
                                     },
                             )
                         state.copy(
-                            proxyForms = state.proxyForms + (scope to populated),
+                            proxyForms = (state.proxyForms + (scope to populated)).toImmutableMap(),
                         )
                     }
                 }
@@ -259,7 +258,7 @@ class TweaksViewModel(
         _state.update { state ->
             val updated = block(state.formFor(scope)).copy(isDraftDirty = true)
             state.copy(
-                proxyForms = state.proxyForms + (scope to updated),
+                proxyForms = (state.proxyForms + (scope to updated)).toImmutableMap(),
             )
         }
     }
@@ -270,7 +269,7 @@ class TweaksViewModel(
     ) {
         _state.update { state ->
             state.copy(
-                proxyForms = state.proxyForms + (scope to block(state.formFor(scope))),
+                proxyForms = (state.proxyForms + (scope to block(state.formFor(scope)))).toImmutableMap(),
             )
         }
     }
@@ -280,7 +279,7 @@ class TweaksViewModel(
             val form = state.formFor(scope)
             if (!form.isDraftDirty) return@update state
             state.copy(
-                proxyForms = state.proxyForms + (scope to form.copy(isDraftDirty = false)),
+                proxyForms = (state.proxyForms + (scope to form.copy(isDraftDirty = false))).toImmutableMap(),
             )
         }
     }
@@ -1098,11 +1097,6 @@ class TweaksViewModel(
                 if (action.tag == _state.value.selectedAppLanguage) return
                 viewModelScope.launch {
                     tweaksRepository.setAppLanguage(action.tag)
-                    runCatching {
-                        tweaksRepository.addRestartReason(
-                            zed.rainxch.core.domain.model.system.RestartReason.LANGUAGE,
-                        )
-                    }
                     if (isDesktop()) {
                         _events.send(TweaksEvent.OnAppLanguageChangeRequiresRestart)
                     }
@@ -1194,18 +1188,6 @@ class TweaksViewModel(
                 }
             }
 
-            is TweaksAction.OnDiscoveryPlatformToggled -> {
-                viewModelScope.launch {
-                    val current = _state.value.selectedDiscoveryPlatforms
-                    val next = if (action.platform in current) {
-                        current - action.platform
-                    } else {
-                        current + action.platform
-                    }
-                    runCatching { tweaksRepository.setDiscoveryPlatforms(next) }
-                }
-            }
-
             is TweaksAction.OnRemoveCustomForge -> {
                 viewModelScope.launch {
                     val result = runCatching { tweaksRepository.removeCustomForgeHost(action.host) }
@@ -1218,17 +1200,6 @@ class TweaksViewModel(
                         }
                     }
                 }
-            }
-
-            TweaksAction.OnRestartNowClick -> {
-                viewModelScope.launch {
-                    runCatching { tweaksRepository.clearRestartReasons() }
-                    restartAppAfterLanguageChange()
-                }
-            }
-
-            TweaksAction.OnRestartLaterClick -> {
-                _state.update { it.copy(restartBannerSessionDismissed = true) }
             }
 
             is TweaksAction.OnMasterProxyTypeSelected -> {
@@ -1388,7 +1359,7 @@ class TweaksViewModel(
             is TweaksAction.OnScopeUseMainToggled -> {
                 _state.update {
                     it.copy(
-                        useMasterByScope = it.useMasterByScope + (action.scope to action.useMain),
+                        useMasterByScope = (it.useMasterByScope + (action.scope to action.useMain)).toImmutableMap(),
                     )
                 }
                 viewModelScope.launch {
@@ -1452,14 +1423,6 @@ class TweaksViewModel(
         }
     }
 
-    private fun observeNeedsRestartReasons() {
-        viewModelScope.launch {
-            tweaksRepository.getNeedsRestartReasons().collect { reasons ->
-                _state.update { it.copy(needsRestartReasons = reasons) }
-            }
-        }
-    }
-
     private fun observeMasterProxyConfig() {
         viewModelScope.launch {
             proxyRepository.getMasterProxyConfig().collect { config ->
@@ -1504,18 +1467,10 @@ class TweaksViewModel(
                 proxyRepository.getUseMaster(scope).collect { useMaster ->
                     _state.update { state ->
                         state.copy(
-                            useMasterByScope = state.useMasterByScope + (scope to useMaster),
+                            useMasterByScope = (state.useMasterByScope + (scope to useMaster)).toImmutableMap(),
                         )
                     }
                 }
-            }
-        }
-    }
-
-    private fun observeDiscoveryPlatforms() {
-        viewModelScope.launch {
-            tweaksRepository.getDiscoveryPlatforms().collect { platforms ->
-                _state.update { it.copy(selectedDiscoveryPlatforms = platforms) }
             }
         }
     }

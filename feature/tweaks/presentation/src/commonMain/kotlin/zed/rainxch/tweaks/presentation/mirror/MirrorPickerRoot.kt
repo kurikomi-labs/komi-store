@@ -1,7 +1,6 @@
 package zed.rainxch.tweaks.presentation.mirror
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,12 +16,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +65,7 @@ fun MirrorPickerRoot(
     viewModel: MirrorPickerViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
@@ -76,8 +73,14 @@ fun MirrorPickerRoot(
         when (event) {
             is MirrorPickerEvent.MirrorRemovedNotice ->
                 coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.mirror_removed_toast, event.displayName))
+                    toastState.warning(
+                        getString(
+                            Res.string.mirror_removed_toast,
+                            event.displayName
+                        )
+                    )
                 }
+
             is MirrorPickerEvent.OpenUrl -> uriHandler.openUri(event.url)
         }
     }
@@ -97,17 +100,7 @@ fun MirrorPickerRoot(
                 },
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
     ) { padding ->
         val listState = rememberLazyListState()
         LazyColumn(

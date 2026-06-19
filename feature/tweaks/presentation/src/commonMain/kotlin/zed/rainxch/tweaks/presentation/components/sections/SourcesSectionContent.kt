@@ -60,7 +60,7 @@ import zed.rainxch.tweaks.presentation.TweaksState
 import zed.rainxch.tweaks.presentation.components.CustomForgesDialog
 
 @Composable
-fun sourcesSectionContent(
+fun SourcesSectionContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -118,11 +118,6 @@ fun sourcesSectionContent(
             )
         }
         Spacer(Modifier.height(16.dp))
-
-        DiscoveryPlatformsCard(
-            selected = state.selectedDiscoveryPlatforms,
-            onToggle = { onAction(TweaksAction.OnDiscoveryPlatformToggled(it)) },
-        )
 
         if (state.customForgeHosts.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))

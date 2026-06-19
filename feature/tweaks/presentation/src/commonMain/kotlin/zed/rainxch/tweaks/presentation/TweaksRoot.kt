@@ -19,9 +19,7 @@ import androidx.compose.material.icons.outlined.Feedback
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -52,19 +50,17 @@ import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.ClearDownloadsDialog
-import zed.rainxch.tweaks.presentation.components.RestartBanner
 import zed.rainxch.tweaks.presentation.components.sections.appearanceSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.connectionSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.installSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.languageSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.privacySectionContent
-import zed.rainxch.tweaks.presentation.components.sections.sourcesSectionContent
+import zed.rainxch.tweaks.presentation.components.sections.SourcesSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.storageSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.translationSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.updatesSectionContent
@@ -81,9 +77,8 @@ fun TweaksRoot(
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
-    val bottomNavHeight = LocalBottomNavigationHeight.current
     var feedbackSheetOpen by rememberSaveable { mutableStateOf(false) }
     val onAction: (TweaksAction) -> Unit = remember(viewModel) { { viewModel.onAction(it) } }
 
@@ -111,26 +106,24 @@ fun TweaksRoot(
         when (event) {
             TweaksEvent.OnAppLanguageChangeRequiresRestart -> {
                 coroutineScope.launch {
-                    val result =
-                        snackbarState.showSnackbar(
-                            message = getString(Res.string.language_restart_required),
-                            actionLabel = getString(Res.string.language_restart_action),
-                            withDismissAction = true,
-                        )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        restartAppAfterLanguageChange()
-                    }
+                    toastState.warning(
+                        message = getString(Res.string.language_restart_required),
+                        actionLabel = getString(Res.string.language_restart_action),
+                        onAction = {
+                            restartAppAfterLanguageChange()
+                        }
+                    )
                 }
             }
 
             TweaksEvent.OnCacheCleared -> {
                 coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.downloads_cleared))
+                    toastState.info(getString(Res.string.downloads_cleared))
                 }
             }
 
             is TweaksEvent.OnCacheClearError -> {
-                coroutineScope.launch { snackbarState.showSnackbar(event.message) }
+                coroutineScope.launch { toastState.danger(event.message) }
             }
 
             else -> Unit
@@ -138,17 +131,7 @@ fun TweaksRoot(
     }
 
     KomiScaffold(
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
         topBar = {
             KomiTopBar(
                 title = stringResource(Res.string.tweaks_title),
@@ -175,24 +158,16 @@ fun TweaksRoot(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp, bottom = bottomNavHeight + 32.dp),
+                        .padding(top = 8.dp, bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                if (state.restartBannerVisible) {
-                    RestartBanner(
-                        reasons = state.needsRestartReasons,
-                        onRestartNow = { onAction(TweaksAction.OnRestartNowClick) },
-                        onLater = { onAction(TweaksAction.OnRestartLaterClick) },
-                    )
-                }
-
                 SectionHeader(stringResource(Res.string.section_look_and_feel))
                 appearanceSectionContent(state = state, onAction = onAction)
                 languageSectionContent(state = state, onAction = onAction)
 
                 SectionHeader(stringResource(Res.string.section_connectivity))
                 connectionSectionContent(state = state, onAction = onAction)
-                sourcesSectionContent(
+                SourcesSectionContent(
                     state = state,
                     onAction = onAction,
                     onNavigateToMirrorPicker = onNavigateToMirrorPicker,
@@ -255,12 +230,12 @@ fun TweaksRoot(
                             FeedbackChannel.EMAIL -> getString(Res.string.feedback_send_success_email)
                             FeedbackChannel.GITHUB -> getString(Res.string.feedback_send_success_github)
                         }
-                    snackbarState.showSnackbar(msg)
+                    toastState.success(msg)
                 }
             },
             onError = { error ->
                 coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.feedback_send_error, error))
+                    toastState.danger(getString(Res.string.feedback_send_error, error))
                 }
             },
         )
