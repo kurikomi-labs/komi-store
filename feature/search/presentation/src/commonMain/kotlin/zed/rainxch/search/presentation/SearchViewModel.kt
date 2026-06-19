@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
@@ -57,7 +57,7 @@ class SearchViewModel(
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val shareManager: ShareManager,
     private val platform: Platform,
     private val clipboardHelper: ClipboardHelper,

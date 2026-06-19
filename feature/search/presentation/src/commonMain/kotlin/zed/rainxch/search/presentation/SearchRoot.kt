@@ -11,11 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,8 +50,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -80,13 +80,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
-import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
@@ -95,6 +93,7 @@ import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.search.presentation.components.LanguageFilterBottomSheet
+import zed.rainxch.search.presentation.components.SearchFiltersSheet
 import zed.rainxch.search.presentation.components.SearchHistorySection
 import zed.rainxch.search.presentation.components.SortByBottomSheet
 import zed.rainxch.search.presentation.model.ParsedGithubLink
@@ -102,7 +101,7 @@ import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
-import zed.rainxch.search.presentation.utils.label
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,13 +114,13 @@ fun SearchRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val snackbarHost = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SearchEvent.OnMessage -> {
                 scope.launch {
-                    snackbarHost.showSnackbar(event.message)
+                    toastState.show(event.message)
                 }
             }
 
@@ -133,7 +132,7 @@ fun SearchRoot(
 
     SearchScreen(
         state = state,
-        snackbarHost = snackbarHost,
+        toastState = toastState,
         onAction = { action ->
             when (action) {
                 is SearchAction.OnRepositoryClick -> {
@@ -156,7 +155,7 @@ fun SearchRoot(
     )
 
     if (state.isFiltersSheetVisible) {
-        zed.rainxch.search.presentation.components.SearchFiltersSheet(
+        SearchFiltersSheet(
             selectedSource = state.selectedSource,
             availableSources = state.availableSources,
             selectedPlatform = state.selectedSearchPlatform,
@@ -216,12 +215,11 @@ fun SearchRoot(
 @Composable
 fun SearchScreen(
     state: SearchState,
-    snackbarHost: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (SearchAction) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyStaggeredGridState()
-    val bottomNavHeight = LocalBottomNavigationHeight.current
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -294,7 +292,7 @@ fun SearchScreen(
                         lastVisible.offset.y + lastVisible.size.height < layoutInfo.viewportEndOffset
 
             if (hasEmptySpace) {
-                delay(100)
+                delay(100.milliseconds)
                 currentOnAction(SearchAction.LoadMore)
             }
         }
@@ -314,20 +312,12 @@ fun SearchScreen(
                 focusRequester = focusRequester,
             )
         },
-        overlay = {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-                SnackbarHost(
-                    hostState = snackbarHost,
-                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     onAction(SearchAction.OnFabClick)
                 },
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -555,7 +545,7 @@ fun SearchScreen(
                                     start = 8.dp,
                                     end = 8.dp,
                                     top = 12.dp,
-                                    bottom = bottomNavHeight + 88.dp,
+                                    bottom = 64.dp,
                                 ),
                             modifier =
                                 Modifier
@@ -570,9 +560,6 @@ fun SearchScreen(
                                     discoveryRepositoryUi = discoveryRepository,
                                     onClick = {
                                         onAction(SearchAction.OnRepositoryClick(discoveryRepository.repository))
-                                    },
-                                    onDeveloperClick = { username ->
-                                        onAction(SearchAction.OnRepositoryDeveloperClick(username))
                                     },
                                     onShareClick = {
                                         onAction(SearchAction.OnShareClick(discoveryRepository.repository))
@@ -1046,8 +1033,8 @@ private fun Preview() {
     PersonalityPreview {
         SearchScreen(
             state = SearchState(),
-            snackbarHost = SnackbarHostState(),
-            onAction = {},
+            toastState = rememberKomiToastState(),
+            onAction = { }
         )
     }
 }
