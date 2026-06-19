@@ -1,11 +1,9 @@
 package zed.rainxch.repopages.presentation.issuedetail
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -14,13 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +26,8 @@ import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -56,12 +53,12 @@ fun IssueDetailRoot(
     viewModel: IssueDetailViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is IssueDetailEvent.OnMessage -> {
-                snackbarHostState.showSnackbar(event.message)
+                toastState.show(event.message)
             }
         }
     }
@@ -74,14 +71,14 @@ fun IssueDetailRoot(
                 else -> viewModel.onAction(action)
             }
         },
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
     )
 }
 
 @Composable
 private fun IssueDetailScreen(
     state: IssueDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (IssueDetailAction) -> Unit
 ) {
     KomiScaffold(
@@ -93,17 +90,7 @@ private fun IssueDetailScreen(
                 }
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
         bottomBar = {
             if (state.detail != null) {
                 CommentComposer(
@@ -384,7 +371,7 @@ private fun IssueDetailScreenPreview() {
                 ),
                 isLoggedIn = true
             ),
-            snackbarHostState = remember { SnackbarHostState() },
+            toastState = rememberKomiToastState(),
             onAction = {}
         )
     }

@@ -10,24 +10,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
@@ -43,7 +39,6 @@ import zed.rainxch.profile.presentation.components.profileSections
 
 @Composable
 fun ProfileRoot(
-    onNavigateBack: () -> Unit,
     onNavigateToDevProfile: (username: String) -> Unit,
     onNavigateToAuthentication: () -> Unit,
     onNavigateToStarredRepos: () -> Unit,
@@ -57,53 +52,36 @@ fun ProfileRoot(
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             ProfileEvent.OnLogoutSuccessful -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.logout_success))
-
-                    onNavigateBack()
-                }
+                toastState.success(getString(Res.string.logout_success))
             }
 
             is ProfileEvent.OnLogoutError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
+                toastState.danger(event.message)
             }
 
             ProfileEvent.OnProxySaved -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.proxy_saved))
-                }
+                toastState.show(getString(Res.string.proxy_saved))
             }
 
             is ProfileEvent.OnProxySaveError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
+                toastState.danger(event.message)
             }
 
             ProfileEvent.OnCacheCleared -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.downloads_cleared))
-                }
+                toastState.show(getString(Res.string.downloads_cleared))
             }
 
             is ProfileEvent.OnCacheClearError -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(event.message)
-                }
+                toastState.danger(event.message)
             }
 
             ProfileEvent.OnSeenHistoryCleared -> {
-                coroutineScope.launch {
-                    snackbarState.showSnackbar(getString(Res.string.seen_history_cleared))
-                }
+                toastState.show(getString(Res.string.seen_history_cleared))
             }
         }
     }
@@ -140,6 +118,7 @@ fun ProfileRoot(
                 ProfileAction.OnAnnouncementsClick -> {
                     onNavigateToAnnouncements()
                 }
+
                 ProfileAction.OnTweaksClick -> {
                     onNavigateToTweaks()
                 }
@@ -153,7 +132,7 @@ fun ProfileRoot(
                 }
             }
         },
-        snackbarState = snackbarState,
+        toastState = toastState,
     )
 
     if (state.isLogoutDialogVisible) {
@@ -173,25 +152,14 @@ fun ProfileRoot(
 fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
-    snackbarState: SnackbarHostState,
+    toastState: KomiToastState,
     hasUnreadAnnouncements: Boolean = false,
 ) {
-    val bottomNavHeight = LocalBottomNavigationHeight.current
     KomiScaffold(
         topBar = {
             KomiTopBar(title = stringResource(Res.string.profile_title))
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
     ) { innerPadding ->
         val listState = rememberLazyListState()
         Box(
@@ -214,7 +182,7 @@ fun ProfileScreen(
                 )
 
                 item {
-                    Spacer(Modifier.height(bottomNavHeight + 32.dp))
+                    Spacer(Modifier.height(32.dp))
                 }
             }
         }
@@ -229,7 +197,7 @@ private fun Preview() {
         ProfileScreen(
             state = ProfileState(),
             onAction = {},
-            snackbarState = SnackbarHostState(),
+            toastState = rememberKomiToastState(),
         )
     }
 }

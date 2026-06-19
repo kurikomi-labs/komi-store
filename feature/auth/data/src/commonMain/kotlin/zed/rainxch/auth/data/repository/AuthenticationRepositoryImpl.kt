@@ -27,7 +27,7 @@ import zed.rainxch.core.data.dto.GithubDeviceTokenSuccessDto
 import zed.rainxch.core.data.mappers.toData
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.network.BACKEND_ORIGIN
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
 import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeoutException
 
 class AuthenticationRepositoryImpl(
     private val tokenStore: TokenStore,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : AuthenticationRepository {
     override val accessTokenFlow: Flow<String?>
         get() = tokenStore.tokenFlow().map { it?.accessToken }

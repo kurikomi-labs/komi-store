@@ -11,12 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,8 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -44,24 +42,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_empty_closed
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_empty_open
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_closed
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_open
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_title
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_body_hint
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_submit
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_title_hint
-import zed.rainxch.repopages.domain.model.IssueLabel
+import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.repopages.domain.model.IssueState
 import zed.rainxch.repopages.domain.model.RepoIssue
 import zed.rainxch.repopages.presentation.components.LabelChip
@@ -69,7 +54,6 @@ import zed.rainxch.repopages.presentation.components.RepoPagesEmpty
 import zed.rainxch.repopages.presentation.components.RepoPagesError
 import zed.rainxch.repopages.presentation.components.RepoPagesLoading
 import zed.rainxch.repopages.presentation.components.RepoPagesTopBar
-import zed.rainxch.repopages.presentation.utils.parseLabelColor
 
 @Composable
 fun IssuesRoot(
@@ -78,12 +62,12 @@ fun IssuesRoot(
     viewModel: IssuesViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is IssuesEvent.OnMessage -> {
-                snackbarHostState.showSnackbar(event.message)
+                toastState.show(event.message)
             }
         }
     }
@@ -108,7 +92,7 @@ fun IssuesRoot(
 
     IssuesScreen(
         state = state,
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
         onAction = { action ->
             when (action) {
                 IssuesAction.OnBackClick -> onNavigateBack()
@@ -123,7 +107,7 @@ fun IssuesRoot(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun IssuesScreen(
     state: IssuesUiState,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (IssuesAction) -> Unit
 ) {
     KomiScaffold(
@@ -135,17 +119,7 @@ private fun IssuesScreen(
                 },
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState,
         floatingActionButton = {
             if (!state.isLoading && state.errorMessage == null) {
                 ExtendedFloatingActionButton(

@@ -28,7 +28,7 @@ import zed.rainxch.auth.domain.repository.RejectedKind
 import zed.rainxch.auth.presentation.mapper.toUi
 import zed.rainxch.auth.presentation.model.AuthLoginState
 import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.helpers.ClipboardHelper
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -39,7 +39,7 @@ class AuthenticationViewModel(
     private val browserHelper: BrowserHelper,
     private val clipboardHelper: ClipboardHelper,
     private val scope: CoroutineScope,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private var hasLoadedInitialData = false

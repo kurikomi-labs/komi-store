@@ -20,7 +20,7 @@ import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -44,7 +44,7 @@ class DeveloperProfileRepositoryImpl(
     private val platform: Platform,
     private val installedAppsDao: InstalledAppDao,
     private val favouritesRepository: FavouritesRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : DeveloperProfileRepository {
     private val httpClient: HttpClient get() = clientProvider.client
 
