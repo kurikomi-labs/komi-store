@@ -141,7 +141,7 @@
     <string name="proxy_test_error_unknown">فشل اختبار الاتصال</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">تم تسجيل الخروج بنجاح، جارٍ إعادة التوجيه...</string>
+    <string name="logout_success">تم تسجيل الخروج بنجاح</string>
 
     <!-- Dialog -->
     <string name="warning">تحذير!</string>

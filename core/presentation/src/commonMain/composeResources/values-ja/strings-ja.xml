@@ -104,7 +104,7 @@
 
     <string name="logout">ログアウト</string>
 
-    <string name="logout_success">ログアウトしました。リダイレクト中…</string>
+    <string name="logout_success">ログアウトしました</string>
 
     <string name="warning">警告！</string>
     <string name="logout_confirmation">ログアウトしてもよろしいですか？</string>

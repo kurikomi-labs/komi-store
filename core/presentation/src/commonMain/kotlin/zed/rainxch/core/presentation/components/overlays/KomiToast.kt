@@ -238,7 +238,7 @@ private fun MangaToastPanel(
                 )
                 if (hasAction) {
                     KomiText(
-                        text = data.actionLabel!!,
+                        text = data.actionLabel,
                         modifier =
                             Modifier.clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -352,7 +352,7 @@ private fun ClassicToastPanel(
                     TextButton(onClick = {
                         data.onAction?.invoke()
                         onClose()
-                    }) { Text(data.actionLabel!!) }
+                    }) { Text(data.actionLabel) }
                 }
             } else {
                 null

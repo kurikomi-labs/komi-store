@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.helpers.AppLauncher
 
 class AndroidAppLauncher(
     private val context: Context,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : AppLauncher {
     override suspend fun launchApp(installedApp: InstalledApp): Result<Unit> =
         withContext(Dispatchers.Main) {

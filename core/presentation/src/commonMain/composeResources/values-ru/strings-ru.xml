@@ -104,7 +104,7 @@
 
     <string name="logout">Выйти</string>
 
-    <string name="logout_success">Ты успешно вышел, перенаправление...</string>
+    <string name="logout_success">Ты успешно вышел</string>
 
     <string name="warning">Внимание!</string>
     <string name="logout_confirmation">Точно хочешь выйти?</string>

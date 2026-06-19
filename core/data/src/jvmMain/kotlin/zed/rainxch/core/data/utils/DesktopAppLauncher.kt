@@ -2,14 +2,14 @@ package zed.rainxch.core.data.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.helpers.AppLauncher
 import java.io.File
 
 class DesktopAppLauncher(
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val platform: Platform,
 ) : AppLauncher {
     override suspend fun launchApp(installedApp: InstalledApp): Result<Unit> =

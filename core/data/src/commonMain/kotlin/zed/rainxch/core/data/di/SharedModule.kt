@@ -58,7 +58,7 @@ import zed.rainxch.core.data.repository.CacheRepositoryImpl
 import zed.rainxch.core.data.repository.HostTokenRepositoryImpl
 import zed.rainxch.core.data.repository.TweaksRepositoryImpl
 import zed.rainxch.core.domain.getPlatform
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.model.settings.ProxyScope
@@ -92,7 +92,7 @@ val coreModule =
             CoroutineScope(Dispatchers.IO + SupervisorJob())
         }
 
-        single<GitHubStoreLogger> {
+        single<KomiStoreLogger> {
             KermitLogger
         }
 

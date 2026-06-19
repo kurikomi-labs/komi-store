@@ -28,7 +28,6 @@ import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerType
-import zed.rainxch.core.domain.model.system.RestartReason
 import zed.rainxch.core.domain.model.appearance.ThemeMode
 import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
@@ -465,29 +464,6 @@ class TweaksRepositoryImpl(
         }
     }
 
-    override fun getNeedsRestartReasons(): Flow<Set<RestartReason>> =
-        gatedGetFlow<List<String>>(K_RESTART_REASONS, emptyList()).map { stored ->
-            stored.mapNotNull { name ->
-                runCatching { RestartReason.valueOf(name) }.getOrNull()
-            }.toSet()
-        }
-
-    override suspend fun addRestartReason(reason: RestartReason) {
-        migrationDeferred.await()
-        rmwLock.withLock {
-            val current = ksafe.safeGet<List<String>>(K_RESTART_REASONS, emptyList()).toSet()
-            if (reason.name in current) return@withLock
-            ksafe.safePut(K_RESTART_REASONS, (current + reason.name).toList())
-        }
-    }
-
-    override suspend fun clearRestartReasons() {
-        migrationDeferred.await()
-        rmwLock.withLock {
-            ksafe.safePut(K_RESTART_REASONS, emptyList<String>())
-        }
-    }
-
     companion object {
         private const val DEFAULT_UPDATE_CHECK_INTERVAL_HOURS = 6L
         private const val MIGRATION_MARKER = "__migrated_from_datastore_v1__"
@@ -536,6 +512,5 @@ class TweaksRepositoryImpl(
         private const val K_FAVOURITES_SORT_RULE = "favourites_sort_rule"
         private const val K_CONTENT_WIDTH = "content_width"
         private const val K_CUSTOM_FORGE_HOSTS = "custom_forge_hosts"
-        private const val K_RESTART_REASONS = "needs_restart_reasons"
     }
 }

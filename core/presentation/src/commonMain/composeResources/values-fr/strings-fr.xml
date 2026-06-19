@@ -104,7 +104,7 @@
 
     <string name="logout">Se déconnecter</string>
 
-    <string name="logout_success">Déconnexion réussie, redirection…</string>
+    <string name="logout_success">Déconnexion réussie</string>
 
     <string name="warning">Attention !</string>
     <string name="logout_confirmation">Voulez-vous vraiment vous déconnecter ?</string>

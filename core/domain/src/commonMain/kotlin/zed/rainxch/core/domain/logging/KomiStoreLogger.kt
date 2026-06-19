@@ -1,6 +1,6 @@
 package zed.rainxch.core.domain.logging
 
-interface GitHubStoreLogger {
+interface KomiStoreLogger {
     fun debug(message: String)
 
     fun info(message: String)
@@ -12,5 +12,5 @@ interface GitHubStoreLogger {
         throwable: Throwable? = null,
     )
 
-    fun withTag(tag: String): GitHubStoreLogger = this
+    fun withTag(tag: String): KomiStoreLogger = this
 }

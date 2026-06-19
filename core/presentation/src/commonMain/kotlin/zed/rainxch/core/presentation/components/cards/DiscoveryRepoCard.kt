@@ -46,7 +46,6 @@ fun DiscoveryRepoCard(
     discoveryRepositoryUi: DiscoveryRepositoryUi,
     onClick: () -> Unit,
     onShareClick: () -> Unit,
-    onDeveloperClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onHideClick: (() -> Unit)? = null,
     onToggleSeen: (() -> Unit)? = null,

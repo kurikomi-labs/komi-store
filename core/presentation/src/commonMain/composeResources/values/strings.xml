@@ -144,7 +144,7 @@
     <string name="proxy_test_error_unknown">Connection test failed</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">Logged out successfully, redirecting...</string>
+    <string name="logout_success">Logged out successfully</string>
 
     <!-- Dialog -->
     <string name="warning">Warning!</string>

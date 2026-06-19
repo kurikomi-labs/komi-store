@@ -105,7 +105,7 @@
 
     <string name="logout">Wyloguj się</string>
 
-    <string name="logout_success">Wylogowano pomyślnie, przekierowywanie...</string>
+    <string name="logout_success">Wylogowano pomyślnie</string>
 
     <string name="warning">Ostrzeżenie!</string>
     <string name="logout_confirmation">Czy na pewno chcesz się wylogować?</string>

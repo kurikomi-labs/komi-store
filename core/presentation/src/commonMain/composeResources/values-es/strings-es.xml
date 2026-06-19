@@ -104,7 +104,7 @@
 
     <string name="logout">Cerrar sesión</string>
 
-    <string name="logout_success">Sesión cerrada correctamente, redirigiendo…</string>
+    <string name="logout_success">Sesión cerrada correctamente</string>
 
     <string name="warning">¡Advertencia!</string>
     <string name="logout_confirmation">¿Estás seguro de que deseas cerrar sesión?</string>

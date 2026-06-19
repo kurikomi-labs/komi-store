@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import zed.rainxch.core.data.cache.CacheManager
 import zed.rainxch.core.data.services.FileLocationsProvider
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.repository.CacheRepository
 
 class CacheRepositoryImpl (
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val fileLocationsProvider: FileLocationsProvider,
     private val cacheManager: CacheManager,
 ) : CacheRepository {

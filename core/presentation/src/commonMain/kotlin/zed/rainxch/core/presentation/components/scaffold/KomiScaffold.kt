@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.overlays.KomiToastHost
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -40,6 +42,7 @@ fun KomiScaffold(
     topBar: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     floatingActionButton: (@Composable () -> Unit)? = null,
+    toastState: KomiToastState? = null,
     overlay: (@Composable () -> Unit)? = null,
     grid: Boolean = true,
     screentone: Boolean = false,
@@ -74,14 +77,23 @@ fun KomiScaffold(
         ) { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
                 if (isManga && grid) {
-                    Box(modifier = Modifier.matchParentSize().gridPaper(color = colors.onSurface, opacity = colors.gridOpacity))
+                    Box(
+                        modifier = Modifier.matchParentSize()
+                            .gridPaper(color = colors.onSurface, opacity = colors.gridOpacity)
+                    )
                 }
                 if (isManga && screentone) {
-                    Box(modifier = Modifier.matchParentSize().screentoneFill(color = colors.onSurface, opacity = colors.screentoneOpacity))
+                    Box(
+                        modifier = Modifier.matchParentSize().screentoneFill(
+                            color = colors.onSurface,
+                            opacity = colors.screentoneOpacity
+                        )
+                    )
                 }
                 content(innerPadding)
             }
         }
+        toastState?.let { KomiToastHost(state = it) }
         overlay?.invoke()
     }
 }
@@ -92,7 +104,8 @@ private fun PreviewScaffold() {
     KomiScaffold(
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg, vertical = Spacing.md),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = Spacing.lg, vertical = Spacing.md),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 KomiText(text = "Discover", role = KomiTextRole.Title)
@@ -105,12 +118,22 @@ private fun PreviewScaffold() {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 listOf("Home", "Search", "For You", "You").forEach {
-                    KomiText(text = it, role = KomiTextRole.Label, color = colors.onSurfaceVariant, fontSize = 11.sp)
+                    KomiText(
+                        text = it,
+                        role = KomiTextRole.Label,
+                        color = colors.onSurfaceVariant,
+                        fontSize = 11.sp
+                    )
                 }
             }
         },
         floatingActionButton = {
-            KomiIconButton(icon = Icons.Default.Add, contentDescription = "Add", onClick = {}, variant = KomiButtonVariant.Primary)
+            KomiIconButton(
+                icon = Icons.Default.Add,
+                contentDescription = "Add",
+                onClick = {},
+                variant = KomiButtonVariant.Primary
+            )
         },
     ) { padding ->
         Column(
@@ -118,7 +141,10 @@ private fun PreviewScaffold() {
             verticalArrangement = Arrangement.spacedBy(Spacing.lg),
         ) {
             repeat(3) {
-                KomiSurface(elevation = KomiSurfaceElevation.Card, contentPadding = PaddingValues(Spacing.lg)) {
+                KomiSurface(
+                    elevation = KomiSurfaceElevation.Card,
+                    contentPadding = PaddingValues(Spacing.lg)
+                ) {
                     KomiText(text = "Panel ${it + 1}", role = KomiTextRole.Title)
                 }
             }

@@ -123,7 +123,7 @@
     <string name="logout">লগআউট</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">সফলভাবে লগআউট হয়েছে, রিডাইরেক্ট করা হচ্ছে...</string>
+    <string name="logout_success">সফলভাবে লগআউট হয়েছে</string>
 
     <!-- Dialog -->
     <string name="warning">সতর্কতা!</string>

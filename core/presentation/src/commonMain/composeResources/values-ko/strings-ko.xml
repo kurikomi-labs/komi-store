@@ -121,7 +121,7 @@
     <string name="logout">로그아웃</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">성공적으로 로그아웃되었습니다. 이동 중...</string>
+    <string name="logout_success">성공적으로 로그아웃되었습니다</string>
 
     <!-- Dialog -->
     <string name="warning">경고!</string>

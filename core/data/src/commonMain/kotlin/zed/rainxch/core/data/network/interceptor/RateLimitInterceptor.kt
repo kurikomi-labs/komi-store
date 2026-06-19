@@ -4,11 +4,8 @@ import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.statement.HttpReceivePipeline
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.HttpResponsePipeline
 import io.ktor.http.Headers
 import io.ktor.util.AttributeKey
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.error.RateLimitInfo
 import zed.rainxch.core.domain.repository.RateLimitRepository

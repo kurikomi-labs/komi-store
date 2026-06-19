@@ -122,7 +122,7 @@
     <string name="logout">Çıkış Yap</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">Başarılı şekilde çıkış yapıldı, yönlendiriliyor...</string>
+    <string name="logout_success">Başarılı şekilde çıkış yapıldı</string>
 
     <!-- Dialog -->
     <string name="warning">Uyarı!</string>
