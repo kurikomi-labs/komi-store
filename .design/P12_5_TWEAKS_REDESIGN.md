@@ -11,7 +11,7 @@
 Citations point to `.design/P12_5_TWEAKS_RESEARCH_REVIEW.md` (review) and `.design/P12_5_ABOUT_PLACEMENT_RESEARCH.md` (placement).
 
 | # | Area | V1 said | V2 says | Driver |
-|---|---|---|---|---|
+| :--- | :--- | :--- | :--- | :--- |
 | 1 | Telemetry UI | absent | first-class opt-out, lives in new **Privacy** sub-screen | review C1 |
 | 2 | Library cleanup | one screen mixing cache + clipboard + history + telemetry-shaped concerns | **split** into **Storage** (APK cache) + **Privacy** (telemetry, clipboard, hide-seen, viewed history) | review M1 |
 | 3 | About leaf | "About" sub-screen with feedback nested inside | **App info** sub-screen (About + Licenses + Privacy policy + version) **plus** dedicated **Send feedback** hub row at bottom; desktop also gains `MenuBar` | placement Option E + review M7 |
@@ -46,7 +46,7 @@ V1 strengths preserved: outlined `Radii.row` vocabulary across all sub-screens, 
 The hub is grouped into **5 visual blocks**, 11 entry rows total. Each block has its own `SectionText` + `Squiggle` underline, then a stack of entry rows. No top-level "Settings" section header — the topbar already says "Tweaks".
 
 | Block | Order | Entry row | Icon (Material outlined) | Subtitle (dynamic state) | Drill-in | Platforms |
-|---|---|---|---|---|---|---|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Look & feel** | 1 | Appearance | `Palette` | Palette + mode, e.g. "Nord · Dark" | `TweaksAppearanceScreen` | All |
 | | 2 | Language | `Translate` | Language name, e.g. "English (US)" or "Follow system · en-US" | `TweaksLanguageScreen` | All |
 | **Connectivity** | 3 | Connection | `Wifi` | "No proxy" / "HTTP 127.0.0.1:1080" / "System proxy" / "127.0.0.1:1080 · 1 override" | `TweaksConnectionScreen` | All |
@@ -81,7 +81,7 @@ Notes on the IA:
 ### 1.3 What stays where
 
 | Existing thing | New home |
-|---|---|
+| :--- | :--- |
 | `MirrorPickerScreen` | Reached from **Sources** (existing nav route preserved) |
 | `HostTokensScreen` | Reached from **Access tokens** hub row (existing nav route preserved) |
 | `SkippedUpdatesScreen` | Reached from **Update behavior** |
@@ -140,7 +140,7 @@ The hub is a list of 11 identical rows grouped into 5 sub-sections. The row is t
 
 **A11y semantics** (review M5):
 
-```
+```kotlin
 Modifier.semantics {
     role = Role.Button
     contentDescription = "$title. $subtitle. Double-tap to open."
@@ -153,7 +153,7 @@ Chevron `contentDescription = null`. Status pill participates via `liveRegion = 
 
 **Component sketch**:
 
-```
+```kotlin
 @Composable
 fun TweaksEntryRow(
     title: String,
@@ -200,13 +200,13 @@ A single inline filter field, lives between the restart banner (if visible) and 
 - `OutlinedTextField`, shape **`WonkySquircleShape.Search`**, leading icon `Icons.Default.Search`, trailing clear icon (when non-empty), placeholder "Search settings" (sentence-case, no period).
 - ~20 lines of Compose. No new VM logic — pure presentational `remember { mutableStateOf("") }`. Filters the static row list in `TweaksScreen` by `title.contains(query, ignoreCase = true) || subtitle?.contains(query, ignoreCase = true) == true`.
 - When query is non-empty, section headers hide and rows render in a flat list.
-- When query yields zero matches: empty-state card (outlined `Radii.row`), `Icons.Outlined.SearchOff` icon tile + "No settings match '<query>'."
+- When query yields zero matches: empty-state card (outlined `Radii.row`), `Icons.Outlined.SearchOff` icon tile + "No settings match `<query>`."
 
 Deep-link routes (`githubstore://tweaks/<category>`) are **spec'd here as a follow-up ticket** (P12.5.1, post-launch). Not in v1 scope. Route names when implemented: `appearance`, `language`, `connection`, `sources`, `translation`, `install-method`, `updates`, `storage`, `privacy`, `access-tokens`, `app-info`, `send-feedback`.
 
 ### 2.6 Vertical rhythm
 
-```
+```text
 LazyColumn(contentPadding = 16.dp horizontal, top = 8.dp, bottom = bottomNavHeight + 32.dp)
   restart banner (if reasons non-empty)
   Spacer(12.dp)
@@ -286,8 +286,9 @@ Conventions shared by every sub-screen:
 **Validation / events**: selecting a language fires `OnAppLanguageSelected(tag)` → repository sets language **and** pushes `RestartReason.LANGUAGE` into `needsRestartReasons`. The §2.3 restart banner takes over; no snackbar from this screen.
 
 **Empty / loading / error**:
+
 - Empty list: never (35+ languages baked in).
-- Search empty: same pattern as §2.5 ("No languages match '<query>'").
+- Search empty: same pattern as §2.5 ("No languages match `<query>`").
 - Error: not possible (static list).
 
 ### 3.3 Connection — `TweaksConnectionScreen` (proxy redesign)
@@ -307,6 +308,7 @@ This screen is the centerpiece. Full deep-dive in §4.
    - Title "GitHub mirror". Subtitle: "Default (github.com)" or selected mirror display name.
 3. Sub-header "Custom forges".
    - If `customForgeHosts.isEmpty()`: empty-state outlined row, title "Add a Forgejo or Gitea host", subtitle "We already know about codeberg.org and gitea.com. Add others here.", trailing `Icons.Default.Add`. Opens `CustomForgesSheet`.
+
    - If non-empty: list of host rows.
      - Title in `Geist Mono labelLarge`, +1 weight bump for visual parity with proportional text (review N5).
      - Subtitle "Added manually" or "Suggested by URL parse".
@@ -322,6 +324,7 @@ This screen is the centerpiece. Full deep-dive in §4.
 - CTA: "Add host", full-width `WonkySquircleShape.CtaPrimary`, disabled until non-blank + passes validation.
 
 **Empty / loading / error**:
+
 - Empty (no forges added): the empty-state row above is the empty state.
 - Loading (validating new host): inline progress indicator in the sheet's CTA, button text "Validating…"
 - Error: inline `supportingText` on the field; failures during validation surface as a snackbar on the Sources screen after the sheet dismisses, e.g. "Couldn't reach `code.example.org`."
@@ -355,6 +358,7 @@ This screen is the centerpiece. Full deep-dive in §4.
    - When enabled: target language picker drill-row that **reuses §3.2 list** filtered to `SupportedTranslationLanguages.all` (review N2 — same picker, not a parallel one).
 
 **Empty / loading / error**:
+
 - No provider selected: Google is always the implicit default; never empty.
 - Credentials missing for non-Google: one-line warning inside credentials card "No key yet — using Google as fallback." (`onSurfaceVariant`, no destructive coloring).
 - Save error: snackbar with retry, e.g. "Couldn't validate DeepL key. [Retry]"
@@ -387,6 +391,7 @@ This screen is the centerpiece. Full deep-dive in §4.
 - Centered `Icons.Outlined.Computer` (48dp) + title "Install method is Android-only" + body "Silent installers and installer attribution are Android features. Desktop installs go through the OS package manager." + back CTA `WonkySquircleShape.CtaAlt` "Back to Tweaks".
 
 **Empty / loading / error**:
+
 - Loading installer states: each radio row's status badge defaults to "Checking…" until `InstallerStatusProvider` returns. Badge has `liveRegion = Polite`.
 - Permission grant errors: snackbar.
 - Attribution custom field error: inline `supportingText`.
@@ -410,6 +415,7 @@ This screen is the centerpiece. Full deep-dive in §4.
 **Desktop**: auto-update card simplifies to a single toggle "Check on launch" (no interval picker, no WorkManager). Skipped + Hidden drill rows still apply. What's-new history moves to **App info** (V1 had it here; V2 moves it because it's reference content about the app, not update behavior).
 
 **Empty / loading / error**:
+
 - "Manual only" interval = no scheduled check; subtitle on hub reads "Manual checks only."
 - Last-check error: hub subtitle pill "Check failed" (`tertiaryContainer`), in-screen banner "Last check failed at 14:02 — [Retry]."
 - Plural-aware count subtitles use `pluralStringResource`.
@@ -430,6 +436,7 @@ This screen is the centerpiece. Full deep-dive in §4.
    - Trailing primary action: `WonkySquircleShape.CtaAlt` `FilledTonalButton` "Clear", `errorContainer` tinted. **Disabled when size = 0 B**. Opens `ClearDownloadsDialog` (existing).
 
 **Empty / loading / error**:
+
 - Size = 0 B: status reads "Using: 0 B"; Clear button disabled with `disabledContainerColor` per Material 3 disabled-tonal pattern. No empty-state card needed — "0 B" is itself the empty state.
 - Loading size: status reads "Calculating…" with subtle indeterminate text shimmer (existing `TweaksViewModel.OnRefreshCacheSize` initialization period).
 - Clear success: snackbar "Cleared 124 MB."
@@ -458,11 +465,13 @@ This screen is **not** the home of the *legal* "Privacy policy" link — that li
    - Drill row (destructive): title "Clear viewed history". Click → `GhsConfirmDialog` ("Clear all viewed history? This won't unstar or unfavorite anything."). On confirm, snackbar with **Undo** for 5s window, then commits irreversibly. (Treats this as reversible-with-Undo rather than purely irreversible — viewed history is non-critical data.)
 
 **Empty / loading / error**:
+
 - Telemetry expandable: static content; never loading.
 - Clipboard / hide-seen toggles: synchronous state; never loading.
 - Clear viewed history error: snackbar with retry.
 
 **Hub subtitle compact state** (for §1.1 row 9): `pluralStringResource`-driven, capped at 32 chars per review M6. Examples:
+
 - "Telemetry off · clipboard on" (28 chars)
 - "Telemetry on · 3 toggles on" — drop "clipboard" / "hide-seen" specifics on overflow.
 
@@ -492,6 +501,7 @@ Hub subtitle: plural-aware "%d token" / "%d tokens" (review M6), or "No tokens y
    - **Source code on GitHub** — icon GitHub glyph (reuse `PlatformGlyph` GitHub variant; fallback `Icons.Outlined.Code`), subtitle "View this app's source." Opens the repo URL.
 
 **Empty / loading / error**:
+
 - Version loading: placeholder "—" until populated.
 - Licenses JSON unreachable (shouldn't happen since shipped as asset): empty-state card "Couldn't load licenses. [Retry]."
 - External URL handlers can fail on desktop without a default browser: snackbar "Couldn't open privacy policy. URL copied to clipboard." with the URL pre-copied as a fallback.
@@ -507,6 +517,7 @@ Per product-owner decision + placement Option E. **Single feedback path** (not d
 - Behavior unchanged from today — pre-fills user-agent + version metadata.
 
 **Empty / loading / error**:
+
 - Submit success: sheet dismisses, hub snackbar "Feedback sent. Thanks."
 - Submit error: inline error in sheet, retry button.
 
@@ -536,6 +547,7 @@ Persistence change (review C2): the master config is its **own** `ProxyConfig?` 
 **Title**: "Connection"
 
 **Top intro card** (outlined `Radii.row`):
+
 - Title "How the app reaches the internet".
 - Body "Pick a connection mode below. Most people leave this on No proxy."
 
@@ -629,12 +641,13 @@ This is a pure-presentation migration — no network calls, no async beyond Data
 
 **`ModePillSegment`** — promote existing `ModeSegment` from `sections/Others.kt` (private) into `core/presentation/components/ModePillSegment.kt`. Generic over a value type:
 
-```
+```kotlin
 data class ModePillItem<T>(val value: T, val label: String, val icon: ImageVector? = null, val caption: String? = null)
 @Composable fun <T> ModePillSegment(items: List<ModePillItem<T>>, selected: T, onSelect: (T) -> Unit, modifier: Modifier = Modifier)
 ```
 
 Used by:
+
 - Appearance theme mode (Light / Dark / Follow system).
 - Connection master mode (No proxy / System / HTTP/HTTPS / SOCKS5) — with `caption` for the bottom-of-pill hint.
 - Content width segment (Compact / Wide / Extra wide).
@@ -668,7 +681,7 @@ All squircles reuse `Radii.row`, `Radii.chip`, `WonkySquircleShape.{CtaPrimary, 
 Resource keys + English values. Across-13-locale translation queued via §9 CSV; English ships first per project policy.
 
 | Resource key | Current text | Proposed text |
-|---|---|---|
+| :--- | :--- | :--- |
 | `Res.string.tweaks_title` | "Tweaks" | "Tweaks" (keep) |
 | `Res.string.section_appearance` | "Appearance" | "Appearance" (keep) |
 | `Res.string.theme_color` | "Theme color" | "Palette" |
@@ -894,7 +907,7 @@ Today's `composeApp/src/jvmMain/kotlin/zed/rainxch/githubstore/DesktopApp.kt` `W
 
 **Spec**:
 
-```
+```kotlin
 Window(...) {
     MenuBar {
         Menu("Help") {

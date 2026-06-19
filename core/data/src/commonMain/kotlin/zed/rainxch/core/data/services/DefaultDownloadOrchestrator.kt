@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import zed.rainxch.core.data.data_source.TokenStore
+import zed.rainxch.core.data.network.GithubAssetAuth
+import zed.rainxch.core.domain.model.installation.DownloadProgress
 import zed.rainxch.core.domain.network.DigestVerifier
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.network.SlowDownloadDetector
@@ -41,6 +44,7 @@ class DefaultDownloadOrchestrator(
     private val slowDownloadDetector: SlowDownloadDetector,
     private val appScope: CoroutineScope,
     private val systemInstallSerializer: SystemInstallSerializer,
+    private val tokenStore: TokenStore,
 ) : DownloadOrchestrator {
     private companion object {
         private const val DEFAULT_MAX_CONCURRENT = 3
@@ -147,18 +151,38 @@ class DefaultDownloadOrchestrator(
             )
         }
 
-        multiSourceDownloader.download(spec.asset.downloadUrl, scopedName).collect { progress ->
-            if (progress.restart) {
-                slowDownloadDetector.reset()
+        suspend fun streamProgress(flow: Flow<DownloadProgress>) {
+            flow.collect { progress ->
+                if (progress.restart) {
+                    slowDownloadDetector.reset()
+                }
+                slowDownloadDetector.onProgress(progress)
+                updateEntry(spec.packageName) {
+                    it.copy(
+                        progressPercent = progress.percent,
+                        bytesDownloaded = progress.bytesDownloaded,
+                        totalBytes = progress.totalBytes ?: it.totalBytes,
+                    )
+                }
             }
-            slowDownloadDetector.onProgress(progress)
+        }
+
+        try {
+            streamProgress(multiSourceDownloader.download(spec.asset.downloadUrl, scopedName))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            val apiUrl = authenticatedGithubAssetUrl(spec)
+                ?: throw e
+            Logger.w(e) {
+                "Orchestrator: primary download failed for ${spec.asset.name}, " +
+                    "retrying via authenticated GitHub asset API"
+            }
             updateEntry(spec.packageName) {
-                it.copy(
-                    progressPercent = progress.percent,
-                    bytesDownloaded = progress.bytesDownloaded,
-                    totalBytes = progress.totalBytes ?: it.totalBytes,
-                )
+                it.copy(bytesDownloaded = 0L, progressPercent = 0)
             }
+            slowDownloadDetector.reset()
+            streamProgress(downloader.download(apiUrl, scopedName, bypassMirror = true))
         }
 
         val filePath =
@@ -197,6 +221,21 @@ class DefaultDownloadOrchestrator(
 
             InstallPolicy.DeferUntilUserAction -> parkForUser(spec, filePath, notify = true)
         }
+    }
+
+    private suspend fun authenticatedGithubAssetUrl(spec: DownloadSpec): String? {
+        if (spec.asset.id <= 0L) return null
+        if (!GithubAssetAuth.isGithubHost(spec.asset.downloadUrl)) return null
+        val signedIn =
+            try {
+                tokenStore.currentToken()?.accessToken?.trim().isNullOrEmpty().not()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                false
+            }
+        if (!signedIn) return null
+        return GithubAssetAuth.assetApiUrl(spec.repoOwner, spec.repoName, spec.asset.id)
     }
 
     private suspend fun runInstall(spec: DownloadSpec, filePath: String) {

@@ -138,4 +138,9 @@ sealed interface GithubStoreGraph {
         val owner: String,
         val repo: String,
     ) : GithubStoreGraph
+
+    @Serializable
+    data class MarkdownViewerScreen(
+        val url: String,
+    ) : GithubStoreGraph
 }

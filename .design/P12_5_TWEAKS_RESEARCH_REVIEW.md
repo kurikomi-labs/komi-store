@@ -32,12 +32,14 @@
 The bigger issue is in §4.3, Card 1 step 4: *"`Test` … runs `OnProxyTest` against `ProxyScope.DOWNLOAD` (canonical scope for testing the master)."* The user reads "Test" and thinks "test this proxy." The app actually tests Download scope only. If Discovery has an override and Download doesn't, master-test passes and the user assumes their setup is fine — but Discovery is broken.
 
 **Evidence.**
+
 - NN/g, "Visibility of System Status" (Heuristic #1): system state must be reflected accurately. Hidden "canonical scope" violates this.
 - Cloudflare WARP, Tailscale, and Bitwarden all expose a connection test that explicitly says *what* it's testing ("Test connection to coordination server", "Pinging derp1.tailscale.com…"). Anonymous "Test" with hidden semantics is the worst of both worlds.
 - The "load semantics" itself is brittle: any time a user toggles an override on then off, repository writes diverge then converge across millisecond-asynchronous DataStore writes — Jetpack DataStore doesn't guarantee snapshot-atomic reads across three keys. Compare-for-equality risks racy "is this master?" decisions.
 
 **Proposed fix.**
-1. **Persist the master concept as its own ProxyConfig record** in `ProxyRepository`, plus a `useMaster: Boolean` per scope. Don't derive it from equality. (Yes, this is a schema change — that's the cost of the chosen IA. §7.4 lists "ProxyRepository schema" as untouched; that decision should be reversed.)
+
+1. **Option A chosen — master config + per-scope `useMaster` booleans** in `ProxyRepository`. The master is stored as a regular `ProxyConfig` under `MasterKeys` (`master_proxy_type`, `master_proxy_host`, etc.), and each scope gets a boolean key (`discovery_proxy_use_master`, etc.). This approach was chosen over Option B (new `ProxyConfig.Master` sealed variant) because: (a) reuses the existing `parseConfig()` function and `writeMasterConfig()` storage path without duplication, (b) the `MasterKeys` object already provides the storage structure, and (c) the `migrateMasterV2IfNeeded()` migration already writes `useMaster` booleans — no new migration needed. Don't derive master from equality comparison.
 2. **Test must announce the scope.** Card 1 test button label: "Test main connection". Per-scope override test: "Test for Downloads". Snackbar should always include scope name: "Downloads proxy connected in 184 ms."
 3. **When master is selected, run the test against all 3 endpoints** (search/metadata GitHub API, download CDN, configured translation provider) and show a 3-line result. This is what Tailscale's `tailscale netcheck` does. Roundtrip cost is acceptable — testing is rare.
 4. Surface "current state" pill on every override sub-row even when collapsed: green "Using main", or amber "Override: HTTP 127.0.0.1:1080".
@@ -51,12 +53,14 @@ The bigger issue is in §4.3, Card 1 step 4: *"`Test` … runs `OnProxyTest` aga
 **Problem.** §6 row: `proxy_none` "None" → "Direct". The architect's reasoning (§4.3 *"'Direct' replaces today's `ProxyType.NONE`. Renamed for clarity — 'None' sounds like an error state."*) is half-right and half-wrong.
 
 **Evidence.**
+
 - "Direct" is industry term in *English* (Firefox, Chrome, system proxy.pac syntax: `DIRECT`). In the 13 locales the app ships, **"Direct" has no shared meaning**. In German "Direkt" works; in Chinese (Simplified) the literal "直接" is awkward UI copy — Chrome zh-CN uses "不使用代理服务器" ("do not use proxy server"); in Russian "Прямое соединение" is verbose. In Polish "Bezpośrednio" — same problem.
 - The original "None" maps cleanly across locales because every translator already has localized "None" from the rest of the OS.
 - iOS HIG, Internationalization: *"Avoid technical jargon and idioms that may not translate. Prefer concrete nouns over abstract states."*
 - "Direct" also collides with the Connection screen body copy: *"Pick a connection mode below. Most people leave this on Direct."* — a user reading that translation might wonder "direct what?"
 
 **Proposed fix.** Three options, ranked:
+
 1. **"No proxy"** — concrete, translatable, accurate. Used by Firefox UI ("No proxy"). Bitwarden uses this exact phrase.
 2. **"Off"** — pairs naturally with a master pill ("Connection: Off"). Cloudflare WARP uses "Off / On / Auto".
 3. Keep "Direct" but mark the rename as English-only and require translator notes for each locale ("the connection bypasses any proxy"). Worst option.
@@ -70,12 +74,14 @@ Pick #1. Also rename `proxy_none_description` from "Connect directly, no proxy."
 ### C4. Empty-state and confirmation patterns are spec'd inconsistently across sub-screens
 
 **Problem.** The spec handles empty states on some screens but ignores them on others:
+
 - §3.4 Sources: explicit empty state for custom forges ✔.
 - §3.7 Updates: skipped/hidden drill rows show counts but **no spec for "0 items"** subtitle copy. Today's `skipped_updates_entry_description` is just descriptive; with the new dynamic-subtitle pattern (§2.2 *"reflects the current value of that domain"*), a zero state needs friendly copy.
 - §3.9 Access tokens: *"No visual change needed beyond making sure its rows already use `Radii.row`"* — but the hub subtitle (§1.1) says "No tokens yet" when empty. The actual `HostTokensScreen` empty state is unaudited. A user tapping "No tokens yet" deserves an "Add your first token" CTA, not a blank list.
 - §3.8 Library cleanup: cache size "Using: 124 MB" but no spec for "Using: 0 B" copy or whether the Clear button should be disabled.
 
 Confirmation dialogs are also inconsistent:
+
 - §3.8 Clear viewed history: uses `GhsConfirmDialog`. Good.
 - §3.4 Remove custom forge: uses `GhsConfirmDialog`. Good.
 - §4 Connection override toggle-off: **no confirmation**, but toggling off override loses test results and arguably changes behavior across an entire scope. Should at least surface a snackbar "Discovery now uses main connection" so the destructive change is observable.
@@ -84,6 +90,7 @@ Confirmation dialogs are also inconsistent:
 **Evidence.** NN/g, "10 Usability Heuristics," #5 Error prevention and #9 Help users recognize, diagnose, recover. Material 3 Confirmation Dialog guidance: *"Use for destructive actions that can't be undone, or that change scope of effect."*
 
 **Proposed fix.** Add an "Empty / loading / error states" sub-section to **every** per-screen spec. Standardize the destructive-action pattern across the redesign:
+
 - Reversible state changes → snackbar with Undo (Material 3 standard).
 - Irreversible destructive (clear cache, clear history, remove token, remove forge) → `GhsConfirmDialog`.
 - Mode switches that change behavior across many scopes (proxy override on/off) → snackbar confirming scope change.
@@ -97,17 +104,20 @@ Confirmation dialogs are also inconsistent:
 **Problem.** §2.6 rejects search; §1.2 declines greyed-out cross-platform rows; §7.1 (Discoverability loss) acknowledges *"Today a user scrolling Tweaks accidentally discovers 'Custom forges' or 'Hide seen.' In a hub-and-spoke model, those settings are one tap further away. Mitigation: the hub's dynamic subtitles … make the state visible without entering."* The mitigation is partial — subtitle visibility helps recognition, not initial discovery, and only for users who already know what to look for.
 
 **Evidence.**
+
 - NN/g, "Site Map vs Search" (2019): site maps (= our hub) work for users who know domain vocabulary; search wins for users who know what they want but not where it lives. Power users (our audience) hover at both ends — proxy tinkerers know exactly what they want, but onboarding users browse.
 - iOS Settings: ~30 hub rows but ships a search bar at top of every Settings screen. Apple HIG, Settings: *"Provide a search bar when your settings hierarchy is more than one level deep."*
 - 1Password and Bitwarden Settings: both ship search.
 - Material 3 Settings pattern (m3.material.io): "For more than 6 categories, provide search." We have 10.
 
 The architect's three reasons for rejecting search (§2.6) are:
+
 1. *"A user can scan them in under 2 seconds."* True for first visit, false for return visits to a specific item.
 2. *"contradicting the 'much cleaner' directive."* A search bar one row tall doesn't violate "much cleaner."
 3. *"deep links … better than fuzzy search field."* These solve different problems — deep links from outside the app, search from inside.
 
 **Proposed fix.** Either:
+
 1. **Ship a tiny search field** at the top of the hub (under the title, above the first block header), `WonkySquircleShape.Search` shape, filters rows + their subtitle text. Cost: ~20 lines of Compose. Removes the entire discoverability complaint.
 2. **Or commit to deep links in v1, not P13** (§7.1 defers them). At minimum: `githubstore://tweaks/connection`, `githubstore://tweaks/translation`, `githubstore://tweaks/updates`. These can be invoked from notifications ("Battery optimization is blocking updates →"), from in-app banners (the existing `D3` themes-refreshed banner), and from external "open settings" deep links.
 
@@ -122,6 +132,7 @@ Even better: ship both. Search is cheap, deep links are infrastructure.
 ### M1. "Library cleanup" is two unrelated mental models stapled together
 
 **Problem.** The user's brief explicitly asks this question. §3.8 puts under one roof:
+
 - Downloaded APK cache (disk-space concern, performance-y).
 - Detect repo links in clipboard (privacy / convenience pref).
 - Hide seen / Clear viewed history (privacy / behavior pref).
@@ -129,10 +140,12 @@ Even better: ship both. Search is cheap, deep links are infrastructure.
 These have nothing in common except "things the app remembers." The clipboard toggle in particular has **zero** to do with "cleanup."
 
 **Evidence.**
+
 - NN/g, "Card Sorting": users group by goal, not by implementation. A user trying to recover disk space won't think to look here for clipboard prefs; a user trying to stop the app from peeking at clipboard won't think to look in a screen called "cleanup."
 - iOS Settings splits these: General → iPhone Storage (disk), General → AirDrop & Handoff → Universal Clipboard (clipboard), Safari → Privacy (browsing history).
 
 **Proposed fix.** Two options:
+
 1. **Split into "Storage" + "Privacy"** at the hub level. Storage = downloaded APKs only. Privacy = clipboard, hide seen, viewed history, **and the telemetry toggle from C1**. Adds one hub row (now 11), but groups by user goal. This is the architecturally honest answer.
 2. **Keep one screen but rename to "Privacy & data"** and add internal sub-sections "Disk" / "Clipboard" / "History" with `titleSmall` sub-headers (the screen-internal convention from §3 general). Less disruptive, slightly muddier.
 
@@ -149,14 +162,17 @@ Prefer #1. The user's "rethink each category" directive supports it.
 The user audience is power users. "Use main connection" reads ambiguously — it sounds like enabling a connection, not inheriting a setting. The toggle is also semantically inverted from the visual: ON = no editor visible (you can't change anything). Users will toggle it to "see the controls" and then panic when they realize they just unhooked the override.
 
 **Evidence.**
+
 - iOS Settings → Wi-Fi → Network → "Configure DNS": uses radio buttons "Automatic / Manual" — same problem, better solution. Two explicit choices, no toggle inversion.
 - Tailscale → Network → Exit Node: uses "Inherit from network" vs explicit "Override".
 - Material 3 Switch guidance: *"Use switches for on/off states of a single setting, not for revealing more options."*
 
 **Proposed fix.** Replace the toggle with a 2-way segment per scope row:
-```
+
+```text
 [ Use main ]  [ Custom… ]
 ```
+
 "Custom…" reveals the mini-editor. "Use main" hides it. This is what 1Password does for per-vault settings ("Inherit / Custom"), and Bitwarden for organization policies ("Use default / Override").
 
 Bonus: a segment makes the "override is on" state visually obvious without subtitle parsing.
@@ -168,21 +184,24 @@ Bonus: a segment makes the "override is on" state visually obvious without subti
 ### M3. PAC files / SOCKS variants / proxy URL paste are unaddressed
 
 **Problem.** §4.3 mode segment offers Direct / System / HTTP / SOCKS. The user community asking for proxy support (China + privacy-conscious EU + Tor) will request:
+
 - **SOCKS4 vs SOCKS5** distinction. Today's `ProxyConfig.Socks` doesn't expose version — fine if SOCKS5 only, but worth confirming. Tor's local proxy is SOCKS5; some corporate proxies are SOCKS4a.
 - **HTTPS proxy** vs HTTP proxy. Many corporate MITM proxies require HTTPS. Today's `ProxyConfig.Http` is ambiguous in name.
 - **PAC files / proxy auto-config URL**. Mentioned in the review brief; not covered by the spec at all. Many enterprise users have a PAC URL from IT. Firefox + Chrome + macOS System Settings + Windows Internet Options all support PAC.
 - **Paste full proxy URL** as a fast-path (e.g. `socks5://user:pass@127.0.0.1:1080`). Tailscale + warp-cli + curl all accept this format. Five fields is a lot of typing; one paste field is mass-market UX.
 
 **Evidence.**
+
 - Tor Browser Bundle, Settings → Connection → "Use a bridge" → bridge string is one paste field, not 5 separate inputs.
 - Cloudflare WARP-CLI supports `warp-cli set-custom-proxy` with full URL.
 - Material 3 form guidance: *"If a single input can replace multiple, prefer the single input with smart parsing."*
 
 **Proposed fix.**
-1. Confirm `ProxyConfig.Socks` is SOCKS5-only (spec it explicitly: rename mode pill "SOCKS5" rather than "SOCKS"). If SOCKS4 is needed, add a sub-toggle.
-2. Confirm "HTTP" actually supports HTTPS proxies (it likely does via JVM `Proxy.Type.HTTP` which serves both). If yes, rename the pill "HTTP/HTTPS" or just leave "HTTP" with a tooltip.
-3. Add a "Paste proxy URL" affordance: a small text-button below the form fields ("Paste full URL"). On click, opens a modal with one paste field that parses `scheme://user:pass@host:port` and populates the form. Don't replace the form; supplement it.
-4. **PAC file**: spec it as an explicit non-goal for v1 with a one-line follow-up ticket, or commit to a Mode pill 5: "PAC URL". Don't leave it ambiguous — users will ask.
+
+1. **SOCKS5-only confirmed.** `ProxyConfig.Socks` stays versionless — JVM `SocksSocketImpl` is SOCKS5 by default, and there's no demand for SOCKS4. The paste parser (`parseProxyUrl()`) accepts `socks4`, `socks5`, `socks5h` but all map to `ProxyType.SOCKS` → `ProxyConfig.Socks`. Info loss on socks4 paste is accepted as a negligible edge case. UI pill label keeps "SOCKS" (not "SOCKS5") for brevity.
+2. **HTTP confirmed for both HTTP and HTTPS.** JVM `Proxy.Type.HTTP` handles both protocols transparently. UI label stays "HTTP" — the caption explains the mode; tooltip not needed.
+3. **Paste URL already implemented.** `PasteProxyUrlSheet` (`connection/PasteProxyUrlSheet.kt`) exists with `parseProxyUrl()` that handles `http`, `https`, `socks`, `socks4`, `socks5`, `socks5h` schemes. Wired in `TweaksConnectionRoot.kt` — the "Paste URL" text button opens the sheet, parses the input, and dispatches `OnMasterProxyPasteUrl`.
+4. **PAC file: explicit non-goal for v1.** No code exists. If issues come up, address as a follow-up (separate ticket). Not adding a Mode pill for it.
 
 **Severity.** Major (will generate GitHub issues within a week of release if not addressed).
 
@@ -193,11 +212,13 @@ Bonus: a segment makes the "override is on" state visually obvious without subti
 **Problem.** §2.2: *"`border = BorderStroke(1.dp, outlineVariant.copy(alpha = 0.55f))`"*. This is the universal border for the entire redesign. Material 3's `outlineVariant` is already low-contrast (~3:1 against `surfaceContainerLow`), and multiplying by 0.55 alpha makes it ~1.7:1 against light Cream surfaces.
 
 **Evidence.**
+
 - WCAG 2.2, SC 1.4.11 Non-text Contrast: **3:1 minimum** for UI component boundaries.
 - Material 3 contrast tables: `outlineVariant` is designed for low-emphasis dividers, not standalone container borders. When used as a container border (your case), Material recommends `outline` (which is `outlineVariant` boosted ~2x).
 - The amber Cream light palette is on file in `D3`. Cream's `surfaceContainerLow` is high-luminance off-white; the border will be nearly invisible.
 
 **Proposed fix.** Either:
+
 1. Drop the 0.55 alpha. Use `outlineVariant` at full opacity.
 2. Use `outline` at 0.55 alpha (lands at roughly the same visual weight on dark themes but stays above 3:1 on Cream light).
 3. Audit per-palette. The architect should screenshot Nord/Cream/Forest/Plum × Light/Dark/AMOLED with a candidate `TweaksEntryRow` and confirm border visibility before committing.
@@ -215,20 +236,24 @@ Run option #2, then audit.
 But: §3.4 Custom forges row has a trailing `IconButton` for delete ("Trailing: `Icons.Outlined.DeleteOutline` `IconButton` → confirmation"). A 24dp icon inside the row needs **48dp tap target** per Material guidance and **44pt** per Apple HIG. Spec doesn't say. Also: an `IconButton` *inside* a clickable row creates a nested-click trap — tapping near the icon may register the row click first (Compose ripple bubbles to outer clickable unless the inner is wrapped in `onClick = {}` with `interactionSource`).
 
 **Evidence.**
+
 - Material 3 Touch Targets: 48 × 48dp minimum for all interactive elements.
 - WCAG 2.2 SC 2.5.8 (AA): 24 × 24 CSS pixel minimum; 44 × 44 strongly recommended.
 - Compose nested clickables: the outer `Modifier.clickable` swallows child clicks if not explicitly excluded via `consumeWindowInsets` or empty inner click handler (this has been a recurring bug — see Compose 1.6 release notes on `clickable` consumption).
 
 **Proposed fix.**
+
 1. Spec the delete `IconButton` as 48dp min with internal 24dp icon and `Modifier.clip(Radii.chip)` for ripple.
 2. Spec the parent row's `Modifier.clickable` to **not** be the only click handler — the row click navigates, but the delete button stops propagation.
 3. A11y semantics for every hub row:
-   ```
+
+   ```kotlin
    semantics {
        role = Role.Button
        contentDescription = "$title. $subtitle. Double-tap to open."
    }
    ```
+
    Chevron icon: `contentDescription = null` (decorative). Status pills (Install method "Needs permission"): exposed as a `liveRegion = Polite` so TalkBack announces re-evaluation when permissions change.
 4. Override toggle accessibility (§4.3 Card 2): when toggled OFF and editor expands, announce "Discovery override on, custom proxy settings for Discovery."
 
@@ -247,15 +272,17 @@ But: §3.4 Custom forges row has a trailing `IconButton` for delete ("Trailing: 
 - **Plurals**: "%d host" / "%d hosts" (§6 row for `custom_forges_count_label`) — this requires Android plural resources (`plurals.xml`) per locale; Compose Multiplatform Resources supports plurals (`pluralStringResource` in `org.jetbrains.compose.resources` since 1.6). Russian has 3 plural forms, Polish has 3, Arabic has 6. Naive "%d hosts" breaks all of them.
 
 **Evidence.**
+
 - W3C i18n best practices, "Don't use 'one' / 'other'" — use CLDR plural categories.
 - Apple HIG Localization: *"Allow at least 50% extra width for German and Russian. CJK can compress 30%."*
 - Compose Multiplatform Resources release notes: `pluralStringResource` is the supported API; today's code uses `stringResource(..., count)` which is **not** plural-aware.
 
 **Proposed fix.**
+
 1. Mandate `pluralStringResource` for any subtitle / label with a count, and add plural XML for every locale that doesn't have it. Audit: %d tokens, %d hosts, %d apps (skipped updates count).
 2. Spec subtitle truncation behavior: *"Truncate with ellipsis. If subtitle has multiple dot-separated tokens, prefer truncating the rightmost token first."* (This is hard in Compose; pragmatic compromise: cap subtitle at ~32 chars in any locale, drop secondary token if over.)
 3. Use a locale-aware separator: `LocalConfiguration.current.locales` → CJK locales use 「· 」(with width adjustment) or " / "; non-CJK uses " · ".
-4. Wrap all hub rows in `CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr)` only for the chevron icon — text content respects user direction.
+4. Chevron auto-flips via `Icons.AutoMirrored.Filled.KeyboardArrowRight` (already used in `GhsEntryRow.kt`). No `CompositionLocalProvider` wrapping needed — text respects user direction automatically, and the mirrored icon handles the arrow flip in RTL locales.
 5. **Translator handoff**: the §6 rename table is English-only. Generate a CSV of "old key → new English → context note" for translators per locale. Don't ship the redesign with stale 12 locales (the user's policy elsewhere ships with English first and queues translations; that's acceptable, but it must be explicit in the spec, not implicit).
 
 **Severity.** Major (13 locales is a load-bearing project property).
@@ -267,11 +294,13 @@ But: §3.4 Custom forges row has a trailing `IconButton` for delete ("Trailing: 
 **Problem.** §1.3 / §3.10: Send feedback moves into About sub-screen. The hub no longer surfaces feedback. Today, a user encountering a bug can reach Feedback in: Profile → Tweaks → scroll to about → Feedback button. New flow: Profile → Tweaks → About row → Feedback row → sheet. **One extra tap** at the worst possible moment — the user is already frustrated.
 
 **Evidence.**
+
 - NN/g, "Error recovery": friction during an error state is multiplied by user frustration. Each extra tap during a bug-report flow doubles the abandonment rate (Sauro 2016 on error-recovery UI).
 - Most apps that have "Send feedback" or "Report a problem" surface it on the Settings root, not buried. Bitwarden: Settings → "Help" (one tap). 1Password: Settings → "Help" (one tap). Tailscale: Settings → "Bug report" (one tap).
 - The user's brief: *"What about emergencies (something broke, user wants to report fast)?"* — direct callout.
 
 **Proposed fix.** Three patterns to consider:
+
 1. **Keep feedback as its own hub row** at the bottom of the "App" block, alongside About. Cost: 11 rows in hub instead of 10. Worth it.
 2. Add a **floating "Help" overflow icon** in the hub topbar (architect's §2.1 says no trailing — reconsider). Pulls open a sheet with "Send feedback / What's new / Privacy".
 3. Surface feedback as a **persistent banner** at the bottom of the hub only when a crash has occurred in the current session (use `CrashReporter`'s presence). Best-case UX, more engineering.
@@ -290,6 +319,7 @@ Ship #1. It's the cheapest and matches industry norm.
 - The architect's chosen mitigation (centered empty state on deep link) is asymmetric — works in one direction (Android user opens deep link on desktop) but not the other (desktop user wondering "how do I make APK install silent on my Pixel from here").
 
 **Evidence.**
+
 - Apple HIG Settings, Cross-platform: *"Where settings are platform-specific, surface a small badge instead of hiding entirely so users know the feature exists elsewhere."*
 - Discord, Slack, 1Password all do this with "Coming soon on this platform" or "Mobile only" subtitle badges.
 
@@ -304,15 +334,18 @@ Ship #1. It's the cheapest and matches industry norm.
 ### M9. "Connection" + "Sources" hub block name "Network & data" doesn't match its rows
 
 **Problem.** §1.1 block "Network & data" contains: Connection, Sources, Translation, Access tokens.
+
 - "Translation" is not network-related from the user's mental model — it's a feature of repo Details. A user looking for "Translation settings" won't think "Network & data."
 - "Access tokens" is closer to "Account / Security," not "Network."
 
 **Evidence.**
+
 - NN/g, "Information Scent": users follow labels that match their intent. "Translation" under "Network & data" has weak scent.
 - iOS Settings groups Translation under "Apps" or "General"; Tokens / passwords are always under "Passwords & Security."
 - The architect's own §6 rename: `section_network` "Network" → "Network & data" (hub block header) — calling this a "data" block is a stretch when 2 of 4 children are arguably not about data movement.
 
 **Proposed fix.** Re-block:
+
 1. **Look & feel**: Appearance, Language ✔ (no change)
 2. **Connectivity**: Connection, Sources ← new tighter block
 3. **Content & translation**: Translation (single row; or merge with another sibling) ← OR put Translation under Look & feel since it's per-locale-y
@@ -334,11 +367,13 @@ That's 7 blocks for 12 rows — heavier than the current 4 blocks for 10 rows, b
 But the new flow is: hub → tap "Language" row → arrive on `TweaksLanguageScreen` → tap a language → snackbar appears on … which screen? If the snackbar appears on `TweaksLanguageScreen` and the user taps "Restart now," the app restarts and lands on Home (existing behavior) — user loses position. If the user dismisses the snackbar and navigates back to the hub, the snackbar host is gone — but the language is still set, and the app hasn't restarted. Are language and UI now in inconsistent state until the next restart?
 
 **Evidence.**
+
 - Today's monolithic `TweaksRoot.kt` has one `SnackbarHostState` for the whole screen; the snackbar persists across user actions until dismissed.
 - New per-sub-screen pattern (§3 general: *"each sub-screen has its own `SnackbarHostState`"*) means the language snackbar belongs to `TweaksLanguageScreen` only. Navigating back drops it.
 - Material 3 Snackbar guidance: "Restart now" is a high-stakes action — should be a banner, not a transient snackbar, when stakes are this high.
 
 **Proposed fix.**
+
 1. Replace the "Restart now" snackbar with a **persistent banner** at the top of `TweaksLanguageScreen` that says "Language changed. Restart the app to see it everywhere. [Restart now] [Later]". Reuse existing `Banner` if any, otherwise a `Radii.row` outlined Surface with `tertiaryContainer` tint.
 2. Persist the "needs restart" flag in `TweaksRepository` so navigating back to the hub still shows a top-level banner: "Restart pending — some screens may still show the old language."
 3. On hub, show the banner above the first block. On any sub-screen, show it at the top of the screen. Dismisses only on app restart.

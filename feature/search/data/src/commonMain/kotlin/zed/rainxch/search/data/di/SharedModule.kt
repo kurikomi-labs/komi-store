@@ -14,6 +14,7 @@ val searchModule =
                 backendApiClient = get(),
                 cacheManager = get(),
                 forgejoClientRegistry = get(),
+                tokenStore = get(),
             )
         }
 

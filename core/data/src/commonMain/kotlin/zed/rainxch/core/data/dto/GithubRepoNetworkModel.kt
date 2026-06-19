@@ -19,6 +19,7 @@ data class GithubRepoNetworkModel(
     @SerialName("releases_url") val releasesUrl: String,
     @SerialName("updated_at") val updatedAt: String,
     @SerialName("fork") val fork: Boolean = false,
+    @SerialName("private") val private: Boolean = false,
     @SerialName("archived") val archived: Boolean = false,
     @SerialName("open_issues_count") val openIssuesCount: Int = 0,
     @SerialName("has_downloads") val hasDownloads: Boolean = false,

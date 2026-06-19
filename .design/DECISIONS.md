@@ -18,6 +18,7 @@ Total bundled font weight target: ≤ 4 MB across all three families.
 ## D3 — AppTheme migration map
 
 Legacy `AppTheme` enum → new `Palette`:
+
 - `OCEAN` → `NORD`
 - `SLATE` → `NORD`
 - `PURPLE` → `PLUM`
@@ -33,6 +34,7 @@ Full DESIGN.md coverage: hero CTAs, lead cards, search input, bottom sheets, con
 ## D5 — Sponsor cut
 
 Cut `SponsorScreen` entirely. Remove:
+
 - Route `GithubStoreGraph.SponsorScreen`
 - Profile sponsor row (`feature/profile/.../Options.kt:114`)
 - Nav wiring in `AppNavigation.kt`
@@ -71,6 +73,7 @@ Design handoff covers only some screens (Home, Library, Detail incl. Inner About
 ## D10 — Motion scope (rich)
 
 Beyond DESIGN.md §6.2 baseline (Heartbeat + 120ms tap + palette/mode crossfade):
+
 - Shared-element transitions (Compose `SharedTransitionLayout`) on avatar → Detail hero
 - Spring physics on press / release (`spring(dampingRatio = MediumBouncy)`)
 - List item enter/exit (slide 200ms)
@@ -102,6 +105,7 @@ Label change only. Route name `AppsScreen` stays (no breaking change for deep li
 ## D17 — Onboarding (3 steps)
 
 New first-launch flow:
+
 1. **Palette pick** — 4 Cookie swatches (Nord/Cream/Forest/Plum) + System/Light/Dark mode default
 2. **Sign in (optional)** — entry point to web-OAuth or device-flow or skip
 3. **Permissions (Android)** — notifications + install-from-unknown-sources prompts (skip-able)

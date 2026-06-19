@@ -57,6 +57,7 @@ actual val corePlatformModule =
         single<Downloader> {
             AndroidDownloader(
                 files = get(),
+                tokenStore = get(),
             )
         }
 

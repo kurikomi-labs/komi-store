@@ -57,4 +57,6 @@ interface DetailsRepository {
         repo: String,
         sha256Digest: String,
     ): Boolean
+
+    suspend fun fetchRawMarkdown(url: String): String?
 }

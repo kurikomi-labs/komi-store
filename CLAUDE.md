@@ -17,14 +17,14 @@ JDK 21+. Android SDK for Android.
 
 ## Structure
 
-```
+```text
 composeApp/            # entry points, navigation, DI wiring (commonMain / androidMain / jvmMain)
 core/
   domain/              # interfaces, models, use cases (no framework deps)
   data/                # repos, Ktor, Room, Koin, platform impls
   presentation/        # Material 3 theme + reusable components + 13-locale strings
 feature/
-  apps auth details dev-profile favourites home profile recently-viewed search starred tweaks
+  apps auth details dev-profile favourites homeP profile recently-viewed search starred tweaks
 build-logic/convention/  # convention plugins
 ```
 
@@ -121,6 +121,7 @@ Kotlin 2.3.10, Compose Multiplatform 1.10.3, Ktor 3.4.0, Room 2.8.4, Koin 4.1.1,
 - Feature-specific guidance in each `feature/*/CLAUDE.md`
 
 ## Approach
+
 - Read existing files before writing. Don't re-read unless changed.
 - Thorough in reasoning, concise in output.
 - Skip files over 100KB unless required.

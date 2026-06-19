@@ -1,4 +1,4 @@
-## Security Policy
+# Security Policy
 
 ## Reporting a Vulnerability
 
@@ -60,4 +60,3 @@ Contributors are encouraged to:
 ## Thank You
 
 We appreciate the efforts of the security community and responsible researchers who help keep this project secure.
-

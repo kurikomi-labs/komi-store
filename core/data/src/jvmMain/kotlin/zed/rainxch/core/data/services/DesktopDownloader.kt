@@ -10,6 +10,8 @@ import okhttp3.Call
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import zed.rainxch.core.data.data_source.TokenStore
+import zed.rainxch.core.data.network.GithubAssetAuth
 import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.domain.model.installation.DownloadProgress
 import zed.rainxch.core.domain.model.settings.ProxyConfig
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class DesktopDownloader(
     private val files: FileLocationsProvider,
+    private val tokenStore: TokenStore,
 ) : Downloader {
     private val activeDownloads = ConcurrentHashMap<String, Call>()
     private val idsByName = ConcurrentHashMap<String, MutableSet<String>>()
@@ -110,7 +113,19 @@ class DesktopDownloader(
 
             Logger.d { "Starting download: $url" }
 
-            val request = Request.Builder().url(url).build()
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .apply {
+                        val token = githubToken()
+                        if (token != null && GithubAssetAuth.isGithubHost(url)) {
+                            header("Authorization", "Bearer $token")
+                            if (GithubAssetAuth.isGithubApiHost(url)) {
+                                header("Accept", "application/octet-stream")
+                            }
+                        }
+                    }.build()
             val call = client.newCall(request)
             activeDownloads[downloadId] = call
             idsByName.computeIfAbsent(safeName) { ConcurrentHashMap.newKeySet() }.add(downloadId)
@@ -166,6 +181,15 @@ class DesktopDownloader(
                 }
             }
         }.flowOn(Dispatchers.IO)
+
+    private suspend fun githubToken(): String? =
+        try {
+            tokenStore.currentToken()?.accessToken?.trim()?.takeIf { it.isNotEmpty() }
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
 
     private fun moveAtomic(source: File, target: File) {
         try {

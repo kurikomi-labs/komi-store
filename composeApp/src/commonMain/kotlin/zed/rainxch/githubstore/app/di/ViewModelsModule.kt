@@ -92,6 +92,13 @@ val viewModelsModule =
                 translationRepository = get(),
             )
         }
+        viewModel { params ->
+            zed.rainxch.details.presentation.markdownviewer.MarkdownViewerViewModel(
+                url = params[0],
+                detailsRepository = get(),
+                translationRepository = get(),
+            )
+        }
         viewModelOf(::DeveloperProfileViewModel)
         viewModel { params ->
             IssuesViewModel(

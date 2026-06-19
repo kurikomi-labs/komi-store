@@ -1,6 +1,7 @@
-package zed.rainxch.details.presentation.about
+package zed.rainxch.details.presentation.markdownviewer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,16 +14,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -31,45 +35,38 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mikepenz.markdown.compose.Markdown
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.delay
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
+import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
+import zed.rainxch.core.presentation.components.buttons.IconButton
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
+import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cd_back
-import zed.rainxch.githubstore.core.presentation.res.details_about_screen_title
 import zed.rainxch.githubstore.core.presentation.res.retry
 
 @Composable
-fun AboutRoot(
-    repositoryId: Long,
-    owner: String,
-    repo: String,
-    sourceHost: String?,
-    translateTo: String? = null,
+fun MarkdownViewerRoot(
+    url: String,
     onNavigateBack: () -> Unit,
     onNavigateToMarkdownViewer: (String) -> Unit,
-    viewModel: DetailsAboutViewModel = koinViewModel {
-        parametersOf(repositoryId, owner, repo, sourceHost)
+    viewModel: MarkdownViewerViewModel = koinViewModel {
+        parametersOf(url)
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    
-    val isReadmeLoaded = state.readmeMarkdown.isNotBlank()
-    androidx.compose.runtime.LaunchedEffect(translateTo, isReadmeLoaded) {
-        if (translateTo != null && isReadmeLoaded) {
-            viewModel.translate(translateTo)
-        }
-    }
-    
-    AboutScreen(
+
+    MarkdownViewerScreen(
         state = state,
         onBack = onNavigateBack,
         onRetry = viewModel::retry,
@@ -83,8 +80,8 @@ fun AboutRoot(
 }
 
 @Composable
-private fun AboutScreen(
-    state: DetailsAboutState,
+private fun MarkdownViewerScreen(
+    state: MarkdownViewerState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onTranslate: (String) -> Unit,
@@ -108,7 +105,30 @@ private fun AboutScreen(
     ) {
         state.translation.translatedText
     } else {
-        state.readmeMarkdown
+        state.markdown
+    }
+
+    var isReadyToRender by remember { mutableStateOf(false) }
+    LaunchedEffect(displayedMarkdown) {
+        if (displayedMarkdown.isNotEmpty()) {
+            delay(350) // Let the slide-in animation finish smoothly
+            isReadyToRender = true
+        } else {
+            isReadyToRender = false
+        }
+    }
+
+    val markdownChunks = remember(displayedMarkdown) {
+        if (displayedMarkdown.isEmpty()) return@remember emptyList<String>()
+        val flavour = GFMFlavourDescriptor()
+        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(displayedMarkdown)
+        parsedTree.children.map { node ->
+            displayedMarkdown.substring(node.startOffset, node.endOffset)
+        }.filter { it.isNotBlank() }
+    }
+
+    val filename = remember(state.url) {
+        state.url.substringAfterLast("/", "Document").substringBefore("?")
     }
 
     Column(
@@ -117,7 +137,7 @@ private fun AboutScreen(
             .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding(),
     ) {
-        AboutTopBar(title = state.repoName, onBack = onBack)
+        MarkdownViewerTopBar(title = filename, onBack = onBack)
         when {
             state.isLoading -> Box(
                 modifier = Modifier.fillMaxSize(),
@@ -142,7 +162,8 @@ private fun AboutScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .clickable { onRetry() },
                     )
                 }
             }
@@ -152,26 +173,6 @@ private fun AboutScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item(key = "header") {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = stringResource(Res.string.details_about_screen_title),
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 26.sp,
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        state.readmeLanguage?.let { lang ->
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = lang,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
                 item(key = "translation_card") {
                     Spacer(Modifier.height(4.dp))
                     TranslationCard(
@@ -183,21 +184,33 @@ private fun AboutScreen(
                         onCancel = onClearTranslation,
                     )
                 }
-                item(key = "markdown") {
-                    Spacer(Modifier.height(4.dp))
-                    zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
-                        onTranslate = onTranslate,
-                        onClearTranslation = onClearTranslation,
-                        onOpenInternalMarkdown = onNavigateToMarkdownViewer,
-                    ) {
-                        Markdown(
-                            content = displayedMarkdown,
-                            colors = colors,
-                            typography = typography,
-                            imageTransformer = imageTransformer,
-                            components = components,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                if (isReadyToRender) {
+                    items(
+                        items = markdownChunks,
+                    ) { chunk ->
+                        zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
+                            onTranslate = onTranslate,
+                            onClearTranslation = onClearTranslation,
+                            onOpenInternalMarkdown = onNavigateToMarkdownViewer,
+                        ) {
+                            Markdown(
+                                content = chunk,
+                                colors = colors,
+                                typography = typography,
+                                imageTransformer = imageTransformer,
+                                components = components,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            )
+                        }
+                    }
+                } else {
+                    item(key = "loading") {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                        }
                     }
                 }
             }
@@ -217,7 +230,7 @@ private fun AboutScreen(
 }
 
 @Composable
-private fun AboutTopBar(title: String, onBack: () -> Unit) {
+private fun MarkdownViewerTopBar(title: String, onBack: () -> Unit) {
     androidx.compose.foundation.layout.Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -240,6 +253,8 @@ private fun AboutTopBar(title: String, onBack: () -> Unit) {
             ),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(start = 4.dp),
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
     }
 }

@@ -423,6 +423,9 @@ fun AppNavigation(
                                             ),
                                         )
                                     },
+                                    onNavigateToMarkdownViewer = { url ->
+                                        navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
+                                    },
                                     viewModel =
                                         koinViewModel {
                                             parametersOf(
@@ -475,6 +478,9 @@ fun AppNavigation(
                                 sourceHost = args.sourceHost,
                                 translateTo = args.translateTo,
                                 onNavigateBack = { navController.navigateUp() },
+                                onNavigateToMarkdownViewer = { url ->
+                                    navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
+                                },
                             )
                         }
 
@@ -574,6 +580,17 @@ fun AppNavigation(
                                     )
                                 },
                                 viewModel = koinViewModel { parametersOf(args.owner, args.repo) },
+                            )
+                        }
+
+                        composable<GithubStoreGraph.MarkdownViewerScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<GithubStoreGraph.MarkdownViewerScreen>()
+                            zed.rainxch.details.presentation.markdownviewer.MarkdownViewerRoot(
+                                url = args.url,
+                                onNavigateBack = { navController.navigateUp() },
+                                onNavigateToMarkdownViewer = { url ->
+                                    navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
+                                },
                             )
                         }
 

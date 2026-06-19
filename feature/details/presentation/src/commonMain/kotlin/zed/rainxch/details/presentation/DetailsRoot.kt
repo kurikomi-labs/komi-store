@@ -159,6 +159,7 @@ fun DetailsRoot(
     onNavigateToIssues: (owner: String, repo: String) -> Unit,
     onNavigateToSecurity: (owner: String, repo: String) -> Unit,
     onNavigateToPulls: (owner: String, repo: String) -> Unit,
+    onNavigateToMarkdownViewer: (url: String) -> Unit,
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

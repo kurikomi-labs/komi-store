@@ -10,13 +10,22 @@ import zed.rainxch.details.presentation.model.SupportedLanguages
 @Composable
 fun ProvideLanguageLinkInterceptor(
     onTranslate: (String) -> Unit,
+    onClearTranslation: (() -> Unit)? = null,
+    onOpenInternalMarkdown: ((String) -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val defaultUriHandler = LocalUriHandler.current
-    val customUriHandler = remember(defaultUriHandler, onTranslate) {
+    val customUriHandler = remember(defaultUriHandler, onTranslate, onClearTranslation, onOpenInternalMarkdown) {
         object : UriHandler {
             override fun openUri(uri: String) {
-                val match = Regex("""(?i)README[-._]([a-z]{2}(?:-[a-z]{2})?)\.md$""").find(uri)
+                if (Regex("""(?i)README\.md(?:[#?].*)?$""").find(uri) != null) {
+                    if (onClearTranslation != null) {
+                        onClearTranslation.invoke()
+                        return
+                    }
+                }
+
+                val match = Regex("""(?i)README[-._]([a-z]{2}(?:-[a-z]{2})?)\.md(?:[#?].*)?$""").find(uri)
                 if (match != null) {
                     val code = match.groupValues[1]
                     val normalizedCode = when (code.lowercase()) {
@@ -37,6 +46,15 @@ fun ProvideLanguageLinkInterceptor(
                         return
                     }
                 }
+                
+                if (onOpenInternalMarkdown != null) {
+                    val isInternalMarkdown = Regex("""(?i)^https://(?:raw\.githubusercontent\.com|github\.com)/[^/]+/[^/]+/(?:blob/)?[^/]+/.+\.md(?:[#?].*)?$""").find(uri) != null
+                    if (isInternalMarkdown) {
+                        onOpenInternalMarkdown.invoke(uri)
+                        return
+                    }
+                }
+
                 defaultUriHandler.openUri(uri)
             }
         }

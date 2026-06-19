@@ -102,6 +102,9 @@ fun AdaptiveDetailPaneContent(
                         sourceHost = current.sourceHost,
                         translateTo = current.translateTo,
                         onNavigateBack = { route = DetailPaneRoute.Main },
+                        onNavigateToMarkdownViewer = { url ->
+                            navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
+                        },
                         viewModel =
                             koinViewModel(key = aboutKey) {
                                 parametersOf(
@@ -195,6 +198,9 @@ private fun MainDetailPane(
         },
         onNavigateToPulls = { owner, repo ->
             navController.navigate(GithubStoreGraph.RepoPullsScreen(owner = owner, repo = repo))
+        },
+        onNavigateToMarkdownViewer = { url ->
+            navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
         },
         viewModel = viewModel,
     )

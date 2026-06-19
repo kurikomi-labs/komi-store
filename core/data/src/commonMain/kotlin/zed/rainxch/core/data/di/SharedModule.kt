@@ -301,6 +301,7 @@ val coreModule =
                 slowDownloadDetector = get(),
                 appScope = get(),
                 systemInstallSerializer = get(),
+                tokenStore = get(),
             )
         }
 

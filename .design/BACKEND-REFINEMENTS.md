@@ -59,6 +59,7 @@ Origin: `~/Downloads/handoff 4/DESIGN.md` §14 + agent specs (`.design/UX-AUDIT.
 **Where used:** Wax-seal trust card (DESIGN.md §7.8). Cracked-seal red state requires comparing installed APK fingerprint to expected.
 **Today:** No "expected" fingerprint stored anywhere. Cracked-seal state can never fire.
 **Need:**
+
 - On-device: persist fingerprint of first successful install per `InstalledApp` (Room schema addition). Subsequent installs compare against this.
 - Optional backend: publisher-declared fingerprint (maintainer registers via dashboard) — out of scope for this overhaul unless backend wants it.
 
@@ -116,10 +117,10 @@ Origin: `~/Downloads/handoff 4/DESIGN.md` §14 + agent specs (`.design/UX-AUDIT.
 ## Endpoint additions needed
 
 | Endpoint | Purpose | Priority |
-|----------|---------|----------|
+| :--- | :--- | :--- |
 | `GET /v1/repo/{owner}/{repo}/trending-rank` | Returns `{ rank: Int, lastComputedAt: Instant }` if repo in top-100 trending. Else 404. | P0 |
 | `GET /v1/repo/{owner}/{repo}/popularity-rank` | Same shape, all-time. | P0 |
-| `GET /v1/repo/{owner}/{repo}/permissions-summary` | Returns `{ posture: low|moderate|high, dangerous: List<String>, sensitive: List<String> }` for latest release. | P1 |
+| `GET /v1/repo/{owner}/{repo}/permissions-summary` | Returns `{ posture: low\|moderate\|high, dangerous: List\<String\>, sensitive: List\<String\> }` for latest release. | P1 |
 | `GET /v1/translate/cache?lang=&version=&repo=` | Returns cached translation or 204. Skip if going Room-only. | P2 |
 
 ---
