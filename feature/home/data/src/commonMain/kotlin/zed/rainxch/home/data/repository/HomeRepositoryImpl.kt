@@ -32,7 +32,7 @@ import zed.rainxch.core.domain.model.account.github.GithubUser
 import zed.rainxch.core.data.mappers.toSummary
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.repository.PaginatedDiscoveryRepositories
@@ -50,7 +50,7 @@ class HomeRepositoryImpl(
     private val clientProvider: GitHubClientProvider,
     private val devicePlatform: Platform,
     private val cachedDataSource: CachedRepositoriesDataSource,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val cacheManager: CacheManager,
 ) : HomeRepository {
     private val httpClient: HttpClient get() = clientProvider.client

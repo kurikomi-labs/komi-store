@@ -112,7 +112,6 @@ fun CategoryListScreen(
                             discoveryRepositoryUi = card.toDiscoveryUi(),
                             onClick = { onAction(CategoryListAction.OnRepoClick(card.id)) },
                             onShareClick = { },
-                            onDeveloperClick = { },
                             rank = index + 1,
                             feed = if (state.category == HomeCategory.MOST_POPULAR) {
                                 KomiRepoCardFeed.Popular

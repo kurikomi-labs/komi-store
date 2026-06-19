@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.isDesktop
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.installation.InstalledApp
@@ -53,7 +53,7 @@ class HomeViewModel(
     private val seenReposRepository: SeenReposRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val userSessionRepository: UserSessionRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val shareManager: ShareManager,
 ) : ViewModel() {
 
@@ -207,7 +207,7 @@ class HomeViewModel(
     private fun rebuild() {
         val hotVisible = hotRepos.filterVisible()
         val lead = hotVisible.firstOrNull()?.toCard()
-        val hotCards = hotVisible.drop(1).take(6).map { it.toCard() }.toImmutableList()
+        val hotCards = hotVisible.map { it.toCard() }.toImmutableList()
         val trendingCards = trendingRepos.filterVisible().take(6).map { it.toCard() }.toImmutableList()
         val popularCards = popularRepos.filterVisible().take(6).map { it.toCard() }.toImmutableList()
         val starredCards = starredRepos.filterVisible().take(5).map { it.toCard() }.toImmutableList()
