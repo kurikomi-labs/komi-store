@@ -36,7 +36,7 @@ import zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow as sharedSh
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.services.LocalizationManager
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.account.github.GithubUser
@@ -54,7 +54,7 @@ class DetailsRepositoryImpl(
     private val clientProvider: GitHubClientProvider,
     private val backendApiClient: BackendApiClient,
     private val localizationManager: LocalizationManager,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val cacheManager: CacheManager,
     private val forgejoClientRegistry: zed.rainxch.core.data.network.ForgejoClientRegistry,
     private val tokenStore: TokenStore,

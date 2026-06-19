@@ -1,7 +1,7 @@
 package zed.rainxch.details.data.system
 
 import kotlinx.coroutines.CancellationException
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.details.domain.system.AttestationVerifier
 import zed.rainxch.details.domain.system.VerificationResult
@@ -11,7 +11,7 @@ import java.security.MessageDigest
 
 class AttestationVerifierImpl(
     private val detailsRepository: DetailsRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : AttestationVerifier {
     override suspend fun verify(
         owner: String,

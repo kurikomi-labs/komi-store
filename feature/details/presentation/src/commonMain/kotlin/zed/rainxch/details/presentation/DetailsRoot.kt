@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.AlertDialog
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
@@ -43,11 +42,10 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -60,9 +58,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
@@ -143,10 +138,9 @@ import zed.rainxch.githubstore.core.presentation.res.repository_starred
 import zed.rainxch.githubstore.core.presentation.res.share_repository
 import zed.rainxch.githubstore.core.presentation.res.signing_key_changed_message
 import zed.rainxch.githubstore.core.presentation.res.signing_key_changed_title
-import zed.rainxch.githubstore.core.presentation.res.star_from_github
 import zed.rainxch.githubstore.core.presentation.res.uninstall
 import zed.rainxch.githubstore.core.presentation.res.uninstall_first
-import zed.rainxch.githubstore.core.presentation.res.unstar_from_github
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DetailsRoot(
@@ -163,7 +157,7 @@ fun DetailsRoot(
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
 
     ObserveAsEvents(viewModel.events) { event ->
@@ -174,7 +168,7 @@ fun DetailsRoot(
 
             is DetailsEvent.OnMessage -> {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar(event.message)
+                    toastState.show(event.message)
                 }
             }
 
@@ -195,21 +189,16 @@ fun DetailsRoot(
                         RefreshError.UPSTREAM -> getString(Res.string.details_refresh_snackbar_upstream)
                         RefreshError.GENERIC -> getString(Res.string.details_refresh_snackbar_generic)
                     }
-                    snackbarHostState.showSnackbar(text)
+                    toastState.show(text)
                 }
             }
         }
     }
 
-    val onAction: (DetailsAction) -> Unit = remember(
-        viewModel,
-        coroutineScope,
-        snackbarHostState,
-        onNavigateBack,
-        onNavigateToDeveloperProfile,
-        onNavigateToSearchByPlatform,
-    ) {
-        { action ->
+    DetailsScreen(
+        state = state,
+        toastState = toastState,
+        onAction = { action ->
             when (action) {
                 DetailsAction.OnNavigateBackClick -> {
                     onNavigateBack()
@@ -225,7 +214,7 @@ fun DetailsRoot(
 
                 is DetailsAction.OnMessage -> {
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar(getString(action.messageText))
+                        toastState.show(getString(action.messageText))
                     }
                 }
 
@@ -233,14 +222,7 @@ fun DetailsRoot(
                     viewModel.onAction(action)
                 }
             }
-            Unit
-        }
-    }
-
-    DetailsScreen(
-        state = state,
-        snackbarHostState = snackbarHostState,
-        onAction = onAction,
+        },
         onReadMoreAbout = state.repository?.let { repo ->
             {
                 onNavigateToAbout(
@@ -519,7 +501,7 @@ fun DetailsRoot(
 fun DetailsScreen(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
     onReadMoreAbout: (() -> Unit)? = null,
     onTranslateLanguage: ((String) -> Unit)? = null,
     onReadMoreWhatsNew: (() -> Unit)? = null,
@@ -534,17 +516,7 @@ fun DetailsScreen(
                 onAction = onAction,
             )
         },
-        overlay = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-        },
+        toastState = toastState
     ) { innerPadding ->
 
             if (state.isLoading) {
@@ -825,7 +797,7 @@ private fun DetailsOverflowMenu(
         if (cooldownUntilMs == null) return@LaunchedEffect
         while (Clock.System.now().toEpochMilliseconds() < cooldownUntilMs) {
             nowMs = Clock.System.now().toEpochMilliseconds()
-            delay(500L)
+            delay(500L.milliseconds)
         }
         nowMs = Clock.System.now().toEpochMilliseconds()
     }
@@ -930,7 +902,7 @@ private fun Preview() {
                     isLoading = false,
                 ),
             onAction = {},
-            snackbarHostState = SnackbarHostState(),
+            toastState = KomiToastState(),
         )
     }
 }

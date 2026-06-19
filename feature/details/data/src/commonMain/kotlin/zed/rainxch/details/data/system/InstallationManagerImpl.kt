@@ -3,7 +3,7 @@ package zed.rainxch.details.data.system
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.apk.ApkPackageInfo
 import zed.rainxch.core.domain.model.installation.InstallSource
 import zed.rainxch.core.domain.model.installation.InstalledApp
@@ -25,7 +25,7 @@ class InstallationManagerImpl(
     private val installedAppsRepository: InstalledAppsRepository,
     private val favouritesRepository: FavouritesRepository,
     private val tweaksRepository: TweaksRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : InstallationManager {
     override suspend fun validateApk(
         filePath: String,
