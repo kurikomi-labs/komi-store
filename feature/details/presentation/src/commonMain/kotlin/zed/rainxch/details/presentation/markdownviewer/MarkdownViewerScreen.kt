@@ -43,12 +43,11 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
-import zed.rainxch.core.presentation.components.buttons.IconButton
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
-import zed.rainxch.core.presentation.vocabulary.Squiggle
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -57,12 +56,9 @@ import zed.rainxch.githubstore.core.presentation.res.retry
 
 @Composable
 fun MarkdownViewerRoot(
-    url: String,
     onNavigateBack: () -> Unit,
     onNavigateToMarkdownViewer: (String) -> Unit,
-    viewModel: MarkdownViewerViewModel = koinViewModel {
-        parametersOf(url)
-    },
+    viewModel: MarkdownViewerViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -238,13 +234,12 @@ private fun MarkdownViewerTopBar(title: String, onBack: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.cd_back),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        KomiIconButton(
+            onClick = onBack,
+            icon = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(Res.string.cd_back),
+        )
+
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge.copy(

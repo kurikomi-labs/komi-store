@@ -53,6 +53,8 @@ import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.locals.LocalSharedTransitionScope
 import zed.rainxch.details.presentation.DetailsRoot
 import zed.rainxch.details.presentation.about.AboutRoot
+import zed.rainxch.details.presentation.markdownviewer.MarkdownViewerRoot
+import zed.rainxch.details.presentation.markdownviewer.MarkdownViewerViewModel
 import zed.rainxch.details.presentation.whatsnew.WhatsNewRoot
 import zed.rainxch.devprofile.presentation.DeveloperProfileRoot
 import zed.rainxch.favourites.presentation.FavouritesRoot
@@ -424,7 +426,11 @@ fun AppNavigation(
                                         )
                                     },
                                     onNavigateToMarkdownViewer = { url ->
-                                        navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
+                                        navController.navigate(
+                                            GithubStoreGraph.MarkdownViewerScreen(
+                                                url,
+                                            ),
+                                        )
                                     },
                                     viewModel =
                                         koinViewModel {
@@ -584,13 +590,18 @@ fun AppNavigation(
                         }
 
                         composable<GithubStoreGraph.MarkdownViewerScreen> { backStackEntry ->
-                            val args = backStackEntry.toRoute<GithubStoreGraph.MarkdownViewerScreen>()
-                            zed.rainxch.details.presentation.markdownviewer.MarkdownViewerRoot(
-                                url = args.url,
+                            val args =
+                                backStackEntry.toRoute<GithubStoreGraph.MarkdownViewerScreen>()
+
+                            MarkdownViewerRoot(
                                 onNavigateBack = { navController.navigateUp() },
                                 onNavigateToMarkdownViewer = { url ->
                                     navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
                                 },
+                                viewModel =
+                                    koinViewModel<MarkdownViewerViewModel> {
+                                        parametersOf(args.url)
+                                    },
                             )
                         }
 
