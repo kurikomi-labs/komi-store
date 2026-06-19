@@ -17,7 +17,7 @@ Follow-up to P12_5_TWEAKS_REDESIGN. Scope: where the "About + Send feedback + Op
 ## Comparison matrix
 
 | App | Platform | About location | Feedback location | Separation pattern |
-|---|---|---|---|---|
+| :--- | :--- | :--- | :--- | :--- |
 | Bitwarden | iOS | Settings tab → About (leaf) | Settings tab → "Get help" / website link | About + Feedback both in Settings root, separate rows |
 | Bitwarden | Android | Settings → About | Settings → "Get help" | Same as iOS |
 | 1Password 8 | iOS | Settings → About | Settings → "Tell us what you think" | Both in Settings, sibling rows |

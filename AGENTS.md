@@ -45,13 +45,14 @@ Package: `zed.rainxch.githubstore`
 ### State Management Pattern (every screen)
 
 Every ViewModel follows the same State/Action/Event pattern:
+
 - `State` — data class holding all UI state, exposed via `StateFlow`
 - `Action` — sealed interface for user input (clicks, refreshes)
 - `Event` — sealed interface for one-off effects (navigation, toasts), sent via `Channel.receiveAsFlow()`
 
 ### Module Layout
 
-```
+```text
 composeApp/          # App entry points, navigation, DI wiring
   src/commonMain/    # Shared UI & wiring
   src/androidMain/   # Android entry (MainActivity)
@@ -72,7 +73,7 @@ Some features (favourites, starred, recently-viewed, tweaks) are **presentation-
 ### Convention Plugins (build-logic)
 
 | Plugin ID | Use For |
-|-----------|---------|
+| :--- | :--- |
 | `convention.kmp.library` | KMP shared library modules (domain, data) |
 | `convention.cmp.library` | Compose Multiplatform library modules |
 | `convention.cmp.feature` | Feature presentation modules (auto-adds Compose + Koin + core:presentation) |

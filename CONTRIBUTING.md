@@ -123,7 +123,7 @@ The first build will pull a lot of dependencies. Subsequent builds reuse the Gra
 
 ## Project layout
 
-```
+```text
 composeApp/                          # Main app entry points + navigation
 core/
   domain/                            # Repository interfaces, models, use cases
@@ -156,6 +156,7 @@ We use Kotlin's official style (`kotlin.code.style=official`). CI lints every PR
 
 - **Clean Architecture + MVI.** Domain layer has zero framework dependencies. Data layer implements domain interfaces. Presentation layer holds ViewModels and Compose code.
 - **State / Action / Event** pattern for every screen:
+
   ```kotlin
   class XViewModel : ViewModel() {
       private val _state = MutableStateFlow(XState())
@@ -167,6 +168,7 @@ We use Kotlin's official style (`kotlin.code.style=official`). CI lints every PR
       fun onAction(action: XAction) { ... }
   }
   ```
+
 - **Sealed interfaces** for actions, events, navigation routes.
 - **Koin** for DI. Each feature module exposes a Koin module from `data/di/SharedModule.kt`. ViewModels are wired in `composeApp/.../app/di/initKoin.kt` and injected via `koinViewModel()`.
 - **Type-safe navigation** via `@Serializable` sealed interface `GithubStoreGraph`.
@@ -226,15 +228,19 @@ We use Kotlin's official style (`kotlin.code.style=official`). CI lints every PR
 
 1. **Open or claim an issue** before doing anything substantial. For tiny fixes (typos, one-liners) you can skip this step.
 2. **Branch from latest `main`:**
+
    ```bash
    git fetch origin
    git checkout -b feat/123-some-thing origin/main
    ```
+
 3. **Make the change.** Keep the PR focused; if it grows beyond one logical change, split it into a stack.
 4. **Run the local checks:**
+
    ```bash
    ./gradlew ktlintCheck build
    ```
+
    (Or the narrower module-specific tasks if you know the change is scoped.)
 5. **Push and open a PR** against `main`. Fill out the description with:
    - **What** the change does.
@@ -261,7 +267,7 @@ We use Kotlin's official style (`kotlin.code.style=official`). CI lints every PR
 
 Komi Store ships in 13 languages. String resources live in:
 
-```
+```text
 core/presentation/src/commonMain/composeResources/
   values/strings.xml             # Default (English)
   values-ar/strings-ar.xml       # Arabic
@@ -306,7 +312,7 @@ You don't normally need to touch this as a contributor; just be aware that landi
 
 ## Security disclosures
 
-**Do not open public issues for security vulnerabilities.** Use [GitHub's private vulnerability reporting](https://github.com/kurikomi-labs/komi-store/security/advisories/new) or email **hello@github-store.org** with the details.
+**Do not open public issues for security vulnerabilities.** Use [GitHub's private vulnerability reporting](https://github.com/kurikomi-labs/komi-store/security/advisories/new) or email `hello@github-store.org` with the details.
 
 We treat token leaks, install-flow exploits, and signing-bypass paths as critical. Other issues we'll triage on a best-effort basis.
 
@@ -315,7 +321,7 @@ We treat token leaks, install-flow exploits, and signing-bypass paths as critica
 ## Questions
 
 - **Real-time chat:** join the [Discord server](https://discord.github-store.org) — fastest way to get a hand from maintainers and other contributors.
-- **Email:** **hello@github-store.org** for anything that doesn't fit a public channel — sponsorship, partnerships, sensitive coordination.
+- **Email:** `hello@github-store.org` for anything that doesn't fit a public channel — sponsorship, partnerships, sensitive coordination.
 - **General questions / discussion:** open a [GitHub Discussion](https://github.com/kurikomi-labs/komi-store/discussions) (if enabled) or a feature-request issue.
 - **Stuck on local setup:** open a draft PR with what you have and ask for help in the description — we'd rather help you finish than have you give up silently.
 - **Sibling repos:** [backend](https://github.com/OpenHub-Store/backend) and [api](https://github.com/OpenHub-Store/api) have their own contributing notes.
