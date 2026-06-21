@@ -1,6 +1,7 @@
 package zed.rainxch.core.presentation.personality
 
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
+import zed.rainxch.core.presentation.personality.model.PersonalityDecor
 import zed.rainxch.core.presentation.personality.model.PersonalityMotion
 import zed.rainxch.core.presentation.personality.model.PersonalityShadow
 import zed.rainxch.core.presentation.personality.model.PersonalityShape
@@ -12,4 +13,5 @@ sealed interface Personality {
     val shape: PersonalityShape
     val shadow: PersonalityShadow
     val motion: PersonalityMotion
+    val decor: PersonalityDecor get() = PersonalityDecor.None
 }

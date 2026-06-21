@@ -11,6 +11,7 @@ import zed.rainxch.core.presentation.personality.manga.mangaColors
 import zed.rainxch.core.presentation.personality.manga.mangaMotion
 import zed.rainxch.core.presentation.personality.model.MotionLevel
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
+import zed.rainxch.core.presentation.personality.model.PersonalityDecor
 import zed.rainxch.core.presentation.personality.model.PersonalityMotion
 import zed.rainxch.core.presentation.personality.model.PersonalityShadow
 import zed.rainxch.core.presentation.personality.model.PersonalityShape
@@ -29,7 +30,9 @@ data class MangaPersonality(
     val starburst: Boolean,
     val inkedIcons: Boolean,
     val panelTilt: Boolean,
-) : Personality
+) : Personality {
+    override val decor: PersonalityDecor get() = PersonalityDecor.MangaKicker
+}
 
 fun mangaPersonality(
     paper: MangaPaper = MangaPaper.DAY,
