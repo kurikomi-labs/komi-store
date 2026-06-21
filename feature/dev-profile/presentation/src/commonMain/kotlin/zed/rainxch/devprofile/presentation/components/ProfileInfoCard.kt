@@ -1,7 +1,7 @@
 package zed.rainxch.devprofile.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,24 +15,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -44,6 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperProfile
@@ -61,14 +59,10 @@ fun ProfileInfoCard(
     profile: DeveloperProfile,
     onAction: (DeveloperProfileAction) -> Unit,
 ) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outline,
-        ),
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(
@@ -79,20 +73,20 @@ fun ProfileInfoCard(
                     imageModel = { profile.avatarUrl },
                     modifier = Modifier
                         .size(80.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(colors.surfaceContainerHigh),
                 )
                 Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
+                        KomiText(
                             text = profile.name ?: profile.login,
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface,
+                            role = KomiTextRole.Title,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
+                            uppercase = false,
                             modifier = Modifier.weight(1f, fill = false),
                         )
                         if (profile.isOrganization) {
@@ -100,12 +94,13 @@ fun ProfileInfoCard(
                             OrgPill()
                         }
                     }
-                    Text(
+                    KomiText(
                         text = "@${profile.login}",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
             }
@@ -129,8 +124,8 @@ fun ProfileInfoCard(
 
 @Composable
 private fun BioText(bio: String, onMention: (String) -> Unit) {
-    val cs = MaterialTheme.colorScheme
-    val annotated = remember(bio, cs.primary) {
+    val colors = LocalPersonality.current.colors
+    val annotated = remember(bio, colors.primary) {
         buildAnnotatedString {
             var cursor = 0
             for (match in MentionRegex.findAll(bio)) {
@@ -143,7 +138,7 @@ private fun BioText(bio: String, onMention: (String) -> Unit) {
                         tag = "mention:$handle",
                         styles = TextLinkStyles(
                             style = SpanStyle(
-                                color = cs.primary,
+                                color = colors.primary,
                                 fontWeight = FontWeight.SemiBold,
                             ),
                         ),
@@ -157,10 +152,10 @@ private fun BioText(bio: String, onMention: (String) -> Unit) {
             if (cursor < bio.length) append(bio.substring(cursor))
         }
     }
-    Text(
+    KomiText(
         text = annotated,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        role = KomiTextRole.Body,
+        color = colors.onSurfaceVariant,
         maxLines = 5,
         overflow = TextOverflow.Ellipsis,
     )
@@ -183,51 +178,58 @@ private fun MetricsStrip(repos: Int, followers: Int, following: Int) {
 
 @Composable
 private fun Metric(value: String, label: String, modifier: Modifier = Modifier) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = modifier.fillMaxWidth().padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Text(
+        KomiText(
             text = value,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            color = colors.onSurface,
             maxLines = 1,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
             maxLines = 1,
+            uppercase = false,
         )
     }
 }
 
 @Composable
 private fun MetricDivider() {
+    val colors = LocalPersonality.current.colors
     Box(
         modifier = Modifier
             .width(1.dp)
             .height(28.dp)
-            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+            .background(colors.outlineVariant.copy(alpha = 0.55f)),
     )
 }
 
 @Composable
 private fun OrgPill() {
-    Surface(
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.tertiaryContainer,
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.primaryContainer),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.dev_profile_org_badge),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onPrimaryContainer,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
@@ -245,11 +247,8 @@ fun IdentityRailCard(
         profile.twitterUsername?.isNotBlank() == true
     if (!hasAny) return
 
-    Surface(
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         FlowRow(
             modifier = Modifier
@@ -300,28 +299,38 @@ fun IdentityRailCard(
 
 @Composable
 private fun StaticChip(icon: ImageVector, text: String) {
-    Surface(
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.surfaceContainerHigh)
+            .border(
+                width = 1.dp,
+                color = colors.outlineVariant.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(shape.cornerSmall),
+            ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
             )
-            Text(
+            KomiText(
                 text = text,
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
         }
     }
@@ -329,29 +338,39 @@ private fun StaticChip(icon: ImageVector, text: String) {
 
 @Composable
 private fun LinkChip(icon: ImageVector, text: String, onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.primary.copy(alpha = 0.12f))
+            .border(
+                width = 1.dp,
+                color = colors.primary.copy(alpha = 0.4f),
+                shape = RoundedCornerShape(shape.cornerSmall),
+            )
+            .clickable(onClick = onClick),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
             )
-            Text(
+            KomiText(
                 text = text,
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.primary,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
         }
     }

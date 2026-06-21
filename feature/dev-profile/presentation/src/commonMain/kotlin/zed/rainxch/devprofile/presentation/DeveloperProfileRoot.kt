@@ -19,13 +19,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.FolderOff
 import androidx.compose.material.icons.filled.OpenInBrowser
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,7 +41,12 @@ import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.devprofile.domain.model.RepoFilterType
@@ -97,7 +100,6 @@ fun DeveloperProfileRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DeveloperProfileScreen(
     state: DeveloperProfileState,
@@ -119,7 +121,7 @@ fun DeveloperProfileScreen(
         ) {
             when {
                 state.isLoading -> {
-                    CircularWavyProgressIndicator(
+                    KomiCircularProgress(
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
@@ -189,7 +191,7 @@ fun DeveloperProfileScreen(
                                             .padding(32.dp),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    CircularWavyProgressIndicator()
+                                    KomiCircularProgress()
                                 }
                             }
                         } else if (state.filteredRepositories.isEmpty()) {
@@ -225,37 +227,46 @@ fun DeveloperProfileScreen(
             }
 
             if (state.errorMessage != null && state.profile != null) {
-                Snackbar(
+                val colors = LocalPersonality.current.colors
+                KomiSurface(
                     modifier =
                         Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(16.dp),
-                    action = {
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                    elevation = KomiSurfaceElevation.Raised,
+                    contentPadding = PaddingValues(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        KomiText(
+                            text = state.errorMessage,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurface,
+                            uppercase = false,
+                            modifier = Modifier.weight(1f),
+                        )
                         KomiButton(
-                            onClick = {
-                                onAction(DeveloperProfileAction.OnRetry)
-                            },
+                            onClick = { onAction(DeveloperProfileAction.OnRetry) },
                             label = stringResource(Res.string.retry),
                             variant = KomiButtonVariant.Text,
                             size = KomiButtonSize.Sm,
                         )
-                    },
-                    dismissAction = {
-                        IconButton(
-                            onClick = {
-                                onAction(DeveloperProfileAction.OnDismissError)
-                            },
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clickable { onAction(DeveloperProfileAction.OnDismissError) },
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = stringResource(Res.string.dismiss),
+                                tint = colors.onSurfaceVariant,
                             )
                         }
-                    },
-                ) {
-                    Text(
-                        text = state.errorMessage,
-                    )
+                    }
                 }
             }
         }
@@ -275,26 +286,28 @@ private fun EmptyReposContent(
             RepoFilterType.FAVORITES -> stringResource(Res.string.no_favorite_repos)
         }
 
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.FolderOff,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            tint = colors.onSurfaceVariant.copy(alpha = 0.6f),
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
+        KomiText(
             text = message,
             maxLines = 2,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
     }
 }
@@ -334,26 +347,28 @@ private fun ErrorContent(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.Error,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.error,
+            tint = colors.error,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
+        KomiText(
             text = stringResource(Res.string.error_generic, message),
             maxLines = 3,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            color = colors.onSurface,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
 
         Spacer(modifier = Modifier.height(16.dp))

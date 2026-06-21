@@ -2,7 +2,6 @@
 
 package zed.rainxch.devprofile.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.CallSplit
@@ -26,10 +24,6 @@ import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,10 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.chips.KomiChip
 import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.formatCount
@@ -61,14 +60,9 @@ fun DeveloperRepoItem(
     onToggleFavorite: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
-        ),
         onClick = onItemClick,
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
@@ -77,14 +71,14 @@ fun DeveloperRepoItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = repository.name,
                         maxLines = 1,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
                     val releaseDate = repository.latestReleaseAt
                     val (label, dateString) = if (releaseDate != null) {
@@ -92,13 +86,15 @@ fun DeveloperRepoItem(
                     } else {
                         Res.string.updated_on_date to repository.updatedAt
                     }
-                    Text(
+                    KomiText(
                         text = stringResource(label, formatRelativeLong(dateString))
                             .replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.labelMedium,
+                        role = KomiTextRole.Label,
+                        fontSize = 12.sp,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
+                        uppercase = false,
                     )
                 }
                 Spacer(Modifier.width(8.dp))
@@ -110,12 +106,14 @@ fun DeveloperRepoItem(
 
             repository.description?.takeIf { it.isNotBlank() }?.let { description ->
                 Spacer(Modifier.height(8.dp))
-                Text(
+                KomiText(
                     text = description,
                     maxLines = 2,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
             }
 
@@ -132,11 +130,11 @@ fun DeveloperRepoItem(
                         kind = KomiChipKind.Info,
                         size = KomiChipSize.Sm,
                         leadingContent = {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Outlined.StarOutline,
                                 contentDescription = null,
                                 modifier = Modifier.size(13.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = colors.onSurfaceVariant,
                             )
                         },
                     )
@@ -147,11 +145,11 @@ fun DeveloperRepoItem(
                         kind = KomiChipKind.Info,
                         size = KomiChipSize.Sm,
                         leadingContent = {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.AutoMirrored.Outlined.CallSplit,
                                 contentDescription = null,
                                 modifier = Modifier.size(13.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = colors.onSurfaceVariant,
                             )
                         },
                     )
@@ -162,11 +160,11 @@ fun DeveloperRepoItem(
                         kind = KomiChipKind.Info,
                         size = KomiChipSize.Sm,
                         leadingContent = {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Outlined.WarningAmber,
                                 contentDescription = null,
                                 modifier = Modifier.size(13.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = colors.onSurfaceVariant,
                             )
                         },
                     )
@@ -177,11 +175,11 @@ fun DeveloperRepoItem(
                         kind = KomiChipKind.Info,
                         size = KomiChipSize.Sm,
                         leadingContent = {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Outlined.Code,
                                 contentDescription = null,
                                 modifier = Modifier.size(13.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = colors.onSurfaceVariant,
                             )
                         },
                     )
@@ -202,22 +200,22 @@ fun DeveloperRepoItem(
                         TonalBadge(
                             text = repository.latestVersion
                                 ?: stringResource(Res.string.has_release),
-                            container = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
-                            content = MaterialTheme.colorScheme.primary,
+                            container = colors.primary.copy(alpha = 0.14f),
+                            content = colors.primary,
                         )
                     } else if (repository.hasReleases) {
                         TonalBadge(
                             text = repository.latestVersion
                                 ?: stringResource(Res.string.has_release),
-                            container = MaterialTheme.colorScheme.secondaryContainer,
-                            content = MaterialTheme.colorScheme.onSecondaryContainer,
+                            container = colors.primaryContainer,
+                            content = colors.onPrimaryContainer,
                         )
                     }
                     if (repository.isInstalled) {
                         TonalBadge(
                             text = stringResource(Res.string.installed),
-                            container = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.18f),
-                            content = MaterialTheme.colorScheme.tertiary,
+                            container = colors.primary.copy(alpha = 0.18f),
+                            content = colors.primary,
                         )
                     }
                 }
@@ -231,25 +229,27 @@ private fun FavoriteToggle(
     isFavorite: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val container = if (isFavorite) {
-        MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
+        colors.error.copy(alpha = 0.18f)
     } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh
+        colors.surfaceContainerHigh
     }
     val tint = if (isFavorite) {
-        MaterialTheme.colorScheme.error
+        colors.error
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        colors.onSurfaceVariant
     }
+    val shape = LocalPersonality.current.shape
     Box(
         modifier = Modifier
             .size(38.dp)
-            .clip(CircleShape)
+            .clip(RoundedCornerShape(shape.cornerSmall))
             .background(container)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = stringResource(
                 if (isFavorite) Res.string.remove_from_favourites
@@ -263,17 +263,20 @@ private fun FavoriteToggle(
 
 @Composable
 private fun TonalBadge(text: String, container: Color, content: Color) {
-    Surface(
-        shape = RoundedCornerShape(50),
-        color = container,
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(container),
     ) {
-        Text(
+        KomiText(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = content,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            uppercase = false,
         )
     }
 }

@@ -18,10 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,11 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
 import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.devprofile.domain.model.RepoFilterType
 import zed.rainxch.devprofile.domain.model.RepoSortType
@@ -62,6 +62,7 @@ fun FilterSortControls(
     totalCount: Int,
     onAction: (DeveloperProfileAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -74,8 +75,12 @@ fun FilterSortControls(
             leadingIcon = Icons.Default.Search,
             trailing = {
                 if (searchQuery.isNotBlank()) {
-                    IconButton(onClick = { onAction(DeveloperProfileAction.OnSearchQueryChange("")) }) {
-                        Icon(
+                    Box(
+                        modifier = Modifier
+                            .clickable { onAction(DeveloperProfileAction.OnSearchQueryChange("")) },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        KomiIcon(
                             imageVector = Icons.Default.Close,
                             contentDescription = stringResource(Res.string.clear_search),
                             modifier = Modifier.size(20.dp),
@@ -111,7 +116,7 @@ fun FilterSortControls(
             )
         }
 
-        Text(
+        KomiText(
             text = if (repoCount == totalCount) {
                 "$repoCount ${stringResource(
                     if (repoCount == 1) Res.string.repository_singular else Res.string.repositories,
@@ -120,8 +125,10 @@ fun FilterSortControls(
                 stringResource(Res.string.showing_x_of_y_repositories, repoCount, totalCount)
             },
             maxLines = 1,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }
@@ -132,20 +139,21 @@ private fun FilterPill(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val container by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
+            colors.primary
         } else {
-            MaterialTheme.colorScheme.surfaceContainerHigh
+            colors.surfaceContainerHigh
         },
         animationSpec = tween(durationMillis = 180),
         label = "filter_container",
     )
     val content by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.onPrimary
+            colors.onPrimary
         } else {
-            MaterialTheme.colorScheme.onSurface
+            colors.onSurface
         },
         animationSpec = tween(durationMillis = 180),
         label = "filter_content",
@@ -158,13 +166,14 @@ private fun FilterPill(
             .padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = content,
             maxLines = 1,
+            uppercase = false,
         )
     }
 }
@@ -174,6 +183,7 @@ private fun SortButton(
     currentSort: RepoSortType,
     onSortChange: (RepoSortType) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     KomiDropdown(
         entries = RepoSortType.entries
             .map { sort -> KomiMenuItem(id = sort.name, label = sort.displayName()) }
@@ -187,15 +197,15 @@ private fun SortButton(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .background(colors.surfaceContainerHigh)
                     .clickable { onClick() },
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.AutoMirrored.Filled.Sort,
                     contentDescription = stringResource(Res.string.sort),
                     modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = colors.onSurface,
                 )
             }
         },
