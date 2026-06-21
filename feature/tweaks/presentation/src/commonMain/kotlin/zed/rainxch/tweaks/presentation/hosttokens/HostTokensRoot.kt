@@ -55,7 +55,9 @@ import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
+import zed.rainxch.tweaks.presentation.components.shell.settingsRowDivider
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
@@ -174,23 +176,25 @@ fun HostTokensRoot(
                 }
                 else -> {
                     val listState = rememberLazyListState()
-                    LazyColumn(
-                        state = listState,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(state.tokens, key = { it.host }) { token ->
-                            TokenRow(
-                                token = token,
-                                isValidating = token.host in state.validatingHosts,
-                                validation = state.validationByHost[token.host],
-                                onValidate = { viewModel.onAction(HostTokensAction.OnValidate(token.host)) },
-                                onDelete = { viewModel.onAction(HostTokensAction.OnDelete(token.host)) },
-                                onReplace = { viewModel.onAction(HostTokensAction.OnReplaceToken(token)) },
-                                onEditLabel = { viewModel.onAction(HostTokensAction.OnEditLabel(token)) },
-                                onOpenManagePage = { kind ->
-                                    viewModel.onAction(HostTokensAction.OnOpenTokenCreationPage(kind))
-                                },
-                            )
+                    LazyColumn(state = listState) {
+                        item {
+                            SettingsGroup {
+                                state.tokens.forEachIndexed { index, token ->
+                                    TokenRow(
+                                        token = token,
+                                        isValidating = token.host in state.validatingHosts,
+                                        validation = state.validationByHost[token.host],
+                                        last = index == state.tokens.lastIndex,
+                                        onValidate = { viewModel.onAction(HostTokensAction.OnValidate(token.host)) },
+                                        onDelete = { viewModel.onAction(HostTokensAction.OnDelete(token.host)) },
+                                        onReplace = { viewModel.onAction(HostTokensAction.OnReplaceToken(token)) },
+                                        onEditLabel = { viewModel.onAction(HostTokensAction.OnEditLabel(token)) },
+                                        onOpenManagePage = { kind ->
+                                            viewModel.onAction(HostTokensAction.OnOpenTokenCreationPage(kind))
+                                        },
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -298,15 +302,18 @@ private fun EmptyStatePicker(
             )
             Spacer(Modifier.height(4.dp))
         }
-        items(presetForges, key = { it.tokenHost }) { kind ->
-            PresetForgeCard(
-                kind = kind,
-                onPick = { onPickPreset(kind) },
-                onOpenTokenCreationPage = { onOpenTokenCreationPage(kind) },
-            )
-        }
         item {
-            OtherForgeCard(onPick = onPickOther)
+            SettingsGroup {
+                presetForges.forEach { kind ->
+                    PresetForgeCard(
+                        kind = kind,
+                        onPick = { onPickPreset(kind) },
+                        onOpenTokenCreationPage = { onOpenTokenCreationPage(kind) },
+                        last = false,
+                    )
+                }
+                OtherForgeCard(onPick = onPickOther)
+            }
         }
     }
 }
@@ -316,59 +323,59 @@ private fun PresetForgeCard(
     kind: ForgeKind,
     onPick: () -> Unit,
     onOpenTokenCreationPage: () -> Unit,
+    last: Boolean,
 ) {
     val colors = LocalPersonality.current.colors
-    KomiSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .settingsRowDivider(colors.outline.copy(alpha = 0.22f), show = !last)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                KomiIcon(
-                    Icons.Default.VpnKey,
-                    contentDescription = null,
-                    tint = colors.primary,
+            KomiIcon(
+                Icons.Default.VpnKey,
+                contentDescription = null,
+                tint = colors.primary,
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                KomiText(
+                    text = kind.displayName,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
-                Column(modifier = Modifier.weight(1f)) {
-                    KomiText(
-                        text = kind.displayName,
-                        role = KomiTextRole.Title,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.onSurface,
-                        uppercase = false,
-                    )
-                    KomiText(
-                        text = kind.tokenHost,
-                        role = KomiTextRole.Body,
-                        fontSize = 13.sp,
-                        color = colors.onSurfaceVariant,
-                        uppercase = false,
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            ) {
-                KomiButton(
-                    onClick = onOpenTokenCreationPage,
-                    label = stringResource(Res.string.host_tokens_picker_open_page),
-                    variant = KomiButtonVariant.Text,
-                    size = KomiButtonSize.Sm,
-                    leadingIcon = Icons.Default.OpenInBrowser,
-                )
-                KomiButton(
-                    onClick = onPick,
-                    label = stringResource(Res.string.host_tokens_picker_paste),
-                    variant = KomiButtonVariant.Text,
-                    size = KomiButtonSize.Sm,
+                KomiText(
+                    text = kind.tokenHost,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+        ) {
+            KomiButton(
+                onClick = onOpenTokenCreationPage,
+                label = stringResource(Res.string.host_tokens_picker_open_page),
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
+                leadingIcon = Icons.Default.OpenInBrowser,
+            )
+            KomiButton(
+                onClick = onPick,
+                label = stringResource(Res.string.host_tokens_picker_paste),
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
+            )
         }
     }
 }
@@ -376,37 +383,33 @@ private fun PresetForgeCard(
 @Composable
 private fun OtherForgeCard(onPick: () -> Unit) {
     val colors = LocalPersonality.current.colors
-    KomiSurface(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onPick,
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onPick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            KomiIcon(
-                Icons.Default.VpnKey,
-                contentDescription = null,
-                tint = colors.onSurfaceVariant,
+        KomiIcon(
+            Icons.Default.VpnKey,
+            contentDescription = null,
+            tint = colors.onSurfaceVariant,
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            KomiText(
+                text = stringResource(Res.string.host_tokens_picker_other),
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
+                uppercase = false,
             )
-            Column(modifier = Modifier.weight(1f)) {
-                KomiText(
-                    text = stringResource(Res.string.host_tokens_picker_other),
-                    role = KomiTextRole.Title,
-                    color = colors.onSurface,
-                    uppercase = false,
-                )
-                KomiText(
-                    text = stringResource(Res.string.host_tokens_picker_other_subtitle),
-                    role = KomiTextRole.Body,
-                    fontSize = 13.sp,
-                    color = colors.onSurfaceVariant,
-                    uppercase = false,
-                )
-            }
+            KomiText(
+                text = stringResource(Res.string.host_tokens_picker_other_subtitle),
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
+            )
         }
     }
 }
@@ -423,12 +426,13 @@ private fun PickerDialog(
         onDismissRequest = onDismiss,
         title = { KomiText(stringResource(Res.string.host_tokens_picker_title), role = KomiTextRole.Title) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            SettingsGroup {
                 presetForges.forEach { kind ->
                     PresetForgeCard(
                         kind = kind,
                         onPick = { onPickPreset(kind) },
                         onOpenTokenCreationPage = { onOpenTokenCreationPage(kind) },
+                        last = false,
                     )
                 }
                 OtherForgeCard(onPick = onPickOther)
@@ -455,17 +459,18 @@ private fun TokenRow(
     onReplace: () -> Unit,
     onEditLabel: () -> Unit,
     onOpenManagePage: (ForgeKind) -> Unit,
+    last: Boolean,
 ) {
     val colors = LocalPersonality.current.colors
     val forge = ForgeKind.fromHost(token.host)
-    KomiSurface(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .settingsRowDivider(colors.outline.copy(alpha = 0.22f), show = !last)
+            .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
             KomiIcon(
                 Icons.Default.VpnKey,
                 contentDescription = null,
@@ -554,7 +559,6 @@ private fun TokenRow(
                 },
             )
         }
-    }
 }
 
 @Composable
