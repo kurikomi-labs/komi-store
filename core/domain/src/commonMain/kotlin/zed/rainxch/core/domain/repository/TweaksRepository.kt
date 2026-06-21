@@ -2,6 +2,8 @@ package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.appearance.AccentId
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
@@ -34,6 +36,14 @@ interface TweaksRepository {
     fun getFontTheme(): Flow<FontTheme>
 
     suspend fun setFontTheme(fontTheme: FontTheme)
+
+    fun getPersonality(): Flow<AppPersonality>
+
+    suspend fun setPersonality(personality: AppPersonality)
+
+    fun getAccentId(): Flow<AccentId>
+
+    suspend fun setAccentId(accentId: AccentId)
 
     fun getAutoDetectClipboardLinks(): Flow<Boolean>
 
