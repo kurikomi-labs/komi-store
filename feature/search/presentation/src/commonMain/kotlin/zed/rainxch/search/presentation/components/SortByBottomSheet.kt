@@ -6,15 +6,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,7 +36,7 @@ fun SortByBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
+    KomiDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
         dismissButton = {
@@ -47,9 +48,9 @@ fun SortByBottomSheet(
             )
         },
         title = {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.sort_by),
-                style = MaterialTheme.typography.titleMedium,
+                role = KomiTextRole.Title,
             )
         },
         text = {
@@ -68,7 +69,7 @@ fun SortByBottomSheet(
                     )
                 }
 
-                HorizontalDivider()
+                KomiHorizontalDivider()
 
                 Spacer(Modifier.height(4.dp))
 
@@ -78,15 +79,11 @@ fun SortByBottomSheet(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     SortOrderUi.entries.forEach { order ->
-                        FilterChip(
+                        KomiChip(
+                            label = stringResource(order.label()),
+                            kind = KomiChipKind.Filter,
                             selected = order == selectedSortOrder,
                             onClick = { onSortOrderSelected(order) },
-                            label = {
-                                Text(
-                                    text = stringResource(order.label()),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            },
                         )
                     }
                 }

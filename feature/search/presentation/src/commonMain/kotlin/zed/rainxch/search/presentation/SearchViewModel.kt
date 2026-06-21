@@ -18,10 +18,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.repository.BrowseFilterStore
+import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.installation.hasActualUpdate
 import zed.rainxch.core.domain.model.installation.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -66,6 +70,7 @@ class SearchViewModel(
     private val searchHistoryRepository: SearchHistoryRepository,
     private val userSessionRepository: UserSessionRepository,
     private val hiddenReposRepository: HiddenReposRepository,
+    private val browseFilterStore: BrowseFilterStore,
     private val initialPlatform: SearchPlatformUi? = null,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
@@ -105,6 +110,7 @@ class SearchViewModel(
                     observeClipboardSetting()
                     observeSearchHistory()
                     checkClipboardForLinks()
+                    if (isDesktop()) observeBrowseFilter()
 
                     hasLoadedInitialData = true
                 }
@@ -126,6 +132,14 @@ class SearchViewModel(
                         (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
             }
             .toImmutableList()
+    }
+
+    private fun observeBrowseFilter() {
+        viewModelScope.launch {
+            browseFilterStore.platform.collect { p ->
+                onAction(SearchAction.OnPlatformTypeSelected(p.toSearchPlatformUi()))
+            }
+        }
     }
 
     private fun observeSeenRepos() {

@@ -28,10 +28,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -42,19 +39,8 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.TravelExplore
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -67,13 +53,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
@@ -83,8 +67,15 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiFab
 import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
@@ -103,7 +94,6 @@ import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRoot(
     onNavigateBack: () -> Unit,
@@ -211,13 +201,13 @@ fun SearchRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
     state: SearchState,
     toastState: KomiToastState,
     onAction: (SearchAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyStaggeredGridState()
 
@@ -314,29 +304,14 @@ fun SearchScreen(
         },
         toastState = toastState,
         floatingActionButton = {
-            FloatingActionButton(
+            KomiFab(
                 onClick = {
                     onAction(SearchAction.OnFabClick)
                 },
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Link,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                    )
-
-                    Text(
-                        text = stringResource(Res.string.open_github_link),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+                icon = Icons.Default.Link,
+                contentDescription = stringResource(Res.string.open_github_link),
+                label = stringResource(Res.string.open_github_link),
+            )
         },
     ) { innerPadding ->
         Box(
@@ -385,16 +360,16 @@ fun SearchScreen(
             Spacer(Modifier.height(6.dp))
 
             if (state.totalCount != null) {
-                Text(
+                KomiText(
                     text =
                         stringResource(
                             Res.string.results_found,
                             state.totalCount,
                         ),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -427,7 +402,7 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxSize().imePadding(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        CircularWavyProgressIndicator()
+                        KomiCircularProgress()
                     }
                 }
 
@@ -437,8 +412,9 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
+                            KomiText(
                                 text = state.errorMessage,
+                                uppercase = false,
                             )
 
                             Spacer(Modifier.height(8.dp))
@@ -465,7 +441,10 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = stringResource(Res.string.no_repositories_found))
+                            KomiText(
+                                text = stringResource(Res.string.no_repositories_found),
+                                uppercase = false,
+                            )
 
                             if (state.passthroughAttempted != true) {
                                 Spacer(Modifier.height(8.dp))
@@ -488,14 +467,15 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
+                            KomiCircularProgress()
 
                             Spacer(Modifier.height(8.dp))
 
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.searching_for_unseen_repos),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.outline,
+                                role = KomiTextRole.Body,
+                                color = colors.outline,
+                                uppercase = false,
                             )
                         }
                     }
@@ -511,8 +491,9 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.search_results_hidden_by_seen_filter),
+                                uppercase = false,
                             )
 
                             Spacer(Modifier.height(8.dp))
@@ -545,7 +526,7 @@ fun SearchScreen(
                                     start = 8.dp,
                                     end = 8.dp,
                                     top = 12.dp,
-                                    bottom = 64.dp,
+                                    bottom = 12.dp,
                                 ),
                             modifier =
                                 Modifier
@@ -587,7 +568,7 @@ fun SearchScreen(
                                                 .padding(16.dp),
                                         contentAlignment = Alignment.Center,
                                     ) {
-                                        CircularProgressIndicator(
+                                        KomiCircularProgress(
                                             modifier = Modifier.size(24.dp),
                                         )
                                     }
@@ -617,38 +598,39 @@ private fun ClipboardBanner(
     onOpenLink: (ParsedGithubLink) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    androidx.compose.material3.Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-        ),
+        contentPadding = PaddingValues(12.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.clipboard_link_detected),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    color = colors.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                 )
-                IconButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.size(28.dp).clip(CircleShape),
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .clickable(onClick = onDismiss),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(Res.string.dismiss),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                     )
                 }
             }
@@ -657,30 +639,31 @@ private fun ClipboardBanner(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(shape.cornerSmall))
                         .clickable { onOpenLink(link) }
                         .padding(vertical = 8.dp, horizontal = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
-                    Text(
+                    KomiText(
                         text = "${link.owner}/${link.repo}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = stringResource(Res.string.open_in_app),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
                 }
             }
@@ -693,55 +676,52 @@ private fun DetectedLinksSection(
     links: ImmutableList<ParsedGithubLink>,
     onOpenLink: (ParsedGithubLink) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.detected_links),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            color = colors.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 6.dp),
         )
         links.forEach { link ->
-            androidx.compose.material3.Surface(
+            KomiSurface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 3.dp),
                 onClick = { onOpenLink(link) },
-                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                border = androidx.compose.foundation.BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                ),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
-                    Text(
+                    KomiText(
                         text = "${link.owner}/${link.repo}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.open_in_app),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Label,
+                        fontSize = 12.sp,
+                        color = colors.primary,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
@@ -766,72 +746,35 @@ private fun SearchTopbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        TextField(
+        val colors = LocalPersonality.current.colors
+        val shape = LocalPersonality.current.shape
+        KomiTextField(
             value = state.query,
             onValueChange = { value ->
                 onAction(SearchAction.OnSearchChange(value))
             },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            trailingIcon = if (state.query.isNotEmpty()) {
-                {
-                    IconButton(
-                        onClick = { onAction(SearchAction.OnClearClick) },
+            placeholder = stringResource(Res.string.search_repositories_hint),
+            leadingIcon = Icons.Default.Search,
+            trailing = {
+                if (state.query.isNotEmpty()) {
+                    Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .clip(CircleShape),
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .clickable { onAction(SearchAction.OnClearClick) },
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.dismiss),
                             modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = colors.onSurfaceVariant,
                         )
                     }
                 }
-            } else null,
-            placeholder = {
-                Text(
-                    text = stringResource(Res.string.search_repositories_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    softWrap = false,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
             },
-            textStyle =
-                MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search,
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onSearch = { onAction(SearchAction.OnSearchImeClick) },
-                    onDone = { onAction(SearchAction.OnSearchImeClick) },
-                    onGo = { onAction(SearchAction.OnSearchImeClick) },
-                    onNext = { onAction(SearchAction.OnSearchImeClick) },
-                    onSend = { onAction(SearchAction.OnSearchImeClick) },
-                ),
-            singleLine = true,
-            colors =
-                TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
-            shape = RoundedCornerShape(50),
+            keyboardType = KeyboardType.Text,
+            onCommit = { onAction(SearchAction.OnSearchImeClick) },
             modifier =
                 Modifier
                     .weight(1f)
@@ -859,13 +802,14 @@ private fun FiltersPillButton(
     activeCount: Int,
     onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(50)
+    val colors = LocalPersonality.current.colors
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     val container =
-        if (activeCount > 0) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.surfaceContainerLow
+        if (activeCount > 0) colors.primary
+        else colors.surface
     val content =
-        if (activeCount > 0) MaterialTheme.colorScheme.onPrimary
-        else MaterialTheme.colorScheme.onSurface
+        if (activeCount > 0) colors.onPrimary
+        else colors.onSurface
     Row(
         modifier = Modifier
             .height(48.dp)
@@ -876,19 +820,19 @@ private fun FiltersPillButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.FilterList,
             contentDescription = stringResource(Res.string.search_filters_button),
             modifier = Modifier.size(18.dp),
             tint = content,
         )
         if (activeCount > 0) {
-            Text(
+            KomiText(
                 text = activeCount.toString(),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                role = KomiTextRole.Label,
+                fontWeight = FontWeight.SemiBold,
                 color = content,
+                uppercase = false,
             )
         }
     }
@@ -952,35 +896,39 @@ private fun ActiveFilterChip(
     leadingIcon: androidx.compose.ui.graphics.vector.ImageVector?,
     onRemove: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(50)
+    val colors = LocalPersonality.current.colors
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     Row(
         modifier = Modifier
             .clip(shape)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), shape)
-            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), shape)
+            .background(colors.primary.copy(alpha = 0.12f), shape)
+            .border(1.dp, colors.primary.copy(alpha = 0.4f), shape)
             .clickable(onClick = onRemove)
             .padding(start = 12.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         if (leadingIcon != null) {
-            Icon(
+            KomiIcon(
                 imageVector = leadingIcon,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
             )
         }
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.primary,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.primary,
+            uppercase = false,
         )
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.Close,
             contentDescription = stringResource(Res.string.search_clear_filter_cd),
             modifier = Modifier.size(14.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            tint = colors.primary,
         )
     }
 }
@@ -1017,10 +965,11 @@ private fun ExploreFromGithubButton(
             }
 
             SearchState.ExploreStatus.EXHAUSTED -> {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.no_more_github_results),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline,
+                    role = KomiTextRole.Body,
+                    color = LocalPersonality.current.colors.outline,
+                    uppercase = false,
                 )
             }
         }
