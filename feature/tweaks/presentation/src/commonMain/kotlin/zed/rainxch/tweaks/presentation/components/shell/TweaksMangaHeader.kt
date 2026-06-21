@@ -31,10 +31,11 @@ import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
 import zed.rainxch.core.presentation.personality.manga.decoration.screentoneCorner
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.back_cd
-import zed.rainxch.githubstore.core.presentation.res.tweaks_title
 
 @Composable
 fun TweaksMangaHeader(
+    title: String,
+    jp: String,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -77,20 +78,22 @@ fun TweaksMangaHeader(
         }
         Column {
             KomiText(
-                text = stringResource(Res.string.tweaks_title),
+                text = title,
                 role = KomiTextRole.Display,
                 color = colors.onSurface,
                 fontSize = 23.sp,
                 lineHeight = 23.sp,
             )
-            KomiText(
-                text = "設定 · SETTINGS",
-                role = KomiTextRole.Label,
-                color = colors.onSurfaceVariant,
-                fontSize = 10.sp,
-                letterSpacing = 0.16.em,
-                uppercase = false,
-            )
+            if (jp.isNotEmpty()) {
+                KomiText(
+                    text = jp,
+                    role = KomiTextRole.Label,
+                    color = colors.onSurfaceVariant,
+                    fontSize = 10.sp,
+                    letterSpacing = 0.16.em,
+                    uppercase = false,
+                )
+            }
         }
     }
 }

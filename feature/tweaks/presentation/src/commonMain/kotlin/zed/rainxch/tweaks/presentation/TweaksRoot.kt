@@ -147,7 +147,13 @@ fun TweaksRoot(
             toastState = toastState,
             grid = true,
             screentone = true,
-            topBar = { TweaksMangaHeader(onNavigateBack = onNavigateBack) },
+            topBar = {
+                TweaksMangaHeader(
+                    title = stringResource(Res.string.tweaks_title),
+                    jp = "設定 · SETTINGS",
+                    onNavigateBack = onNavigateBack,
+                )
+            },
         ) { innerPadding ->
             Box(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),

@@ -42,8 +42,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.account.ForgeKind
 import zed.rainxch.core.domain.model.account.HostToken
-import zed.rainxch.core.presentation.components.bars.KomiTopBar
-import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
@@ -57,6 +55,7 @@ import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
@@ -126,18 +125,13 @@ fun HostTokensRoot(
     }
 
     KomiScaffold(
+        grid = true,
+        screentone = true,
         topBar = {
-            KomiTopBar(
+            TweaksMangaHeader(
                 title = stringResource(Res.string.host_tokens_title),
-                size = KomiTopBarSize.Compact,
-                leading = {
-                    KomiIconButton(
-                        icon = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.host_tokens_action_back),
-                        onClick = onNavigateBack,
-                        variant = KomiButtonVariant.Text,
-                    )
-                },
+                jp = "トークン",
+                onNavigateBack = onNavigateBack,
             )
         },
         toastState = toastState,

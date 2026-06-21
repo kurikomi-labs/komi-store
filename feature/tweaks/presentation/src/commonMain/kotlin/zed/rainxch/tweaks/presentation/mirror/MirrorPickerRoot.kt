@@ -1,26 +1,20 @@
 package zed.rainxch.tweaks.presentation.mirror
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -29,13 +23,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.mirror.MirrorConfig
 import zed.rainxch.core.domain.model.mirror.MirrorPreference
+import zed.rainxch.core.domain.model.mirror.MirrorStatus
 import zed.rainxch.core.domain.model.mirror.MirrorType
-import zed.rainxch.core.presentation.components.bars.KomiTopBar
-import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
-import zed.rainxch.core.presentation.components.buttons.KomiIconButton
-import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
 import zed.rainxch.core.presentation.components.inputs.KomiRadioButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -44,21 +35,27 @@ import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_label
-import zed.rainxch.githubstore.core.presentation.res.navigate_back
 import zed.rainxch.githubstore.core.presentation.res.mirror_picker_description
 import zed.rainxch.githubstore.core.presentation.res.mirror_picker_title
 import zed.rainxch.githubstore.core.presentation.res.mirror_removed_toast
 import zed.rainxch.githubstore.core.presentation.res.mirror_section_community
 import zed.rainxch.githubstore.core.presentation.res.mirror_section_official
+import zed.rainxch.githubstore.core.presentation.res.mirror_status_degraded
+import zed.rainxch.githubstore.core.presentation.res.mirror_status_down
+import zed.rainxch.githubstore.core.presentation.res.mirror_status_ok
+import zed.rainxch.githubstore.core.presentation.res.mirror_status_unknown
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_button
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_dns_fail
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_http_error
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_other
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_success
 import zed.rainxch.githubstore.core.presentation.res.mirror_test_timeout
+import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
+import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
+import zed.rainxch.tweaks.presentation.components.shell.SettingsSectionHead
+import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.tweaks.presentation.mirror.components.CustomMirrorDialog
 import zed.rainxch.tweaks.presentation.mirror.components.DeployYourOwnHint
-import zed.rainxch.tweaks.presentation.mirror.components.MirrorRow
 
 @Composable
 fun MirrorPickerRoot(
@@ -74,12 +71,7 @@ fun MirrorPickerRoot(
         when (event) {
             is MirrorPickerEvent.MirrorRemovedNotice ->
                 coroutineScope.launch {
-                    toastState.warning(
-                        getString(
-                            Res.string.mirror_removed_toast,
-                            event.displayName
-                        )
-                    )
+                    toastState.warning(getString(Res.string.mirror_removed_toast, event.displayName))
                 }
 
             is MirrorPickerEvent.OpenUrl -> uriHandler.openUri(event.url)
@@ -87,124 +79,88 @@ fun MirrorPickerRoot(
     }
 
     KomiScaffold(
+        toastState = toastState,
+        grid = true,
+        screentone = true,
         topBar = {
-            KomiTopBar(
+            TweaksMangaHeader(
                 title = stringResource(Res.string.mirror_picker_title),
-                size = KomiTopBarSize.Compact,
-                leading = {
-                    KomiIconButton(
-                        icon = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.navigate_back),
-                        onClick = onNavigateBack,
-                        variant = KomiButtonVariant.Text,
-                    )
-                },
+                jp = "ミラー",
+                onNavigateBack = onNavigateBack,
             )
         },
-        toastState = toastState,
     ) { padding ->
-        val listState = rememberLazyListState()
-        LazyColumn(
-            state = listState,
+        val colors = LocalPersonality.current.colors
+        val official = state.mirrors.filter { it.type == MirrorType.OFFICIAL }
+        val community = state.mirrors.filter { it.type == MirrorType.COMMUNITY }
+        Column(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
-                Spacer(Modifier.height(8.dp))
-                KomiText(
-                    text = stringResource(Res.string.mirror_picker_description),
-                    role = KomiTextRole.Body,
-                    color = LocalPersonality.current.colors.onSurfaceVariant,
-                    uppercase = false,
-                )
-                Spacer(Modifier.height(16.dp))
-            }
+            KomiText(
+                text = stringResource(Res.string.mirror_picker_description),
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
+            )
 
-            item {
-                KomiText(
-                    text = stringResource(Res.string.mirror_section_official),
-                    role = KomiTextRole.Title,
-                    color = LocalPersonality.current.colors.onSurfaceVariant,
-                )
-            }
-            items(
-                items = state.mirrors.filter { it.type == MirrorType.OFFICIAL },
-                key = { it.id },
-            ) { mirror ->
-                MirrorRow(
-                    mirror = mirror,
-                    selected = isMirrorSelected(mirror, state.preference),
-                    onClick = { viewModel.onAction(MirrorPickerAction.OnSelectMirror(mirror)) },
-                )
-            }
-
-            item {
-                Spacer(Modifier.height(12.dp))
-                KomiText(
-                    text = stringResource(Res.string.mirror_section_community),
-                    role = KomiTextRole.Title,
-                    color = LocalPersonality.current.colors.onSurfaceVariant,
-                )
-            }
-            items(
-                items = state.mirrors.filter { it.type == MirrorType.COMMUNITY },
-                key = { it.id },
-            ) { mirror ->
-                MirrorRow(
-                    mirror = mirror,
-                    selected = isMirrorSelected(mirror, state.preference),
-                    onClick = { viewModel.onAction(MirrorPickerAction.OnSelectMirror(mirror)) },
-                )
-            }
-
-            item {
-                Spacer(Modifier.height(8.dp))
-                CustomMirrorRow(
-                    selected = state.preference is MirrorPreference.Custom,
-                    onClick = { viewModel.onAction(MirrorPickerAction.OnCustomMirrorClicked) },
-                )
-            }
-
-            item {
-                Spacer(Modifier.height(12.dp))
-                KomiHorizontalDivider()
-                Spacer(Modifier.height(12.dp))
-            }
-
-            item {
-                KomiButton(
-                    onClick = { viewModel.onAction(MirrorPickerAction.OnTestConnection) },
-                    label = stringResource(Res.string.mirror_test_button),
-                    variant = KomiButtonVariant.Primary,
-                    enabled = !state.isTesting,
-                    loading = state.isTesting,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                state.testResult?.let { result ->
-                    Spacer(Modifier.height(8.dp))
-                    KomiText(
-                        text = formatTestResult(result),
-                        role = KomiTextRole.Body,
-                        color = LocalPersonality.current.colors.onSurface,
-                        uppercase = false,
+            SettingsSectionHead(stringResource(Res.string.mirror_section_official), "公式")
+            SettingsGroup {
+                official.forEachIndexed { index, mirror ->
+                    MirrorSettingsRow(
+                        mirror = mirror,
+                        selected = isMirrorSelected(mirror, state.preference),
+                        last = index == official.lastIndex,
+                        onClick = { viewModel.onAction(MirrorPickerAction.OnSelectMirror(mirror)) },
                     )
                 }
             }
 
-            item {
-                Spacer(Modifier.height(16.dp))
-                DeployYourOwnHint(
-                    onClick = { viewModel.onAction(MirrorPickerAction.OnDeployYourOwnClicked) },
+            SettingsSectionHead(stringResource(Res.string.mirror_section_community), "有志")
+            SettingsGroup {
+                community.forEachIndexed { index, mirror ->
+                    MirrorSettingsRow(
+                        mirror = mirror,
+                        selected = isMirrorSelected(mirror, state.preference),
+                        last = false,
+                        onClick = { viewModel.onAction(MirrorPickerAction.OnSelectMirror(mirror)) },
+                    )
+                }
+                SettingsRow(
+                    title = stringResource(Res.string.mirror_custom_label),
+                    last = true,
+                    onClick = { viewModel.onAction(MirrorPickerAction.OnCustomMirrorClicked) },
+                    trailing = {
+                        KomiRadioButton(selected = state.preference is MirrorPreference.Custom, onClick = null)
+                    },
                 )
             }
 
-            item {
-                Spacer(Modifier.height(32.dp))
+            KomiButton(
+                onClick = { viewModel.onAction(MirrorPickerAction.OnTestConnection) },
+                label = stringResource(Res.string.mirror_test_button),
+                variant = KomiButtonVariant.Primary,
+                enabled = !state.isTesting,
+                loading = state.isTesting,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            state.testResult?.let { result ->
+                KomiText(
+                    text = formatTestResult(result),
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
+                    uppercase = false,
+                )
             }
+
+            Spacer(Modifier.height(4.dp))
+            DeployYourOwnHint(onClick = { viewModel.onAction(MirrorPickerAction.OnDeployYourOwnClicked) })
         }
     }
 
@@ -220,30 +176,26 @@ fun MirrorPickerRoot(
 }
 
 @Composable
-private fun CustomMirrorRow(
+private fun MirrorSettingsRow(
+    mirror: MirrorConfig,
     selected: Boolean,
+    last: Boolean,
     onClick: () -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .selectable(
-                    selected = selected,
-                    onClick = onClick,
-                    role = Role.RadioButton,
-                ).padding(vertical = 8.dp, horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        KomiRadioButton(selected = selected, onClick = null)
-        KomiText(
-            text = stringResource(Res.string.mirror_custom_label),
-            role = KomiTextRole.Body,
-            color = LocalPersonality.current.colors.onSurface,
-            uppercase = false,
-        )
-    }
+    val label =
+        when (mirror.status) {
+            MirrorStatus.OK -> mirror.latencyMs?.let { stringResource(Res.string.mirror_status_ok, it) }
+            MirrorStatus.DEGRADED -> mirror.latencyMs?.let { stringResource(Res.string.mirror_status_degraded, it) }
+            MirrorStatus.DOWN -> stringResource(Res.string.mirror_status_down)
+            MirrorStatus.UNKNOWN -> stringResource(Res.string.mirror_status_unknown)
+        }
+    SettingsRow(
+        title = mirror.name,
+        subtitle = label,
+        last = last,
+        onClick = onClick,
+        trailing = { KomiRadioButton(selected = selected, onClick = null) },
+    )
 }
 
 @Composable
