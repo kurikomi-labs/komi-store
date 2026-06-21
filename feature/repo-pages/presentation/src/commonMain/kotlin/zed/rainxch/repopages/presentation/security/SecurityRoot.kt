@@ -1,5 +1,6 @@
 package zed.rainxch.repopages.presentation.security
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,17 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_security_advisories_header
@@ -95,6 +98,7 @@ private fun SecurityContent(
     overview: SecurityOverview,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
@@ -105,10 +109,10 @@ private fun SecurityContent(
         }
         if (overview.advisories.isEmpty()) {
             item(key = "advisories_empty") {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.repo_pages_security_no_advisories),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                 )
             }
         } else {
@@ -123,15 +127,13 @@ private fun SecurityContent(
         item(key = "policy_body") {
             val policy = overview.securityPolicyMarkdown
             if (policy.isNullOrBlank()) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.repo_pages_security_no_policy),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                 )
             } else {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                KomiSurface(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     RepoMarkdown(content = policy, modifier = Modifier.fillMaxWidth().padding(14.dp))
@@ -143,29 +145,34 @@ private fun SecurityContent(
 
 @Composable
 private fun SectionHeader(text: String) {
-    Text(
+    val colors = LocalPersonality.current.colors
+    KomiText(
         text = text,
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-        color = MaterialTheme.colorScheme.onBackground,
+        role = KomiTextRole.Title,
+        fontWeight = FontWeight.SemiBold,
+        color = colors.onBackground,
+        uppercase = false,
         modifier = Modifier.padding(top = 4.dp),
     )
 }
 
 @Composable
 private fun AdvisoryCard(advisory: SecurityAdvisory) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
+            KomiText(
                 text = advisory.summary,
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
+                uppercase = false,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SeverityBadge(advisory.severity)
@@ -177,10 +184,12 @@ private fun AdvisoryCard(advisory: SecurityAdvisory) {
                     }
                 }
                 if (meta.isNotEmpty()) {
-                    Text(
+                    KomiText(
                         text = meta,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        fontSize = 12.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
@@ -194,6 +203,7 @@ private fun AdvisoryCard(advisory: SecurityAdvisory) {
 @Composable
 private fun SeverityBadge(severity: AdvisorySeverity) {
     val statusColors = LocalStatusColors.current
+    val shape = LocalPersonality.current.shape
     val color = when (severity) {
         AdvisorySeverity.CRITICAL -> statusColors.severityCritical
         AdvisorySeverity.HIGH -> statusColors.severityHigh
@@ -208,15 +218,15 @@ private fun SeverityBadge(severity: AdvisorySeverity) {
         AdvisorySeverity.LOW -> stringResource(Res.string.repo_pages_severity_low)
         AdvisorySeverity.UNKNOWN -> stringResource(Res.string.repo_pages_severity_unknown)
     }
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = color.copy(alpha = 0.16f),
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = color,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-        )
-    }
+    KomiText(
+        text = label,
+        role = KomiTextRole.Label,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = color,
+        uppercase = false,
+        modifier = Modifier
+            .background(color.copy(alpha = 0.16f), RoundedCornerShape(shape.cornerSmall))
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+    )
 }
