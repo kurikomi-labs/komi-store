@@ -1,6 +1,5 @@
 package zed.rainxch.tweaks.presentation.hosttokens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,31 +24,18 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.VpnKey
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -61,9 +47,19 @@ import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiFab
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -100,7 +96,6 @@ import zed.rainxch.githubstore.core.presentation.res.host_tokens_title
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_undo_action
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_undo_snackbar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HostTokensRoot(
     onNavigateBack: () -> Unit,
@@ -148,9 +143,11 @@ fun HostTokensRoot(
         toastState = toastState,
         floatingActionButton = {
             if (state.tokens.isNotEmpty()) {
-                FloatingActionButton(onClick = { viewModel.onAction(HostTokensAction.OnAddClicked) }) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.host_tokens_action_add))
-                }
+                KomiFab(
+                    onClick = { viewModel.onAction(HostTokensAction.OnAddClicked) },
+                    icon = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.host_tokens_action_add),
+                )
             }
         },
     ) { padding ->
@@ -169,7 +166,7 @@ fun HostTokensRoot(
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
-                    ) { CircularProgressIndicator() }
+                    ) { KomiCircularProgress() }
                 }
                 state.tokens.isEmpty() -> {
                     EmptyStatePicker(
@@ -244,12 +241,8 @@ private fun visiblePresetForges(state: HostTokensState): List<ForgeKind> {
 
 @Composable
 private fun OAuthCoexistenceNote() {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    val colors = LocalPersonality.current.colors
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -257,16 +250,18 @@ private fun OAuthCoexistenceNote() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
+            KomiIcon(
                 Icons.Default.Info,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
-            Text(
+            KomiText(
                 text = stringResource(Res.string.host_tokens_oauth_coexistence),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
     }
@@ -284,26 +279,28 @@ private fun EmptyStatePicker(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
+            val colors = LocalPersonality.current.colors
             Spacer(Modifier.height(8.dp))
-            Text(
+            KomiText(
                 text = stringResource(Res.string.host_tokens_empty_title),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
             )
             Spacer(Modifier.height(4.dp))
-            Text(
+            KomiText(
                 text = stringResource(Res.string.host_tokens_empty_subtitle),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
             Spacer(Modifier.height(16.dp))
-            Text(
+            KomiText(
                 text = stringResource(Res.string.host_tokens_picker_title),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurfaceVariant,
             )
             Spacer(Modifier.height(4.dp))
         }
@@ -326,12 +323,8 @@ private fun PresetForgeCard(
     onPick: () -> Unit,
     onOpenTokenCreationPage: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    val colors = LocalPersonality.current.colors
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -342,21 +335,25 @@ private fun PresetForgeCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Icon(
+                KomiIcon(
                     Icons.Default.VpnKey,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = colors.primary,
                 )
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = kind.displayName,
-                        style = MaterialTheme.typography.titleMedium,
+                        role = KomiTextRole.Title,
                         fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
-                    Text(
+                    KomiText(
                         text = kind.tokenHost,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
@@ -384,14 +381,10 @@ private fun PresetForgeCard(
 
 @Composable
 private fun OtherForgeCard(onPick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-            .clickable(onClick = onPick),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onPick,
     ) {
         Row(
             modifier = Modifier
@@ -400,20 +393,24 @@ private fun OtherForgeCard(onPick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
+            KomiIcon(
                 Icons.Default.VpnKey,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
             )
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.host_tokens_picker_other),
-                    style = MaterialTheme.typography.titleMedium,
+                    role = KomiTextRole.Title,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
-                Text(
+                KomiText(
                     text = stringResource(Res.string.host_tokens_picker_other_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
@@ -428,9 +425,9 @@ private fun PickerDialog(
     onOpenTokenCreationPage: (ForgeKind) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
+    KomiDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(Res.string.host_tokens_picker_title)) },
+        title = { KomiText(stringResource(Res.string.host_tokens_picker_title), role = KomiTextRole.Title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 presetForges.forEach { kind ->
@@ -465,14 +462,9 @@ private fun TokenRow(
     onEditLabel: () -> Unit,
     onOpenManagePage: (ForgeKind) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val forge = ForgeKind.fromHost(token.host)
-    var menuOpen by remember { mutableStateOf(false) }
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -480,17 +472,19 @@ private fun TokenRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Icon(
+            KomiIcon(
                 Icons.Default.VpnKey,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
             )
             Spacer(Modifier.width(8.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = forge?.displayName ?: token.host,
-                    style = MaterialTheme.typography.titleMedium,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
                 val secondary = when {
                     validation?.isSuccess == true -> {
@@ -511,61 +505,60 @@ private fun TokenRow(
                     )
                     else -> token.displayName ?: token.host
                 }
-                Text(
+                KomiText(
                     text = secondary,
-                    style = MaterialTheme.typography.bodySmall,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
                     color = if (validation != null && !validation.isSuccess) {
-                        MaterialTheme.colorScheme.error
+                        colors.error
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        colors.onSurfaceVariant
                     },
+                    uppercase = false,
                 )
             }
             if (isValidating) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                KomiCircularProgress(modifier = Modifier.size(20.dp))
             } else {
-                IconButton(onClick = onValidate) {
-                    Icon(
-                        Icons.Default.Check,
-                        contentDescription = stringResource(Res.string.host_tokens_row_validate),
-                    )
-                }
+                KomiIconButton(
+                    icon = Icons.Default.Check,
+                    contentDescription = stringResource(Res.string.host_tokens_row_validate),
+                    onClick = onValidate,
+                    variant = KomiButtonVariant.Text,
+                )
             }
-            Box {
-                IconButton(onClick = { menuOpen = true }) {
-                    Icon(
-                        Icons.Default.MoreVert,
-                        contentDescription = stringResource(Res.string.host_tokens_row_menu),
+            val menuEntries = buildList {
+                add(KomiMenuItem(id = "edit", label = stringResource(Res.string.host_tokens_row_edit_label)))
+                add(KomiMenuItem(id = "replace", label = stringResource(Res.string.host_tokens_row_replace_token)))
+                if (forge != null) {
+                    add(
+                        KomiMenuItem(
+                            id = "open",
+                            label = stringResource(Res.string.host_tokens_row_open_token_page, forge.displayName),
+                        ),
                     )
                 }
-                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.host_tokens_row_edit_label)) },
-                        onClick = { menuOpen = false; onEditLabel() },
-                    )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.host_tokens_row_replace_token)) },
-                        onClick = { menuOpen = false; onReplace() },
-                    )
-                    if (forge != null) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    stringResource(
-                                        Res.string.host_tokens_row_open_token_page,
-                                        forge.displayName,
-                                    ),
-                                )
-                            },
-                            onClick = { menuOpen = false; onOpenManagePage(forge) },
-                        )
+                add(KomiMenuItem(id = "delete", label = stringResource(Res.string.host_tokens_action_delete)))
+            }.toImmutableList()
+            KomiDropdown(
+                entries = menuEntries,
+                onSelect = { item ->
+                    when (item.id) {
+                        "edit" -> onEditLabel()
+                        "replace" -> onReplace()
+                        "open" -> forge?.let { onOpenManagePage(it) }
+                        "delete" -> onDelete()
                     }
-                    DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.host_tokens_action_delete)) },
-                        onClick = { menuOpen = false; onDelete() },
+                },
+                trigger = { onClick ->
+                    KomiIconButton(
+                        icon = Icons.Default.MoreVert,
+                        contentDescription = stringResource(Res.string.host_tokens_row_menu),
+                        onClick = onClick,
+                        variant = KomiButtonVariant.Text,
                     )
-                }
-            }
+                },
+            )
         }
     }
 }
@@ -581,9 +574,9 @@ private fun AddTokenDialog(
     } else {
         stringResource(Res.string.host_tokens_compose_add_title)
     }
-    AlertDialog(
+    KomiDialog(
         onDismissRequest = { onAction(HostTokensAction.OnAddDismiss) },
-        title = { Text(title) },
+        title = { KomiText(title, role = KomiTextRole.Title, uppercase = false) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state.draftForge == null) {

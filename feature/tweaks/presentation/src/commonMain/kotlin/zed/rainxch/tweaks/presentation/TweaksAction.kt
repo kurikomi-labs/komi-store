@@ -1,15 +1,25 @@
 package zed.rainxch.tweaks.presentation
 
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.model.settings.TranslationProvider
+import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 sealed interface TweaksAction {
     data object OnNavigateBackClick : TweaksAction
+
+    data class OnPersonalitySelected(
+        val personality: AppPersonality,
+    ) : TweaksAction
+
+    data class OnAccentSelected(
+        val accent: MangaAccent,
+    ) : TweaksAction
 
     data class OnThemeColorSelected(
         val themeColor: AppTheme,

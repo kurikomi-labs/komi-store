@@ -4,8 +4,10 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableMap
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.core.domain.model.installation.DhizukuAvailability
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerAttribution
@@ -17,6 +19,8 @@ import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 
 data class TweaksState(
+    val selectedPersonality: AppPersonality = AppPersonality.MANGA,
+    val selectedAccent: MangaAccent = MangaAccent.CRIMSON,
     val selectedThemeColor: AppTheme = AppTheme.NORD,
     val selectedFontTheme: FontTheme = FontTheme.CUSTOM,
     val isAmoledThemeEnabled: Boolean = false,

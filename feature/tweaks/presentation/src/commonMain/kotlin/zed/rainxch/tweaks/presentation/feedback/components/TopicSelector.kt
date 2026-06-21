@@ -7,13 +7,15 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_topic_label
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackTopic
@@ -26,12 +28,12 @@ fun TopicSelector(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.feedback_topic_label),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
         )
         Spacer(Modifier.height(8.dp))
         FlowRow(

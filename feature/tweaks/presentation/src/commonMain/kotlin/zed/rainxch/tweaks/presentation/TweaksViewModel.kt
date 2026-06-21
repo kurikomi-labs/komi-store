@@ -35,6 +35,8 @@ import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.UpdateScheduleManager
+import zed.rainxch.core.presentation.personality.toAccentId
+import zed.rainxch.core.presentation.personality.toMangaAccent
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_save_proxy_settings
@@ -164,6 +166,18 @@ class TweaksViewModel(
                 _state.update {
                     it.copy(selectedThemeColor = theme)
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            tweaksRepository.getPersonality().collect { personality ->
+                _state.update { it.copy(selectedPersonality = personality) }
+            }
+        }
+
+        viewModelScope.launch {
+            tweaksRepository.getAccentId().collect { accentId ->
+                _state.update { it.copy(selectedAccent = accentId.toMangaAccent()) }
             }
         }
 
@@ -540,6 +554,18 @@ class TweaksViewModel(
 
             TweaksAction.OnHiddenRepositoriesClick -> {
                 // Handled in composable (navigates to the hidden-repositories screen).
+            }
+
+            is TweaksAction.OnPersonalitySelected -> {
+                viewModelScope.launch {
+                    tweaksRepository.setPersonality(action.personality)
+                }
+            }
+
+            is TweaksAction.OnAccentSelected -> {
+                viewModelScope.launch {
+                    tweaksRepository.setAccentId(action.accent.toAccentId())
+                }
             }
 
             is TweaksAction.OnThemeColorSelected -> {

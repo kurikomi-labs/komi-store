@@ -1,8 +1,8 @@
 package zed.rainxch.tweaks.presentation.appinfo
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,12 +21,10 @@ import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,10 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -125,7 +123,7 @@ fun AppInfoRoot(
                 icon = Icons.Outlined.Code,
                 title = stringResource(Res.string.tweaks_app_info_licenses_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
-                accent = MaterialTheme.colorScheme.primary,
+                accent = LocalPersonality.current.colors.primary,
                 onClick = onNavigateToLicenses,
             )
             Spacer(Modifier.height(8.dp))
@@ -136,7 +134,7 @@ fun AppInfoRoot(
                 icon = Icons.Outlined.Description,
                 title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
-                accent = MaterialTheme.colorScheme.primary,
+                accent = LocalPersonality.current.colors.primary,
                 onClick = {
                     runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
                 },
@@ -149,7 +147,7 @@ fun AppInfoRoot(
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
                 title = stringResource(Res.string.tweaks_app_info_source_code_title),
                 subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
-                accent = MaterialTheme.colorScheme.primary,
+                accent = LocalPersonality.current.colors.primary,
                 onClick = {
                     runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
                 },
@@ -161,12 +159,8 @@ fun AppInfoRoot(
 
 @Composable
 private fun AppIdentityCard(versionName: String) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    val colors = LocalPersonality.current.colors
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -185,25 +179,25 @@ private fun AppIdentityCard(versionName: String) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.tweaks_app_info_app_name),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                 )
-                Text(
+                KomiText(
                     text = versionName.ifBlank { "—" },
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontFamily = FontFamily.Monospace,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Mono,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(
+                KomiText(
                     text = stringResource(Res.string.tweaks_app_info_tagline),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
@@ -220,29 +214,25 @@ private fun CommunityCard(
     onWebsite: () -> Unit,
     onBusiness: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    val colors = LocalPersonality.current.colors
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.tweaks_app_info_community_title),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     modifier = Modifier.weight(1f),
                 )
-                Text(
+                KomiText(
                     text = stringResource(Res.string.tweaks_app_info_community_subtitle),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
+                    color = colors.onSurfaceVariant,
                 )
             }
             Spacer(Modifier.height(14.dp))
@@ -254,21 +244,21 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Telegram",
                     iconUrl = "https://cdn.simpleicons.org/telegram/000000",
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onTelegram,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Discord",
                     iconUrl = "https://cdn.simpleicons.org/discord/000000",
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onDiscord,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "Mastodon",
                     iconUrl = "https://cdn.simpleicons.org/mastodon/000000",
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onMastodon,
                     modifier = Modifier.weight(1f),
                 )
@@ -281,28 +271,28 @@ private fun CommunityCard(
                 SocialTile(
                     label = "Reddit",
                     iconUrl = "https://cdn.simpleicons.org/reddit/000000",
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onReddit,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = "GitHub",
                     iconUrl = "https://cdn.simpleicons.org/github/000000",
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onGithub,
                     modifier = Modifier.weight(1f),
                 )
                 SocialTile(
                     label = stringResource(Res.string.tweaks_app_info_website),
                     iconFallback = Icons.Outlined.Language,
-                    accent = MaterialTheme.colorScheme.primary,
+                    accent = LocalPersonality.current.colors.primary,
                     onClick = onWebsite,
                     modifier = Modifier.weight(1f),
                 )
             }
 
             Spacer(Modifier.height(16.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+            KomiHorizontalDivider(color = colors.outline.copy(alpha = 0.5f))
             Spacer(Modifier.height(14.dp))
 
             Row(
@@ -311,17 +301,19 @@ private fun CommunityCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.tweaks_app_info_community_business_title),
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.tweaks_app_info_community_business_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
                 KomiButton(
@@ -345,13 +337,13 @@ private fun SocialTile(
     iconUrl: String? = null,
     iconFallback: ImageVector? = null,
 ) {
-    Surface(
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    Box(
         modifier = modifier
-            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+            .clip(shape)
+            .background(accent.copy(alpha = 0.14f))
+            .border(1.dp, accent.copy(alpha = 0.35f), shape)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = accent.copy(alpha = 0.14f),
-        border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
     ) {
         Column(
             modifier = Modifier
@@ -375,7 +367,7 @@ private fun SocialTile(
                         colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(accent),
                     )
                 } else if (iconFallback != null) {
-                    Icon(
+                    KomiIcon(
                         imageVector = iconFallback,
                         contentDescription = null,
                         tint = accent,
@@ -383,14 +375,15 @@ private fun SocialTile(
                     )
                 }
             }
-            Text(
+            KomiText(
                 text = label,
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = LocalPersonality.current.colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
         }
     }
@@ -404,24 +397,20 @@ private fun ActionRow(
     onClick: () -> Unit,
     accent: Color = Color.Unspecified,
 ) {
+    val colors = LocalPersonality.current.colors
     val tileBg = if (accent == Color.Unspecified) {
-        MaterialTheme.colorScheme.surfaceContainerHigh
+        colors.surfaceContainerHigh
     } else {
         accent.copy(alpha = 0.14f)
     }
     val tint = if (accent == Color.Unspecified) {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        colors.onSurfaceVariant
     } else {
         accent
     }
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    KomiSurface(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier
@@ -437,7 +426,7 @@ private fun ActionRow(
                     .background(tileBg),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = tint,
@@ -448,27 +437,29 @@ private fun ActionRow(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text(
+                KomiText(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
-                Text(
+                KomiText(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
             }
-            Icon(
+            KomiIcon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(24.dp),
             )
         }

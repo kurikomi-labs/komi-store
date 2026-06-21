@@ -5,17 +5,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.mirror.MirrorConfig
 import zed.rainxch.core.domain.model.mirror.MirrorStatus
+import zed.rainxch.core.presentation.components.inputs.KomiRadioButton
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_status_degraded
 import zed.rainxch.githubstore.core.presentation.res.mirror_status_down
@@ -29,6 +31,7 @@ fun MirrorRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier =
             modifier
@@ -38,12 +41,13 @@ fun MirrorRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RadioButton(selected = selected, onClick = null)
+        KomiRadioButton(selected = selected, onClick = null)
         StatusDot(status = mirror.status)
-        Text(
+        KomiText(
             text = mirror.name,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
+            uppercase = false,
             modifier = Modifier.padding(end = 8.dp),
         )
         val label =
@@ -54,10 +58,12 @@ fun MirrorRow(
                 MirrorStatus.UNKNOWN -> stringResource(Res.string.mirror_status_unknown)
             }
         if (label != null) {
-            Text(
+            KomiText(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
     }

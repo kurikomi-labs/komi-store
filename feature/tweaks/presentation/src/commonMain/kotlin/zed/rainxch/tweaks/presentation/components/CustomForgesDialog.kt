@@ -1,5 +1,6 @@
 package zed.rainxch.tweaks.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,25 +9,22 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.InputChipDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
@@ -37,29 +35,32 @@ fun CustomForgesDialog(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
 ) {
-    AlertDialog(
+    val personality = LocalPersonality.current
+    val colors = personality.colors
+    KomiDialog(
         onDismissRequest = { onAction(TweaksAction.OnDismissCustomForgesDialog) },
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        title = { Text(stringResource(Res.string.custom_forges_dialog_title)) },
+        title = { KomiText(stringResource(Res.string.custom_forges_dialog_title), role = KomiTextRole.Title) },
         text = {
             Column {
 
-                Surface(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
-                    modifier = Modifier.padding(bottom = 10.dp),
-                ) {
-                    Text(
-                        text = stringResource(Res.string.custom_forges_dialog_builtin_note),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    )
-                }
-                Text(
+                KomiText(
+                    text = stringResource(Res.string.custom_forges_dialog_builtin_note),
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onPrimaryContainer,
+                    uppercase = false,
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                        .clip(RoundedCornerShape(personality.shape.cornerSmall))
+                        .background(colors.primaryContainer)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                )
+                KomiText(
                     text = stringResource(Res.string.custom_forges_dialog_help),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
                 Row(
                     modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
@@ -81,18 +82,22 @@ fun CustomForgesDialog(
                     )
                 }
                 if (state.customForgeError != null) {
-                    Text(
+                    KomiText(
                         text = state.customForgeError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.error,
+                        uppercase = false,
                         modifier = Modifier.padding(top = 4.dp),
                     )
                 }
                 if (state.customForgeHosts.isEmpty()) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.custom_forges_empty),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                         modifier = Modifier.padding(top = 16.dp),
                     )
                 } else {
@@ -101,16 +106,10 @@ fun CustomForgesDialog(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         items(items = state.customForgeHosts.toList(), key = { it }) { host ->
-                            InputChip(
-                                selected = false,
-                                onClick = {},
-                                label = { Text(host) },
-                                trailingIcon = {
-                                    IconButton(onClick = { onAction(TweaksAction.OnRemoveCustomForge(host)) }) {
-                                        Icon(Icons.Default.Close, contentDescription = null)
-                                    }
-                                },
-                                colors = InputChipDefaults.inputChipColors(),
+                            KomiChip(
+                                label = host,
+                                kind = KomiChipKind.Input,
+                                onRemove = { onAction(TweaksAction.OnRemoveCustomForge(host)) },
                             )
                         }
                     }

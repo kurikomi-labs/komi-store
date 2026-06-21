@@ -2,8 +2,6 @@ package zed.rainxch.tweaks.presentation.mirror.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.StringResource
@@ -12,6 +10,9 @@ import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cancel
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_dialog_hint
@@ -26,9 +27,9 @@ fun CustomMirrorDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
+    KomiDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(Res.string.mirror_custom_dialog_title)) },
+        title = { KomiText(stringResource(Res.string.mirror_custom_dialog_title), role = KomiTextRole.Title) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 KomiTextField(

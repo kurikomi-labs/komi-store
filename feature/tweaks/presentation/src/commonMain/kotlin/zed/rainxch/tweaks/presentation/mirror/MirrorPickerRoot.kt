@@ -13,11 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,7 +35,12 @@ import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.inputs.KomiRadioButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_custom_label
@@ -114,19 +115,20 @@ fun MirrorPickerRoot(
         ) {
             item {
                 Spacer(Modifier.height(8.dp))
-                Text(
+                KomiText(
                     text = stringResource(Res.string.mirror_picker_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = LocalPersonality.current.colors.onSurfaceVariant,
+                    uppercase = false,
                 )
                 Spacer(Modifier.height(16.dp))
             }
 
             item {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.mirror_section_official),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Title,
+                    color = LocalPersonality.current.colors.onSurfaceVariant,
                 )
             }
             items(
@@ -142,10 +144,10 @@ fun MirrorPickerRoot(
 
             item {
                 Spacer(Modifier.height(12.dp))
-                Text(
+                KomiText(
                     text = stringResource(Res.string.mirror_section_community),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Title,
+                    color = LocalPersonality.current.colors.onSurfaceVariant,
                 )
             }
             items(
@@ -169,7 +171,7 @@ fun MirrorPickerRoot(
 
             item {
                 Spacer(Modifier.height(12.dp))
-                HorizontalDivider()
+                KomiHorizontalDivider()
                 Spacer(Modifier.height(12.dp))
             }
 
@@ -184,10 +186,11 @@ fun MirrorPickerRoot(
                 )
                 state.testResult?.let { result ->
                     Spacer(Modifier.height(8.dp))
-                    Text(
+                    KomiText(
                         text = formatTestResult(result),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = LocalPersonality.current.colors.onSurface,
+                        uppercase = false,
                     )
                 }
             }
@@ -233,11 +236,12 @@ private fun CustomMirrorRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RadioButton(selected = selected, onClick = null)
-        Text(
+        KomiRadioButton(selected = selected, onClick = null)
+        KomiText(
             text = stringResource(Res.string.mirror_custom_label),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = LocalPersonality.current.colors.onSurface,
+            uppercase = false,
         )
     }
 }

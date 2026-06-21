@@ -1,8 +1,6 @@
 package zed.rainxch.tweaks.presentation.licenses
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,17 +18,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_body
@@ -89,23 +86,22 @@ fun LicensesRoot(
         toastState = snackbarState,
     ) {
         item(key = "intro") {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-            ) {
+            val colors = LocalPersonality.current.colors
+            KomiSurface(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.tweaks_licenses_intro_title),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
                     Spacer(Modifier.height(4.dp))
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.tweaks_licenses_intro_body),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
@@ -122,16 +118,17 @@ fun LicensesRoot(
                             .padding(vertical = 48.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        CircularProgressIndicator()
+                        KomiCircularProgress()
                     }
                 }
             }
             loadError -> {
                 item(key = "error") {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.tweaks_licenses_load_failed),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
+                        role = KomiTextRole.Body,
+                        color = LocalPersonality.current.colors.error,
+                        uppercase = false,
                         modifier = Modifier.padding(16.dp),
                     )
                 }
@@ -152,15 +149,10 @@ fun LicensesRoot(
 
 @Composable
 private fun LibraryRow(library: LibraryEntry, onClick: () -> Unit) {
-    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(rowShape)
-            .clickable(onClick = onClick),
-        shape = rowShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
     ) {
         Column(
             modifier = Modifier
@@ -168,21 +160,21 @@ private fun LibraryRow(library: LibraryEntry, onClick: () -> Unit) {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
+            KomiText(
                 text = library.name,
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = library.license,
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontFamily = FontFamily.Monospace,
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Mono,
+                fontSize = 11.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
     }

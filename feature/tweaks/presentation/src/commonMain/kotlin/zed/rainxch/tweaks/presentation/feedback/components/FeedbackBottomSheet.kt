@@ -10,20 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,13 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.isAndroid
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -51,7 +49,6 @@ import zed.rainxch.tweaks.presentation.feedback.FeedbackState
 import zed.rainxch.tweaks.presentation.feedback.FeedbackViewModel
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedbackBottomSheet(
     onDismiss: () -> Unit,
@@ -74,10 +71,8 @@ fun FeedbackBottomSheet(
     }
 
     if (isAndroid()) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ModalBottomSheet(
-            onDismissRequest = dismiss,
-            sheetState = sheetState,
+        KomiSheet(
+            onDismiss = dismiss,
         ) {
             FeedbackContent(
                 state = state,
@@ -98,7 +93,7 @@ fun FeedbackBottomSheet(
                     .widthIn(max = 560.dp)
                     .heightIn(max = 720.dp)
                     .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(LocalPersonality.current.colors.surface),
             ) {
                 FeedbackContent(
                     state = state,
@@ -175,26 +170,24 @@ private fun FeedbackContent(
 
 @Composable
 private fun FeedbackHeader(onDismiss: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.feedback_title),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurface,
         )
-        IconButton(onClick = onDismiss) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(Res.string.feedback_close),
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        KomiIconButton(
+            icon = Icons.Default.Close,
+            contentDescription = stringResource(Res.string.feedback_close),
+            onClick = onDismiss,
+            variant = KomiButtonVariant.Text,
+        )
     }
 }
 
@@ -202,12 +195,13 @@ private fun FeedbackHeader(onDismiss: () -> Unit) {
 private fun SectionLabel(text: String, topGap: androidx.compose.ui.unit.Dp = 4.dp) {
     Column {
         if (topGap > 0.dp) Spacer(Modifier.height(topGap))
-        Text(
+        KomiText(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }

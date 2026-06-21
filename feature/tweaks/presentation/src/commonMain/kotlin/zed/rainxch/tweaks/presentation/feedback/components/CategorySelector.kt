@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_category_label
@@ -36,13 +37,14 @@ fun CategorySelector(
     onSelected: (FeedbackCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(modifier = modifier) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.feedback_category_label),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurfaceVariant,
         )
         Spacer(Modifier.height(8.dp))
         FlowRow(
@@ -67,20 +69,21 @@ internal fun FeedbackPillChip(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val container by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
+            colors.primary
         } else {
-            MaterialTheme.colorScheme.surfaceContainerHigh
+            colors.surfaceContainerHigh
         },
         animationSpec = tween(durationMillis = 180),
         label = "chip_container",
     )
     val content by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.onPrimary
+            colors.onPrimary
         } else {
-            MaterialTheme.colorScheme.onSurface
+            colors.onSurface
         },
         animationSpec = tween(durationMillis = 180),
         label = "chip_content",
@@ -93,12 +96,13 @@ internal fun FeedbackPillChip(
             .padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = content,
+            uppercase = false,
         )
     }
 }

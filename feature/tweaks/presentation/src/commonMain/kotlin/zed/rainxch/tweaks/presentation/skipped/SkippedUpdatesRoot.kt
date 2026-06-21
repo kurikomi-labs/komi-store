@@ -11,22 +11,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.foundation.shape.RoundedCornerShape
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -102,9 +101,10 @@ fun SkippedUpdatesRoot(
                     .fillMaxSize()
                     .padding(padding),
         ) {
+            val colors = LocalPersonality.current.colors
             when {
                 state.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    KomiCircularProgress(modifier = Modifier.align(Alignment.Center))
                 }
 
                 state.items.isEmpty() -> {
@@ -115,16 +115,18 @@ fun SkippedUpdatesRoot(
                                 .padding(horizontal = 32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.skipped_updates_empty_title),
-                            style = MaterialTheme.typography.titleMedium,
+                            role = KomiTextRole.Title,
                             fontWeight = FontWeight.SemiBold,
+                            color = colors.onSurface,
                         )
                         Spacer(Modifier.size(8.dp))
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.skipped_updates_empty_description),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
                         )
                     }
                 }
@@ -159,47 +161,49 @@ private fun SkippedAppRow(
     item: SkippedAppUi,
     onUnskip: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    val colors = LocalPersonality.current.colors
+    KomiSurface(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = item.appName,
-                    style = MaterialTheme.typography.titleSmall,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
-                Text(
+                KomiText(
                     text =
                         stringResource(
                             Res.string.skipped_updates_skipped_label,
                             item.skippedTag,
                         ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
                 if (item.installedVersion.isNotBlank()) {
-                    Text(
+                    KomiText(
                         text =
                             stringResource(
                                 Res.string.skipped_updates_installed_label,
                                 item.installedVersion,
                             ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
             }

@@ -3,12 +3,14 @@ package zed.rainxch.tweaks.presentation.mirror.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.mirror_deploy_your_own_hint
 
@@ -17,10 +19,12 @@ fun DeployYourOwnHint(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    KomiText(
         text = stringResource(Res.string.mirror_deploy_your_own_hint),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.primary,
+        role = KomiTextRole.Body,
+        fontSize = 13.sp,
+        color = LocalPersonality.current.colors.primary,
+        uppercase = false,
         modifier =
             modifier
                 .fillMaxWidth()

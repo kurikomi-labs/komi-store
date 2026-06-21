@@ -5,18 +5,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_diagnostics_header
 import zed.rainxch.githubstore.core.presentation.res.feedback_diagnostics_include
@@ -31,12 +32,10 @@ fun DiagnosticsPreview(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-        ),
-        shape = RoundedCornerShape(32.dp),
+        paper = KomiSurfacePaper.Background,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -45,29 +44,34 @@ fun DiagnosticsPreview(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.feedback_diagnostics_header),
-                        style = MaterialTheme.typography.titleMedium,
+                        role = KomiTextRole.Title,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.feedback_diagnostics_include),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
-                Switch(
+                KomiSwitch(
                     checked = enabled,
                     onCheckedChange = { onToggle() },
                 )
             }
 
             if (enabled && diagnostics != null) {
-                Text(
+                KomiText(
                     text = formatDiagnostics(diagnostics, channel),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                     modifier = Modifier.padding(top = 12.dp),
                 )
             }
