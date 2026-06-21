@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -269,10 +270,25 @@ private fun DeeplCredentialsForm(
     onAction: (TweaksAction) -> Unit,
 ) {
     val canSave = state.deeplAuthKey.isNotBlank()
+    val uriHandler = LocalUriHandler.current
     Column(
         modifier = Modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
+        KomiText(
+            text = stringResource(Res.string.translation_deepl_help),
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
+            uppercase = false,
+        )
+        KomiButton(
+            onClick = { runCatching { uriHandler.openUri("https://www.deepl.com/pro-api") } },
+            label = stringResource(Res.string.translation_deepl_get_free_key),
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
+            modifier = Modifier.align(Alignment.Start),
+        )
         KomiTextField(
             value = state.deeplAuthKey,
             onValueChange = { onAction(TweaksAction.OnDeeplAuthKeyChanged(it)) },
@@ -298,10 +314,25 @@ private fun MicrosoftCredentialsForm(
     onAction: (TweaksAction) -> Unit,
 ) {
     val canSave = state.microsoftTranslatorKey.isNotBlank()
+    val uriHandler = LocalUriHandler.current
     Column(
         modifier = Modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
+        KomiText(
+            text = stringResource(Res.string.translation_microsoft_help),
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
+            uppercase = false,
+        )
+        KomiButton(
+            onClick = { runCatching { uriHandler.openUri("https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation") } },
+            label = stringResource(Res.string.translation_microsoft_get_free_key),
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
+            modifier = Modifier.align(Alignment.Start),
+        )
         KomiTextField(
             value = state.microsoftTranslatorKey,
             onValueChange = { onAction(TweaksAction.OnMicrosoftTranslatorKeyChanged(it)) },
