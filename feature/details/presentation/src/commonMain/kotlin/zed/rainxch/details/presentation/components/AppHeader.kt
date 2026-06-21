@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.CallSplit
@@ -29,11 +28,6 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.AccountTree
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -60,6 +54,10 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.chips.KomiChip
 import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.core.presentation.utils.toIcons
@@ -91,7 +89,7 @@ private fun Color.normalizedForStripe(isDark: Boolean): Color {
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AppHeader(
     author: GithubUserProfile?,
@@ -107,10 +105,12 @@ fun AppHeader(
     onOwnerClick: () -> Unit = {},
 ) {
     val isDark = isSystemInDarkTheme()
-    val surface = MaterialTheme.colorScheme.surface
+    val colors = LocalPersonality.current.colors
+    val surface = colors.surface
     val avatarUrl = author?.avatarUrl ?: repository.owner.avatarUrl
-    val rawAccent = MaterialTheme.colorScheme.primary
-    val headerShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    val rawAccent = colors.primary
+    val shape = LocalPersonality.current.shape
+    val headerShape = RoundedCornerShape(shape.corner)
     val normalizedAccent = remember(rawAccent, isDark) { rawAccent.normalizedForStripe(isDark) }
     val tintFraction = if (isDark) 0.10f else 0.06f
     val animatedAccent by animateColorAsState(
@@ -127,7 +127,7 @@ fun AppHeader(
     val stripeLineThick = if (isDark) animatedAccent.copy(alpha = 0.45f) else animatedAccent.copy(alpha = 0.55f)
     val stripeLineThin = if (isDark) animatedAccent.copy(alpha = 0.22f) else animatedAccent.copy(alpha = 0.30f)
     val avatarBg = if (isDark) animatedAccent.copy(alpha = 0.20f) else animatedAccent.copy(alpha = 0.14f)
-    val borderColor = MaterialTheme.colorScheme.outline
+    val borderColor = colors.outline
 
     val animatedProgress by animateFloatAsState(
         targetValue = (downloadProgress ?: 0) / 100f,
@@ -207,24 +207,24 @@ fun AppHeader(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                KomiText(
                     text = author?.login ?: repository.owner.login,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontSize = 13.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                    role = KomiTextRole.Label,
+                    fontSize = 13.sp,
+                    color = colors.onSurface.copy(alpha = 0.75f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .weight(1f, fill = false)
                         .clickable(onClick = onOwnerClick),
+                    uppercase = false,
                 )
                 if (isCurrentUserOwner) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Filled.Verified,
                         contentDescription = stringResource(Res.string.self_owned_badge),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
                 }
             }
@@ -237,11 +237,11 @@ fun AppHeader(
             ) {
                 androidx.compose.foundation.text.BasicText(
                     text = repository.name,
-                    style = MaterialTheme.typography.headlineMedium.copy(
+                    style = LocalPersonality.current.type.display.copy(
                         fontWeight = FontWeight.Black,
                         fontSize = 30.sp,
                         letterSpacing = (-0.4).sp,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = colors.onSurface,
                     ),
                     maxLines = 1,
                     softWrap = false,
@@ -269,25 +269,24 @@ fun AppHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                val statColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.88f)
-                val statStyle = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 13.sp,
-                )
+                val statColor = colors.onSurface.copy(alpha = 0.88f)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Outlined.Star,
                         contentDescription = null,
                         tint = statColor,
                         modifier = Modifier.size(15.dp),
                     )
-                    Text(
+                    KomiText(
                         text = formatCount(stats?.stars ?: repository.stargazersCount),
-                        style = statStyle,
+                        role = KomiTextRole.Label,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = statColor,
+                        uppercase = false,
                     )
                 }
                 val forksValue = stats?.forks ?: repository.forksCount
@@ -296,16 +295,19 @@ fun AppHeader(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Outlined.AccountTree,
                             contentDescription = null,
                             tint = statColor,
                             modifier = Modifier.size(15.dp),
                         )
-                        Text(
+                        KomiText(
                             text = formatCount(forksValue),
-                            style = statStyle,
+                            role = KomiTextRole.Label,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
                             color = statColor,
+                            uppercase = false,
                         )
                     }
                 }
@@ -315,55 +317,61 @@ fun AppHeader(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Download,
                             contentDescription = null,
                             tint = statColor,
                             modifier = Modifier.size(15.dp),
                         )
-                        Text(
+                        KomiText(
                             text = formatCount(downloadsValue),
-                            style = statStyle,
+                            role = KomiTextRole.Label,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
                             color = statColor,
+                            uppercase = false,
                         )
                     }
                 }
                 val licenseValue = stats?.license
                 if (!licenseValue.isNullOrBlank()) {
-                    Text(
+                    KomiText(
                         text = licenseValue,
-                        style = statStyle,
+                        role = KomiTextRole.Label,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = statColor,
+                        uppercase = false,
                     )
                 }
             }
             Spacer(Modifier.height(12.dp))
-            Text(
+            KomiText(
                 text = repository.description ?: stringResource(Res.string.no_description),
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 14.sp,
+                color = colors.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
             if (installedApp != null) {
                 Spacer(Modifier.height(12.dp))
                 Box(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    val statusColor = when {
+                        installedApp.isPendingInstall -> colors.primary
+                        installedApp.isUpdateAvailable -> colors.primary
+                        else -> colors.primary
+                    }
                     Row(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
+                            .clip(RoundedCornerShape(shape.cornerSmall))
                             .border(
                                 width = 1.dp,
-                                color = when {
-                                    installedApp.isPendingInstall ->
-                                        MaterialTheme.colorScheme.secondary
-                                    installedApp.isUpdateAvailable ->
-                                        MaterialTheme.colorScheme.tertiary
-                                    else -> MaterialTheme.colorScheme.primary
-                                },
-                                shape = RoundedCornerShape(50),
+                                color = statusColor,
+                                shape = RoundedCornerShape(shape.cornerSmall),
                             )
                             .padding(horizontal = 12.dp, vertical = 5.dp),
                     ) {
-                        Text(
+                        KomiText(
                             text = stringResource(
                                 when {
                                     installedApp.isPendingInstall -> Res.string.pending_install
@@ -371,17 +379,11 @@ fun AppHeader(
                                     else -> Res.string.installed
                                 },
                             ),
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 12.sp,
-                            ),
-                            color = when {
-                                installedApp.isPendingInstall ->
-                                    MaterialTheme.colorScheme.secondary
-                                installedApp.isUpdateAvailable ->
-                                    MaterialTheme.colorScheme.tertiary
-                                else -> MaterialTheme.colorScheme.primary
-                            },
+                            role = KomiTextRole.Label,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            color = statusColor,
+                            uppercase = false,
                         )
                     }
                 }
@@ -401,11 +403,11 @@ fun AppHeader(
                             leadingContent = {
                                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                                     platform.toIcons().forEach { icon ->
-                                        Icon(
+                                        KomiIcon(
                                             imageVector = icon,
                                             contentDescription = null,
                                             modifier = Modifier.size(16.dp),
-                                            tint = MaterialTheme.colorScheme.onSurface,
+                                            tint = colors.onSurface,
                                         )
                                     }
                                 }
@@ -427,39 +429,34 @@ fun AppHeader(
             Box(
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(shape.cornerSmall))
                     .background(avatarBg)
-                    .border(2.5.dp, animatedAccent, CircleShape),
+                    .border(2.5.dp, animatedAccent, RoundedCornerShape(shape.cornerSmall)),
                 contentAlignment = Alignment.Center,
             ) {
                 GitHubStoreImage(
                     imageModel = { avatarUrl },
-                    modifier = Modifier.size(92.dp).clip(CircleShape),
+                    modifier = Modifier.size(92.dp).clip(RoundedCornerShape(shape.cornerSmall)),
                 )
             }
             if (downloadStage != DownloadStage.IDLE) {
                 when (downloadStage) {
                     DownloadStage.DOWNLOADING -> {
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             progress = { 1f },
                             modifier = Modifier.fillMaxSize(),
                             color = animatedAccent.copy(alpha = 0.2f),
-                            strokeWidth = 4.dp,
                         )
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             progress = { animatedProgress },
                             modifier = Modifier.fillMaxSize(),
                             color = animatedAccent,
-                            strokeWidth = 4.dp,
-                            strokeCap = StrokeCap.Round,
                         )
                     }
                     DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             modifier = Modifier.fillMaxSize(),
                             color = animatedAccent,
-                            strokeWidth = 4.dp,
-                            strokeCap = StrokeCap.Round,
                         )
                     }
                 }

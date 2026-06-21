@@ -2,6 +2,7 @@ package zed.rainxch.details.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,19 +12,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.loading_releases
@@ -44,36 +46,37 @@ fun ReleasesStatusCard(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
+        elevation = KomiSurfaceElevation.Flat,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             when (status) {
                 ReleasesStatus.FAILED -> {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Outlined.CloudOff,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(28.dp),
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.releases_load_failed),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.releases_load_failed_description),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(4.dp))
                     KomiButton(
@@ -87,30 +90,30 @@ fun ReleasesStatusCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
                         )
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.loading_releases),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
                         )
                     }
                 }
 
                 ReleasesStatus.EMPTY -> {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Outlined.Inventory2,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(28.dp),
                     )
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.no_releases_published),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                     )
                 }
             }

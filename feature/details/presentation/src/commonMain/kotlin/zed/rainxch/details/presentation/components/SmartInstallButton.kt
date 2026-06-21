@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,11 +33,6 @@ import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -53,6 +47,11 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.utils.VersionMath
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.model.AttestationStatus
@@ -79,8 +78,6 @@ import zed.rainxch.githubstore.core.presentation.res.verified_build
 import zed.rainxch.githubstore.core.presentation.res.verifying
 
 private val ButtonHeight = 56.dp
-private val PillCorner = 28.dp
-private val InnerCorner = 8.dp
 
 @Composable
 fun SmartInstallButton(
@@ -92,6 +89,8 @@ fun SmartInstallButton(
     modifier: Modifier = Modifier,
     state: DetailsState,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val installedApp = state.installedApp
     val isInstalled = installedApp != null && !installedApp.isPendingInstall
     val isUpdateAvailable =
@@ -125,16 +124,12 @@ fun SmartInstallButton(
     }
 
     val accent = when {
-        !enabled && !isActiveDownload -> MaterialTheme.colorScheme.surfaceContainerHighest
-        isUpdateAvailable -> MaterialTheme.colorScheme.tertiary
-        isInstalled -> MaterialTheme.colorScheme.secondary
-        else -> MaterialTheme.colorScheme.primary
+        !enabled && !isActiveDownload -> colors.surfaceContainerHigh
+        else -> colors.primary
     }
     val onAccent = when {
-        !enabled && !isActiveDownload -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
-        isUpdateAvailable -> MaterialTheme.colorScheme.onTertiary
-        isInstalled -> MaterialTheme.colorScheme.onSecondary
-        else -> MaterialTheme.colorScheme.onPrimary
+        !enabled && !isActiveDownload -> colors.onSurface.copy(alpha = 0.45f)
+        else -> colors.onPrimary
     }
 
     val buttonText = when {
@@ -169,13 +164,13 @@ fun SmartInstallButton(
         ) {
             val primaryShape = if (hasTrailing) {
                 RoundedCornerShape(
-                    topStart = PillCorner,
-                    bottomStart = PillCorner,
-                    topEnd = InnerCorner,
-                    bottomEnd = InnerCorner,
+                    topStart = shape.corner,
+                    bottomStart = shape.corner,
+                    topEnd = shape.cornerSmall,
+                    bottomEnd = shape.cornerSmall,
                 )
             } else {
-                RoundedCornerShape(PillCorner)
+                RoundedCornerShape(shape.corner)
             }
             PrimaryAction(
                 modifier = Modifier.weight(1f),
@@ -203,15 +198,15 @@ fun SmartInstallButton(
 
             if (isActiveDownload) {
                 TrailingActionPill(
-                    container = MaterialTheme.colorScheme.errorContainer,
-                    content = MaterialTheme.colorScheme.onErrorContainer,
+                    container = colors.error,
+                    content = colors.onError,
                     icon = Icons.Default.Close,
                     contentDescription = stringResource(Res.string.cancel_download),
                     onClick = { onAction(DetailsAction.CancelCurrentDownload) },
                 )
             } else if (state.isObtainiumEnabled) {
                 TrailingActionPill(
-                    container = if (enabled) accent else MaterialTheme.colorScheme.surfaceContainerHighest,
+                    container = if (enabled) accent else colors.surfaceContainerHigh,
                     content = onAccent,
                     icon = Icons.Default.KeyboardArrowDown,
                     contentDescription = stringResource(Res.string.show_install_options),
@@ -326,18 +321,20 @@ private fun IdleLabel(
                 else -> null
             }
             if (leadingIcon != null) {
-                Icon(
+                KomiIcon(
                     imageVector = leadingIcon,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                     tint = contentColor,
                 )
             }
-            Text(
+            KomiText(
                 text = text,
+                role = KomiTextRole.Title,
                 color = contentColor,
                 fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
+                fontSize = 15.sp,
+                uppercase = false,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -353,10 +350,12 @@ private fun IdleLabel(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                KomiText(
                     text = subtitle,
+                    role = KomiTextRole.Label,
                     color = contentColor.copy(alpha = 0.78f),
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                    fontSize = 11.sp,
+                    uppercase = false,
                 )
                 if (assetArch != null && isExactArchitectureMatch(
                         assetName = primaryAsset.name.lowercase(),
@@ -364,7 +363,7 @@ private fun IdleLabel(
                     )
                 ) {
                     Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = stringResource(Res.string.architecture_compatible),
                         tint = contentColor.copy(alpha = 0.78f),
@@ -401,11 +400,13 @@ private fun DownloadingLabel(
             }
             DownloadStage.IDLE -> ""
         }
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
+            role = KomiTextRole.Title,
+            fontSize = 15.sp,
             color = contentColor,
             fontWeight = FontWeight.SemiBold,
+            uppercase = false,
         )
         if (state.downloadStage == DownloadStage.DOWNLOADING) {
             Spacer(Modifier.height(2.dp))
@@ -414,10 +415,12 @@ private fun DownloadingLabel(
             } else {
                 "${progress ?: 0}%"
             }
-            Text(
+            KomiText(
                 text = progressText,
-                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                role = KomiTextRole.Label,
+                fontSize = 11.sp,
                 color = contentColor.copy(alpha = 0.78f),
+                uppercase = false,
             )
         }
     }
@@ -431,21 +434,22 @@ private fun TrailingActionPill(
     contentDescription: String,
     onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(
-        topStart = InnerCorner,
-        bottomStart = InnerCorner,
-        topEnd = PillCorner,
-        bottomEnd = PillCorner,
+    val shape = LocalPersonality.current.shape
+    val pillShape = RoundedCornerShape(
+        topStart = shape.cornerSmall,
+        bottomStart = shape.cornerSmall,
+        topEnd = shape.corner,
+        bottomEnd = shape.corner,
     )
     Box(
         modifier = Modifier
             .size(width = ButtonHeight, height = ButtonHeight)
-            .clip(shape)
+            .clip(pillShape)
             .background(container)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = icon,
             contentDescription = contentDescription,
             tint = content,
@@ -459,22 +463,24 @@ private fun InstalledSplitRow(
     onUninstall: () -> Unit,
     onOpenApp: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         val leftShape = RoundedCornerShape(
-            topStart = PillCorner,
-            bottomStart = PillCorner,
-            topEnd = InnerCorner,
-            bottomEnd = InnerCorner,
+            topStart = shape.corner,
+            bottomStart = shape.corner,
+            topEnd = shape.cornerSmall,
+            bottomEnd = shape.cornerSmall,
         )
         val rightShape = RoundedCornerShape(
-            topStart = InnerCorner,
-            bottomStart = InnerCorner,
-            topEnd = PillCorner,
-            bottomEnd = PillCorner,
+            topStart = shape.cornerSmall,
+            bottomStart = shape.cornerSmall,
+            topEnd = shape.corner,
+            bottomEnd = shape.corner,
         )
         Box(
             modifier = Modifier
@@ -483,7 +489,7 @@ private fun InstalledSplitRow(
                 .clip(leftShape)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.55f),
+                    color = colors.error.copy(alpha = 0.55f),
                     shape = leftShape,
                 )
                 .clickable(onClick = onUninstall),
@@ -493,17 +499,19 @@ private fun InstalledSplitRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.DeleteOutline,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = colors.error,
                 )
-                Text(
+                KomiText(
                     text = stringResource(Res.string.uninstall),
-                    color = MaterialTheme.colorScheme.error,
+                    role = KomiTextRole.Title,
+                    color = colors.error,
                     fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
+                    fontSize = 15.sp,
+                    uppercase = false,
                 )
             }
         }
@@ -512,7 +520,7 @@ private fun InstalledSplitRow(
                 .weight(1f)
                 .height(ButtonHeight)
                 .clip(rightShape)
-                .background(MaterialTheme.colorScheme.primary)
+                .background(colors.primary)
                 .clickable(onClick = onOpenApp),
             contentAlignment = Alignment.Center,
         ) {
@@ -520,17 +528,19 @@ private fun InstalledSplitRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = colors.onPrimary,
                 )
-                Text(
+                KomiText(
                     text = stringResource(Res.string.open_app),
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    role = KomiTextRole.Title,
+                    color = colors.onPrimary,
                     fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
+                    fontSize = 15.sp,
+                    uppercase = false,
                 )
             }
         }
@@ -539,6 +549,8 @@ private fun InstalledSplitRow(
 
 @Composable
 private fun AttestationBadge(attestationStatus: AttestationStatus) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     AnimatedVisibility(
         visible = attestationStatus == AttestationStatus.VERIFIED ||
             attestationStatus == AttestationStatus.CHECKING ||
@@ -548,20 +560,20 @@ private fun AttestationBadge(attestationStatus: AttestationStatus) {
     ) {
         val (container, content, icon, label) = when (attestationStatus) {
             AttestationStatus.VERIFIED -> AttestationVisual(
-                container = MaterialTheme.colorScheme.tertiaryContainer,
-                content = MaterialTheme.colorScheme.onTertiaryContainer,
+                container = colors.primaryContainer,
+                content = colors.onPrimaryContainer,
                 icon = Icons.Filled.VerifiedUser,
                 label = stringResource(Res.string.verified_build),
             )
             AttestationStatus.UNABLE_TO_VERIFY -> AttestationVisual(
-                container = MaterialTheme.colorScheme.surfaceContainerHigh,
-                content = MaterialTheme.colorScheme.onSurfaceVariant,
+                container = colors.surfaceContainerHigh,
+                content = colors.onSurfaceVariant,
                 icon = Icons.Outlined.Warning,
                 label = stringResource(Res.string.unable_to_verify_attestation),
             )
             AttestationStatus.CHECKING -> AttestationVisual(
-                container = MaterialTheme.colorScheme.surfaceContainerHigh,
-                content = MaterialTheme.colorScheme.onSurfaceVariant,
+                container = colors.surfaceContainerHigh,
+                content = colors.onSurfaceVariant,
                 icon = null,
                 label = stringResource(Res.string.checking_attestation),
             )
@@ -572,11 +584,16 @@ private fun AttestationBadge(attestationStatus: AttestationStatus) {
                 label = "",
             )
         }
-        Surface(
-            modifier = Modifier.padding(top = 10.dp),
-            shape = RoundedCornerShape(50),
-            color = container,
-            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+        Box(
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .clip(RoundedCornerShape(shape.cornerSmall))
+                .background(container)
+                .border(
+                    width = 0.5.dp,
+                    color = colors.outlineVariant.copy(alpha = 0.4f),
+                    shape = RoundedCornerShape(shape.cornerSmall),
+                ),
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -584,24 +601,25 @@ private fun AttestationBadge(attestationStatus: AttestationStatus) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 if (attestationStatus == AttestationStatus.CHECKING) {
-                    CircularProgressIndicator(
+                    KomiCircularProgress(
                         modifier = Modifier.size(13.dp),
-                        strokeWidth = 1.6.dp,
                         color = content,
                     )
                 } else if (icon != null) {
-                    Icon(
+                    KomiIcon(
                         imageVector = icon,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
                         tint = content,
                     )
                 }
-                Text(
+                KomiText(
                     text = label,
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
                     color = content,
                     fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             }
         }
@@ -614,4 +632,3 @@ private data class AttestationVisual(
     val icon: androidx.compose.ui.graphics.vector.ImageVector?,
     val label: String,
 )
-

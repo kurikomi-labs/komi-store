@@ -8,15 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.components.StatItem
 import zed.rainxch.details.presentation.components.TextStatItem
@@ -26,6 +26,7 @@ fun LazyListScope.stats(
     repoStats: RepoStats,
 ) {
     item {
+        val colors = LocalPersonality.current.colors
         Spacer(Modifier.height(20.dp))
 
         Column(
@@ -34,13 +35,13 @@ fun LazyListScope.stats(
                 .padding(bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.details_stats_section),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = colors.onBackground,
+                uppercase = false,
             )
         }
 

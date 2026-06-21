@@ -17,10 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +40,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
@@ -127,10 +127,11 @@ private fun MarkdownViewerScreen(
         state.url.substringAfterLast("/", "Document").substringBefore("?")
     }
 
+    val personalityColors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(personalityColors.background)
             .systemBarsPadding(),
     ) {
         MarkdownViewerTopBar(title = filename, onBack = onBack)
@@ -138,26 +139,26 @@ private fun MarkdownViewerScreen(
             state.isLoading -> Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
+            ) { KomiCircularProgress() }
 
             state.errorMessage != null -> Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
+                    KomiText(
                         text = state.errorMessage,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
+                        role = KomiTextRole.Body,
+                        color = personalityColors.error,
                     )
                     Spacer(Modifier.size(8.dp))
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.retry),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Label,
+                        color = personalityColors.primary,
                         modifier = Modifier
                             .padding(8.dp)
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .background(personalityColors.surfaceContainerHigh)
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                             .clickable { onRetry() },
                     )
@@ -205,7 +206,7 @@ private fun MarkdownViewerScreen(
                             modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
                             contentAlignment = Alignment.Center,
                         ) {
-                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                            KomiCircularProgress(modifier = Modifier.size(32.dp))
                         }
                     }
                 }
@@ -227,6 +228,7 @@ private fun MarkdownViewerScreen(
 
 @Composable
 private fun MarkdownViewerTopBar(title: String, onBack: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     androidx.compose.foundation.layout.Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -240,16 +242,16 @@ private fun MarkdownViewerTopBar(title: String, onBack: () -> Unit) {
             contentDescription = stringResource(Res.string.cd_back),
         )
 
-        Text(
+        KomiText(
             text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            color = colors.onSurface,
             modifier = Modifier.padding(start = 4.dp),
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            uppercase = false,
         )
     }
 }

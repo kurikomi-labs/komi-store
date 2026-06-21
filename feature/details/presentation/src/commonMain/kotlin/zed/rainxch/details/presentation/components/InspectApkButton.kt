@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,20 +19,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
@@ -53,24 +52,26 @@ fun InspectApkButton(
     onCoachmarkDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val buttonShape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     val pulse by rememberPulse(active = showCoachmark)
     val tilt by rememberTilt(active = showCoachmark)
 
     Box(modifier = modifier) {
-        IconButton(
-            onClick = onClick,
+        Box(
             modifier = Modifier
                 .size(52.dp)
                 .scale(pulse)
-                .graphicsLayer { rotationZ = tilt },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            ),
+                .graphicsLayer { rotationZ = tilt }
+                .clip(buttonShape)
+                .background(colors.surfaceContainerHigh)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.Search,
                 contentDescription = stringResource(Res.string.apk_inspect_button_label),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(22.dp),
             )
         }
@@ -109,6 +110,7 @@ private fun rememberTilt(active: Boolean) =
 
 @Composable
 private fun Coachmark(onDismiss: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     Popup(
         alignment = Alignment.TopEnd,
 
@@ -121,11 +123,11 @@ private fun Coachmark(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
     ) {
         Column(horizontalAlignment = Alignment.End) {
-            Surface(
-                shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-                color = MaterialTheme.colorScheme.primary,
-                shadowElevation = 6.dp,
-                modifier = Modifier.width(260.dp),
+            Box(
+                modifier = Modifier
+                    .width(260.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+                    .background(colors.primary),
             ) {
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
@@ -135,25 +137,26 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Search,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = colors.onPrimary,
                             modifier = Modifier.size(16.dp),
                         )
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.apk_inspect_coachmark_title),
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp,
-                            ),
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            role = KomiTextRole.Title,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            color = colors.onPrimary,
+                            uppercase = false,
                         )
                     }
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.apk_inspect_coachmark_body),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onPrimary.copy(alpha = 0.9f),
                     )
                     Row(
                         modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
@@ -173,7 +176,7 @@ private fun Coachmark(onDismiss: () -> Unit) {
                 modifier = Modifier
                     .padding(end = 24.dp)
                     .size(width = 16.dp, height = 8.dp)
-                    .arrowDown(MaterialTheme.colorScheme.primary),
+                    .arrowDown(colors.primary),
             )
         }
     }

@@ -32,22 +32,19 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.text.font.FontWeight
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
 import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import kotlinx.collections.immutable.toImmutableList
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
 import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -267,27 +264,27 @@ fun DetailsRoot(
     )
 
     state.downgradeWarning?.let { warning ->
-        AlertDialog(
+        KomiDialog(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissDowngradeWarning)
             },
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.downgrade_requires_uninstall),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             },
             text = {
-                Text(
+                KomiText(
                     text =
                         stringResource(
                             Res.string.downgrade_warning_message,
                             warning.targetVersion,
                             warning.currentVersion,
                         ),
+                    role = KomiTextRole.Body,
                 )
             },
             confirmButton = {
@@ -315,27 +312,27 @@ fun DetailsRoot(
     }
 
     state.signingKeyWarning?.let { warning ->
-        AlertDialog(
+        KomiDialog(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissSigningKeyWarning)
             },
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.signing_key_changed_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             },
             text = {
-                Text(
+                KomiText(
                     text =
                         stringResource(
                             Res.string.signing_key_changed_message,
                             warning.expectedFingerprint.take(19),
                             warning.actualFingerprint.take(19),
                         ),
+                    role = KomiTextRole.Body,
                 )
             },
             confirmButton = {
@@ -363,22 +360,22 @@ fun DetailsRoot(
 
     if (state.showUninstallConfirmation) {
         val appName = state.installedApp?.appName ?: ""
-        AlertDialog(
+        KomiDialog(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUninstallConfirmation)
             },
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.confirm_uninstall_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             },
             text = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.confirm_uninstall_message, appName),
+                    role = KomiTextRole.Body,
                 )
             },
             confirmButton = {
@@ -406,22 +403,22 @@ fun DetailsRoot(
 
     if (state.showUnlinkConfirmation) {
         val appName = state.installedApp?.appName ?: ""
-        AlertDialog(
+        KomiDialog(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.OnDismissUnlinkConfirmation)
             },
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.details_unlink_external_app_dialog_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             },
             text = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.details_unlink_external_app_dialog_body, appName),
+                    role = KomiTextRole.Body,
                 )
             },
             confirmButton = {
@@ -448,21 +445,23 @@ fun DetailsRoot(
     }
 
     if (state.showExternalInstallerPrompt) {
-        AlertDialog(
+        KomiDialog(
             onDismissRequest = {
                 viewModel.onAction(DetailsAction.DismissExternalInstallerPrompt)
             },
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             title = {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.install_permission_unavailable),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             },
             text = {
-                Text(text = stringResource(Res.string.install_permission_blocked_message))
+                KomiText(
+                    text = stringResource(Res.string.install_permission_blocked_message),
+                    role = KomiTextRole.Body,
+                )
             },
             confirmButton = {
                 KomiButton(
@@ -496,7 +495,6 @@ fun DetailsRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DetailsScreen(
     state: DetailsState,
@@ -524,7 +522,7 @@ fun DetailsScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularWavyProgressIndicator()
+                    KomiCircularProgress()
                 }
 
                 return@KomiScaffold
@@ -703,7 +701,6 @@ fun DetailsScreen(
         }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PullToRefreshHost(
     enabled: Boolean,
@@ -712,7 +709,7 @@ private fun PullToRefreshHost(
     content: @Composable () -> Unit,
 ) {
     if (enabled) {
-        PullToRefreshBox(
+        KomiPullToRefresh(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize(),
@@ -724,7 +721,6 @@ private fun PullToRefreshHost(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DetailsTopbar(
     state: DetailsState,
@@ -744,34 +740,36 @@ private fun DetailsTopbar(
             onClick = { onAction(DetailsAction.OnNavigateBackClick) },
         )
         if (state.repository != null) {
+            val colors = LocalPersonality.current.colors
+            val shape = LocalPersonality.current.shape
             Row(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.surface)
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(colors.surface)
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline,
-                        shape = RoundedCornerShape(50),
+                        color = colors.outline,
+                        shape = RoundedCornerShape(shape.cornerSmall),
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(50))
+                        .clip(RoundedCornerShape(shape.cornerSmall))
                         .clickable { onAction(DetailsAction.OpenRepoInBrowser) }
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.OpenInBrowser,
                         contentDescription = stringResource(Res.string.open_repository),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = colors.onSurface,
                         modifier = Modifier.size(18.dp),
                     )
                 }
                 Box(
                     modifier = Modifier
                         .size(1.dp, 20.dp)
-                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+                        .background(colors.outline.copy(alpha = 0.5f)),
                 )
                 DetailsOverflowMenu(state = state, onAction = onAction)
             }
@@ -782,8 +780,6 @@ private fun DetailsTopbar(
 
 @OptIn(
     ExperimentalTime::class,
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 private fun DetailsOverflowMenu(
@@ -874,17 +870,19 @@ private fun DetailsOverflowMenu(
             }
         },
         trigger = { onClick ->
+            val colors = LocalPersonality.current.colors
+            val shape = LocalPersonality.current.shape
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(50))
+                    .clip(RoundedCornerShape(shape.cornerSmall))
                     .clickable(onClick = onClick)
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = moreOptionsCd,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = colors.onSurface,
                     modifier = Modifier.size(18.dp),
                 )
             }

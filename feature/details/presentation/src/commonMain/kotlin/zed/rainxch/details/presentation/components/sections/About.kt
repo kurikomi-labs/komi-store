@@ -18,12 +18,9 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +47,11 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.utils.applyThemeAwareImages
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
@@ -71,6 +73,7 @@ fun LazyListScope.about(
     onReadMore: (() -> Unit)? = null,
 ) {
     item {
+        val colors = LocalPersonality.current.colors
         Spacer(Modifier.height(20.dp))
 
         Column(
@@ -83,19 +86,21 @@ fun LazyListScope.about(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.about_this_app),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 22.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                    color = colors.onBackground,
+                    uppercase = false,
                 )
                 readmeLanguage?.let {
-                    Text(
+                    KomiText(
                         text = it,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.outline,
+                        uppercase = false,
                     )
                 }
             }
@@ -104,6 +109,7 @@ fun LazyListScope.about(
     }
 
     item(key = "about_markdown") {
+        val colors = LocalPersonality.current.colors
         val isDark = androidx.compose.foundation.isSystemInDarkTheme()
         val raw = applyThemeAwareImages(readmeMarkdown, isDark = isDark)
         
@@ -128,7 +134,7 @@ fun LazyListScope.about(
                     collapsedHeight = collapsedHeight,
                     measuredHeightPx = measuredHeightPx,
                     onMeasured = onMeasured,
-                    fadeColor = MaterialTheme.colorScheme.background,
+                    fadeColor = colors.background,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -142,7 +148,7 @@ fun LazyListScope.about(
                 collapsedHeight = collapsedHeight,
                 measuredHeightPx = measuredHeightPx,
                 onMeasured = onMeasured,
-                fadeColor = MaterialTheme.colorScheme.background,
+                fadeColor = colors.background,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -163,6 +169,8 @@ fun ExpandableMarkdownContent(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
+    val personalityColors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val colors = rememberMarkdownColors()
     val typography = rememberMarkdownTypography()
 
@@ -202,35 +210,35 @@ fun ExpandableMarkdownContent(
         modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
     ) {
         Box {
-            Surface(
-                color = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                modifier =
-                    when {
-                        !isExpanded && needsExpansion ->
-                            Modifier
-                                .height(collapsedHeight)
-                                .clipToBounds()
-                        isExpanded && measuredDp != null ->
-                            Modifier.heightIn(min = measuredDp)
-                        else -> Modifier
-                    },
-            ) {
-                ProgressiveMarkdown(
-                    isExpanded = isExpanded,
-                    fullChunks = fullChunks,
-                    collapsedHeight = collapsedHeight,
-                    colors = colors,
-                    typography = typography,
-                    components = components,
-                    flavour = flavour,
-                    parser = parser,
-                    imageTransformer = imageTransformer,
-                    onMeasured = onMeasured,
-                    effectiveHeight = effectiveHeight,
-                    collapsedHeightPx = collapsedHeightPx,
-                    rawKey = rawMarkdown,
-                )
+            CompositionLocalProvider(LocalContentColor provides personalityColors.onBackground) {
+                Box(
+                    modifier =
+                        when {
+                            !isExpanded && needsExpansion ->
+                                Modifier
+                                    .height(collapsedHeight)
+                                    .clipToBounds()
+                            isExpanded && measuredDp != null ->
+                                Modifier.heightIn(min = measuredDp)
+                            else -> Modifier
+                        },
+                ) {
+                    ProgressiveMarkdown(
+                        isExpanded = isExpanded,
+                        fullChunks = fullChunks,
+                        collapsedHeight = collapsedHeight,
+                        colors = colors,
+                        typography = typography,
+                        components = components,
+                        flavour = flavour,
+                        parser = parser,
+                        imageTransformer = imageTransformer,
+                        onMeasured = onMeasured,
+                        effectiveHeight = effectiveHeight,
+                        collapsedHeightPx = collapsedHeightPx,
+                        rawKey = rawMarkdown,
+                    )
+                }
             }
 
             if (!isExpanded && needsExpansion) {
@@ -259,29 +267,29 @@ fun ExpandableMarkdownContent(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.onSurface)
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(personalityColors.onSurface)
                     .clickable(onClick = onToggleExpanded)
                     .padding(horizontal = 22.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
+                KomiText(
                     text = if (isExpanded) {
                         stringResource(Res.string.show_less)
                     } else {
                         stringResource(Res.string.read_more)
                     },
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = MaterialTheme.colorScheme.surface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.Bold,
+                    color = personalityColors.surface,
+                    uppercase = false,
                 )
                 if (!isExpanded) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.surface,
+                        tint = personalityColors.surface,
                         modifier = Modifier.size(18.dp),
                     )
                 }
@@ -314,7 +322,7 @@ internal fun ProgressiveMarkdown(
                 .height(collapsedHeight.takeIf { it > 0.dp } ?: 120.dp),
             contentAlignment = Alignment.Center,
         ) {
-            CircularProgressIndicator(modifier = Modifier.size(28.dp))
+            KomiCircularProgress(modifier = Modifier.size(28.dp))
         }
         return
     }
@@ -368,7 +376,7 @@ internal fun ProgressiveMarkdown(
                     .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                KomiCircularProgress(modifier = Modifier.size(20.dp))
             }
         }
     }

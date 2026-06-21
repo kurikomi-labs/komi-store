@@ -1,11 +1,12 @@
 package zed.rainxch.details.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,16 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +30,12 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -61,18 +63,18 @@ fun TranslationCard(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     val effectiveTargetCode = state.targetLanguageCode ?: deviceLanguageCode
     val effectiveTargetName = state.targetLanguageDisplayName
         ?: SupportedLanguages.all.firstOrNull { it.code == effectiveTargetCode }?.displayName
         ?: effectiveTargetCode
 
-    Surface(
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)),
+        elevation = KomiSurfaceElevation.Flat,
+        contentPadding = PaddingValues(16.dp),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column {
             Header(state = state, displayName = effectiveTargetName)
 
             Spacer(Modifier.height(14.dp))
@@ -103,14 +105,15 @@ fun TranslationCard(
 
             if (state.translatedText != null && state.detectedSourceLanguage != null) {
                 Spacer(Modifier.height(8.dp))
-                Text(
+                KomiText(
                     text = stringResource(
                         Res.string.translation_card_detected_source,
                         SupportedLanguages.all.firstOrNull { it.code == state.detectedSourceLanguage }?.displayName
                             ?: state.detectedSourceLanguage,
                     ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                 )
             }
         }
@@ -119,30 +122,32 @@ fun TranslationCard(
 
 @Composable
 private fun Header(state: TranslationState, displayName: String) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
                 .size(34.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                .clip(RoundedCornerShape(shape.corner))
+                .background(colors.primary.copy(alpha = 0.14f)),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Outlined.Translate,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(18.dp),
             )
         }
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.translation_card_title),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 17.sp,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 17.sp,
+                color = colors.onSurface,
+                uppercase = false,
             )
             val subtitle = when {
                 state.isTranslating -> stringResource(Res.string.translation_card_subtitle_translating)
@@ -152,10 +157,11 @@ private fun Header(state: TranslationState, displayName: String) {
                     stringResource(Res.string.translation_card_subtitle_original)
                 else -> stringResource(Res.string.translation_card_subtitle_idle)
             }
-            Text(
+            KomiText(
                 text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -168,50 +174,49 @@ private fun TargetLanguageRow(
     displayName: String,
     onPick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val rowShape = RoundedCornerShape(shape.corner)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.translation_card_target_label),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            color = colors.onSurfaceVariant,
         )
-        Surface(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .clickable(onClick = onPick),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                .clip(rowShape)
+                .background(colors.surfaceContainerHigh)
+                .border(1.dp, colors.outlineVariant.copy(alpha = 0.5f), rowShape)
+                .clickable(onClick = onPick)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Language,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = displayName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = stringResource(Res.string.translation_card_change_language),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
+            KomiIcon(
+                imageVector = Icons.Outlined.Language,
+                contentDescription = null,
+                tint = colors.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(10.dp))
+            KomiText(
+                text = displayName,
+                role = KomiTextRole.Body,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                uppercase = false,
+            )
+            KomiIcon(
+                imageVector = Icons.Default.ExpandMore,
+                contentDescription = stringResource(Res.string.translation_card_change_language),
+                tint = colors.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }
@@ -269,38 +274,41 @@ private fun ErrorRow(
     message: String,
     onRetry: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.errorContainer,
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.error)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        KomiText(
+            text = message,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.onError,
+            modifier = Modifier.weight(1f),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(shape.cornerSmall))
+                .background(colors.error)
+                .clickable(onClick = onRetry)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onErrorContainer,
-                modifier = Modifier.weight(1f),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+            KomiText(
+                text = stringResource(Res.string.translation_card_retry),
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onError,
             )
-            Spacer(Modifier.width(8.dp))
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.error)
-                    .clickable(onClick = onRetry)
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = stringResource(Res.string.translation_card_retry),
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onError,
-                )
-            }
         }
     }
 }

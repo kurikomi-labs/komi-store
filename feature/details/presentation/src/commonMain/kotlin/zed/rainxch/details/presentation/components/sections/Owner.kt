@@ -12,14 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,17 +26,21 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubUserProfile
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.*
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.author(
     author: GithubUserProfile?,
     onAction: (DetailsAction) -> Unit,
 ) {
     item {
-        val developerCardShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+        val colors = LocalPersonality.current.colors
+        val shape = LocalPersonality.current.shape
+        val developerCardShape = RoundedCornerShape(shape.corner)
         Spacer(Modifier.height(20.dp))
 
         Column(
@@ -50,13 +49,13 @@ fun LazyListScope.author(
                 .padding(bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.details_developer_section),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = colors.onBackground,
+                uppercase = false,
             )
         }
 
@@ -66,10 +65,10 @@ fun LazyListScope.author(
                 .clip(developerCardShape)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = colors.outline,
                     shape = developerCardShape,
                 )
-                .background(MaterialTheme.colorScheme.surface)
+                .background(colors.surface)
                 .clickable(enabled = author?.login != null) {
                     author?.login?.let { login ->
                         onAction(DetailsAction.OpenDeveloperProfile(login))
@@ -83,8 +82,8 @@ fun LazyListScope.author(
                 imageModel = { author?.avatarUrl },
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .border(2.dp, colors.primary, RoundedCornerShape(shape.cornerSmall)),
             )
             Column(
                 modifier = Modifier.weight(1f),
@@ -95,11 +94,11 @@ fun LazyListScope.author(
                 displayName?.let {
                     androidx.compose.foundation.text.BasicText(
                         text = it,
-                        style = MaterialTheme.typography.headlineSmall.copy(
+                        style = LocalPersonality.current.type.title.copy(
                             fontWeight = FontWeight.Black,
                             fontSize = 22.sp,
                             letterSpacing = (-0.3).sp,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = colors.onSurface,
                         ),
                         maxLines = 1,
                         softWrap = false,
@@ -111,24 +110,24 @@ fun LazyListScope.author(
                     )
                 }
                 handle?.let { login ->
-                    Text(
+                    KomiText(
                         text = "@$login",
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 12.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 12.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
                 author?.bio?.let { bio ->
-                    Text(
+                    KomiText(
                         text = bio,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 2,
-                        softWrap = true,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -141,18 +140,18 @@ fun LazyListScope.author(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             painter = painterResource(Res.drawable.ic_github),
                             contentDescription = null,
                             modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = colors.primary,
                         )
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.profile),
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            color = MaterialTheme.colorScheme.primary,
+                            role = KomiTextRole.Label,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.primary,
+                            uppercase = false,
                         )
                     }
                 }
@@ -160,24 +159,24 @@ fun LazyListScope.author(
             if (author?.login != null) {
                 Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.onSurface)
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(colors.onSurface)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.details_view_developer_profile),
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.surface,
+                        role = KomiTextRole.Label,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.surface,
+                        uppercase = false,
                     )
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.surface,
+                        tint = colors.surface,
                     )
                 }
             }

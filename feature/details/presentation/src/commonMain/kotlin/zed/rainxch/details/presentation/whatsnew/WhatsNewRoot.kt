@@ -18,11 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -42,6 +37,11 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
@@ -95,11 +95,12 @@ private fun WhatsNewScreen(
     val components = remember(isDark, imageTransformer) {
         githubStoreMarkdownComponents(imageTransformer, isDark)
     }
+    val personalityColors = LocalPersonality.current.colors
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(personalityColors.background)
             .systemBarsPadding(),
     ) {
         Row(
@@ -109,37 +110,36 @@ private fun WhatsNewScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.cd_back),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-            Text(
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.cd_back),
+                onClick = onBack,
+                variant = KomiButtonVariant.Text,
+            )
+            KomiText(
                 text = state.repoName,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = personalityColors.onSurface,
                 modifier = Modifier.padding(start = 4.dp),
+                uppercase = false,
             )
         }
         when {
             state.isLoading -> Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
+            ) { KomiCircularProgress() }
 
             state.errorMessage != null -> Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                KomiText(
                     text = state.errorMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
+                    role = KomiTextRole.Body,
+                    color = personalityColors.error,
                 )
             }
 
@@ -150,13 +150,13 @@ private fun WhatsNewScreen(
             ) {
                 item(key = "header") {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.details_whats_new_screen_title),
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 26.sp,
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
+                            role = KomiTextRole.Display,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 26.sp,
+                            color = personalityColors.onBackground,
+                            uppercase = false,
                         )
                     }
                 }
@@ -181,30 +181,31 @@ private fun WhatsNewScreen(
                                 .clip(rowShape)
                                 .border(
                                     width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = personalityColors.outline,
                                     shape = rowShape,
                                 )
-                                .background(MaterialTheme.colorScheme.surface)
+                                .background(personalityColors.surface)
                                 .padding(horizontal = 14.dp, vertical = 10.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(
+                            KomiText(
                                 text = release.tagName,
-                                style = MaterialTheme.typography.titleSmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                ),
-                                color = MaterialTheme.colorScheme.primary,
+                                role = KomiTextRole.Title,
+                                fontWeight = FontWeight.Bold,
+                                color = personalityColors.primary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f),
+                                uppercase = false,
                             )
-                            Text(
+                            KomiText(
                                 text = release.publishedAt.take(10),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                role = KomiTextRole.Label,
+                                fontSize = 12.sp,
+                                color = personalityColors.onSurfaceVariant,
                                 maxLines = 1,
-                                softWrap = false,
+                                uppercase = false,
                             )
                         }
                         Spacer(Modifier.height(6.dp))

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,25 +25,24 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.WarningAmber
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
@@ -73,6 +73,8 @@ fun LazyListScope.releaseChannel(
     if (!showMerged && !showStalled && !showSwitchToStable && !showChannelChip) return
 
     item(key = "release-channel-controls") {
+        val colors = LocalPersonality.current.colors
+        val cardShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -99,9 +101,9 @@ fun LazyListScope.releaseChannel(
 
                                 tint =
                                     if (includeBetas) {
-                                        MaterialTheme.colorScheme.tertiary
+                                        colors.primary
                                     } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                        colors.onSurfaceVariant
                                     },
                                 onClick = { onAction(DetailsAction.ToggleIncludeBetas) },
 
@@ -127,7 +129,7 @@ fun LazyListScope.releaseChannel(
                                         stable.tagName,
                                     ),
                                 icon = Icons.Default.Restore,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = colors.primary,
                                 onClick = { onAction(DetailsAction.SwitchToStable) },
                                 contentDescriptionText = null,
                             )
@@ -145,38 +147,37 @@ fun LazyListScope.releaseChannel(
                     } else {
                         stringResource(Res.string.stalled_project_warning_days, days)
                     }
-                Card(
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f),
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                        ),
-                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-                    modifier = Modifier.fillMaxWidth(),
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(cardShape)
+                        .background(colors.error.copy(alpha = 0.25f))
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Top,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.WarningAmber,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
+                    KomiIcon(
+                        imageVector = Icons.Default.WarningAmber,
+                        contentDescription = null,
+                        tint = colors.onError,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    Column {
+                        KomiText(
+                            text = title,
+                            role = KomiTextRole.Title,
+                            color = colors.onError,
+                            uppercase = false,
                         )
-                        Spacer(Modifier.size(12.dp))
-                        Column {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(
-                                    Res.string.stalled_project_warning_description,
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
+                        Spacer(Modifier.height(4.dp))
+                        KomiText(
+                            text = stringResource(
+                                Res.string.stalled_project_warning_description,
+                            ),
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onError,
+                        )
                     }
                 }
             }
@@ -184,39 +185,37 @@ fun LazyListScope.releaseChannel(
             val mergedBaseTag = state.mergedChangelogBaseTag
             if (mergedBaseTag != null && !state.mergedChangelog.isNullOrBlank()) {
                 val baseTag = mergedBaseTag
-                Card(
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-                    modifier = Modifier.fillMaxWidth(),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(cardShape)
+                        .background(colors.surfaceContainerHigh)
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                 ) {
-                    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Bolt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                            Spacer(Modifier.size(8.dp))
-                            Text(
-                                text = stringResource(
-                                    Res.string.merged_whats_changed_title,
-                                    baseTag,
-                                ),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = state.mergedChangelog.orEmpty(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        KomiIcon(
+                            imageVector = Icons.Default.Bolt,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = colors.primary,
+                        )
+                        Spacer(Modifier.size(8.dp))
+                        KomiText(
+                            text = stringResource(
+                                Res.string.merged_whats_changed_title,
+                                baseTag,
+                            ),
+                            role = KomiTextRole.Title,
+                            color = colors.onSurface,
+                            uppercase = false,
                         )
                     }
+                    Spacer(Modifier.height(8.dp))
+                    KomiText(
+                        text = state.mergedChangelog.orEmpty(),
+                        role = KomiTextRole.Body,
+                        color = colors.onSurfaceVariant,
+                    )
                 }
             }
         }
@@ -231,37 +230,37 @@ private fun ChannelChip(
     onClick: () -> Unit,
     contentDescriptionText: String?,
 ) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier =
-            Modifier
-                .clickable(onClick = onClick)
-                .then(
-                    if (contentDescriptionText != null) {
-                        Modifier.semantics { contentDescription = contentDescriptionText }
-                    } else {
-                        Modifier
-                    },
-                ),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.surfaceContainerHigh)
+            .clickable(onClick = onClick)
+            .then(
+                if (contentDescriptionText != null) {
+                    Modifier.semantics { contentDescription = contentDescriptionText }
+                } else {
+                    Modifier
+                },
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = tint,
-                modifier = Modifier.size(16.dp),
-            )
-            Spacer(Modifier.size(6.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = tint,
-            )
-        }
+        KomiIcon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(16.dp),
+        )
+        Spacer(Modifier.size(6.dp))
+        KomiText(
+            text = label,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            color = tint,
+            uppercase = false,
+        )
     }
 }
 
@@ -281,6 +280,7 @@ private fun rememberChipPulse(active: Boolean) =
 
 @Composable
 private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     Popup(
         alignment = Alignment.TopStart,
         offset = androidx.compose.ui.unit.IntOffset(x = 0, y = -220),
@@ -292,49 +292,48 @@ private fun ChannelChipCoachmark(onDismiss: () -> Unit) {
             ),
         onDismissRequest = onDismiss,
     ) {
-        Surface(
-            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-            color = MaterialTheme.colorScheme.primary,
-            shadowElevation = 6.dp,
-            modifier = Modifier.width(280.dp),
+        Column(
+            modifier = Modifier
+                .width(280.dp)
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+                .background(colors.primary)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Science,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Text(
-                        text = stringResource(Res.string.channel_chip_coachmark_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Text(
-                    text = stringResource(Res.string.channel_chip_coachmark_body),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                KomiIcon(
+                    imageVector = Icons.Default.Science,
+                    contentDescription = null,
+                    tint = colors.onPrimary,
+                    modifier = Modifier.size(16.dp),
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    KomiButton(
-                        onClick = onDismiss,
-                        label = stringResource(Res.string.channel_chip_coachmark_dismiss),
-                        variant = KomiButtonVariant.Text,
-                        size = KomiButtonSize.Sm,
-                    )
-                }
+                KomiText(
+                    text = stringResource(Res.string.channel_chip_coachmark_title),
+                    role = KomiTextRole.Title,
+                    color = colors.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    uppercase = false,
+                )
+            }
+            KomiText(
+                text = stringResource(Res.string.channel_chip_coachmark_body),
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onPrimary.copy(alpha = 0.9f),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                KomiButton(
+                    onClick = onDismiss,
+                    label = stringResource(Res.string.channel_chip_coachmark_dismiss),
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
+                )
             }
         }
     }
