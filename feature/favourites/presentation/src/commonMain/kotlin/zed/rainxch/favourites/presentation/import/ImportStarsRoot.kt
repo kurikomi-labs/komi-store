@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package zed.rainxch.favourites.presentation.import
 
 import androidx.compose.foundation.clickable
@@ -15,17 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import org.jetbrains.compose.resources.stringResource
@@ -43,8 +38,12 @@ import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.clear_search
@@ -128,16 +127,17 @@ private fun UsernameInputPanel(
     state: ImportStarsState,
     onAction: (ImportStarsAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.import_stars_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
         )
 
         KomiTextField(
@@ -148,10 +148,11 @@ private fun UsernameInputPanel(
         )
 
         if (state.errorMessage != null) {
-            Text(
+            KomiText(
                 text = state.errorMessage,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.error,
             )
         }
 
@@ -172,6 +173,7 @@ private fun ResultsPanel(
     state: ImportStarsState,
     onAction: (ImportStarsAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -182,14 +184,15 @@ private fun ResultsPanel(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            KomiText(
                 text = stringResource(
                     resource = Res.string.import_stars_header_count,
                     state.importedUsername ?: "",
                     state.candidates.size,
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
                 modifier = Modifier.weight(1f),
             )
             KomiButton(
@@ -209,17 +212,14 @@ private fun ResultsPanel(
             leadingIcon = Icons.Filled.Search,
             trailing = {
                 if (state.searchQuery.isNotEmpty()) {
-                    IconButton(
-                        onClick = { onAction(ImportStarsAction.OnClearSearch) },
-                        modifier = Modifier.size(20.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = stringResource(Res.string.clear_search),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
+                    KomiIcon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(Res.string.clear_search),
+                        tint = colors.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clickable { onAction(ImportStarsAction.OnClearSearch) },
+                    )
                 }
             },
         )
@@ -243,7 +243,7 @@ private fun ResultsPanel(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                KomiText(
                     text = if (state.candidates.isEmpty()) {
                         stringResource(
                             resource = Res.string.import_stars_empty,
@@ -252,8 +252,9 @@ private fun ResultsPanel(
                     } else {
                         stringResource(Res.string.import_stars_no_match)
                     },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         } else {
@@ -279,6 +280,7 @@ private fun CandidateRow(
     onClick: () -> Unit,
     onToggle: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -291,48 +293,49 @@ private fun CandidateRow(
             imageModel = { candidate.ownerAvatarUrl },
             modifier = Modifier
                 .size(40.dp)
-                .clip(MaterialTheme.shapes.small),
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)),
         )
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = "${candidate.owner}/${candidate.name}",
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onBackground,
+                uppercase = false,
             )
 
             if (!candidate.description.isNullOrBlank()) {
-                Text(
+                KomiText(
                     text = candidate.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                     maxLines = 2,
                 )
             }
         }
 
-        IconButton(onClick = onToggle) {
-            Icon(
-                imageVector = if (candidate.isAlreadyFavourited) {
-                    Icons.Filled.Favorite
+        KomiIcon(
+            imageVector = if (candidate.isAlreadyFavourited) {
+                Icons.Filled.Favorite
+            } else {
+                Icons.Outlined.FavoriteBorder
+            },
+            contentDescription = stringResource(
+                if (candidate.isAlreadyFavourited) {
+                    Res.string.import_stars_added
                 } else {
-                    Icons.Outlined.FavoriteBorder
+                    Res.string.import_stars_add
                 },
-                contentDescription = stringResource(
-                    if (candidate.isAlreadyFavourited) {
-                        Res.string.import_stars_added
-                    } else {
-                        Res.string.import_stars_add
-                    },
-                ),
-                tint = if (candidate.isAlreadyFavourited) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-            )
-        }
+            ),
+            tint = if (candidate.isAlreadyFavourited) {
+                colors.primary
+            } else {
+                colors.onSurfaceVariant
+            },
+            modifier = Modifier.clickable(onClick = onToggle),
+        )
     }
 }
