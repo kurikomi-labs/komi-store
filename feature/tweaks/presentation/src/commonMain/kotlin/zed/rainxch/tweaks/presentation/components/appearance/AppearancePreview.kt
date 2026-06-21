@@ -20,6 +20,7 @@ import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSectionHead
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSegment
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSegmented
 import zed.rainxch.tweaks.presentation.components.shell.SettingsValuePill
@@ -43,7 +44,7 @@ private fun AppearanceSectionPreview() {
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SettingsSectionHead(label = "Look & Feel", jp = "外観")
+            SettingsSectionHead(label = "Look & Feel", slot = TweaksDecorSlot.LookAndFeel)
             AppearanceHeadline(
                 personality = personality,
                 accent = accent,

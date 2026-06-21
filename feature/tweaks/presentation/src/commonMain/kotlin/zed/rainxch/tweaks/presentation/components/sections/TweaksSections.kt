@@ -24,6 +24,7 @@ import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSectionHead
 import zed.rainxch.tweaks.presentation.components.shell.SettingsValuePill
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 
 @Composable
 fun ColumnScope.lookAndFeelSection(
@@ -37,7 +38,7 @@ fun ColumnScope.lookAndFeelSection(
     onOpenLanguage: () -> Unit,
     showHead: Boolean = true,
 ) {
-    if (showHead) SettingsSectionHead(stringResource(Res.string.section_look_and_feel), "外観")
+    if (showHead) SettingsSectionHead(stringResource(Res.string.section_look_and_feel), TweaksDecorSlot.LookAndFeel)
     AppearanceHeadline(
         personality = personality,
         accent = accent,
@@ -63,7 +64,7 @@ fun ColumnScope.connectivitySection(
     onNavigateToMirrorPicker: () -> Unit,
     showHead: Boolean = true,
 ) {
-    if (showHead) SettingsSectionHead(stringResource(Res.string.section_connectivity), "接続")
+    if (showHead) SettingsSectionHead(stringResource(Res.string.section_connectivity), TweaksDecorSlot.Connectivity)
     connectionSectionContent(state = state, onAction = onAction)
     SourcesSectionContent(
         state = state,
@@ -80,7 +81,7 @@ fun ColumnScope.installsSection(
     onNavigateToSkippedUpdates: () -> Unit,
     showHead: Boolean = true,
 ) {
-    if (showHead) SettingsSectionHead(stringResource(Res.string.section_installs_and_updates), "導入")
+    if (showHead) SettingsSectionHead(stringResource(Res.string.section_installs_and_updates), TweaksDecorSlot.InstallsUpdates)
     installSectionContent(state = state, onAction = onAction)
     updatesSectionContent(
         state = state,
@@ -97,7 +98,7 @@ fun ColumnScope.privacySection(
     onNavigateToHostTokens: () -> Unit,
     showHead: Boolean = true,
 ) {
-    if (showHead) SettingsSectionHead(stringResource(Res.string.section_privacy_and_data), "個人情報")
+    if (showHead) SettingsSectionHead(stringResource(Res.string.section_privacy_and_data), TweaksDecorSlot.PrivacyData)
     storageSectionContent(state = state, onAction = onAction)
     privacySectionContent(
         state = state,
@@ -119,7 +120,7 @@ fun ColumnScope.appSection(
     onOpenFeedback: () -> Unit,
     showHead: Boolean = true,
 ) {
-    if (showHead) SettingsSectionHead(stringResource(Res.string.section_app_block), "アプリ")
+    if (showHead) SettingsSectionHead(stringResource(Res.string.section_app_block), TweaksDecorSlot.App)
     SettingsGroup {
         SettingsDrillRow(
             title = stringResource(Res.string.tweaks_entry_feedback),

@@ -32,10 +32,11 @@ private val SkewedStamp =
 @Composable
 fun SettingsSectionHead(
     label: String,
-    jp: String,
+    slot: TweaksDecorSlot,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
+    val kicker = tweaksKicker(slot)
     Row(
         modifier =
             modifier
@@ -57,13 +58,15 @@ fun SettingsSectionHead(
             color = colors.onSurface,
             fontSize = 18.sp,
         )
-        KomiText(
-            text = jp,
-            role = KomiTextRole.Label,
-            color = colors.onSurfaceVariant,
-            fontSize = 11.sp,
-            uppercase = false,
-        )
+        if (kicker != null) {
+            KomiText(
+                text = kicker,
+                role = KomiTextRole.Label,
+                color = colors.onSurfaceVariant,
+                fontSize = 11.sp,
+                uppercase = false,
+            )
+        }
         Box(
             modifier =
                 Modifier

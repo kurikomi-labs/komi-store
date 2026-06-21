@@ -41,6 +41,7 @@ import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidde
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_snackbar
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 
 @Composable
@@ -71,7 +72,7 @@ fun HiddenRepositoriesRoot(
         topBar = {
             TweaksMangaHeader(
                 title = stringResource(Res.string.hidden_repositories_title),
-                jp = "非表示",
+                slot = TweaksDecorSlot.Hidden,
                 onNavigateBack = onNavigateBack,
             )
         },

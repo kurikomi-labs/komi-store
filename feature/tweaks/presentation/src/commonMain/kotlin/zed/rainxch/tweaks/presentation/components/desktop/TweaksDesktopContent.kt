@@ -45,15 +45,18 @@ import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
 import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.tweaks.presentation.components.sections.appSection
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
+import zed.rainxch.tweaks.presentation.components.shell.personalityUsesDecor
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 import zed.rainxch.tweaks.presentation.components.sections.connectivitySection
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
 
-private enum class DesktopSection(val jp: String) {
-    LOOK("外観"),
-    CONNECTIVITY("接続"),
-    PRIVACY("個人情報"),
-    APP("アプリ"),
+private enum class DesktopSection(val slot: TweaksDecorSlot) {
+    LOOK(TweaksDecorSlot.LookAndFeel),
+    CONNECTIVITY(TweaksDecorSlot.Connectivity),
+    PRIVACY(TweaksDecorSlot.PrivacyData),
+    APP(TweaksDecorSlot.App),
 }
 
 @Composable
@@ -109,18 +112,20 @@ fun TweaksDesktopContent(
                 fontSize = 22.sp,
                 modifier = Modifier.padding(start = 6.dp),
             )
-            KomiText(
-                text = "設定",
-                role = KomiTextRole.Label,
-                color = colors.onSurfaceVariant,
-                fontSize = 10.sp,
-                uppercase = false,
-                modifier = Modifier.padding(start = 6.dp, bottom = 14.dp),
-            )
+            if (personalityUsesDecor()) {
+                KomiText(
+                    text = "設定",
+                    role = KomiTextRole.Label,
+                    color = colors.onSurfaceVariant,
+                    fontSize = 10.sp,
+                    uppercase = false,
+                    modifier = Modifier.padding(start = 6.dp, bottom = 14.dp),
+                )
+            }
             DesktopSection.entries.forEach { entry ->
                 NavRow(
                     label = entry.label(),
-                    jp = entry.jp,
+                    kicker = tweaksKicker(entry.slot),
                     active = section == entry,
                     onClick = { section = entry },
                 )
@@ -182,7 +187,7 @@ fun TweaksDesktopContent(
 @Composable
 private fun NavRow(
     label: String,
-    jp: String,
+    kicker: String?,
     active: Boolean,
     onClick: () -> Unit,
 ) {
@@ -215,12 +220,14 @@ private fun NavRow(
             fontSize = 14.sp,
             modifier = Modifier.weight(1f),
         )
-        KomiText(
-            text = jp,
-            role = KomiTextRole.Label,
-            color = if (active) colors.onPrimary else colors.onSurfaceVariant,
-            fontSize = 9.5.sp,
-            uppercase = false,
-        )
+        if (kicker != null) {
+            KomiText(
+                text = kicker,
+                role = KomiTextRole.Label,
+                color = if (active) colors.onPrimary else colors.onSurfaceVariant,
+                fontSize = 9.5.sp,
+                uppercase = false,
+            )
+        }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 
 @Composable
@@ -23,14 +24,14 @@ fun TweaksSubScreenScaffold(
     title: String,
     onNavigateBack: () -> Unit,
     toastState: KomiToastState,
-    jp: String = "",
+    slot: TweaksDecorSlot? = null,
     content: LazyListScope.() -> Unit,
 ) {
     KomiScaffold(
         grid = true,
         screentone = true,
         topBar = {
-            TweaksMangaHeader(title = title, jp = jp, onNavigateBack = onNavigateBack)
+            TweaksMangaHeader(title = title, slot = slot, onNavigateBack = onNavigateBack)
         },
         toastState = toastState,
     ) { innerPadding ->

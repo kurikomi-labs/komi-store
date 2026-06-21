@@ -1,0 +1,12 @@
+# komi-learn (managed) — private + derived data, never commit.
+# Shareable project memory (MEMORY.md, USER.md, skills/) IS meant to be committed.
+*.local.md
+**/*.local.md
+skills.local/
+index.db
+index.db-shm
+index.db-wal
+state.json
+state.lock
+keys/
+.env

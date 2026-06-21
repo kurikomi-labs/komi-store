@@ -53,6 +53,7 @@ import zed.rainxch.githubstore.core.presentation.res.mirror_test_timeout
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSectionHead
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.tweaks.presentation.mirror.components.CustomMirrorDialog
 import zed.rainxch.tweaks.presentation.mirror.components.DeployYourOwnHint
@@ -85,7 +86,7 @@ fun MirrorPickerRoot(
         topBar = {
             TweaksMangaHeader(
                 title = stringResource(Res.string.mirror_picker_title),
-                jp = "ミラー",
+                slot = TweaksDecorSlot.Mirror,
                 onNavigateBack = onNavigateBack,
             )
         },
@@ -110,7 +111,7 @@ fun MirrorPickerRoot(
                 uppercase = false,
             )
 
-            SettingsSectionHead(stringResource(Res.string.mirror_section_official), "公式")
+            SettingsSectionHead(stringResource(Res.string.mirror_section_official), TweaksDecorSlot.MirrorOfficial)
             SettingsGroup {
                 official.forEachIndexed { index, mirror ->
                     MirrorSettingsRow(
@@ -122,7 +123,7 @@ fun MirrorPickerRoot(
                 }
             }
 
-            SettingsSectionHead(stringResource(Res.string.mirror_section_community), "有志")
+            SettingsSectionHead(stringResource(Res.string.mirror_section_community), TweaksDecorSlot.MirrorCommunity)
             SettingsGroup {
                 community.forEachIndexed { index, mirror ->
                     MirrorSettingsRow(

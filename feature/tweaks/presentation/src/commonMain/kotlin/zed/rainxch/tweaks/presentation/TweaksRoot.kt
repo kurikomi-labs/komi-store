@@ -53,7 +53,9 @@ import zed.rainxch.tweaks.presentation.components.sections.installsSection
 import zed.rainxch.tweaks.presentation.components.sections.languageSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
+import zed.rainxch.tweaks.presentation.components.shell.personalityUsesDecor
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 
@@ -150,7 +152,7 @@ fun TweaksRoot(
             topBar = {
                 TweaksMangaHeader(
                     title = stringResource(Res.string.tweaks_title),
-                    jp = "設定 · SETTINGS",
+                    slot = TweaksDecorSlot.Settings,
                     onNavigateBack = onNavigateBack,
                 )
             },
@@ -199,15 +201,17 @@ fun TweaksRoot(
                     )
                     appSection(onOpenFeedback = onOpenFeedback)
 
-                    KomiText(
-                        text = "― 設定 · komi store ―",
-                        role = KomiTextRole.Stamp,
-                        color = LocalPersonality.current.colors.onSurfaceVariant,
-                        fontSize = 11.sp,
-                        uppercase = false,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                    )
+                    if (personalityUsesDecor()) {
+                        KomiText(
+                            text = "― 設定 · komi store ―",
+                            role = KomiTextRole.Stamp,
+                            color = LocalPersonality.current.colors.onSurfaceVariant,
+                            fontSize = 11.sp,
+                            uppercase = false,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                        )
+                    }
                 }
             }
         }

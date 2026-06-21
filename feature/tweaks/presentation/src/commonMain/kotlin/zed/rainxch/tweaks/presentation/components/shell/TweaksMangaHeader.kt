@@ -35,11 +35,12 @@ import zed.rainxch.githubstore.core.presentation.res.back_cd
 @Composable
 fun TweaksMangaHeader(
     title: String,
-    jp: String,
+    slot: TweaksDecorSlot?,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
+    val kicker = slot?.let { tweaksKicker(it) }
     Row(
         modifier =
             modifier
@@ -84,9 +85,9 @@ fun TweaksMangaHeader(
                 fontSize = 23.sp,
                 lineHeight = 23.sp,
             )
-            if (jp.isNotEmpty()) {
+            if (kicker != null) {
                 KomiText(
-                    text = jp,
+                    text = kicker,
                     role = KomiTextRole.Label,
                     color = colors.onSurfaceVariant,
                     fontSize = 10.sp,

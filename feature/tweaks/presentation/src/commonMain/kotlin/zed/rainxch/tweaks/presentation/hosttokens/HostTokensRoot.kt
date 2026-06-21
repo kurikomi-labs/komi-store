@@ -56,6 +56,7 @@ import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.tweaks.presentation.components.shell.settingsRowDivider
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
@@ -132,7 +133,7 @@ fun HostTokensRoot(
         topBar = {
             TweaksMangaHeader(
                 title = stringResource(Res.string.host_tokens_title),
-                jp = "トークン",
+                slot = TweaksDecorSlot.Tokens,
                 onNavigateBack = onNavigateBack,
             )
         },

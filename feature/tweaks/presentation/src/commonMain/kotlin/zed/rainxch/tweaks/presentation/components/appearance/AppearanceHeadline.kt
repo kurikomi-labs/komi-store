@@ -15,6 +15,8 @@ import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 
 private val AccentOrder =
     listOf(
@@ -35,7 +37,7 @@ fun AppearanceHeadline(
 ) {
     SettingsGroup(modifier = modifier) {
         Column(modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 16.dp, bottom = 17.dp)) {
-            HeadlineLabel(latin = "Personality", jp = "個性")
+            HeadlineLabel(latin = "Personality", slot = TweaksDecorSlot.Personality)
             Row(
                 modifier = Modifier.padding(top = 11.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -54,7 +56,7 @@ fun AppearanceHeadline(
                 )
             }
 
-            HeadlineLabel(latin = "Accent", jp = "色", modifier = Modifier.padding(top = 18.dp))
+            HeadlineLabel(latin = "Accent", slot = TweaksDecorSlot.Accent, modifier = Modifier.padding(top = 18.dp))
             Row(
                 modifier = Modifier.padding(top = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -74,10 +76,11 @@ fun AppearanceHeadline(
 @Composable
 private fun HeadlineLabel(
     latin: String,
-    jp: String,
+    slot: TweaksDecorSlot,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
+    val kicker = tweaksKicker(slot)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -89,12 +92,14 @@ private fun HeadlineLabel(
             color = colors.onSurfaceVariant,
             fontSize = 13.sp,
         )
-        KomiText(
-            text = jp,
-            role = KomiTextRole.Label,
-            color = colors.onSurfaceVariant,
-            fontSize = 11.sp,
-            uppercase = false,
-        )
+        if (kicker != null) {
+            KomiText(
+                text = kicker,
+                role = KomiTextRole.Label,
+                color = colors.onSurfaceVariant,
+                fontSize = 11.sp,
+                uppercase = false,
+            )
+        }
     }
 }

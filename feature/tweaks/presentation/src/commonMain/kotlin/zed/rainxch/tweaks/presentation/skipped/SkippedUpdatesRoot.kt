@@ -42,6 +42,7 @@ import zed.rainxch.githubstore.core.presentation.res.skipped_updates_unskip_fail
 import zed.rainxch.githubstore.core.presentation.res.skipped_updates_unskipped_snackbar
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 
 @Composable
@@ -74,7 +75,7 @@ fun SkippedUpdatesRoot(
         topBar = {
             TweaksMangaHeader(
                 title = stringResource(Res.string.skipped_updates_title),
-                jp = "スキップ",
+                slot = TweaksDecorSlot.Skipped,
                 onNavigateBack = onNavigateBack,
             )
         },
