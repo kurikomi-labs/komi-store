@@ -15,6 +15,12 @@ object BottomNavigationUtils {
                 screen = GithubStoreGraph.HomeScreen,
             ),
             BottomNavigationItem(
+                titleRes = Res.string.bottom_nav_for_you_title,
+                iconOutlined = Icons.Outlined.AutoAwesome,
+                iconFilled = Icons.Filled.AutoAwesome,
+                screen = GithubStoreGraph.ForYouScreen,
+            ),
+            BottomNavigationItem(
                 titleRes = Res.string.bottom_nav_search_title,
                 iconOutlined = Icons.Outlined.Search,
                 iconFilled = Icons.Filled.Search,

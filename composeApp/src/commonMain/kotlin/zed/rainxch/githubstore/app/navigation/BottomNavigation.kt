@@ -14,8 +14,8 @@ fun BottomNavigation(
     currentScreen: GithubStoreGraph,
     onNavigate: (GithubStoreGraph) -> Unit,
     isUpdateAvailable: Boolean,
-    hasUnreadAnnouncements: Boolean = false,
     modifier: Modifier = Modifier,
+    hasUnreadAnnouncements: Boolean = false,
 ) {
     val allowedScreens = BottomNavigationUtils.allowedScreens()
     if (allowedScreens.none { it.screen::class == currentScreen::class }) return

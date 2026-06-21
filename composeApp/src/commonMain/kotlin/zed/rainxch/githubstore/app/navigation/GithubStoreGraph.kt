@@ -8,6 +8,9 @@ sealed interface GithubStoreGraph {
     data object HomeScreen : GithubStoreGraph
 
     @Serializable
+    data object ForYouScreen : GithubStoreGraph
+
+    @Serializable
     data class SearchScreen(
         val initialPlatform: String? = null,
     ) : GithubStoreGraph

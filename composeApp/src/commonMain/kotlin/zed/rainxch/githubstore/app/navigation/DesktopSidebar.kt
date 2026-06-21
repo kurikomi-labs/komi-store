@@ -1,0 +1,507 @@
+package zed.rainxch.githubstore.app.navigation
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.FeedCategory
+import zed.rainxch.core.domain.repository.BrowseFilterStore
+import zed.rainxch.core.presentation.components.badge.KomiBadge
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.MangaPersonality
+import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
+import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toLabel
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.category_all
+import zed.rainxch.githubstore.core.presentation.res.feed_category_ai
+import zed.rainxch.githubstore.core.presentation.res.feed_category_media
+import zed.rainxch.githubstore.core.presentation.res.feed_category_networking
+import zed.rainxch.githubstore.core.presentation.res.feed_category_privacy
+import zed.rainxch.githubstore.core.presentation.res.feed_category_reading
+import zed.rainxch.githubstore.core.presentation.res.feed_category_social
+import zed.rainxch.githubstore.core.presentation.res.feed_category_tools
+import zed.rainxch.githubstore.core.presentation.res.sidebar_browse
+import zed.rainxch.githubstore.core.presentation.res.sidebar_browse_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_categories
+import zed.rainxch.githubstore.core.presentation.res.sidebar_categories_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_foryou_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_home_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_search_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_you_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_platform
+import zed.rainxch.githubstore.core.presentation.res.sidebar_platform_jp
+
+private val SidebarPlatforms =
+    listOf(
+        DiscoveryPlatform.All,
+        DiscoveryPlatform.Android,
+        DiscoveryPlatform.Windows,
+        DiscoveryPlatform.Macos,
+        DiscoveryPlatform.Linux,
+    )
+
+@Composable
+fun DesktopSidebar(
+    currentScreen: GithubStoreGraph?,
+    onNavigate: (GithubStoreGraph) -> Unit,
+    rail: Boolean,
+    unreadAnnouncementsCount: Int,
+    modifier: Modifier = Modifier,
+) {
+    val colors = LocalPersonality.current.colors
+    val store = koinInject<BrowseFilterStore>()
+    val platform by store.platform.collectAsStateWithLifecycle()
+    val category by store.category.collectAsStateWithLifecycle()
+
+    val browseItems = BottomNavigationUtils.items().filterNot { it.screen == GithubStoreGraph.AppsScreen }
+    val isBrowseScreen =
+        currentScreen != null &&
+            (
+                currentScreen::class == GithubStoreGraph.HomeScreen::class ||
+                    currentScreen::class == GithubStoreGraph.ForYouScreen::class ||
+                    currentScreen::class == GithubStoreGraph.SearchScreen()::class
+            )
+    val isHomeFeed = currentScreen != null && currentScreen::class == GithubStoreGraph.HomeScreen::class
+
+    Column(
+        modifier =
+            modifier
+                .width(if (rail) 62.dp else 216.dp)
+                .fillMaxHeight()
+                .background(colors.surface)
+                .drawBehind {
+                    val w = 3.dp.toPx()
+                    drawRect(
+                        color = colors.outline,
+                        topLeft = Offset(size.width - w, 0f),
+                        size = Size(w, size.height),
+                    )
+                }.verticalScroll(rememberScrollState())
+                .padding(
+                    top = if (rail) 12.dp else 16.dp,
+                    bottom = 16.dp,
+                    start = if (rail) 8.dp else 12.dp,
+                    end = if (rail) 8.dp else 12.dp,
+                ),
+        verticalArrangement = Arrangement.spacedBy(if (rail) 6.dp else 4.dp),
+    ) {
+        SidebarSideHeading(stringResource(Res.string.sidebar_browse), stringResource(Res.string.sidebar_browse_jp), rail)
+        browseItems.forEach { item ->
+            val selected = item.screen::class == currentScreen?.let { it::class }
+            val badge =
+                when (item.screen) {
+                    GithubStoreGraph.ProfileGraph.ProfileScreen -> unreadAnnouncementsCount
+                    else -> 0
+                }
+            SidebarNavRow(
+                label = stringResource(item.titleRes),
+                kicker = navKicker(item.screen),
+                icon = if (selected) item.iconFilled else item.iconOutlined,
+                selected = selected,
+                rail = rail,
+                badgeCount = badge,
+                onClick = { onNavigate(item.screen) },
+            )
+        }
+
+        if (isBrowseScreen) {
+            Spacer(Modifier.height(if (rail) 2.dp else 6.dp))
+            SidebarSideHeading(stringResource(Res.string.sidebar_platform), stringResource(Res.string.sidebar_platform_jp), rail)
+            SidebarPlatforms.forEach { p ->
+                SidebarPlatformRow(
+                    platform = p,
+                    selected = p == platform,
+                    rail = rail,
+                    onClick = { store.setPlatform(p) },
+                )
+            }
+        }
+
+        if (isHomeFeed) {
+            Spacer(Modifier.height(if (rail) 2.dp else 6.dp))
+            SidebarSideHeading(stringResource(Res.string.sidebar_categories), stringResource(Res.string.sidebar_categories_jp), rail)
+            FeedCategory.entries.forEach { c ->
+                SidebarCategoryRow(
+                    category = c,
+                    selected = c == category,
+                    rail = rail,
+                    onClick = { store.setCategory(c) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarSideHeading(
+    title: String,
+    jp: String,
+    rail: Boolean,
+) {
+    val colors = LocalPersonality.current.colors
+    if (rail) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .width(30.dp)
+                        .height(2.5.dp)
+                        .background(colors.outline),
+            )
+        }
+    } else {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 4.dp, top = 4.dp, bottom = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            KomiText(
+                text = title,
+                role = KomiTextRole.Label,
+                color = colors.onSurfaceVariant,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.W800,
+                maxLines = 1,
+            )
+            KomiText(
+                text = jp,
+                role = KomiTextRole.Label,
+                color = colors.onSurfaceVariant.copy(alpha = 0.7f),
+                fontSize = 9.5.sp,
+                uppercase = false,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SidebarNavRow(
+    label: String,
+    kicker: String?,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    selected: Boolean,
+    rail: Boolean,
+    badgeCount: Int,
+    onClick: () -> Unit,
+) {
+    val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
+    val fg = if (selected) colors.onPrimary else colors.onSurface
+
+    val rowModifier =
+        Modifier
+            .fillMaxWidth()
+            .then(
+                if (selected && isManga) {
+                    Modifier.hardShadow(offset = DpOffset(3.dp, 3.dp), color = colors.shadow, shape = shape)
+                } else {
+                    Modifier
+                },
+            ).clip(shape)
+            .then(if (selected) Modifier.background(colors.primary) else Modifier.hoverWash(colors.onSurface))
+            .border(
+                width = if (selected) 2.5.dp else 0.dp,
+                color = if (selected) colors.outline else Color.Transparent,
+                shape = shape,
+            ).clickable(onClick = onClick)
+
+    if (rail) {
+        Box(
+            modifier = rowModifier.height(40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            NavIcon(icon, fg, badgeCount)
+        }
+    } else {
+        Row(
+            modifier = rowModifier.height(38.dp).padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            NavIcon(icon, fg, badgeCount)
+            KomiText(
+                text = label,
+                role = KomiTextRole.Label,
+                color = fg,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W800,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            kicker?.let {
+                KomiText(
+                    text = it,
+                    role = KomiTextRole.Label,
+                    color = fg.copy(alpha = 0.8f),
+                    fontSize = 9.5.sp,
+                    uppercase = false,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NavIcon(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    tint: Color,
+    badgeCount: Int,
+) {
+    if (badgeCount > 0) {
+        Box(contentAlignment = Alignment.TopEnd) {
+            KomiIcon(imageVector = icon, contentDescription = null, modifier = Modifier.size(17.dp), tint = tint)
+            KomiBadge(count = badgeCount, dot = true)
+        }
+    } else {
+        KomiIcon(imageVector = icon, contentDescription = null, modifier = Modifier.size(17.dp), tint = tint)
+    }
+}
+
+@Composable
+private fun SidebarPlatformRow(
+    platform: DiscoveryPlatform,
+    selected: Boolean,
+    rail: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = LocalPersonality.current.colors
+    val glyph = platform.toIcons().firstOrNull()
+    val label =
+        if (platform == DiscoveryPlatform.All) {
+            stringResource(Res.string.category_all)
+        } else {
+            platform.toLabel()
+        }
+    if (rail) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .then(
+                        if (selected) {
+                            Modifier.border(
+                                2.dp,
+                                colors.outline,
+                                RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
+                            )
+                        } else {
+                            Modifier.hoverWash(colors.onSurface)
+                        },
+                    ).clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (glyph != null) {
+                KomiIcon(glyph, contentDescription = label, modifier = Modifier.size(16.dp), tint = colors.onSurface)
+            } else {
+                KomiText(
+                    text = label,
+                    role = KomiTextRole.Label,
+                    color = colors.onSurface,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.W800,
+                    maxLines = 1,
+                )
+            }
+        }
+    } else {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .hoverWash(colors.onSurface)
+                    .clickable(onClick = onClick)
+                    .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            InkCheckbox(checked = selected)
+            glyph?.let { KomiIcon(it, contentDescription = null, modifier = Modifier.size(14.dp), tint = colors.onSurface) }
+            KomiText(
+                text = label,
+                role = KomiTextRole.Label,
+                color = colors.onSurface,
+                fontSize = 12.5.sp,
+                fontWeight = if (selected) FontWeight.W900 else FontWeight.W700,
+                uppercase = false,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryRow(
+    category: FeedCategory,
+    selected: Boolean,
+    rail: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = LocalPersonality.current.colors
+    if (rail) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .then(
+                        if (selected) {
+                            Modifier.border(
+                                2.dp,
+                                colors.outline,
+                                RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
+                            )
+                        } else {
+                            Modifier.hoverWash(colors.onSurface)
+                        },
+                    ).clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            InkDiamond(filled = selected)
+        }
+    } else {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .hoverWash(colors.onSurface)
+                    .clickable(onClick = onClick)
+                    .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            InkDiamond(filled = selected)
+            KomiText(
+                text = stringResource(category.sidebarLabelRes()),
+                role = KomiTextRole.Label,
+                color = if (selected) colors.onSurface else colors.onSurfaceVariant,
+                fontSize = 12.5.sp,
+                fontWeight = if (selected) FontWeight.W900 else FontWeight.W700,
+                uppercase = false,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+private fun InkCheckbox(checked: Boolean) {
+    val colors = LocalPersonality.current.colors
+    Box(
+        modifier =
+            Modifier
+                .size(14.dp)
+                .background(if (checked) colors.primary else Color.Transparent)
+                .border(2.dp, colors.outline),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (checked) {
+            KomiIcon(Icons.Rounded.Check, contentDescription = null, modifier = Modifier.size(10.dp), tint = colors.onPrimary)
+        }
+    }
+}
+
+@Composable
+private fun InkDiamond(filled: Boolean) {
+    val colors = LocalPersonality.current.colors
+    Box(
+        modifier =
+            Modifier
+                .size(8.dp)
+                .rotate(45f)
+                .then(
+                    if (filled) {
+                        Modifier.background(colors.primary)
+                    } else {
+                        Modifier.border(1.5.dp, colors.onSurfaceVariant)
+                    },
+                ),
+    )
+}
+
+@Composable
+private fun Modifier.hoverWash(color: Color): Modifier {
+    val interaction = remember { MutableInteractionSource() }
+    val hovered by interaction.collectIsHoveredAsState()
+    return this
+        .hoverable(interaction)
+        .background(if (hovered) color.copy(alpha = 0.08f) else Color.Transparent)
+}
+
+@Composable
+private fun navKicker(screen: GithubStoreGraph): String? =
+    when (screen::class) {
+        GithubStoreGraph.HomeScreen::class -> stringResource(Res.string.sidebar_nav_home_jp)
+        GithubStoreGraph.ForYouScreen::class -> stringResource(Res.string.sidebar_nav_foryou_jp)
+        GithubStoreGraph.SearchScreen()::class -> stringResource(Res.string.sidebar_nav_search_jp)
+        GithubStoreGraph.ProfileGraph.ProfileScreen::class -> stringResource(Res.string.sidebar_nav_you_jp)
+        else -> null
+    }
+
+private fun FeedCategory.sidebarLabelRes() =
+    when (this) {
+        FeedCategory.All -> Res.string.category_all
+        FeedCategory.Ai -> Res.string.feed_category_ai
+        FeedCategory.Privacy -> Res.string.feed_category_privacy
+        FeedCategory.Networking -> Res.string.feed_category_networking
+        FeedCategory.Media -> Res.string.feed_category_media
+        FeedCategory.Social -> Res.string.feed_category_social
+        FeedCategory.Reading -> Res.string.feed_category_reading
+        FeedCategory.Tools -> Res.string.feed_category_tools
+    }
