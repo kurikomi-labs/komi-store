@@ -9,16 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,10 +24,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.hide_repository
@@ -50,6 +52,9 @@ fun RepositoryActionsSheet(
     onToggleSeen: () -> Unit,
     onHide: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+
     KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -58,26 +63,29 @@ fun RepositoryActionsSheet(
         ) {
             GitHubStoreImage(
                 imageModel = { repository.owner.avatarUrl },
-                modifier = Modifier.size(36.dp).clip(CircleShape),
+                modifier = Modifier.size(36.dp).clip(RoundedCornerShape(shape.cornerSmall)),
             )
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = repository.fullName,
-                    style = MaterialTheme.typography.titleSmall,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
 
                 repository.description?.let {
-                    Text(
+                    KomiText(
                         text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
             }
@@ -85,7 +93,7 @@ fun RepositoryActionsSheet(
 
         Spacer(Modifier.height(4.dp))
 
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        KomiHorizontalDivider(color = colors.outlineVariant)
 
         SheetRow(
             label = stringResource(Res.string.share_repository),
@@ -106,13 +114,13 @@ fun RepositoryActionsSheet(
             onClick = onToggleSeen,
         )
 
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        KomiHorizontalDivider(color = colors.outlineVariant)
 
         SheetRow(
             label = stringResource(Res.string.hide_repository),
             icon = Icons.Default.VisibilityOff,
             onClick = onHide,
-            tint = MaterialTheme.colorScheme.error,
+            tint = colors.error,
         )
     }
 }
@@ -122,7 +130,7 @@ private fun SheetRow(
     label: String,
     icon: ImageVector,
     onClick: () -> Unit,
-    tint: Color = MaterialTheme.colorScheme.onSurface,
+    tint: Color = LocalPersonality.current.colors.onSurface,
 ) {
     Row(
         modifier = Modifier
@@ -132,12 +140,12 @@ private fun SheetRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = tint)
+        KomiIcon(imageVector = icon, contentDescription = null, tint = tint)
 
-        Text(
+        KomiText(
             text = label,
+            role = KomiTextRole.Body,
             color = tint,
-            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }
