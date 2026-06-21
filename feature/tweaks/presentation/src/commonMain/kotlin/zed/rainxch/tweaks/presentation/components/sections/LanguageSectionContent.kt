@@ -1,8 +1,6 @@
 package zed.rainxch.tweaks.presentation.components.sections
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.PhoneAndroid
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -33,8 +27,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.settings.AppLanguages
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.language_follow_system
@@ -66,10 +65,12 @@ fun languageSectionContent(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.tweaks_language_intro_body),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
         )
         Spacer(Modifier.height(8.dp))
@@ -115,14 +116,10 @@ private fun LanguageRow(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier
@@ -136,42 +133,44 @@ private fun LanguageRow(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                        .background(colors.surfaceContainerHigh),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Outlined.PhoneAndroid,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(22.dp),
                     )
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
                 if (!subtitleTag.isNullOrBlank()) {
-                    Text(
+                    KomiText(
                         text = subtitleTag,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
             }
             if (selected) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = colors.primary,
                     modifier = Modifier.size(24.dp),
                 )
             }

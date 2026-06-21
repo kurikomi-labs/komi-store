@@ -1,109 +1,94 @@
 package zed.rainxch.tweaks.presentation.components.sections
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.isDesktop
-import zed.rainxch.core.domain.model.appearance.FontTheme
-import zed.rainxch.core.presentation.components.text.KomiText
-import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.utils.displayName
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
-import zed.rainxch.tweaks.presentation.components.ToggleSettingCard
+import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
+import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
+import zed.rainxch.tweaks.presentation.components.shell.SettingsSegment
+import zed.rainxch.tweaks.presentation.components.shell.SettingsSegmented
 
-@OptIn(ExperimentalLayoutApi::class)
+private enum class ModeChoice { LIGHT, DARK, SYSTEM }
+
+private fun isDarkToChoice(value: Boolean?): ModeChoice =
+    when (value) {
+        true -> ModeChoice.DARK
+        false -> ModeChoice.LIGHT
+        null -> ModeChoice.SYSTEM
+    }
+
+private fun choiceToIsDark(choice: ModeChoice): Boolean? =
+    when (choice) {
+        ModeChoice.DARK -> true
+        ModeChoice.LIGHT -> false
+        ModeChoice.SYSTEM -> null
+    }
+
 @Composable
 fun appearanceSectionContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        KomiText(role = KomiTextRole.Title, text = stringResource(Res.string.appearance_section_mode))
-        Spacer(Modifier.height(8.dp))
-
-        ModeTiles(
-            current = isDarkToChoice(state.isDarkTheme),
-            paletteForPreview = state.selectedThemeColor,
-            onSelected = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
-        )
-        Spacer(Modifier.height(16.dp))
-
-        KomiText(role = KomiTextRole.Title, text = stringResource(Res.string.theme_color))
-        Spacer(Modifier.height(8.dp))
-
-        PaletteGrid(
-            isDarkTheme = state.isDarkTheme,
-            amoledEnabled = state.isAmoledThemeEnabled,
-            selected = state.selectedThemeColor,
-            onSelected = { onAction(TweaksAction.OnThemeColorSelected(it)) },
-        )
-
-        run {
-            val systemDark = isSystemInDarkTheme()
-            val resolvedDark = state.isDarkTheme ?: systemDark
-            AnimatedVisibility(
-                visible = resolvedDark,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Column {
-                    Spacer(Modifier.height(8.dp))
-                    ToggleSettingCard(
-                        title = stringResource(Res.string.amoled_black_theme),
-                        description = stringResource(Res.string.amoled_black_description),
-                        checked = state.isAmoledThemeEnabled,
-                        onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(16.dp))
-        KomiText(role = KomiTextRole.Title, text = stringResource(Res.string.appearance_section_display))
-        Spacer(Modifier.height(8.dp))
-
-        ToggleSettingCard(
-            title = stringResource(Res.string.system_font),
-            description = stringResource(Res.string.system_font_description),
-            checked = state.selectedFontTheme == FontTheme.SYSTEM,
-            onCheckedChange = { enabled ->
-                onAction(
-                    TweaksAction.OnFontThemeSelected(
-                        if (enabled) FontTheme.SYSTEM else FontTheme.CUSTOM,
-                    ),
+    val desktop = isDesktop()
+    SettingsGroup(modifier = modifier) {
+        SettingsRow(
+            title = stringResource(Res.string.appearance_section_mode),
+            trailing = {
+                SettingsSegmented(
+                    value = isDarkToChoice(state.isDarkTheme),
+                    small = true,
+                    onSelect = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
+                    options =
+                        listOf(
+                            SettingsSegment(ModeChoice.LIGHT, stringResource(Res.string.theme_light)),
+                            SettingsSegment(ModeChoice.DARK, stringResource(Res.string.theme_dark)),
+                            SettingsSegment(ModeChoice.SYSTEM, stringResource(Res.string.theme_system)),
+                        ),
                 )
             },
         )
-
-        if (isDesktop()) {
-            Spacer(Modifier.height(8.dp))
-            ToggleSettingCard(
+        SettingsRow(
+            title = stringResource(Res.string.amoled_black_theme),
+            subtitle = stringResource(Res.string.amoled_black_description),
+            last = !desktop,
+            trailing = {
+                KomiSwitch(
+                    checked = state.isAmoledThemeEnabled,
+                    onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
+                )
+            },
+        )
+        if (desktop) {
+            SettingsRow(
                 title = stringResource(Res.string.scrollbar_option_title),
-                description = stringResource(Res.string.scrollbar_option_description),
-                checked = state.isScrollbarEnabled,
-                onCheckedChange = { onAction(TweaksAction.OnScrollbarToggled(it)) },
+                subtitle = stringResource(Res.string.scrollbar_option_description),
+                trailing = {
+                    KomiSwitch(
+                        checked = state.isScrollbarEnabled,
+                        onCheckedChange = { onAction(TweaksAction.OnScrollbarToggled(it)) },
+                    )
+                },
             )
-
-            Spacer(Modifier.height(8.dp))
-            ContentWidthCard(
-                selected = state.contentWidth,
-                onSelected = { onAction(TweaksAction.OnContentWidthSelected(it)) },
+            SettingsRow(
+                title = stringResource(Res.string.content_width_title),
+                subtitle = stringResource(Res.string.content_width_description),
+                last = true,
+                trailing = {
+                    SettingsSegmented(
+                        value = state.contentWidth,
+                        small = true,
+                        onSelect = { onAction(TweaksAction.OnContentWidthSelected(it)) },
+                        options = ContentWidth.entries.map { SettingsSegment(it, it.displayName) },
+                    )
+                },
             )
         }
     }
