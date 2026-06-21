@@ -76,6 +76,18 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
+            tweaksRepository.getPersonality().collect { personality ->
+                _state.update { it.copy(personality = personality) }
+            }
+        }
+
+        viewModelScope.launch {
+            tweaksRepository.getAccentId().collect { accent ->
+                _state.update { it.copy(accent = accent) }
+            }
+        }
+
+        viewModelScope.launch {
             val complete = tweaksRepository.getOnboardingComplete().first()
             _state.update { it.copy(onboardingComplete = complete) }
         }

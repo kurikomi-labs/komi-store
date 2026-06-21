@@ -1,5 +1,7 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.model.appearance.AccentId
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.appearance.FontTheme
@@ -10,6 +12,8 @@ data class MainState(
     val rateLimitInfo: RateLimitInfo? = null,
     val showRateLimitDialog: Boolean = false,
     val showSessionExpiredDialog: Boolean = false,
+    val personality: AppPersonality = AppPersonality.MANGA,
+    val accent: AccentId = AccentId.CRIMSON,
     val currentColorTheme: AppTheme = AppTheme.NORD,
     val isAmoledTheme: Boolean = false,
     val isDarkTheme: Boolean? = null,

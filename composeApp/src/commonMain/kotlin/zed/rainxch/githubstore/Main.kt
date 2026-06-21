@@ -11,8 +11,11 @@ import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.presentation.personality.classicPersonality
+import zed.rainxch.core.presentation.personality.manga.MangaPaper
 import zed.rainxch.core.presentation.personality.mangaPersonality
+import zed.rainxch.core.presentation.personality.toMangaAccent
 import zed.rainxch.core.presentation.personality.utils.PersonalityTheme
 import zed.rainxch.githubstore.app.components.RateLimitDialog
 import zed.rainxch.githubstore.app.components.SessionExpiredDialog
@@ -64,7 +67,21 @@ fun App(
     val resolvedDarkTheme = mainState.isDarkTheme ?: isSystemInDarkTheme()
     LaunchedEffect(resolvedDarkTheme) { onResolvedDarkTheme(resolvedDarkTheme) }
 
-    PersonalityTheme(mangaPersonality()) {
+    val personality =
+        when (mainState.personality) {
+            AppPersonality.MANGA -> {
+                mangaPersonality(
+                    paper = if (resolvedDarkTheme) MangaPaper.NIGHT else MangaPaper.DAY,
+                    accent = mainState.accent.toMangaAccent(),
+                )
+            }
+
+            AppPersonality.CLASSIC -> {
+                classicPersonality(dark = resolvedDarkTheme)
+            }
+        }
+
+    PersonalityTheme(personality) {
         AppNavigation(
             navController = navController,
             isScrollbarEnabled = mainState.isScrollbarEnabled,

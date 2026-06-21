@@ -14,6 +14,7 @@ import zed.rainxch.details.presentation.whatsnew.DetailsWhatsNewViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
 import zed.rainxch.favourites.presentation.import.ImportStarsViewModel
+import zed.rainxch.feed.presentation.FeedViewModel
 import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
 import zed.rainxch.githubstore.app.onboarding.OnboardingViewModel
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
@@ -133,6 +134,7 @@ val viewModelsModule =
         viewModelOf(::FavouritesViewModel)
         viewModelOf(::ImportStarsViewModel)
         viewModelOf(::HomeViewModel)
+        viewModelOf(::FeedViewModel)
         viewModelOf(::RecentlyViewedViewModel)
         viewModel { params ->
             SearchViewModel(
@@ -150,6 +152,7 @@ val viewModelsModule =
                 searchHistoryRepository = get(),
                 hiddenReposRepository = get(),
                 userSessionRepository = get(),
+                browseFilterStore = get(),
                 initialPlatform = params.getOrNull<SearchPlatformUi>(),
             )
         }
