@@ -1,6 +1,5 @@
 package zed.rainxch.profile.presentation.whatsnew
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,33 +10,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.whats_new_history_empty
 import zed.rainxch.githubstore.core.presentation.res.whats_new_title
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewHistoryScreen(
     entries: List<WhatsNewEntry>,
     onNavigateBack: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     KomiScaffold(
         topBar = {
             KomiTopBar(
@@ -62,10 +63,11 @@ fun WhatsNewHistoryScreen(
                         .padding(innerPadding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.whats_new_history_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         } else {
@@ -87,26 +89,31 @@ fun WhatsNewHistoryScreen(
 
 @Composable
 fun WhatsNewEntryCard(entry: WhatsNewEntry) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        elevation = KomiSurfaceElevation.Card,
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
+                KomiText(
                     text = entry.versionName,
-                    style = MaterialTheme.typography.titleLarge,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
-                Text(
+                KomiText(
                     text = entry.releaseDate,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
 

@@ -5,18 +5,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.WhatsNewSection
 import zed.rainxch.core.domain.model.announcement.WhatsNewSectionType
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.whats_new_section_fixed
 import zed.rainxch.githubstore.core.presentation.res.whats_new_section_heads_up
@@ -28,13 +31,14 @@ fun SectionBlock(section: WhatsNewSection) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionLabel(type = section.type)
 
-        Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        KomiSurface(
             modifier = Modifier.fillMaxWidth(),
+            elevation = KomiSurfaceElevation.Card,
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 section.bullets.forEach { bullet ->
@@ -47,32 +51,35 @@ fun SectionBlock(section: WhatsNewSection) {
 
 @Composable
 private fun SectionLabel(type: WhatsNewSectionType) {
-    val (label, color) =
-        when (type) {
-            WhatsNewSectionType.NEW -> {
-                stringResource(Res.string.whats_new_section_new) to
-                        MaterialTheme.colorScheme.primary
-            }
-
-            WhatsNewSectionType.IMPROVED -> {
-                stringResource(Res.string.whats_new_section_improved) to
-                        MaterialTheme.colorScheme.tertiary
-            }
-
-            WhatsNewSectionType.FIXED -> {
-                stringResource(Res.string.whats_new_section_fixed) to
-                        MaterialTheme.colorScheme.secondary
-            }
-
-            WhatsNewSectionType.HEADS_UP -> {
-                stringResource(Res.string.whats_new_section_heads_up) to
-                        MaterialTheme.colorScheme.error
-            }
+    val colors = LocalPersonality.current.colors
+    val label: String
+    val color: Color
+    when (type) {
+        WhatsNewSectionType.NEW -> {
+            label = stringResource(Res.string.whats_new_section_new)
+            color = colors.primary
         }
 
-    Text(
+        WhatsNewSectionType.IMPROVED -> {
+            label = stringResource(Res.string.whats_new_section_improved)
+            color = colors.primary
+        }
+
+        WhatsNewSectionType.FIXED -> {
+            label = stringResource(Res.string.whats_new_section_fixed)
+            color = colors.primary
+        }
+
+        WhatsNewSectionType.HEADS_UP -> {
+            label = stringResource(Res.string.whats_new_section_heads_up)
+            color = colors.error
+        }
+    }
+
+    KomiText(
         text = label,
-        style = MaterialTheme.typography.labelMedium,
+        role = KomiTextRole.Label,
+        fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold,
         color = color,
     )
@@ -80,20 +87,23 @@ private fun SectionLabel(type: WhatsNewSectionType) {
 
 @Composable
 private fun BulletRow(text: String) {
+    val colors = LocalPersonality.current.colors
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text(
+        KomiText(
             text = "•",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
             modifier = Modifier.fillMaxWidth(),
+            uppercase = false,
         )
     }
 }

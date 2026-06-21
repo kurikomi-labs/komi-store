@@ -1,6 +1,5 @@
 package zed.rainxch.profile.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -29,10 +27,6 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +43,9 @@ import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
@@ -82,7 +79,7 @@ fun LazyListScope.profileSections(
                 title = stringResource(Res.string.stars),
                 subtitle = stringResource(Res.string.profile_stars_description),
                 icon = Icons.Outlined.Star,
-                accentColor = MaterialTheme.colorScheme.primary,
+                accentColor = LocalPersonality.current.colors.primary,
                 onClick = { onAction(ProfileAction.OnStarredReposClick) },
             )
 
@@ -95,7 +92,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.favourites),
             subtitle = stringResource(Res.string.profile_favourites_description),
             icon = Icons.Outlined.Favorite,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
         )
 
@@ -106,7 +103,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.recently_viewed),
             subtitle = stringResource(Res.string.profile_recently_viewed_description),
             icon = Icons.Outlined.Schedule,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
         )
     }
@@ -126,7 +123,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.whats_new_title),
             subtitle = stringResource(Res.string.whats_new_profile_description),
             icon = Icons.Outlined.Campaign,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnWhatsNewClick) },
         )
 
@@ -137,7 +134,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.announcements_title),
             subtitle = stringResource(Res.string.announcements_profile_description),
             icon = Icons.Outlined.Notifications,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnAnnouncementsClick) },
             badge = if (hasUnreadAnnouncements) {
                 { UnreadDot() }
@@ -162,7 +159,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.tweaks_title),
             subtitle = stringResource(Res.string.profile_tweaks_description),
             icon = Icons.Outlined.Tune,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnTweaksClick) },
         )
 
@@ -173,7 +170,7 @@ fun LazyListScope.profileSections(
             title = stringResource(Res.string.profile_entry_about_title),
             subtitle = stringResource(Res.string.profile_entry_about_subtitle),
             icon = Icons.Outlined.Info,
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = LocalPersonality.current.colors.primary,
             onClick = { onAction(ProfileAction.OnAboutClick) },
         )
     }
@@ -206,11 +203,9 @@ private fun HeroIdentityCard(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
 ) {
-    Surface(
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        elevation = KomiSurfaceElevation.Card,
     ) {
         Column(
             modifier = Modifier
@@ -229,6 +224,8 @@ private fun HeroIdentityCard(
 
 @Composable
 private fun SignedOutContent(onAction: (ProfileAction) -> Unit) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -237,31 +234,31 @@ private fun SignedOutContent(onAction: (ProfileAction) -> Unit) {
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                .clip(RoundedCornerShape(shape.cornerSmall))
+                .background(colors.surfaceContainerHigh),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.AccountCircle,
                 contentDescription = null,
                 modifier = Modifier.size(56.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
             )
         }
         Spacer(Modifier.height(4.dp))
-        Text(
+        KomiText(
             text = stringResource(Res.string.profile_sign_in_title),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurface,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = stringResource(Res.string.profile_sign_in_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(4.dp))
@@ -280,6 +277,8 @@ private fun SignedInContent(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val profile = state.userProfile ?: return
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -290,38 +289,41 @@ private fun SignedInContent(
             imageModel = { profile.imageUrl },
             modifier = Modifier
                 .size(80.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                .clip(RoundedCornerShape(shape.cornerSmall))
+                .background(colors.surfaceContainerHigh),
         )
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             val displayName = profile.name.takeIf { it.isNotBlank() } ?: profile.username
-            Text(
+            KomiText(
                 text = displayName,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = "@${profile.username}",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
             profile.bio?.takeIf { it.isNotBlank() }?.let { bio ->
                 Spacer(Modifier.height(2.dp))
-                Text(
+                KomiText(
                     text = bio,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
             }
         }
@@ -381,25 +383,27 @@ private fun Metric(
     label: String,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Text(
+        KomiText(
             text = value,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -408,11 +412,12 @@ private fun Metric(
 
 @Composable
 private fun MetricDivider() {
+    val colors = LocalPersonality.current.colors
     Box(
         modifier = Modifier
             .width(1.dp)
             .height(28.dp)
-            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+            .background(colors.outlineVariant.copy(alpha = 0.55f)),
     )
 }
 
@@ -430,40 +435,42 @@ private fun ProfileEntryRow(
     destructive: Boolean = false,
     trailingChevron: Boolean = true,
 ) {
-    val accent = if (destructive) MaterialTheme.colorScheme.error else accentColor
-    val titleColor = if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+    val colors = LocalPersonality.current.colors
+    val accent = if (destructive) colors.error else accentColor
+    val titleColor = if (destructive) colors.error else colors.onSurface
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .background(colors.surface)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Icon(
+        KomiIcon(
             imageVector = icon,
             contentDescription = null,
             tint = accent,
             modifier = Modifier.size(22.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
-            KomiText(text = title, role = KomiTextRole.Label, color = titleColor)
+            KomiText(text = title, role = KomiTextRole.Label, color = titleColor, uppercase = false)
             subtitle?.let {
                 KomiText(
                     text = it,
                     role = KomiTextRole.Body,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
         badge?.invoke()
         if (trailingChevron) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -472,10 +479,12 @@ private fun ProfileEntryRow(
 
 @Composable
 private fun UnreadDot() {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Box(
         modifier = Modifier
             .size(8.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.error),
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.error),
     )
 }

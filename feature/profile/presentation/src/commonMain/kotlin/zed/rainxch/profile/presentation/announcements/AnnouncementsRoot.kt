@@ -10,10 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -24,13 +20,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.domain.model.announcement.Announcement
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -40,7 +41,6 @@ import zed.rainxch.githubstore.core.presentation.res.announcements_refresh_faile
 import zed.rainxch.githubstore.core.presentation.res.announcements_title
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnnouncementsRoot(
     items: List<Announcement>,
@@ -56,6 +56,7 @@ fun AnnouncementsRoot(
     onLeavingScreen: () -> Unit = {},
     onEnteringScreen: () -> Unit = {},
 ) {
+    val colors = LocalPersonality.current.colors
     var showMuteSheet by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -89,7 +90,7 @@ fun AnnouncementsRoot(
             )
         },
     ) { innerPadding ->
-        PullToRefreshBox(
+        KomiPullToRefresh(
             isRefreshing = isRefreshing,
             onRefresh = {
                 coroutineScope.launch {
@@ -111,7 +112,7 @@ fun AnnouncementsRoot(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
+                    KomiText(
                         text =
                             stringResource(
                                 if (refreshFailed) {
@@ -120,8 +121,9 @@ fun AnnouncementsRoot(
                                     Res.string.announcements_empty
                                 },
                             ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             } else {
@@ -132,10 +134,12 @@ fun AnnouncementsRoot(
                 ) {
                     if (refreshFailed) {
                         item {
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.announcements_refresh_failed),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                role = KomiTextRole.Label,
+                                fontSize = 11.sp,
+                                color = colors.onSurfaceVariant,
+                                uppercase = false,
                             )
                         }
                     }

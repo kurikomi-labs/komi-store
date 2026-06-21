@@ -21,10 +21,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,11 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.Announcement
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
@@ -45,6 +43,12 @@ import zed.rainxch.core.domain.model.announcement.AnnouncementSeverity
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledge
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledged
@@ -62,65 +66,75 @@ fun AnnouncementCard(
     onAcknowledgeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val severityColor = severityAccent(announcement.severity)
     val containerColor =
         when (announcement.severity) {
-            AnnouncementSeverity.CRITICAL -> MaterialTheme.colorScheme.errorContainer
-            AnnouncementSeverity.IMPORTANT -> MaterialTheme.colorScheme.surfaceContainerHigh
-            AnnouncementSeverity.INFO -> MaterialTheme.colorScheme.surfaceContainerLow
+            AnnouncementSeverity.CRITICAL -> colors.error
+            AnnouncementSeverity.IMPORTANT -> colors.surfaceContainerHigh
+            AnnouncementSeverity.INFO -> colors.surface
         }
 
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = containerColor,
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
+        elevation = KomiSurfaceElevation.Card,
     ) {
-        Row(
+        Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
+                    .clip(RoundedCornerShape(shape.corner))
+                    .background(containerColor),
         ) {
-            Box(
+            Row(
                 modifier =
                     Modifier
-                        .width(4.dp)
-                        .fillMaxHeight()
-                        .background(severityColor),
-            )
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
             ) {
-                HeaderRow(
-                    severity = announcement.severity,
-                    category = announcement.category,
-                    iconHint = announcement.iconHint,
-                    severityColor = severityColor,
-                    isAcknowledged = isAcknowledged,
+                Box(
+                    modifier =
+                        Modifier
+                            .width(4.dp)
+                            .fillMaxHeight()
+                            .background(severityColor),
                 )
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    HeaderRow(
+                        severity = announcement.severity,
+                        category = announcement.category,
+                        iconHint = announcement.iconHint,
+                        severityColor = severityColor,
+                        isAcknowledged = isAcknowledged,
+                    )
 
-                Text(
-                    text = announcement.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                    KomiText(
+                        text = announcement.title,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                    )
 
-                ExpandableBody(announcement.body)
+                    ExpandableBody(announcement.body)
 
-                ActionRow(
-                    announcement = announcement,
-                    isAcknowledged = isAcknowledged,
-                    onCtaClick = onCtaClick,
-                    onDismissClick = onDismissClick,
-                    onAcknowledgeClick = onAcknowledgeClick,
-                )
+                    ActionRow(
+                        announcement = announcement,
+                        isAcknowledged = isAcknowledged,
+                        onCtaClick = onCtaClick,
+                        onDismissClick = onDismissClick,
+                        onAcknowledgeClick = onAcknowledgeClick,
+                    )
+                }
             }
         }
     }
@@ -134,11 +148,12 @@ private fun HeaderRow(
     severityColor: Color,
     isAcknowledged: Boolean,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
+        KomiIcon(
             imageVector = severityIcon(severity, iconHint),
             contentDescription = stringResource(severityLabel(severity)),
             tint = severityColor,
@@ -147,17 +162,18 @@ private fun HeaderRow(
         CategoryChip(category = category)
         Spacer(Modifier.weight(1f))
         if (isAcknowledged) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.width(4.dp))
-            Text(
+            KomiText(
                 text = stringResource(Res.string.announcements_acknowledged),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
+                role = KomiTextRole.Label,
+                fontSize = 11.sp,
+                color = colors.primary,
             )
         }
     }
@@ -165,28 +181,36 @@ private fun HeaderRow(
 
 @Composable
 private fun CategoryChip(category: AnnouncementCategory) {
-    Surface(
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(shape.cornerSmall))
+                .background(colors.surfaceContainerHigh)
+                .padding(horizontal = 10.dp, vertical = 2.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(categoryLabel(category)),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }
 
 @Composable
 private fun ExpandableBody(body: String) {
+    val colors = LocalPersonality.current.colors
     var expanded by remember(body) { mutableStateOf(false) }
     var isOverflowing by remember(body) { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
+        KomiText(
             text = body,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
+            uppercase = false,
             maxLines = if (expanded) Int.MAX_VALUE else BODY_COLLAPSED_LINES,
             onTextLayout = { layout ->
                 if (!expanded) {
@@ -250,12 +274,14 @@ private fun ActionRow(
 }
 
 @Composable
-private fun severityAccent(severity: AnnouncementSeverity): Color =
-    when (severity) {
-        AnnouncementSeverity.CRITICAL -> MaterialTheme.colorScheme.error
-        AnnouncementSeverity.IMPORTANT -> MaterialTheme.colorScheme.primary
-        AnnouncementSeverity.INFO -> MaterialTheme.colorScheme.tertiary
+private fun severityAccent(severity: AnnouncementSeverity): Color {
+    val colors = LocalPersonality.current.colors
+    return when (severity) {
+        AnnouncementSeverity.CRITICAL -> colors.error
+        AnnouncementSeverity.IMPORTANT -> colors.primary
+        AnnouncementSeverity.INFO -> colors.primary
     }
+}
 
 private fun severityIcon(
     severity: AnnouncementSeverity,

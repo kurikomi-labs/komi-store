@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Security
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -24,6 +20,11 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.Announcement
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_acknowledge
 import zed.rainxch.githubstore.core.presentation.res.announcements_view_details
@@ -34,30 +35,33 @@ fun CriticalAnnouncementModal(
     onAcknowledge: () -> Unit,
     onOpenDetails: () -> Unit,
 ) {
-    AlertDialog(
+    val colors = LocalPersonality.current.colors
+    KomiDialog(
         onDismissRequest = { },
         icon = {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.Security,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.error,
+                tint = colors.error,
                 modifier = Modifier.size(40.dp),
             )
         },
         title = {
-            Text(
+            KomiText(
                 text = announcement.title,
-                style = MaterialTheme.typography.headlineSmall,
+                role = KomiTextRole.Display,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
+                uppercase = false,
             )
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
+                KomiText(
                     text = announcement.body,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
                 Spacer(Modifier.height(0.dp))
             }
@@ -88,8 +92,6 @@ fun CriticalAnnouncementModal(
             } else {
                 null
             },
-        containerColor = MaterialTheme.colorScheme.surface,
-        iconContentColor = MaterialTheme.colorScheme.error,
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
     )
 }

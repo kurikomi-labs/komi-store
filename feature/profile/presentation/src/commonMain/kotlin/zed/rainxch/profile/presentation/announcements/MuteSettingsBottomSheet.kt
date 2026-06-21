@@ -12,13 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,23 +21,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_mute_locked
 import zed.rainxch.githubstore.core.presentation.res.announcements_mute_settings_title
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MuteSettingsBottomSheet(
     mutedCategories: Set<AnnouncementCategory>,
     onToggle: (AnnouncementCategory, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
+    val colors = LocalPersonality.current.colors
+    KomiSheet(
+        onDismiss = onDismiss,
     ) {
         Column(
             modifier =
@@ -53,11 +48,12 @@ fun MuteSettingsBottomSheet(
                     .padding(PaddingValues(horizontal = 24.dp, vertical = 8.dp)),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.announcements_mute_settings_title),
-                style = MaterialTheme.typography.titleMedium,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
+                uppercase = false,
             )
 
             AnnouncementCategory.entries.forEach { category ->
@@ -84,6 +80,7 @@ private fun CategoryRow(
     locked: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val rowModifier =
         Modifier
             .fillMaxWidth()
@@ -104,21 +101,22 @@ private fun CategoryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
             modifier = Modifier.weight(1f),
+            uppercase = false,
         )
         if (locked) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.Lock,
                 contentDescription = stringResource(Res.string.announcements_mute_locked),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(16.dp),
             )
         }
-        Switch(
+        KomiSwitch(
             checked = enabled,
             onCheckedChange = null,
             enabled = !locked,
