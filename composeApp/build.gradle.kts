@@ -64,6 +64,10 @@ kotlin {
             implementation(projects.feature.home.data)
             implementation(projects.feature.home.presentation)
 
+            implementation(projects.feature.feed.domain)
+            implementation(projects.feature.feed.data)
+            implementation(projects.feature.feed.presentation)
+
             implementation(projects.feature.search.domain)
             implementation(projects.feature.search.data)
             implementation(projects.feature.search.presentation)
