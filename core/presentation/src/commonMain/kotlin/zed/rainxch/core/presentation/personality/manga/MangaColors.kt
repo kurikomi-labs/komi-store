@@ -69,14 +69,7 @@ fun mangaColors(
     accent: MangaAccent,
 ): PersonalityColors {
     val ink = paperInk(paper)
-    val (primary, onPrimary) =
-        when (accent) {
-            MangaAccent.MONO -> ink.ink to ink.page
-            MangaAccent.CRIMSON -> Color(0xFFD8202A) to Color(0xFFFFFFFF)
-            MangaAccent.COBALT -> Color(0xFF1F4ED8) to Color(0xFFFFFFFF)
-            MangaAccent.SUN -> Color(0xFFF5A300) to Color(0xFF1B150D)
-            MangaAccent.FROST -> Color(0xFF88C0D0) to Color(0xFF2E3440)
-        }
+    val (primary, onPrimary) = mangaAccentSwatch(accent) ?: (ink.ink to ink.page)
     return PersonalityColors(
         primary = primary,
         onPrimary = onPrimary,
