@@ -50,6 +50,7 @@ import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -297,11 +298,13 @@ private fun HomeEndCap() {
             thickness = 2.dp,
             color = LocalPersonality.current.colors.outline.copy(alpha = 0.4f),
         )
-        KomiText(
-            text = stringResource(Res.string.feed_end_cap),
-            role = KomiTextRole.Label,
-            color = LocalPersonality.current.colors.onSurfaceVariant,
-        )
+        if (LocalPersonality.current.usesDecor) {
+            KomiText(
+                text = stringResource(Res.string.feed_end_cap),
+                role = KomiTextRole.Label,
+                color = LocalPersonality.current.colors.onSurfaceVariant,
+            )
+        }
         KomiHorizontalDivider(
             modifier = Modifier.weight(1f),
             thickness = 2.dp,

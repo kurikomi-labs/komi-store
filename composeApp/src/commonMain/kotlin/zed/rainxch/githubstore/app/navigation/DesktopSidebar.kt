@@ -50,6 +50,7 @@ import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.utils.toIcons
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -210,14 +211,16 @@ private fun SidebarSideHeading(
                 fontWeight = FontWeight.W800,
                 maxLines = 1,
             )
-            KomiText(
-                text = jp,
-                role = KomiTextRole.Label,
-                color = colors.onSurfaceVariant.copy(alpha = 0.7f),
-                fontSize = 9.5.sp,
-                uppercase = false,
-                maxLines = 1,
-            )
+            if (LocalPersonality.current.usesDecor) {
+                KomiText(
+                    text = jp,
+                    role = KomiTextRole.Label,
+                    color = colors.onSurfaceVariant.copy(alpha = 0.7f),
+                    fontSize = 9.5.sp,
+                    uppercase = false,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }
@@ -277,7 +280,7 @@ private fun SidebarNavRow(
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
             )
-            kicker?.let {
+            kicker?.takeIf { LocalPersonality.current.usesDecor }?.let {
                 KomiText(
                     text = it,
                     role = KomiTextRole.Label,

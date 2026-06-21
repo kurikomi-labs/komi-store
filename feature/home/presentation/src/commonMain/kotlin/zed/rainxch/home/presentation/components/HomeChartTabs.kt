@@ -22,6 +22,7 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -100,14 +101,16 @@ private fun ChartTabSegment(
             fontWeight = FontWeight.W800,
             maxLines = 1,
         )
-        KomiText(
-            text = tab.kicker(),
-            role = KomiTextRole.Label,
-            color = kicker,
-            fontSize = 9.sp,
-            uppercase = false,
-            maxLines = 1,
-        )
+        if (personality.usesDecor) {
+            KomiText(
+                text = tab.kicker(),
+                role = KomiTextRole.Label,
+                color = kicker,
+                fontSize = 9.sp,
+                uppercase = false,
+                maxLines = 1,
+            )
+        }
     }
 }
 

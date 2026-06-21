@@ -15,3 +15,5 @@ sealed interface Personality {
     val motion: PersonalityMotion
     val decor: PersonalityDecor get() = PersonalityDecor.None
 }
+
+val Personality.usesDecor: Boolean get() = decor != PersonalityDecor.None

@@ -64,6 +64,7 @@ import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -217,7 +218,7 @@ private fun BoxScope.FeedContent(
             KomiTopBar(
                 title = stringResource(Res.string.feed_masthead_title),
                 titleAccent = stringResource(Res.string.feed_masthead_title_accent),
-                subtitle = stringResource(Res.string.feed_masthead_subtitle),
+                subtitle = if (LocalPersonality.current.usesDecor) stringResource(Res.string.feed_masthead_subtitle) else null,
                 insets = false,
                 actions = {
                     KomiIconButton(
@@ -394,11 +395,13 @@ private fun FeedEndCap() {
             color = LocalPersonality.current.colors.outline.copy(alpha = 0.4f),
         )
 
-        KomiText(
-            text = stringResource(Res.string.feed_end_cap),
-            role = KomiTextRole.Label,
-            color = LocalPersonality.current.colors.onSurfaceVariant,
-        )
+        if (LocalPersonality.current.usesDecor) {
+            KomiText(
+                text = stringResource(Res.string.feed_end_cap),
+                role = KomiTextRole.Label,
+                color = LocalPersonality.current.colors.onSurfaceVariant,
+            )
+        }
 
         KomiHorizontalDivider(
             modifier = Modifier.weight(1f),

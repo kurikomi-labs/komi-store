@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.speedLineWash
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.home_masthead_subtitle
 import zed.rainxch.githubstore.core.presentation.res.home_masthead_title
@@ -71,18 +72,20 @@ fun ForYouHeader(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            BasicText(
-                text = stringResource(Res.string.home_masthead_subtitle),
-                style = type.label.copy(
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.W800,
-                    letterSpacing = 0.18.em,
-                    color = colors.onSurfaceVariant,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 2.dp),
-            )
+            if (LocalPersonality.current.usesDecor) {
+                BasicText(
+                    text = stringResource(Res.string.home_masthead_subtitle),
+                    style = type.label.copy(
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.W800,
+                        letterSpacing = 0.18.em,
+                        color = colors.onSurfaceVariant,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
         }
 
         trailing?.invoke()
