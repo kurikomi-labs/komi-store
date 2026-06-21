@@ -1,14 +1,15 @@
 package zed.rainxch.apps.presentation.import.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,20 +18,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
@@ -67,26 +72,24 @@ fun CandidateCard(
     onSearchSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expandLabel = stringResource(Res.string.external_import_card_expand_label)
-    val collapseLabel = stringResource(Res.string.external_import_card_collapse_label)
     val reducedMotion = LocalReducedMotion.current
-    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    val clickActionLabel = if (expanded) {
+        stringResource(Res.string.external_import_card_collapse_label)
+    } else {
+        stringResource(Res.string.external_import_card_expand_label)
+    }
 
-    Surface(
-        shape = rowShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(rowShape)
-                .clickable(
-                    onClickLabel = if (expanded) collapseLabel else expandLabel,
-                    role = Role.Button,
-                ) { onToggleExpanded() },
+    KomiSurface(
+        onClick = onToggleExpanded,
+        contentPadding = PaddingValues(20.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                role = Role.Button
+                onClick(label = clickActionLabel, action = null)
+            },
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             CandidateHeader(candidate = candidate)
@@ -187,6 +190,9 @@ private fun CollapsedActions(
 
 @Composable
 private fun CandidateHeader(candidate: CandidateUi) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -198,25 +204,28 @@ private fun CandidateHeader(candidate: CandidateUi) {
             modifier =
                 Modifier
                     .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp)),
+                    .clip(RoundedCornerShape(shape.corner)),
         )
 
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
+            KomiText(
                 text = candidate.appLabel,
-                style = MaterialTheme.typography.titleMedium,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
-            Text(
+            KomiText(
                 text = candidate.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
             InstallerChip(installerLabel = candidate.installerLabel)
@@ -226,14 +235,20 @@ private fun CandidateHeader(candidate: CandidateUi) {
 
 @Composable
 private fun InstallerChip(installerLabel: String) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(8.dp),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.primaryContainer),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.external_import_card_installer_chip, installerLabel),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onPrimaryContainer,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
@@ -241,28 +256,32 @@ private fun InstallerChip(installerLabel: String) {
 
 @Composable
 private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val containerColor =
         if (suggestion != null) {
-            MaterialTheme.colorScheme.primaryContainer
+            colors.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surfaceVariant
+            colors.surfaceVariant
         }
     val contentColor =
         if (suggestion != null) {
-            MaterialTheme.colorScheme.onPrimaryContainer
+            colors.onPrimaryContainer
         } else {
-            MaterialTheme.colorScheme.onSurfaceVariant
+            colors.onSurfaceVariant
         }
-    Surface(
-        color = containerColor,
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(containerColor),
     ) {
         if (suggestion == null) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_card_preselect_unknown),
-                style = MaterialTheme.typography.bodyMedium,
+                role = KomiTextRole.Body,
                 color = contentColor,
+                uppercase = false,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
             )
         } else {
@@ -271,48 +290,53 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_card_preselect_known_prefix),
-                    style = MaterialTheme.typography.labelSmall,
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
                     color = contentColor,
                 )
 
-                Text(
+                KomiText(
                     text = suggestion.repo,
-                    style = MaterialTheme.typography.titleMedium,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    KomiText(
                         text = stringResource(
                             Res.string.external_import_card_owner_byline,
                             suggestion.owner,
                         ),
-                        style = MaterialTheme.typography.bodySmall,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
                         color = contentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                         modifier = Modifier.weight(1f, fill = false),
                     )
 
-                    Text(
+                    KomiText(
                         text = stringResource(
                             Res.string.external_import_match_confidence_chip,
                             percent,
                         ) + "%",
-                        style = MaterialTheme.typography.labelSmall,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
                         color = contentColor,
+                        uppercase = false,
                     )
                 }
             }
         }
     }
 }
-

@@ -1,5 +1,6 @@
 package zed.rainxch.apps.presentation.import.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,16 +9,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
@@ -37,6 +39,8 @@ fun RepoSearchOverride(
     onPick: (RepoSuggestionUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -49,8 +53,11 @@ fun RepoSearchOverride(
                 error = searchError?.takeIf { it.isNotBlank() },
                 placeholder = stringResource(Res.string.external_import_search_placeholder_url),
                 trailing = {
-                    IconButton(onClick = onSubmit) {
-                        Icon(
+                    Box(
+                        modifier = Modifier.size(48.dp).clickable(onClick = onSubmit),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        KomiIcon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(Res.string.external_import_search_icon_label),
                         )
@@ -60,13 +67,12 @@ fun RepoSearchOverride(
             )
 
             if (isSearching) {
-                CircularProgressIndicator(
+                KomiCircularProgress(
                     modifier =
                         Modifier
                             .align(Alignment.CenterEnd)
                             .padding(end = 56.dp)
                             .size(18.dp),
-                    strokeWidth = 2.dp,
                 )
             }
         }
@@ -81,10 +87,11 @@ fun RepoSearchOverride(
                 }
             }
         } else if (query.isNotBlank() && !isSearching) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_search_empty),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
             )
         }
     }

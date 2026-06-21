@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -16,6 +15,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.CompactStatusFlags
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -57,16 +57,16 @@ fun StatusDotCluster(
     flags: CompactStatusFlags,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
+    val colors = LocalPersonality.current.colors
 
     val items = buildList {
-        if (flags.readyToInstall) add(StatusItem(DotShape.Ring, colorScheme.primary))
-        if (flags.pendingInstall) add(StatusItem(DotShape.Chevron, colorScheme.tertiary))
-        if (flags.variantStale) add(StatusItem(DotShape.Triangle, colorScheme.error))
-        if (flags.variantPinned) add(StatusItem(DotShape.Diamond, colorScheme.primary))
-        if (flags.filterActive) add(StatusItem(DotShape.Square, colorScheme.primary))
-        if (flags.preReleaseOn) add(StatusItem(DotShape.Circle, colorScheme.tertiary))
-        if (flags.updatesIgnored) add(StatusItem(DotShape.Bar, colorScheme.outline))
+        if (flags.readyToInstall) add(StatusItem(DotShape.Ring, colors.primary))
+        if (flags.pendingInstall) add(StatusItem(DotShape.Chevron, colors.primary))
+        if (flags.variantStale) add(StatusItem(DotShape.Triangle, colors.error))
+        if (flags.variantPinned) add(StatusItem(DotShape.Diamond, colors.primary))
+        if (flags.filterActive) add(StatusItem(DotShape.Square, colors.primary))
+        if (flags.preReleaseOn) add(StatusItem(DotShape.Circle, colors.primary))
+        if (flags.updatesIgnored) add(StatusItem(DotShape.Bar, colors.outline))
     }
 
     if (items.isEmpty()) return

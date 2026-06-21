@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 
 package zed.rainxch.apps.presentation
 
@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -41,20 +40,8 @@ import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
 import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
-import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -102,6 +90,12 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
 import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiCheckbox
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -232,6 +226,8 @@ fun AppsScreen(
     onAction: (AppsAction) -> Unit,
     toastState: KomiToastState,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     KomiScaffold(
         topBar = {
             KomiTopBar(
@@ -239,12 +235,12 @@ fun AppsScreen(
                 actions = {
                     Row(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(MaterialTheme.colorScheme.surface)
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .background(colors.surface)
                             .border(
                                 width = 1.dp,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = RoundedCornerShape(50),
+                                color = colors.outline,
+                                shape = RoundedCornerShape(shape.cornerSmall),
                             ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -274,10 +270,10 @@ fun AppsScreen(
                                         .padding(horizontal = 12.dp, vertical = 10.dp),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    Icon(
+                                    KomiIcon(
                                         imageVector = Icons.AutoMirrored.Filled.Sort,
                                         contentDescription = stringResource(Res.string.sort_apps),
-                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        tint = colors.onSurface,
                                         modifier = Modifier.size(18.dp),
                                     )
                                 }
@@ -287,7 +283,7 @@ fun AppsScreen(
                         Box(
                             modifier = Modifier
                                 .size(1.dp, 20.dp)
-                                .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+                                .background(colors.outline.copy(alpha = 0.5f)),
                         )
 
                         Box(
@@ -296,10 +292,10 @@ fun AppsScreen(
                                 .padding(horizontal = 12.dp, vertical = 10.dp),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = stringResource(Res.string.check_for_updates),
-                                tint = MaterialTheme.colorScheme.onSurface,
+                                tint = colors.onSurface,
                                 modifier = Modifier.size(18.dp),
                             )
                         }
@@ -307,7 +303,7 @@ fun AppsScreen(
                         Box(
                             modifier = Modifier
                                 .size(1.dp, 20.dp)
-                                .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+                                .background(colors.outline.copy(alpha = 0.5f)),
                         )
 
                         KomiDropdown(
@@ -354,10 +350,10 @@ fun AppsScreen(
                                         .padding(horizontal = 12.dp, vertical = 10.dp),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    Icon(
+                                    KomiIcon(
                                         imageVector = Icons.Outlined.MoreVert,
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        tint = colors.onSurface,
                                         modifier = Modifier.size(18.dp),
                                     )
                                 }
@@ -465,7 +461,7 @@ fun AppsScreen(
             }
         }
 
-        PullToRefreshBox(
+        KomiPullToRefresh(
             isRefreshing = state.isRefreshing,
             onRefresh = { onAction(AppsAction.OnRefresh) },
             modifier = Modifier
@@ -499,26 +495,28 @@ fun AppsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            CircularProgressIndicator(
+                            KomiCircularProgress(
                                 modifier = Modifier.size(14.dp),
-                                strokeWidth = 2.dp,
                             )
 
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.checking_for_updates),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                color = colors.onSurfaceVariant,
                             )
                         }
                     } else if (state.lastCheckedTimestamp != null) {
-                        Text(
+                        KomiText(
                             text =
                                 stringResource(
                                     Res.string.last_checked,
                                     formatLastChecked(state.lastCheckedTimestamp),
                                 ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            uppercase = false,
+                            color = colors.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                         )
                     }
@@ -529,7 +527,7 @@ fun AppsScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                CircularProgressIndicator()
+                                KomiCircularProgress()
                             }
                         }
 
@@ -538,10 +536,10 @@ fun AppsScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                Text(
+                                KomiText(
                                     text = stringResource(Res.string.no_apps_found),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onBackground,
+                                    role = KomiTextRole.Title,
+                                    color = colors.onBackground,
                                 )
                             }
                         }
@@ -973,6 +971,8 @@ fun AppItemCard(
     onUnskipVersionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val app = appItem.installedApp
     val isBusy =
         app.isPendingInstall ||
@@ -987,7 +987,7 @@ fun AppItemCard(
         Column(
             modifier =
                 Modifier
-                    .clip(RoundedCornerShape(32.dp))
+                    .clip(RoundedCornerShape(shape.corner))
                     .padding(16.dp),
         ) {
             Row(
@@ -1001,18 +1001,19 @@ fun AppItemCard(
                     modifier =
                         Modifier
                             .size(64.dp)
-                            .clip(RoundedCornerShape(18.dp)),
+                            .clip(RoundedCornerShape(shape.corner)),
                     apkFilePath = app.pendingInstallFilePath,
                 )
 
                 Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                    Text(
+                    KomiText(
                         text = app.appName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
 
                     Row(
@@ -1024,15 +1025,17 @@ fun AppItemCard(
                             modifier =
                                 Modifier
                                     .size(18.dp)
-                                    .clip(CircleShape),
+                                    .clip(RoundedCornerShape(shape.cornerSmall)),
                         )
 
                         Spacer(Modifier.width(6.dp))
 
-                        Text(
+                        KomiText(
                             text = app.repoOwner,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            uppercase = false,
+                            color = colors.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f, fill = false),
@@ -1048,28 +1051,34 @@ fun AppItemCard(
                     when {
 
                         app.pendingInstallFilePath != null -> {
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.ready_to_install),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                uppercase = false,
+                                color = colors.primary,
                                 fontWeight = FontWeight.SemiBold,
                             )
                         }
 
                         app.isPendingInstall -> {
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.pending_install),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.tertiary,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                uppercase = false,
+                                color = colors.primary,
                             )
                         }
 
                         app.preferredVariantStale -> {
 
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.variant_stale_hint),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                uppercase = false,
+                                color = colors.error,
                                 modifier =
                                     Modifier.clickable(
                                         enabled = !isBusy,
@@ -1079,7 +1088,7 @@ fun AppItemCard(
                         }
 
                         app.isUpdateAvailable -> {
-                            Text(
+                            KomiText(
                                 text =
                                     buildVersionLabel(
                                         installedVersion = app.installedVersion,
@@ -1087,21 +1096,25 @@ fun AppItemCard(
                                         latestReleasePublishedAt = app.latestReleasePublishedAt,
                                         lastUpdatedAt = app.lastUpdatedAt,
                                     ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                uppercase = false,
+                                color = colors.primary,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
 
                             if (!app.preferredAssetVariant.isNullOrBlank()) {
-                                Text(
+                                KomiText(
                                     text =
                                         stringResource(
                                             Res.string.variant_label_inline,
                                             app.preferredAssetVariant,
                                         ),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    role = KomiTextRole.Label,
+                                    fontSize = 11.sp,
+                                    uppercase = false,
+                                    color = colors.onSurfaceVariant,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -1109,7 +1122,7 @@ fun AppItemCard(
                         }
 
                         else -> {
-                            Text(
+                            KomiText(
                                 text =
                                     buildVersionLabel(
                                         installedVersion = app.installedVersion,
@@ -1117,8 +1130,10 @@ fun AppItemCard(
                                         latestReleasePublishedAt = null,
                                         lastUpdatedAt = app.lastUpdatedAt,
                                     ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                uppercase = false,
+                                color = colors.onSurfaceVariant,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -1130,10 +1145,11 @@ fun AppItemCard(
             if (app.repoDescription != null) {
                 Spacer(Modifier.height(8.dp))
 
-                Text(
+                KomiText(
                     text = app.repoDescription,
-                    style = MaterialTheme.typography.bodyMediumEmphasized,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    uppercase = false,
+                    color = colors.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -1147,10 +1163,11 @@ fun AppItemCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val preReleaseString = stringResource(Res.string.pre_release_badge)
-                Text(
+                KomiText(
                     text = preReleaseString,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                 )
 
                 Row(
@@ -1160,21 +1177,23 @@ fun AppItemCard(
                         stringResource(Res.string.advanced_settings_open)
                     val hasFilter =
                         !app.assetFilterRegex.isNullOrBlank() || app.fallbackToOlderReleases
-                    IconButton(
-                        onClick = onAdvancedSettingsClick,
-                        enabled = !isBusy,
-                        modifier = Modifier.semantics {
-                            contentDescription = advancedFilterDescription
-                        },
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable(enabled = !isBusy, onClick = onAdvancedSettingsClick)
+                            .semantics {
+                                contentDescription = advancedFilterDescription
+                            },
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.FilterAlt,
                             contentDescription = null,
                             tint =
                                 if (hasFilter) {
-                                    MaterialTheme.colorScheme.primary
+                                    colors.primary
                                 } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                    colors.onSurfaceVariant
                                 },
                         )
                     }
@@ -1182,26 +1201,28 @@ fun AppItemCard(
                     val pickVariantDescription =
                         stringResource(Res.string.variant_picker_open)
                     val hasPin = !app.preferredAssetVariant.isNullOrBlank()
-                    IconButton(
-                        onClick = onPickVariantClick,
-                        enabled = !isBusy,
-                        modifier = Modifier.semantics {
-                            contentDescription = pickVariantDescription
-                        },
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable(enabled = !isBusy, onClick = onPickVariantClick)
+                            .semantics {
+                                contentDescription = pickVariantDescription
+                            },
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Tune,
                             contentDescription = null,
                             tint =
                                 when {
-                                    app.preferredVariantStale -> MaterialTheme.colorScheme.error
-                                    hasPin -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                    app.preferredVariantStale -> colors.error
+                                    hasPin -> colors.primary
+                                    else -> colors.onSurfaceVariant
                                 },
                         )
                     }
 
-                    Checkbox(
+                    KomiCheckbox(
                         checked = app.includePreReleases,
                         onCheckedChange = onTogglePreReleases,
                         enabled = !isBusy,
@@ -1242,17 +1263,19 @@ fun AppItemCard(
                             }
                         },
                         trigger = { onClick ->
-                            IconButton(
-                                onClick = onClick,
-                                enabled = !isBusy,
-                                modifier = Modifier.semantics {
-                                    contentDescription = moreActionsLabel
-                                },
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clickable(enabled = !isBusy, onClick = onClick)
+                                    .semantics {
+                                        contentDescription = moreActionsLabel
+                                    },
+                                contentAlignment = Alignment.Center,
                             ) {
-                                Icon(
+                                KomiIcon(
                                     imageVector = Icons.Outlined.MoreVert,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    tint = colors.onSurfaceVariant,
                                 )
                             }
                         },
@@ -1269,26 +1292,30 @@ fun AppItemCard(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.downloading),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                color = colors.onSurface,
                             )
 
                             if (appItem.downloadProgress != null) {
-                                Text(
+                                KomiText(
                                     text = "${appItem.downloadProgress}%",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    role = KomiTextRole.Body,
+                                    fontSize = 13.sp,
+                                    uppercase = false,
+                                    color = colors.onSurface,
                                 )
                             }
                         }
 
                         Spacer(Modifier.height(4.dp))
 
-                        LinearWavyProgressIndicator(
+                        KomiLinearProgress(
                             progress = { (appItem.downloadProgress ?: 0) / 100f },
                             modifier = Modifier.fillMaxWidth(),
+                            color = colors.primary,
                         )
                     }
                 }
@@ -1298,15 +1325,15 @@ fun AppItemCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
                         )
 
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.installing),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onSurface,
                         )
                     }
                 }
@@ -1316,15 +1343,15 @@ fun AppItemCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
                         )
 
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.checking),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onSurface,
                         )
                     }
                 }
@@ -1334,26 +1361,29 @@ fun AppItemCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = colors.primary,
                             modifier = Modifier.size(16.dp),
                         )
 
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.updated_successfully),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.primary,
                         )
                     }
                 }
 
                 is UpdateState.Error -> {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.error_with_message, state.message),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        uppercase = false,
+                        color = colors.error,
                     )
                 }
 
@@ -1367,14 +1397,17 @@ fun AppItemCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    onClick = onUninstallClick,
-                    enabled = !isBusy,
+                val uninstallDescription = stringResource(Res.string.uninstall)
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable(enabled = !isBusy, onClick = onUninstallClick),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Outlined.DeleteOutline,
-                        contentDescription = stringResource(Res.string.uninstall),
-                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = uninstallDescription,
+                        tint = colors.error,
                     )
                 }
 
@@ -1401,11 +1434,18 @@ fun AppItemCard(
                                 modifier = Modifier.weight(1f),
                             )
 
-                            IconButton(onClick = onDiscardPendingClick) {
-                                Icon(
+                            val discardDescription =
+                                stringResource(Res.string.discard_pending_install)
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clickable(onClick = onDiscardPendingClick),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                KomiIcon(
                                     imageVector = Icons.Default.Cancel,
-                                    contentDescription = stringResource(Res.string.discard_pending_install),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    contentDescription = discardDescription,
+                                    tint = colors.onSurfaceVariant,
                                 )
                             }
                         } else if (app.isUpdateAvailable && !app.isPendingInstall) {

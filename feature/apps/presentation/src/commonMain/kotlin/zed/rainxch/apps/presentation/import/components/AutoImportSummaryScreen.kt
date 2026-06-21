@@ -1,5 +1,6 @@
 package zed.rainxch.apps.presentation.import.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,21 +13,23 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_auto_summary_body
 import zed.rainxch.githubstore.core.presentation.res.external_import_auto_summary_continue
@@ -44,6 +47,8 @@ fun AutoImportSummaryScreen(
     onUndoAll: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+
     Box(
         modifier = modifier.fillMaxSize().padding(24.dp),
         contentAlignment = Alignment.Center,
@@ -53,42 +58,45 @@ fun AutoImportSummaryScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.widthIn(max = 480.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(72.dp),
             )
 
-            Text(
+            KomiText(
                 text = pluralStringResource(
                     Res.plurals.external_import_auto_summary_headline,
                     autoLinkedCount,
                     autoLinkedCount,
                 ),
-                style = MaterialTheme.typography.titleLarge,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
+                uppercase = false,
             )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_auto_summary_body),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
+                uppercase = false,
             )
 
             if (cardsRemaining > 0) {
-                Text(
+                KomiText(
                     text = pluralStringResource(
                         Res.plurals.external_import_auto_summary_review_hint,
                         cardsRemaining,
                         cardsRemaining,
                     ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
                     textAlign = TextAlign.Center,
+                    uppercase = false,
                 )
             }
 
@@ -139,15 +147,21 @@ private fun AutoLinkedChipRow(autoLinkedLabels: ImmutableList<String>) {
 
 @Composable
 private fun ChipSurface(text: String) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(12.dp),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.primaryContainer),
     ) {
-        Text(
+        KomiText(
             text = text,
-            style = MaterialTheme.typography.labelMedium,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = colors.onPrimaryContainer,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
         )
     }

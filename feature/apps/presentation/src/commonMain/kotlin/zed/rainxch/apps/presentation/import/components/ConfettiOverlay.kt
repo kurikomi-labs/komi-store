@@ -21,6 +21,7 @@ import androidx.compose.ui.zIndex
 import kotlin.math.min
 import kotlin.random.Random
 import zed.rainxch.apps.presentation.import.util.LocalReducedMotion
+import zed.rainxch.core.presentation.locals.LocalPersonality
 
 private data class Particle(
     val xFraction: Float,
@@ -39,12 +40,13 @@ fun ConfettiOverlay(
     val reducedMotion = LocalReducedMotion.current
     if (!enabled || reducedMotion) return
 
+    val colors = LocalPersonality.current.colors
     val palette = listOf(
-        androidx.compose.material3.MaterialTheme.colorScheme.primary,
-        androidx.compose.material3.MaterialTheme.colorScheme.secondary,
-        androidx.compose.material3.MaterialTheme.colorScheme.tertiary,
-        androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
-        androidx.compose.material3.MaterialTheme.colorScheme.error,
+        colors.primary,
+        colors.primary,
+        colors.primary,
+        colors.primaryContainer,
+        colors.error,
     )
 
     val particles = remember(palette) {

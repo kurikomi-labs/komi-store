@@ -1,12 +1,12 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 
 package zed.rainxch.apps.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,15 +25,13 @@ import androidx.compose.material.icons.outlined.MoreVert
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.KomiDropdown
 import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.components.overlays.KomiMenuTone
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +43,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.AppItem
@@ -85,7 +84,9 @@ fun CompactAppRow(
 
     val flags = rememberCompactStatusFlags(appItem)
     val rowSemanticName = buildCompactRowSemantics(app.appName, app.installedVersion, flags)
-    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val rowShape = RoundedCornerShape(shape.corner)
 
     Row(
         modifier = modifier
@@ -94,10 +95,10 @@ fun CompactAppRow(
             .clip(rowShape)
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outline,
+                color = colors.outline,
                 shape = rowShape,
             )
-            .background(MaterialTheme.colorScheme.surface)
+            .background(colors.surface)
             .clickable(onClick = onRowClick)
             .padding(horizontal = 14.dp, vertical = 12.dp)
             .semantics(mergeDescendants = true) {
@@ -112,16 +113,18 @@ fun CompactAppRow(
             modifier =
                 Modifier
                     .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp)),
+                    .clip(RoundedCornerShape(shape.corner)),
             apkFilePath = app.pendingInstallFilePath,
         )
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = app.appName,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontSize = 14.sp,
+                color = colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
+                uppercase = false,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -134,10 +137,11 @@ fun CompactAppRow(
             ) {
                 app.sourceHost?.let { SourceChip(host = it) }
 
-                Text(
+                KomiText(
                     text = app.installedVersion,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
@@ -160,14 +164,21 @@ fun CompactAppRow(
             Spacer(Modifier.width(4.dp))
         } else if (app.isPendingInstall) {
         } else if (!isBusy) {
-            IconButton(
-                onClick = onOpenClick,
-                modifier = Modifier.size(40.dp),
+            val openLabel = stringResource(Res.string.open)
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable(onClick = onOpenClick)
+                    .semantics {
+                        contentDescription = openLabel
+                        role = Role.Button
+                    },
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = stringResource(Res.string.open),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = null,
+                    tint = colors.onSurfaceVariant,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -209,6 +220,7 @@ private fun CompactRowOverflow(
     onDiscardPendingClick: () -> Unit,
     onUnskipVersionClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val moreActionsLabel = stringResource(Res.string.apps_compact_more_actions, appName)
 
     val preReleaseBase = stringResource(Res.string.pre_release_badge)
@@ -272,21 +284,21 @@ private fun CompactRowOverflow(
             }
         },
         trigger = { onClick ->
-            IconButton(
-                onClick = onClick,
+            Box(
                 modifier =
                     Modifier
                         .size(40.dp)
+                        .clickable(enabled = !isBusy, onClick = onClick)
                         .semantics {
                             contentDescription = moreActionsLabel
                             role = Role.Button
                         },
-                enabled = !isBusy,
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.MoreVert,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = if (isBusy) colors.onSurfaceVariant.copy(alpha = 0.38f) else colors.onSurfaceVariant,
                 )
             }
         },

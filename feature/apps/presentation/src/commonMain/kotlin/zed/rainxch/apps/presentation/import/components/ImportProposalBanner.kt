@@ -7,23 +7,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -39,62 +42,64 @@ fun ImportProposalBanner(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer,
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+
+    Row(
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(shape.corner))
+                .background(colors.primaryContainer)
+                .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        KomiIcon(
+            imageVector = Icons.Outlined.FileDownload,
+            contentDescription = null,
+            tint = colors.onPrimaryContainer,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Icon(
-                imageVector = Icons.Outlined.FileDownload,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.size(24.dp),
+            KomiText(
+                text =
+                    pluralStringResource(
+                        Res.plurals.external_import_proposal_banner_headline,
+                        pendingCount,
+                        pendingCount,
+                    ),
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onPrimaryContainer,
+                uppercase = false,
             )
 
-            Spacer(Modifier.width(12.dp))
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text =
-                        pluralStringResource(
-                            Res.plurals.external_import_proposal_banner_headline,
-                            pendingCount,
-                            pendingCount,
-                        ),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
-
-                Text(
-                    text = stringResource(Res.string.external_import_proposal_banner_body),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
-            }
-
-            Spacer(Modifier.width(8.dp))
-
-            KomiButton(
-                onClick = onReview,
-                label = stringResource(Res.string.external_import_proposal_banner_review),
-                variant = KomiButtonVariant.Text,
-                size = KomiButtonSize.Sm,
+            KomiText(
+                text = stringResource(Res.string.external_import_proposal_banner_body),
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onPrimaryContainer,
             )
-
-            IconButton(onClick = onDismiss) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(Res.string.external_import_proposal_banner_dismiss),
-                )
-            }
         }
+
+        Spacer(Modifier.width(8.dp))
+
+        KomiButton(
+            onClick = onReview,
+            label = stringResource(Res.string.external_import_proposal_banner_review),
+            variant = KomiButtonVariant.Text,
+            size = KomiButtonSize.Sm,
+        )
+
+        KomiIconButton(
+            icon = Icons.Default.Close,
+            contentDescription = stringResource(Res.string.external_import_proposal_banner_dismiss),
+            onClick = onDismiss,
+        )
     }
 }

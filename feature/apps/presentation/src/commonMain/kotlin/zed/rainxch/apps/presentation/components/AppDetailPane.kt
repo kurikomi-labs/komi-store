@@ -1,9 +1,8 @@
-@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
-
 package zed.rainxch.apps.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,13 +24,6 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +37,13 @@ import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.UpdateState
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pending_install
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pre_release_on
@@ -172,13 +170,15 @@ fun AppDetailPane(
 
 @Composable
 private fun DetailHeader(appItem: AppItem) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val app = appItem.installedApp
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
                 .size(72.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                .clip(RoundedCornerShape(shape.corner))
+                .background(colors.surfaceContainerHigh),
             contentAlignment = Alignment.Center,
         ) {
             InstalledAppIcon(
@@ -192,33 +192,37 @@ private fun DetailHeader(appItem: AppItem) {
         Spacer(Modifier.width(14.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = app.appName,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = colors.onBackground,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
-            Text(
+            KomiText(
                 text = app.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
             Spacer(Modifier.height(2.dp))
 
-            Text(
+            KomiText(
                 text = "${app.repoOwner}/${app.repoName}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
         }
     }
@@ -226,12 +230,19 @@ private fun DetailHeader(appItem: AppItem) {
 
 @Composable
 private fun StatusBlock(appItem: AppItem) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val app = appItem.installedApp
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.surface)
+            .border(
+                width = 1.dp,
+                color = colors.outlineVariant.copy(alpha = 0.4f),
+                shape = RoundedCornerShape(shape.corner),
+            ),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             StatusRow(
@@ -239,8 +250,8 @@ private fun StatusBlock(appItem: AppItem) {
                 value = app.installedVersion,
             )
 
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+            KomiHorizontalDivider(
+                color = colors.outlineVariant.copy(alpha = 0.35f),
                 modifier = Modifier.padding(vertical = 10.dp),
             )
 
@@ -250,8 +261,8 @@ private fun StatusBlock(appItem: AppItem) {
             )
 
             if (app.preferredAssetVariant != null) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+                KomiHorizontalDivider(
+                    color = colors.outlineVariant.copy(alpha = 0.35f),
                     modifier = Modifier.padding(vertical = 10.dp),
                 )
 
@@ -281,10 +292,12 @@ private fun StatusBlock(appItem: AppItem) {
                 is UpdateState.Error -> {
                     Spacer(Modifier.height(10.dp))
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.error_with_message, state.message),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.error,
+                        uppercase = false,
                     )
                 }
                 else -> {}
@@ -316,23 +329,28 @@ private fun StatusRow(
     label: String,
     value: String,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.onSurfaceVariant,
             modifier = Modifier.weight(1f),
+            uppercase = false,
         )
 
-        Text(
+        KomiText(
             text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            fontWeight = FontWeight.Medium,
+            color = colors.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            uppercase = false,
         )
     }
 }
@@ -342,38 +360,50 @@ private fun StatusProgress(
     label: String,
     progress: Float?,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
 
         Spacer(Modifier.height(6.dp))
 
         if (progress != null) {
-            LinearWavyProgressIndicator(
+            KomiLinearProgress(
                 progress = { progress },
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
-            LinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
+            KomiLinearProgress(modifier = Modifier.fillMaxWidth())
         }
     }
 }
 
 @Composable
 private fun StatusPill(label: String) {
-    Surface(
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.surfaceContainerHigh)
+            .border(
+                width = 0.5.dp,
+                color = colors.outlineVariant.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(shape.cornerSmall),
+            ),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            uppercase = false,
         )
     }
 }
@@ -450,12 +480,19 @@ private fun SettingsBlock(
     onOpenAdvancedSettings: () -> Unit,
     onPickVariant: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val app = appItem.installedApp
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.surface)
+            .border(
+                width = 1.dp,
+                color = colors.outlineVariant.copy(alpha = 0.4f),
+                shape = RoundedCornerShape(shape.corner),
+            ),
     ) {
         Column {
             SettingsToggleRow(
@@ -495,20 +532,22 @@ private fun SettingsToggleRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
+        KomiText(
             text = title,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
             modifier = Modifier.weight(1f),
+            uppercase = false,
         )
 
-        Switch(
+        KomiSwitch(
             checked = checked,
             onCheckedChange = onCheckedChange,
         )
@@ -520,35 +559,38 @@ private fun SettingsActionRow(
     title: String,
     onClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        onClick = onClick,
+    val colors = LocalPersonality.current.colors
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colors.surface)
+            .clickable(onClick = onClick),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.Tune,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
 
             Spacer(Modifier.width(12.dp))
 
-            Text(
+            KomiText(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Body,
+                color = colors.onSurface,
                 modifier = Modifier.weight(1f),
+                uppercase = false,
             )
 
-            Icon(
+            KomiIcon(
                 imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(16.dp),
             )
         }
@@ -557,23 +599,27 @@ private fun SettingsActionRow(
 
 @Composable
 private fun DividerThin() {
-    HorizontalDivider(
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+    val colors = LocalPersonality.current.colors
+    KomiHorizontalDivider(
+        color = colors.outlineVariant.copy(alpha = 0.35f),
     )
 }
 
 @Composable
 private fun SectionLabel(text: String) {
-    Text(
+    val colors = LocalPersonality.current.colors
+    KomiText(
         text = text,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        role = KomiTextRole.Label,
+        fontWeight = FontWeight.SemiBold,
+        color = colors.onSurfaceVariant,
         modifier = Modifier.padding(bottom = 8.dp, start = 4.dp),
     )
 }
 
 @Composable
 private fun EmptyDetailPane(modifier: Modifier = Modifier) {
+    val colors = LocalPersonality.current.colors
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -582,28 +628,30 @@ private fun EmptyDetailPane(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(32.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Outlined.Apps,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline,
+                tint = colors.outline,
                 modifier = Modifier.size(48.dp),
             )
 
             Spacer(Modifier.height(12.dp))
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.apps_two_pane_empty_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Title,
+                color = colors.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
+                uppercase = false,
             )
 
             Spacer(Modifier.height(4.dp))
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.apps_two_pane_empty_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline,
+                role = KomiTextRole.Body,
+                color = colors.outline,
+                uppercase = false,
             )
         }
     }

@@ -10,12 +10,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,8 @@ fun EmptyStateScreen(
     onAddManually: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+
     Box(
         modifier = modifier.fillMaxSize().padding(24.dp),
         contentAlignment = Alignment.Center,
@@ -48,18 +51,18 @@ fun EmptyStateScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             if (!isPermissionDenied) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.CheckCircle,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = colors.onSurfaceVariant,
                     modifier = Modifier.size(64.dp),
                 )
 
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_empty_all_matched),
-                    style = MaterialTheme.typography.titleLarge,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.onSurface,
                     textAlign = TextAlign.Center,
                 )
 
@@ -75,26 +78,27 @@ fun EmptyStateScreen(
                     variant = KomiButtonVariant.Text,
                 )
             } else {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = colors.onSurfaceVariant,
                     modifier = Modifier.size(72.dp),
                 )
 
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_empty_no_apps_title),
-                    style = MaterialTheme.typography.titleLarge,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.onSurface,
                     textAlign = TextAlign.Center,
                 )
 
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_empty_no_apps_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                     textAlign = TextAlign.Center,
+                    uppercase = false,
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

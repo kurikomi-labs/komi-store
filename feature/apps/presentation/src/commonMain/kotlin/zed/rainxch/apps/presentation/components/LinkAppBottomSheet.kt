@@ -27,20 +27,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,7 +61,6 @@ import zed.rainxch.core.domain.system.RepoMatchSource
 import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.githubstore.core.presentation.res.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LinkAppBottomSheet(
     state: AppsState,
@@ -145,24 +144,25 @@ private fun PickAppStep(
     onSearchChange: (String) -> Unit,
     onAppSelected: (DeviceAppUi) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.link_app_title),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            color = colors.onSurface,
             fontWeight = FontWeight.Bold,
         )
 
         Spacer(Modifier.height(4.dp))
 
-        Text(
+        KomiText(
             text = stringResource(Res.string.pick_installed_app),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -191,8 +191,8 @@ private fun PickAppStep(
                     onClick = { onAppSelected(app) },
                 )
 
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                KomiHorizontalDivider(
+                    color = colors.outlineVariant.copy(alpha = 0.3f),
                 )
             }
 
@@ -204,10 +204,10 @@ private fun PickAppStep(
                             .padding(32.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.no_apps_found),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
                         )
                     }
                 }
@@ -223,6 +223,7 @@ private fun DeviceAppItem(
     app: DeviceAppUi,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -233,13 +234,14 @@ private fun DeviceAppItem(
         Column(
             modifier = Modifier.weight(1f),
         ) {
-            Text(
+            KomiText(
                 text = app.appName,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Body,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -247,12 +249,14 @@ private fun DeviceAppItem(
 
                 Spacer(Modifier.width(6.dp))
 
-                Text(
+                KomiText(
                     text = app.packageName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -261,12 +265,14 @@ private fun DeviceAppItem(
         Spacer(Modifier.width(8.dp))
 
         app.versionName?.let { version ->
-            Text(
+            KomiText(
                 text = version,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.outline,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                color = colors.outline,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
                 modifier = Modifier.widthIn(max = 96.dp),
             )
         }
@@ -282,30 +288,34 @@ private fun InstallerCategoryChip(category: InstallerCategory) {
         InstallerCategory.PLAY_STORE -> stringResource(Res.string.installer_category_play_store)
         InstallerCategory.SYSTEM_UPDATE -> stringResource(Res.string.installer_category_system_update)
     }
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val container = when (category) {
-        InstallerCategory.SIDE_STORE -> MaterialTheme.colorScheme.primaryContainer
-        InstallerCategory.SIDELOADED -> MaterialTheme.colorScheme.secondaryContainer
-        InstallerCategory.VENDOR_STORE -> MaterialTheme.colorScheme.tertiaryContainer
-        InstallerCategory.PLAY_STORE -> MaterialTheme.colorScheme.surfaceVariant
-        InstallerCategory.SYSTEM_UPDATE -> MaterialTheme.colorScheme.surfaceVariant
+        InstallerCategory.SIDE_STORE -> colors.primaryContainer
+        InstallerCategory.SIDELOADED -> colors.primaryContainer
+        InstallerCategory.VENDOR_STORE -> colors.primaryContainer
+        InstallerCategory.PLAY_STORE -> colors.surfaceVariant
+        InstallerCategory.SYSTEM_UPDATE -> colors.surfaceVariant
     }
     val content = when (category) {
-        InstallerCategory.SIDE_STORE -> MaterialTheme.colorScheme.onPrimaryContainer
-        InstallerCategory.SIDELOADED -> MaterialTheme.colorScheme.onSecondaryContainer
-        InstallerCategory.VENDOR_STORE -> MaterialTheme.colorScheme.onTertiaryContainer
-        InstallerCategory.PLAY_STORE -> MaterialTheme.colorScheme.onSurfaceVariant
-        InstallerCategory.SYSTEM_UPDATE -> MaterialTheme.colorScheme.onSurfaceVariant
+        InstallerCategory.SIDE_STORE -> colors.onPrimaryContainer
+        InstallerCategory.SIDELOADED -> colors.onPrimaryContainer
+        InstallerCategory.VENDOR_STORE -> colors.onPrimaryContainer
+        InstallerCategory.PLAY_STORE -> colors.onSurfaceVariant
+        InstallerCategory.SYSTEM_UPDATE -> colors.onSurfaceVariant
     }
-    Surface(
-        color = container,
-        shape = RoundedCornerShape(6.dp),
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(container),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
             color = content,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
         )
     }
@@ -324,6 +334,7 @@ private fun SmartMatchStep(
     onRetry: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -334,17 +345,17 @@ private fun SmartMatchStep(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onBack, enabled = !isValidating) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.cd_back),
+                onClick = onBack,
+                enabled = !isValidating,
+            )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.link_smart_search_title),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -355,22 +366,25 @@ private fun SmartMatchStep(
         Spacer(Modifier.height(8.dp))
 
         if (selectedApp != null) {
-            Text(
+            KomiText(
                 text = selectedApp.appName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Text(
+            KomiText(
                 text = selectedApp.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -386,17 +400,16 @@ private fun SmartMatchStep(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    CircularProgressIndicator(
+                    KomiCircularProgress(
                         modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
                     )
 
                     Spacer(Modifier.width(12.dp))
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.link_smart_search_searching),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurfaceVariant,
                     )
                 }
             }
@@ -409,26 +422,26 @@ private fun SmartMatchStep(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    CircularProgressIndicator(
+                    KomiCircularProgress(
                         modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
                     )
 
                     Spacer(Modifier.width(12.dp))
 
-                    Text(
+                    KomiText(
                         text = validationStatus ?: stringResource(Res.string.validating_repo),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
 
             error != null -> {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.link_smart_search_failed),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
+                    role = KomiTextRole.Body,
+                    color = colors.error,
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -442,10 +455,10 @@ private fun SmartMatchStep(
             }
 
             suggestions.isEmpty() -> {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.link_smart_search_no_matches),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                 )
             }
 
@@ -471,8 +484,8 @@ private fun SmartMatchStep(
                             },
                         )
 
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                        KomiHorizontalDivider(
+                            color = colors.outlineVariant.copy(alpha = 0.3f),
                         )
                     }
                 }
@@ -496,6 +509,7 @@ private fun SuggestionRow(
     suggestion: RepoMatchSuggestion,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -504,24 +518,26 @@ private fun SuggestionRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = "${suggestion.owner}/${suggestion.repo}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Body,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
-                softWrap = false,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
                 modifier = Modifier.fillMaxWidth(),
             )
             val description = suggestion.description?.takeIf { it.isNotBlank() }
             if (description != null) {
-                Text(
+                KomiText(
                     text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -535,19 +551,23 @@ private fun SuggestionRow(
 
                 Spacer(Modifier.width(6.dp))
 
-                Text(
+                KomiText(
                     text = "${(suggestion.confidence * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
 
                 suggestion.stars?.let { stars ->
                     Spacer(Modifier.width(8.dp))
 
-                    Text(
+                    KomiText(
                         text = "★ $stars",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
@@ -557,36 +577,40 @@ private fun SuggestionRow(
 
 @Composable
 private fun HostBadge(sourceHost: String?) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val (label, bg, fg) = when {
         sourceHost == null ->
             Triple(
                 "GitHub",
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.onSurfaceVariant,
+                colors.surfaceVariant,
+                colors.onSurfaceVariant,
             )
         sourceHost.equals("codeberg.org", ignoreCase = true) ->
             Triple(
                 "Codeberg",
-                MaterialTheme.colorScheme.tertiaryContainer,
-                MaterialTheme.colorScheme.onTertiaryContainer,
+                colors.primaryContainer,
+                colors.onPrimaryContainer,
             )
         else ->
             Triple(
                 sourceHost,
-                MaterialTheme.colorScheme.primaryContainer,
-                MaterialTheme.colorScheme.onPrimaryContainer,
+                colors.primaryContainer,
+                colors.onPrimaryContainer,
             )
     }
-    Surface(
-        color = bg,
-        shape = RoundedCornerShape(6.dp),
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(bg),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
             color = fg,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
         )
     }
@@ -603,16 +627,20 @@ private fun MatchSourceChip(source: RepoMatchSource) {
         RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
         RepoMatchSource.STARRED -> stringResource(Res.string.match_source_starred)
     }
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(6.dp),
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(colors.primaryContainer),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onPrimaryContainer,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
         )
     }
@@ -629,6 +657,8 @@ private fun EnterUrlStep(
     onConfirm: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -638,17 +668,16 @@ private fun EnterUrlStep(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.cd_back),
+                onClick = onBack,
+            )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.link_app_title),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -659,30 +688,34 @@ private fun EnterUrlStep(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(shape.corner))
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = selectedApp.appName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                     )
 
-                    Text(
+                    KomiText(
                         text = selectedApp.packageName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
 
                 selectedApp.versionName?.let {
-                    Text(
+                    KomiText(
                         text = it,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Label,
+                        color = colors.primary,
+                        uppercase = false,
                     )
                 }
             }
@@ -717,10 +750,12 @@ private fun EnterUrlStep(
         if (isValidating && validationStatus != null) {
             Spacer(Modifier.height(8.dp))
 
-            Text(
+            KomiText(
                 text = validationStatus,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -743,6 +778,8 @@ private fun PickAssetStep(
     onAssetSelected: (GithubAssetUi) -> Unit,
     onBack: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val isProcessing = selectedAsset != null
 
     Column(
@@ -754,27 +791,27 @@ private fun PickAssetStep(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onBack, enabled = !isProcessing) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.cd_back),
+                onClick = onBack,
+                enabled = !isProcessing,
+            )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.select_asset_title),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Bold,
             )
         }
 
         Spacer(Modifier.height(4.dp))
 
-        Text(
+        KomiText(
             text = stringResource(Res.string.select_asset_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 4.dp),
         )
 
@@ -815,21 +852,22 @@ private fun PickAssetStep(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.fallback_older_releases_title),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
                     fontWeight = FontWeight.Medium,
                 )
 
-                Text(
+                KomiText(
                     text = stringResource(Res.string.fallback_older_releases_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                 )
             }
 
-            Switch(
+            KomiSwitch(
                 checked = fallbackEnabled,
                 onCheckedChange = onFallbackToggled,
                 enabled = !isProcessing,
@@ -855,8 +893,8 @@ private fun PickAssetStep(
                         .then(
                             if (isSelected) {
                                 Modifier.background(
-                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                                    RoundedCornerShape(8.dp),
+                                    colors.primaryContainer.copy(alpha = 0.3f),
+                                    RoundedCornerShape(shape.cornerSmall),
                                 )
                             } else {
                                 Modifier
@@ -867,43 +905,47 @@ private fun PickAssetStep(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(
+                        KomiText(
                             text = asset.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurface,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
+                            uppercase = false,
                         )
 
-                        Text(
+                        KomiText(
                             text = formatFileSize(asset.size),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
                         )
                     }
 
                     if (isSelected && downloadProgress != null) {
                         Spacer(Modifier.width(8.dp))
 
-                        CircularProgressIndicator(
+                        KomiCircularProgress(
                             progress = { downloadProgress / 100f },
                             modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp,
                         )
 
                         Spacer(Modifier.width(4.dp))
 
-                        Text(
+                        KomiText(
                             text = "$downloadProgress%",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.primary,
+                            uppercase = false,
                         )
                     }
                 }
 
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                KomiHorizontalDivider(
+                    color = colors.outlineVariant.copy(alpha = 0.3f),
                 )
             }
 
@@ -923,14 +965,14 @@ private fun PickAssetStep(
                             .padding(24.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(
+                        KomiText(
                             text = message,
-                            style = MaterialTheme.typography.bodyMedium,
+                            role = KomiTextRole.Body,
                             color =
                                 if (isError) {
-                                    MaterialTheme.colorScheme.error
+                                    colors.error
                                 } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                    colors.onSurfaceVariant
                                 },
                         )
                     }
@@ -940,19 +982,23 @@ private fun PickAssetStep(
 
         if (validationStatus != null) {
             Spacer(Modifier.height(8.dp))
-            Text(
+            KomiText(
                 text = validationStatus,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
 
         if (validationError != null) {
             Spacer(Modifier.height(8.dp))
-            Text(
+            KomiText(
                 text = validationError,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.error,
+                uppercase = false,
             )
         }
     }

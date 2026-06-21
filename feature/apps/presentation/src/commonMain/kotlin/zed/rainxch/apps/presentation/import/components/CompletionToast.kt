@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ fun CompletionToast(
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     val tracked = autoImported + manuallyLinked
 
     Box(
@@ -45,32 +47,34 @@ fun CompletionToast(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(72.dp),
             )
 
-            Text(
+            KomiText(
                 text =
                     pluralStringResource(
                         Res.plurals.external_import_completion_headline,
                         tracked,
                         tracked,
                     ),
-                style = MaterialTheme.typography.headlineSmall,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
+                uppercase = false,
             )
 
             if (skipped > 0) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_completion_skipped_subline, skipped),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                     textAlign = TextAlign.Center,
+                    uppercase = false,
                 )
             }
 

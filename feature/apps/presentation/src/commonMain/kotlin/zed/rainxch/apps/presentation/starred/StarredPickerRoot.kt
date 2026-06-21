@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package zed.rainxch.apps.presentation.starred
 
 import androidx.compose.foundation.layout.Arrangement
@@ -16,18 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.starred.components.StarredCandidateRow
@@ -40,7 +33,13 @@ import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.chips.KomiChip
 import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
@@ -115,24 +114,26 @@ private fun ContentBody(
     state: StarredPickerState,
     onAction: (StarredPickerAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Spacer(Modifier.height(8.dp))
 
-        Text(
+        KomiText(
             text = stringResource(
                 Res.string.starred_picker_header_counts,
                 state.totalStarred,
                 state.apkCount,
                 state.trackedCount,
             ),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
 
         if (state.phase == StarredPickerState.Phase.ScanningReleases) {
             Spacer(Modifier.height(8.dp))
             Column(modifier = Modifier.fillMaxWidth()) {
-                LinearProgressIndicator(
+                KomiLinearProgress(
                     progress = {
                         if (state.scanTotal > 0) state.scanProgress.toFloat() / state.scanTotal else 0f
                     },
@@ -141,14 +142,16 @@ private fun ContentBody(
 
                 Spacer(Modifier.height(4.dp))
 
-                Text(
+                KomiText(
                     text = stringResource(
                         Res.string.starred_picker_progress,
                         state.scanProgress,
                         state.scanTotal,
                     ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
@@ -204,14 +207,16 @@ private fun ContentBody(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.starred_picker_filter_show_all),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
+                uppercase = false,
             )
 
-            Switch(
+            KomiSwitch(
                 checked = state.showWithoutApk,
                 onCheckedChange = { onAction(StarredPickerAction.OnToggleWithoutApk(it)) },
             )
@@ -219,10 +224,12 @@ private fun ContentBody(
 
         Spacer(Modifier.height(8.dp))
 
-        Text(
+        KomiText(
             text = stringResource(Res.string.starred_picker_star_dedup_tooltip),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
 
         if (state.visibleCandidates.isEmpty()) {
@@ -230,10 +237,11 @@ private fun ContentBody(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.starred_picker_no_match),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         } else {
@@ -256,6 +264,7 @@ private fun ContentBody(
 
 @Composable
 private fun RateLimitedBanner(onResume: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -263,11 +272,13 @@ private fun RateLimitedBanner(onResume: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.starred_picker_rate_limited),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.error,
             modifier = Modifier.weight(1f),
+            uppercase = false,
         )
 
         KomiButton(
@@ -281,6 +292,7 @@ private fun RateLimitedBanner(onResume: () -> Unit) {
 
 @Composable
 private fun EmptyState(isAuthenticated: Boolean) {
+    val colors = LocalPersonality.current.colors
     Box(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         contentAlignment = Alignment.Center,
@@ -290,10 +302,11 @@ private fun EmptyState(isAuthenticated: Boolean) {
         } else {
             stringResource(Res.string.starred_picker_empty)
         }
-        Text(
+        KomiText(
             text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }
@@ -304,7 +317,7 @@ private fun CenteredProgress() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator()
+        KomiCircularProgress()
     }
 }
 

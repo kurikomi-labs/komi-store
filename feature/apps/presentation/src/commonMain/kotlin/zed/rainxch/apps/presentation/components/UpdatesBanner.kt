@@ -1,10 +1,9 @@
-@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
-
 package zed.rainxch.apps.presentation.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,15 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,8 +31,13 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.core.presentation.components.buttons.KomiButton
-import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_hide
 import zed.rainxch.githubstore.core.presentation.res.apps_updates_banner_show
@@ -66,17 +66,24 @@ fun UpdatesBanner(
         animationSpec = tween(durationMillis = 180),
         label = "updates-banner-chevron",
     )
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val title = if (count == 1) {
         stringResource(Res.string.apps_updates_banner_title_one)
     } else {
         stringResource(Res.string.apps_updates_banner_title_other, count)
     }
 
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.primaryContainer)
+            .border(
+                width = 0.5.dp,
+                color = colors.outlineVariant.copy(alpha = 0.35f),
+                shape = RoundedCornerShape(shape.corner),
+            ),
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -86,49 +93,50 @@ fun UpdatesBanner(
                         .padding(2.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
-                        modifier = Modifier.size(32.dp),
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(RoundedCornerShape(shape.corner))
+                            .background(colors.primary.copy(alpha = 0.18f)),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.Default.Update,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
+                        KomiIcon(
+                            imageVector = Icons.Default.Update,
+                            contentDescription = null,
+                            tint = colors.onPrimaryContainer,
+                            modifier = Modifier.size(18.dp),
+                        )
                     }
                 }
 
                 Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        uppercase = false,
+                        color = colors.onPrimaryContainer,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.apps_updates_banner_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f),
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onPrimaryContainer.copy(alpha = 0.78f),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
 
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.ExpandMore,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f),
+                    tint = colors.onPrimaryContainer.copy(alpha = 0.78f),
                     modifier = Modifier
                         .size(22.dp)
                         .rotate(rotation),
@@ -179,30 +187,34 @@ private fun UpdateAllInlineProgress(
     progress: UpdateAllProgress,
     onCancel: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = stringResource(
                         Res.string.updating_x_of_y,
                         progress.current,
                         progress.total,
                     ),
-                    style = MaterialTheme.typography.titleSmall,
+                    role = KomiTextRole.Title,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    uppercase = false,
+                    color = colors.onPrimaryContainer,
                 )
 
-                Text(
+                KomiText(
                     text = stringResource(
                         Res.string.currently_updating,
                         progress.currentAppName,
                     ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f),
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onPrimaryContainer.copy(alpha = 0.78f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -219,11 +231,10 @@ private fun UpdateAllInlineProgress(
 
         Spacer(Modifier.height(10.dp))
 
-        LinearWavyProgressIndicator(
+        KomiLinearProgress(
             progress = { progress.current.toFloat() / progress.total.coerceAtLeast(1) },
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            trackColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.18f),
+            color = colors.onPrimaryContainer,
         )
     }
 }
