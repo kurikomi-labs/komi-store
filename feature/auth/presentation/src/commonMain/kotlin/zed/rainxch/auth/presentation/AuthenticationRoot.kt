@@ -1,8 +1,3 @@
-@file:OptIn(
-    androidx.compose.material3.ExperimentalMaterial3Api::class,
-    androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class,
-)
-
 package zed.rainxch.auth.presentation
 
 import androidx.compose.animation.AnimatedContent
@@ -18,7 +13,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,7 +28,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -43,13 +36,6 @@ import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -81,10 +66,19 @@ import zed.rainxch.auth.presentation.model.GithubDeviceStartUi
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.classicPersonality
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -148,6 +142,7 @@ fun AuthenticationScreen(
     state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val shape = LocalPersonality.current.shape
     KomiScaffold(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
@@ -186,7 +181,7 @@ fun AuthenticationScreen(
                             scaleX = iconScale
                             scaleY = iconScale
                         }
-                        .clip(RoundedCornerShape(24.dp)),
+                        .clip(RoundedCornerShape(shape.corner)),
                     contentScale = ContentScale.Crop,
                 )
 
@@ -239,19 +234,20 @@ fun AuthenticationScreen(
 
 @Composable
 private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
+    val colors = LocalPersonality.current.colors
     var showMoreOptions by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.unlock_full_experience),
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = MaterialTheme.colorScheme.onBackground,
+            role = KomiTextRole.Display,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onBackground,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
 
         Spacer(Modifier.height(20.dp))
@@ -311,11 +307,11 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 
 @Composable
 private fun BenefitsCard() {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+        paper = KomiSurfacePaper.Surface,
     ) {
         Row(
             modifier = Modifier.padding(18.dp),
@@ -325,32 +321,34 @@ private fun BenefitsCard() {
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                    .clip(RoundedCornerShape(shape.corner))
+                    .background(colors.primary.copy(alpha = 0.14f)),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     painter = painterResource(Res.drawable.ic_github),
                     contentDescription = null,
                     modifier = Modifier.size(22.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = colors.primary,
                 )
             }
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.more_requests),
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
-                Text(
+                KomiText(
                     text = stringResource(Res.string.more_requests_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
@@ -363,26 +361,27 @@ private fun StateDevicePrompt(
     authState: AuthLoginState.DevicePrompt,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
 
-        Surface(
+        KomiSurface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+            paper = KomiSurfacePaper.Surface,
         ) {
             Column(
                 modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.enter_code_on_github),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
                 Spacer(Modifier.height(14.dp))
                 Row(
@@ -390,21 +389,20 @@ private fun StateDevicePrompt(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(
+                    KomiText(
                         text = authState.start.userCode,
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 3.sp,
+                        role = KomiTextRole.Mono,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
                     Spacer(Modifier.width(12.dp))
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f))
+                            .clip(RoundedCornerShape(shape.corner))
+                            .background(colors.primary.copy(alpha = 0.14f))
                             .clickable {
                                 onAction(AuthenticationAction.CopyCode(authState.start))
                             },
@@ -418,22 +416,25 @@ private fun StateDevicePrompt(
                             },
                             label = "copy_icon",
                         ) { isCopied ->
-                            Icon(
+                            KomiIcon(
                                 imageVector = if (isCopied) Icons.Default.DoneAll else Icons.Default.ContentCopy,
                                 contentDescription = stringResource(Res.string.copy_code),
                                 modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = colors.primary,
                             )
                         }
                     }
                 }
                 state.info?.let { info ->
                     Spacer(Modifier.height(10.dp))
-                    Text(
+                    KomiText(
                         text = info,
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.primary,
                         textAlign = TextAlign.Center,
+                        uppercase = false,
                     )
                 }
                 if (authState.remainingSeconds > 0) {
@@ -447,12 +448,12 @@ private fun StateDevicePrompt(
                     )
                     val isUrgent = authState.remainingSeconds < 60
                     val progressColor by animateColorAsState(
-                        targetValue = if (isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        targetValue = if (isUrgent) colors.error else colors.primary,
                         animationSpec = tween(500),
                         label = "progress_color",
                     )
                     val timerColor by animateColorAsState(
-                        targetValue = if (isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        targetValue = if (isUrgent) colors.error else colors.onSurfaceVariant,
                         animationSpec = tween(500),
                         label = "timer_color",
                     )
@@ -460,13 +461,12 @@ private fun StateDevicePrompt(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        LinearProgressIndicator(
+                        KomiLinearProgress(
                             progress = { animatedProgress },
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(4.dp)),
+                                .clip(RoundedCornerShape(shape.cornerSmall)),
                             color = progressColor,
-                            trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         )
                         Spacer(Modifier.width(12.dp))
                         val minutes = authState.remainingSeconds / 60
@@ -474,13 +474,13 @@ private fun StateDevicePrompt(
                         val formatted = remember(minutes, seconds) {
                             "%02d:%02d".format(minutes, seconds)
                         }
-                        Text(
+                        KomiText(
                             text = formatted,
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                            ),
+                            role = KomiTextRole.Mono,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
                             color = timerColor,
+                            uppercase = false,
                         )
                     }
                 }
@@ -497,40 +497,32 @@ private fun StateDevicePrompt(
 
         Spacer(Modifier.height(10.dp))
 
-        OutlinedPillButton(
-            text = if (state.isPolling) {
+        KomiButton(
+            onClick = { onAction(AuthenticationAction.PollNow) },
+            label = if (state.isPolling) {
                 stringResource(Res.string.auth_polling_status)
             } else {
                 stringResource(Res.string.auth_check_status)
             },
-            leadingIcon = if (state.isPolling) {
-                {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            } else {
-                {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            },
+            variant = KomiButtonVariant.Outline,
+            size = KomiButtonSize.Md,
+            fullWidth = true,
             enabled = !state.isPolling,
-            onClick = { onAction(AuthenticationAction.PollNow) },
+            loading = state.isPolling,
+            leadingIcon = if (state.isPolling) null else Icons.Default.Refresh,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
         )
 
         if (state.pollIntervalSec > 0) {
             Spacer(Modifier.height(8.dp))
-            Text(
+            KomiText(
                 text = stringResource(Res.string.auth_rate_limited, state.pollIntervalSec),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                fontSize = 11.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
 
@@ -540,24 +532,28 @@ private fun StateDevicePrompt(
 
 @Composable
 private fun StatePending() {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        CircularWavyProgressIndicator(modifier = Modifier.size(56.dp))
+        KomiCircularProgress(modifier = Modifier.size(56.dp))
         Spacer(Modifier.height(20.dp))
-        Text(
+        KomiText(
             text = stringResource(Res.string.waiting_for_authorization),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Title,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
     }
 }
 
 @Composable
 private fun StateLoggedIn() {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -572,29 +568,32 @@ private fun StateLoggedIn() {
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)),
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(colors.primary.copy(alpha = 0.14f)),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
                     modifier = Modifier.size(40.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = colors.primary,
                 )
             }
         }
         Spacer(Modifier.height(18.dp))
-        Text(
+        KomiText(
             text = stringResource(Res.string.signed_in),
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onBackground,
+            role = KomiTextRole.Title,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onBackground,
+            uppercase = false,
         )
         Spacer(Modifier.height(6.dp))
-        Text(
+        KomiText(
             text = stringResource(Res.string.redirecting_message),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }
@@ -604,41 +603,47 @@ private fun StateError(
     authState: AuthLoginState.Error,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
-        Surface(
+        KomiSurface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.errorContainer,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f)),
+            paper = KomiSurfacePaper.Surface,
         ) {
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.error.copy(alpha = 0.12f))
+                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.WarningAmber,
                     contentDescription = null,
                     modifier = Modifier.size(34.dp),
-                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                    tint = colors.error,
                 )
                 Spacer(Modifier.height(12.dp))
-                Text(
+                KomiText(
                     text = stringResource(Res.string.auth_error_with_message, authState.message),
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     textAlign = TextAlign.Center,
+                    uppercase = false,
                 )
                 authState.recoveryHint?.let { hint ->
                     Spacer(Modifier.height(6.dp))
-                    Text(
+                    KomiText(
                         text = hint,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f),
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         textAlign = TextAlign.Center,
+                        uppercase = false,
                     )
                 }
             }
@@ -684,37 +689,19 @@ private fun PrimaryPillButton(
 private fun OutlinedPillButton(
     text: String,
     onClick: () -> Unit,
-    leadingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
 ) {
-    Surface(
+    KomiButton(
+        onClick = onClick,
+        label = text,
+        enabled = enabled,
+        variant = KomiButtonVariant.Outline,
+        size = KomiButtonSize.Md,
+        fullWidth = true,
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
-        onClick = onClick,
-        enabled = enabled,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            leadingIcon?.invoke()
-            if (leadingIcon != null) Spacer(Modifier.width(8.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-    }
+    )
 }
 
 @Composable
@@ -724,6 +711,7 @@ private fun PatSignInSheet(
     isSubmitting: Boolean,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     KomiSheet(
         onDismiss = { if (!isSubmitting) onAction(AuthenticationAction.DismissPatSheet) },
         placement = KomiSheetPlacement.Bottom,
@@ -735,17 +723,19 @@ private fun PatSignInSheet(
                 .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.pat_sheet_title),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = stringResource(Res.string.pat_sheet_description),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
 
             OutlinedPillButton(
@@ -769,29 +759,15 @@ private fun PatSignInSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Surface(
+                KomiButton(
+                    onClick = { onAction(AuthenticationAction.DismissPatSheet) },
+                    label = stringResource(Res.string.pat_cancel),
+                    enabled = !isSubmitting,
+                    variant = KomiButtonVariant.Outline,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
-                    shape = RoundedCornerShape(50),
-                    color = Color.Transparent,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
-                    onClick = { onAction(AuthenticationAction.DismissPatSheet) },
-                    enabled = !isSubmitting,
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.pat_cancel),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
+                )
 
                 KomiButton(
                     onClick = { onAction(AuthenticationAction.SubmitPat) },
