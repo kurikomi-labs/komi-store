@@ -46,7 +46,6 @@ import zed.rainxch.tweaks.presentation.TweaksState
 import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.tweaks.presentation.components.sections.appSection
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
-import zed.rainxch.tweaks.presentation.components.shell.personalityUsesDecor
 import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 import zed.rainxch.tweaks.presentation.components.sections.connectivitySection
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
@@ -112,9 +111,9 @@ fun TweaksDesktopContent(
                 fontSize = 22.sp,
                 modifier = Modifier.padding(start = 6.dp),
             )
-            if (personalityUsesDecor()) {
+            tweaksKicker(TweaksDecorSlot.SettingsNavTitle)?.let { navKicker ->
                 KomiText(
-                    text = "設定",
+                    text = navKicker,
                     role = KomiTextRole.Label,
                     color = colors.onSurfaceVariant,
                     fontSize = 10.sp,

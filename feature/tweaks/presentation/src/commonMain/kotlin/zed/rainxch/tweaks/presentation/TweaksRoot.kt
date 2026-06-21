@@ -55,7 +55,7 @@ import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
-import zed.rainxch.tweaks.presentation.components.shell.personalityUsesDecor
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
 
@@ -201,9 +201,9 @@ fun TweaksRoot(
                     )
                     appSection(onOpenFeedback = onOpenFeedback)
 
-                    if (personalityUsesDecor()) {
+                    tweaksKicker(TweaksDecorSlot.Footer)?.let { footer ->
                         KomiText(
-                            text = "― 設定 · komi store ―",
+                            text = footer,
                             role = KomiTextRole.Stamp,
                             color = LocalPersonality.current.colors.onSurfaceVariant,
                             fontSize = 11.sp,

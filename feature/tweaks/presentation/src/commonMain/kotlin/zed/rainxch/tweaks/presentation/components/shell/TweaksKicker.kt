@@ -19,6 +19,8 @@ enum class TweaksDecorSlot {
     Hidden,
     Skipped,
     Tokens,
+    SettingsNavTitle,
+    Footer,
 }
 
 @Composable
@@ -28,12 +30,11 @@ fun tweaksKicker(slot: TweaksDecorSlot): String? =
         PersonalityDecor.MangaKicker -> mangaKicker(slot)
     }
 
-@Composable
-fun personalityUsesDecor(): Boolean = LocalPersonality.current.decor != PersonalityDecor.None
-
 private fun mangaKicker(slot: TweaksDecorSlot): String =
     when (slot) {
         TweaksDecorSlot.Settings -> "設定 · SETTINGS"
+        TweaksDecorSlot.SettingsNavTitle -> "設定"
+        TweaksDecorSlot.Footer -> "― 設定 · komi store ―"
         TweaksDecorSlot.LookAndFeel -> "外観"
         TweaksDecorSlot.Connectivity -> "接続"
         TweaksDecorSlot.InstallsUpdates -> "導入"
