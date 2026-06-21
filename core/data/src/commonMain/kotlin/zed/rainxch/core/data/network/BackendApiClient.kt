@@ -34,6 +34,7 @@ import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.dto.AnnouncementsResponseDto
 import zed.rainxch.core.data.dto.BackendExploreResponse
+import zed.rainxch.core.data.dto.BackendFeedResponse
 import zed.rainxch.core.data.dto.BackendRepoResponse
 import zed.rainxch.core.data.dto.BackendSearchResponse
 import zed.rainxch.core.data.dto.ExternalMatchRequest
@@ -131,6 +132,28 @@ class BackendApiClient(
                 parameter("limit", limit)
                 parameter("offset", offset)
                 if (token != null) header(X_GITHUB_TOKEN_HEADER, token)
+            }
+            when {
+                response.status.isSuccess() -> Result.success(response.body())
+                response.status == HttpStatusCode.TooManyRequests -> Result.failure(buildRateLimited(response))
+                else -> Result.failure(BackendException(response.status.value))
+            }
+        }
+
+    suspend fun getFeed(
+        platform: String?,
+        page: Int = 1,
+        limit: Int = 20,
+    ): Result<BackendFeedResponse> =
+        safeCall {
+            val response = httpClient.get("feed") {
+                if (platform != null) parameter("platform", platform)
+                parameter("page", page)
+                parameter("limit", limit)
+                timeout {
+                    requestTimeoutMillis = 30_000
+                    socketTimeoutMillis = 30_000
+                }
             }
             when {
                 response.status.isSuccess() -> Result.success(response.body())

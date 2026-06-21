@@ -50,6 +50,7 @@ import zed.rainxch.core.data.repository.InstalledAppsRepositoryImpl
 import zed.rainxch.core.data.repository.ProxyRepositoryImpl
 import zed.rainxch.core.data.repository.RateLimitRepositoryImpl
 import zed.rainxch.core.data.repository.HiddenReposRepositoryImpl
+import zed.rainxch.core.data.repository.BrowseFilterStoreImpl
 import zed.rainxch.core.data.repository.SeenReposRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
 import zed.rainxch.core.data.repository.AnnouncementsCacheStoreImpl
@@ -81,6 +82,7 @@ import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import zed.rainxch.core.domain.repository.HiddenReposRepository
 import zed.rainxch.core.domain.repository.HostTokenRepository
+import zed.rainxch.core.domain.repository.BrowseFilterStore
 import zed.rainxch.core.domain.repository.SeenReposRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
@@ -205,6 +207,10 @@ val coreModule =
             SeenReposRepositoryImpl(
                 seenRepoDao = get(),
             )
+        }
+
+        single<BrowseFilterStore> {
+            BrowseFilterStoreImpl()
         }
 
         single<HiddenReposRepository> {

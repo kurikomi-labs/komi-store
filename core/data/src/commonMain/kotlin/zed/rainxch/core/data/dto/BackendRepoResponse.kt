@@ -17,6 +17,7 @@ data class BackendRepoResponse(
     val license: BackendLicense? = null,
     val language: String? = null,
     val topics: List<String> = emptyList(),
+    val topicCodes: List<String> = emptyList(),
     val releasesUrl: String? = null,
     val updatedAt: String? = null,
     val createdAt: String? = null,

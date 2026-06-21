@@ -23,6 +23,8 @@ import zed.rainxch.core.data.secure.MigrationEntry
 import zed.rainxch.core.data.secure.migrateDataStoreToKSafe
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
 import zed.rainxch.core.domain.model.settings.AppLanguages
+import zed.rainxch.core.domain.model.appearance.AccentId
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
@@ -116,6 +118,22 @@ class TweaksRepositoryImpl(
     override suspend fun setFontTheme(fontTheme: FontTheme) {
         migrationDeferred.await()
         ksafe.safePut(K_FONT, fontTheme.name)
+    }
+
+    override fun getPersonality(): Flow<AppPersonality> =
+        gatedGetFlow(K_PERSONALITY, "").map { AppPersonality.fromName(it.ifEmpty { null }) }
+
+    override suspend fun setPersonality(personality: AppPersonality) {
+        migrationDeferred.await()
+        ksafe.safePut(K_PERSONALITY, personality.name)
+    }
+
+    override fun getAccentId(): Flow<AccentId> =
+        gatedGetFlow(K_ACCENT, "").map { AccentId.fromName(it.ifEmpty { null }) }
+
+    override suspend fun setAccentId(accentId: AccentId) {
+        migrationDeferred.await()
+        ksafe.safePut(K_ACCENT, accentId.name)
     }
 
     override fun getAutoDetectClipboardLinks(): Flow<Boolean> = gatedGetFlow(K_AUTO_DETECT_CLIPBOARD, false)
@@ -472,6 +490,8 @@ class TweaksRepositoryImpl(
         private const val K_AMOLED = "amoled_theme"
         private const val K_IS_DARK = "is_dark_theme"
         private const val K_FONT = "font_theme"
+        private const val K_PERSONALITY = "app_personality"
+        private const val K_ACCENT = "app_accent"
         private const val K_DISCOVERY_PLATFORMS = "discovery_platforms"
         private const val K_AUTO_DETECT_CLIPBOARD = "auto_detect_clipboard_links"
         private const val K_INSTALLER_TYPE = "installer_type"

@@ -23,6 +23,7 @@ fun BackendRepoResponse.toSummary(): GithubRepoSummary =
         forksCount = forksCount,
         language = language,
         topics = topics.ifEmpty { null },
+        topicCodes = topicCodes,
         releasesUrl = releasesUrl ?: "https://api.github.com/repos/$fullName/releases{/id}",
         updatedAt = updatedAt ?: latestReleaseDate ?: "",
         availablePlatforms = buildAvailablePlatforms(),
