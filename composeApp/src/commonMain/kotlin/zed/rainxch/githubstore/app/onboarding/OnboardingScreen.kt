@@ -21,15 +21,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.DownloadForOffline
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +43,9 @@ import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ThemeMode
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -93,7 +92,7 @@ fun OnboardingScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(LocalPersonality.current.colors.background)
                 .systemBarsPadding(),
         contentAlignment = Alignment.TopCenter,
     ) {
@@ -122,8 +121,7 @@ fun OnboardingScreen(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
             ) { step ->
                 when (step) {
-                    OnboardingStep.PALETTE -> StepPalette(state, onAction)
-                    OnboardingStep.SIGN_IN -> StepSignIn(onAction)
+                    OnboardingStep.THEME -> StepTheme(state, onAction)
                     OnboardingStep.PERMISSIONS -> StepPermissions(permissionsController)
                 }
             }
@@ -138,6 +136,8 @@ private fun StepIndicator(
     total: Int,
     currentIndex: Int,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         repeat(total) { i ->
             val active = i <= currentIndex
@@ -145,12 +145,12 @@ private fun StepIndicator(
                 modifier =
                     Modifier
                         .size(width = if (i == currentIndex) 24.dp else 8.dp, height = 8.dp)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(shape.cornerSmall))
                         .background(
                             if (active) {
-                                MaterialTheme.colorScheme.primary
+                                colors.primary
                             } else {
-                                MaterialTheme.colorScheme.outlineVariant
+                                colors.outlineVariant
                             },
                         ),
             )
@@ -159,28 +159,29 @@ private fun StepIndicator(
 }
 
 @Composable
-private fun StepPalette(
+private fun StepTheme(
     state: OnboardingState,
     onAction: (OnboardingAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.onboarding_palette_title),
-            style =
-                MaterialTheme.typography.displaySmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Display,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurface,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = stringResource(Res.string.onboarding_palette_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             AppTheme.entries
@@ -207,6 +208,7 @@ private fun PaletteSwatch(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val swatchShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -221,22 +223,17 @@ private fun PaletteSwatch(
                     .background(palette.swatchColor)
                     .border(
                         width = if (isSelected) 3.dp else 0.dp,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = colors.onSurface,
                         shape = swatchShape,
                     ),
         )
-        Text(
+        KomiText(
             text = palette.name.lowercase().replaceFirstChar { it.uppercaseChar() },
-            color =
-                if (isSelected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-            style =
-                MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            color = if (isSelected) colors.primary else colors.onSurfaceVariant,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+            uppercase = false,
         )
     }
 }
@@ -246,12 +243,13 @@ private fun ModeRow(
     selected: ThemeMode,
     onSelect: (ThemeMode) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val chipShape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     Row(
         modifier =
             Modifier
                 .clip(chipShape)
-                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .background(colors.surfaceContainer)
                 .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -261,19 +259,16 @@ private fun ModeRow(
                 modifier =
                     Modifier
                         .clip(chipShape)
-                        .background(if (isActive) MaterialTheme.colorScheme.primary else Color.Transparent)
+                        .background(if (isActive) colors.primary else Color.Transparent)
                         .clickable { onSelect(mode) }
                         .padding(horizontal = 12.dp, vertical = 6.dp),
             ) {
-                Text(
+                KomiText(
                     text = mode.name.lowercase().replaceFirstChar { it.uppercaseChar() },
-                    color =
-                        if (isActive) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                    style = MaterialTheme.typography.labelMedium,
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    color = if (isActive) colors.onPrimary else colors.onSurface,
+                    uppercase = false,
                 )
             }
         }
@@ -281,71 +276,28 @@ private fun ModeRow(
 }
 
 @Composable
-private fun StepSignIn(onAction: (OnboardingAction) -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(96.dp)
-                    .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-                    .background(MaterialTheme.colorScheme.primary),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "G",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 48.sp,
-            )
-        }
-        Text(
-            text = stringResource(Res.string.sign_in_with_github),
-            style =
-                MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = stringResource(Res.string.onboarding_signin_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
-        KomiButton(
-            onClick = { onAction(OnboardingAction.OnSignInClick) },
-            label = stringResource(Res.string.onboarding_signin_button),
-            variant = KomiButtonVariant.Primary,
-        )
-    }
-}
-
-@Composable
 private fun StepPermissions(controller: OnboardingPermissionsController) {
     val notificationsGranted by controller.notificationsGranted
     val installSourcesGranted by controller.installSourcesGranted
+    val colors = LocalPersonality.current.colors
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.onboarding_permissions_title),
-            style =
-                MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurface,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = stringResource(Res.string.onboarding_permissions_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
         PermissionRow(
             icon = Icons.Outlined.Notifications,
@@ -372,12 +324,13 @@ private fun PermissionRow(
     isGranted: Boolean,
     onAllowClick: () -> Unit,
 ) {
-    val cs = MaterialTheme.colorScheme
+    val cs = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+                .clip(RoundedCornerShape(shape.corner))
                 .background(cs.surfaceContainer)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -387,27 +340,32 @@ private fun PermissionRow(
             modifier =
                 Modifier
                     .size(40.dp)
-                    .clip(CircleShape)
-                    .background(if (isGranted) cs.tertiaryContainer else cs.primaryContainer),
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(if (isGranted) cs.primaryContainer else cs.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isGranted) cs.tertiary else cs.primary,
+                tint = cs.primary,
                 modifier = Modifier.size(22.dp),
             )
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = label,
+                role = KomiTextRole.Title,
+                fontSize = 14.sp,
                 color = cs.onSurface,
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                fontWeight = FontWeight.SemiBold,
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = description,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
                 color = cs.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
+                uppercase = false,
             )
         }
         if (isGranted) {
@@ -415,11 +373,11 @@ private fun PermissionRow(
                 modifier =
                     Modifier
                         .size(36.dp)
-                        .clip(CircleShape)
-                        .background(cs.tertiary),
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(cs.primary),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(Res.string.onboarding_permission_granted),
                     tint = cs.onPrimary,
@@ -446,7 +404,7 @@ private fun ActionRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (state.currentStep == OnboardingStep.SIGN_IN || state.currentStep == OnboardingStep.PERMISSIONS) {
+        if (state.currentStep != OnboardingStep.THEME) {
             KomiButton(
                 onClick = { onAction(OnboardingAction.OnSkipStepClick) },
                 label = stringResource(Res.string.onboarding_skip),
@@ -455,6 +413,7 @@ private fun ActionRow(
         } else {
             Spacer(Modifier.size(80.dp))
         }
+
         KomiButton(
             onClick = { onAction(OnboardingAction.OnNextClick) },
             label = if (state.isLast) stringResource(Res.string.onboarding_get_started) else stringResource(Res.string.onboarding_next),

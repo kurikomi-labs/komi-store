@@ -2,6 +2,7 @@ package zed.rainxch.githubstore.app.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,9 +22,9 @@ class OnboardingViewModel(
             OnboardingState(
                 steps =
                     if (isAndroid) {
-                        listOf(OnboardingStep.PALETTE, OnboardingStep.SIGN_IN, OnboardingStep.PERMISSIONS)
+                        persistentListOf(OnboardingStep.THEME, OnboardingStep.PERMISSIONS)
                     } else {
-                        listOf(OnboardingStep.PALETTE, OnboardingStep.SIGN_IN)
+                        persistentListOf(OnboardingStep.THEME)
                     },
                 isAndroid = isAndroid,
             ),
