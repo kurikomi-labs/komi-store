@@ -341,7 +341,7 @@ private fun chipMetrics(
     val filterLike = kind != KomiChipKind.Info
     return when {
         filterLike && size == KomiChipSize.Sm -> ChipMetrics(26.dp, 11.dp, 12f, 14.dp, 2.5.dp)
-        filterLike && size == KomiChipSize.Md -> ChipMetrics(30.dp, 13.dp, 13f, 15.dp, 2.5.dp)
+        filterLike && size == KomiChipSize.Md -> ChipMetrics(34.dp, 14.dp, 14f, 16.dp, 2.5.dp)
         size == KomiChipSize.Sm -> ChipMetrics(24.dp, 9.dp, 11f, 13.dp, 2.dp)
         else -> ChipMetrics(28.dp, 10.dp, 11.5f, 14.dp, 2.dp)
     }

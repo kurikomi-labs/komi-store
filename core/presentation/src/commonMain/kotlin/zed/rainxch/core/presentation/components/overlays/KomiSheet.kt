@@ -102,29 +102,55 @@ fun KomiSheet(
     when (val personality = LocalPersonality.current) {
         is MangaPersonality -> {
             if (resolved == KomiSheetPlacement.Bottom) {
-                MangaBottomSheet(personality, onDismiss, title, titleJp, footer, dismissible, screentone, screenHeight, modifier, content)
+                MangaBottomSheet(
+                    personality = personality,
+                    onDismiss = onDismiss,
+                    title = title,
+                    titleJp = titleJp,
+                    footer = footer,
+                    screentone = screentone,
+                    screenHeight = screenHeight,
+                    modifier = modifier,
+                    content = content
+                )
             } else {
                 MangaCenterDialog(
-                    personality,
-                    onDismiss,
-                    title,
-                    titleJp,
-                    footer,
-                    maxWidth,
-                    dismissible,
-                    screentone,
-                    screenHeight,
-                    modifier,
-                    content,
+                    personality = personality,
+                    onDismiss = onDismiss,
+                    title = title,
+                    titleJp = titleJp,
+                    footer = footer,
+                    maxWidth = maxWidth,
+                    dismissible = dismissible,
+                    screentone = screentone,
+                    screenHeight = screenHeight,
+                    modifier = modifier,
+                    content = content,
                 )
             }
         }
 
         is ClassicPersonality -> {
             if (resolved == KomiSheetPlacement.Bottom) {
-                ClassicBottomSheet(onDismiss, title, footer, dismissible, screenHeight, modifier, content)
+                ClassicBottomSheet(
+                    onDismiss = onDismiss,
+                    title = title,
+                    footer = footer,
+                    screenHeight = screenHeight,
+                    modifier = modifier,
+                    content = content
+                )
             } else {
-                ClassicCenterDialog(onDismiss, title, footer, maxWidth, dismissible, screenHeight, modifier, content)
+                ClassicCenterDialog(
+                    onDismiss = onDismiss,
+                    title = title,
+                    footer = footer,
+                    maxWidth = maxWidth,
+                    dismissible = dismissible,
+                    screenHeight = screenHeight,
+                    modifier = modifier,
+                    content = content
+                )
             }
         }
     }
@@ -138,7 +164,6 @@ private fun MangaBottomSheet(
     title: String?,
     titleJp: String?,
     footer: (@Composable () -> Unit)?,
-    dismissible: Boolean,
     screentone: Boolean,
     screenHeight: Dp,
     modifier: Modifier,
@@ -296,7 +321,8 @@ private fun MangaSheetInner(
     ) {
         if (grabber) {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(bottom = if (title != null) 12.dp else 8.dp),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = if (title != null) 12.dp else 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(Modifier.size(width = 46.dp, height = 5.dp).background(colors.outline))
@@ -305,7 +331,8 @@ private fun MangaSheetInner(
 
         if (title != null) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(end = if (reserveCloseSpace) 44.dp else 0.dp, bottom = 14.dp),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(end = if (reserveCloseSpace) 44.dp else 0.dp, bottom = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
@@ -315,7 +342,13 @@ private fun MangaSheetInner(
                         .background(colors.primary, MangaMarkerShape)
                         .border(2.dp, colors.outline, MangaMarkerShape),
                 )
-                KomiText(text = title, role = KomiTextRole.Title, fontSize = 19.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                KomiText(
+                    text = title,
+                    role = KomiTextRole.Title,
+                    fontSize = 19.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 if (titleJp != null) {
                     KomiText(
                         text = titleJp,
@@ -330,7 +363,8 @@ private fun MangaSheetInner(
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxWidth().weight(1f, fill = false)
+                .verticalScroll(rememberScrollState()),
             content = content,
         )
 
@@ -349,7 +383,8 @@ private fun CloseStamp(
     val colors = personality.colors
     val interaction = remember { MutableInteractionSource() }
     Box(
-        modifier = modifier.size(44.dp).clickable(interactionSource = interaction, indication = null, onClick = onClose),
+        modifier = modifier.size(44.dp)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClose),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -387,7 +422,6 @@ private fun ClassicBottomSheet(
     onDismiss: () -> Unit,
     title: String?,
     footer: (@Composable () -> Unit)?,
-    dismissible: Boolean,
     screenHeight: Dp,
     modifier: Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -403,7 +437,8 @@ private fun ClassicBottomSheet(
         contentColor = colors.onSurface,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().heightIn(max = screenHeight * 0.85f).padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(max = screenHeight * 0.85f)
+                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
         ) {
             if (title != null) {
                 KomiText(
@@ -415,7 +450,8 @@ private fun ClassicBottomSheet(
                 Spacer(Modifier.height(16.dp))
             }
             Column(
-                modifier = Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth().weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState()),
                 content = content,
             )
             if (footer != null) {
@@ -451,18 +487,24 @@ private fun ClassicCenterDialog(
     ) {
         Surface(
             modifier = Modifier.widthIn(max = maxWidth).heightIn(max = screenHeight * 0.9f),
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
             color = colors.surfaceContainerHigh,
             contentColor = colors.onSurface,
             tonalElevation = 6.dp,
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
                 if (title != null) {
-                    KomiText(text = title, role = KomiTextRole.Title, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    KomiText(
+                        text = title,
+                        role = KomiTextRole.Title,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Spacer(Modifier.height(16.dp))
                 }
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
                     content = content,
                 )
                 if (footer != null) {
@@ -487,8 +529,18 @@ private fun PreviewBody() {
 @Composable
 private fun PreviewFooter() {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        KomiButton(onClick = {}, label = "Cancel", variant = KomiButtonVariant.Outline, modifier = Modifier.weight(1f))
-        KomiButton(onClick = {}, label = "Remove", variant = KomiButtonVariant.Destructive, modifier = Modifier.weight(1f))
+        KomiButton(
+            onClick = {},
+            label = "Cancel",
+            variant = KomiButtonVariant.Outline,
+            modifier = Modifier.weight(1f)
+        )
+        KomiButton(
+            onClick = {},
+            label = "Remove",
+            variant = KomiButtonVariant.Destructive,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -515,7 +567,12 @@ private fun KomiSheetMangaPreview() {
 private fun KomiSheetMangaNightPreview() {
     PersonalityPreview(mangaPersonality(paper = MangaPaper.NIGHT, accent = MangaAccent.SUN)) {
         Box(Modifier.fillMaxWidth().padding(8.dp)) {
-            KomiSheet(onDismiss = {}, placement = KomiSheetPlacement.Center, title = "Choose platform", titleJp = "対応OS") {
+            KomiSheet(
+                onDismiss = {},
+                placement = KomiSheetPlacement.Center,
+                title = "Choose platform",
+                titleJp = "対応OS"
+            ) {
                 PreviewBody()
             }
         }
@@ -527,7 +584,11 @@ private fun KomiSheetMangaNightPreview() {
 private fun KomiSheetClassicPreview() {
     PersonalityPreview(classicPersonality()) {
         Box(Modifier.fillMaxWidth().padding(8.dp)) {
-            KomiSheet(onDismiss = {}, placement = KomiSheetPlacement.Center, title = "Uninstall?", footer = { PreviewFooter() }) {
+            KomiSheet(
+                onDismiss = {},
+                placement = KomiSheetPlacement.Center,
+                title = "Uninstall?",
+                footer = { PreviewFooter() }) {
                 PreviewBody()
             }
         }

@@ -10,6 +10,7 @@ data class KomiMenuItem(
     val id: String,
     val label: String,
     val icon: ImageVector? = null,
+    val subtitle: String? = null,
     val tone: KomiMenuTone = KomiMenuTone.Default,
     val enabled: Boolean = true,
 ) : KomiMenuEntry

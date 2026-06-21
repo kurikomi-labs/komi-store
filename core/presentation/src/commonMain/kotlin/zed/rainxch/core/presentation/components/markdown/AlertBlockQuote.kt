@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Info
@@ -88,7 +89,7 @@ fun AlertBlockQuote(
     Surface(
         color = palette.container,
         contentColor = palette.content,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
     ) {
         Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {

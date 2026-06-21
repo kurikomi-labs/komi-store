@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -57,7 +58,7 @@ fun ExpandableDetails(
 
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {

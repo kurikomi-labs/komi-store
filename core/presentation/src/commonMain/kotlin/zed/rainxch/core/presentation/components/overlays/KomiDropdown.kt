@@ -65,7 +65,6 @@ fun KomiDropdown(
     onSelect: (KomiMenuItem) -> Unit,
     modifier: Modifier = Modifier,
     value: String? = null,
-    title: String? = null,
     trigger: @Composable (onClick: () -> Unit) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -92,7 +91,6 @@ fun KomiDropdown(
         KomiSheet(
             onDismiss = { expanded = false },
             placement = KomiSheetPlacement.Bottom,
-            title = title,
         ) {
             MenuEntries(entries = entries, value = value, onPick = onPick)
         }
@@ -205,17 +203,29 @@ private fun KomiMenuRow(
                 tint = fg.copy(alpha = alpha),
             )
         }
-        KomiText(
-            text = item.label,
-            modifier = Modifier.weight(1f),
-            role = KomiTextRole.Body,
-            color = fg.copy(alpha = alpha),
-            fontSize = 14.sp,
-            fontWeight = if (isManga) FontWeight.W700 else null,
-            uppercase = false,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            KomiText(
+                text = item.label,
+                role = KomiTextRole.Body,
+                color = fg.copy(alpha = alpha),
+                fontSize = 14.sp,
+                fontWeight = if (isManga) FontWeight.W700 else null,
+                uppercase = false,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            item.subtitle?.let { subtitle ->
+                KomiText(
+                    text = subtitle,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant.copy(alpha = alpha),
+                    fontSize = 12.sp,
+                    uppercase = false,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
         if (selected) {
             Icon(
                 imageVector = Icons.Default.Check,

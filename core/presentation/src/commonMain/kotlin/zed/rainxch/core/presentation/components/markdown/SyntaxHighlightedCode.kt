@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +71,7 @@ fun SyntaxHighlightedCode(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                 .background(container)
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 12.dp, vertical = 10.dp),

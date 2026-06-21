@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -15,10 +16,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -39,6 +42,7 @@ import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.classicPersonality
 import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.core.presentation.personality.manga.MangaPaper
+import zed.rainxch.core.presentation.personality.manga.decoration.speedLineWash
 import zed.rainxch.core.presentation.personality.mangaPersonality
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import androidx.compose.material3.Text as MaterialText
@@ -53,6 +57,7 @@ fun KomiTopBar(
     actions: (@Composable RowScope.() -> Unit)? = null,
     size: KomiTopBarSize = KomiTopBarSize.Masthead,
     centerTitle: Boolean = false,
+    insets: Boolean = true,
 ) {
     when (val personality = LocalPersonality.current) {
         is MangaPersonality -> {
@@ -65,6 +70,7 @@ fun KomiTopBar(
                 actions = actions,
                 size = size,
                 centerTitle = centerTitle,
+                insets = insets,
                 modifier = modifier,
             )
         }
@@ -76,6 +82,7 @@ fun KomiTopBar(
                 leading = leading,
                 actions = actions,
                 centerTitle = centerTitle,
+                insets = insets,
                 modifier = modifier,
             )
         }
@@ -92,6 +99,7 @@ private fun MangaTopBar(
     actions: (@Composable RowScope.() -> Unit)?,
     size: KomiTopBarSize,
     centerTitle: Boolean,
+    insets: Boolean,
     modifier: Modifier,
 ) {
     val colors = personality.colors
@@ -107,7 +115,9 @@ private fun MangaTopBar(
             modifier
                 .fillMaxWidth()
                 .background(if (isMast) colors.background else colors.surface)
-                .statusBarsPadding()
+                .clipToBounds()
+                .speedLineWash(color = colors.onSurface)
+                .then(if (insets) Modifier.statusBarsPadding() else Modifier)
                 .then(if (isMast) Modifier else Modifier.heightIn(min = 54.dp))
                 .padding(
                     start = if (isMast) 16.dp else 8.dp,
@@ -182,8 +192,10 @@ private fun ClassicTopBar(
     leading: (@Composable () -> Unit)?,
     actions: (@Composable RowScope.() -> Unit)?,
     centerTitle: Boolean,
+    insets: Boolean,
     modifier: Modifier,
 ) {
+    val windowInsets = if (insets) TopAppBarDefaults.windowInsets else WindowInsets(0, 0, 0, 0)
     val titleContent: @Composable () -> Unit = {
         Column {
             KomiText(
@@ -213,6 +225,7 @@ private fun ClassicTopBar(
             title = titleContent,
             navigationIcon = navigationIcon,
             actions = actionsContent,
+            windowInsets = windowInsets,
             modifier = modifier,
         )
     } else {
@@ -220,6 +233,7 @@ private fun ClassicTopBar(
             title = titleContent,
             navigationIcon = navigationIcon,
             actions = actionsContent,
+            windowInsets = windowInsets,
             modifier = modifier,
         )
     }

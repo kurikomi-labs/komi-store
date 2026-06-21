@@ -25,6 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,6 +58,7 @@ import zed.rainxch.core.presentation.personality.classicPersonality
 import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.core.presentation.personality.manga.MangaPaper
 import zed.rainxch.core.presentation.personality.manga.decoration.StarburstShape
+import zed.rainxch.core.presentation.personality.manga.decoration.halftoneOverlay
 import zed.rainxch.core.presentation.personality.manga.decoration.screentoneFill
 import zed.rainxch.core.presentation.personality.mangaPersonality
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
@@ -76,6 +81,7 @@ fun KomiRepoCard(
     modifier: Modifier = Modifier,
     onLongPress: (() -> Unit)? = null,
     monogram: String? = null,
+    imageUrl: String? = null,
     feed: KomiRepoCardFeed = KomiRepoCardFeed.Plain,
     rank: Int = 1,
     version: String? = null,
@@ -109,6 +115,7 @@ fun KomiRepoCard(
             ) {
                 CardIconTile(
                     monogram = monogram ?: name.take(2),
+                    imageUrl = imageUrl,
                     size = if (compact) 52.dp else 60.dp,
                     colors = colors
                 )
@@ -242,33 +249,80 @@ fun KomiRepoCard(
     }
 }
 
+private fun inkAvatarFilter(dark: Boolean): ColorFilter {
+    val saturation = 0.15f
+    val contrast = if (dark) 1.05f else 1.15f
+    val brightness = if (dark) 0.95f else 1.02f
+    val keep = 1f - saturation
+    val cb = contrast * brightness
+    val t = (-.5f * contrast + .5f) * 255f
+    val lr = 0.299f
+    val lg = 0.587f
+    val lb = 0.114f
+    return ColorFilter.colorMatrix(
+        ColorMatrix(
+            floatArrayOf(
+                cb * (lr * keep + saturation), cb * (lg * keep), cb * (lb * keep), 0f, t,
+                cb * (lr * keep), cb * (lg * keep + saturation), cb * (lb * keep), 0f, t,
+                cb * (lr * keep), cb * (lg * keep), cb * (lb * keep + saturation), 0f, t,
+                0f, 0f, 0f, 1f, 0f,
+            ),
+        ),
+    )
+}
+
+private val InkAvatarFilterDay = inkAvatarFilter(dark = false)
+private val InkAvatarFilterNight = inkAvatarFilter(dark = true)
+
 @Composable
 private fun CardIconTile(
     monogram: String,
+    imageUrl: String?,
     size: Dp,
     colors: PersonalityColors,
 ) {
+    val hasImage = !imageUrl.isNullOrBlank()
     when (LocalPersonality.current) {
         is MangaPersonality ->
             Box(
                 modifier =
                     Modifier
                         .size(size)
+                        .clipToBounds()
                         .background(color = colors.surface)
-                        .screentoneFill(
-                            color = colors.onSurface,
-                            opacity = colors.screentoneOpacity + 0.06f
-                        )
-                        .border(width = 2.5.dp, color = colors.outline),
+                        .then(
+                            if (hasImage) {
+                                Modifier
+                            } else {
+                                Modifier.screentoneFill(
+                                    color = colors.onSurface,
+                                    opacity = colors.screentoneOpacity + 0.06f,
+                                )
+                            },
+                        ).border(width = 2.5.dp, color = colors.outline),
                 contentAlignment = Alignment.Center,
             ) {
-                KomiText(
-                    text = monogram.uppercase(),
-                    role = KomiTextRole.Title,
-                    color = colors.onSurface,
-                    fontSize = (size.value * 0.46f).sp,
-                    maxLines = 1,
-                )
+                if (hasImage) {
+                    GitHubStoreImage(
+                        imageModel = { imageUrl },
+                        modifier =
+                            Modifier
+                                .matchParentSize()
+                                .halftoneOverlay(
+                                    color = colors.onSurface,
+                                    opacity = colors.screentoneOpacity + 0.06f,
+                                ),
+                        colorFilter = if (colors.isDark) InkAvatarFilterNight else InkAvatarFilterDay,
+                    )
+                } else {
+                    KomiText(
+                        text = monogram.uppercase(),
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
+                        fontSize = (size.value * 0.46f).sp,
+                        maxLines = 1,
+                    )
+                }
             }
 
         is ClassicPersonality ->
@@ -280,13 +334,20 @@ private fun CardIconTile(
                         .background(color = colors.surfaceVariant),
                 contentAlignment = Alignment.Center,
             ) {
-                KomiText(
-                    text = monogram.uppercase(),
-                    role = KomiTextRole.Title,
-                    color = colors.onSurface,
-                    fontSize = (size.value * 0.42f).sp,
-                    maxLines = 1,
-                )
+                if (hasImage) {
+                    GitHubStoreImage(
+                        imageModel = { imageUrl },
+                        modifier = Modifier.matchParentSize(),
+                    )
+                } else {
+                    KomiText(
+                        text = monogram.uppercase(),
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
+                        fontSize = (size.value * 0.42f).sp,
+                        maxLines = 1,
+                    )
+                }
             }
     }
 }

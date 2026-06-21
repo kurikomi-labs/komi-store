@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
@@ -20,10 +22,12 @@ import com.skydoves.landscapist.crossfade.CrossfadePlugin
 fun GitHubStoreImage(
     imageModel: () -> Any?,
     modifier: Modifier = Modifier,
+    colorFilter: ColorFilter? = null,
 ) {
     CoilImage(
         imageModel = imageModel,
         modifier = modifier,
+        imageOptions = ImageOptions(colorFilter = colorFilter),
         loading = {
             Box(
                 modifier = Modifier.fillMaxSize(),

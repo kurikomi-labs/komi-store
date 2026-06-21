@@ -67,6 +67,7 @@ fun DiscoveryRepoCard(
     KomiRepoCard(
         name = repo.name,
         owner = repo.owner.login,
+        imageUrl = repo.owner.avatarUrl,
         language = repo.language.orEmpty(),
         description = repo.description.orEmpty(),
         platforms = platforms,
