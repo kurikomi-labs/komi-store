@@ -143,9 +143,7 @@ class InstalledAppsRepositoryImpl(
                 .map { it.toDomain() }
                 .onEach { release ->
                     val flagSays = release.isPrerelease
-                    val tagSays =
-                        VersionMath.isPreReleaseTag(release.tagName) ||
-                                VersionMath.isPreReleaseTag(release.name)
+                    val tagSays = VersionMath.isPreReleaseTag(release.tagName)
                     if (flagSays != tagSays) {
                         Logger.w {
                             "Pre-release flag/tag mismatch for $owner/$repo " +
@@ -187,10 +185,10 @@ class InstalledAppsRepositoryImpl(
         if (releases.isEmpty()) return null
 
         val candidates =
-            if (filter != null && fallbackToOlderReleases) {
-                releases
-            } else {
+            if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)
+            } else {
+                releases
             }
 
         val hasAnyPin =
@@ -242,7 +240,7 @@ class InstalledAppsRepositoryImpl(
                                     AssetVariant.extractBaseStem(it.name) == installedStem
                                 }
 
-                            if (matching.isNotEmpty()) matching else pool
+                            matching.ifEmpty { pool }
                         }
                     }
             val primary = fingerprintMatch
@@ -336,9 +334,6 @@ class InstalledAppsRepositoryImpl(
                 installedAppsDao.setSkippedReleaseTag(packageName, null)
             }
 
-            // If the installed version can't be reconciled with the release tag (e.g. tag
-            // 2.0.9.1 vs APK versionName 2.0.9-<githash>), numeric comparison is misleading.
-            // Pin to the current tag (below) and track by release tag from here on (GH#729).
             val reconcilable =
                 VersionMath.versionsReconcilable(app.installedVersion, matchedRelease.tagName)
             val isUpdateAvailable =
@@ -362,10 +357,6 @@ class InstalledAppsRepositoryImpl(
                         "isUpdate=$isUpdateAvailable, variantLost=$variantWasLost"
             }
 
-            // Keep the latest release's known code only while the tag is unchanged. A new
-            // tag means a new (still-unknown) code, so reset to null — otherwise
-            // codesAlreadyMatch would freeze on a stale code and mask the new release.
-            // The real code is set on install (updateAppVersion); the poll never invents it.
             val resolvedLatestVersionCode =
                 if (matchedRelease.tagName == app.latestVersion) app.latestVersionCode else null
 
@@ -655,10 +646,10 @@ class InstalledAppsRepositoryImpl(
         }
 
         val candidates =
-            if (filter != null && fallbackToOlderReleases) {
-                releases
-            } else {
+            if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)
+            } else {
+                releases
             }
 
         for (release in candidates) {
