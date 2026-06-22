@@ -1488,4 +1488,5 @@
     <string name="feed_category_social">Social</string>
     <string name="feed_category_reading">Reading</string>
     <string name="feed_category_tools">Tools</string>
+    <string name="cd_more_actions">More actions</string>
 </resources>
