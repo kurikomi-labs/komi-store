@@ -184,13 +184,6 @@ class InstalledAppsRepositoryImpl(
     ): ResolvedRelease? {
         if (releases.isEmpty()) return null
 
-        // Scan the whole release window and return the newest release that actually carries an
-        // installable asset. Restricting to the single newest release (take(1)) meant that when
-        // the latest release shipped no asset for this platform/arch, no update surfaced at all —
-        // even though a slightly older release did. The newer-than-installed gate in
-        // checkForUpdates still applies, so this can never surface an older-than-installed
-        // release. Only an explicit asset filter without the fallback opt-in keeps the strict
-        // newest-only behaviour.
         val candidates =
             if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)
@@ -247,7 +240,7 @@ class InstalledAppsRepositoryImpl(
                                     AssetVariant.extractBaseStem(it.name) == installedStem
                                 }
 
-                            if (matching.isNotEmpty()) matching else pool
+                            matching.ifEmpty { pool }
                         }
                     }
             val primary = fingerprintMatch
@@ -341,9 +334,6 @@ class InstalledAppsRepositoryImpl(
                 installedAppsDao.setSkippedReleaseTag(packageName, null)
             }
 
-            // If the installed version can't be reconciled with the release tag (e.g. tag
-            // 2.0.9.1 vs APK versionName 2.0.9-<githash>), numeric comparison is misleading.
-            // Pin to the current tag (below) and track by release tag from here on (GH#729).
             val reconcilable =
                 VersionMath.versionsReconcilable(app.installedVersion, matchedRelease.tagName)
             val isUpdateAvailable =
@@ -367,10 +357,6 @@ class InstalledAppsRepositoryImpl(
                         "isUpdate=$isUpdateAvailable, variantLost=$variantWasLost"
             }
 
-            // Keep the latest release's known code only while the tag is unchanged. A new
-            // tag means a new (still-unknown) code, so reset to null — otherwise
-            // codesAlreadyMatch would freeze on a stale code and mask the new release.
-            // The real code is set on install (updateAppVersion); the poll never invents it.
             val resolvedLatestVersionCode =
                 if (matchedRelease.tagName == app.latestVersion) app.latestVersionCode else null
 
@@ -659,9 +645,6 @@ class InstalledAppsRepositoryImpl(
             return MatchingPreview(release = null, matchedAssets = emptyList())
         }
 
-        // Mirror resolveTrackedRelease: scan the whole window for the newest release with a
-        // matching installable asset, so the preview isn't blank when only an older release
-        // carries the asset. Strict newest-only only when a filter is set without fallback.
         val candidates =
             if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)

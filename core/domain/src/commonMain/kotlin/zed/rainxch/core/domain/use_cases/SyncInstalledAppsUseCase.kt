@@ -19,6 +19,8 @@ class SyncInstalledAppsUseCase(
 ) {
     companion object {
         private const val PENDING_TIMEOUT_MS = 24 * 60 * 60 * 1000L
+
+        private const val MIN_PLAUSIBLE_SCAN_SIZE = 20
     }
 
     suspend operator fun invoke(): Result<Unit> =
@@ -27,10 +29,6 @@ class SyncInstalledAppsUseCase(
                 val appsInDb = installedAppsRepository.getAllInstalledApps().first()
                 if (appsInDb.isEmpty()) return@withContext Result.success(Unit)
 
-                // The tracked library (installed_apps) is the user's curated source of truth.
-                // A device scan may UPDATE version metadata but must never DELETE a tracked row
-                // unless we can positively prove the package is gone. On platforms that cannot
-                // enumerate installed packages (e.g. desktop) we never delete here at all.
                 if (packageMonitor.canEnumerateInstalledPackages()) {
                     reconcileEnumerable(appsInDb)
                 } else {
@@ -46,11 +44,6 @@ class SyncInstalledAppsUseCase(
             }
         }
 
-    // No package enumeration on this platform (desktop): we cannot tell which apps are present,
-    // so we NEVER delete a tracked row here. We only resolve "orphan" pending rows — delegated
-    // installs with no parked file that can therefore never self-confirm — so they don't sit
-    // pending forever (and previously got swept by the 24h stale-pending delete, wiping the
-    // library on every app open).
     private suspend fun resolveUntrackablePending(appsInDb: List<InstalledApp>) {
         val orphanPending =
             appsInDb.filter { it.isPendingInstall && it.pendingInstallFilePath == null }
@@ -107,14 +100,13 @@ class SyncInstalledAppsUseCase(
             }
         }
 
-        guardUntrustworthyScan(appsInDb, installedPackageNames, deleteCandidates, staleCandidates)
+        guardUntrustworthyScan(
+            appsInDb = appsInDb,
+            installedPackageNames = installedPackageNames,
+            deleteCandidates = deleteCandidates,
+            staleCandidates = staleCandidates
+        )
 
-        // Re-confirm every surviving deletion against the authoritative per-package query before
-        // committing it. getAllInstalledPackageNames() can be truncated by Android package
-        // visibility; getInstalledPackageInfo() still resolves packages we are allowed to see.
-        // A row is deleted ONLY on positive proof of absence (Presence.Absent). A lookup that
-        // fails (Presence.Unknown — SecurityException, transient error) is never treated as proof
-        // of uninstall, so a transient glitch can never wipe a tracked row.
         val confirmedDeletes =
             deleteCandidates.filter { pkg ->
                 val absent = presenceOf(pkg) is Presence.Absent
@@ -128,13 +120,10 @@ class SyncInstalledAppsUseCase(
             when (presenceOf(app.packageName)) {
                 is Presence.Absent -> confirmedStaleDeletes.add(app.packageName)
                 is Presence.Present -> toResolvePending.add(app)
-                is Presence.Unknown -> Unit // leave it pending, retry next sync
+                is Presence.Unknown -> Unit
             }
         }
 
-        // Fetch all system package info up front so the write transaction stays pure DB work and
-        // doesn't hold the writer connection open across PackageManager calls. A failed lookup
-        // yields null here (no version write), never a delete.
         val systemInfoByPackage =
             (toResolvePending.map { it.packageName } + toSyncVersions.map { it.packageName })
                 .toSet()
@@ -158,10 +147,6 @@ class SyncInstalledAppsUseCase(
         )
     }
 
-    // Trust gate: getAllInstalledPackageNames() can be truncated by Android package visibility
-    // (denied QUERY_ALL_PACKAGES, restrictive OEM ROMs). An empty scan, or one that recognises
-    // fewer than half of the tracked apps, is not a genuine mass-uninstall — drop ALL absence-
-    // driven deletions (catch-up + stale pending). Real uninstalls arrive via PackageEventReceiver.
     private fun guardUntrustworthyScan(
         appsInDb: List<InstalledApp>,
         installedPackageNames: Set<String>,
@@ -171,8 +156,9 @@ class SyncInstalledAppsUseCase(
         val nonPendingCount = appsInDb.count { !it.isPendingInstall }
         val recognizedCount =
             appsInDb.count { !it.isPendingInstall && installedPackageNames.contains(it.packageName) }
+
         val scanUntrustworthy =
-            installedPackageNames.isEmpty() ||
+            installedPackageNames.size < MIN_PLAUSIBLE_SCAN_SIZE ||
                 (nonPendingCount >= 1 && recognizedCount * 2 < nonPendingCount)
         if (scanUntrustworthy) {
             logger.error(
@@ -297,10 +283,6 @@ class SyncInstalledAppsUseCase(
         }
     }
 
-    // Positive-proof package presence. getInstalledPackageInfo throws on ambiguous failures
-    // (SecurityException, transient PackageManager error); we map those to Unknown so callers
-    // never mistake "couldn't tell" for "not installed". Only NameNotFoundException (→ null) is
-    // Absent.
     private suspend fun presenceOf(packageName: String): Presence =
         runCatching { packageMonitor.getInstalledPackageInfo(packageName) }
             .fold(

@@ -2093,10 +2093,6 @@ class DetailsViewModel(
         parkedFilePath: String? = null,
     ) {
         val repo = _state.value.repository ?: return
-        // "Pending" means "delegated to the OS installer, awaiting confirmation". Only Android can
-        // confirm it (PackageEventReceiver). On platforms without a package monitor (desktop) the
-        // install is delegated with no way back, so it must settle as installed immediately rather
-        // than linger pending forever and get swept by stale-pending cleanup.
         val isPending = installOutcome != InstallOutcome.COMPLETED && platform == Platform.ANDROID
 
         val pendingPath = parkedFilePath?.takeIf { isPending }
