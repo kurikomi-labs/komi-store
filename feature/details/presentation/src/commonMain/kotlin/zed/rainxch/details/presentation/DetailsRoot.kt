@@ -26,7 +26,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LinkOff
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
@@ -36,8 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.KomiDialog
-import zed.rainxch.core.presentation.components.overlays.KomiDropdown
-import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -79,6 +76,8 @@ import zed.rainxch.core.domain.model.installation.InstallSource
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiActionRow
+import zed.rainxch.core.presentation.components.buttons.KomiActionRowItem
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
@@ -109,7 +108,6 @@ import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_title
 import zed.rainxch.githubstore.core.presentation.res.details_refresh
 import zed.rainxch.githubstore.core.presentation.res.details_refresh_cooldown
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_more_options
 import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_archived
 import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_budget_exhausted
 import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_cooldown
@@ -739,40 +737,9 @@ private fun DetailsTopbar(
             contentDescription = stringResource(Res.string.navigate_back),
             onClick = { onAction(DetailsAction.OnNavigateBackClick) },
         )
+
         if (state.repository != null) {
-            val colors = LocalPersonality.current.colors
-            val shape = LocalPersonality.current.shape
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(shape.cornerSmall))
-                    .background(colors.surface)
-                    .border(
-                        width = 1.dp,
-                        color = colors.outline,
-                        shape = RoundedCornerShape(shape.cornerSmall),
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(shape.cornerSmall))
-                        .clickable { onAction(DetailsAction.OpenRepoInBrowser) }
-                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                ) {
-                    KomiIcon(
-                        imageVector = Icons.Default.OpenInBrowser,
-                        contentDescription = stringResource(Res.string.open_repository),
-                        tint = colors.onSurface,
-                        modifier = Modifier.size(18.dp),
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .size(1.dp, 20.dp)
-                        .background(colors.outline.copy(alpha = 0.5f)),
-                )
-                DetailsOverflowMenu(state = state, onAction = onAction)
-            }
+            DetailsActions(state = state, onAction = onAction)
         }
     }
 }
@@ -782,7 +749,7 @@ private fun DetailsTopbar(
     ExperimentalTime::class,
 )
 @Composable
-private fun DetailsOverflowMenu(
+private fun DetailsActions(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
 ) {
@@ -804,90 +771,76 @@ private fun DetailsOverflowMenu(
     val cooldownActive = cooldownSeconds > 0
     val refreshDisabled = cooldownActive || state.isRefreshing
 
-    val entries = buildList {
-        add(
-            KomiMenuItem(
-                id = "star",
-                label = stringResource(
-                    if (state.isStarred) Res.string.repository_starred
-                    else Res.string.repository_not_starred,
-                ),
-                icon = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
-            ),
+    val openLabel = stringResource(Res.string.open_repository)
+    val starLabel =
+        stringResource(
+            if (state.isStarred) Res.string.repository_starred else Res.string.repository_not_starred,
         )
-        add(
-            KomiMenuItem(
-                id = "favourite",
-                label = stringResource(
-                    if (state.isFavourite) Res.string.remove_from_favourites
-                    else Res.string.add_to_favourites,
-                ),
-                icon = if (state.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-            ),
+    val favouriteLabel =
+        stringResource(
+            if (state.isFavourite) Res.string.remove_from_favourites else Res.string.add_to_favourites,
         )
-        if (state.repository?.htmlUrl != null) {
-            add(
-                KomiMenuItem(
-                    id = "share",
-                    label = stringResource(Res.string.share_repository),
-                    icon = Icons.Default.Share,
-                ),
-            )
+    val shareLabel = stringResource(Res.string.share_repository)
+    val refreshLabel =
+        if (cooldownActive) {
+            stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
+        } else {
+            stringResource(Res.string.details_refresh)
         }
-        add(
-            KomiMenuItem(
-                id = "refresh",
-                label = if (cooldownActive) {
-                    stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
-                } else {
-                    stringResource(Res.string.details_refresh)
-                },
-                icon = Icons.Default.Refresh,
-                enabled = !refreshDisabled,
-            ),
-        )
-        if (state.installedApp?.installSource == InstallSource.MANUAL) {
-            add(
-                KomiMenuItem(
-                    id = "unlink",
-                    label = stringResource(Res.string.details_unlink_external_app_menu),
-                    icon = Icons.Default.LinkOff,
-                ),
-            )
-        }
-    }.toImmutableList()
+    val unlinkLabel = stringResource(Res.string.details_unlink_external_app_menu)
 
-    val moreOptionsCd = stringResource(Res.string.details_refresh_more_options)
-    KomiDropdown(
-        entries = entries,
-        onSelect = { item ->
-            when (item.id) {
-                "star" -> onAction(DetailsAction.OnToggleStar)
-                "favourite" -> onAction(DetailsAction.OnToggleFavorite)
-                "share" -> onAction(DetailsAction.OnShareClick)
-                "refresh" -> onAction(DetailsAction.Refresh)
-                "unlink" -> onAction(DetailsAction.OnUnlinkExternalApp)
-            }
-        },
-        trigger = { onClick ->
-            val colors = LocalPersonality.current.colors
-            val shape = LocalPersonality.current.shape
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(shape.cornerSmall))
-                    .clickable(onClick = onClick)
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                KomiIcon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = moreOptionsCd,
-                    tint = colors.onSurface,
-                    modifier = Modifier.size(18.dp),
+    val items =
+        buildList {
+            add(
+                KomiActionRowItem(
+                    icon = Icons.Default.OpenInBrowser,
+                    title = openLabel,
+                    onClick = { onAction(DetailsAction.OpenRepoInBrowser) },
+                ),
+            )
+            add(
+                KomiActionRowItem(
+                    icon = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+                    title = starLabel,
+                    onClick = { onAction(DetailsAction.OnToggleStar) },
+                ),
+            )
+            add(
+                KomiActionRowItem(
+                    icon = if (state.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    title = favouriteLabel,
+                    onClick = { onAction(DetailsAction.OnToggleFavorite) },
+                ),
+            )
+            if (state.repository?.htmlUrl != null) {
+                add(
+                    KomiActionRowItem(
+                        icon = Icons.Default.Share,
+                        title = shareLabel,
+                        onClick = { onAction(DetailsAction.OnShareClick) },
+                    ),
                 )
             }
-        },
-    )
+            add(
+                KomiActionRowItem(
+                    icon = Icons.Default.Refresh,
+                    title = refreshLabel,
+                    onClick = { onAction(DetailsAction.Refresh) },
+                    enabled = !refreshDisabled,
+                ),
+            )
+            if (state.installedApp?.installSource == InstallSource.MANUAL) {
+                add(
+                    KomiActionRowItem(
+                        icon = Icons.Default.LinkOff,
+                        title = unlinkLabel,
+                        onClick = { onAction(DetailsAction.OnUnlinkExternalApp) },
+                    ),
+                )
+            }
+        }.toImmutableList()
+
+    KomiActionRow(items = items, maxVisible = 1)
 }
 
 @Preview
