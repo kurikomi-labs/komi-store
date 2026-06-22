@@ -21,8 +21,10 @@ import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
 import zed.rainxch.tweaks.presentation.components.shell.SettingsSectionHead
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegment
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegmented
+import kotlinx.collections.immutable.persistentListOf
+import zed.rainxch.core.presentation.components.buttons.KomiIconButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiSegmented
+import zed.rainxch.core.presentation.components.buttons.KomiSegmentedItem
 import zed.rainxch.tweaks.presentation.components.shell.SettingsValuePill
 import zed.rainxch.core.presentation.components.inputs.KomiSwitch
 
@@ -56,15 +58,15 @@ private fun AppearanceSectionPreview() {
                     title = "Mode",
                     subtitle = "Light / Dark / System",
                     trailing = {
-                        SettingsSegmented(
-                            value = mode,
-                            small = true,
+                        KomiSegmented(
+                            selected = mode,
                             onSelect = { mode = it },
-                            options =
-                                listOf(
-                                    SettingsSegment("light", "Light"),
-                                    SettingsSegment("dark", "Dark"),
-                                    SettingsSegment("system", "Sys"),
+                            size = KomiIconButtonSize.Sm,
+                            items =
+                                persistentListOf(
+                                    KomiSegmentedItem(value = "light", title = "Light"),
+                                    KomiSegmentedItem(value = "dark", title = "Dark"),
+                                    KomiSegmentedItem(value = "system", title = "Sys"),
                                 ),
                         )
                     },

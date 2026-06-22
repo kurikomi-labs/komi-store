@@ -10,17 +10,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiSegmented
+import zed.rainxch.core.presentation.components.buttons.KomiSegmentedItem
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.proxy_host
@@ -43,14 +46,11 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_test
 import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_use_main
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
+import zed.rainxch.tweaks.presentation.components.shell.SettingsExpandableRow
+import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.connection.PasteProxyUrlSheet
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 import zed.rainxch.tweaks.presentation.model.ProxyType
-import zed.rainxch.tweaks.presentation.components.shell.SettingsExpandableRow
-import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
-import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegment
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegmented
 
 @Composable
 fun connectionSectionContent(
@@ -123,14 +123,14 @@ fun connectionSectionContent(
                 onToggle = { expandedScope = if (expandedScope == scope) null else scope },
                 last = index == ProxyScope.entries.lastIndex,
             ) {
-                SettingsSegmented(
-                    value = useMain,
-                    small = true,
+                KomiSegmented(
+                    selected = useMain,
                     onSelect = { onAction(TweaksAction.OnScopeUseMainToggled(scope, it)) },
-                    options =
-                        listOf(
-                            SettingsSegment(true, stringResource(Res.string.tweaks_connection_use_main)),
-                            SettingsSegment(false, stringResource(Res.string.tweaks_connection_custom)),
+                    size = KomiIconButtonSize.Sm,
+                    items =
+                        persistentListOf(
+                            KomiSegmentedItem(value = true, title = stringResource(Res.string.tweaks_connection_use_main)),
+                            KomiSegmentedItem(value = false, title = stringResource(Res.string.tweaks_connection_custom)),
                         ),
                 )
                 AnimatedVisibility(visible = !useMain) {
@@ -221,16 +221,16 @@ private fun ProxyTypeSegmented(
     selected: ProxyType,
     onSelected: (ProxyType) -> Unit,
 ) {
-    SettingsSegmented(
-        value = selected,
-        small = true,
+    KomiSegmented(
+        selected = selected,
         onSelect = onSelected,
-        options =
-            listOf(
-                SettingsSegment(ProxyType.NONE, stringResource(Res.string.tweaks_connection_mode_no_proxy)),
-                SettingsSegment(ProxyType.SYSTEM, stringResource(Res.string.tweaks_connection_mode_system)),
-                SettingsSegment(ProxyType.HTTP, stringResource(Res.string.tweaks_connection_mode_http)),
-                SettingsSegment(ProxyType.SOCKS, stringResource(Res.string.tweaks_connection_mode_socks)),
+        size = KomiIconButtonSize.Sm,
+        items =
+            persistentListOf(
+                KomiSegmentedItem(value = ProxyType.NONE, title = stringResource(Res.string.tweaks_connection_mode_no_proxy)),
+                KomiSegmentedItem(value = ProxyType.SYSTEM, title = stringResource(Res.string.tweaks_connection_mode_system)),
+                KomiSegmentedItem(value = ProxyType.HTTP, title = stringResource(Res.string.tweaks_connection_mode_http)),
+                KomiSegmentedItem(value = ProxyType.SOCKS, title = stringResource(Res.string.tweaks_connection_mode_socks)),
             ),
     )
 }

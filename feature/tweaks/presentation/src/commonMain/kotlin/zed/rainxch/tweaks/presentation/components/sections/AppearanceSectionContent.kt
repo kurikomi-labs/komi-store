@@ -12,8 +12,11 @@ import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegment
-import zed.rainxch.tweaks.presentation.components.shell.SettingsSegmented
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import zed.rainxch.core.presentation.components.buttons.KomiIconButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiSegmented
+import zed.rainxch.core.presentation.components.buttons.KomiSegmentedItem
 
 private enum class ModeChoice { LIGHT, DARK, SYSTEM }
 
@@ -42,15 +45,15 @@ fun appearanceSectionContent(
         SettingsRow(
             title = stringResource(Res.string.appearance_section_mode),
             trailing = {
-                SettingsSegmented(
-                    value = isDarkToChoice(state.isDarkTheme),
-                    small = true,
+                KomiSegmented(
+                    selected = isDarkToChoice(state.isDarkTheme),
                     onSelect = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
-                    options =
-                        listOf(
-                            SettingsSegment(ModeChoice.LIGHT, stringResource(Res.string.theme_light)),
-                            SettingsSegment(ModeChoice.DARK, stringResource(Res.string.theme_dark)),
-                            SettingsSegment(ModeChoice.SYSTEM, stringResource(Res.string.theme_system)),
+                    size = KomiIconButtonSize.Sm,
+                    items =
+                        persistentListOf(
+                            KomiSegmentedItem(value = ModeChoice.LIGHT, title = stringResource(Res.string.theme_light)),
+                            KomiSegmentedItem(value = ModeChoice.DARK, title = stringResource(Res.string.theme_dark)),
+                            KomiSegmentedItem(value = ModeChoice.SYSTEM, title = stringResource(Res.string.theme_system)),
                         ),
                 )
             },
@@ -82,11 +85,11 @@ fun appearanceSectionContent(
                 subtitle = stringResource(Res.string.content_width_description),
                 last = true,
                 trailing = {
-                    SettingsSegmented(
-                        value = state.contentWidth,
-                        small = true,
+                    KomiSegmented(
+                        selected = state.contentWidth,
                         onSelect = { onAction(TweaksAction.OnContentWidthSelected(it)) },
-                        options = ContentWidth.entries.map { SettingsSegment(it, it.displayName) },
+                        size = KomiIconButtonSize.Sm,
+                        items = ContentWidth.entries.map { KomiSegmentedItem(value = it, title = it.displayName) }.toImmutableList(),
                     )
                 },
             )
