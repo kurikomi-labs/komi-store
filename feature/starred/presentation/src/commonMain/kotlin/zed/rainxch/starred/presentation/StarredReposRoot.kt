@@ -169,9 +169,11 @@ fun StarredScreen(
                                     state.starredRepositories
                                         .filter { repo ->
                                             repo.repoName.lowercase().contains(q) ||
-                                                repo.repoOwner.lowercase().contains(q) ||
-                                                (repo.repoDescription?.lowercase()?.contains(q) == true) ||
-                                                (repo.primaryLanguage?.lowercase()?.contains(q) == true)
+                                                    repo.repoOwner.lowercase().contains(q) ||
+                                                    (repo.repoDescription?.lowercase()
+                                                        ?.contains(q) == true) ||
+                                                    (repo.primaryLanguage?.lowercase()
+                                                        ?.contains(q) == true)
                                         }
                                         .toImmutableList()
                                 }
@@ -196,8 +198,12 @@ fun StarredScreen(
                                     columns = StaggeredGridCells.Adaptive(350.dp),
                                     verticalItemSpacing = 12.dp,
                                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
-                                    modifier = Modifier.fillMaxSize().arrowKeyScroll(gridState, autoFocus = true),
+                                    contentPadding = PaddingValues(
+                                        horizontal = 8.dp,
+                                        vertical = 12.dp
+                                    ),
+                                    modifier = Modifier.fillMaxSize()
+                                        .arrowKeyScroll(gridState, autoFocus = true),
                                 ) {
                                     items(
                                         items = filteredRepositories,
@@ -212,7 +218,11 @@ fun StarredScreen(
                                                 onAction(StarredReposAction.OnRepositoryClick(repo))
                                             },
                                             onDevProfileClick = {
-                                                onAction(StarredReposAction.OnDeveloperProfileClick(repo.repoOwner))
+                                                onAction(
+                                                    StarredReposAction.OnDeveloperProfileClick(
+                                                        repo.repoOwner
+                                                    )
+                                                )
                                             },
                                             modifier = Modifier.animateItem(),
                                         )
@@ -233,7 +243,12 @@ fun StarredScreen(
                             .padding(16.dp)
                             .fillMaxWidth(),
                     elevation = KomiSurfaceElevation.Raised,
-                    contentPadding = PaddingValues(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 8.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
+                    ),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -286,15 +301,14 @@ private fun StarredTopBar(
             null
         }
 
-    val sortEntries =
-        StarredSortRule.entries
-            .map { rule ->
-                KomiMenuItem(
-                    id = rule.name,
-                    label = stringResource(rule.labelRes()),
-                )
-            }
-            .toPersistentList()
+    val sortEntries = StarredSortRule.entries
+        .map { rule ->
+            KomiMenuItem(
+                id = rule.name,
+                label = stringResource(rule.labelRes()),
+            )
+        }
+        .toPersistentList()
 
     KomiTopBar(
         title = stringResource(Res.string.starred_repositories),
@@ -305,7 +319,7 @@ private fun StarredTopBar(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.navigate_back),
                 onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
         },
         actions = {
@@ -330,7 +344,7 @@ private fun StarredTopBar(
                             icon = Icons.AutoMirrored.Filled.Sort,
                             contentDescription = stringResource(Res.string.sort_label),
                             onClick = onClick,
-                            variant = KomiButtonVariant.Text,
+                            variant = KomiButtonVariant.Tonal,
                         )
                     },
                 )

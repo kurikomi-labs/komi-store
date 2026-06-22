@@ -45,7 +45,7 @@ fun TweaksStubScreen(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(Res.string.back_cd),
                         onClick = onNavigateBack,
-                        variant = KomiButtonVariant.Text,
+                        variant = KomiButtonVariant.Tonal,
                     )
                 },
             )

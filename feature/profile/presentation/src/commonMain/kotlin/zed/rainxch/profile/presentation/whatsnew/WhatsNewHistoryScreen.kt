@@ -49,7 +49,7 @@ fun WhatsNewHistoryScreen(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "",
                         onClick = onNavigateBack,
-                        variant = KomiButtonVariant.Text,
+                        variant = KomiButtonVariant.Tonal,
                     )
                 },
             )

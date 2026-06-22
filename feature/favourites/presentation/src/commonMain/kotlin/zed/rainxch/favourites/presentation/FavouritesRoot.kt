@@ -196,7 +196,7 @@ private fun FavouritesTopbar(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.navigate_back),
                 onClick = { onAction(FavouritesAction.OnNavigateBackClick) },
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
         },
         actions = {
@@ -204,7 +204,7 @@ private fun FavouritesTopbar(
                 icon = Icons.Filled.PersonAdd,
                 contentDescription = stringResource(Res.string.import_stars_entry),
                 onClick = { onAction(FavouritesAction.OnImportStarsClick) },
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
             if (hasRepos) {
                 val sortContentDescription = stringResource(Res.string.sort_label)
@@ -230,7 +230,7 @@ private fun FavouritesTopbar(
                             icon = Icons.AutoMirrored.Filled.Sort,
                             contentDescription = sortContentDescription,
                             onClick = onClick,
-                            variant = KomiButtonVariant.Text,
+                            variant = KomiButtonVariant.Tonal,
                         )
                     },
                 )

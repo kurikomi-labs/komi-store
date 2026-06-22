@@ -107,7 +107,7 @@ fun ExternalImportRoot(
                             icon = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.external_import_top_bar_back),
                             onClick = { viewModel.onAction(ExternalImportAction.OnExit) },
-                            variant = KomiButtonVariant.Text,
+                            variant = KomiButtonVariant.Tonal,
                         )
                     },
                     actions = {
@@ -130,7 +130,7 @@ fun ExternalImportRoot(
                                         icon = Icons.Outlined.MoreVert,
                                         contentDescription = stringResource(Res.string.external_import_overflow_more),
                                         onClick = onClick,
-                                        variant = KomiButtonVariant.Text,
+                                        variant = KomiButtonVariant.Tonal,
                                     )
                                 },
                             )

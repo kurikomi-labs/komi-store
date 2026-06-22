@@ -155,7 +155,7 @@ private fun CategoryListTopBar(category: HomeCategory, onBack: () -> Unit) {
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.cd_back),
                 onClick = onBack,
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
         },
     )

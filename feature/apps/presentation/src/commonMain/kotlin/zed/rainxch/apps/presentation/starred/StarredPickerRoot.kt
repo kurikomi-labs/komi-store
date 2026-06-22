@@ -91,7 +91,7 @@ private fun StarredPickerScreen(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(Res.string.navigate_back),
                         onClick = { onAction(StarredPickerAction.OnNavigateBack) },
-                        variant = KomiButtonVariant.Text,
+                        variant = KomiButtonVariant.Tonal,
                     )
                 },
             )

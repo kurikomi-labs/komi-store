@@ -76,7 +76,7 @@ fun AnnouncementsRoot(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(Res.string.navigate_back),
                         onClick = onNavigateBack,
-                        variant = KomiButtonVariant.Text,
+                        variant = KomiButtonVariant.Tonal,
                     )
                 },
                 actions = {
@@ -84,7 +84,7 @@ fun AnnouncementsRoot(
                         icon = Icons.Filled.Tune,
                         contentDescription = stringResource(Res.string.announcements_open_mute_settings),
                         onClick = { showMuteSheet = true },
-                        variant = KomiButtonVariant.Text,
+                        variant = KomiButtonVariant.Tonal,
                     )
                 },
             )

@@ -139,7 +139,7 @@ private fun RecentlyViewedTopbar(onAction: (RecentlyViewedAction) -> Unit) {
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.navigate_back),
                 onClick = { onAction(RecentlyViewedAction.OnNavigateBackClick) },
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
         },
     )

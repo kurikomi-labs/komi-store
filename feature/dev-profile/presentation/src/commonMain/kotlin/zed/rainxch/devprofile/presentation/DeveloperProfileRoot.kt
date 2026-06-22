@@ -325,7 +325,7 @@ fun DevProfileTopbar(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.navigate_back),
                 onClick = { onAction(DeveloperProfileAction.OnNavigateBackClick) },
-                variant = KomiButtonVariant.Text,
+                variant = KomiButtonVariant.Tonal,
             )
         },
         actions = {
@@ -334,7 +334,7 @@ fun DevProfileTopbar(
                     icon = Icons.Default.OpenInBrowser,
                     contentDescription = stringResource(Res.string.open_repository),
                     onClick = { onAction(DeveloperProfileAction.OnOpenLink(it)) },
-                    variant = KomiButtonVariant.Text,
+                    variant = KomiButtonVariant.Tonal,
                 )
             }
         },
