@@ -2144,6 +2144,7 @@ class DetailsViewModel(
                         siblingAssetCount = installable.size,
                         pickedAssetIndex = pickedIndex,
                         pendingInstallFilePath = pendingPath,
+                        sourceHost = sourceHostParam,
                     ),
                 )
             _state.value = _state.value.copy(installedApp = reloaded)

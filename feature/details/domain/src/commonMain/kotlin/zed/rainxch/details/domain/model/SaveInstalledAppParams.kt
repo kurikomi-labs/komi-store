@@ -16,4 +16,6 @@ data class SaveInstalledAppParams(
     val pickedAssetIndex: Int?,
 
     val pendingInstallFilePath: String? = null,
+
+    val sourceHost: String? = null,
 )

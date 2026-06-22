@@ -127,6 +127,7 @@ class InstallationManagerImpl(
                         params.releaseTag.takeIf { params.pendingInstallFilePath != null },
                     pendingInstallAssetName =
                         params.assetName.takeIf { params.pendingInstallFilePath != null },
+                    sourceHost = params.sourceHost,
                 )
 
             installedAppsRepository.saveInstalledApp(installedApp)

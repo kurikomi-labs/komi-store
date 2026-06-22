@@ -143,9 +143,7 @@ class InstalledAppsRepositoryImpl(
                 .map { it.toDomain() }
                 .onEach { release ->
                     val flagSays = release.isPrerelease
-                    val tagSays =
-                        VersionMath.isPreReleaseTag(release.tagName) ||
-                                VersionMath.isPreReleaseTag(release.name)
+                    val tagSays = VersionMath.isPreReleaseTag(release.tagName)
                     if (flagSays != tagSays) {
                         Logger.w {
                             "Pre-release flag/tag mismatch for $owner/$repo " +
@@ -186,11 +184,18 @@ class InstalledAppsRepositoryImpl(
     ): ResolvedRelease? {
         if (releases.isEmpty()) return null
 
+        // Scan the whole release window and return the newest release that actually carries an
+        // installable asset. Restricting to the single newest release (take(1)) meant that when
+        // the latest release shipped no asset for this platform/arch, no update surfaced at all —
+        // even though a slightly older release did. The newer-than-installed gate in
+        // checkForUpdates still applies, so this can never surface an older-than-installed
+        // release. Only an explicit asset filter without the fallback opt-in keeps the strict
+        // newest-only behaviour.
         val candidates =
-            if (filter != null && fallbackToOlderReleases) {
-                releases
-            } else {
+            if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)
+            } else {
+                releases
             }
 
         val hasAnyPin =
@@ -654,11 +659,14 @@ class InstalledAppsRepositoryImpl(
             return MatchingPreview(release = null, matchedAssets = emptyList())
         }
 
+        // Mirror resolveTrackedRelease: scan the whole window for the newest release with a
+        // matching installable asset, so the preview isn't blank when only an older release
+        // carries the asset. Strict newest-only only when a filter is set without fallback.
         val candidates =
-            if (filter != null && fallbackToOlderReleases) {
-                releases
-            } else {
+            if (filter != null && !fallbackToOlderReleases) {
                 releases.take(1)
+            } else {
+                releases
             }
 
         for (release in candidates) {
