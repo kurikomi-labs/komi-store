@@ -12,4 +12,6 @@ class DesktopPackageMonitor : PackageMonitor {
     override suspend fun getAllInstalledPackageNames(): Set<String> = setOf()
 
     override suspend fun getAllInstalledApps(): List<DeviceApp> = emptyList()
+
+    override fun canEnumerateInstalledPackages(): Boolean = false
 }

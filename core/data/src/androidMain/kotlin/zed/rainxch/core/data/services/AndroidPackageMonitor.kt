@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
 import android.os.Build
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.domain.model.installation.DeviceApp
@@ -18,6 +19,8 @@ class AndroidPackageMonitor(
     private val packageManager: PackageManager = context.packageManager
 
     override suspend fun isPackageInstalled(packageName: String): Boolean = getInstalledPackageInfo(packageName) != null
+
+    override fun canEnumerateInstalledPackages(): Boolean = true
 
     override suspend fun getInstalledPackageInfo(packageName: String): SystemPackageInfo? =
         withContext(Dispatchers.IO) {
@@ -81,6 +84,10 @@ class AndroidPackageMonitor(
                     isInstalled = true,
                     signingFingerprint = signingFingerprint,
                 )
+            }.onFailure { e ->
+                if (e !is PackageManager.NameNotFoundException) {
+                    Logger.w(e) { "getInstalledPackageInfo($packageName) failed: ${e.message}" }
+                }
             }.getOrNull()
         }
 
