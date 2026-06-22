@@ -2092,7 +2092,7 @@ class DetailsViewModel(
         parkedFilePath: String? = null,
     ) {
         val repo = _state.value.repository ?: return
-        val isPending = installOutcome != InstallOutcome.COMPLETED
+        val isPending = installOutcome != InstallOutcome.COMPLETED && platform == Platform.ANDROID
 
         val pendingPath = parkedFilePath?.takeIf { isPending }
 
@@ -2139,6 +2139,7 @@ class DetailsViewModel(
                         siblingAssetCount = installable.size,
                         pickedAssetIndex = pickedIndex,
                         pendingInstallFilePath = pendingPath,
+                        sourceHost = sourceHostParam,
                     ),
                 )
             _state.value = _state.value.copy(installedApp = reloaded)

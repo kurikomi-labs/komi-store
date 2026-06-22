@@ -11,4 +11,6 @@ interface PackageMonitor {
     suspend fun getAllInstalledPackageNames(): Set<String>
 
     suspend fun getAllInstalledApps(): List<DeviceApp>
+
+    fun canEnumerateInstalledPackages(): Boolean
 }
