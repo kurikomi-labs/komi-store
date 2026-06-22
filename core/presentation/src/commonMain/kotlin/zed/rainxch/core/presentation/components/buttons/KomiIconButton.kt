@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -102,7 +101,7 @@ private fun MangaIconButton(
     enabled: Boolean,
 ) {
     val colors = personality.colors
-    val metrics = iconButtonMetrics(size)
+    val metrics = size.metrics
     val shape =
         remember(personality.shape.cornerSmall) { RoundedCornerShape(personality.shape.cornerSmall) }
     val alpha = if (enabled) 1f else 0.45f
@@ -186,7 +185,7 @@ private fun ClassicIconButton(
     enabled: Boolean,
 ) {
     val colors = LocalPersonality.current.colors
-    val metrics = iconButtonMetrics(size)
+    val metrics = size.metrics
     val content: @Composable () -> Unit = {
         Icon(
             imageVector = icon,
@@ -247,43 +246,6 @@ private fun ClassicIconButton(
         }
     }
 }
-
-private data class IconButtonMetrics(
-    val box: Dp,
-    val icon: Dp,
-    val shadow: Dp,
-    val border: Dp,
-)
-
-private fun iconButtonMetrics(size: KomiIconButtonSize): IconButtonMetrics =
-    when (size) {
-        KomiIconButtonSize.Sm -> {
-            IconButtonMetrics(
-                box = 34.dp,
-                icon = 18.dp,
-                shadow = 3.dp,
-                border = 2.5.dp,
-            )
-        }
-
-        KomiIconButtonSize.Md -> {
-            IconButtonMetrics(
-                box = 42.dp,
-                icon = 20.dp,
-                shadow = 4.dp,
-                border = 2.5.dp,
-            )
-        }
-
-        KomiIconButtonSize.Lg -> {
-            IconButtonMetrics(
-                box = 48.dp,
-                icon = 22.dp,
-                shadow = 4.dp,
-                border = 2.5.dp,
-            )
-        }
-    }
 
 @Composable
 private fun PreviewIconRow() {
