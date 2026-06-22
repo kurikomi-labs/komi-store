@@ -84,11 +84,17 @@ class AndroidPackageMonitor(
                     isInstalled = true,
                     signingFingerprint = signingFingerprint,
                 )
-            }.onFailure { e ->
-                if (e !is PackageManager.NameNotFoundException) {
+            }.getOrElse { e ->
+                // null means ONLY "positively not installed" (NameNotFoundException). Any other
+                // failure (SecurityException, transient PackageManager error) is rethrown so the
+                // caller never mistakes an ambiguous lookup for proof of uninstall and deletes data.
+                if (e is PackageManager.NameNotFoundException) {
+                    null
+                } else {
                     Logger.w(e) { "getInstalledPackageInfo($packageName) failed: ${e.message}" }
+                    throw e
                 }
-            }.getOrNull()
+            }
         }
 
     override suspend fun getAllInstalledPackageNames(): Set<String> =

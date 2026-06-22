@@ -112,31 +112,33 @@ class SyncInstalledAppsUseCase(
         // Re-confirm every surviving deletion against the authoritative per-package query before
         // committing it. getAllInstalledPackageNames() can be truncated by Android package
         // visibility; getInstalledPackageInfo() still resolves packages we are allowed to see.
-        // Only delete when BOTH agree the package is gone. A stale-pending app the direct query
-        // CAN see has actually installed — resolve it instead of deleting it.
+        // A row is deleted ONLY on positive proof of absence (Presence.Absent). A lookup that
+        // fails (Presence.Unknown — SecurityException, transient error) is never treated as proof
+        // of uninstall, so a transient glitch can never wipe a tracked row.
         val confirmedDeletes =
             deleteCandidates.filter { pkg ->
-                val present = packageMonitor.getInstalledPackageInfo(pkg) != null
-                if (present) {
-                    logger.info("Kept $pkg: bulk scan missed it but it is installed (visibility)")
+                val absent = presenceOf(pkg) is Presence.Absent
+                if (!absent) {
+                    logger.info("Kept $pkg: not positively absent (installed, hidden, or lookup failed)")
                 }
-                !present
+                absent
             }
         val confirmedStaleDeletes = mutableListOf<String>()
         staleCandidates.forEach { app ->
-            if (packageMonitor.getInstalledPackageInfo(app.packageName) == null) {
-                confirmedStaleDeletes.add(app.packageName)
-            } else {
-                toResolvePending.add(app)
+            when (presenceOf(app.packageName)) {
+                is Presence.Absent -> confirmedStaleDeletes.add(app.packageName)
+                is Presence.Present -> toResolvePending.add(app)
+                is Presence.Unknown -> Unit // leave it pending, retry next sync
             }
         }
 
         // Fetch all system package info up front so the write transaction stays pure DB work and
-        // doesn't hold the writer connection open across PackageManager calls.
+        // doesn't hold the writer connection open across PackageManager calls. A failed lookup
+        // yields null here (no version write), never a delete.
         val systemInfoByPackage =
             (toResolvePending.map { it.packageName } + toSyncVersions.map { it.packageName })
                 .toSet()
-                .associateWith { packageMonitor.getInstalledPackageInfo(it) }
+                .associateWith { (presenceOf(it) as? Presence.Present)?.info }
 
         installedAppsRepository.executeInTransaction {
             confirmedDeletes.forEach { deleteTracked(it, "uninstalled app") }
@@ -295,9 +297,32 @@ class SyncInstalledAppsUseCase(
         }
     }
 
+    // Positive-proof package presence. getInstalledPackageInfo throws on ambiguous failures
+    // (SecurityException, transient PackageManager error); we map those to Unknown so callers
+    // never mistake "couldn't tell" for "not installed". Only NameNotFoundException (→ null) is
+    // Absent.
+    private suspend fun presenceOf(packageName: String): Presence =
+        runCatching { packageMonitor.getInstalledPackageInfo(packageName) }
+            .fold(
+                onSuccess = { info -> if (info == null) Presence.Absent else Presence.Present(info) },
+                onFailure = { e ->
+                    if (e is CancellationException) throw e
+                    logger.warn("Package lookup failed for $packageName; treated as unknown: ${e.message}")
+                    Presence.Unknown
+                },
+            )
+
+    private sealed interface Presence {
+        data object Absent : Presence
+
+        data class Present(val info: SystemPackageInfo) : Presence
+
+        data object Unknown : Presence
+    }
+
     private suspend fun determineMigrationData(app: InstalledApp): MigrationResult =
         if (platform == Platform.ANDROID) {
-            val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
+            val systemInfo = (presenceOf(app.packageName) as? Presence.Present)?.info
             if (systemInfo != null) {
                 MigrationResult(
                     versionName = systemInfo.versionName,
