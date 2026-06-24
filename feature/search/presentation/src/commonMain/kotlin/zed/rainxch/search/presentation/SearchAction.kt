@@ -1,5 +1,6 @@
 package zed.rainxch.search.presentation
 
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
 import zed.rainxch.search.presentation.model.SearchPlatformUi
@@ -13,7 +14,7 @@ sealed interface SearchAction {
     ) : SearchAction
 
     data class OnPlatformTypeSelected(
-        val searchPlatform: SearchPlatformUi,
+        val searchPlatform: DiscoveryPlatform,
     ) : SearchAction
 
     data class OnSourceSelected(

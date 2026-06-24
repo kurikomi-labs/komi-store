@@ -2,6 +2,7 @@ package zed.rainxch.search.presentation
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.model.DiscoveryRepositoryUi
 import zed.rainxch.search.presentation.model.ParsedGithubLink
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
@@ -14,7 +15,7 @@ data class SearchState(
     val query: String = "",
     val repositories: ImmutableList<DiscoveryRepositoryUi> = persistentListOf(),
     val visibleRepos: ImmutableList<DiscoveryRepositoryUi> = persistentListOf(),
-    val selectedSearchPlatform: SearchPlatformUi = SearchPlatformUi.All,
+    val selectedSearchPlatform: DiscoveryPlatform = DiscoveryPlatform.All,
     val selectedSortBy: SortByUi = SortByUi.BestMatch,
     val selectedSortOrder: SortOrderUi = SortOrderUi.Descending,
     val selectedLanguage: ProgrammingLanguageUi = ProgrammingLanguageUi.All,

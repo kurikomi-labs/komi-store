@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
@@ -49,7 +50,6 @@ import zed.rainxch.githubstore.core.presentation.res.search_filters_section_sort
 import zed.rainxch.githubstore.core.presentation.res.search_filters_section_source
 import zed.rainxch.githubstore.core.presentation.res.search_filters_title
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
-import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.label
@@ -61,11 +61,11 @@ import zed.rainxch.search.presentation.mappers.toDomain
 fun SearchFiltersSheet(
     selectedSource: SearchSourceUi,
     availableSources: ImmutableList<SearchSourceUi>,
-    selectedPlatform: SearchPlatformUi,
+    selectedPlatform: DiscoveryPlatform,
     selectedLanguage: ProgrammingLanguageUi,
     selectedSortBy: SortByUi,
     onSourceSelected: (SearchSourceUi) -> Unit,
-    onPlatformSelected: (SearchPlatformUi) -> Unit,
+    onPlatformSelected: (DiscoveryPlatform) -> Unit,
     onOpenLanguagePicker: () -> Unit,
     onOpenSortPicker: () -> Unit,
     onReset: () -> Unit,
@@ -120,9 +120,9 @@ fun SearchFiltersSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    SearchPlatformUi.entries.forEach { platform ->
+                    DiscoveryPlatform.entries.forEach { platform ->
                         SelectableChip(
-                            text = platform.toDomain().toLabel(),
+                            text = platform.toLabel(),
                             selected = selectedPlatform == platform,
                             onClick = { onPlatformSelected(platform) },
                         )

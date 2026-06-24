@@ -71,7 +71,7 @@ class SearchViewModel(
     private val userSessionRepository: UserSessionRepository,
     private val hiddenReposRepository: HiddenReposRepository,
     private val browseFilterStore: BrowseFilterStore,
-    private val initialPlatform: SearchPlatformUi? = null,
+    private val initialPlatform: DiscoveryPlatform? = null,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
@@ -137,7 +137,7 @@ class SearchViewModel(
     private fun observeBrowseFilter() {
         viewModelScope.launch {
             browseFilterStore.platform.collect { p ->
-                onAction(SearchAction.OnPlatformTypeSelected(p.toSearchPlatformUi()))
+                onAction(SearchAction.OnPlatformTypeSelected(p))
             }
         }
     }
@@ -431,7 +431,7 @@ class SearchViewModel(
                 searchRepository
                     .searchRepositories(
                         query = _state.value.query,
-                        platform = _state.value.selectedSearchPlatform.toDomain(),
+                        platform = _state.value.selectedSearchPlatform,
                         language = _state.value.selectedLanguage.toDomain(),
                         sortBy = _state.value.selectedSortBy.toDomain(),
                         sortOrder = _state.value.selectedSortOrder.toDomain(),
@@ -897,7 +897,7 @@ class SearchViewModel(
             try {
                 val exploreResult = searchRepository.exploreFromGithub(
                     query = query,
-                    platform = platformUi.toDomain(),
+                    platform = platformUi,
                     page = explorePage,
                 )
                 val existingCount = _state.value.repositories.size
