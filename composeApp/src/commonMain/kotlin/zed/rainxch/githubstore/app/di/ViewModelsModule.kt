@@ -8,6 +8,7 @@ import zed.rainxch.apps.presentation.AppsViewModel
 import zed.rainxch.apps.presentation.import.ExternalImportViewModel
 import zed.rainxch.apps.presentation.starred.StarredPickerViewModel
 import zed.rainxch.auth.presentation.AuthenticationViewModel
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.details.presentation.about.DetailsAboutViewModel
 import zed.rainxch.details.presentation.whatsnew.DetailsWhatsNewViewModel
@@ -27,7 +28,6 @@ import zed.rainxch.repopages.presentation.issues.IssuesViewModel
 import zed.rainxch.repopages.presentation.pulls.PullsViewModel
 import zed.rainxch.repopages.presentation.security.SecurityViewModel
 import zed.rainxch.search.presentation.SearchViewModel
-import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposViewModel
 import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.feedback.FeedbackViewModel
@@ -153,7 +153,7 @@ val viewModelsModule =
                 hiddenReposRepository = get(),
                 userSessionRepository = get(),
                 browseFilterStore = get(),
-                initialPlatform = params.getOrNull<SearchPlatformUi>(),
+                initialPlatform = params.getOrNull<DiscoveryPlatform>(),
             )
         }
         viewModelOf(::ProfileViewModel)

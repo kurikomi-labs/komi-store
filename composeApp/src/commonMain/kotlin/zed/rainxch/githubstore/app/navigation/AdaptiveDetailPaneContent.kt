@@ -196,9 +196,6 @@ private fun MainDetailPane(
         onNavigateToSecurity = { owner, repo ->
             navController.navigate(GithubStoreGraph.RepoSecurityScreen(owner = owner, repo = repo))
         },
-        onNavigateToPulls = { owner, repo ->
-            navController.navigate(GithubStoreGraph.RepoPullsScreen(owner = owner, repo = repo))
-        },
         onNavigateToMarkdownViewer = { url ->
             navController.navigate(GithubStoreGraph.MarkdownViewerScreen(url))
         },

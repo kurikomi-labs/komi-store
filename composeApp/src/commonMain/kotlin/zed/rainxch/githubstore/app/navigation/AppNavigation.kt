@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,6 +42,7 @@ import zed.rainxch.apps.presentation.starred.StarredPickerRoot
 import zed.rainxch.auth.presentation.AuthenticationRoot
 import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.adaptive.AdaptiveDetailArgs
 import zed.rainxch.core.presentation.components.adaptive.AdaptiveListDetailScaffold
 import zed.rainxch.core.presentation.components.adaptive.rememberAdaptiveListDetailState
@@ -78,7 +78,6 @@ import zed.rainxch.repopages.presentation.security.SecurityRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.search.presentation.SearchViewModel
 import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
-import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.appinfo.AppInfoRoot
@@ -319,7 +318,7 @@ fun AppNavigation(
                                 val initialPlatform =
                                     args.initialPlatform?.let { name ->
                                         runCatching {
-                                            SearchPlatformUi.valueOf(name)
+                                            DiscoveryPlatform.valueOf(name)
                                         }.getOrNull()
                                     }
                                 val listDetailState = rememberAdaptiveListDetailState()
@@ -464,14 +463,6 @@ fun AppNavigation(
                                         onNavigateToSecurity = { owner, repo ->
                                             navController.navigate(
                                                 GithubStoreGraph.RepoSecurityScreen(
-                                                    owner = owner,
-                                                    repo = repo,
-                                                ),
-                                            )
-                                        },
-                                        onNavigateToPulls = { owner, repo ->
-                                            navController.navigate(
-                                                GithubStoreGraph.RepoPullsScreen(
                                                     owner = owner,
                                                     repo = repo,
                                                 ),
