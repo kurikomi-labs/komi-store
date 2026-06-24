@@ -1,9 +1,7 @@
 package zed.rainxch.profile.presentation.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Campaign
@@ -31,19 +28,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.lists.KomiList
+import zed.rainxch.core.presentation.components.lists.KomiListItem
+import zed.rainxch.core.presentation.components.lists.KomiListTrailing
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -74,37 +74,39 @@ fun LazyListScope.profileSections(
 
             Spacer(Modifier.height(8.dp))
         }
-        item(key = "row_stars") {
-            ProfileEntryRow(
-                title = stringResource(Res.string.stars),
-                subtitle = stringResource(Res.string.profile_stars_description),
-                icon = Icons.Outlined.Star,
-                accentColor = LocalPersonality.current.colors.primary,
-                onClick = { onAction(ProfileAction.OnStarredReposClick) },
-            )
-
-            Spacer(Modifier.height(8.dp))
-        }
     }
+    item(key = "library_list") {
+        KomiList(
+            items = buildList {
+                if (state.isUserLoggedIn) {
+                    add(
+                        KomiListItem(
+                            title = stringResource(Res.string.stars),
+                            subtitle = stringResource(Res.string.profile_stars_description),
+                            icon = Icons.Outlined.Star,
+                            onClick = { onAction(ProfileAction.OnStarredReposClick) },
+                        ),
+                    )
+                }
 
-    item(key = "row_favourites") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.favourites),
-            subtitle = stringResource(Res.string.profile_favourites_description),
-            icon = Icons.Outlined.Favorite,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
-        )
+                add(
+                    KomiListItem(
+                        title = stringResource(Res.string.favourites),
+                        subtitle = stringResource(Res.string.profile_favourites_description),
+                        icon = Icons.Outlined.Favorite,
+                        onClick = { onAction(ProfileAction.OnFavouriteReposClick) },
+                    ),
+                )
 
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "row_recent") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.recently_viewed),
-            subtitle = stringResource(Res.string.profile_recently_viewed_description),
-            icon = Icons.Outlined.Schedule,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
+                add(
+                    KomiListItem(
+                        title = stringResource(Res.string.recently_viewed),
+                        subtitle = stringResource(Res.string.profile_recently_viewed_description),
+                        icon = Icons.Outlined.Schedule,
+                        onClick = { onAction(ProfileAction.OnRecentlyViewedClick) },
+                    ),
+                )
+            }.toImmutableList(),
         )
     }
 
@@ -118,29 +120,23 @@ fun LazyListScope.profileSections(
 
         Spacer(Modifier.height(8.dp))
     }
-    item(key = "row_whats_new") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.whats_new_title),
-            subtitle = stringResource(Res.string.whats_new_profile_description),
-            icon = Icons.Outlined.Campaign,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnWhatsNewClick) },
-        )
-
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "row_announcements") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.announcements_title),
-            subtitle = stringResource(Res.string.announcements_profile_description),
-            icon = Icons.Outlined.Notifications,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnAnnouncementsClick) },
-            badge = if (hasUnreadAnnouncements) {
-                { UnreadDot() }
-            } else {
-                null
-            },
+    item(key = "updates_list") {
+        KomiList(
+            items = persistentListOf(
+                KomiListItem(
+                    title = stringResource(Res.string.whats_new_title),
+                    subtitle = stringResource(Res.string.whats_new_profile_description),
+                    icon = Icons.Outlined.Campaign,
+                    onClick = { onAction(ProfileAction.OnWhatsNewClick) },
+                ),
+                KomiListItem(
+                    title = stringResource(Res.string.announcements_title),
+                    subtitle = stringResource(Res.string.announcements_profile_description),
+                    icon = Icons.Outlined.Notifications,
+                    trailing = if (hasUnreadAnnouncements) KomiListTrailing.UnreadDot else KomiListTrailing.Chevron,
+                    onClick = { onAction(ProfileAction.OnAnnouncementsClick) },
+                ),
+            ),
         )
     }
 
@@ -154,24 +150,22 @@ fun LazyListScope.profileSections(
 
         Spacer(Modifier.height(8.dp))
     }
-    item(key = "row_tweaks") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.tweaks_title),
-            subtitle = stringResource(Res.string.profile_tweaks_description),
-            icon = Icons.Outlined.Tune,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnTweaksClick) },
-        )
-
-        Spacer(Modifier.height(8.dp))
-    }
-    item(key = "row_about") {
-        ProfileEntryRow(
-            title = stringResource(Res.string.profile_entry_about_title),
-            subtitle = stringResource(Res.string.profile_entry_about_subtitle),
-            icon = Icons.Outlined.Info,
-            accentColor = LocalPersonality.current.colors.primary,
-            onClick = { onAction(ProfileAction.OnAboutClick) },
+    item(key = "app_list") {
+        KomiList(
+            items = persistentListOf(
+                KomiListItem(
+                    title = stringResource(Res.string.tweaks_title),
+                    subtitle = stringResource(Res.string.profile_tweaks_description),
+                    icon = Icons.Outlined.Tune,
+                    onClick = { onAction(ProfileAction.OnTweaksClick) },
+                ),
+                KomiListItem(
+                    title = stringResource(Res.string.profile_entry_about_title),
+                    subtitle = stringResource(Res.string.profile_entry_about_subtitle),
+                    icon = Icons.Outlined.Info,
+                    onClick = { onAction(ProfileAction.OnAboutClick) },
+                ),
+            ),
         )
     }
 
@@ -186,13 +180,17 @@ fun LazyListScope.profileSections(
 
             Spacer(Modifier.height(8.dp))
         }
-        item(key = "row_logout") {
-            ProfileEntryRow(
-                title = stringResource(Res.string.logout),
-                icon = Icons.AutoMirrored.Filled.Logout,
-                destructive = true,
-                trailingChevron = false,
-                onClick = { onAction(ProfileAction.OnLogoutClick) },
+        item(key = "account_list") {
+            KomiList(
+                items = persistentListOf(
+                    KomiListItem(
+                        title = stringResource(Res.string.logout),
+                        icon = Icons.AutoMirrored.Filled.Logout,
+                        trailing = KomiListTrailing.None,
+                        destructive = true,
+                        onClick = { onAction(ProfileAction.OnLogoutClick) },
+                    ),
+                ),
             )
         }
     }
@@ -418,73 +416,5 @@ private fun MetricDivider() {
             .width(1.dp)
             .height(28.dp)
             .background(colors.outlineVariant.copy(alpha = 0.55f)),
-    )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun ProfileEntryRow(
-    title: String,
-    icon: ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null,
-    accentColor: Color = Color.Unspecified,
-    onLongClick: (() -> Unit)? = null,
-    badge: (@Composable () -> Unit)? = null,
-    destructive: Boolean = false,
-    trailingChevron: Boolean = true,
-) {
-    val colors = LocalPersonality.current.colors
-    val accent = if (destructive) colors.error else accentColor
-    val titleColor = if (destructive) colors.error else colors.onSurface
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
-            .background(colors.surface)
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        KomiIcon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = accent,
-            modifier = Modifier.size(22.dp),
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            KomiText(text = title, role = KomiTextRole.Label, color = titleColor, uppercase = false)
-            subtitle?.let {
-                KomiText(
-                    text = it,
-                    role = KomiTextRole.Body,
-                    color = colors.onSurfaceVariant,
-                    uppercase = false,
-                )
-            }
-        }
-        badge?.invoke()
-        if (trailingChevron) {
-            KomiIcon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = colors.onSurfaceVariant,
-                modifier = Modifier.size(20.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun UnreadDot() {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    Box(
-        modifier = Modifier
-            .size(8.dp)
-            .clip(RoundedCornerShape(shape.cornerSmall))
-            .background(colors.error),
     )
 }
