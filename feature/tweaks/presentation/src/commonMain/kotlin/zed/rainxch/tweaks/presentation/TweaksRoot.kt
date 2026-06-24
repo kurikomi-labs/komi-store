@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -34,6 +38,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.isAndroid
 import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.settings.AppLanguages
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
@@ -54,7 +61,6 @@ import zed.rainxch.tweaks.presentation.components.sections.languageSectionConten
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
-import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 import zed.rainxch.tweaks.presentation.feedback.components.FeedbackBottomSheet
 import zed.rainxch.tweaks.presentation.feedback.model.FeedbackChannel
@@ -84,13 +90,12 @@ fun TweaksRoot(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer =
-            androidx.lifecycle.LifecycleEventObserver { _, event ->
-                if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                    viewModel.onAction(TweaksAction.OnRefreshCacheSize)
-                    viewModel.onAction(TweaksAction.OnReevaluateBatteryOptimizationCard)
-                }
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.onAction(TweaksAction.OnRefreshCacheSize)
+                viewModel.onAction(TweaksAction.OnReevaluateBatteryOptimizationCard)
             }
+        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
@@ -127,7 +132,11 @@ fun TweaksRoot(
     val onOpenFeedback = { feedbackSheetOpen = true }
 
     if (isDesktop()) {
-        KomiScaffold(toastState = toastState, grid = false, screentone = false) { innerPadding ->
+        KomiScaffold(
+            toastState = toastState,
+            grid = false,
+            screentone = false
+        ) { innerPadding ->
             TweaksDesktopContent(
                 state = state,
                 onAction = onAction,
@@ -146,29 +155,34 @@ fun TweaksRoot(
         }
     } else {
         KomiScaffold(
+            topBar = {
+                KomiTopBar(
+                    title = stringResource(Res.string.tweaks_title),
+                    titleAccent = tweaksKicker(TweaksDecorSlot.Settings),
+                    leading = {
+                        KomiIconButton(
+                            icon = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.navigate_back),
+                            onClick = onNavigateBack,
+                        )
+                    }
+                )
+            },
             toastState = toastState,
             grid = true,
             screentone = true,
-            topBar = {
-                TweaksMangaHeader(
-                    title = stringResource(Res.string.tweaks_title),
-                    slot = TweaksDecorSlot.Settings,
-                    onNavigateBack = onNavigateBack,
-                )
-            },
         ) { innerPadding ->
             Box(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Column(
-                    modifier =
-                        Modifier
-                            .constrainedContentWidth()
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 4.dp, bottom = 28.dp),
+                    modifier = Modifier
+                        .constrainedContentWidth()
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 4.dp, bottom = 28.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     lookAndFeelSection(

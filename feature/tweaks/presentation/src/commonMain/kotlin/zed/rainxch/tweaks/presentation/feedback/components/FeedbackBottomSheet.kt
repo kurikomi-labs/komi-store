@@ -78,6 +78,7 @@ fun FeedbackBottomSheet(
                 state = state,
                 onAction = viewModel::onAction,
                 onDismiss = dismiss,
+                scrollable = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
@@ -112,10 +113,11 @@ private fun FeedbackContent(
     onAction: (FeedbackAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    scrollable: Boolean = true,
 ) {
     val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.verticalScroll(scrollState),
+        modifier = if (scrollable) modifier.verticalScroll(scrollState) else modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         FeedbackHeader(onDismiss = onDismiss)

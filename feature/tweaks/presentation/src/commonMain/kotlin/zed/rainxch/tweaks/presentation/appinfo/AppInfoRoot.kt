@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
@@ -41,14 +45,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.githubstore.core.presentation.res.navigate_back
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_app_name
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_cta
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_community_business_subtitle
@@ -65,20 +74,16 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_tagline
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
-import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
-import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
-
-private const val PRIVACY_POLICY_URL = "https://komistore.app/privacy-policy"
-private const val SOURCE_CODE_URL = "https://github.com/kurikomi-labs/komi-store"
-
-private const val TELEGRAM_URL = "https://t.me/komistoreapp"
-private const val DISCORD_URL = "https://discord.komistore.app"
-private const val MASTODON_URL = "https://fosstodon.org/@komistore"
-private const val REDDIT_URL = "https://reddit.com/r/githubstore"
-private const val GITHUB_ORG_URL = "https://github.com/kurikomi-labs"
-private const val WEBSITE_URL = "https://komistore.app"
-private const val BUSINESS_EMAIL = "mailto:hello@komistore.app"
+import zed.rainxch.tweaks.presentation.utils.Constants.BUSINESS_EMAIL
+import zed.rainxch.tweaks.presentation.utils.Constants.DISCORD_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.GITHUB_ORG_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.MASTODON_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.PRIVACY_POLICY_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.REDDIT_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.SOURCE_CODE_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.TELEGRAM_URL
+import zed.rainxch.tweaks.presentation.utils.Constants.WEBSITE_URL
 
 @Composable
 fun AppInfoRoot(
@@ -87,72 +92,90 @@ fun AppInfoRoot(
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = rememberKomiToastState()
+    val toastState = rememberKomiToastState()
     val uriHandler = LocalUriHandler.current
 
-    TweaksSubScreenScaffold(
-        title = stringResource(Res.string.tweaks_entry_app_info),
-        onNavigateBack = onNavigateBack,
-        toastState = snackbarState,
-    ) {
-        item(key = "app_identity") {
-            AppIdentityCard(versionName = state.versionName)
-            Spacer(Modifier.height(20.dp))
-        }
-
-        item(key = "community_section_header") {
-            KomiText(text = stringResource(Res.string.tweaks_app_info_community_section), role = KomiTextRole.Title)
-            Spacer(Modifier.height(8.dp))
-        }
-
-        item(key = "community_card") {
-            CommunityCard(
-                onTelegram = { runCatching { uriHandler.openUri(TELEGRAM_URL) } },
-                onDiscord = { runCatching { uriHandler.openUri(DISCORD_URL) } },
-                onMastodon = { runCatching { uriHandler.openUri(MASTODON_URL) } },
-                onReddit = { runCatching { uriHandler.openUri(REDDIT_URL) } },
-                onGithub = { runCatching { uriHandler.openUri(GITHUB_ORG_URL) } },
-                onWebsite = { runCatching { uriHandler.openUri(WEBSITE_URL) } },
-                onBusiness = { runCatching { uriHandler.openUri(BUSINESS_EMAIL) } },
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                title = stringResource(Res.string.tweaks_entry_app_info),
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack,
+                    )
+                }
             )
-            Spacer(Modifier.height(20.dp))
-        }
+        },
+        grid = true,
+        screentone = true,
+        toastState = toastState
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Column (
+                modifier = Modifier
+                    .constrainedContentWidth()
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 28.dp)
+            ) {
+                AppIdentityCard(versionName = state.versionName)
+                Spacer(Modifier.height(20.dp))
 
-        item(key = "action_licenses") {
-            ActionRow(
-                icon = Icons.Outlined.Code,
-                title = stringResource(Res.string.tweaks_app_info_licenses_title),
-                subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
-                accent = LocalPersonality.current.colors.primary,
-                onClick = onNavigateToLicenses,
-            )
-            Spacer(Modifier.height(8.dp))
-        }
+                KomiText(
+                    text = stringResource(Res.string.tweaks_app_info_community_section),
+                    role = KomiTextRole.Title
+                )
+                Spacer(Modifier.height(8.dp))
 
-        item(key = "action_privacy") {
-            ActionRow(
-                icon = Icons.Outlined.Description,
-                title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
-                subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
-                accent = LocalPersonality.current.colors.primary,
-                onClick = {
-                    runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
-                },
-            )
-            Spacer(Modifier.height(8.dp))
-        }
+                CommunityCard(
+                    onTelegram = { runCatching { uriHandler.openUri(TELEGRAM_URL) } },
+                    onDiscord = { runCatching { uriHandler.openUri(DISCORD_URL) } },
+                    onMastodon = { runCatching { uriHandler.openUri(MASTODON_URL) } },
+                    onReddit = { runCatching { uriHandler.openUri(REDDIT_URL) } },
+                    onGithub = { runCatching { uriHandler.openUri(GITHUB_ORG_URL) } },
+                    onWebsite = { runCatching { uriHandler.openUri(WEBSITE_URL) } },
+                    onBusiness = { runCatching { uriHandler.openUri(BUSINESS_EMAIL) } },
+                )
+                Spacer(Modifier.height(20.dp))
 
-        item(key = "action_source") {
-            ActionRow(
-                icon = Icons.AutoMirrored.Outlined.OpenInNew,
-                title = stringResource(Res.string.tweaks_app_info_source_code_title),
-                subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
-                accent = LocalPersonality.current.colors.primary,
-                onClick = {
-                    runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
-                },
-            )
-            Spacer(Modifier.height(8.dp))
+                ActionRow(
+                    icon = Icons.Outlined.Code,
+                    title = stringResource(Res.string.tweaks_app_info_licenses_title),
+                    subtitle = stringResource(Res.string.tweaks_app_info_licenses_subtitle),
+                    accent = LocalPersonality.current.colors.primary,
+                    onClick = onNavigateToLicenses,
+                )
+                Spacer(Modifier.height(8.dp))
+
+                ActionRow(
+                    icon = Icons.Outlined.Description,
+                    title = stringResource(Res.string.tweaks_app_info_privacy_policy_title),
+                    subtitle = stringResource(Res.string.tweaks_app_info_privacy_policy_subtitle),
+                    accent = LocalPersonality.current.colors.primary,
+                    onClick = {
+                        runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) }
+                    },
+                )
+                Spacer(Modifier.height(8.dp))
+
+                ActionRow(
+                    icon = Icons.AutoMirrored.Outlined.OpenInNew,
+                    title = stringResource(Res.string.tweaks_app_info_source_code_title),
+                    subtitle = stringResource(Res.string.tweaks_app_info_source_code_subtitle),
+                    accent = LocalPersonality.current.colors.primary,
+                    onClick = {
+                        runCatching { uriHandler.openUri(SOURCE_CODE_URL) }
+                    },
+                )
+            }
         }
     }
 }

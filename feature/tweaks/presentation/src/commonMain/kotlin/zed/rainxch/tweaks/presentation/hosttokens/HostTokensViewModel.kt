@@ -202,7 +202,7 @@ class HostTokensViewModel(
             return
         }
         val host = current.draftHostNormalized
-        val effectiveToken = if (keepExistingToken) replacing!!.token else token
+        val effectiveToken = if (keepExistingToken) replacing.token else token
         val displayName = current.draftDisplayName.trim().takeIf { it.isNotEmpty() }
         viewModelScope.launch {
             val saveResult = runCatching { repository.set(host, effectiveToken, displayName) }

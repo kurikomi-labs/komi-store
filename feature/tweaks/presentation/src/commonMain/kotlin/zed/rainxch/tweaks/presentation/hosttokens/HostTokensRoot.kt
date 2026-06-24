@@ -42,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.account.ForgeKind
 import zed.rainxch.core.domain.model.account.HostToken
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
@@ -57,7 +58,6 @@ import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
-import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
 import zed.rainxch.tweaks.presentation.components.shell.settingsRowDivider
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -65,6 +65,7 @@ import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_title
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_add
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_back
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_action_cancel
@@ -97,6 +98,8 @@ import zed.rainxch.githubstore.core.presentation.res.host_tokens_row_validate
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_title
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_undo_action
 import zed.rainxch.githubstore.core.presentation.res.host_tokens_undo_snackbar
+import zed.rainxch.githubstore.core.presentation.res.navigate_back
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 
 @Composable
 fun HostTokensRoot(
@@ -131,10 +134,16 @@ fun HostTokensRoot(
         grid = true,
         screentone = true,
         topBar = {
-            TweaksMangaHeader(
+            KomiTopBar(
                 title = stringResource(Res.string.host_tokens_title),
-                slot = TweaksDecorSlot.Tokens,
-                onNavigateBack = onNavigateBack,
+                titleAccent = tweaksKicker(TweaksDecorSlot.Tokens),
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack
+                    )
+                }
             )
         },
         toastState = toastState,

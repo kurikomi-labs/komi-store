@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ fun ColumnScope.SettingsExpandableRow(
         modifier = modifier,
         trailing = {
             KomiIcon(
-                imageVector = Icons.Filled.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(20.dp).rotate(if (expanded) 90f else 0f),

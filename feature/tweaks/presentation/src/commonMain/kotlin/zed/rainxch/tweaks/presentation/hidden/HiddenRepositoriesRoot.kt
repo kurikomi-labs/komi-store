@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
@@ -29,6 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_empty_description
@@ -39,10 +43,11 @@ import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhide_
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhide_failure
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_all_snackbar
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_snackbar
+import zed.rainxch.githubstore.core.presentation.res.navigate_back
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
-import zed.rainxch.tweaks.presentation.components.shell.TweaksMangaHeader
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 
 @Composable
 fun HiddenRepositoriesRoot(
@@ -70,10 +75,16 @@ fun HiddenRepositoriesRoot(
         grid = true,
         screentone = true,
         topBar = {
-            TweaksMangaHeader(
+            KomiTopBar(
                 title = stringResource(Res.string.hidden_repositories_title),
-                slot = TweaksDecorSlot.Hidden,
-                onNavigateBack = onNavigateBack,
+                titleAccent = tweaksKicker(TweaksDecorSlot.Hidden),
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack
+                    )
+                }
             )
         },
     ) { padding ->

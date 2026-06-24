@@ -1,6 +1,5 @@
 package zed.rainxch.tweaks.presentation.licenses
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,24 +24,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.navigate_back
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_load_failed
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_title
-import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksViewModel
-import zed.rainxch.tweaks.presentation.components.TweaksSubScreenScaffold
 
 @Serializable
 private data class LibraryEntry(
@@ -62,8 +64,7 @@ fun LicensesRoot(
     onNavigateBack: () -> Unit,
     viewModel: TweaksViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = rememberKomiToastState()
+    val toastState = rememberKomiToastState()
     val uriHandler = LocalUriHandler.current
 
     var libraries by remember { mutableStateOf<List<LibraryEntry>?>(null) }
@@ -80,65 +81,76 @@ fun LicensesRoot(
             .onFailure { loadError = true }
     }
 
-    TweaksSubScreenScaffold(
-        title = stringResource(Res.string.tweaks_licenses_title),
-        onNavigateBack = onNavigateBack,
-        toastState = snackbarState,
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                title = stringResource(Res.string.tweaks_licenses_title),
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack,
+                    )
+                },
+            )
+        },
+        toastState = toastState,
+        grid = true,
+        screentone = true
     ) {
-        item(key = "intro") {
-            val colors = LocalPersonality.current.colors
-            KomiSurface(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    KomiText(
-                        text = stringResource(Res.string.tweaks_licenses_intro_title),
-                        role = KomiTextRole.Body,
-                        color = colors.onSurface,
-                        uppercase = false,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    KomiText(
-                        text = stringResource(Res.string.tweaks_licenses_intro_body),
-                        role = KomiTextRole.Body,
-                        fontSize = 13.sp,
-                        color = colors.onSurfaceVariant,
-                        uppercase = false,
-                    )
-                }
+        val colors = LocalPersonality.current.colors
+        KomiSurface(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                KomiText(
+                    text = stringResource(Res.string.tweaks_licenses_intro_title),
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
+                    uppercase = false,
+                )
+                Spacer(Modifier.height(4.dp))
+                KomiText(
+                    text = stringResource(Res.string.tweaks_licenses_intro_body),
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
+                )
             }
-            Spacer(Modifier.height(12.dp))
         }
+        Spacer(Modifier.height(12.dp))
 
-        val list = libraries
         when {
-            list == null && !loadError -> {
-                item(key = "loading") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 48.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        KomiCircularProgress()
-                    }
+            libraries == null && !loadError -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 48.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    KomiCircularProgress()
                 }
             }
+
             loadError -> {
-                item(key = "error") {
-                    KomiText(
-                        text = stringResource(Res.string.tweaks_licenses_load_failed),
-                        role = KomiTextRole.Body,
-                        color = LocalPersonality.current.colors.error,
-                        uppercase = false,
-                        modifier = Modifier.padding(16.dp),
-                    )
-                }
+                KomiText(
+                    text = stringResource(Res.string.tweaks_licenses_load_failed),
+                    role = KomiTextRole.Body,
+                    color = LocalPersonality.current.colors.error,
+                    uppercase = false,
+                    modifier = Modifier.padding(16.dp),
+                )
             }
-            list != null -> {
-                list.forEach { library ->
-                    item(key = "lib_${library.name}") {
-                        LibraryRow(library = library, onClick = {
-                            runCatching { uriHandler.openUri(library.url) }
-                        })
+
+            libraries != null -> {
+                libraries?.let { libraryEntries ->
+                    libraryEntries.forEach { library ->
+                        LibraryRow(
+                            library = library,
+                            onClick = {
+                                runCatching { uriHandler.openUri(library.url) }
+                            }
+                        )
+
                         Spacer(Modifier.height(8.dp))
                     }
                 }
