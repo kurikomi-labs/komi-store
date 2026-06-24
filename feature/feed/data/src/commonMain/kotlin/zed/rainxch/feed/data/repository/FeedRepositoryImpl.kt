@@ -142,7 +142,7 @@ class FeedRepositoryImpl(
         DiscoveryPlatform.Windows -> "windows"
         DiscoveryPlatform.Macos -> "macos"
         DiscoveryPlatform.Linux -> "linux"
-        DiscoveryPlatform.Ios -> null
+        DiscoveryPlatform.Ios -> "ios"
         DiscoveryPlatform.All -> null
     }
 

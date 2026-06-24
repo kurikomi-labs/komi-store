@@ -60,9 +60,11 @@ import zed.rainxch.githubstore.core.presentation.res.feed_end_cap
 import zed.rainxch.githubstore.core.presentation.res.home_finding_repositories
 import zed.rainxch.githubstore.core.presentation.res.home_platform_filter
 import zed.rainxch.githubstore.core.presentation.res.home_retry
-import zed.rainxch.home.presentation.components.ForYouHeader
 import zed.rainxch.home.presentation.components.HomeChartTabs
 import zed.rainxch.core.domain.isDesktop
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.githubstore.core.presentation.res.home_masthead_subtitle
+import zed.rainxch.githubstore.core.presentation.res.home_masthead_title
 import zed.rainxch.home.presentation.components.HomePlatformPicker
 import zed.rainxch.home.presentation.components.RepositoryActionsSheet
 import zed.rainxch.home.presentation.model.ChartTab
@@ -125,7 +127,25 @@ private fun HomeScreen(
         }
     }
 
-    KomiScaffold(toastState = toastState) { innerPadding ->
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                title = stringResource(Res.string.home_masthead_title),
+                titleAccent = stringResource(Res.string.home_masthead_subtitle),
+                actions = {
+                    if (!isDesktop()) {
+                        KomiIconButton(
+                            icon = Icons.Rounded.Tune,
+                            contentDescription = stringResource(Res.string.home_platform_filter),
+                            onClick = { onAction(HomeAction.OnPlatformPopupOpen) },
+                            variant = KomiButtonVariant.Primary,
+                        )
+                    }
+                }
+            )
+        },
+        toastState = toastState
+    ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.TopCenter,
@@ -136,11 +156,19 @@ private fun HomeScreen(
                     onRefresh = { onAction(HomeAction.OnRefresh) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    HomeChartFeed(state = state, listState = listState, onAction = onAction)
+                    HomeChartFeed(
+                        state = state,
+                        listState = listState,
+                        onAction = onAction
+                    )
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    HomeChartFeed(state = state, listState = listState, onAction = onAction)
+                    HomeChartFeed(
+                        state = state,
+                        listState = listState,
+                        onAction = onAction
+                    )
                 }
             }
         }
@@ -199,27 +227,13 @@ private fun BoxScope.HomeChartFeed(
         contentPadding = PaddingValues(bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item(key = "home_masthead", contentType = "masthead") {
-            ForYouHeader(
-                trailing = {
-                    if (!isDesktop()) {
-                        KomiIconButton(
-                            icon = Icons.Rounded.Tune,
-                            contentDescription = stringResource(Res.string.home_platform_filter),
-                            onClick = { onAction(HomeAction.OnPlatformPopupOpen) },
-                            variant = KomiButtonVariant.Primary,
-                        )
-                    }
-                },
-            )
-        }
-
         stickyHeader(key = "home_chart_tabs", contentType = "tabs") {
             Column(modifier = Modifier.fillMaxWidth().background(colors.background)) {
                 HomeChartTabs(
                     selected = state.selectedChart,
                     onSelect = { onAction(HomeAction.OnChartSelected(it)) },
                 )
+
                 if (isManga) {
                     KomiHorizontalDivider(thickness = 3.dp, color = colors.outline)
                 }

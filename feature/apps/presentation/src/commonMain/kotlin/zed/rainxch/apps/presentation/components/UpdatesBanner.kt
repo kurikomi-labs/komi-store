@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,97 +87,99 @@ fun UpdatesBanner(
                 shape = RoundedCornerShape(shape.corner),
             ),
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .padding(2.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
+        CompositionLocalProvider(LocalContentColor provides colors.onPrimaryContainer) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(shape.corner))
-                            .background(colors.primary.copy(alpha = 0.18f)),
+                            .size(36.dp)
+                            .padding(2.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        KomiIcon(
-                            imageVector = Icons.Default.Update,
-                            contentDescription = null,
-                            tint = colors.onPrimaryContainer,
-                            modifier = Modifier.size(18.dp),
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(shape.corner))
+                                .background(colors.primary.copy(alpha = 0.18f)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            KomiIcon(
+                                imageVector = Icons.Default.Update,
+                                contentDescription = null,
+                                tint = colors.onPrimaryContainer,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        KomiText(
+                            text = title,
+                            role = KomiTextRole.Title,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            uppercase = false,
+                            color = colors.onPrimaryContainer,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        KomiText(
+                            text = stringResource(Res.string.apps_updates_banner_subtitle),
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onPrimaryContainer.copy(alpha = 0.78f),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
-                }
 
-                Spacer(Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    KomiText(
-                        text = title,
-                        role = KomiTextRole.Title,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp,
-                        uppercase = false,
-                        color = colors.onPrimaryContainer,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    KomiText(
-                        text = stringResource(Res.string.apps_updates_banner_subtitle),
-                        role = KomiTextRole.Body,
-                        fontSize = 13.sp,
-                        color = colors.onPrimaryContainer.copy(alpha = 0.78f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                    KomiIcon(
+                        imageVector = Icons.Default.ExpandMore,
+                        contentDescription = null,
+                        tint = colors.onPrimaryContainer.copy(alpha = 0.78f),
+                        modifier = Modifier
+                            .size(22.dp)
+                            .rotate(rotation),
                     )
                 }
 
-                KomiIcon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    tint = colors.onPrimaryContainer.copy(alpha = 0.78f),
-                    modifier = Modifier
-                        .size(22.dp)
-                        .rotate(rotation),
-                )
-            }
+                if (isUpdatingAll && updateAllProgress != null) {
+                    Spacer(Modifier.height(14.dp))
 
-            if (isUpdatingAll && updateAllProgress != null) {
-                Spacer(Modifier.height(14.dp))
-
-                UpdateAllInlineProgress(
-                    progress = updateAllProgress,
-                    onCancel = onCancelUpdateAll,
-                )
-            } else {
-                Spacer(Modifier.height(14.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    KomiButton(
-                        onClick = onUpdateAll,
-                        label = stringResource(Res.string.update_all),
-                        variant = KomiButtonVariant.Primary,
-                        enabled = updateAllEnabled,
-                        leadingIcon = Icons.Default.Update,
-                        modifier = Modifier.weight(1f),
+                    UpdateAllInlineProgress(
+                        progress = updateAllProgress,
+                        onCancel = onCancelUpdateAll,
                     )
+                } else {
+                    Spacer(Modifier.height(14.dp))
 
-                    KomiButton(
-                        onClick = onToggleExpanded,
-                        label = if (isExpanded) {
-                            stringResource(Res.string.apps_updates_banner_hide)
-                        } else {
-                            stringResource(Res.string.apps_updates_banner_show)
-                        },
-                        variant = KomiButtonVariant.Outline,
-                        modifier = Modifier.height(44.dp),
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        KomiButton(
+                            onClick = onUpdateAll,
+                            label = stringResource(Res.string.update_all),
+                            variant = KomiButtonVariant.Primary,
+                            enabled = updateAllEnabled,
+                            leadingIcon = Icons.Default.Update,
+                            modifier = Modifier.weight(1f),
+                        )
+
+                        KomiButton(
+                            onClick = onToggleExpanded,
+                            label = if (isExpanded) {
+                                stringResource(Res.string.apps_updates_banner_hide)
+                            } else {
+                                stringResource(Res.string.apps_updates_banner_show)
+                            },
+                            variant = KomiButtonVariant.Outline,
+                            modifier = Modifier.height(44.dp),
+                        )
+                    }
                 }
             }
         }

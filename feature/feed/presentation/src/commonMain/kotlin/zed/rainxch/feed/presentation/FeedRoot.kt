@@ -69,7 +69,7 @@ import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.repository.FeedCategory
@@ -159,7 +159,16 @@ private fun FeedScreen(
     val colors = LocalPersonality.current.colors
     val isManga = LocalPersonality.current is MangaPersonality
 
-    KomiScaffold(toastState = toastState) { innerPadding ->
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                title = stringResource(Res.string.feed_masthead_title),
+                titleAccent = stringResource(Res.string.feed_masthead_title_accent),
+                subtitle = if (LocalPersonality.current.usesDecor) stringResource(Res.string.feed_masthead_subtitle) else null,
+            )
+        },
+        toastState = toastState
+    ) { innerPadding ->
         if (isAndroid()) {
             KomiPullToRefresh(
                 isRefreshing = state.isRefreshing,
@@ -175,7 +184,7 @@ private fun FeedScreen(
                 )
             }
         } else {
-            Box (
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -214,30 +223,6 @@ private fun BoxScope.FeedContent(
         contentPadding = PaddingValues(bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item(key = "feed_masthead", contentType = "masthead") {
-            KomiTopBar(
-                title = stringResource(Res.string.feed_masthead_title),
-                titleAccent = stringResource(Res.string.feed_masthead_title_accent),
-                subtitle = if (LocalPersonality.current.usesDecor) stringResource(Res.string.feed_masthead_subtitle) else null,
-                insets = false,
-                actions = {
-                    KomiIconButton(
-                        icon = Icons.Rounded.Search,
-                        contentDescription = stringResource(Res.string.feed_cd_search),
-                        onClick = { onAction(FeedAction.OnSearchClick) },
-                        variant = KomiButtonVariant.Primary,
-                    )
-
-                    KomiIconButton(
-                        icon = Icons.Outlined.Person,
-                        contentDescription = stringResource(Res.string.feed_cd_profile),
-                        onClick = { onAction(FeedAction.OnProfileClick) },
-                        variant = KomiButtonVariant.Primary,
-                    )
-                },
-            )
-        }
-
         if (!isDesktop()) {
             stickyHeader(key = "feed_controls", contentType = "controls") {
                 Column(modifier = Modifier.fillMaxWidth().background(colors.background)) {
@@ -353,7 +338,7 @@ private fun FeedPlatformBar(
             label = if (platform == DiscoveryPlatform.All) stringResource(Res.string.feed_platform_all) else platform.toLabel(),
             variant = KomiButtonVariant.Primary,
             size = KomiButtonSize.Sm,
-            leadingIcon = if (platform == DiscoveryPlatform.All) null else platform.toIcons().firstOrNull(),
+            leadingIcon = if (platform == DiscoveryPlatform.All) null else platform.toIcon(),
             trailingIcon = Icons.Rounded.KeyboardArrowDown,
         )
     }
@@ -488,7 +473,11 @@ private fun FeedEmpty(
             )
 
             KomiText(
-                text = stringResource(Res.string.feed_empty_subtitle, category.label(), platform.toLabel()),
+                text = stringResource(
+                    Res.string.feed_empty_subtitle,
+                    category.label(),
+                    platform.toLabel()
+                ),
                 role = KomiTextRole.Body,
                 color = LocalPersonality.current.colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -516,13 +505,7 @@ private fun FeedPlatformPicker(
         titleJp = stringResource(Res.string.feed_platform_picker_title_jp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            listOf(
-                DiscoveryPlatform.All,
-                DiscoveryPlatform.Android,
-                DiscoveryPlatform.Windows,
-                DiscoveryPlatform.Macos,
-                DiscoveryPlatform.Linux,
-            ).forEach { platform ->
+            DiscoveryPlatform.entries.forEach { platform ->
                 FeedPlatformRow(
                     platform = platform,
                     isSelected = platform == selected,
@@ -555,22 +538,13 @@ private fun FeedPlatformRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            if (platform == DiscoveryPlatform.All) {
+            platform.toIcon()?.let { icon ->
                 KomiIcon(
-                    imageVector = Icons.Filled.AutoAwesome,
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(22.dp),
                     tint = content,
                 )
-            } else {
-                platform.toIcons().forEach { icon ->
-                    KomiIcon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
-                        tint = content,
-                    )
-                }
             }
 
             KomiText(

@@ -24,7 +24,7 @@ import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feed_platform_all
@@ -86,24 +86,21 @@ private fun HomePlatformRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            if (platform != DiscoveryPlatform.All) {
-                platform.toIcons().forEach { icon ->
-                    KomiIcon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
-                        tint = content,
-                    )
-                }
+            platform.toIcon()?.let { icon ->
+                KomiIcon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                    tint = content,
+                )
             }
 
             KomiText(
-                text =
-                    if (platform == DiscoveryPlatform.All) {
-                        stringResource(Res.string.feed_platform_all)
-                    } else {
-                        platform.toLabel()
-                    },
+                text =  if (platform == DiscoveryPlatform.All) {
+                    stringResource(Res.string.feed_platform_all)
+                } else {
+                    platform.toLabel()
+                },
                 role = KomiTextRole.Title,
                 color = content,
                 modifier = Modifier.weight(1f),

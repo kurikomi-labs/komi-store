@@ -44,6 +44,7 @@ import zed.rainxch.home.data.mappers.toGithubRepoSummary
 import zed.rainxch.home.domain.repository.HomeRepository
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
 
 class HomeRepositoryImpl(
@@ -427,7 +428,7 @@ class HomeRepositoryImpl(
                             candidates.map { repo ->
                                 async {
                                     semaphore.withPermit {
-                                        withTimeoutOrNull(5000) {
+                                        withTimeoutOrNull(5000.milliseconds) {
                                             checkRepoHasInstallers(repo)
                                         }
                                     }
@@ -555,14 +556,14 @@ class HomeRepositoryImpl(
             DiscoveryPlatform.Android -> "android"
             DiscoveryPlatform.Windows -> "desktop"
             DiscoveryPlatform.Macos -> "macos"
-            DiscoveryPlatform.Linux -> "linux"
             DiscoveryPlatform.Ios -> "ios"
+            DiscoveryPlatform.Linux -> "linux"
         }
 
     private fun Set<DiscoveryPlatform>.normalize(): Set<DiscoveryPlatform> {
         if (contains(DiscoveryPlatform.All)) return emptySet()
         val real = filter { it != DiscoveryPlatform.All }.toSet()
-        return if (real.size == DiscoveryPlatform.selectablePlatforms.size) emptySet() else real
+        return if (real.size == DiscoveryPlatform.entries.size) emptySet() else real
     }
 
     private fun calculatePlatformScore(repo: GithubRepoNetworkModel): Int {
