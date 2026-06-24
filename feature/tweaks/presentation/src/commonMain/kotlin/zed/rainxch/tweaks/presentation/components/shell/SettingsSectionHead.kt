@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.MangaPersonality
 
 private val SkewedStamp =
     GenericShape { size, _ ->
@@ -35,29 +36,34 @@ fun SettingsSectionHead(
     slot: TweaksDecorSlot,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalPersonality.current.colors
+    val personality = LocalPersonality.current
+    val colors = personality.colors
     val kicker = tweaksKicker(slot)
+    val isManga = personality is MangaPersonality
     Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(top = 14.dp, bottom = 12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 14.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Box(
-            modifier =
-                Modifier
+        if (isManga) {
+            Box(
+                modifier = Modifier
                     .size(width = 11.dp, height = 21.dp)
                     .background(colors.primary, SkewedStamp)
                     .border(2.dp, colors.outline, SkewedStamp),
-        )
+            )
+        }
+
         KomiText(
             text = label,
-            role = KomiTextRole.Stamp,
+            role = if (isManga) KomiTextRole.Stamp else KomiTextRole.Title,
             color = colors.onSurface,
             fontSize = 18.sp,
+            uppercase = if (isManga) null else false,
         )
+
         if (kicker != null) {
             KomiText(
                 text = kicker,
@@ -67,12 +73,12 @@ fun SettingsSectionHead(
                 uppercase = false,
             )
         }
+
         Box(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .height(2.dp)
-                    .background(colors.outline.copy(alpha = 0.3f)),
+            modifier = Modifier
+                .weight(1f)
+                .height(if (isManga) 2.dp else 1.dp)
+                .background(if (isManga) colors.outline.copy(alpha = 0.3f) else colors.outlineVariant),
         )
     }
 }

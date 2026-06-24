@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.DpOffset
@@ -32,6 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.core.presentation.personality.manga.decoration.gridPaper
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
@@ -85,6 +88,7 @@ fun TweaksDesktopContent(
 ) {
     var section by rememberSaveable { mutableStateOf(DesktopSection.LOOK) }
     val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
 
     Row(modifier = modifier.fillMaxSize()) {
         Column(
@@ -94,9 +98,9 @@ fun TweaksDesktopContent(
                     .fillMaxHeight()
                     .background(colors.surface)
                     .drawBehind {
-                        val stroke = 3.dp.toPx()
+                        val stroke = (if (isManga) 3.dp else 1.dp).toPx()
                         drawLine(
-                            color = colors.outline,
+                            color = if (isManga) colors.outline else colors.outlineVariant,
                             start = Offset(size.width - stroke / 2f, 0f),
                             end = Offset(size.width - stroke / 2f, size.height),
                             strokeWidth = stroke,
@@ -191,17 +195,24 @@ private fun NavRow(
     onClick: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = 6.dp)
+                .clip(shape)
                 .then(
                     if (active) {
-                        Modifier
-                            .hardShadow(DpOffset(3.dp, 3.dp), colors.shadow)
-                            .background(colors.primary)
-                            .border(2.5.dp, colors.outline)
+                        if (isManga) {
+                            Modifier
+                                .hardShadow(DpOffset(3.dp, 3.dp), colors.shadow, shape)
+                                .background(colors.primary, shape)
+                                .border(2.5.dp, colors.outline, shape)
+                        } else {
+                            Modifier.background(colors.primary, shape)
+                        }
                     } else {
                         Modifier
                     },
@@ -214,9 +225,10 @@ private fun NavRow(
     ) {
         KomiText(
             text = label,
-            role = KomiTextRole.Stamp,
+            role = if (isManga) KomiTextRole.Stamp else KomiTextRole.Label,
             color = if (active) colors.onPrimary else colors.onSurface,
             fontSize = 14.sp,
+            uppercase = if (isManga) null else false,
             modifier = Modifier.weight(1f),
         )
         if (kicker != null) {

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -51,7 +53,7 @@ import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
 import zed.rainxch.core.presentation.personality.usesDecor
-import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.category_all
@@ -91,11 +93,13 @@ fun DesktopSidebar(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
     val store = koinInject<BrowseFilterStore>()
     val platform by store.platform.collectAsStateWithLifecycle()
     val category by store.category.collectAsStateWithLifecycle()
 
-    val browseItems = BottomNavigationUtils.items().filterNot { it.screen == GithubStoreGraph.AppsScreen }
+    val browseItems =
+        BottomNavigationUtils.items().filterNot { it.screen == GithubStoreGraph.AppsScreen }
     val isBrowseScreen =
         currentScreen != null &&
             (
@@ -103,7 +107,8 @@ fun DesktopSidebar(
                     currentScreen::class == GithubStoreGraph.ForYouScreen::class ||
                     currentScreen::class == GithubStoreGraph.SearchScreen()::class
             )
-    val isHomeFeed = currentScreen != null && currentScreen::class == GithubStoreGraph.HomeScreen::class
+    val isHomeFeed =
+        currentScreen != null && currentScreen::class == GithubStoreGraph.HomeScreen::class
 
     Column(
         modifier =
@@ -112,9 +117,9 @@ fun DesktopSidebar(
                 .fillMaxHeight()
                 .background(colors.surface)
                 .drawBehind {
-                    val w = 3.dp.toPx()
+                    val w = (if (isManga) 3.dp else 1.dp).toPx()
                     drawRect(
-                        color = colors.outline,
+                        color = if (isManga) colors.outline else colors.outlineVariant,
                         topLeft = Offset(size.width - w, 0f),
                         size = Size(w, size.height),
                     )
@@ -127,7 +132,11 @@ fun DesktopSidebar(
                 ),
         verticalArrangement = Arrangement.spacedBy(if (rail) 6.dp else 4.dp),
     ) {
-        SidebarSideHeading(stringResource(Res.string.sidebar_browse), stringResource(Res.string.sidebar_browse_jp), rail)
+        SidebarSideHeading(
+            stringResource(Res.string.sidebar_browse),
+            stringResource(Res.string.sidebar_browse_jp),
+            rail,
+        )
         browseItems.forEach { item ->
             val selected = item.screen::class == currentScreen?.let { it::class }
             val badge =
@@ -148,7 +157,11 @@ fun DesktopSidebar(
 
         if (isBrowseScreen) {
             Spacer(Modifier.height(if (rail) 2.dp else 6.dp))
-            SidebarSideHeading(stringResource(Res.string.sidebar_platform), stringResource(Res.string.sidebar_platform_jp), rail)
+            SidebarSideHeading(
+                stringResource(Res.string.sidebar_platform),
+                stringResource(Res.string.sidebar_platform_jp),
+                rail,
+            )
             SidebarPlatforms.forEach { p ->
                 SidebarPlatformRow(
                     platform = p,
@@ -161,7 +174,11 @@ fun DesktopSidebar(
 
         if (isHomeFeed) {
             Spacer(Modifier.height(if (rail) 2.dp else 6.dp))
-            SidebarSideHeading(stringResource(Res.string.sidebar_categories), stringResource(Res.string.sidebar_categories_jp), rail)
+            SidebarSideHeading(
+                stringResource(Res.string.sidebar_categories),
+                stringResource(Res.string.sidebar_categories_jp),
+                rail,
+            )
             FeedCategory.entries.forEach { c ->
                 SidebarCategoryRow(
                     category = c,
@@ -245,15 +262,19 @@ private fun SidebarNavRow(
             .fillMaxWidth()
             .then(
                 if (selected && isManga) {
-                    Modifier.hardShadow(offset = DpOffset(3.dp, 3.dp), color = colors.shadow, shape = shape)
+                    Modifier.hardShadow(
+                        offset = DpOffset(3.dp, 3.dp),
+                        color = colors.shadow,
+                        shape = shape,
+                    )
                 } else {
                     Modifier
                 },
             ).clip(shape)
             .then(if (selected) Modifier.background(colors.primary) else Modifier.hoverWash(colors.onSurface))
             .border(
-                width = if (selected) 2.5.dp else 0.dp,
-                color = if (selected) colors.outline else Color.Transparent,
+                width = if (selected && isManga) 2.5.dp else 0.dp,
+                color = if (selected && isManga) colors.outline else Color.Transparent,
                 shape = shape,
             ).clickable(onClick = onClick)
 
@@ -302,11 +323,21 @@ private fun NavIcon(
 ) {
     if (badgeCount > 0) {
         Box(contentAlignment = Alignment.TopEnd) {
-            KomiIcon(imageVector = icon, contentDescription = null, modifier = Modifier.size(17.dp), tint = tint)
+            KomiIcon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(17.dp),
+                tint = tint,
+            )
             KomiBadge(count = badgeCount, dot = true)
         }
     } else {
-        KomiIcon(imageVector = icon, contentDescription = null, modifier = Modifier.size(17.dp), tint = tint)
+        KomiIcon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(17.dp),
+            tint = tint,
+        )
     }
 }
 
@@ -318,7 +349,7 @@ private fun SidebarPlatformRow(
     onClick: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
-    val glyph = platform.toIcons().firstOrNull()
+    val isManga = LocalPersonality.current is MangaPersonality
     val label =
         if (platform == DiscoveryPlatform.All) {
             stringResource(Res.string.category_all)
@@ -334,19 +365,29 @@ private fun SidebarPlatformRow(
                     .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .then(
                         if (selected) {
-                            Modifier.border(
-                                2.dp,
-                                colors.outline,
-                                RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
-                            )
+                            if (isManga) {
+                                Modifier.border(
+                                    2.dp,
+                                    colors.outline,
+                                    RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
+                                )
+                            } else {
+                                Modifier.background(colors.primaryContainer)
+                            }
                         } else {
                             Modifier.hoverWash(colors.onSurface)
                         },
                     ).clickable(onClick = onClick),
             contentAlignment = Alignment.Center,
         ) {
-            if (glyph != null) {
-                KomiIcon(glyph, contentDescription = label, modifier = Modifier.size(16.dp), tint = colors.onSurface)
+            val icon = platform.toIcon()
+            if (icon != null) {
+                KomiIcon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    modifier = Modifier.size(16.dp),
+                    tint = colors.onSurface,
+                )
             } else {
                 KomiText(
                     text = label,
@@ -372,7 +413,15 @@ private fun SidebarPlatformRow(
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             InkCheckbox(checked = selected)
-            glyph?.let { KomiIcon(it, contentDescription = null, modifier = Modifier.size(14.dp), tint = colors.onSurface) }
+            val icon = platform.toIcon()
+            icon?.let { icon ->
+                KomiIcon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = colors.onSurface,
+                )
+            }
             KomiText(
                 text = label,
                 role = KomiTextRole.Label,
@@ -394,6 +443,7 @@ private fun SidebarCategoryRow(
     onClick: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
     if (rail) {
         Box(
             modifier =
@@ -403,11 +453,15 @@ private fun SidebarCategoryRow(
                     .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
                     .then(
                         if (selected) {
-                            Modifier.border(
-                                2.dp,
-                                colors.outline,
-                                RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
-                            )
+                            if (isManga) {
+                                Modifier.border(
+                                    2.dp,
+                                    colors.outline,
+                                    RoundedCornerShape(LocalPersonality.current.shape.cornerSmall),
+                                )
+                            } else {
+                                Modifier.background(colors.primaryContainer)
+                            }
                         } else {
                             Modifier.hoverWash(colors.onSurface)
                         },
@@ -446,16 +500,32 @@ private fun SidebarCategoryRow(
 @Composable
 private fun InkCheckbox(checked: Boolean) {
     val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
+    val shape = if (isManga) RectangleShape else RoundedCornerShape(4.dp)
+    val borderColor =
+        if (isManga) {
+            colors.outline
+        } else if (checked) {
+            colors.primary
+        } else {
+            colors.outlineVariant
+        }
     Box(
         modifier =
             Modifier
                 .size(14.dp)
+                .clip(shape)
                 .background(if (checked) colors.primary else Color.Transparent)
-                .border(2.dp, colors.outline),
+                .border(if (isManga) 2.dp else 1.5.dp, borderColor, shape),
         contentAlignment = Alignment.Center,
     ) {
         if (checked) {
-            KomiIcon(Icons.Rounded.Check, contentDescription = null, modifier = Modifier.size(10.dp), tint = colors.onPrimary)
+            KomiIcon(
+                Icons.Rounded.Check,
+                contentDescription = null,
+                modifier = Modifier.size(10.dp),
+                tint = colors.onPrimary,
+            )
         }
     }
 }
@@ -463,19 +533,36 @@ private fun InkCheckbox(checked: Boolean) {
 @Composable
 private fun InkDiamond(filled: Boolean) {
     val colors = LocalPersonality.current.colors
-    Box(
-        modifier =
-            Modifier
-                .size(8.dp)
-                .rotate(45f)
-                .then(
-                    if (filled) {
-                        Modifier.background(colors.primary)
-                    } else {
-                        Modifier.border(1.5.dp, colors.onSurfaceVariant)
-                    },
-                ),
-    )
+    val isManga = LocalPersonality.current is MangaPersonality
+    if (isManga) {
+        Box(
+            modifier =
+                Modifier
+                    .size(8.dp)
+                    .rotate(45f)
+                    .then(
+                        if (filled) {
+                            Modifier.background(colors.primary)
+                        } else {
+                            Modifier.border(1.5.dp, colors.onSurfaceVariant)
+                        },
+                    ),
+        )
+    } else {
+        Box(
+            modifier =
+                Modifier
+                    .size(7.dp)
+                    .clip(CircleShape)
+                    .then(
+                        if (filled) {
+                            Modifier.background(colors.primary)
+                        } else {
+                            Modifier.border(1.5.dp, colors.outlineVariant, CircleShape)
+                        },
+                    ),
+        )
+    }
 }
 
 @Composable

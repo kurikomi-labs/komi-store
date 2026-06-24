@@ -13,15 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -31,6 +34,7 @@ import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.gridPaper
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
 
@@ -50,14 +54,27 @@ fun PersonalityTile(
 ) {
     val colors = LocalPersonality.current.colors
     val isManga = kind == AppPersonality.MANGA
+    val isActiveManga = LocalPersonality.current is MangaPersonality
+    val tileShape = if (isActiveManga) RectangleShape else RoundedCornerShape(LocalPersonality.current.shape.corner)
     val borderColor = if (selected) colors.primary else colors.outline.copy(alpha = 0.45f)
 
     Column(
         modifier =
             modifier
-                .then(if (selected) Modifier.hardShadow(DpOffset(5.dp, 5.dp), colors.shadow) else Modifier)
+                .then(
+                    if (selected) {
+                        if (isActiveManga) {
+                            Modifier.hardShadow(DpOffset(5.dp, 5.dp), colors.shadow, tileShape)
+                        } else {
+                            Modifier.shadow(6.dp, tileShape)
+                        }
+                    } else {
+                        Modifier
+                    },
+                )
+                .clip(tileShape)
                 .background(colors.surface)
-                .border(3.dp, borderColor)
+                .border(if (isActiveManga) 3.dp else 1.5.dp, borderColor, tileShape)
                 .clickable(onClick = onClick),
     ) {
         Box(
@@ -98,8 +115,9 @@ fun PersonalityTile(
                             .align(Alignment.TopStart)
                             .padding(top = 6.dp, start = 8.dp)
                             .size(22.dp)
+                            .then(if (isActiveManga) Modifier else Modifier.clip(CircleShape))
                             .background(colors.primary)
-                            .border(2.dp, colors.outline),
+                            .then(if (isActiveManga) Modifier.border(2.dp, colors.outline) else Modifier),
                     contentAlignment = Alignment.Center,
                 ) {
                     KomiIcon(
