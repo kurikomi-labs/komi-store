@@ -4,7 +4,7 @@ enum class KomiTextRole {
     Display,
     Title,
     Stamp,
-    Body,
     Label,
+    Body,
     Mono,
 }

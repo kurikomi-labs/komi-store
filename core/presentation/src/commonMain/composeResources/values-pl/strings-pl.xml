@@ -274,6 +274,7 @@
     <string name="time_years_ago">%1$d lat temu</string>
     <string name="time_months_ago">%1$d mies temu</string>
     <string name="time_days_ago">%1$d d temu</string>
+    <string name="time_weeks_ago">%1$d tyg temu</string>
     <string name="time_hours_ago">%1$d h temu</string>
     <string name="time_minutes_ago">%1$d min temu</string>
 

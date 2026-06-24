@@ -333,6 +333,7 @@
     <string name="time_years_ago">منذ %1$d سنة</string>
     <string name="time_months_ago">منذ %1$d شهر</string>
     <string name="time_days_ago">منذ %1$d يوم</string>
+    <string name="time_weeks_ago">منذ %1$d أسبوع</string>
     <string name="time_hours_ago">منذ %1$d ساعة</string>
     <string name="time_minutes_ago">منذ %1$d دقيقة</string>
 

@@ -25,12 +25,14 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -106,8 +108,10 @@ private fun MangaIconButton(
         remember(personality.shape.cornerSmall) { RoundedCornerShape(personality.shape.cornerSmall) }
     val alpha = if (enabled) 1f else 0.45f
     val flat = variant == KomiButtonVariant.Text
+    val ambientInk = LocalContentColor.current
     val container = mangaButtonContainer(variant, colors)
-    val contentColor = mangaButtonContent(variant, colors)
+    val contentColor = mangaButtonContent(variant, colors, ambientInk)
+    val borderColor = if (container == Color.Transparent) contentColor else colors.outline
     val tapTarget = maxOf(metrics.box, MinTouchTarget)
 
     val interaction = remember { MutableInteractionSource() }
@@ -155,7 +159,7 @@ private fun MangaIconButton(
                         if (!flat) {
                             Modifier.border(
                                 width = metrics.border,
-                                color = colors.outline.copy(alpha = alpha),
+                                color = borderColor.copy(alpha = alpha),
                                 shape = shape,
                             )
                         } else {

@@ -2,6 +2,7 @@ package zed.rainxch.core.presentation.personality.utils
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -33,6 +34,7 @@ fun PersonalityTheme(
     CompositionLocalProvider(
         LocalPersonality provides resolved,
         LocalStatusColors provides statusColors(resolved.colors.isDark),
+        LocalContentColor provides resolved.colors.onBackground,
     ) {
         when (resolved) {
             is ClassicPersonality -> MaterialExpressiveTheme(colorScheme = colorScheme, content = content)

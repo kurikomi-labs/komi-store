@@ -304,6 +304,7 @@
     <string name="time_years_ago">%1$d বছর আগে</string>
     <string name="time_months_ago">%1$d মাস আগে</string>
     <string name="time_days_ago">%1$d দিন আগে</string>
+    <string name="time_weeks_ago">%1$d সপ্তাহ আগে</string>
     <string name="time_hours_ago">%1$d ঘণ্টা আগে</string>
     <string name="time_minutes_ago">%1$d মিনিট আগে</string>
 

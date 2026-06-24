@@ -434,6 +434,7 @@
     <string name="time_years_ago">%1$d y ago</string>
     <string name="time_months_ago">%1$d mo ago</string>
     <string name="time_days_ago">%1$d d ago</string>
+    <string name="time_weeks_ago">%1$d w ago</string>
     <string name="time_hours_ago">%1$d h ago</string>
     <string name="time_minutes_ago">%1$d m ago</string>
 

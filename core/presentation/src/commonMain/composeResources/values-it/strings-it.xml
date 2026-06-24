@@ -300,6 +300,7 @@
     <string name="time_years_ago">%1$d a fa</string>
     <string name="time_months_ago">%1$d m fa</string>
     <string name="time_days_ago">%1$d g fa</string>
+    <string name="time_weeks_ago">%1$d sett fa</string>
     <string name="time_hours_ago">%1$d h fa</string>
     <string name="time_minutes_ago">%1$d min fa</string>
 

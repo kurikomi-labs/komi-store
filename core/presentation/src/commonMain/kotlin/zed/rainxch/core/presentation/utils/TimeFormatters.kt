@@ -11,6 +11,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalTime::class)
 private fun parseIsoInstantLenient(isoInstant: String): Instant? {
@@ -57,6 +58,23 @@ fun formatRelativeShort(isoInstant: String?): String {
     if (months < 12L) return "${months}mo"
     val years = days / 365L
     return "${years}y"
+}
+
+@OptIn(ExperimentalTime::class)
+@Composable
+fun formatReleasedAgo(isoInstant: String?): String? {
+    val instant = isoInstant?.let { parseIsoInstantLenient(it) } ?: return null
+    val diff = Clock.System.now() - instant
+    val minutes = if (diff.isNegative()) 0L else diff.inWholeMinutes
+    return when {
+        minutes < 1L -> stringResource(Res.string.just_now)
+        minutes < 60L -> stringResource(Res.string.time_minutes_ago, minutes.toInt())
+        diff.inWholeHours < 24L -> stringResource(Res.string.time_hours_ago, diff.inWholeHours.toInt())
+        diff.inWholeDays < 7L -> stringResource(Res.string.time_days_ago, diff.inWholeDays.toInt())
+        diff.inWholeDays < 30L -> stringResource(Res.string.time_weeks_ago, (diff.inWholeDays / 7.0).roundToInt())
+        diff.inWholeDays < 365L -> stringResource(Res.string.time_months_ago, (diff.inWholeDays / 30.0).roundToInt())
+        else -> stringResource(Res.string.time_years_ago, (diff.inWholeDays / 365.0).roundToInt())
+    }
 }
 
 @OptIn(ExperimentalTime::class)

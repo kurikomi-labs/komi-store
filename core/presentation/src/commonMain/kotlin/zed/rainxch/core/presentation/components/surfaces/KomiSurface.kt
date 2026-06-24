@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -137,6 +139,10 @@ private fun MangaSurface(
             KomiSurfacePaper.Surface -> colors.surface
             KomiSurfacePaper.Background -> colors.background
         }
+    val contentInk = when (paper) {
+        KomiSurfacePaper.Surface -> colors.onSurface
+        KomiSurfacePaper.Background -> colors.onBackground
+    }
 
     val pressable = onClick != null
     val tiltModifier = if (tilt != 0f) Modifier.rotate(tilt) else Modifier
@@ -148,8 +154,10 @@ private fun MangaSurface(
             val hovered by interaction.collectIsHoveredAsState()
             val focused by interaction.collectIsFocusedAsState()
             val hover = hoverEnabled ?: true
-            val pressProgress = animateFloatAsState(if (pressed) 1f else 0f, label = "komiSurfacePress")
-            val hoverProgress = animateFloatAsState(if (hovered && hover) 1f else 0f, label = "komiSurfaceHover")
+            val pressProgress =
+                animateFloatAsState(if (pressed) 1f else 0f, label = "komiSurfacePress")
+            val hoverProgress =
+                animateFloatAsState(if (hovered && hover) 1f else 0f, label = "komiSurfaceHover")
             Modifier
                 .inkFocusRing(focused = { focused }, color = colors.primary)
                 .inkPress(
@@ -167,22 +175,37 @@ private fun MangaSurface(
                     onLongClick = onLongClick,
                 )
         } else if (elev.shadow > 0.dp) {
-            Modifier.hardShadow(offset = DpOffset(elev.shadow, elev.shadow), color = colors.shadow, shape = shape)
+            Modifier.hardShadow(
+                offset = DpOffset(elev.shadow, elev.shadow),
+                color = colors.shadow,
+                shape = shape
+            )
         } else {
             Modifier
         }
 
-    val toneModifier =
-        when (screentone) {
-            KomiScreentone.None -> Modifier
-            KomiScreentone.Corner -> Modifier.screentoneCorner(colors.onSurface, colors.screentoneOpacity, boost = screentoneBoost)
-            KomiScreentone.Fill -> Modifier.screentoneFill(colors.onSurface, colors.screentoneOpacity)
-        }
+    val toneModifier = when (screentone) {
+        KomiScreentone.None -> Modifier
+        KomiScreentone.Corner -> Modifier.screentoneCorner(
+            colors.onSurface,
+            colors.screentoneOpacity,
+            boost = screentoneBoost
+        )
+
+        KomiScreentone.Fill -> Modifier.screentoneFill(
+            colors.onSurface,
+            colors.screentoneOpacity
+        )
+    }
 
     val borderModifier =
         if (topEdgeOnly) {
             Modifier.drawBehind {
-                drawRect(color = colors.outline, topLeft = Offset.Zero, size = Size(size.width, borderWidth.toPx()))
+                drawRect(
+                    color = colors.outline,
+                    topLeft = Offset.Zero,
+                    size = Size(size.width, borderWidth.toPx())
+                )
             }
         } else {
             Modifier.border(width = borderWidth, color = colors.outline, shape = shape)
@@ -199,7 +222,9 @@ private fun MangaSurface(
                 .then(borderModifier)
                 .padding(contentPadding),
     ) {
-        content()
+        CompositionLocalProvider(LocalContentColor provides contentInk) {
+            content()
+        }
     }
 }
 
@@ -309,7 +334,11 @@ private fun KomiSurfaceMangaFillTiltPreview() {
 @Composable
 private fun KomiSurfaceMangaNightPreview() {
     PersonalityPreview(mangaPersonality(paper = MangaPaper.NIGHT, accent = MangaAccent.FROST)) {
-        KomiSurface(screentone = KomiScreentone.Corner, onClick = {}, contentPadding = PaddingValues(Spacing.lg)) {
+        KomiSurface(
+            screentone = KomiScreentone.Corner,
+            onClick = {},
+            contentPadding = PaddingValues(Spacing.lg)
+        ) {
             PreviewPanelBody()
         }
     }
@@ -327,7 +356,10 @@ private fun KomiSurfaceClassicPreview() {
 @Composable
 private fun KomiSurfaceClassicDarkPreview() {
     PersonalityPreview(classicPersonality(dark = true)) {
-        KomiSurface(elevation = KomiSurfaceElevation.Modal, contentPadding = PaddingValues(Spacing.lg)) {
+        KomiSurface(
+            elevation = KomiSurfaceElevation.Modal,
+            contentPadding = PaddingValues(Spacing.lg)
+        ) {
             PreviewPanelBody()
         }
     }

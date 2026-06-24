@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -191,14 +192,17 @@ private fun MangaTextField(
 
     Column(modifier = modifier.then(if (enabled) Modifier else Modifier.alpha(0.5f))) {
         if (label != null) {
-            val labelStyle =
-                TextStyle(
-                    fontFamily = type.display.fontFamily,
-                    fontSize = (metrics.font - 2f).sp,
-                    letterSpacing = 0.05.em,
-                )
+            val labelStyle = TextStyle(
+                fontFamily = type.display.fontFamily,
+                fontSize = (metrics.font - 2f).sp,
+                letterSpacing = 0.05.em,
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = label.uppercase(), style = labelStyle, color = colors.onSurface)
+                Text(
+                    text = label.uppercase(),
+                    style = labelStyle,
+                    color = colors.onSurface
+                )
                 if (required) {
                     Text(
                         text = "*",
@@ -247,14 +251,20 @@ private fun MangaTextField(
                         if (multiline) {
                             Modifier.padding(10.dp)
                         } else {
-                            Modifier.heightIn(min = metrics.height).padding(horizontal = metrics.paddingX)
+                            Modifier.heightIn(min = metrics.height)
+                                .padding(horizontal = metrics.paddingX)
                         },
                     ),
             verticalAlignment = if (multiline) Alignment.Top else Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             if (leadingIcon != null) {
-                Icon(imageVector = leadingIcon, contentDescription = null, modifier = Modifier.size(metrics.icon), tint = iconColor)
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(metrics.icon),
+                    tint = iconColor
+                )
             }
             BasicTextField(
                 value = value,
@@ -284,9 +294,14 @@ private fun MangaTextField(
                     if (value.isEmpty() && placeholder != null) {
                         Text(
                             text = placeholder,
-                            style = TextStyle(fontFamily = type.body.fontFamily, fontWeight = FontWeight.W700, fontSize = metrics.font.sp),
+                            style = TextStyle(
+                                fontFamily = type.body.fontFamily,
+                                fontWeight = FontWeight.W700,
+                                fontSize = metrics.font.sp
+                            ),
                             color = colors.onSurfaceVariant,
                             maxLines = if (multiline) Int.MAX_VALUE else 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     inner()
@@ -302,7 +317,10 @@ private fun MangaTextField(
                     tint = iconColor,
                 )
             } else if (showClear) {
-                ClearButton(colors = colors, iconSize = metrics.icon, onClear = { onValueChange("") })
+                ClearButton(
+                    colors = colors,
+                    iconSize = metrics.icon,
+                    onClear = { onValueChange("") })
             }
         }
 
@@ -311,7 +329,11 @@ private fun MangaTextField(
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = supporting,
-                style = TextStyle(fontFamily = type.body.fontFamily, fontWeight = FontWeight.W700, fontSize = (metrics.font - 3.5f).sp),
+                style = TextStyle(
+                    fontFamily = type.body.fontFamily,
+                    fontWeight = FontWeight.W700,
+                    fontSize = (metrics.font - 3.5f).sp
+                ),
                 color = if (hasError) colors.error else colors.onSurfaceVariant,
             )
         }
@@ -386,8 +408,9 @@ private fun ClassicTextField(
     val supporting = error ?: helper
     val showClear = clearable && enabled && value.isNotEmpty() && trailing == null
     var passwordVisible by remember { mutableStateOf(false) }
-    val visualTransformation =
-        if (password && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
+    val visualTransformation = if (password && !passwordVisible) {
+        PasswordVisualTransformation()
+    } else VisualTransformation.None
 
     TextField(
         value = value,
@@ -396,9 +419,29 @@ private fun ClassicTextField(
         enabled = enabled,
         isError = hasError,
         visualTransformation = visualTransformation,
-        label = label?.let { { Text(if (required) "$it *" else it) } },
-        placeholder = placeholder?.let { { Text(it) } },
-        leadingIcon = leadingIcon?.let { { Icon(it, contentDescription = null) } },
+        label = label?.let {
+            {
+                Text(text = if (required) "$it *" else it)
+            }
+        },
+        placeholder = placeholder?.let {
+            {
+                Text(
+                    text = it,
+                    color = LocalPersonality.current.colors.onSurfaceVariant,
+                    maxLines = if (multiline) Int.MAX_VALUE else 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        leadingIcon = leadingIcon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null
+                )
+            }
+        },
         trailingIcon =
             when {
                 trailing != null -> {
@@ -410,7 +453,9 @@ private fun ClassicTextField(
                         Icon(
                             imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = null,
-                            modifier = Modifier.clickable(onClick = { passwordVisible = !passwordVisible }),
+                            modifier = Modifier.clickable(onClick = {
+                                passwordVisible = !passwordVisible
+                            }),
                         )
                     }
                 }
@@ -418,7 +463,7 @@ private fun ClassicTextField(
                 showClear -> {
                     {
                         Icon(
-                            Icons.Default.Close,
+                            imageVector = Icons.Default.Close,
                             contentDescription = "Clear",
                             modifier = Modifier.clickable(onClick = { onValueChange("") }),
                         )
@@ -437,6 +482,7 @@ private fun ClassicTextField(
                 keyboardType = keyboardType,
                 imeAction = if (!multiline && onCommit != null) ImeAction.Done else ImeAction.Default,
             ),
+        maxLines = if (multiline) Int.MAX_VALUE else 1,
         keyboardActions = KeyboardActions(onDone = { onCommit?.invoke() }),
     )
 }
@@ -470,7 +516,13 @@ private fun PreviewFields() {
             helper = "Press Enter to search.",
             onCommit = {},
         )
-        KomiTextField(value = "immich-app", onValueChange = {}, label = "Owner", required = true, helper = "GitHub org or user.")
+        KomiTextField(
+            value = "immich-app",
+            onValueChange = {},
+            label = "Owner",
+            required = true,
+            helper = "GitHub org or user."
+        )
         KomiTextField(
             value = "not-an-email",
             onValueChange = {},
@@ -480,7 +532,13 @@ private fun PreviewFields() {
         )
         KomiTextField(value = "Self-hosted photo backup.", onValueChange = {
         }, label = "Description", multiline = true, rows = 3, helper = "Shown on the app card.")
-        KomiTextField(value = "locked", onValueChange = {}, label = "Disabled", enabled = false, helper = "Read-only.")
+        KomiTextField(
+            value = "locked",
+            onValueChange = {},
+            label = "Disabled",
+            enabled = false,
+            helper = "Read-only."
+        )
     }
 }
 
@@ -493,7 +551,12 @@ private fun KomiTextFieldMangaPreview() {
 @Preview
 @Composable
 private fun KomiTextFieldMangaNightPreview() {
-    PersonalityPreview(mangaPersonality(paper = MangaPaper.NIGHT, accent = MangaAccent.FROST)) { PreviewFields() }
+    PersonalityPreview(
+        mangaPersonality(
+            paper = MangaPaper.NIGHT,
+            accent = MangaAccent.FROST
+        )
+    ) { PreviewFields() }
 }
 
 @Preview

@@ -258,6 +258,7 @@
     <string name="time_years_ago">il y a %1$d an(s)</string>
     <string name="time_months_ago">il y a %1$d mois</string>
     <string name="time_days_ago">il y a %1$d j</string>
+    <string name="time_weeks_ago">il y a %1$d sem</string>
     <string name="time_hours_ago">il y a %1$d h</string>
     <string name="time_minutes_ago">il y a %1$d min</string>
 

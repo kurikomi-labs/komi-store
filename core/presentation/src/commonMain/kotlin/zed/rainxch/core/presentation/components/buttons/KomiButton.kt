@@ -139,8 +139,10 @@ private fun MangaButton(
     val alpha = if (active) 1f else 0.45f
 
     val flat = variant == KomiButtonVariant.Text
+    val ambientInk = LocalContentColor.current
     val container = mangaButtonContainer(variant, colors)
-    val contentColor = mangaButtonContent(variant, colors)
+    val contentColor = mangaButtonContent(variant, colors, ambientInk)
+    val borderColor = if (container == Color.Transparent) contentColor else colors.outline
     val sweep =
         emphasized && active &&
             (variant == KomiButtonVariant.Primary || variant == KomiButtonVariant.Destructive)
@@ -189,7 +191,7 @@ private fun MangaButton(
                     if (!flat) {
                         Modifier.border(
                             width = metrics.border,
-                            color = colors.outline.copy(alpha = alpha),
+                            color = borderColor.copy(alpha = alpha),
                             shape = shape,
                         )
                     } else {

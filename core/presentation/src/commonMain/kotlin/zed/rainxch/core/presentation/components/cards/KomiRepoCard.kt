@@ -44,7 +44,7 @@ import zed.rainxch.core.presentation.components.chips.KomiChip
 import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.chips.KomiChipSize
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
-import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.formatReleasedAgo
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.core.presentation.components.surfaces.KomiScreentone
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
@@ -64,6 +64,7 @@ import zed.rainxch.core.presentation.personality.mangaPersonality
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.spacing.Spacing
+import zed.rainxch.core.presentation.utils.toIcon
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -89,6 +90,7 @@ fun KomiRepoCard(
     compact: Boolean = false,
     index: Int = 0,
     tilt: Boolean = false,
+    releasedAt: String? = null,
 ) {
     val colors = LocalPersonality.current.colors
     val tiltDeg =
@@ -185,7 +187,7 @@ fun KomiRepoCard(
                         size = if (compact) KomiChipSize.Sm else KomiChipSize.Md,
                         leadingContent = {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                platform.toIcons().forEach { icon ->
+                                platform.toIcon()?.let { icon ->
                                     Icon(
                                         imageVector = icon,
                                         contentDescription = null,
@@ -224,11 +226,13 @@ fun KomiRepoCard(
                         value = fmtCompact(downloads),
                         colors = colors
                     )
-                    Stat(
-                        icon = Icons.Outlined.Schedule,
-                        value = fmtAgo(releasedAgoDays),
-                        colors = colors
-                    )
+                    formatReleasedAgo(releasedAt)?.let { ago ->
+                        Stat(
+                            icon = Icons.Outlined.Schedule,
+                            value = ago,
+                            colors = colors
+                        )
+                    }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     KomiText(
@@ -576,15 +580,6 @@ private fun shorten(
     return if (rounded == rounded.toLong().toDouble()) rounded.toLong()
         .toString() else rounded.toString()
 }
-
-private fun fmtAgo(days: Int): String =
-    when {
-        days <= 0 -> "today"
-        days < 7 -> "${days}d ago"
-        days < 30 -> "${(days / 7.0).roundToInt()}w ago"
-        days < 365 -> "${(days / 30.0).roundToInt()}mo ago"
-        else -> "${(days / 365.0).roundToInt()}y ago"
-    }
 
 @Composable
 private fun PreviewCards() {

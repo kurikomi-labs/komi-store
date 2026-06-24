@@ -258,6 +258,7 @@
     <string name="time_years_ago">%1$d 年前</string>
     <string name="time_months_ago">%1$d ヶ月前</string>
     <string name="time_days_ago">%1$d 日前</string>
+    <string name="time_weeks_ago">%1$d 週間前</string>
     <string name="time_hours_ago">%1$d 時間前</string>
     <string name="time_minutes_ago">%1$d 分前</string>
 

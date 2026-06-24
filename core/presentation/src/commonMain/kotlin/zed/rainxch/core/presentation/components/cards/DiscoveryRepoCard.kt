@@ -74,6 +74,7 @@ fun DiscoveryRepoCard(
         stars = repo.stargazersCount,
         downloads = repo.downloadCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
         releasedAgoDays = daysSinceIso(repo.latestReleaseDate ?: repo.updatedAt) ?: 0,
+        releasedAt = repo.latestReleaseDate ?: repo.updatedAt,
         onOpen = onClick,
         modifier = modifier,
         onLongPress = longPress,

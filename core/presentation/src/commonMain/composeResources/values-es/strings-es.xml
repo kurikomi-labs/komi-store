@@ -257,6 +257,7 @@
     <string name="time_years_ago">hace %1$d año(s)</string>
     <string name="time_months_ago">hace %1$d mes(es)</string>
     <string name="time_days_ago">hace %1$d d</string>
+    <string name="time_weeks_ago">hace %1$d sem</string>
     <string name="time_hours_ago">hace %1$d h</string>
     <string name="time_minutes_ago">hace %1$d min</string>
 
