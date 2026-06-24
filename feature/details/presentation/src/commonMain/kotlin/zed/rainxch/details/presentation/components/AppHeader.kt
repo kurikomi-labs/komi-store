@@ -60,7 +60,7 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
-import zed.rainxch.core.presentation.utils.toIcons
+import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
@@ -123,10 +123,14 @@ fun AppHeader(
         animationSpec = tween(durationMillis = 1800, easing = LinearOutSlowInEasing),
         label = "details-hero-surface",
     )
-    val stripeBase = if (isDark) animatedAccent.copy(alpha = 0.18f) else animatedAccent.copy(alpha = 0.12f)
-    val stripeLineThick = if (isDark) animatedAccent.copy(alpha = 0.45f) else animatedAccent.copy(alpha = 0.55f)
-    val stripeLineThin = if (isDark) animatedAccent.copy(alpha = 0.22f) else animatedAccent.copy(alpha = 0.30f)
-    val avatarBg = if (isDark) animatedAccent.copy(alpha = 0.20f) else animatedAccent.copy(alpha = 0.14f)
+    val stripeBase =
+        if (isDark) animatedAccent.copy(alpha = 0.18f) else animatedAccent.copy(alpha = 0.12f)
+    val stripeLineThick =
+        if (isDark) animatedAccent.copy(alpha = 0.45f) else animatedAccent.copy(alpha = 0.55f)
+    val stripeLineThin =
+        if (isDark) animatedAccent.copy(alpha = 0.22f) else animatedAccent.copy(alpha = 0.30f)
+    val avatarBg =
+        if (isDark) animatedAccent.copy(alpha = 0.20f) else animatedAccent.copy(alpha = 0.14f)
     val borderColor = colors.outline
 
     val animatedProgress by animateFloatAsState(
@@ -143,9 +147,9 @@ fun AppHeader(
             if (names.any { it.endsWith(".dmg") || it.endsWith(".pkg") }) add(DiscoveryPlatform.Macos)
             if (names.any {
                     it.endsWith(".appimage") ||
-                        it.endsWith(".deb") ||
-                        it.endsWith(".rpm") ||
-                        it.endsWith(".pkg.tar.zst")
+                            it.endsWith(".deb") ||
+                            it.endsWith(".rpm") ||
+                            it.endsWith(".pkg.tar.zst")
                 }
             ) add(DiscoveryPlatform.Linux)
         }
@@ -170,7 +174,8 @@ fun AppHeader(
                         val thin = 2.5.dp.toPx()
                         val gapAfterThick = 10.dp.toPx()
                         val gapBetweenThin = 6.dp.toPx()
-                        val cycle = thick + gapAfterThick + thin + gapBetweenThin + thin + gapAfterThick
+                        val cycle =
+                            thick + gapAfterThick + thin + gapBetweenThin + thin + gapAfterThick
                         var x = -size.height
                         while (x < size.width + size.height) {
                             drawLine(
@@ -401,18 +406,20 @@ fun AppHeader(
                             kind = KomiChipKind.Info,
                             size = KomiChipSize.Sm,
                             leadingContent = {
-                                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    platform.toIcons().forEach { icon ->
-                                        KomiIcon(
-                                            imageVector = icon,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp),
-                                            tint = colors.onSurface,
-                                        )
-                                    }
+                                platform.toIcon()?.let { icon ->
+                                    KomiIcon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp),
+                                        tint = colors.onSurface,
+                                    )
                                 }
                             },
-                            onClick = onPlatformClick?.let { handler -> { handler(platform) } },
+                            onClick = onPlatformClick?.let { handler ->
+                                {
+                                    handler(platform)
+                                }
+                            },
                         )
                     }
                 }
@@ -439,27 +446,29 @@ fun AppHeader(
                     modifier = Modifier.size(92.dp).clip(RoundedCornerShape(shape.cornerSmall)),
                 )
             }
-            if (downloadStage != DownloadStage.IDLE) {
-                when (downloadStage) {
-                    DownloadStage.DOWNLOADING -> {
-                        KomiCircularProgress(
-                            progress = { 1f },
-                            modifier = Modifier.fillMaxSize(),
-                            color = animatedAccent.copy(alpha = 0.2f),
-                        )
-                        KomiCircularProgress(
-                            progress = { animatedProgress },
-                            modifier = Modifier.fillMaxSize(),
-                            color = animatedAccent,
-                        )
-                    }
-                    DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
-                        KomiCircularProgress(
-                            modifier = Modifier.fillMaxSize(),
-                            color = animatedAccent,
-                        )
-                    }
+
+            when (downloadStage) {
+                DownloadStage.DOWNLOADING -> {
+                    KomiCircularProgress(
+                        progress = { 1f },
+                        modifier = Modifier.fillMaxSize(),
+                        color = animatedAccent.copy(alpha = 0.2f),
+                    )
+                    KomiCircularProgress(
+                        progress = { animatedProgress },
+                        modifier = Modifier.fillMaxSize(),
+                        color = animatedAccent,
+                    )
                 }
+
+                DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
+                    KomiCircularProgress(
+                        modifier = Modifier.fillMaxSize(),
+                        color = animatedAccent,
+                    )
+                }
+
+                DownloadStage.IDLE -> { }
             }
         }
     }

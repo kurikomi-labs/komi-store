@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
@@ -54,7 +55,7 @@ import zed.rainxch.githubstore.core.presentation.res.versions_title
 @Composable
 fun VersionPicker(
     selectedRelease: GithubRelease?,
-    filteredReleases: List<GithubRelease>,
+    filteredReleases: ImmutableList<GithubRelease>,
     isPickerVisible: Boolean,
     onAction: (DetailsAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -99,7 +100,7 @@ fun VersionPicker(
                 KomiText(
                     text = selectedRelease?.tagName
                         ?: stringResource(Res.string.no_version_selected),
-                    role = KomiTextRole.Title,
+                    role = KomiTextRole.Stamp,
                     fontWeight = FontWeight.SemiBold,
                     color = colors.onSurface,
                     overflow = TextOverflow.Clip,
@@ -203,7 +204,7 @@ private fun VersionListItem(
             ) {
                 KomiText(
                     text = release.tagName,
-                    role = KomiTextRole.Title,
+                    role = KomiTextRole.Stamp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                     color = if (isSelected) colors.primary else colors.onSurface,
                     uppercase = false,

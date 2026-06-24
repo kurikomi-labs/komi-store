@@ -40,9 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.account.github.GithubUser
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
@@ -66,13 +69,13 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 @Composable
 fun ReleaseAssetsPicker(
     onAction: (DetailsAction) -> Unit,
-    assetsList: List<GithubAsset>,
+    assetsList: ImmutableList<GithubAsset>,
     modifier: Modifier = Modifier,
     selectedAsset: GithubAsset? = null,
     isPickerVisible: Boolean = false,
     pinnedVariant: String? = null,
     showAllPlatforms: Boolean = false,
-    crossPlatformAssets: List<GithubAsset> = emptyList(),
+    crossPlatformAssets: ImmutableList<GithubAsset> = persistentListOf(),
 ) {
     val colors = LocalPersonality.current.colors
 
@@ -133,7 +136,7 @@ fun ReleaseAssetsPicker(
         ) {
             KomiText(
                 text = selectedAsset?.name ?: stringResource(Res.string.no_assets_selected),
-                role = KomiTextRole.Title,
+                role = KomiTextRole.Stamp,
                 fontWeight = FontWeight.SemiBold,
                 color = colors.onSurface,
                 overflow = TextOverflow.Ellipsis,
@@ -153,8 +156,8 @@ fun ReleaseAssetsPicker(
 
 @Composable
 private fun ReleaseAssetsItemsPicker(
-    assetsList: List<GithubAsset>,
-    crossPlatformAssets: List<GithubAsset>,
+    assetsList: ImmutableList<GithubAsset>,
+    crossPlatformAssets: ImmutableList<GithubAsset>,
     showAllPlatforms: Boolean,
     selectedAsset: GithubAsset?,
     pinnedVariant: String?,
@@ -276,10 +279,10 @@ private fun ReleaseAssetsItemsPicker(
 
                     val sectionOrder =
                         listOf(
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Android to Res.string.platform_section_android,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Windows to Res.string.platform_section_windows,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Macos to Res.string.platform_section_macos,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Linux to Res.string.platform_section_linux,
+                            DiscoveryPlatform.Android to Res.string.platform_section_android,
+                            DiscoveryPlatform.Windows to Res.string.platform_section_windows,
+                            DiscoveryPlatform.Macos to Res.string.platform_section_macos,
+                            DiscoveryPlatform.Linux to Res.string.platform_section_linux,
                         ).sortedByDescending { (platform, _) ->
                             groups[platform]?.any { it.id in installableIds } == true
                         }
@@ -309,8 +312,7 @@ private fun ReleaseAssetsItemsPicker(
                 } else if (assetsList.isNotEmpty()) {
                     items(items = assetsList, key = { it.id }) { asset ->
                         val variantTag = AssetVariant.extract(asset.name)
-                        val isPinned =
-                            !pinnedVariant.isNullOrBlank() &&
+                        val isPinned = !pinnedVariant.isNullOrBlank() &&
                                 variantTag?.equals(pinnedVariant, ignoreCase = true) == true
                         ReleaseAssetItem(
                             asset = asset,
@@ -401,7 +403,7 @@ private fun ReleaseAssetItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 KomiText(
                     text = asset.name,
-                    role = KomiTextRole.Title,
+                    role = KomiTextRole.Stamp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
@@ -527,8 +529,8 @@ private fun PlatformSectionCard(
                 val variantTag = AssetVariant.extract(asset.name)
                 val isPinned =
                     isInstallableHere &&
-                        !pinnedVariant.isNullOrBlank() &&
-                        variantTag?.equals(pinnedVariant, ignoreCase = true) == true
+                            !pinnedVariant.isNullOrBlank() &&
+                            variantTag?.equals(pinnedVariant, ignoreCase = true) == true
                 ReleaseAssetItem(
                     asset = asset,
                     isSelected = isInstallableHere && asset.id == selectedAsset?.id,

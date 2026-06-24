@@ -1,10 +1,12 @@
 package zed.rainxch.details.presentation
 
-import zed.rainxch.core.domain.model.apk.ApkInspection
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.account.github.GithubUserProfile
+import zed.rainxch.core.domain.model.apk.ApkInspection
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.system.SystemArchitecture
 import zed.rainxch.details.domain.model.ReleaseCategory
@@ -26,9 +28,9 @@ data class DetailsState(
     val userProfile: GithubUserProfile? = null,
     val repository: GithubRepoSummary? = null,
     val primaryAsset: GithubAsset? = null,
-    val installableAssets: List<GithubAsset> = emptyList(),
+    val installableAssets: ImmutableList<GithubAsset> = persistentListOf(),
     val selectedRelease: GithubRelease? = null,
-    val allReleases: List<GithubRelease> = emptyList(),
+    val allReleases: ImmutableList<GithubRelease> = persistentListOf(),
     val releasesLoadFailed: Boolean = false,
     val isRetryingReleases: Boolean = false,
     val isReleaseSelectorVisible: Boolean = false,
@@ -37,7 +39,7 @@ data class DetailsState(
     val stats: RepoStats? = null,
     val readmeMarkdown: String? = null,
     val readmeLanguage: String? = null,
-    val installLogs: List<InstallLogItem> = emptyList(),
+    val installLogs: ImmutableList<InstallLogItem> = persistentListOf(),
     val isDownloading: Boolean = false,
     val downloadProgressPercent: Int? = null,
     val downloadedBytes: Long = 0L,
@@ -53,7 +55,7 @@ data class DetailsState(
     val isAppManagerAvailable: Boolean = false,
     val isAppManagerEnabled: Boolean = false,
     val installedApp: InstalledApp? = null,
-    val installedApps: List<InstalledApp> = emptyList(),
+    val installedApps: ImmutableList<InstalledApp> = persistentListOf(),
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
     val isTrackingApp: Boolean = false,
@@ -85,7 +87,7 @@ data class DetailsState(
     val isChannelChipCoachmarkPending: Boolean = false,
     val showAllPlatforms: Boolean = false,
 
-    val filteredReleases: List<GithubRelease> = emptyList(),
+    val filteredReleases: ImmutableList<GithubRelease> = persistentListOf(),
     val latestStableRelease: GithubRelease? = null,
     val canSwitchToStable: Boolean = false,
     val isPendingInstallReady: Boolean = false,

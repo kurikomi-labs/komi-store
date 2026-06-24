@@ -1,7 +1,6 @@
 package zed.rainxch.details.presentation.components.sections
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,15 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,12 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,8 +34,8 @@ import kotlinx.coroutines.withContext
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import zed.rainxch.core.domain.utils.applyThemeAwareImages
-import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
@@ -56,6 +44,7 @@ import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransforme
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
+import zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor
 import zed.rainxch.details.presentation.utils.splitMarkdownIntoChunks
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.math.abs
@@ -63,14 +52,8 @@ import kotlin.math.abs
 fun LazyListScope.about(
     readmeMarkdown: String,
     readmeLanguage: String?,
-    isExpanded: Boolean,
-    onToggleExpanded: () -> Unit,
-    collapsedHeight: Dp,
-    measuredHeightPx: Float?,
-    onMeasured: (Float) -> Unit,
     onTranslateLanguage: ((String) -> Unit)? = null,
     onOpenInternalMarkdown: ((String) -> Unit)? = null,
-    onReadMore: (() -> Unit)? = null,
 ) {
     item {
         val colors = LocalPersonality.current.colors
@@ -109,11 +92,10 @@ fun LazyListScope.about(
     }
 
     item(key = "about_markdown") {
-        val colors = LocalPersonality.current.colors
-        val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+        val isDark = isSystemInDarkTheme()
         val raw = applyThemeAwareImages(readmeMarkdown, isDark = isDark)
-        
-        val probeClient = org.koin.compose.koinInject<io.ktor.client.HttpClient>(
+
+        val probeClient = koinInject<io.ktor.client.HttpClient>(
             qualifier = org.koin.core.qualifier.named("test"),
         )
         val imageTransformer = remember(probeClient) {
@@ -121,34 +103,22 @@ fun LazyListScope.about(
         }
 
         if (onTranslateLanguage != null) {
-            zed.rainxch.details.presentation.utils.ProvideLanguageLinkInterceptor(
+            ProvideLanguageLinkInterceptor(
                 onTranslate = onTranslateLanguage,
                 onOpenInternalMarkdown = onOpenInternalMarkdown,
             ) {
-                ExpandableMarkdownContent(
+                MarkdownContent(
                     rawMarkdown = raw,
                     isDark = isDark,
-                    isExpanded = isExpanded,
-                    onToggleExpanded = onReadMore ?: onToggleExpanded,
                     imageTransformer = imageTransformer,
-                    collapsedHeight = collapsedHeight,
-                    measuredHeightPx = measuredHeightPx,
-                    onMeasured = onMeasured,
-                    fadeColor = colors.background,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         } else {
-            ExpandableMarkdownContent(
+            MarkdownContent(
                 rawMarkdown = raw,
                 isDark = isDark,
-                isExpanded = isExpanded,
-                onToggleExpanded = onReadMore ?: onToggleExpanded,
                 imageTransformer = imageTransformer,
-                collapsedHeight = collapsedHeight,
-                measuredHeightPx = measuredHeightPx,
-                onMeasured = onMeasured,
-                fadeColor = colors.background,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -156,28 +126,19 @@ fun LazyListScope.about(
 }
 
 @Composable
-fun ExpandableMarkdownContent(
+fun MarkdownContent(
     rawMarkdown: String,
     isDark: Boolean,
-    isExpanded: Boolean,
-    onToggleExpanded: () -> Unit,
     imageTransformer: ImageTransformer,
-    collapsedHeight: Dp,
-    measuredHeightPx: Float?,
-    onMeasured: (Float) -> Unit,
-    fadeColor: Color,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
     val personalityColors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
     val colors = rememberMarkdownColors()
     val typography = rememberMarkdownTypography()
 
     var fullChunks by remember(rawMarkdown, isDark) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(rawMarkdown, isDark) {
         val processed = withContext(Dispatchers.Default) {
-
             val themed = applyThemeAwareImages(rawMarkdown, isDark)
             zed.rainxch.core.domain.utils.separateAdjacentImageLinks(themed)
         }
@@ -193,107 +154,23 @@ fun ExpandableMarkdownContent(
         githubStoreMarkdownComponents(imageTransformer, isDark)
     }
 
-    val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
-    val effectiveHeight = measuredHeightPx ?: 0f
-    val needsExpansion = effectiveHeight > collapsedHeightPx && collapsedHeightPx > 0f
-    val measuredDp =
-        measuredHeightPx?.let { with(density) { it.toDp() } }
-
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    LaunchedEffect(isExpanded) {
-        if (isExpanded) {
-            bringIntoViewRequester.bringIntoView()
-        }
-    }
-
-    Column(
-        modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
-    ) {
-        Box {
-            CompositionLocalProvider(LocalContentColor provides personalityColors.onBackground) {
-                Box(
-                    modifier =
-                        when {
-                            !isExpanded && needsExpansion ->
-                                Modifier
-                                    .height(collapsedHeight)
-                                    .clipToBounds()
-                            isExpanded && measuredDp != null ->
-                                Modifier.heightIn(min = measuredDp)
-                            else -> Modifier
-                        },
-                ) {
-                    ProgressiveMarkdown(
-                        isExpanded = isExpanded,
-                        fullChunks = fullChunks,
-                        collapsedHeight = collapsedHeight,
-                        colors = colors,
-                        typography = typography,
-                        components = components,
-                        flavour = flavour,
-                        parser = parser,
-                        imageTransformer = imageTransformer,
-                        onMeasured = onMeasured,
-                        effectiveHeight = effectiveHeight,
-                        collapsedHeightPx = collapsedHeightPx,
-                        rawKey = rawMarkdown,
-                    )
-                }
-            }
-
-            if (!isExpanded && needsExpansion) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(140.dp)
-                        .background(
-                            Brush.verticalGradient(
-                                colorStops = arrayOf(
-                                    0f to fadeColor.copy(alpha = 0f),
-                                    0.35f to fadeColor.copy(alpha = 0.10f),
-                                    0.6f to fadeColor.copy(alpha = 0.35f),
-                                    0.8f to fadeColor.copy(alpha = 0.7f),
-                                    1f to fadeColor,
-                                ),
-                            ),
-                        ),
-                )
-            }
-        }
-
-        if (needsExpansion) {
-            Spacer(Modifier.height(12.dp))
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(shape.cornerSmall))
-                    .background(personalityColors.onSurface)
-                    .clickable(onClick = onToggleExpanded)
-                    .padding(horizontal = 22.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                KomiText(
-                    text = if (isExpanded) {
-                        stringResource(Res.string.show_less)
-                    } else {
-                        stringResource(Res.string.read_more)
-                    },
-                    role = KomiTextRole.Title,
-                    fontWeight = FontWeight.Bold,
-                    color = personalityColors.surface,
-                    uppercase = false,
-                )
-                if (!isExpanded) {
-                    KomiIcon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = personalityColors.surface,
-                        modifier = Modifier.size(18.dp),
-                    )
-                }
-            }
+    CompositionLocalProvider(LocalContentColor provides personalityColors.onBackground) {
+        Column(modifier = modifier) {
+            ProgressiveMarkdown(
+                isExpanded = true,
+                fullChunks = fullChunks,
+                collapsedHeight = 0.dp,
+                colors = colors,
+                typography = typography,
+                components = components,
+                flavour = flavour,
+                parser = parser,
+                imageTransformer = imageTransformer,
+                onMeasured = {},
+                effectiveHeight = 1f,
+                collapsedHeightPx = 0f,
+                rawKey = rawMarkdown,
+            )
         }
     }
 }

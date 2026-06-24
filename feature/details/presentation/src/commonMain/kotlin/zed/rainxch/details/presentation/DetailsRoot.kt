@@ -1,23 +1,16 @@
 package zed.rainxch.details.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import zed.rainxch.core.domain.isDesktop
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,17 +24,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.ui.text.font.FontWeight
-import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.presentation.components.icon.KomiIcon
-import zed.rainxch.core.presentation.components.overlays.KomiDialog
-import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
-import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
-import zed.rainxch.core.presentation.components.text.KomiText
-import zed.rainxch.core.presentation.components.text.KomiTextRole
-import kotlinx.collections.immutable.toImmutableList
-import zed.rainxch.core.presentation.components.overlays.KomiToastState
-import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,81 +43,54 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.isDesktop
+import zed.rainxch.core.domain.model.error.RefreshError
 import zed.rainxch.core.domain.model.installation.InstallSource
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.KomiButton
-import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.buttons.KomiActionRow
 import zed.rainxch.core.presentation.components.buttons.KomiActionRowItem
-import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.utils.contentWidthCap
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
+import zed.rainxch.core.presentation.utils.contentWidthCap
 import zed.rainxch.core.presentation.utils.isPullToRefreshSupported
-import zed.rainxch.core.domain.model.error.RefreshError
 import zed.rainxch.details.presentation.components.ApkInspectSheet
 import zed.rainxch.details.presentation.components.sections.about
-import zed.rainxch.details.presentation.components.sections.author
 import zed.rainxch.details.presentation.components.sections.header
 import zed.rainxch.details.presentation.components.sections.logs
-import zed.rainxch.details.presentation.components.sections.reportIssue
-import zed.rainxch.details.presentation.components.sections.stats
 import zed.rainxch.details.presentation.components.sections.releaseChannel
+import zed.rainxch.details.presentation.components.sections.stats
 import zed.rainxch.details.presentation.components.sections.whatsNew
 import zed.rainxch.details.presentation.components.states.ErrorState
-import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_details_issues_button
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_details_pulls_button
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_details_security_button
-import zed.rainxch.githubstore.core.presentation.res.add_to_favourites
-import zed.rainxch.githubstore.core.presentation.res.cancel
-import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
-import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_title
-import zed.rainxch.githubstore.core.presentation.res.details_refresh
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_cooldown
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_archived
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_budget_exhausted
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_cooldown
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_generic
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_not_found
-import zed.rainxch.githubstore.core.presentation.res.details_refresh_snackbar_upstream
-import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_dialog_body
-import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_dialog_confirm
-import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_dialog_title
-import zed.rainxch.githubstore.core.presentation.res.details_unlink_external_app_menu
-import zed.rainxch.githubstore.core.presentation.res.dismiss
-import zed.rainxch.githubstore.core.presentation.res.downgrade_requires_uninstall
-import zed.rainxch.githubstore.core.presentation.res.downgrade_warning_message
-import zed.rainxch.githubstore.core.presentation.res.install_anyway
-import zed.rainxch.githubstore.core.presentation.res.install_permission_blocked_message
-import zed.rainxch.githubstore.core.presentation.res.install_permission_unavailable
-import zed.rainxch.githubstore.core.presentation.res.navigate_back
-import zed.rainxch.githubstore.core.presentation.res.open_repository
-import zed.rainxch.githubstore.core.presentation.res.open_with_external_installer
-import zed.rainxch.githubstore.core.presentation.res.remove_from_favourites
-import zed.rainxch.githubstore.core.presentation.res.repository_not_starred
-import zed.rainxch.githubstore.core.presentation.res.repository_starred
-import zed.rainxch.githubstore.core.presentation.res.share_repository
-import zed.rainxch.githubstore.core.presentation.res.signing_key_changed_message
-import zed.rainxch.githubstore.core.presentation.res.signing_key_changed_title
-import zed.rainxch.githubstore.core.presentation.res.uninstall
-import zed.rainxch.githubstore.core.presentation.res.uninstall_first
+import zed.rainxch.githubstore.core.presentation.res.*
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun DetailsRoot(
@@ -147,7 +102,6 @@ fun DetailsRoot(
     onNavigateToWhatsNew: (repoId: Long, owner: String, repo: String, sourceHost: String?) -> Unit,
     onNavigateToIssues: (owner: String, repo: String) -> Unit,
     onNavigateToSecurity: (owner: String, repo: String) -> Unit,
-    onNavigateToPulls: (owner: String, repo: String) -> Unit,
     onNavigateToMarkdownViewer: (url: String) -> Unit,
     viewModel: DetailsViewModel = koinViewModel(),
 ) {
@@ -175,10 +129,12 @@ fun DetailsRoot(
                             Res.string.details_refresh_snackbar_cooldown,
                             seconds.coerceAtLeast(1),
                         )
+
                         RefreshError.BUDGET_EXHAUSTED -> getString(
                             Res.string.details_refresh_snackbar_budget_exhausted,
                             seconds.coerceAtLeast(1),
                         )
+
                         RefreshError.ARCHIVED -> getString(Res.string.details_refresh_snackbar_archived)
                         RefreshError.NOT_FOUND -> getString(Res.string.details_refresh_snackbar_not_found)
                         RefreshError.UPSTREAM -> getString(Res.string.details_refresh_snackbar_upstream)
@@ -218,17 +174,6 @@ fun DetailsRoot(
                 }
             }
         },
-        onReadMoreAbout = state.repository?.let { repo ->
-            {
-                onNavigateToAbout(
-                    repo.id,
-                    repo.owner.login,
-                    repo.name,
-                    repo.sourceHost,
-                    null,
-                )
-            }
-        },
         onTranslateLanguage = state.repository?.let { repo ->
             { code ->
                 onNavigateToAbout(
@@ -255,9 +200,6 @@ fun DetailsRoot(
         },
         onOpenSecurity = state.repository?.takeIf { it.sourceHost == null }?.let { repo ->
             { onNavigateToSecurity(repo.owner.login, repo.name) }
-        },
-        onOpenPulls = state.repository?.takeIf { it.sourceHost == null }?.let { repo ->
-            { onNavigateToPulls(repo.owner.login, repo.name) }
         },
     )
 
@@ -415,7 +357,10 @@ fun DetailsRoot(
             },
             text = {
                 KomiText(
-                    text = stringResource(Res.string.details_unlink_external_app_dialog_body, appName),
+                    text = stringResource(
+                        Res.string.details_unlink_external_app_dialog_body,
+                        appName
+                    ),
                     role = KomiTextRole.Body,
                 )
             },
@@ -498,205 +443,166 @@ fun DetailsScreen(
     state: DetailsState,
     onAction: (DetailsAction) -> Unit,
     toastState: KomiToastState,
-    onReadMoreAbout: (() -> Unit)? = null,
     onTranslateLanguage: ((String) -> Unit)? = null,
     onReadMoreWhatsNew: (() -> Unit)? = null,
     onOpenIssues: (() -> Unit)? = null,
     onOpenSecurity: (() -> Unit)? = null,
-    onOpenPulls: (() -> Unit)? = null,
 ) {
     KomiScaffold(
         topBar = {
-            DetailsTopbar(
-                state = state,
-                onAction = onAction,
+            KomiTopBar(
+                title = "",
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = { onAction(DetailsAction.OnNavigateBackClick) },
+                    )
+                },
+                actions = {
+                    if (state.repository != null) {
+                        DetailsActions(state = state, onAction = onAction)
+                    }
+                }
             )
         },
         toastState = toastState
     ) { innerPadding ->
-
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    KomiCircularProgress()
-                }
-
-                return@KomiScaffold
-            }
-
-            if (state.errorMessage != null) {
-                ErrorState(state.errorMessage, onAction)
-
-                return@KomiScaffold
-            }
-
-            val density = LocalDensity.current
-            var containerHeightDp by remember { mutableStateOf(0.dp) }
-            val collapsedSectionHeight = containerHeightDp * 0.4f
-            val listState = rememberLazyListState()
-            val isScrollbarEnabled = LocalScrollbarEnabled.current
-            val contentWidthDp = contentWidthCap()
-            val pullEnabled = remember { isPullToRefreshSupported() }
-
-            val isDesktop = remember { isDesktop() }
+        if (state.isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .scrollable(
-                        state = listState,
-                        orientation = Orientation.Vertical,
-
-                        reverseDirection = true,
-                        enabled = isDesktop,
-                    )
-                    .onSizeChanged { size ->
-
-                        val newHeight = with(density) { size.height.toDp() }
-                        if (newHeight != containerHeightDp) containerHeightDp = newHeight
-                    },
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                ScrollbarContainer(
-                    listState = listState,
-                    enabled = isScrollbarEnabled,
-                    modifier =
-                        Modifier
-                            .fillMaxHeight()
-                            .widthIn(max = contentWidthDp)
-                            .fillMaxWidth(),
+                KomiCircularProgress()
+            }
+
+            return@KomiScaffold
+        }
+
+        if (state.errorMessage != null) {
+            ErrorState(state.errorMessage, onAction)
+
+            return@KomiScaffold
+        }
+
+        val density = LocalDensity.current
+        var containerHeightDp by remember { mutableStateOf(0.dp) }
+        val collapsedSectionHeight = containerHeightDp * 0.4f
+        val listState = rememberLazyListState()
+        val isScrollbarEnabled = LocalScrollbarEnabled.current
+        val contentWidthDp = contentWidthCap()
+        val pullEnabled = remember { isPullToRefreshSupported() }
+
+        val isDesktop = remember { isDesktop() }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .scrollable(
+                    state = listState,
+                    orientation = Orientation.Vertical,
+
+                    reverseDirection = true,
+                    enabled = isDesktop,
+                )
+                .onSizeChanged { size ->
+
+                    val newHeight = with(density) { size.height.toDp() }
+                    if (newHeight != containerHeightDp) containerHeightDp = newHeight
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            ScrollbarContainer(
+                listState = listState,
+                enabled = isScrollbarEnabled,
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .widthIn(max = contentWidthDp)
+                        .fillMaxWidth(),
+            ) {
+                val listModifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .widthIn(max = contentWidthDp)
+                        .fillMaxWidth()
+                        .arrowKeyScroll(listState, autoFocus = true)
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown &&
+                                (event.isMetaPressed || event.isCtrlPressed) &&
+                                event.key == Key.R
+                            ) {
+                                onAction(DetailsAction.Refresh)
+                                true
+                            } else {
+                                false
+                            }
+                        }.padding(innerPadding)
+
+                PullToRefreshHost(
+                    enabled = pullEnabled,
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onAction(DetailsAction.Refresh) },
                 ) {
-                    val listModifier =
-                        Modifier
-                            .fillMaxHeight()
-                            .widthIn(max = contentWidthDp)
-                            .fillMaxWidth()
-                            .arrowKeyScroll(listState, autoFocus = true)
-                            .onPreviewKeyEvent { event ->
-                                if (event.type == KeyEventType.KeyDown &&
-                                    (event.isMetaPressed || event.isCtrlPressed) &&
-                                    event.key == Key.R
-                                ) {
-                                    onAction(DetailsAction.Refresh)
-                                    true
-                                } else {
-                                    false
-                                }
-                            }.padding(innerPadding)
-
-                    PullToRefreshHost(
-                        enabled = pullEnabled,
-                        isRefreshing = state.isRefreshing,
-                        onRefresh = { onAction(DetailsAction.Refresh) },
+                    LazyColumn(
+                        state = listState,
+                        modifier = listModifier,
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
-                        LazyColumn(
-                            state = listState,
-                            modifier = listModifier,
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(24.dp),
-                        ) {
-                    header(
-                        state = state,
-                        onAction = onAction,
-                    )
-
-                    state.stats?.let { stats ->
-                        stats(
-                            repoStats = stats,
-                        )
-                    }
-
-                    releaseChannel(
-                        state = state,
-                        onAction = onAction,
-                    )
-
-                    if (onOpenIssues != null || onOpenSecurity != null || onOpenPulls != null) {
-                        item(key = "repo_pages_actions") {
-                            RepoPagesActionRow(
-                                onOpenIssues = onOpenIssues,
-                                onOpenSecurity = onOpenSecurity,
-                                onOpenPulls = onOpenPulls,
-                            )
-                        }
-                    }
-
-                    if (state.isComingFromUpdate) {
-                        state.selectedRelease?.let { release ->
-                            whatsNew(
-                                release = release,
-                                isExpanded = state.isWhatsNewExpanded,
-                                onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
-                                collapsedHeight = collapsedSectionHeight,
-                                measuredHeightPx = state.whatsNewMeasuredHeightPx,
-                                onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
-                                onReadMore = onReadMoreWhatsNew,
-                            )
-                        }
-
-                        state.readmeMarkdown?.let {
-                            about(
-                                readmeMarkdown = state.readmeMarkdown,
-                                readmeLanguage = state.readmeLanguage,
-                                isExpanded = state.isAboutExpanded,
-                                onToggleExpanded = { onAction(DetailsAction.ToggleAboutExpanded) },
-                                collapsedHeight = collapsedSectionHeight,
-                                measuredHeightPx = state.aboutMeasuredHeightPx,
-                                onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
-                                onTranslateLanguage = onTranslateLanguage,
-                                onReadMore = onReadMoreAbout,
-                            )
-                        }
-                    } else {
-                        state.readmeMarkdown?.let {
-                            about(
-                                readmeMarkdown = state.readmeMarkdown,
-                                readmeLanguage = state.readmeLanguage,
-                                isExpanded = state.isAboutExpanded,
-                                onToggleExpanded = { onAction(DetailsAction.ToggleAboutExpanded) },
-                                collapsedHeight = collapsedSectionHeight,
-                                measuredHeightPx = state.aboutMeasuredHeightPx,
-                                onMeasured = { onAction(DetailsAction.OnAboutMeasured(it)) },
-                                onTranslateLanguage = onTranslateLanguage,
-                                onReadMore = onReadMoreAbout,
-                            )
-                        }
-
-                        state.selectedRelease?.let { release ->
-                            whatsNew(
-                                release = release,
-                                isExpanded = state.isWhatsNewExpanded,
-                                onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
-                                collapsedHeight = collapsedSectionHeight,
-                                measuredHeightPx = state.whatsNewMeasuredHeightPx,
-                                onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
-                                onReadMore = onReadMoreWhatsNew,
-                            )
-                        }
-                    }
-
-                    state.repository?.let { repository ->
-                        reportIssue(
-                            repoUrl = repository.htmlUrl,
-                        )
-                    }
-
-                    state.userProfile?.let { userProfile ->
-                        author(
-                            author = userProfile,
+                        header(
+                            state = state,
                             onAction = onAction,
                         )
-                    }
 
-                    if (state.installLogs.isNotEmpty()) {
-                        logs(state)
-                    }
+                        state.stats?.let { stats ->
+                            stats(
+                                repoStats = stats,
+                            )
+                        }
+
+                        releaseChannel(
+                            state = state,
+                            onAction = onAction,
+                        )
+
+                        if (onOpenIssues != null || onOpenSecurity != null) {
+                            item(key = "repo_pages_actions") {
+                                RepoPagesActionRow(
+                                    onOpenIssues = onOpenIssues,
+                                    onOpenSecurity = onOpenSecurity,
+                                )
+                            }
+                        }
+
+                        state.selectedRelease?.let { release ->
+                            whatsNew(
+                                release = release,
+                                isExpanded = state.isWhatsNewExpanded,
+                                onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
+                                collapsedHeight = collapsedSectionHeight,
+                                measuredHeightPx = state.whatsNewMeasuredHeightPx,
+                                onMeasured = { onAction(DetailsAction.OnWhatsNewMeasured(it)) },
+                                onReadMore = onReadMoreWhatsNew,
+                            )
+                        }
+
+                        state.readmeMarkdown?.let {
+                            about(
+                                readmeMarkdown = state.readmeMarkdown,
+                                readmeLanguage = state.readmeLanguage,
+                                onTranslateLanguage = onTranslateLanguage,
+                            )
+                        }
+
+
+                        if (state.installLogs.isNotEmpty()) {
+                            logs(state)
                         }
                     }
                 }
             }
         }
+    }
 }
 
 @Composable
@@ -719,35 +625,7 @@ private fun PullToRefreshHost(
     }
 }
 
-@Composable
-private fun DetailsTopbar(
-    state: DetailsState,
-    onAction: (DetailsAction) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 14.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        KomiIconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(Res.string.navigate_back),
-            onClick = { onAction(DetailsAction.OnNavigateBackClick) },
-        )
-
-        if (state.repository != null) {
-            DetailsActions(state = state, onAction = onAction)
-        }
-    }
-}
-
-
-@OptIn(
-    ExperimentalTime::class,
-)
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun DetailsActions(
     state: DetailsState,
@@ -772,73 +650,80 @@ private fun DetailsActions(
     val refreshDisabled = cooldownActive || state.isRefreshing
 
     val openLabel = stringResource(Res.string.open_repository)
-    val starLabel =
-        stringResource(
-            if (state.isStarred) Res.string.repository_starred else Res.string.repository_not_starred,
-        )
-    val favouriteLabel =
-        stringResource(
-            if (state.isFavourite) Res.string.remove_from_favourites else Res.string.add_to_favourites,
-        )
+    val starLabel = stringResource(
+        if (state.isStarred) Res.string.repository_starred else Res.string.repository_not_starred,
+    )
+    val favouriteLabel = stringResource(
+        if (state.isFavourite) Res.string.remove_from_favourites else Res.string.add_to_favourites,
+    )
     val shareLabel = stringResource(Res.string.share_repository)
-    val refreshLabel =
-        if (cooldownActive) {
-            stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
-        } else {
-            stringResource(Res.string.details_refresh)
-        }
-    val unlinkLabel = stringResource(Res.string.details_unlink_external_app_menu)
+    val refreshLabel = if (cooldownActive) {
+        stringResource(Res.string.details_refresh_cooldown, cooldownSeconds)
+    } else {
+        stringResource(Res.string.details_refresh)
+    }
 
-    val items =
-        buildList {
+    val items = buildList {
+        add(
+            KomiActionRowItem(
+                icon = Icons.Default.OpenInBrowser,
+                title = openLabel,
+                onClick = {
+                    onAction(DetailsAction.OpenRepoInBrowser)
+                },
+            ),
+        )
+        add(
+            KomiActionRowItem(
+                icon = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+                title = starLabel,
+                onClick = {
+                    onAction(DetailsAction.OnToggleStar)
+                },
+            ),
+        )
+        add(
+            KomiActionRowItem(
+                icon = if (state.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                title = favouriteLabel,
+                onClick = {
+                    onAction(DetailsAction.OnToggleFavorite)
+                },
+            ),
+        )
+        if (state.repository?.htmlUrl != null) {
             add(
                 KomiActionRowItem(
-                    icon = Icons.Default.OpenInBrowser,
-                    title = openLabel,
-                    onClick = { onAction(DetailsAction.OpenRepoInBrowser) },
+                    icon = Icons.Default.Share,
+                    title = shareLabel,
+                    onClick = {
+                        onAction(DetailsAction.OnShareClick)
+                    },
                 ),
             )
+        }
+        add(
+            KomiActionRowItem(
+                icon = Icons.Default.Refresh,
+                title = refreshLabel,
+                onClick = {
+                    onAction(DetailsAction.Refresh)
+                },
+                enabled = !refreshDisabled,
+            ),
+        )
+        if (state.installedApp?.installSource == InstallSource.MANUAL) {
             add(
                 KomiActionRowItem(
-                    icon = if (state.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
-                    title = starLabel,
-                    onClick = { onAction(DetailsAction.OnToggleStar) },
+                    icon = Icons.Default.LinkOff,
+                    title = stringResource(Res.string.details_unlink_external_app_menu),
+                    onClick = {
+                        onAction(DetailsAction.OnUnlinkExternalApp)
+                    },
                 ),
             )
-            add(
-                KomiActionRowItem(
-                    icon = if (state.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    title = favouriteLabel,
-                    onClick = { onAction(DetailsAction.OnToggleFavorite) },
-                ),
-            )
-            if (state.repository?.htmlUrl != null) {
-                add(
-                    KomiActionRowItem(
-                        icon = Icons.Default.Share,
-                        title = shareLabel,
-                        onClick = { onAction(DetailsAction.OnShareClick) },
-                    ),
-                )
-            }
-            add(
-                KomiActionRowItem(
-                    icon = Icons.Default.Refresh,
-                    title = refreshLabel,
-                    onClick = { onAction(DetailsAction.Refresh) },
-                    enabled = !refreshDisabled,
-                ),
-            )
-            if (state.installedApp?.installSource == InstallSource.MANUAL) {
-                add(
-                    KomiActionRowItem(
-                        icon = Icons.Default.LinkOff,
-                        title = unlinkLabel,
-                        onClick = { onAction(DetailsAction.OnUnlinkExternalApp) },
-                    ),
-                )
-            }
-        }.toImmutableList()
+        }
+    }.toImmutableList()
 
     KomiActionRow(items = items, maxVisible = 1)
 }
@@ -862,7 +747,6 @@ private fun Preview() {
 private fun RepoPagesActionRow(
     onOpenIssues: (() -> Unit)?,
     onOpenSecurity: (() -> Unit)?,
-    onOpenPulls: (() -> Unit)?,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -872,15 +756,6 @@ private fun RepoPagesActionRow(
             KomiButton(
                 onClick = open,
                 label = stringResource(Res.string.repo_pages_details_issues_button),
-                variant = KomiButtonVariant.Tonal,
-                size = KomiButtonSize.Sm,
-                modifier = Modifier.weight(1f),
-            )
-        }
-        onOpenPulls?.let { open ->
-            KomiButton(
-                onClick = open,
-                label = stringResource(Res.string.repo_pages_details_pulls_button),
                 variant = KomiButtonVariant.Tonal,
                 size = KomiButtonSize.Sm,
                 modifier = Modifier.weight(1f),

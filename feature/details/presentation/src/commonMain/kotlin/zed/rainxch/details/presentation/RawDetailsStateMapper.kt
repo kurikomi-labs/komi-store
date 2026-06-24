@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation
 
+import kotlinx.collections.immutable.toImmutableList
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
 import zed.rainxch.core.domain.utils.VersionMath
@@ -10,7 +11,7 @@ internal fun RawDetailsState.toView(): DetailsState {
         ReleaseCategory.STABLE -> allReleases.filter { !it.isEffectivelyPreRelease() }
         ReleaseCategory.PRE_RELEASE -> allReleases.filter { it.isEffectivelyPreRelease() }
         ReleaseCategory.ALL -> allReleases
-    }
+    }.toImmutableList()
     val latestStableRelease = allReleases
         .filter { !it.isEffectivelyPreRelease() }
         .maxByOrNull { it.publishedAt }
@@ -26,9 +27,9 @@ internal fun RawDetailsState.toView(): DetailsState {
         userProfile = userProfile,
         repository = repository,
         primaryAsset = primaryAsset,
-        installableAssets = installableAssets,
+        installableAssets = installableAssets.toImmutableList(),
         selectedRelease = selectedRelease,
-        allReleases = allReleases,
+        allReleases = allReleases.toImmutableList(),
         releasesLoadFailed = releasesLoadFailed,
         isRetryingReleases = isRetryingReleases,
         isReleaseSelectorVisible = isReleaseSelectorVisible,
@@ -37,7 +38,7 @@ internal fun RawDetailsState.toView(): DetailsState {
         stats = stats,
         readmeMarkdown = readmeMarkdown,
         readmeLanguage = readmeLanguage,
-        installLogs = installLogs,
+        installLogs = installLogs.toImmutableList(),
         isDownloading = isDownloading,
         downloadProgressPercent = downloadProgressPercent,
         downloadedBytes = downloadedBytes,
@@ -53,7 +54,7 @@ internal fun RawDetailsState.toView(): DetailsState {
         isAppManagerAvailable = isAppManagerAvailable,
         isAppManagerEnabled = isAppManagerEnabled,
         installedApp = installedApp,
-        installedApps = installedApps,
+        installedApps = installedApps.toImmutableList(),
         isFavourite = isFavourite,
         isStarred = isStarred,
         isTrackingApp = isTrackingApp,

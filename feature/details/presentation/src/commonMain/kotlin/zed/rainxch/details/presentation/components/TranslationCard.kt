@@ -249,7 +249,7 @@ private fun ActionRow(
                 } else {
                     stringResource(Res.string.translation_card_show_translation)
                 },
-                variant = KomiButtonVariant.Outline,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

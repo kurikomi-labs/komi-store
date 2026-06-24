@@ -39,6 +39,8 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -48,6 +50,7 @@ import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransforme
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -127,6 +130,23 @@ private fun MarkdownViewerScreen(
         state.url.substringAfterLast("/", "Document").substringBefore("?")
     }
 
+    KomiScaffold (
+        topBar = {
+            KomiTopBar(
+                leading = {
+                    KomiIconButton(
+                        onClick = onBack,
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.cd_back),
+                    )
+                },
+                title = filename
+            )
+        }
+    ) {
+
+    }
+
     val personalityColors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
@@ -134,7 +154,6 @@ private fun MarkdownViewerScreen(
             .background(personalityColors.background)
             .systemBarsPadding(),
     ) {
-        MarkdownViewerTopBar(title = filename, onBack = onBack)
         when {
             state.isLoading -> Box(
                 modifier = Modifier.fillMaxSize(),
@@ -171,7 +190,6 @@ private fun MarkdownViewerScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item(key = "translation_card") {
-                    Spacer(Modifier.height(4.dp))
                     TranslationCard(
                         state = state.translation,
                         deviceLanguageCode = state.deviceLanguageCode,
@@ -224,34 +242,4 @@ private fun MarkdownViewerScreen(
         },
         onDismiss = onDismissLanguagePicker,
     )
-}
-
-@Composable
-private fun MarkdownViewerTopBar(title: String, onBack: () -> Unit) {
-    val colors = LocalPersonality.current.colors
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        KomiIconButton(
-            onClick = onBack,
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(Res.string.cd_back),
-        )
-
-        KomiText(
-            text = title,
-            role = KomiTextRole.Title,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            color = colors.onSurface,
-            modifier = Modifier.padding(start = 4.dp),
-            maxLines = 1,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            uppercase = false,
-        )
-    }
 }

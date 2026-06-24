@@ -38,6 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -120,14 +122,12 @@ fun LazyListScope.releaseChannel(
                     }
 
                     if (showSwitchToStable) {
-                        val stable = state.latestStableRelease
-                        if (stable != null) {
+                        if (state.latestStableRelease != null) {
                             ChannelChip(
-                                label =
-                                    stringResource(
-                                        Res.string.action_switch_to_stable,
-                                        stable.tagName,
-                                    ),
+                                label = stringResource(
+                                    Res.string.action_switch_to_stable,
+                                    state.latestStableRelease.tagName,
+                                ),
                                 icon = Icons.Default.Restore,
                                 tint = colors.primary,
                                 onClick = { onAction(DetailsAction.SwitchToStable) },
@@ -138,15 +138,18 @@ fun LazyListScope.releaseChannel(
                 }
             }
 
-            val stalledDays = state.stalledStableSinceDays
-            if (stalledDays != null) {
-                val days = stalledDays
-                val title =
-                    if (days >= 30) {
-                        stringResource(Res.string.stalled_project_warning_months, days / 30)
-                    } else {
-                        stringResource(Res.string.stalled_project_warning_days, days)
-                    }
+            if (state.stalledStableSinceDays != null) {
+                val title = if (state.stalledStableSinceDays >= 30) {
+                    stringResource(
+                        Res.string.stalled_project_warning_months,
+                        state.stalledStableSinceDays / 30
+                    )
+                } else {
+                    stringResource(
+                        Res.string.stalled_project_warning_days,
+                        state.stalledStableSinceDays
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
@@ -171,51 +174,12 @@ fun LazyListScope.releaseChannel(
                         )
                         Spacer(Modifier.height(4.dp))
                         KomiText(
-                            text = stringResource(
-                                Res.string.stalled_project_warning_description,
-                            ),
+                            text = stringResource(Res.string.stalled_project_warning_description),
                             role = KomiTextRole.Body,
                             fontSize = 13.sp,
                             color = colors.onError,
                         )
                     }
-                }
-            }
-
-            val mergedBaseTag = state.mergedChangelogBaseTag
-            if (mergedBaseTag != null && !state.mergedChangelog.isNullOrBlank()) {
-                val baseTag = mergedBaseTag
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(cardShape)
-                        .background(colors.surfaceContainerHigh)
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KomiIcon(
-                            imageVector = Icons.Default.Bolt,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = colors.primary,
-                        )
-                        Spacer(Modifier.size(8.dp))
-                        KomiText(
-                            text = stringResource(
-                                Res.string.merged_whats_changed_title,
-                                baseTag,
-                            ),
-                            role = KomiTextRole.Title,
-                            color = colors.onSurface,
-                            uppercase = false,
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    KomiText(
-                        text = state.mergedChangelog.orEmpty(),
-                        role = KomiTextRole.Body,
-                        color = colors.onSurfaceVariant,
-                    )
                 }
             }
         }
@@ -225,8 +189,8 @@ fun LazyListScope.releaseChannel(
 @Composable
 private fun ChannelChip(
     label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    tint: androidx.compose.ui.graphics.Color,
+    icon: ImageVector,
+    tint: Color,
     onClick: () -> Unit,
     contentDescriptionText: String?,
 ) {

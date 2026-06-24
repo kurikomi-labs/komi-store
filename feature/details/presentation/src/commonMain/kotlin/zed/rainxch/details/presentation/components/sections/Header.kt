@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
@@ -42,6 +44,8 @@ import zed.rainxch.details.presentation.components.ReleasesStatus
 import zed.rainxch.details.presentation.components.ReleasesStatusCard
 import zed.rainxch.core.domain.model.installation.InstallSource
 import zed.rainxch.core.domain.model.installation.isReallyInstalled
+import zed.rainxch.core.domain.utils.AssetVariant
+import zed.rainxch.core.domain.utils.assetPlatformOf
 import zed.rainxch.details.presentation.components.InspectApkButton
 import zed.rainxch.details.presentation.components.SmartInstallButton
 import zed.rainxch.details.presentation.components.VersionPicker
@@ -136,22 +140,19 @@ fun LazyListScope.header(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
 
-                    val crossPlatformAssets =
-                        androidx.compose.runtime.remember(state.selectedRelease) {
-                            state.selectedRelease
-                                ?.assets
-                                ?.filter {
-                                    zed.rainxch.core.domain.utils
-                                        .assetPlatformOf(it.name) != null
-                                }
-                                .orEmpty()
-                        }
+                    val crossPlatformAssets = remember(state.selectedRelease) {
+                        state.selectedRelease
+                            ?.assets
+                            ?.filter {
+                                assetPlatformOf(it.name) != null
+                            }
+                            .orEmpty()
+                    }.toImmutableList()
 
                     val pinnedVariantLabel =
                         state.installedApp?.preferredAssetVariant?.let { stored ->
                             state.primaryAsset?.name?.let { name ->
-                                zed.rainxch.core.domain.utils.AssetVariant.extract(name)
-                                    ?.takeIf { it.isNotBlank() }
+                                AssetVariant.extract(name)?.takeIf { it.isNotBlank() }
                             } ?: stored
                         }
                     ReleaseAssetsPicker(
@@ -176,16 +177,15 @@ fun LazyListScope.header(
         }
 
         item {
-
             val canInspectApk = state.installedApp?.isReallyInstalled() == true
 
             val coachmarkActive =
                 state.isApkInspectCoachmarkPending &&
-                    canInspectApk &&
-                    !state.isDownloading &&
-                    !state.isInstalling &&
-                    state.downloadStage == DownloadStage.IDLE &&
-                    !state.isApkInspectSheetVisible
+                        canInspectApk &&
+                        !state.isDownloading &&
+                        !state.isInstalling &&
+                        state.downloadStage == DownloadStage.IDLE &&
+                        !state.isApkInspectSheetVisible
             Box(
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -214,40 +214,40 @@ fun LazyListScope.header(
                     }
                 }
 
-            if (state.isInstallDropdownExpanded) {
-                val density = LocalDensity.current
-                Popup(
-                    alignment = Alignment.TopStart,
-                    offset = with(density) { IntOffset(0, 20.dp.roundToPx()) },
-                    onDismissRequest = { onAction(DetailsAction.OnToggleInstallDropdown) },
-                    properties = PopupProperties(focusable = true),
-                ) {
-                    KomiSurface(elevation = KomiSurfaceElevation.Modal) {
-                        Column(modifier = Modifier.width(300.dp)) {
-                            InstallOptionItem(
-                                title = stringResource(Res.string.open_in_obtainium),
-                                subtitle = stringResource(Res.string.obtainium_description),
-                                icon = Icons.Default.Update,
-                                onClick = { onAction(DetailsAction.OpenInObtainium) },
-                            )
-                            InstallOptionItem(
-                                title = stringResource(Res.string.inspect_with_appmanager),
-                                subtitle = stringResource(Res.string.appmanager_description),
-                                icon = Icons.Default.Security,
-                                onClick = { onAction(DetailsAction.OpenInAppManager) },
-                            )
-                            InstallOptionItem(
-                                title = stringResource(Res.string.open_with_external_installer),
-                                subtitle = stringResource(Res.string.external_installer_description),
-                                icon = Icons.AutoMirrored.Filled.OpenInNew,
-                                onClick = { onAction(DetailsAction.InstallWithExternalApp) },
-                            )
+                if (state.isInstallDropdownExpanded) {
+                    val density = LocalDensity.current
+                    Popup(
+                        alignment = Alignment.TopStart,
+                        offset = with(density) { IntOffset(0, 20.dp.roundToPx()) },
+                        onDismissRequest = { onAction(DetailsAction.OnToggleInstallDropdown) },
+                        properties = PopupProperties(focusable = true),
+                    ) {
+                        KomiSurface(elevation = KomiSurfaceElevation.Modal) {
+                            Column(modifier = Modifier.width(300.dp)) {
+                                InstallOptionItem(
+                                    title = stringResource(Res.string.open_in_obtainium),
+                                    subtitle = stringResource(Res.string.obtainium_description),
+                                    icon = Icons.Default.Update,
+                                    onClick = { onAction(DetailsAction.OpenInObtainium) },
+                                )
+                                InstallOptionItem(
+                                    title = stringResource(Res.string.inspect_with_appmanager),
+                                    subtitle = stringResource(Res.string.appmanager_description),
+                                    icon = Icons.Default.Security,
+                                    onClick = { onAction(DetailsAction.OpenInAppManager) },
+                                )
+                                InstallOptionItem(
+                                    title = stringResource(Res.string.open_with_external_installer),
+                                    subtitle = stringResource(Res.string.external_installer_description),
+                                    icon = Icons.AutoMirrored.Filled.OpenInNew,
+                                    onClick = { onAction(DetailsAction.InstallWithExternalApp) },
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
 }
 
