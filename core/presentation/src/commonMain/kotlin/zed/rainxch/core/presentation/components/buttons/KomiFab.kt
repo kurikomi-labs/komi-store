@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +34,7 @@ import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.ClassicPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
+import zed.rainxch.core.presentation.personality.manga.decoration.inkFocusRing
 
 @Composable
 fun KomiFab(
@@ -83,6 +86,8 @@ private fun MangaFab(
     val shape = remember(personality.shape.cornerSmall) { RoundedCornerShape(personality.shape.cornerSmall) }
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
+    val focused by interaction.collectIsFocusedAsState()
+    val hovered by interaction.collectIsHoveredAsState()
     val press = animateFloatAsState(if (pressed) 1f else 0f, label = "komiFabPress")
     val shadow = DpOffset((5 - 5 * press.value).dp, (5 - 5 * press.value).dp)
 
@@ -92,6 +97,7 @@ private fun MangaFab(
             .clip(shape)
             .background(colors.primary, shape)
             .border(3.dp, colors.outline, shape)
+            .inkFocusRing(focused = { focused || hovered }, color = colors.primary)
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
 
     if (label != null) {

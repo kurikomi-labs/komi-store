@@ -4,6 +4,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -13,6 +16,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -20,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.ClassicPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
+import zed.rainxch.core.presentation.personality.manga.decoration.inkFocusRing
 
 @Composable
 fun KomiSwitch(
@@ -74,10 +79,15 @@ private fun MangaSwitch(
         if (checked) trackWidth - thumb - 4.dp else 4.dp,
         label = "komiSwitchThumb",
     )
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val hovered by interaction.collectIsHoveredAsState()
     val toggleModifier =
         if (onCheckedChange != null) {
             Modifier.toggleable(
                 value = checked,
+                interactionSource = interaction,
+                indication = null,
                 enabled = enabled,
                 role = Role.Switch,
                 onValueChange = onCheckedChange,
@@ -90,6 +100,7 @@ private fun MangaSwitch(
             modifier
                 .then(toggleModifier)
                 .size(width = trackWidth, height = trackHeight)
+                .inkFocusRing(focused = { focused || hovered }, color = colors.primary)
                 .background(color = track.copy(alpha = track.alpha * alpha), shape = shape)
                 .border(width = 2.5.dp, color = colors.outline.copy(alpha = alpha), shape = shape),
         contentAlignment = Alignment.CenterStart,
