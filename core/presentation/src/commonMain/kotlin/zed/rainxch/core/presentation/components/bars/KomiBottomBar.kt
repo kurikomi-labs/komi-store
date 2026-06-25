@@ -18,9 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -218,7 +218,7 @@ private fun ClassicBottomBar(
 private val PreviewNav =
     persistentListOf(
         KomiNavItem(id = "home", label = "Home", icon = Icons.Default.Home),
-        KomiNavItem(id = "foryou", label = "For You", icon = Icons.Default.Star, badgeCount = 3),
+        KomiNavItem(id = "charts", label = "Top Charts", icon = Icons.Default.Leaderboard, badgeCount = 3),
         KomiNavItem(id = "search", label = "Search", icon = Icons.Default.Search),
         KomiNavItem(id = "you", label = "You", icon = Icons.Default.Person, badgeCount = 12),
     )

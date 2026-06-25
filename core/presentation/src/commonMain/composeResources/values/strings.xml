@@ -306,9 +306,8 @@
     <string name="home_failed_to_load_repositories">Failed to load repositories</string>
 
     <string name="home_topbar_discover">Discover</string>
-    <string name="home_masthead_title">For You</string>
-    <string name="home_masthead_title_accent">You</string>
-    <string name="home_masthead_subtitle">あなたへ · CHARTS &amp; PICKS</string>
+    <string name="home_masthead_title">Top Charts</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
     <string name="home_platform_filter">Filter platforms</string>
     <string name="home_chart_trending">Trending</string>
     <string name="home_chart_trending_jp">急上昇</string>
@@ -322,8 +321,8 @@
     <string name="sidebar_platform_jp">対応</string>
     <string name="sidebar_categories">Categories</string>
     <string name="sidebar_categories_jp">部門</string>
-    <string name="sidebar_nav_home_jp">ホーム</string>
-    <string name="sidebar_nav_foryou_jp">あなたへ</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
     <string name="sidebar_nav_search_jp">検索</string>
     <string name="sidebar_nav_you_jp">あなた</string>
     <string name="home_section_hot_releases">Hot releases</string>
@@ -449,7 +448,7 @@
     <string name="released_days_ago">Released %1$d day(s) ago</string>
     <string name="released_on_date">Released on %1$s</string>
 
-    <string name="bottom_nav_home_title">Home</string>
+    <string name="bottom_nav_explore_title">Explore</string>
     <string name="bottom_nav_search_title">Search</string>
     <string name="bottom_nav_apps_title">Library</string>
     <string name="bottom_nav_profile_title">Profile</string>
@@ -1480,11 +1479,11 @@
     <string name="repo_pages_pr_draft">Draft</string>
 
     <!-- Feed (Home) -->
-    <string name="bottom_nav_for_you_title">For You</string>
+    <string name="bottom_nav_top_charts_title">Top Charts</string>
     <string name="feed_masthead_title">Komi Store</string>
     <string name="feed_masthead_title_accent">Store</string>
     <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
-    <string name="feed_fresh_for">Fresh for</string>
+    <string name="feed_browsing">Browsing</string>
     <string name="feed_cd_search">Search</string>
     <string name="feed_cd_profile">Profile</string>
     <string name="feed_platform_picker_title">Choose your OS</string>

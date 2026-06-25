@@ -316,7 +316,7 @@
     <string name="released_days_ago">%1$d일 전에 출시됨</string>
     <string name="released_on_date">%1$s에 출시됨</string>
 
-    <string name="bottom_nav_home_title">홈</string>
+    <string name="bottom_nav_explore_title">탐색</string>
     <string name="bottom_nav_search_title">검색</string>
     <string name="bottom_nav_apps_title">라이브러리</string>
     <string name="bottom_nav_profile_title">프로필</string>
@@ -1399,15 +1399,15 @@
     <!-- Feed / Home masthead + sidebar (Japanese decorative stamps verbatim) -->
     <string name="feed_end_cap">続く · TO BE CONTINUED</string>
     <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
-    <string name="home_masthead_subtitle">あなたへ · CHARTS &amp; PICKS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
     <string name="feed_platform_picker_title_jp">対応</string>
     <string name="home_chart_popular_jp">人気</string>
     <string name="home_chart_releases_jp">新着</string>
     <string name="home_chart_trending_jp">急上昇</string>
     <string name="sidebar_browse_jp">航行</string>
     <string name="sidebar_categories_jp">部門</string>
-    <string name="sidebar_nav_foryou_jp">あなたへ</string>
-    <string name="sidebar_nav_home_jp">ホーム</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
     <string name="sidebar_nav_search_jp">検索</string>
     <string name="sidebar_nav_you_jp">あなた</string>
     <string name="sidebar_platform_jp">対応</string>
@@ -1418,7 +1418,7 @@
 
     <!-- Feed / Home masthead + sidebar (translated) -->
     <string name="appearance_section_paper">페이퍼</string>
-    <string name="bottom_nav_for_you_title">맞춤</string>
+    <string name="bottom_nav_top_charts_title">인기 차트</string>
     <string name="cd_more_actions">추가 작업</string>
     <string name="feed_category_ai">AI</string>
     <string name="feed_category_media">미디어</string>
@@ -1433,7 +1433,7 @@
     <string name="feed_empty_subtitle">아직 %2$s용 %1$s 앱이 없습니다.</string>
     <string name="feed_empty_title">아직 아무것도 없습니다</string>
     <string name="feed_failed_to_load">피드를 불러올 수 없습니다</string>
-    <string name="feed_fresh_for">새로운 앱:</string>
+    <string name="feed_browsing">둘러보기</string>
     <string name="feed_loading">최신 항목을 불러오는 중…</string>
     <string name="feed_offline">오프라인 — 저장된 피드를 표시 중</string>
     <string name="feed_platform_all">모든 플랫폼</string>
@@ -1441,8 +1441,7 @@
     <string name="home_chart_popular">인기</string>
     <string name="home_chart_releases">릴리스</string>
     <string name="home_chart_trending">급상승</string>
-    <string name="home_masthead_title">맞춤</string>
-    <string name="home_masthead_title_accent">맞춤</string>
+    <string name="home_masthead_title">인기 차트</string>
     <string name="home_platform_filter">플랫폼 필터링</string>
     <string name="paper_day">데이</string>
     <string name="paper_night">나이트</string>

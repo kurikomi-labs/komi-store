@@ -117,7 +117,7 @@ private fun PreviewScaffold() {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                listOf("Home", "Search", "For You", "You").forEach {
+                listOf("Explore", "Search", "Top Charts", "You").forEach {
                     KomiText(
                         text = it,
                         role = KomiTextRole.Label,

@@ -122,7 +122,7 @@ fun App(
         val pendingEntry by whatsNewViewModel.pendingEntry.collectAsStateWithLifecycle()
 
         pendingEntry?.let { entryToShow ->
-            val onHomeScreen = currentScreen is GithubStoreGraph.HomeScreen
+            val onHomeScreen = currentScreen is GithubStoreGraph.ExploreScreen
 
             if (onHomeScreen && !mainState.showRateLimitDialog) {
                 val hasHistory by whatsNewViewModel.hasHistory.collectAsStateWithLifecycle()

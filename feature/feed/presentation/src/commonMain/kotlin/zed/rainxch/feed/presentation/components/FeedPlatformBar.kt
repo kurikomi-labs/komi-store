@@ -20,7 +20,7 @@ import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.feed_fresh_for
+import zed.rainxch.githubstore.core.presentation.res.feed_browsing
 import zed.rainxch.githubstore.core.presentation.res.feed_platform_all
 
 @Composable
@@ -34,7 +34,7 @@ fun FeedPlatformBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         KomiText(
-            text = stringResource(Res.string.feed_fresh_for),
+            text = stringResource(Res.string.feed_browsing),
             role = KomiTextRole.Title,
         )
 

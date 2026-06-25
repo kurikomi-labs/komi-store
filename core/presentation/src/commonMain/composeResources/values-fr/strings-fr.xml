@@ -272,7 +272,7 @@
     <string name="released_days_ago">Publié il y a %1$d jour(s)</string>
     <string name="released_on_date">Publié le %1$s</string>
 
-    <string name="bottom_nav_home_title">Accueil</string>
+    <string name="bottom_nav_explore_title">Explorer</string>
     <string name="bottom_nav_search_title">Rechercher</string>
     <string name="bottom_nav_apps_title">Bibliothèque</string>
     <string name="bottom_nav_profile_title">Profil</string>
@@ -1379,15 +1379,15 @@
     <string name="repo_pages_pr_draft">Brouillon</string>
     <string name="feed_end_cap">続く · TO BE CONTINUED</string>
     <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
-    <string name="home_masthead_subtitle">あなたへ · CHARTS &amp; PICKS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
     <string name="feed_platform_picker_title_jp">対応</string>
     <string name="home_chart_popular_jp">人気</string>
     <string name="home_chart_releases_jp">新着</string>
     <string name="home_chart_trending_jp">急上昇</string>
     <string name="sidebar_browse_jp">航行</string>
     <string name="sidebar_categories_jp">部門</string>
-    <string name="sidebar_nav_foryou_jp">あなたへ</string>
-    <string name="sidebar_nav_home_jp">ホーム</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
     <string name="sidebar_nav_search_jp">検索</string>
     <string name="sidebar_nav_you_jp">あなた</string>
     <string name="sidebar_platform_jp">対応</string>
@@ -1396,7 +1396,7 @@
     <string name="platform_section_ios">iOS</string>
     <string name="paper_nord">Nord</string>
     <string name="appearance_section_paper">Papier</string>
-    <string name="bottom_nav_for_you_title">Pour vous</string>
+    <string name="bottom_nav_top_charts_title">Classements</string>
     <string name="cd_more_actions">Plus d\'actions</string>
     <string name="feed_category_ai">IA</string>
     <string name="feed_category_media">Médias</string>
@@ -1411,7 +1411,7 @@
     <string name="feed_empty_subtitle">Aucune app %1$s pour %2$s pour le moment.</string>
     <string name="feed_empty_title">Rien ici pour le moment</string>
     <string name="feed_failed_to_load">Impossible de charger le fil</string>
-    <string name="feed_fresh_for">Nouveautés pour</string>
+    <string name="feed_browsing">Parcourir</string>
     <string name="feed_loading">Chargement des dernières nouveautés…</string>
     <string name="feed_offline">Hors ligne — affichage d\'un fil enregistré</string>
     <string name="feed_platform_all">Toutes les plateformes</string>
@@ -1419,8 +1419,7 @@
     <string name="home_chart_popular">Populaire</string>
     <string name="home_chart_releases">Versions</string>
     <string name="home_chart_trending">Tendances</string>
-    <string name="home_masthead_title">Pour vous</string>
-    <string name="home_masthead_title_accent">vous</string>
+    <string name="home_masthead_title">Classements</string>
     <string name="home_platform_filter">Filtrer les plateformes</string>
     <string name="paper_day">Jour</string>
     <string name="paper_night">Nuit</string>

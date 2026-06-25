@@ -41,7 +41,7 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.app_icon
 import zed.rainxch.githubstore.core.presentation.res.app_name
 import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
-import zed.rainxch.githubstore.core.presentation.res.bottom_nav_home_title
+import zed.rainxch.githubstore.core.presentation.res.bottom_nav_explore_title
 import zed.rainxch.githubstore.core.presentation.res.bottom_nav_search_title
 import zed.rainxch.githubstore.core.presentation.res.favourites
 import zed.rainxch.githubstore.core.presentation.res.menubar_file_menu
@@ -198,7 +198,7 @@ fun main(args: Array<String>) {
                 }
                 Menu(text = stringResource(Res.string.menubar_go_menu)) {
                     Item(
-                        text = stringResource(Res.string.bottom_nav_home_title),
+                        text = stringResource(Res.string.bottom_nav_explore_title),
                         onClick = { deepLinkUri = "githubstore://home" },
                     )
                     Item(

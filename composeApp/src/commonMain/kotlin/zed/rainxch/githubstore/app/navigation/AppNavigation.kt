@@ -117,7 +117,7 @@ fun AppNavigation(
                         currentScreen = desktopDrawerCurrent,
                         onNavigate = { target ->
                             navController.navigate(target) {
-                                popUpTo(GithubStoreGraph.HomeScreen) {
+                                popUpTo(GithubStoreGraph.ExploreScreen) {
                                     saveState = true
                                 }
                                 launchSingleTop = true
@@ -158,7 +158,7 @@ fun AppNavigation(
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = GithubStoreGraph.HomeScreen,
+                            startDestination = GithubStoreGraph.ExploreScreen,
                             modifier = Modifier.background(LocalPersonality.current.colors.background),
                             enterTransition = {
                                 val from = initialState.bottomNavIndex()
@@ -199,7 +199,7 @@ fun AppNavigation(
                                 ) + fadeOut(tween(220))
                             },
                         ) {
-                            composable<GithubStoreGraph.HomeScreen> {
+                            composable<GithubStoreGraph.ExploreScreen> {
                                 CompositionLocalProvider(
                                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                                     LocalAnimatedVisibilityScope provides this@composable,
@@ -249,7 +249,7 @@ fun AppNavigation(
                                 }
                             }
 
-                            composable<GithubStoreGraph.ForYouScreen> {
+                            composable<GithubStoreGraph.ChartsScreen> {
                                 CompositionLocalProvider(
                                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                                     LocalAnimatedVisibilityScope provides this@composable,
@@ -696,7 +696,7 @@ fun AppNavigation(
                             composable<GithubStoreGraph.AuthenticationScreen> {
                                 AuthenticationRoot(
                                     onNavigateToHome = {
-                                        navController.navigate(GithubStoreGraph.HomeScreen) {
+                                        navController.navigate(GithubStoreGraph.ExploreScreen) {
                                             popUpTo(0) {
                                                 inclusive = true
                                             }
@@ -1001,7 +1001,7 @@ fun AppNavigation(
                             currentScreen = currentScreen,
                             onNavigate = {
                                 navController.navigate(it) {
-                                    popUpTo(GithubStoreGraph.HomeScreen) {
+                                    popUpTo(GithubStoreGraph.ExploreScreen) {
                                         saveState = true
                                     }
 

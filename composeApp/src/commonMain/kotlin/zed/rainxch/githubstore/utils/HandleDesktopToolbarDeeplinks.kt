@@ -33,9 +33,9 @@ fun HandleDesktopToolbarDeeplinks(
                 }
 
                 DeepLinkDestination.Home -> {
-                    if (currentScreen !is GithubStoreGraph.HomeScreen) {
-                        navController.navigate(GithubStoreGraph.HomeScreen) {
-                            popUpTo(GithubStoreGraph.HomeScreen) { inclusive = true }
+                    if (currentScreen !is GithubStoreGraph.ExploreScreen) {
+                        navController.navigate(GithubStoreGraph.ExploreScreen) {
+                            popUpTo(GithubStoreGraph.ExploreScreen) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
@@ -43,7 +43,7 @@ fun HandleDesktopToolbarDeeplinks(
 
                 DeepLinkDestination.Apps -> {
                     navController.navigate(GithubStoreGraph.AppsScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
+                        popUpTo(GithubStoreGraph.ExploreScreen) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -101,7 +101,7 @@ fun HandleDesktopToolbarDeeplinks(
                 DeepLinkDestination.Search -> {
                     if (currentScreen !is GithubStoreGraph.SearchScreen) {
                         navController.navigate(GithubStoreGraph.SearchScreen()) {
-                            popUpTo(GithubStoreGraph.HomeScreen) {
+                            popUpTo(GithubStoreGraph.ExploreScreen) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -112,7 +112,7 @@ fun HandleDesktopToolbarDeeplinks(
 
                 DeepLinkDestination.Favourites -> {
                     navController.navigate(GithubStoreGraph.FavouritesScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
+                        popUpTo(GithubStoreGraph.ExploreScreen) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -122,7 +122,7 @@ fun HandleDesktopToolbarDeeplinks(
 
                 DeepLinkDestination.RecentlyViewed -> {
                     navController.navigate(GithubStoreGraph.RecentlyViewedScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
+                        popUpTo(GithubStoreGraph.ExploreScreen) {
                             saveState = true
                         }
                         launchSingleTop = true

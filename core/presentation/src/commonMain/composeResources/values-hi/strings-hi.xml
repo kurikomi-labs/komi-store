@@ -314,7 +314,7 @@
     <string name="released_days_ago">%1$d दिन पहले जारी किया गया</string>
     <string name="released_on_date">%1$s को जारी किया गया</string>
 
-    <string name="bottom_nav_home_title">होम</string>
+    <string name="bottom_nav_explore_title">एक्सप्लोर</string>
     <string name="bottom_nav_search_title">खोज</string>
     <string name="bottom_nav_apps_title">लाइब्रेरी</string>
     <string name="bottom_nav_profile_title">प्रोफ़ाइल</string>
@@ -1413,15 +1413,15 @@
     <string name="repo_pages_pr_draft">ड्राफ्ट</string>
     <string name="feed_end_cap">続く · TO BE CONTINUED</string>
     <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
-    <string name="home_masthead_subtitle">あなたへ · CHARTS &amp; PICKS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
     <string name="feed_platform_picker_title_jp">対応</string>
     <string name="home_chart_popular_jp">人気</string>
     <string name="home_chart_releases_jp">新着</string>
     <string name="home_chart_trending_jp">急上昇</string>
     <string name="sidebar_browse_jp">航行</string>
     <string name="sidebar_categories_jp">部門</string>
-    <string name="sidebar_nav_foryou_jp">あなたへ</string>
-    <string name="sidebar_nav_home_jp">ホーム</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
     <string name="sidebar_nav_search_jp">検索</string>
     <string name="sidebar_nav_you_jp">あなた</string>
     <string name="sidebar_platform_jp">対応</string>
@@ -1430,7 +1430,7 @@
     <string name="platform_section_ios">iOS</string>
     <string name="paper_nord">Nord</string>
     <string name="appearance_section_paper">पेपर</string>
-    <string name="bottom_nav_for_you_title">आपके लिए</string>
+    <string name="bottom_nav_top_charts_title">टॉप चार्ट</string>
     <string name="cd_more_actions">और क्रियाएँ</string>
     <string name="feed_category_ai">AI</string>
     <string name="feed_category_media">मीडिया</string>
@@ -1445,7 +1445,7 @@
     <string name="feed_empty_subtitle">%2$s के लिए अभी कोई %1$s ऐप नहीं।</string>
     <string name="feed_empty_title">यहाँ अभी कुछ नहीं है</string>
     <string name="feed_failed_to_load">फ़ीड लोड नहीं हो सका</string>
-    <string name="feed_fresh_for">ताज़ा, इसके लिए</string>
+    <string name="feed_browsing">ब्राउज़िंग</string>
     <string name="feed_loading">नवीनतम लोड हो रहा है…</string>
     <string name="feed_offline">ऑफ़लाइन — सहेजी गई फ़ीड दिखाई जा रही है</string>
     <string name="feed_platform_all">सभी प्लेटफ़ॉर्म</string>
@@ -1453,8 +1453,7 @@
     <string name="home_chart_popular">लोकप्रिय</string>
     <string name="home_chart_releases">रिलीज़</string>
     <string name="home_chart_trending">ट्रेंडिंग</string>
-    <string name="home_masthead_title">आपके लिए</string>
-    <string name="home_masthead_title_accent">आपके लिए</string>
+    <string name="home_masthead_title">टॉप चार्ट</string>
     <string name="home_platform_filter">प्लेटफ़ॉर्म फ़िल्टर करें</string>
     <string name="paper_day">दिन</string>
     <string name="paper_night">रात</string>

@@ -467,23 +467,22 @@ private fun NewReleaseStamp(
     showStamp: Boolean,
     colors: PersonalityColors,
 ) {
+    if (!showStamp) return
     Column(horizontalAlignment = Alignment.End) {
-        if (showStamp) {
-            Box(
-                modifier =
-                    Modifier
-                        .rotate(2f)
-                        .background(color = colors.primary)
-                        .border(width = 2.dp, color = colors.outline)
-                        .padding(horizontal = 7.dp, vertical = 3.dp),
-            ) {
-                KomiText(
-                    text = "New Release",
-                    role = KomiTextRole.Label,
-                    color = colors.onPrimary,
-                    fontSize = 10.5.sp
-                )
-            }
+        Box(
+            modifier =
+                Modifier
+                    .rotate(2f)
+                    .background(color = colors.primary)
+                    .border(width = 2.dp, color = colors.outline)
+                    .padding(horizontal = 7.dp, vertical = 3.dp),
+        ) {
+            KomiText(
+                text = "New Release",
+                role = KomiTextRole.Label,
+                color = colors.onPrimary,
+                fontSize = 10.5.sp
+            )
         }
         if (version != null) {
             KomiText(

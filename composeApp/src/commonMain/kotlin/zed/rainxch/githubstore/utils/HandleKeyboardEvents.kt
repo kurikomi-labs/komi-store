@@ -18,7 +18,7 @@ fun HandleKeyboardEvents(navController: NavHostController) {
             KeyboardNavigationEvent.OnCtrlFClick -> {
                 if (currentScreen !is GithubStoreGraph.SearchScreen) {
                     navController.navigate(GithubStoreGraph.SearchScreen()) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
+                        popUpTo(GithubStoreGraph.ExploreScreen) {
                             saveState = true
                         }
 

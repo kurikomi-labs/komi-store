@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface GithubStoreGraph {
     @Serializable
-    data object HomeScreen : GithubStoreGraph
+    data object ExploreScreen : GithubStoreGraph
 
     @Serializable
-    data object ForYouScreen : GithubStoreGraph
+    data object ChartsScreen : GithubStoreGraph
 
     @Serializable
     data class SearchScreen(

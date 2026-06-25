@@ -60,7 +60,7 @@ fun BottomNavigation(
 fun BottomNavigationPreview() {
     PersonalityPreview {
         BottomNavigation(
-            currentScreen = GithubStoreGraph.HomeScreen,
+            currentScreen = GithubStoreGraph.ExploreScreen,
             onNavigate = {},
             isUpdateAvailable = true,
         )

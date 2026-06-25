@@ -68,8 +68,8 @@ import zed.rainxch.githubstore.core.presentation.res.sidebar_browse
 import zed.rainxch.githubstore.core.presentation.res.sidebar_browse_jp
 import zed.rainxch.githubstore.core.presentation.res.sidebar_categories
 import zed.rainxch.githubstore.core.presentation.res.sidebar_categories_jp
-import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_foryou_jp
-import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_home_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_charts_jp
+import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_explore_jp
 import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_search_jp
 import zed.rainxch.githubstore.core.presentation.res.sidebar_nav_you_jp
 import zed.rainxch.githubstore.core.presentation.res.sidebar_platform
@@ -103,12 +103,12 @@ fun DesktopSidebar(
     val isBrowseScreen =
         currentScreen != null &&
             (
-                currentScreen::class == GithubStoreGraph.HomeScreen::class ||
-                    currentScreen::class == GithubStoreGraph.ForYouScreen::class ||
+                currentScreen::class == GithubStoreGraph.ExploreScreen::class ||
+                    currentScreen::class == GithubStoreGraph.ChartsScreen::class ||
                     currentScreen::class == GithubStoreGraph.SearchScreen()::class
             )
     val isHomeFeed =
-        currentScreen != null && currentScreen::class == GithubStoreGraph.HomeScreen::class
+        currentScreen != null && currentScreen::class == GithubStoreGraph.ExploreScreen::class
 
     Column(
         modifier =
@@ -577,8 +577,8 @@ private fun Modifier.hoverWash(color: Color): Modifier {
 @Composable
 private fun navKicker(screen: GithubStoreGraph): String? =
     when (screen::class) {
-        GithubStoreGraph.HomeScreen::class -> stringResource(Res.string.sidebar_nav_home_jp)
-        GithubStoreGraph.ForYouScreen::class -> stringResource(Res.string.sidebar_nav_foryou_jp)
+        GithubStoreGraph.ExploreScreen::class -> stringResource(Res.string.sidebar_nav_explore_jp)
+        GithubStoreGraph.ChartsScreen::class -> stringResource(Res.string.sidebar_nav_charts_jp)
         GithubStoreGraph.SearchScreen()::class -> stringResource(Res.string.sidebar_nav_search_jp)
         GithubStoreGraph.ProfileGraph.ProfileScreen::class -> stringResource(Res.string.sidebar_nav_you_jp)
         else -> null

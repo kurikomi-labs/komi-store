@@ -289,7 +289,7 @@
     <string name="released_days_ago">Опубликовано %1$d день(дней) назад</string>
     <string name="released_on_date">Опубликовано %1$s</string>
 
-    <string name="bottom_nav_home_title">Главная</string>
+    <string name="bottom_nav_explore_title">Обзор</string>
     <string name="bottom_nav_search_title">Поиск</string>
     <string name="bottom_nav_apps_title">Библиотека</string>
     <string name="bottom_nav_profile_title">Профиль</string>
@@ -1407,15 +1407,15 @@
 
     <string name="feed_end_cap">続く · TO BE CONTINUED</string>
     <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
-    <string name="home_masthead_subtitle">あなたへ · CHARTS &amp; PICKS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
     <string name="feed_platform_picker_title_jp">対応</string>
     <string name="home_chart_popular_jp">人気</string>
     <string name="home_chart_releases_jp">新着</string>
     <string name="home_chart_trending_jp">急上昇</string>
     <string name="sidebar_browse_jp">航行</string>
     <string name="sidebar_categories_jp">部門</string>
-    <string name="sidebar_nav_foryou_jp">あなたへ</string>
-    <string name="sidebar_nav_home_jp">ホーム</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
     <string name="sidebar_nav_search_jp">検索</string>
     <string name="sidebar_nav_you_jp">あなた</string>
     <string name="sidebar_platform_jp">対応</string>
@@ -1424,7 +1424,7 @@
     <string name="platform_section_ios">iOS</string>
     <string name="paper_nord">Nord</string>
     <string name="appearance_section_paper">Бумага</string>
-    <string name="bottom_nav_for_you_title">Для вас</string>
+    <string name="bottom_nav_top_charts_title">Топ-чарты</string>
     <string name="cd_more_actions">Другие действия</string>
     <string name="feed_category_ai">ИИ</string>
     <string name="feed_category_media">Медиа</string>
@@ -1439,7 +1439,7 @@
     <string name="feed_empty_subtitle">Пока нет приложений %1$s для %2$s.</string>
     <string name="feed_empty_title">Здесь пока пусто</string>
     <string name="feed_failed_to_load">Не удалось загрузить ленту</string>
-    <string name="feed_fresh_for">Свежее для</string>
+    <string name="feed_browsing">Просмотр</string>
     <string name="feed_loading">Загрузка новинок…</string>
     <string name="feed_offline">Не в сети — показана сохранённая лента</string>
     <string name="feed_platform_all">Все платформы</string>
@@ -1447,8 +1447,7 @@
     <string name="home_chart_popular">Популярное</string>
     <string name="home_chart_releases">Релизы</string>
     <string name="home_chart_trending">В тренде</string>
-    <string name="home_masthead_title">Для вас</string>
-    <string name="home_masthead_title_accent">вас</string>
+    <string name="home_masthead_title">Топ-чарты</string>
     <string name="home_platform_filter">Фильтр платформ</string>
     <string name="paper_day">День</string>
     <string name="paper_night">Ночь</string>
