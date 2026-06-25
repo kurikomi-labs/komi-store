@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,8 +60,11 @@ fun InspectApkButton(
         Box(
             modifier = Modifier
                 .size(52.dp)
-                .scale(pulse)
-                .graphicsLayer { rotationZ = tilt }
+                .graphicsLayer {
+                    scaleX = pulse
+                    scaleY = pulse
+                    rotationZ = tilt
+                }
                 .clip(buttonShape)
                 .background(colors.surfaceContainerHigh)
                 .clickable(onClick = onClick),

@@ -37,8 +37,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -96,7 +96,12 @@ fun LazyListScope.releaseChannel(
                                 stringResource(Res.string.channel_chip_stable_only)
                             }
                         val pulse by rememberChipPulse(active = state.isChannelChipCoachmarkPending)
-                        Box(modifier = Modifier.scale(pulse)) {
+                        Box(
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = pulse
+                                scaleY = pulse
+                            },
+                        ) {
                             ChannelChip(
                                 label = channelLabel,
                                 icon = Icons.Default.Science,

@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import zed.rainxch.core.domain.model.account.github.GithubAsset
@@ -19,6 +20,7 @@ import zed.rainxch.details.presentation.model.SigningKeyWarning
 import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.model.TranslationTarget
 
+@Immutable
 data class DetailsState(
     val isLoading: Boolean = true,
     val isCurrentUserOwner: Boolean = false,

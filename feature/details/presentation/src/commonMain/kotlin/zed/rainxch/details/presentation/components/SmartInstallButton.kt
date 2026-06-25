@@ -11,11 +11,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -235,62 +235,57 @@ private fun PrimaryAction(
     progress: Int?,
     onClick: () -> Unit,
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val totalWidthPx = constraints.maxWidth.toFloat().coerceAtLeast(1f)
-        val pct = progress?.coerceIn(0, 100) ?: 0
-        val targetFraction = if (isActiveDownload && state.downloadStage == DownloadStage.DOWNLOADING) {
-            pct / 100f
-        } else if (isActiveDownload) {
-            1f
-        } else {
-            0f
-        }
-        val animatedFraction by animateFloatAsState(
-            targetValue = targetFraction,
-            animationSpec = tween(durationMillis = 350),
-            label = "install-progress",
-        )
+    val pct = progress?.coerceIn(0, 100) ?: 0
+    val targetFraction = if (isActiveDownload && state.downloadStage == DownloadStage.DOWNLOADING) {
+        pct / 100f
+    } else if (isActiveDownload) {
+        1f
+    } else {
+        0f
+    }
+    val animatedFraction by animateFloatAsState(
+        targetValue = targetFraction,
+        animationSpec = tween(durationMillis = 350),
+        label = "install-progress",
+    )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ButtonHeight)
-                .clip(shape)
-                .background(accent.copy(alpha = if (isActiveDownload) 0.35f else 1f))
-                .clickable(enabled = enabled, onClick = onClick),
-        ) {
-            if (isActiveDownload) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(with(androidx.compose.ui.platform.LocalDensity.current) {
-                            (animatedFraction * totalWidthPx).toDp()
-                        })
-                        .background(accent),
-                )
-            }
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(ButtonHeight)
+            .clip(shape)
+            .drawBehind {
+                drawRect(accent.copy(alpha = if (isActiveDownload) 0.35f else 1f))
                 if (isActiveDownload) {
-                    DownloadingLabel(
-                        state = state,
-                        progress = progress,
-                        contentColor = onAccent,
-                        isUpdateAvailable = isUpdateAvailable,
-                    )
-                } else {
-                    IdleLabel(
-                        text = buttonText,
-                        enabled = enabled,
-                        contentColor = onAccent,
-                        isUpdateAvailable = isUpdateAvailable,
-                        isInstalled = isInstalled,
-                        primaryAsset = primaryAsset,
-                        state = state,
+                    drawRect(
+                        color = accent,
+                        size = Size(size.width * animatedFraction, size.height),
                     )
                 }
+            }
+            .clickable(enabled = enabled, onClick = onClick),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (isActiveDownload) {
+                DownloadingLabel(
+                    state = state,
+                    progress = progress,
+                    contentColor = onAccent,
+                    isUpdateAvailable = isUpdateAvailable,
+                )
+            } else {
+                IdleLabel(
+                    text = buttonText,
+                    enabled = enabled,
+                    contentColor = onAccent,
+                    isUpdateAvailable = isUpdateAvailable,
+                    isInstalled = isInstalled,
+                    primaryAsset = primaryAsset,
+                    state = state,
+                )
             }
         }
     }

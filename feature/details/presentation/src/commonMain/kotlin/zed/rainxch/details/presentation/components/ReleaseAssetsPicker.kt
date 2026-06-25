@@ -26,7 +26,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,11 +78,7 @@ fun ReleaseAssetsPicker(
 ) {
     val colors = LocalPersonality.current.colors
 
-    val isPickerEnabled by remember(assetsList, crossPlatformAssets) {
-        derivedStateOf {
-            assetsList.isNotEmpty() || crossPlatformAssets.isNotEmpty()
-        }
-    }
+    val isPickerEnabled = assetsList.isNotEmpty() || crossPlatformAssets.isNotEmpty()
 
     ReleaseAssetsItemsPicker(
         showPicker = isPickerVisible,

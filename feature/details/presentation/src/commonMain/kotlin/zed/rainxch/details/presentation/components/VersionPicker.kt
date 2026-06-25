@@ -21,9 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,9 +58,7 @@ fun VersionPicker(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
-    val isPickerEnabled by remember(filteredReleases) {
-        derivedStateOf { filteredReleases.isNotEmpty() }
-    }
+    val isPickerEnabled = filteredReleases.isNotEmpty()
 
     val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
@@ -152,9 +147,7 @@ fun VersionPicker(
                     modifier = Modifier.padding(vertical = 16.dp),
                 )
             } else {
-                val latestReleaseId by remember(filteredReleases) {
-                    derivedStateOf { filteredReleases.firstOrNull()?.id }
-                }
+                val latestReleaseId = filteredReleases.firstOrNull()?.id
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().heightIn(max = 420.dp),
                     contentPadding = PaddingValues(vertical = 8.dp),
