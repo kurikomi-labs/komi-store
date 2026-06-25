@@ -4,7 +4,7 @@ import java.io.File
 import zed.rainxch.core.domain.system.DesktopOs
 
 object DesktopAppDataPaths {
-    private const val APP_DIR_NAME = "GitHub-Store"
+    private const val APP_DIR_NAME = "Komi-Store"
 
     fun appDataDir(): File {
         val home = File(System.getProperty("user.home"))

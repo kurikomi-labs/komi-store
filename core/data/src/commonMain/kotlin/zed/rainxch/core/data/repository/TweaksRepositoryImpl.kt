@@ -30,10 +30,9 @@ import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerType
-import zed.rainxch.core.domain.model.appearance.ThemeMode
+import zed.rainxch.core.domain.model.appearance.MangaPaperId
 import zed.rainxch.core.domain.model.settings.TranslationProvider
 import zed.rainxch.core.domain.repository.TweaksRepository
-import kotlinx.coroutines.flow.combine
 import zed.rainxch.core.data.secure.safeDelete
 import zed.rainxch.core.data.secure.safeGet
 import zed.rainxch.core.data.secure.safeGetFlow
@@ -86,30 +85,12 @@ class TweaksRepositoryImpl(
     override fun getAmoledTheme(): Flow<Boolean> = gatedGetFlow(K_AMOLED, false)
     override suspend fun setAmoledTheme(enabled: Boolean) { migrationDeferred.await(); ksafe.safePut(K_AMOLED, enabled) }
 
-    override fun getThemeMode(): Flow<ThemeMode> =
-        combine(getIsDarkTheme(), getAmoledTheme()) { isDark, amoled ->
-            when {
-                isDark == null -> ThemeMode.SYSTEM
-                !isDark -> ThemeMode.LIGHT
-                amoled -> ThemeMode.AMOLED
-                else -> ThemeMode.DARK
-            }
-        }
+    override fun getMangaPaper(): Flow<MangaPaperId> =
+        gatedGetFlow(K_MANGA_PAPER, "").map { MangaPaperId.fromName(it.ifEmpty { null }) }
 
-    override suspend fun setThemeMode(mode: ThemeMode) {
-        when (mode) {
-            ThemeMode.SYSTEM -> setDarkTheme(null)
-            ThemeMode.LIGHT -> { setDarkTheme(false); setAmoledTheme(false) }
-            ThemeMode.DARK -> { setDarkTheme(true); setAmoledTheme(false) }
-            ThemeMode.AMOLED -> { setDarkTheme(true); setAmoledTheme(true) }
-        }
-    }
-
-    override fun getOnboardingComplete(): Flow<Boolean> = gatedGetFlow(K_ONBOARDING_COMPLETE, false)
-
-    override suspend fun setOnboardingComplete(complete: Boolean) {
+    override suspend fun setMangaPaper(paper: MangaPaperId) {
         migrationDeferred.await()
-        ksafe.safePut(K_ONBOARDING_COMPLETE, complete)
+        ksafe.safePut(K_MANGA_PAPER, paper.name)
     }
 
     override fun getFontTheme(): Flow<FontTheme> =
@@ -522,7 +503,7 @@ class TweaksRepositoryImpl(
         private const val K_SHOW_ALL_PLATFORMS = "show_all_platforms"
         private const val K_BATTERY_OPT_PROMPT_DISMISSED = "battery_opt_prompt_dismissed"
         private const val K_LAST_SEEN_WHATS_NEW_VERSION_CODE = "last_seen_whats_new_version_code"
-        private const val K_ONBOARDING_COMPLETE = "onboarding_complete"
+        private const val K_MANGA_PAPER = "manga_paper"
         private const val K_ANNOUNCEMENTS_DISMISSED_IDS = "announcements_dismissed_ids"
         private const val K_ANNOUNCEMENTS_ACKNOWLEDGED_IDS = "announcements_acknowledged_ids"
         private const val K_ANNOUNCEMENTS_MUTED_CATEGORIES = "announcements_muted_categories"
