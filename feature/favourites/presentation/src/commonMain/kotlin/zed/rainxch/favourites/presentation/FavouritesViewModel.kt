@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -38,11 +39,28 @@ class FavouritesViewModel(
 
                     hasLoadedInitialData = true
                 }
-            }.stateIn(
+            }.map { it.withDerived() }
+            .flowOn(Dispatchers.Default)
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = FavouritesState(),
             )
+
+    private fun FavouritesState.withDerived(): FavouritesState {
+        val query = searchQuery.trim().lowercase()
+        val filtered = if (query.isBlank()) {
+            favouriteRepositories
+        } else {
+            favouriteRepositories.filter { repo ->
+                repo.repoName.lowercase().contains(query) ||
+                    repo.repoOwner.lowercase().contains(query) ||
+                    (repo.repoDescription?.lowercase()?.contains(query) == true) ||
+                    (repo.primaryLanguage?.lowercase()?.contains(query) == true)
+            }.toImmutableList()
+        }
+        return copy(filteredRepositories = filtered)
+    }
 
     private fun loadFavouriteRepos() {
         viewModelScope.launch {

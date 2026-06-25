@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -115,26 +114,10 @@ fun FavouritesScreen(
                 )
             }
 
-            val filteredRepositories =
-                remember(state.favouriteRepositories, state.searchQuery) {
-                    val q = state.searchQuery.trim().lowercase()
-                    if (q.isBlank()) {
-                        state.favouriteRepositories
-                    } else {
-                        state.favouriteRepositories
-                            .filter { repo ->
-                                repo.repoName.lowercase().contains(q) ||
-                                    repo.repoOwner.lowercase().contains(q) ||
-                                    (repo.repoDescription?.lowercase()?.contains(q) == true) ||
-                                    (repo.primaryLanguage?.lowercase()?.contains(q) == true)
-                            }
-                            .toImmutableList()
-                    }
-                }
-
             Box(modifier = Modifier.fillMaxSize()) {
                 val gridState = rememberLazyStaggeredGridState()
                 val isScrollbarEnabled = LocalScrollbarEnabled.current
+
                 ScrollbarContainer(
                     gridState = gridState,
                     enabled = isScrollbarEnabled,
@@ -152,7 +135,7 @@ fun FavouritesScreen(
                         modifier = Modifier.fillMaxSize().arrowKeyScroll(gridState, autoFocus = true),
                     ) {
                         items(
-                            items = filteredRepositories,
+                            items = state.filteredRepositories,
                             key = { it.repoId },
                         ) { repo ->
                             FavouriteRepositoryItem(
@@ -213,7 +196,12 @@ private fun FavouritesTopbar(
                         .map { rule ->
                             KomiMenuItem(
                                 id = rule.name,
-                                label = stringResource(rule.labelRes()),
+                                label = stringResource(
+                                    when (rule) {
+                                        FavouritesSortRule.RecentlyAdded -> Res.string.sort_recently_added
+                                        FavouritesSortRule.NameAsc -> Res.string.sort_name
+                                    }
+                                ),
                             )
                         }
                         .toImmutableList()
@@ -238,12 +226,6 @@ private fun FavouritesTopbar(
         },
     )
 }
-
-private fun FavouritesSortRule.labelRes() =
-    when (this) {
-        FavouritesSortRule.RecentlyAdded -> Res.string.sort_recently_added
-        FavouritesSortRule.NameAsc -> Res.string.sort_name
-    }
 
 @Composable
 private fun FavouritesSearchBar(

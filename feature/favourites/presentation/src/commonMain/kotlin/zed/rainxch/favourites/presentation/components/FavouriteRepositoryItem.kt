@@ -76,6 +76,7 @@ fun FavouriteRepositoryItem(
                         .size(28.dp)
                         .clip(RoundedCornerShape(shape.cornerSmall)),
                 )
+
                 KomiText(
                     text = favouriteRepository.repoOwner,
                     role = KomiTextRole.Label,
@@ -86,6 +87,7 @@ fun FavouriteRepositoryItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
+
                 if (favouriteRepository.isCurrentUserOwner) {
                     KomiIcon(
                         imageVector = Icons.Filled.Verified,
@@ -113,8 +115,10 @@ fun FavouriteRepositoryItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
                     favouriteRepository.repoDescription?.let {
                         Spacer(Modifier.height(4.dp))
+
                         KomiText(
                             text = it,
                             role = KomiTextRole.Body,
@@ -126,6 +130,7 @@ fun FavouriteRepositoryItem(
                         )
                     }
                 }
+
                 FavoriteToggle(
                     favorited = true,
                     onClick = onToggleFavouriteClick,
@@ -154,6 +159,7 @@ fun FavouriteRepositoryItem(
                         },
                     )
                 }
+
                 favouriteRepository.latestRelease?.let { release ->
                     KomiChip(
                         label = release,
@@ -169,6 +175,7 @@ fun FavouriteRepositoryItem(
                         },
                     )
                 }
+
                 KomiChip(
                     label = favouriteRepository.addedAtFormatter,
                     kind = KomiChipKind.Info,
