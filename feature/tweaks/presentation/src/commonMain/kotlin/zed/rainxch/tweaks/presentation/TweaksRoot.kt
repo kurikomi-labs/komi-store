@@ -15,13 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -41,8 +36,6 @@ import zed.rainxch.core.domain.model.settings.AppLanguages
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.icon.KomiIcon
-import zed.rainxch.core.presentation.components.overlays.KomiSheet
-import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -53,11 +46,11 @@ import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.components.ClearDownloadsDialog
+import zed.rainxch.tweaks.presentation.components.LanguagePickerSheet
 import zed.rainxch.tweaks.presentation.components.desktop.TweaksDesktopContent
 import zed.rainxch.tweaks.presentation.components.sections.appSection
 import zed.rainxch.tweaks.presentation.components.sections.connectivitySection
 import zed.rainxch.tweaks.presentation.components.sections.installsSection
-import zed.rainxch.tweaks.presentation.components.sections.languageSectionContent
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
@@ -77,16 +70,6 @@ fun TweaksRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
-    var feedbackSheetOpen by rememberSaveable { mutableStateOf(false) }
-    var languageSheetOpen by rememberSaveable { mutableStateOf(false) }
-    val onAction: (TweaksAction) -> Unit = remember(viewModel) { { viewModel.onAction(it) } }
-
-    LaunchedEffect(Unit) {
-        TweaksDeepLinkBus.openFeedbackRequests.collect {
-            feedbackSheetOpen = true
-            TweaksDeepLinkBus.consume()
-        }
-    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -107,7 +90,9 @@ fun TweaksRoot(
                     toastState.warning(
                         message = getString(Res.string.language_restart_required),
                         actionLabel = getString(Res.string.language_restart_action),
-                        onAction = { restartAppAfterLanguageChange() },
+                        onAction = {
+                            restartAppAfterLanguageChange()
+                        },
                     )
                 }
             }
@@ -124,12 +109,9 @@ fun TweaksRoot(
         }
     }
 
-    val currentLanguageLabel =
-        state.selectedAppLanguage
-            ?.let { tag -> AppLanguages.ALL.firstOrNull { it.tag == tag }?.displayName }
-            ?: stringResource(Res.string.language_follow_system)
-    val onOpenLanguage = { languageSheetOpen = true }
-    val onOpenFeedback = { feedbackSheetOpen = true }
+    val currentLanguageLabel = state.selectedAppLanguage
+        ?.let { tag -> AppLanguages.ALL.firstOrNull { it.tag == tag }?.displayName }
+        ?: stringResource(Res.string.language_follow_system)
 
     if (isDesktop()) {
         KomiScaffold(
@@ -139,14 +121,14 @@ fun TweaksRoot(
         ) { innerPadding ->
             TweaksDesktopContent(
                 state = state,
-                onAction = onAction,
+                onAction = viewModel::onAction,
                 personality = state.selectedPersonality,
                 accent = state.selectedAccent,
-                onPersonalitySelected = { onAction(TweaksAction.OnPersonalitySelected(it)) },
-                onAccentSelected = { onAction(TweaksAction.OnAccentSelected(it)) },
+                onPersonalitySelected = { viewModel.onAction(TweaksAction.OnPersonalitySelected(it)) },
+                onAccentSelected = { viewModel.onAction(TweaksAction.OnAccentSelected(it)) },
                 currentLanguageLabel = currentLanguageLabel,
-                onOpenLanguage = onOpenLanguage,
-                onOpenFeedback = onOpenFeedback,
+                onOpenLanguage = { viewModel.onAction(TweaksAction.OnLanguagePickerOpen) },
+                onOpenFeedback = { viewModel.onAction(TweaksAction.OnFeedbackClick) },
                 onNavigateToMirrorPicker = onNavigateToMirrorPicker,
                 onNavigateToHiddenRepositories = onNavigateToHiddenRepositories,
                 onNavigateToHostTokens = onNavigateToHostTokens,
@@ -173,7 +155,9 @@ fun TweaksRoot(
             screentone = true,
         ) { innerPadding ->
             Box(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Column(
@@ -182,38 +166,44 @@ fun TweaksRoot(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp)
-                        .padding(top = 4.dp, bottom = 28.dp),
+                        .padding(top = 4.dp, bottom = 18.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     lookAndFeelSection(
                         state = state,
-                        onAction = onAction,
+                        onAction = viewModel::onAction,
                         personality = state.selectedPersonality,
                         accent = state.selectedAccent,
-                        onPersonalitySelected = { onAction(TweaksAction.OnPersonalitySelected(it)) },
-                        onAccentSelected = { onAction(TweaksAction.OnAccentSelected(it)) },
+                        onPersonalitySelected = {
+                            viewModel.onAction(TweaksAction.OnPersonalitySelected(it))
+                        },
+                        onAccentSelected = {
+                            viewModel.onAction(TweaksAction.OnAccentSelected(it))
+                        },
                         currentLanguageLabel = currentLanguageLabel,
-                        onOpenLanguage = onOpenLanguage,
+                        onOpenLanguage = {
+                            viewModel.onAction(TweaksAction.OnLanguagePickerOpen)
+                        },
                     )
                     connectivitySection(
                         state = state,
-                        onAction = onAction,
+                        onAction = viewModel::onAction,
                         onNavigateToMirrorPicker = onNavigateToMirrorPicker,
                     )
                     if (isAndroid()) {
                         installsSection(
                             state = state,
-                            onAction = onAction,
+                            onAction = viewModel::onAction,
                             onNavigateToSkippedUpdates = onNavigateToSkippedUpdates,
                         )
                     }
                     privacySection(
                         state = state,
-                        onAction = onAction,
+                        onAction = viewModel::onAction,
                         onNavigateToHiddenRepositories = onNavigateToHiddenRepositories,
                         onNavigateToHostTokens = onNavigateToHostTokens,
                     )
-                    appSection(onOpenFeedback = onOpenFeedback)
+                    appSection(onOpenFeedback = { viewModel.onAction(TweaksAction.OnFeedbackClick) })
 
                     tweaksKicker(TweaksDecorSlot.Footer)?.let { footer ->
                         KomiText(
@@ -234,26 +224,29 @@ fun TweaksRoot(
     if (state.isClearDownloadsDialogVisible) {
         ClearDownloadsDialog(
             cacheSize = state.cacheSize,
-            onDismissRequest = { onAction(TweaksAction.OnClearDownloadsDismiss) },
-            onConfirm = { onAction(TweaksAction.OnClearDownloadsConfirm) },
+            onDismissRequest = { viewModel.onAction(TweaksAction.OnClearDownloadsDismiss) },
+            onConfirm = { viewModel.onAction(TweaksAction.OnClearDownloadsConfirm) },
         )
     }
 
-    if (languageSheetOpen) {
-        KomiSheet(
-            onDismiss = { languageSheetOpen = false },
-            placement = KomiSheetPlacement.Bottom,
+    if (state.isLanguageSheetVisible) {
+        LanguagePickerSheet(
             title = stringResource(Res.string.select_language),
-        ) {
-            languageSectionContent(state = state, onAction = onAction)
-        }
+            options = state.languagePickerOptions,
+            selectedId = state.selectedAppLanguage,
+            query = state.languageQuery,
+            onQueryChange = { viewModel.onAction(TweaksAction.OnLanguageQueryChange(it)) },
+            intro = stringResource(Res.string.tweaks_language_intro_body),
+            onSelect = { viewModel.onAction(TweaksAction.OnAppLanguageSelected(it)) },
+            onDismiss = { viewModel.onAction(TweaksAction.OnLanguagePickerDismiss) },
+        )
     }
 
-    if (feedbackSheetOpen) {
+    if (state.isFeedbackSheetVisible) {
         FeedbackBottomSheet(
-            onDismiss = { feedbackSheetOpen = false },
+            onDismiss = { viewModel.onAction(TweaksAction.OnFeedbackDismiss) },
             onSent = { channel ->
-                feedbackSheetOpen = false
+                viewModel.onAction(TweaksAction.OnFeedbackDismiss)
                 coroutineScope.launch {
                     val msg =
                         when (channel) {

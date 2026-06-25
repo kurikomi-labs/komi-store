@@ -35,8 +35,6 @@ import zed.rainxch.core.domain.system.AggressiveOemDetector
 import zed.rainxch.core.domain.system.AppVersionInfo
 import zed.rainxch.core.domain.system.InstallerStatusProvider
 import zed.rainxch.core.domain.system.UpdateScheduleManager
-import zed.rainxch.core.presentation.personality.toAccentId
-import zed.rainxch.core.presentation.personality.toMangaAccent
 import zed.rainxch.tweaks.presentation.model.ProxyScopeFormState
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_save_proxy_settings
@@ -54,6 +52,8 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_invalid
 import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_remove_failed
 import zed.rainxch.githubstore.core.presentation.res.tweaks_custom_forge_save_failed
 import zed.rainxch.tweaks.presentation.model.ProxyType
+import zed.rainxch.tweaks.presentation.connection.parseProxyUrl
+import zed.rainxch.tweaks.presentation.utils.TweaksDeepLinkBus
 import kotlin.time.Duration.Companion.milliseconds
 
 class TweaksViewModel(
@@ -114,6 +114,7 @@ class TweaksViewModel(
                 observeInstallerAttribution()
                 observeMasterProxyConfig()
                 observeUseMasterFlags()
+                observeFeedbackDeepLink()
 
                 hasLoadedInitialData = true
             }
@@ -128,6 +129,15 @@ class TweaksViewModel(
 
     private val _events = Channel<TweaksEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
+
+    private fun observeFeedbackDeepLink() {
+        viewModelScope.launch {
+            TweaksDeepLinkBus.openFeedbackRequests.collect {
+                _state.update { it.copy(isFeedbackSheetVisible = true) }
+                TweaksDeepLinkBus.consume()
+            }
+        }
+    }
 
     private fun refreshCacheSize() {
         if (cacheSizeJob?.isActive == true) return
@@ -177,7 +187,13 @@ class TweaksViewModel(
 
         viewModelScope.launch {
             tweaksRepository.getAccentId().collect { accentId ->
-                _state.update { it.copy(selectedAccent = accentId.toMangaAccent()) }
+                _state.update { it.copy(selectedAccent = accentId) }
+            }
+        }
+
+        viewModelScope.launch {
+            tweaksRepository.getMangaPaper().collect { paper ->
+                _state.update { it.copy(mangaPaper = paper) }
             }
         }
 
@@ -564,7 +580,13 @@ class TweaksViewModel(
 
             is TweaksAction.OnAccentSelected -> {
                 viewModelScope.launch {
-                    tweaksRepository.setAccentId(action.accent.toAccentId())
+                    tweaksRepository.setAccentId(action.accent)
+                }
+            }
+
+            is TweaksAction.OnMangaPaperSelected -> {
+                viewModelScope.launch {
+                    tweaksRepository.setMangaPaper(action.paper)
                 }
             }
 
@@ -916,6 +938,50 @@ class TweaksViewModel(
             TweaksAction.OnFeedbackDismiss ->
                 _state.update { it.copy(isFeedbackSheetVisible = false) }
 
+            TweaksAction.OnLanguagePickerOpen ->
+                _state.update { it.copy(isLanguageSheetVisible = true, languageQuery = "") }
+
+            TweaksAction.OnLanguagePickerDismiss ->
+                _state.update { it.copy(isLanguageSheetVisible = false) }
+
+            is TweaksAction.OnLanguageQueryChange ->
+                _state.update { it.copy(languageQuery = action.query) }
+
+            TweaksAction.OnTranslationProviderExpandToggle ->
+                _state.update { it.copy(translationProviderExpanded = !it.translationProviderExpanded) }
+
+            TweaksAction.OnTranslationTargetPickerOpen ->
+                _state.update { it.copy(translationTargetPickerOpen = true, languageQuery = "") }
+
+            TweaksAction.OnTranslationTargetPickerDismiss ->
+                _state.update { it.copy(translationTargetPickerOpen = false) }
+
+            TweaksAction.OnConnectionPasteSheetOpen ->
+                _state.update {
+                    it.copy(
+                        connectionPasteSheetOpen = true,
+                        proxyPasteUrlInput = "",
+                        proxyPasteUrlError = false,
+                    )
+                }
+
+            TweaksAction.OnConnectionPasteSheetDismiss ->
+                _state.update { it.copy(connectionPasteSheetOpen = false) }
+
+            TweaksAction.OnConnectionMasterExpandToggle ->
+                _state.update { it.copy(connectionMasterExpanded = !it.connectionMasterExpanded) }
+
+            is TweaksAction.OnProxyScopeExpandToggle ->
+                _state.update {
+                    it.copy(
+                        expandedProxyScope =
+                            if (it.expandedProxyScope == action.scope) null else action.scope,
+                    )
+                }
+
+            is TweaksAction.OnDesktopSectionSelected ->
+                _state.update { it.copy(desktopSection = action.section) }
+
             is TweaksAction.OnTranslationProviderSelected -> {
                 when (action.provider) {
                     TranslationProvider.GOOGLE -> {
@@ -1120,6 +1186,7 @@ class TweaksViewModel(
             }
 
             is TweaksAction.OnAppLanguageSelected -> {
+                _state.update { it.copy(isLanguageSheetVisible = false) }
                 if (action.tag == _state.value.selectedAppLanguage) return
                 viewModelScope.launch {
                     tweaksRepository.setAppLanguage(action.tag)
@@ -1136,6 +1203,7 @@ class TweaksViewModel(
             }
 
             is TweaksAction.OnAutoTranslateTargetSelected -> {
+                _state.update { it.copy(translationTargetPickerOpen = false) }
                 viewModelScope.launch {
                     tweaksRepository.setAutoTranslateTargetLang(action.tag)
                 }
@@ -1286,15 +1354,31 @@ class TweaksViewModel(
                 mutateMasterForm { it.copy(isPasswordVisible = !it.isPasswordVisible) }
             }
 
-            is TweaksAction.OnMasterProxyPasteUrl -> {
-                mutateMasterForm {
-                    it.copy(
-                        type = action.type,
-                        host = action.host,
-                        port = action.port.toString(),
-                        username = action.username.orEmpty(),
-                        password = action.password.orEmpty(),
-                    )
+            is TweaksAction.OnProxyPasteUrlChanged -> {
+                _state.update { it.copy(proxyPasteUrlInput = action.value, proxyPasteUrlError = false) }
+            }
+
+            TweaksAction.OnProxyPasteUrlSubmit -> {
+                val parsed = parseProxyUrl(_state.value.proxyPasteUrlInput)
+                if (parsed == null) {
+                    _state.update { it.copy(proxyPasteUrlError = true) }
+                } else {
+                    _state.update {
+                        it.copy(
+                            connectionPasteSheetOpen = false,
+                            proxyPasteUrlInput = "",
+                            proxyPasteUrlError = false,
+                        )
+                    }
+                    mutateMasterForm {
+                        it.copy(
+                            type = parsed.type,
+                            host = parsed.host,
+                            port = parsed.port.toString(),
+                            username = parsed.username.orEmpty(),
+                            password = parsed.password.orEmpty(),
+                        )
+                    }
                 }
             }
 

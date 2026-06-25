@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -88,13 +84,13 @@ fun parseProxyUrl(raw: String): PastedProxy? {
 
 @Composable
 fun PasteProxyUrlSheet(
+    input: String,
+    isError: Boolean,
+    onInputChange: (String) -> Unit,
+    onSubmit: () -> Unit,
     onDismiss: () -> Unit,
-    onParsed: (PastedProxy) -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
-    var input by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
-    val parseErrorMessage = stringResource(Res.string.tweaks_connection_paste_url_error)
 
     KomiSheet(
         onDismiss = onDismiss,
@@ -111,6 +107,7 @@ fun PasteProxyUrlSheet(
                 fontWeight = FontWeight.SemiBold,
                 color = colors.onSurface,
             )
+
             KomiText(
                 text = stringResource(Res.string.tweaks_connection_paste_url_body),
                 role = KomiTextRole.Body,
@@ -118,31 +115,25 @@ fun PasteProxyUrlSheet(
                 color = colors.onSurfaceVariant,
                 uppercase = false,
             )
+
             KomiTextField(
                 value = input,
-                onValueChange = {
-                    input = it
-                    error = null
-                },
+                onValueChange = onInputChange,
                 label = stringResource(Res.string.tweaks_connection_paste_url_placeholder),
-                error = error,
+                error = if (isError) stringResource(Res.string.tweaks_connection_paste_url_error) else null,
                 modifier = Modifier.fillMaxWidth(),
             )
+
             Spacer(Modifier.height(4.dp))
+
             KomiButton(
-                onClick = {
-                    val parsed = parseProxyUrl(input)
-                    if (parsed == null) {
-                        error = parseErrorMessage
-                    } else {
-                        onParsed(parsed)
-                    }
-                },
+                onClick = onSubmit,
                 label = stringResource(Res.string.tweaks_connection_paste_url_cta),
                 variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = input.isNotBlank(),
             )
+
             Spacer(Modifier.height(8.dp))
         }
     }

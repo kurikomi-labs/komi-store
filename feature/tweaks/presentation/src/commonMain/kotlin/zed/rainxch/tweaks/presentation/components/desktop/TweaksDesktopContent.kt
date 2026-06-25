@@ -18,10 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +31,7 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
-import zed.rainxch.core.presentation.personality.manga.MangaAccent
+import zed.rainxch.core.domain.model.appearance.AccentId
 import zed.rainxch.core.presentation.personality.manga.decoration.gridPaper
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -54,7 +50,7 @@ import zed.rainxch.tweaks.presentation.components.sections.connectivitySection
 import zed.rainxch.tweaks.presentation.components.sections.lookAndFeelSection
 import zed.rainxch.tweaks.presentation.components.sections.privacySection
 
-private enum class DesktopSection(val slot: TweaksDecorSlot) {
+enum class DesktopSection(val slot: TweaksDecorSlot) {
     LOOK(TweaksDecorSlot.LookAndFeel),
     CONNECTIVITY(TweaksDecorSlot.Connectivity),
     PRIVACY(TweaksDecorSlot.PrivacyData),
@@ -75,9 +71,9 @@ fun TweaksDesktopContent(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
     personality: AppPersonality,
-    accent: MangaAccent,
+    accent: AccentId,
     onPersonalitySelected: (AppPersonality) -> Unit,
-    onAccentSelected: (MangaAccent) -> Unit,
+    onAccentSelected: (AccentId) -> Unit,
     currentLanguageLabel: String,
     onOpenLanguage: () -> Unit,
     onOpenFeedback: () -> Unit,
@@ -86,7 +82,6 @@ fun TweaksDesktopContent(
     onNavigateToHostTokens: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var section by rememberSaveable { mutableStateOf(DesktopSection.LOOK) }
     val colors = LocalPersonality.current.colors
     val isManga = LocalPersonality.current is MangaPersonality
 
@@ -129,8 +124,8 @@ fun TweaksDesktopContent(
                 NavRow(
                     label = entry.label(),
                     kicker = tweaksKicker(entry.slot),
-                    active = section == entry,
-                    onClick = { section = entry },
+                    active = state.desktopSection == entry,
+                    onClick = { onAction(TweaksAction.OnDesktopSectionSelected(entry)) },
                 )
             }
         }
@@ -152,7 +147,7 @@ fun TweaksDesktopContent(
                         .padding(horizontal = 28.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                when (section) {
+                when (state.desktopSection) {
                     DesktopSection.LOOK ->
                         lookAndFeelSection(
                             state = state,

@@ -8,15 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -24,8 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
@@ -42,44 +39,15 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_intro_title
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_load_failed
 import zed.rainxch.githubstore.core.presentation.res.tweaks_licenses_title
-import zed.rainxch.tweaks.presentation.TweaksViewModel
 
-@Serializable
-private data class LibraryEntry(
-    val name: String,
-    val license: String,
-    val url: String,
-)
-
-@Serializable
-private data class LicensesPayload(
-    val libraries: List<LibraryEntry> = emptyList(),
-)
-
-private val licensesJson = Json { ignoreUnknownKeys = true }
-
-@OptIn(org.jetbrains.compose.resources.ExperimentalResourceApi::class)
 @Composable
 fun LicensesRoot(
     onNavigateBack: () -> Unit,
-    viewModel: TweaksViewModel = koinViewModel(),
+    viewModel: LicensesViewModel = koinViewModel(),
 ) {
     val toastState = rememberKomiToastState()
     val uriHandler = LocalUriHandler.current
-
-    var libraries by remember { mutableStateOf<List<LibraryEntry>?>(null) }
-    var loadError by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        runCatching {
-            val bytes = Res.readBytes("files/licenses.json")
-            licensesJson.decodeFromString(
-                LicensesPayload.serializer(),
-                bytes.decodeToString(),
-            ).libraries
-        }.onSuccess { libraries = it }
-            .onFailure { loadError = true }
-    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     KomiScaffold(
         topBar = {
@@ -97,9 +65,16 @@ fun LicensesRoot(
         toastState = toastState,
         grid = true,
         screentone = true
-    ) {
+    ) { innerPadding ->
         val colors = LocalPersonality.current.colors
-        KomiSurface(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+        ) {
+            KomiSurface(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 KomiText(
                     text = stringResource(Res.string.tweaks_licenses_intro_title),
@@ -120,10 +95,10 @@ fun LicensesRoot(
         Spacer(Modifier.height(12.dp))
 
         when {
-            libraries == null && !loadError -> {
+            state.isLoading -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(vertical = 48.dp),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -131,7 +106,7 @@ fun LicensesRoot(
                 }
             }
 
-            loadError -> {
+            state.loadError -> {
                 KomiText(
                     text = stringResource(Res.string.tweaks_licenses_load_failed),
                     role = KomiTextRole.Body,
@@ -141,8 +116,8 @@ fun LicensesRoot(
                 )
             }
 
-            libraries != null -> {
-                libraries?.let { libraryEntries ->
+            state.libraries != null -> {
+                state.libraries?.let { libraryEntries ->
                     libraryEntries.forEach { library ->
                         LibraryRow(
                             library = library,
@@ -155,6 +130,7 @@ fun LicensesRoot(
                     }
                 }
             }
+        }
         }
     }
 }

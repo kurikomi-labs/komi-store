@@ -3,7 +3,7 @@ package zed.rainxch.tweaks.presentation.components.sections
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.personality.manga.MangaAccent
+import zed.rainxch.core.domain.model.appearance.AccentId
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.feedback_hub_subtitle
 import zed.rainxch.githubstore.core.presentation.res.section_app_block
@@ -31,9 +31,9 @@ fun ColumnScope.lookAndFeelSection(
     state: TweaksState,
     onAction: (TweaksAction) -> Unit,
     personality: AppPersonality,
-    accent: MangaAccent,
+    accent: AccentId,
     onPersonalitySelected: (AppPersonality) -> Unit,
-    onAccentSelected: (MangaAccent) -> Unit,
+    onAccentSelected: (AccentId) -> Unit,
     currentLanguageLabel: String,
     onOpenLanguage: () -> Unit,
     showHead: Boolean = true,

@@ -9,30 +9,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import zed.rainxch.core.domain.model.appearance.AccentId
 import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.presentation.personality.manga.MangaAccent
+import zed.rainxch.core.presentation.personality.MangaPersonality
+import zed.rainxch.core.presentation.personality.classic.classicAccentSwatch
+import zed.rainxch.core.presentation.personality.manga.mangaAccentSwatch
+import zed.rainxch.core.presentation.personality.toMangaAccent
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
 import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 
 private val AccentOrder =
     listOf(
-        MangaAccent.CRIMSON,
-        MangaAccent.COBALT,
-        MangaAccent.SUN,
-        MangaAccent.FROST,
-        MangaAccent.MONO,
+        AccentId.CRIMSON,
+        AccentId.COBALT,
+        AccentId.SUN,
+        AccentId.FROST,
+        AccentId.MONO,
     )
 
 @Composable
 fun AppearanceHeadline(
     personality: AppPersonality,
-    accent: MangaAccent,
+    accent: AccentId,
     onPersonalitySelected: (AppPersonality) -> Unit,
-    onAccentSelected: (MangaAccent) -> Unit,
+    onAccentSelected: (AccentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SettingsGroup(modifier = modifier) {
@@ -62,8 +66,15 @@ fun AppearanceHeadline(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 AccentOrder.forEach { entry ->
+                    val isManga = LocalPersonality.current is MangaPersonality
+                    val colors = LocalPersonality.current.colors
+                    val mangaSwatch = if (isManga) mangaAccentSwatch(entry.toMangaAccent()) else null
+                    val classicSwatch = if (isManga) null else classicAccentSwatch(entry, colors.isDark)
+
                     AccentSwatch(
-                        accent = entry,
+                        fill = mangaSwatch?.first ?: classicSwatch?.first ?: colors.onSurface,
+                        onFill = mangaSwatch?.second ?: classicSwatch?.second ?: colors.background,
+                        mono = isManga && entry == AccentId.MONO,
                         selected = accent == entry,
                         onClick = { onAccentSelected(entry) },
                     )

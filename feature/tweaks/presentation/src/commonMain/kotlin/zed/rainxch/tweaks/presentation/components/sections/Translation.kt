@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -23,7 +19,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.settings.SupportedTranslationLanguages
 import zed.rainxch.core.domain.model.settings.TranslationProvider
@@ -35,8 +30,6 @@ import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiSwitch
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
-import zed.rainxch.core.presentation.components.overlays.KomiDropdown
-import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
@@ -50,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.tweaks.presentation.TweaksAction
 import zed.rainxch.tweaks.presentation.TweaksState
+import zed.rainxch.tweaks.presentation.components.LanguagePickerSheet
 import zed.rainxch.tweaks.presentation.components.shell.SettingsExpandableRow
 import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
 import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
@@ -60,15 +54,14 @@ fun translationSectionContent(
     onAction: (TweaksAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var providerExpanded by rememberSaveable { mutableStateOf(false) }
     val provider = state.displayedTranslationProvider
 
     SettingsGroup(modifier = modifier) {
         SettingsExpandableRow(
             title = stringResource(Res.string.translation_provider_title),
             subtitle = providerLabel(provider),
-            expanded = providerExpanded,
-            onToggle = { providerExpanded = !providerExpanded },
+            expanded = state.translationProviderExpanded,
+            onToggle = { onAction(TweaksAction.OnTranslationProviderExpandToggle) },
         ) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -114,8 +107,8 @@ fun translationSectionContent(
                 )
                 Spacer(Modifier.height(6.dp))
                 TranslationTargetDropdown(
-                    selectedTag = state.autoTranslateTargetLang,
-                    onLanguageSelected = { onAction(TweaksAction.OnAutoTranslateTargetSelected(it)) },
+                    state = state,
+                    onAction = onAction,
                 )
             }
         }
@@ -132,66 +125,64 @@ private fun providerLabel(provider: TranslationProvider): String =
         TranslationProvider.MICROSOFT -> stringResource(Res.string.translation_provider_microsoft)
     }
 
-private const val FOLLOW_SYSTEM_ID = "__follow_system__"
-
 @Composable
 private fun TranslationTargetDropdown(
-    selectedTag: String?,
-    onLanguageSelected: (String?) -> Unit,
+    state: TweaksState,
+    onAction: (TweaksAction) -> Unit,
 ) {
     val personality = LocalPersonality.current
     val colors = personality.colors
     val followSystemLabel = stringResource(Res.string.language_follow_system)
+    val selectedTag = state.autoTranslateTargetLang
     val currentLabel =
         when (val match = SupportedTranslationLanguages.findByCode(selectedTag)) {
             null -> followSystemLabel
             else -> match.displayName
         }
-    val entries =
-        buildList {
-            add(KomiMenuItem(id = FOLLOW_SYSTEM_ID, label = followSystemLabel))
-            SupportedTranslationLanguages.all.forEach { lang ->
-                add(KomiMenuItem(id = lang.code, label = lang.displayName))
-            }
-        }.toImmutableList()
 
-    KomiDropdown(
-        entries = entries,
-        value = currentLabel,
-        onSelect = { item -> onLanguageSelected(if (item.id == FOLLOW_SYSTEM_ID) null else item.id) },
-        modifier = Modifier.fillMaxWidth(),
-        trigger = { onClick ->
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(personality.shape.corner))
-                        .background(colors.surface)
-                        .clickable(onClick = onClick)
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                KomiText(
-                    text = currentLabel,
-                    role = KomiTextRole.Body,
-                    color = colors.onSurface,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    uppercase = false,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                Spacer(Modifier.size(8.dp))
-                KomiIcon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    tint = colors.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        },
-    )
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(personality.shape.corner))
+                .background(colors.surface)
+                .clickable(onClick = { onAction(TweaksAction.OnTranslationTargetPickerOpen) })
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        KomiText(
+            text = currentLabel,
+            role = KomiTextRole.Body,
+            color = colors.onSurface,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            uppercase = false,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+
+        Spacer(Modifier.size(8.dp))
+
+        KomiIcon(
+            imageVector = Icons.Default.ExpandMore,
+            contentDescription = null,
+            tint = colors.onSurfaceVariant,
+            modifier = Modifier.size(20.dp),
+        )
+    }
+
+    if (state.translationTargetPickerOpen) {
+        LanguagePickerSheet(
+            title = stringResource(Res.string.translation_auto_target_label),
+            options = state.translationLanguageOptions,
+            selectedId = selectedTag,
+            query = state.languageQuery,
+            onQueryChange = { onAction(TweaksAction.OnLanguageQueryChange(it)) },
+            onSelect = { onAction(TweaksAction.OnAutoTranslateTargetSelected(it)) },
+            onDismiss = { onAction(TweaksAction.OnTranslationTargetPickerDismiss) },
+        )
+    }
 }
 
 @Composable

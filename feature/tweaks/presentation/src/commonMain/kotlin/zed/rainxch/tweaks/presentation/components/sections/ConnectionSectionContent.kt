@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -58,18 +54,14 @@ fun connectionSectionContent(
     onAction: (TweaksAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var pasteSheetOpen by rememberSaveable { mutableStateOf(false) }
-    var masterExpanded by rememberSaveable { mutableStateOf(false) }
-    var expandedScope by rememberSaveable { mutableStateOf<ProxyScope?>(null) }
-
     val master = state.masterProxyForm
 
     SettingsGroup(modifier = modifier) {
         SettingsExpandableRow(
             title = stringResource(Res.string.tweaks_connection_main_section),
             subtitle = proxySummary(master),
-            expanded = masterExpanded,
-            onToggle = { masterExpanded = !masterExpanded },
+            expanded = state.connectionMasterExpanded,
+            onToggle = { onAction(TweaksAction.OnConnectionMasterExpandToggle) },
         ) {
             ProxyTypeSegmented(
                 selected = master.type,
@@ -88,7 +80,7 @@ fun connectionSectionContent(
                     Spacer(Modifier.height(10.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         KomiButton(
-                            onClick = { pasteSheetOpen = true },
+                            onClick = { onAction(TweaksAction.OnConnectionPasteSheetOpen) },
                             label = stringResource(Res.string.tweaks_connection_paste_url),
                             variant = KomiButtonVariant.Outline,
                             size = KomiButtonSize.Sm,
@@ -119,8 +111,8 @@ fun connectionSectionContent(
             SettingsExpandableRow(
                 title = scopeTitle(scope),
                 subtitle = stringResource(Res.string.tweaks_connection_overrides_section),
-                expanded = expandedScope == scope,
-                onToggle = { expandedScope = if (expandedScope == scope) null else scope },
+                expanded = state.expandedProxyScope == scope,
+                onToggle = { onAction(TweaksAction.OnProxyScopeExpandToggle(scope)) },
                 last = index == ProxyScope.entries.lastIndex,
             ) {
                 KomiSegmented(
@@ -176,21 +168,13 @@ fun connectionSectionContent(
         }
     }
 
-    if (pasteSheetOpen) {
+    if (state.connectionPasteSheetOpen) {
         PasteProxyUrlSheet(
-            onDismiss = { pasteSheetOpen = false },
-            onParsed = { parsed ->
-                onAction(
-                    TweaksAction.OnMasterProxyPasteUrl(
-                        type = parsed.type,
-                        host = parsed.host,
-                        port = parsed.port,
-                        username = parsed.username,
-                        password = parsed.password,
-                    ),
-                )
-                pasteSheetOpen = false
-            },
+            input = state.proxyPasteUrlInput,
+            isError = state.proxyPasteUrlError,
+            onInputChange = { onAction(TweaksAction.OnProxyPasteUrlChanged(it)) },
+            onSubmit = { onAction(TweaksAction.OnProxyPasteUrlSubmit) },
+            onDismiss = { onAction(TweaksAction.OnConnectionPasteSheetDismiss) },
         )
     }
 }

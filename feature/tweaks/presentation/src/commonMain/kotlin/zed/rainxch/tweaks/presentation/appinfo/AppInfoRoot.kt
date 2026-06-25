@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Language
+import zed.rainxch.core.presentation.components.GitHubStoreImage
 import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +76,6 @@ import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_source_code
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_tagline
 import zed.rainxch.githubstore.core.presentation.res.tweaks_app_info_website
 import zed.rainxch.githubstore.core.presentation.res.tweaks_entry_app_info
-import zed.rainxch.tweaks.presentation.TweaksViewModel
 import zed.rainxch.tweaks.presentation.utils.Constants.BUSINESS_EMAIL
 import zed.rainxch.tweaks.presentation.utils.Constants.DISCORD_URL
 import zed.rainxch.tweaks.presentation.utils.Constants.GITHUB_ORG_URL
@@ -89,7 +90,7 @@ import zed.rainxch.tweaks.presentation.utils.Constants.WEBSITE_URL
 fun AppInfoRoot(
     onNavigateBack: () -> Unit,
     onNavigateToLicenses: () -> Unit,
-    viewModel: TweaksViewModel = koinViewModel(),
+    viewModel: AppInfoViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val toastState = rememberKomiToastState()
@@ -342,7 +343,7 @@ private fun CommunityCard(
                 KomiButton(
                     onClick = onBusiness,
                     label = stringResource(Res.string.tweaks_app_info_community_business_cta),
-                    variant = KomiButtonVariant.Outline,
+                    variant = KomiButtonVariant.Primary,
                     size = KomiButtonSize.Sm,
                     trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
                 )
@@ -383,11 +384,10 @@ private fun SocialTile(
                 contentAlignment = Alignment.Center,
             ) {
                 if (iconUrl != null) {
-                    coil3.compose.AsyncImage(
-                        model = iconUrl,
-                        contentDescription = null,
+                    GitHubStoreImage(
+                        imageModel = { iconUrl },
                         modifier = Modifier.size(20.dp),
-                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(accent),
+                        colorFilter = ColorFilter.tint(accent),
                     )
                 } else if (iconFallback != null) {
                     KomiIcon(
@@ -462,7 +462,7 @@ private fun ActionRow(
             ) {
                 KomiText(
                     text = title,
-                    role = KomiTextRole.Title,
+                    role = KomiTextRole.Stamp,
                     fontWeight = FontWeight.SemiBold,
                     color = colors.onSurface,
                     maxLines = 1,

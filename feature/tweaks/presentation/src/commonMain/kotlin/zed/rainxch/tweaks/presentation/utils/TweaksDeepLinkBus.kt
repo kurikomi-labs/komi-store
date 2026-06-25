@@ -1,4 +1,4 @@
-package zed.rainxch.tweaks.presentation
+package zed.rainxch.tweaks.presentation.utils
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
@@ -14,8 +14,6 @@ object TweaksDeepLinkBus {
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
 
-    // replay = 1 so a request published while navigating to Tweaks survives until
-    // TweaksRoot subscribes; consume() clears it so a later revisit does not reopen.
     val openFeedbackRequests: SharedFlow<Unit> = _openFeedbackRequests.asSharedFlow()
 
     fun requestOpenFeedback() {

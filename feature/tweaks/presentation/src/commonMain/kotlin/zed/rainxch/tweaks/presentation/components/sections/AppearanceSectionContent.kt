@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.isDesktop
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.ContentWidth
+import zed.rainxch.core.domain.model.appearance.MangaPaperId
 import zed.rainxch.core.presentation.components.inputs.KomiSwitch
 import zed.rainxch.core.presentation.utils.displayName
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -34,6 +36,18 @@ private fun choiceToIsDark(choice: ModeChoice): Boolean? =
         ModeChoice.SYSTEM -> null
     }
 
+private fun showsAmoledToggle(
+    personality: AppPersonality,
+    isDarkTheme: Boolean?,
+): Boolean =
+    when (personality) {
+        // AMOLED forces near-black surfaces — only meaningful where a dark surface is
+        // actually rendered. Classic Light never applies it (hide); Dark + System keep it.
+        AppPersonality.CLASSIC -> isDarkTheme != false
+        // Manga's Night paper is inherently pure-black, so there is nothing to toggle.
+        AppPersonality.MANGA -> false
+    }
+
 @Composable
 fun appearanceSectionContent(
     state: TweaksState,
@@ -41,34 +55,64 @@ fun appearanceSectionContent(
     modifier: Modifier = Modifier,
 ) {
     val desktop = isDesktop()
+    val amoledVisible = showsAmoledToggle(state.selectedPersonality, state.isDarkTheme)
     SettingsGroup(modifier = modifier) {
-        SettingsRow(
-            title = stringResource(Res.string.appearance_section_mode),
-            trailing = {
-                KomiSegmented(
-                    selected = isDarkToChoice(state.isDarkTheme),
-                    onSelect = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
-                    size = KomiIconButtonSize.Sm,
-                    items =
-                        persistentListOf(
-                            KomiSegmentedItem(value = ModeChoice.LIGHT, title = stringResource(Res.string.theme_light)),
-                            KomiSegmentedItem(value = ModeChoice.DARK, title = stringResource(Res.string.theme_dark)),
-                            KomiSegmentedItem(value = ModeChoice.SYSTEM, title = stringResource(Res.string.theme_system)),
-                        ),
+        when (state.selectedPersonality) {
+            AppPersonality.MANGA -> {
+                SettingsRow(
+                    title = stringResource(Res.string.appearance_section_paper),
+                    last = !desktop,
+                    trailing = {
+                        KomiSegmented(
+                            selected = state.mangaPaper,
+                            onSelect = { onAction(TweaksAction.OnMangaPaperSelected(it)) },
+                            size = KomiIconButtonSize.Sm,
+                            items =
+                                persistentListOf(
+                                    KomiSegmentedItem(value = MangaPaperId.DAY, title = stringResource(Res.string.paper_day)),
+                                    KomiSegmentedItem(value = MangaPaperId.NIGHT, title = stringResource(Res.string.paper_night)),
+                                    KomiSegmentedItem(value = MangaPaperId.NORD, title = stringResource(Res.string.paper_nord)),
+                                ),
+                        )
+                    },
                 )
-            },
-        )
-        SettingsRow(
-            title = stringResource(Res.string.amoled_black_theme),
-            subtitle = stringResource(Res.string.amoled_black_description),
-            last = !desktop,
-            trailing = {
-                KomiSwitch(
-                    checked = state.isAmoledThemeEnabled,
-                    onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
+            }
+
+            AppPersonality.CLASSIC -> {
+                SettingsRow(
+                    title = stringResource(Res.string.appearance_section_mode),
+                    last = !desktop && !amoledVisible,
+                    trailing = {
+                        KomiSegmented(
+                            selected = isDarkToChoice(state.isDarkTheme),
+                            onSelect = { onAction(TweaksAction.OnDarkThemeChange(choiceToIsDark(it))) },
+                            size = KomiIconButtonSize.Sm,
+                            items =
+                                persistentListOf(
+                                    KomiSegmentedItem(value = ModeChoice.LIGHT, title = stringResource(Res.string.theme_light)),
+                                    KomiSegmentedItem(value = ModeChoice.DARK, title = stringResource(Res.string.theme_dark)),
+                                    KomiSegmentedItem(value = ModeChoice.SYSTEM, title = stringResource(Res.string.theme_system)),
+                                ),
+                        )
+                    },
                 )
-            },
-        )
+
+                if (amoledVisible) {
+                    SettingsRow(
+                        title = stringResource(Res.string.amoled_black_theme),
+                        subtitle = stringResource(Res.string.amoled_black_description),
+                        last = !desktop,
+                        trailing = {
+                            KomiSwitch(
+                                checked = state.isAmoledThemeEnabled,
+                                onCheckedChange = { onAction(TweaksAction.OnAmoledThemeToggled(it)) },
+                            )
+                        },
+                    )
+                }
+            }
+        }
+
         if (desktop) {
             SettingsRow(
                 title = stringResource(Res.string.scrollbar_option_title),
@@ -80,6 +124,7 @@ fun appearanceSectionContent(
                     )
                 },
             )
+
             SettingsRow(
                 title = stringResource(Res.string.content_width_title),
                 subtitle = stringResource(Res.string.content_width_description),

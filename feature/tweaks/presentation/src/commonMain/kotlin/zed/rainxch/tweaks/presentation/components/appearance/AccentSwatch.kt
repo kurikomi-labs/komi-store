@@ -14,27 +14,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
-import zed.rainxch.core.presentation.personality.manga.MangaAccent
 import zed.rainxch.core.presentation.personality.manga.decoration.hardShadow
-import zed.rainxch.core.presentation.personality.manga.mangaAccentSwatch
 
 @Composable
 fun AccentSwatch(
-    accent: MangaAccent,
+    fill: Color,
+    onFill: Color,
+    mono: Boolean,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
-    val swatch = mangaAccentSwatch(accent)
-    val fill = swatch?.first ?: colors.onSurface
-    val onFill = swatch?.second ?: colors.background
     val isManga = LocalPersonality.current is MangaPersonality
     val shape = if (isManga) RectangleShape else CircleShape
 
@@ -53,7 +51,7 @@ fun AccentSwatch(
                 .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        if (accent == MangaAccent.MONO) {
+        if (mono) {
             Box(
                 modifier =
                     Modifier
@@ -69,6 +67,7 @@ fun AccentSwatch(
                         ),
             )
         }
+
         if (selected) {
             KomiIcon(
                 imageVector = Icons.Filled.Check,
