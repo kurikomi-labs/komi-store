@@ -76,7 +76,9 @@ fun ProfileInfoCard(
                         .clip(RoundedCornerShape(shape.cornerSmall))
                         .background(colors.surfaceContainerHigh),
                 )
+
                 Spacer(Modifier.width(16.dp))
+
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KomiText(
@@ -89,11 +91,14 @@ fun ProfileInfoCard(
                             uppercase = false,
                             modifier = Modifier.weight(1f, fill = false),
                         )
+
                         if (profile.isOrganization) {
                             Spacer(Modifier.width(8.dp))
+
                             OrgPill()
                         }
                     }
+
                     KomiText(
                         text = "@${profile.login}",
                         role = KomiTextRole.Label,
@@ -113,6 +118,7 @@ fun ProfileInfoCard(
             }
 
             Spacer(Modifier.height(16.dp))
+
             MetricsStrip(
                 repos = profile.publicRepos,
                 followers = profile.followers,
@@ -169,9 +175,13 @@ private fun MetricsStrip(repos: Int, followers: Int, following: Int) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Metric(value = formatCount(repos), label = stringResource(Res.string.profile_repos), modifier = Modifier.weight(1f))
+
         MetricDivider()
+
         Metric(value = formatCount(followers), label = stringResource(Res.string.followers), modifier = Modifier.weight(1f))
+
         MetricDivider()
+
         Metric(value = formatCount(following), label = stringResource(Res.string.following), modifier = Modifier.weight(1f))
     }
 }
@@ -193,6 +203,7 @@ private fun Metric(value: String, label: String, modifier: Modifier = Modifier) 
             maxLines = 1,
             uppercase = false,
         )
+
         KomiText(
             text = label,
             role = KomiTextRole.Label,
@@ -270,9 +281,11 @@ fun IdentityRailCard(
                     StaticChip(icon = Icons.Default.Business, text = trimmed)
                 }
             }
+
             profile.location?.takeIf { it.isNotBlank() }?.let { location ->
                 StaticChip(icon = Icons.Default.LocationOn, text = location)
             }
+
             profile.blog?.takeIf { it.isNotBlank() }?.let { blog ->
                 val display = blog.removePrefix("https://").removePrefix("http://")
                 LinkChip(
@@ -284,6 +297,7 @@ fun IdentityRailCard(
                     },
                 )
             }
+
             profile.twitterUsername?.takeIf { it.isNotBlank() }?.let { twitter ->
                 LinkChip(
                     icon = Icons.Default.Tag,
@@ -322,6 +336,7 @@ private fun StaticChip(icon: ImageVector, text: String) {
                 modifier = Modifier.size(14.dp),
                 tint = colors.onSurfaceVariant,
             )
+
             KomiText(
                 text = text,
                 role = KomiTextRole.Label,
@@ -362,6 +377,7 @@ private fun LinkChip(icon: ImageVector, text: String, onClick: () -> Unit) {
                 modifier = Modifier.size(14.dp),
                 tint = colors.primary,
             )
+
             KomiText(
                 text = text,
                 role = KomiTextRole.Label,

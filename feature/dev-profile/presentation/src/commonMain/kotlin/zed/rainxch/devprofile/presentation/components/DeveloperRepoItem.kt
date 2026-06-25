@@ -80,6 +80,7 @@ fun DeveloperRepoItem(
                         color = colors.onSurface,
                         uppercase = false,
                     )
+
                     val releaseDate = repository.latestReleaseAt
                     val (label, dateString) = if (releaseDate != null) {
                         Res.string.released_on_date to releaseDate
@@ -97,7 +98,9 @@ fun DeveloperRepoItem(
                         uppercase = false,
                     )
                 }
+
                 Spacer(Modifier.width(8.dp))
+
                 FavoriteToggle(
                     isFavorite = repository.isFavorite,
                     onClick = onToggleFavorite,

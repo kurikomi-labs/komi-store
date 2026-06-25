@@ -41,7 +41,6 @@ import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
-import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -248,12 +247,14 @@ fun DeveloperProfileScreen(
                             uppercase = false,
                             modifier = Modifier.weight(1f),
                         )
+
                         KomiButton(
                             onClick = { onAction(DeveloperProfileAction.OnRetry) },
                             label = stringResource(Res.string.retry),
                             variant = KomiButtonVariant.Text,
                             size = KomiButtonSize.Sm,
                         )
+
                         Box(
                             modifier = Modifier
                                 .size(36.dp)

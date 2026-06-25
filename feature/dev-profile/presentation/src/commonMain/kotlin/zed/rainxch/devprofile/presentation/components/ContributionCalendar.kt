@@ -67,6 +67,7 @@ fun ContributionCalendarCard(
                     fontWeight = FontWeight.SemiBold,
                     color = colors.onSurface,
                 )
+
                 contributions?.let {
                     KomiText(
                         text = stringResource(Res.string.dev_profile_contributions_this_year, it.totalLastYear),
@@ -77,7 +78,9 @@ fun ContributionCalendarCard(
                     )
                 }
             }
+
             Spacer(Modifier.height(12.dp))
+
             when {
                 isLoading && contributions == null -> {
                     KomiText(
@@ -157,7 +160,9 @@ private fun CalendarGrid(days: List<ContributionDay>) {
             }
         }
     }
+
     Spacer(Modifier.height(8.dp))
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -168,14 +173,16 @@ private fun CalendarGrid(days: List<ContributionDay>) {
             fontSize = 11.sp,
             color = colors.onSurfaceVariant,
         )
-        palette.forEach { c ->
+
+        palette.forEach { cell ->
             Box(
                 modifier = Modifier
                     .size(CELL_SIZE)
                     .clip(RoundedCornerShape(shape.cornerSmall))
-                    .background(c),
+                    .background(cell),
             )
         }
+
         KomiText(
             text = stringResource(Res.string.dev_profile_contributions_more),
             role = KomiTextRole.Label,

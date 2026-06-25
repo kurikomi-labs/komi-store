@@ -104,12 +104,18 @@ fun FilterSortControls(
             ) {
                 RepoFilterType.entries.forEach { filter ->
                     FilterPill(
-                        label = filter.displayName(),
+                        label = when (filter) {
+                            RepoFilterType.WITH_RELEASES -> stringResource(Res.string.filter_with_releases)
+                            RepoFilterType.WITH_INSTALLABLE -> stringResource(Res.string.filter_with_installable)
+                            RepoFilterType.INSTALLED -> stringResource(Res.string.filter_installed)
+                            RepoFilterType.FAVORITES -> stringResource(Res.string.filter_favorites)
+                        },
                         isSelected = currentFilter == filter,
                         onClick = { onAction(DeveloperProfileAction.OnFilterChange(filter)) },
                     )
                 }
             }
+
             SortButton(
                 currentSort = currentSort,
                 onSortChange = { onAction(DeveloperProfileAction.OnSortChange(it)) },
@@ -186,7 +192,16 @@ private fun SortButton(
     val colors = LocalPersonality.current.colors
     KomiDropdown(
         entries = RepoSortType.entries
-            .map { sort -> KomiMenuItem(id = sort.name, label = sort.displayName()) }
+            .map { sort ->
+                KomiMenuItem(
+                    id = sort.name,
+                    label = when (sort) {
+                        RepoSortType.UPDATED -> stringResource(Res.string.sort_recently_updated)
+                        RepoSortType.STARS -> stringResource(Res.string.sort_most_stars)
+                        RepoSortType.NAME -> stringResource(Res.string.sort_name)
+                    },
+                )
+            }
             .toImmutableList(),
         onSelect = { item ->
             RepoSortType.entries.firstOrNull { it.name == item.id }?.let(onSortChange)
@@ -210,19 +225,4 @@ private fun SortButton(
             }
         },
     )
-}
-
-@Composable
-private fun RepoFilterType.displayName(): String = when (this) {
-    RepoFilterType.WITH_RELEASES -> stringResource(Res.string.filter_with_releases)
-    RepoFilterType.WITH_INSTALLABLE -> stringResource(Res.string.filter_with_installable)
-    RepoFilterType.INSTALLED -> stringResource(Res.string.filter_installed)
-    RepoFilterType.FAVORITES -> stringResource(Res.string.filter_favorites)
-}
-
-@Composable
-private fun RepoSortType.displayName(): String = when (this) {
-    RepoSortType.UPDATED -> stringResource(Res.string.sort_recently_updated)
-    RepoSortType.STARS -> stringResource(Res.string.sort_most_stars)
-    RepoSortType.NAME -> stringResource(Res.string.sort_name)
 }
