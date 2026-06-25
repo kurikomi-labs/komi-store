@@ -29,14 +29,12 @@ import zed.rainxch.githubstore.core.presentation.res.external_import_completion_
 
 @Composable
 fun CompletionToast(
-    autoImported: Int,
-    manuallyLinked: Int,
+    trackedCount: Int,
     skipped: Int,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPersonality.current.colors
-    val tracked = autoImported + manuallyLinked
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -58,8 +56,8 @@ fun CompletionToast(
                 text =
                     pluralStringResource(
                         Res.plurals.external_import_completion_headline,
-                        tracked,
-                        tracked,
+                        trackedCount,
+                        trackedCount,
                     ),
                 role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,

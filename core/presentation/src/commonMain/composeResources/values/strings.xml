@@ -902,7 +902,7 @@
     <string name="external_import_proposal_banner_review">Review</string>
     <string name="external_import_proposal_banner_dismiss">Dismiss</string>
     <string name="external_import_match_confidence_a11y">Match confidence: %1$d percent</string>
-    <string name="external_import_match_confidence_chip">%1$d</string>
+    <string name="external_import_match_confidence_chip">%1$d%%</string>
     <string name="external_import_error_link_failed">Couldn't link this app — try again.</string>
     <string name="external_import_error_link_network">Couldn't reach GitHub. Try again later.</string>
     <string name="external_import_error_scan_failed_default">Scan failed</string>
