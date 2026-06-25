@@ -61,7 +61,28 @@ fun WizardList(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item(key = "progress-header") {
-            ProgressChip(remaining = cards.size)
+            val colors = LocalPersonality.current.colors
+            val shape = LocalPersonality.current.shape
+            Box(
+                modifier = Modifier
+                    .semantics { liveRegion = LiveRegionMode.Polite }
+                    .clip(RoundedCornerShape(shape.corner))
+                    .background(colors.surfaceVariant),
+            ) {
+                KomiText(
+                    text = pluralStringResource(
+                        Res.plurals.external_import_list_remaining,
+                        cards.size,
+                        cards.size,
+                    ),
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
         }
 
         items(
@@ -87,41 +108,13 @@ fun WizardList(
         }
 
         item(key = "add-manually-footer") {
-            AddManuallyFooter(onClick = onAddManually)
+            KomiButton(
+                onClick = onAddManually,
+                label = stringResource(Res.string.external_import_list_add_manually),
+                variant = KomiButtonVariant.Text,
+                trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-    }
-}
-
-@Composable
-private fun AddManuallyFooter(onClick: () -> Unit) {
-    KomiButton(
-        onClick = onClick,
-        label = stringResource(Res.string.external_import_list_add_manually),
-        variant = KomiButtonVariant.Text,
-        trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-private fun ProgressChip(remaining: Int) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    Box(
-        modifier =
-            Modifier
-                .semantics { liveRegion = LiveRegionMode.Polite }
-                .clip(RoundedCornerShape(shape.corner))
-                .background(colors.surfaceVariant),
-    ) {
-        KomiText(
-            text = pluralStringResource(Res.plurals.external_import_list_remaining, remaining, remaining),
-            role = KomiTextRole.Label,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = colors.onSurfaceVariant,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-        )
     }
 }

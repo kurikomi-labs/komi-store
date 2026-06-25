@@ -101,7 +101,26 @@ fun AutoImportSummaryScreen(
             }
 
             if (autoLinkedLabels.isNotEmpty()) {
-                AutoLinkedChipRow(autoLinkedLabels = autoLinkedLabels)
+                val visibleLabels = autoLinkedLabels.take(MAX_VISIBLE_CHIPS)
+                val overflowCount = autoLinkedLabels.size - visibleLabels.size
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    visibleLabels.forEach { label ->
+                        ChipSurface(text = label)
+                    }
+
+                    if (overflowCount > 0) {
+                        ChipSurface(
+                            text = stringResource(
+                                Res.string.external_import_auto_summary_more_count,
+                                overflowCount,
+                            ),
+                        )
+                    }
+                }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -117,30 +136,6 @@ fun AutoImportSummaryScreen(
                     variant = KomiButtonVariant.Primary,
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun AutoLinkedChipRow(autoLinkedLabels: ImmutableList<String>) {
-    val visible = autoLinkedLabels.take(MAX_VISIBLE_CHIPS)
-    val overflow = autoLinkedLabels.size - visible.size
-
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        visible.forEach { label ->
-            ChipSurface(text = label)
-        }
-
-        if (overflow > 0) {
-            ChipSurface(
-                text = stringResource(
-                    Res.string.external_import_auto_summary_more_count,
-                    overflow,
-                ),
-            )
         }
     }
 }

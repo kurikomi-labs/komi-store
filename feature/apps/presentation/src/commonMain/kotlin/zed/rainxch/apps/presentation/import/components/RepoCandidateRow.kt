@@ -25,14 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.roundToInt
 import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
-import zed.rainxch.apps.presentation.import.model.SuggestionSource
+import zed.rainxch.apps.presentation.import.model.SuggestionChipTone
 import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_card_owner_byline
@@ -47,18 +46,14 @@ fun RepoCandidateRow(
 ) {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
-    val percent = (suggestion.confidence * 100).roundToInt().coerceIn(0, 100)
-    val (chipBg, chipFg) =
-        when {
-            suggestion.source == SuggestionSource.MANUAL ->
-                colors.surfaceVariant to colors.onSurfaceVariant
-            suggestion.confidence >= 0.85 ->
-                colors.primaryContainer to colors.onPrimaryContainer
-            suggestion.confidence >= 0.5 ->
-                colors.primaryContainer to colors.onPrimaryContainer
-            else ->
-                colors.surfaceVariant to colors.onSurfaceVariant
-        }
+    val chipBg = when (suggestion.chipTone) {
+        SuggestionChipTone.Primary -> colors.primaryContainer
+        SuggestionChipTone.Muted -> colors.surfaceVariant
+    }
+    val chipFg = when (suggestion.chipTone) {
+        SuggestionChipTone.Primary -> colors.onPrimaryContainer
+        SuggestionChipTone.Muted -> colors.onSurfaceVariant
+    }
 
     Row(
         modifier =
@@ -97,7 +92,37 @@ fun RepoCandidateRow(
                     modifier = Modifier.weight(1f, fill = false),
                 )
 
-                SuggestionHostChip(suggestion.sourceHost)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(
+                            if (suggestion.sourceHost == null) {
+                                colors.surfaceVariant
+                            } else {
+                                colors.primaryContainer
+                            },
+                        ),
+                ) {
+                    KomiText(
+                        text = when {
+                            suggestion.sourceHost == null -> "GitHub"
+                            suggestion.sourceHost.equals("codeberg.org", ignoreCase = true) ->
+                                "Codeberg"
+                            else -> suggestion.sourceHost
+                        },
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = if (suggestion.sourceHost == null) {
+                            colors.onSurfaceVariant
+                        } else {
+                            colors.onPrimaryContainer
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
             }
 
             if (!suggestion.description.isNullOrBlank()) {
@@ -136,7 +161,7 @@ fun RepoCandidateRow(
         Spacer(Modifier.width(12.dp))
 
         val confidenceLabel =
-            stringResource(Res.string.external_import_match_confidence_a11y, percent)
+            stringResource(Res.string.external_import_match_confidence_a11y, suggestion.confidencePercent)
         Box(
             modifier =
                 Modifier
@@ -147,7 +172,10 @@ fun RepoCandidateRow(
                     .background(chipBg),
         ) {
             KomiText(
-                text = stringResource(Res.string.external_import_match_confidence_chip, percent) + "%",
+                text = stringResource(
+                    Res.string.external_import_match_confidence_chip,
+                    suggestion.confidencePercent,
+                ),
                 role = KomiTextRole.Label,
                 fontSize = 12.sp,
                 color = chipFg,
@@ -155,48 +183,5 @@ fun RepoCandidateRow(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun SuggestionHostChip(sourceHost: String?) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    val (label, bg, fg) = when {
-        sourceHost == null ->
-            Triple(
-                "GitHub",
-                colors.surfaceVariant,
-                colors.onSurfaceVariant,
-            )
-        sourceHost.equals("codeberg.org", ignoreCase = true) ->
-            Triple(
-                "Codeberg",
-                colors.primaryContainer,
-                colors.onPrimaryContainer,
-            )
-        else ->
-            Triple(
-                sourceHost,
-                colors.primaryContainer,
-                colors.onPrimaryContainer,
-            )
-    }
-    Box(
-        modifier =
-            Modifier
-                .clip(RoundedCornerShape(shape.cornerSmall))
-                .background(bg),
-    ) {
-        KomiText(
-            text = label,
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = fg,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-        )
     }
 }
