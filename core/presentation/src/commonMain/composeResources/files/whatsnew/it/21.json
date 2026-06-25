@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-25",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nuova scheda Esplora — un feed di scoperta di app installabili per la tua piattaforma. Si aggiorna ogni giorno così c'è sempre qualcosa di nuovo, carica altri risultati mentre scorri e torna in cima quando cambi piattaforma o categoria.",
+        "Nuova scheda Classifiche — scopri cosa è di tendenza, le ultime uscite e le più popolari, in classifica su tutto lo store."
+      ]
+    }
+  ]
+}
