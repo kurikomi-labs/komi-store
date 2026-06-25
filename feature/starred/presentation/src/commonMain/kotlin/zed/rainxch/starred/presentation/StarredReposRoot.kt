@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package zed.rainxch.starred.presentation
 
 import androidx.compose.foundation.clickable
@@ -28,7 +26,6 @@ import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -64,8 +60,6 @@ import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.starred.presentation.components.StarredRepositoryItem
 import zed.rainxch.starred.presentation.model.StarredSortRule
-import zed.rainxch.starred.presentation.utils.formatRelativeTime
-import kotlin.time.ExperimentalTime
 
 @Composable
 fun StarredReposRoot(
@@ -77,7 +71,7 @@ fun StarredReposRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    StarredScreen(
+    StarredReposScreen(
         state = state,
         onAction = { action ->
             when (action) {
@@ -92,14 +86,14 @@ fun StarredReposRoot(
 }
 
 @Composable
-fun StarredScreen(
+fun StarredReposScreen(
     state: StarredReposState,
     onAction: (StarredReposAction) -> Unit,
 ) {
     KomiScaffold(
         topBar = {
             StarredTopBar(
-                lastSyncTime = state.lastSyncTime,
+                subtitle = state.lastSyncSubtitle,
                 isSyncing = state.isSyncing,
                 sortRule = state.sortRule,
                 hasRepos = state.starredRepositories.isNotEmpty(),
@@ -160,25 +154,6 @@ fun StarredScreen(
                             )
                         }
 
-                        val filteredRepositories =
-                            remember(state.starredRepositories, state.searchQuery) {
-                                val q = state.searchQuery.trim().lowercase()
-                                if (q.isBlank()) {
-                                    state.starredRepositories
-                                } else {
-                                    state.starredRepositories
-                                        .filter { repo ->
-                                            repo.repoName.lowercase().contains(q) ||
-                                                    repo.repoOwner.lowercase().contains(q) ||
-                                                    (repo.repoDescription?.lowercase()
-                                                        ?.contains(q) == true) ||
-                                                    (repo.primaryLanguage?.lowercase()
-                                                        ?.contains(q) == true)
-                                        }
-                                        .toImmutableList()
-                                }
-                            }
-
                         KomiPullToRefresh(
                             isRefreshing = state.isSyncing,
                             onRefresh = {
@@ -206,7 +181,7 @@ fun StarredScreen(
                                         .arrowKeyScroll(gridState, autoFocus = true),
                                 ) {
                                     items(
-                                        items = filteredRepositories,
+                                        items = state.filteredRepositories,
                                         key = { it.repoId },
                                     ) { repo ->
                                         StarredRepositoryItem(
@@ -288,24 +263,23 @@ fun StarredScreen(
 
 @Composable
 private fun StarredTopBar(
-    lastSyncTime: Long?,
+    subtitle: String?,
     isSyncing: Boolean,
     sortRule: StarredSortRule,
     hasRepos: Boolean,
     onAction: (StarredReposAction) -> Unit,
 ) {
-    val subtitle =
-        if (lastSyncTime != null && !isSyncing) {
-            "${stringResource(Res.string.last_synced)}: ${formatRelativeTime(lastSyncTime)}"
-        } else {
-            null
-        }
-
     val sortEntries = StarredSortRule.entries
         .map { rule ->
             KomiMenuItem(
                 id = rule.name,
-                label = stringResource(rule.labelRes()),
+                label = stringResource(
+                    when (rule) {
+                        StarredSortRule.RecentlyStarred -> Res.string.starred_picker_sort_recent
+                        StarredSortRule.NameAsc -> Res.string.starred_picker_sort_alphabetical
+                        StarredSortRule.StarsDesc -> Res.string.starred_picker_sort_stars
+                    }
+                ),
             )
         }
         .toPersistentList()
@@ -352,13 +326,6 @@ private fun StarredTopBar(
         },
     )
 }
-
-private fun StarredSortRule.labelRes() =
-    when (this) {
-        StarredSortRule.RecentlyStarred -> Res.string.starred_picker_sort_recent
-        StarredSortRule.NameAsc -> Res.string.starred_picker_sort_alphabetical
-        StarredSortRule.StarsDesc -> Res.string.starred_picker_sort_stars
-    }
 
 @Composable
 private fun StarredSearchBar(
@@ -444,7 +411,7 @@ private fun EmptyStateContent(
 @Composable
 private fun PreviewStarred() {
     PersonalityPreview {
-        StarredScreen(
+        StarredReposScreen(
             state =
                 StarredReposState(
                     starredRepositories = persistentListOf(),

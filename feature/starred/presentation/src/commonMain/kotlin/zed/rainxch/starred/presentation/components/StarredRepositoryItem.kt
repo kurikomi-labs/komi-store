@@ -26,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,6 +93,7 @@ fun StarredRepositoryItem(
                         overflow = TextOverflow.Ellipsis,
                         uppercase = false,
                     )
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -105,6 +108,7 @@ fun StarredRepositoryItem(
                             uppercase = false,
                             modifier = Modifier.weight(1f, fill = false),
                         )
+
                         if (repository.isCurrentUserOwner) {
                             KomiIcon(
                                 imageVector = Icons.Filled.Verified,
@@ -146,22 +150,26 @@ fun StarredRepositoryItem(
                     icon = Icons.Default.Star,
                     label = formatCount(repository.stargazersCount),
                 )
+
                 StatChipNeutral(
                     icon = Icons.AutoMirrored.Filled.CallSplit,
                     label = formatCount(repository.forksCount),
                 )
+
                 if (repository.openIssuesCount > 0) {
                     StatChipNeutral(
                         icon = Icons.Outlined.Warning,
                         label = formatCount(repository.openIssuesCount),
                     )
                 }
+
                 repository.primaryLanguage?.let { language ->
                     StatChipNeutral(
                         icon = Icons.Default.Code,
                         label = language,
                     )
                 }
+
                 if (repository.isInstalled) {
                     TonalBadge(
                         text = stringResource(Res.string.installed),
@@ -169,6 +177,7 @@ fun StarredRepositoryItem(
                         content = colors.primary,
                     )
                 }
+
                 repository.latestRelease?.let { version ->
                     TonalBadge(
                         text = version,
@@ -182,7 +191,7 @@ fun StarredRepositoryItem(
 }
 
 @Composable
-private fun StatChipNeutral(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String) {
+private fun StatChipNeutral(icon: ImageVector, label: String) {
     val colors = LocalPersonality.current.colors
     KomiChip(
         label = label,
@@ -202,8 +211,8 @@ private fun StatChipNeutral(icon: androidx.compose.ui.graphics.vector.ImageVecto
 @Composable
 private fun TonalBadge(
     text: String,
-    container: androidx.compose.ui.graphics.Color,
-    content: androidx.compose.ui.graphics.Color,
+    container: Color,
+    content: Color,
 ) {
     Box(
         modifier = Modifier
