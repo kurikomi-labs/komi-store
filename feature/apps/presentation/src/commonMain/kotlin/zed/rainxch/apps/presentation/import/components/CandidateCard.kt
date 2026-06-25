@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.components.InstalledAppIcon
@@ -72,6 +71,8 @@ fun CandidateCard(
     onSearchSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val reducedMotion = LocalReducedMotion.current
     val clickActionLabel = if (expanded) {
         stringResource(Res.string.external_import_card_collapse_label)
@@ -92,16 +93,92 @@ fun CandidateCard(
         Column(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            CandidateHeader(candidate = candidate)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                InstalledAppIcon(
+                    packageName = candidate.packageName,
+                    appName = candidate.appLabel,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(shape.corner)),
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    KomiText(
+                        text = candidate.appLabel,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                    )
+
+                    KomiText(
+                        text = candidate.packageName,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .background(colors.primaryContainer),
+                    ) {
+                        KomiText(
+                            text = stringResource(
+                                Res.string.external_import_card_installer_chip,
+                                candidate.installerLabel,
+                            ),
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.onPrimaryContainer,
+                            uppercase = false,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        )
+                    }
+                }
+            }
 
             PreselectedRow(suggestion = candidate.preselectedSuggestion)
 
             if (!expanded) {
-                CollapsedActions(
-                    canLink = candidate.preselectedSuggestion != null,
-                    onLink = onLink,
-                    onExpand = onToggleExpanded,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (candidate.preselectedSuggestion != null) {
+                        KomiButton(
+                            onClick = onLink,
+                            label = stringResource(Res.string.external_import_card_action_link),
+                            variant = KomiButtonVariant.Primary,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+
+                    KomiButton(
+                        onClick = onToggleExpanded,
+                        label = stringResource(Res.string.external_import_card_action_more),
+                        variant = KomiButtonVariant.Text,
+                        trailingIcon = Icons.Default.KeyboardArrowDown,
+                        modifier = if (candidate.preselectedSuggestion != null) {
+                            Modifier
+                        } else {
+                            Modifier.weight(1f)
+                        },
+                    )
+                }
             }
 
             AnimatedVisibility(
@@ -159,102 +236,6 @@ fun CandidateCard(
 }
 
 @Composable
-private fun CollapsedActions(
-    canLink: Boolean,
-    onLink: () -> Unit,
-    onExpand: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (canLink) {
-            KomiButton(
-                onClick = onLink,
-                label = stringResource(Res.string.external_import_card_action_link),
-                variant = KomiButtonVariant.Primary,
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        KomiButton(
-            onClick = onExpand,
-            label = stringResource(Res.string.external_import_card_action_more),
-            variant = KomiButtonVariant.Text,
-            trailingIcon = Icons.Default.KeyboardArrowDown,
-            modifier = if (canLink) Modifier else Modifier.weight(1f),
-        )
-    }
-}
-
-@Composable
-private fun CandidateHeader(candidate: CandidateUi) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        InstalledAppIcon(
-            packageName = candidate.packageName,
-            appName = candidate.appLabel,
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(shape.corner)),
-        )
-
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            KomiText(
-                text = candidate.appLabel,
-                role = KomiTextRole.Title,
-                fontWeight = FontWeight.SemiBold,
-                color = colors.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                uppercase = false,
-            )
-
-            KomiText(
-                text = candidate.packageName,
-                role = KomiTextRole.Body,
-                fontSize = 13.sp,
-                color = colors.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                uppercase = false,
-            )
-
-            InstallerChip(installerLabel = candidate.installerLabel)
-        }
-    }
-}
-
-@Composable
-private fun InstallerChip(installerLabel: String) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(shape.cornerSmall))
-            .background(colors.primaryContainer),
-    ) {
-        KomiText(
-            text = stringResource(Res.string.external_import_card_installer_chip, installerLabel),
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = colors.onPrimaryContainer,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-        )
-    }
-}
-
-@Composable
 private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
@@ -285,7 +266,6 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
             )
         } else {
-            val percent = (suggestion.confidence * 100).roundToInt().coerceIn(0, 100)
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -328,8 +308,8 @@ private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
                     KomiText(
                         text = stringResource(
                             Res.string.external_import_match_confidence_chip,
-                            percent,
-                        ) + "%",
+                            suggestion.confidencePercent,
+                        ),
                         role = KomiTextRole.Label,
                         fontSize = 11.sp,
                         color = contentColor,
