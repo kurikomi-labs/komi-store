@@ -104,7 +104,6 @@
                     android:scheme="githubstore" />
             </intent-filter>
 
-            <!-- Web OAuth handoff deep link from github-store.org/auth/callback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

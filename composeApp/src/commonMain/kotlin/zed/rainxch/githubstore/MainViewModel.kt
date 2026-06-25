@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -88,8 +87,9 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            val complete = tweaksRepository.getOnboardingComplete().first()
-            _state.update { it.copy(onboardingComplete = complete) }
+            tweaksRepository.getMangaPaper().collect { paper ->
+                _state.update { it.copy(mangaPaper = paper) }
+            }
         }
 
         viewModelScope.launch {
@@ -101,6 +101,12 @@ class MainViewModel(
         viewModelScope.launch {
             tweaksRepository.getContentWidth().collect { width ->
                 _state.update { it.copy(contentWidth = width) }
+            }
+        }
+
+        viewModelScope.launch {
+            tweaksRepository.getAppLanguage().collect { tag ->
+                _state.update { it.copy(appLanguageTag = tag) }
             }
         }
 

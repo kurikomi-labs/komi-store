@@ -10,7 +10,7 @@ import zed.rainxch.githubstore.app.deeplink.DeepLinkDestination
 import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.navigation.getCurrentScreen
-import zed.rainxch.tweaks.presentation.TweaksDeepLinkBus
+import zed.rainxch.tweaks.presentation.utils.TweaksDeepLinkBus
 
 @Composable
 fun HandleDesktopToolbarDeeplinks(

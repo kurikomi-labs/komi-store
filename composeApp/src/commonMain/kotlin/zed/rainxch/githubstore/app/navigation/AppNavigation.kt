@@ -60,16 +60,16 @@ import zed.rainxch.devprofile.presentation.DeveloperProfileRoot
 import zed.rainxch.favourites.presentation.FavouritesRoot
 import zed.rainxch.favourites.presentation.import.ImportStarsRoot
 import zed.rainxch.feed.presentation.FeedRoot
-import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
-import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_subtitle
 import zed.rainxch.githubstore.core.presentation.res.adaptive_pick_repo_title
 import zed.rainxch.home.domain.model.HomeCategory
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.home.presentation.categorylist.CategoryListRoot
-import zed.rainxch.profile.presentation.announcements.AnnouncementsRoot
+import zed.rainxch.profile.presentation.announcements.AnnouncementsScreen
+import zed.rainxch.profile.presentation.announcements.AnnouncementsViewModel
 import zed.rainxch.profile.presentation.whatsnew.WhatsNewHistoryScreen
+import zed.rainxch.profile.presentation.whatsnew.WhatsNewViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedRoot
 import zed.rainxch.repopages.presentation.issuedetail.IssueDetailRoot
 import zed.rainxch.repopages.presentation.issues.IssuesRoot
@@ -77,7 +77,6 @@ import zed.rainxch.repopages.presentation.pulls.PullsRoot
 import zed.rainxch.repopages.presentation.security.SecurityRoot
 import zed.rainxch.search.presentation.SearchRoot
 import zed.rainxch.search.presentation.SearchViewModel
-import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.starred.presentation.StarredReposRoot
 import zed.rainxch.tweaks.presentation.TweaksRoot
 import zed.rainxch.tweaks.presentation.appinfo.AppInfoRoot
@@ -427,7 +426,7 @@ fun AppNavigation(
                                         onNavigateToSearchByPlatform = { platform ->
                                             navController.navigate(
                                                 GithubStoreGraph.SearchScreen(
-                                                    initialPlatform = platform.toSearchPlatformUi().name,
+                                                    initialPlatform = platform.name,
                                                 ),
                                             )
                                         },
@@ -706,19 +705,6 @@ fun AppNavigation(
                                 )
                             }
 
-                            composable<GithubStoreGraph.OnboardingScreen> {
-                                zed.rainxch.githubstore.app.onboarding.OnboardingRoot(
-                                    onNavigateToSignIn = {
-                                        navController.navigate(GithubStoreGraph.AuthenticationScreen)
-                                    },
-                                    onNavigateToHome = {
-                                        navController.navigate(GithubStoreGraph.HomeScreen) {
-                                            popUpTo(0) { inclusive = true }
-                                        }
-                                    },
-                                )
-                            }
-
                             composable<GithubStoreGraph.FavouritesScreen> {
                                 FavouritesRoot(
                                     onNavigateBack = {
@@ -839,23 +825,11 @@ fun AppNavigation(
                             }
 
                             composable<GithubStoreGraph.AnnouncementsScreen> {
-                                val feed by announcementsViewModel.feed.collectAsStateWithLifecycle()
-                                val displayed by announcementsViewModel.displayedItems.collectAsStateWithLifecycle()
-                                AnnouncementsRoot(
-                                    items = displayed,
-                                    acknowledgedIds = feed.acknowledgedIds,
-                                    mutedCategories = feed.mutedCategories,
-                                    refreshFailed = feed.lastRefreshFailed,
+                                val announcementsState by announcementsViewModel.state.collectAsStateWithLifecycle()
+                                AnnouncementsScreen(
+                                    state = announcementsState,
+                                    onAction = announcementsViewModel::onAction,
                                     onNavigateBack = { navController.navigateUp() },
-                                    onRefresh = { announcementsViewModel.refresh() },
-                                    onCtaClick = { announcementsViewModel.openCta(it) },
-                                    onDismissClick = { announcementsViewModel.dismiss(it) },
-                                    onAcknowledgeClick = { announcementsViewModel.acknowledge(it) },
-                                    onToggleMute = { category, muted ->
-                                        announcementsViewModel.setMuted(category, muted)
-                                    },
-                                    onLeavingScreen = { announcementsViewModel.clearPreview() },
-                                    onEnteringScreen = { announcementsViewModel.markRoutineItemsSeen() },
                                 )
                             }
 

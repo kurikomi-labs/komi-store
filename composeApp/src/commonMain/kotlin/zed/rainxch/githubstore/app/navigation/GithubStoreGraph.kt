@@ -66,9 +66,6 @@ sealed interface GithubStoreGraph {
     data object AppsScreen : GithubStoreGraph
 
     @Serializable
-    data object OnboardingScreen : GithubStoreGraph
-
-    @Serializable
     data object ExternalImportScreen : GithubStoreGraph
 
     @Serializable

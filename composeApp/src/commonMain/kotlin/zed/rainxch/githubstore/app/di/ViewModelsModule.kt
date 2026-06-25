@@ -16,12 +16,11 @@ import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
 import zed.rainxch.favourites.presentation.import.ImportStarsViewModel
 import zed.rainxch.feed.presentation.FeedViewModel
-import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
-import zed.rainxch.githubstore.app.onboarding.OnboardingViewModel
-import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.home.presentation.HomeViewModel
 import zed.rainxch.home.presentation.categorylist.CategoryListViewModel
 import zed.rainxch.profile.presentation.ProfileViewModel
+import zed.rainxch.profile.presentation.announcements.AnnouncementsViewModel
+import zed.rainxch.profile.presentation.whatsnew.WhatsNewViewModel
 import zed.rainxch.recentlyviewed.presentation.RecentlyViewedViewModel
 import zed.rainxch.repopages.presentation.issuedetail.IssueDetailViewModel
 import zed.rainxch.repopages.presentation.issues.IssuesViewModel
@@ -30,9 +29,11 @@ import zed.rainxch.repopages.presentation.security.SecurityViewModel
 import zed.rainxch.search.presentation.SearchViewModel
 import zed.rainxch.starred.presentation.StarredReposViewModel
 import zed.rainxch.tweaks.presentation.TweaksViewModel
+import zed.rainxch.tweaks.presentation.appinfo.AppInfoViewModel
 import zed.rainxch.tweaks.presentation.feedback.FeedbackViewModel
 import zed.rainxch.tweaks.presentation.hidden.HiddenRepositoriesViewModel
 import zed.rainxch.tweaks.presentation.hosttokens.HostTokensViewModel
+import zed.rainxch.tweaks.presentation.licenses.LicensesViewModel
 import zed.rainxch.tweaks.presentation.mirror.MirrorPickerViewModel
 import zed.rainxch.tweaks.presentation.skipped.SkippedUpdatesViewModel
 
@@ -164,9 +165,10 @@ val viewModelsModule =
         viewModelOf(::SkippedUpdatesViewModel)
         viewModelOf(::HiddenRepositoriesViewModel)
         viewModelOf(::HostTokensViewModel)
+        viewModelOf(::LicensesViewModel)
+        viewModelOf(::AppInfoViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::AnnouncementsViewModel)
-        viewModelOf(::OnboardingViewModel)
         viewModel { params ->
             CategoryListViewModel(
                 category = params.get(),

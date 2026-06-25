@@ -19,7 +19,6 @@ import zed.rainxch.details.presentation.DetailsRoot
 import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.details.presentation.about.AboutRoot
 import zed.rainxch.details.presentation.whatsnew.WhatsNewRoot
-import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 
 private sealed interface DetailPaneRoute {
     data object Main : DetailPaneRoute
@@ -184,7 +183,7 @@ private fun MainDetailPane(
         onNavigateToSearchByPlatform = { platform ->
             navController.navigate(
                 GithubStoreGraph.SearchScreen(
-                    initialPlatform = platform.toSearchPlatformUi().name,
+                    initialPlatform = platform.name,
                 ),
             )
         },

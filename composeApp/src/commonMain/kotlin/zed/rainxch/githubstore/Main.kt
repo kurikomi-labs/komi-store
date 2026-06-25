@@ -13,9 +13,9 @@ import coil3.svg.SvgDecoder
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.presentation.personality.classicPersonality
-import zed.rainxch.core.presentation.personality.manga.MangaPaper
 import zed.rainxch.core.presentation.personality.mangaPersonality
 import zed.rainxch.core.presentation.personality.toMangaAccent
+import zed.rainxch.core.presentation.personality.toMangaPaper
 import zed.rainxch.core.presentation.personality.utils.PersonalityTheme
 import zed.rainxch.githubstore.app.components.RateLimitDialog
 import zed.rainxch.githubstore.app.components.SessionExpiredDialog
@@ -23,9 +23,9 @@ import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.navigation.getCurrentScreen
 import zed.rainxch.githubstore.app.whatsnew.WhatsNewSheet
-import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
 import zed.rainxch.githubstore.utils.HandleDesktopToolbarDeeplinks
 import zed.rainxch.githubstore.utils.HandleKeyboardEvents
+import zed.rainxch.profile.presentation.whatsnew.WhatsNewViewModel
 
 @Composable
 fun App(
@@ -71,17 +71,21 @@ fun App(
         when (mainState.personality) {
             AppPersonality.MANGA -> {
                 mangaPersonality(
-                    paper = if (resolvedDarkTheme) MangaPaper.NIGHT else MangaPaper.DAY,
+                    paper = mainState.mangaPaper.toMangaPaper(),
                     accent = mainState.accent.toMangaAccent(),
                 )
             }
 
             AppPersonality.CLASSIC -> {
-                classicPersonality(dark = resolvedDarkTheme)
+                classicPersonality(
+                    dark = resolvedDarkTheme,
+                    amoled = mainState.isAmoledTheme,
+                    accent = mainState.accent,
+                )
             }
         }
 
-    PersonalityTheme(personality) {
+    PersonalityTheme(personality, languageTag = mainState.appLanguageTag) {
         AppNavigation(
             navController = navController,
             isScrollbarEnabled = mainState.isScrollbarEnabled,

@@ -44,12 +44,12 @@ object WindowStateStore {
         val dir =
             when {
                 DesktopOs.isMac -> {
-                    File(home, "Library/Application Support/GitHub-Store")
+                    File(home, "Library/Application Support/Komi-Store")
                 }
 
                 DesktopOs.isWindows -> {
                     val appData = System.getenv("APPDATA")?.let(::File) ?: File(home, "AppData/Roaming")
-                    File(appData, "GitHub-Store")
+                    File(appData, "Komi-Store")
                 }
 
                 else -> {
@@ -59,7 +59,7 @@ object WindowStateStore {
                             ?.takeIf { it.isNotBlank() }
                             ?.let(::File)
                             ?: File(home, ".config")
-                    File(xdg, "GitHub-Store")
+                    File(xdg, "Komi-Store")
                 }
             }
         File(dir, FILE_NAME)

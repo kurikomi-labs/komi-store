@@ -76,19 +76,19 @@ object CrashReporter {
         val home = File(System.getProperty("user.home"))
         return when {
             DesktopOs.isMac -> {
-                File(home, "Library/Logs/GitHub-Store")
+                File(home, "Library/Logs/Komi-Store")
             }
 
             DesktopOs.isWindows -> {
                 val localAppData = System.getenv("LOCALAPPDATA")?.let(::File) ?: home
-                File(localAppData, "GitHub-Store/logs")
+                File(localAppData, "Komi-Store/logs")
             }
 
             else -> {
                 val stateHome =
                     System.getenv("XDG_STATE_HOME")?.let(::File)
                         ?: File(home, ".local/state")
-                File(stateHome, "GitHub-Store/logs")
+                File(stateHome, "Komi-Store/logs")
             }
         }
     }

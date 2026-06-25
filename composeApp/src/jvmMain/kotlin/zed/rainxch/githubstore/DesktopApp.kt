@@ -64,7 +64,7 @@ import java.security.Security
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val PRIVACY_POLICY_URL = "https://github-store.org/privacy-policy"
+private const val PRIVACY_POLICY_URL = "https://komistore.app/privacy-policy"
 
 private const val LANGUAGE_PREF_READ_TIMEOUT_MS = 2000L
 
