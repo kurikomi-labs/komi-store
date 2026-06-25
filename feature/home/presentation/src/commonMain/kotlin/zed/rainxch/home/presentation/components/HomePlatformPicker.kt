@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.presentation.components.icon.KomiIcon
@@ -31,17 +32,9 @@ import zed.rainxch.githubstore.core.presentation.res.feed_platform_all
 import zed.rainxch.githubstore.core.presentation.res.feed_platform_picker_title
 import zed.rainxch.githubstore.core.presentation.res.feed_platform_picker_title_jp
 
-private val PickerPlatforms =
-    listOf(
-        DiscoveryPlatform.All,
-        DiscoveryPlatform.Android,
-        DiscoveryPlatform.Windows,
-        DiscoveryPlatform.Macos,
-        DiscoveryPlatform.Linux,
-    )
-
 @Composable
 fun HomePlatformPicker(
+    platforms: ImmutableList<DiscoveryPlatform>,
     selected: DiscoveryPlatform,
     onSelect: (DiscoveryPlatform) -> Unit,
     onDismiss: () -> Unit,
@@ -53,7 +46,7 @@ fun HomePlatformPicker(
         titleJp = stringResource(Res.string.feed_platform_picker_title_jp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            PickerPlatforms.forEach { platform ->
+            platforms.forEach { platform ->
                 HomePlatformRow(
                     platform = platform,
                     isSelected = platform == selected,
@@ -96,7 +89,7 @@ private fun HomePlatformRow(
             }
 
             KomiText(
-                text =  if (platform == DiscoveryPlatform.All) {
+                text = if (platform == DiscoveryPlatform.All) {
                     stringResource(Res.string.feed_platform_all)
                 } else {
                     platform.toLabel()

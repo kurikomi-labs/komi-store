@@ -51,6 +51,7 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.usesDecor
+import zed.rainxch.core.presentation.personality.ClassicPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
@@ -175,6 +176,7 @@ private fun HomeScreen(
 
         if (state.isPlatformPopupVisible) {
             HomePlatformPicker(
+                platforms = state.platformOptions,
                 selected = state.selectedPlatform,
                 onSelect = { onAction(HomeAction.OnPlatformSelected(it)) },
                 onDismiss = { onAction(HomeAction.OnPlatformPopupDismiss) },
@@ -219,7 +221,6 @@ private fun BoxScope.HomeChartFeed(
     onAction: (HomeAction) -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
-    val isManga = LocalPersonality.current is MangaPersonality
 
     LazyColumn(
         state = listState,
@@ -234,8 +235,9 @@ private fun BoxScope.HomeChartFeed(
                     onSelect = { onAction(HomeAction.OnChartSelected(it)) },
                 )
 
-                if (isManga) {
-                    KomiHorizontalDivider(thickness = 3.dp, color = colors.outline)
+                when (LocalPersonality.current) {
+                    is MangaPersonality -> KomiHorizontalDivider(thickness = 3.dp, color = colors.outline)
+                    is ClassicPersonality -> Unit
                 }
             }
         }

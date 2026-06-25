@@ -64,7 +64,7 @@ fun CategoryListRoot(
 }
 
 @Composable
-fun CategoryListScreen(
+private fun CategoryListScreen(
     state: CategoryListState,
     onAction: (CategoryListAction) -> Unit,
     onBack: () -> Unit,
@@ -86,7 +86,26 @@ fun CategoryListScreen(
     }
 
     KomiScaffold(
-        topBar = { CategoryListTopBar(state.category, onBack) },
+        topBar = {
+            KomiTopBar(
+                title = stringResource(
+                    when (state.category) {
+                        HomeCategory.HOT_RELEASE -> Res.string.home_section_hot_releases
+                        HomeCategory.TRENDING -> Res.string.home_section_trending_now
+                        HomeCategory.MOST_POPULAR -> Res.string.home_section_most_popular
+                    },
+                ),
+                size = KomiTopBarSize.Compact,
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.cd_back),
+                        onClick = onBack,
+                        variant = KomiButtonVariant.Tonal,
+                    )
+                },
+            )
+        },
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -137,26 +156,4 @@ fun CategoryListScreen(
             }
         }
     }
-}
-
-@Composable
-private fun CategoryListTopBar(category: HomeCategory, onBack: () -> Unit) {
-    KomiTopBar(
-        title = stringResource(
-            when (category) {
-                HomeCategory.HOT_RELEASE -> Res.string.home_section_hot_releases
-                HomeCategory.TRENDING -> Res.string.home_section_trending_now
-                HomeCategory.MOST_POPULAR -> Res.string.home_section_most_popular
-            },
-        ),
-        size = KomiTopBarSize.Compact,
-        leading = {
-            KomiIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.cd_back),
-                onClick = onBack,
-                variant = KomiButtonVariant.Tonal,
-            )
-        },
-    )
 }
