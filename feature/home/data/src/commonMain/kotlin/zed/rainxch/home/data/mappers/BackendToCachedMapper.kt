@@ -28,6 +28,7 @@ fun BackendRepoResponse.toCachedGithubRepoSummary(): CachedGithubRepoSummary =
             ?: releaseRecency?.takeIf { it >= 0 }?.let { releaseDateFromRecencyDays(it) },
         trendingScore = trendingScore,
         popularityScore = popularityScore?.toInt(),
+        dailyStars = dailyStars,
         availablePlatforms = buildList {
             if (hasInstallersAndroid) add(DiscoveryPlatform.Android)
             if (hasInstallersWindows) add(DiscoveryPlatform.Windows)

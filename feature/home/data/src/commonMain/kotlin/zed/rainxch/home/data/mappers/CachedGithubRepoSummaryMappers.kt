@@ -28,4 +28,5 @@ fun CachedGithubRepoSummary.toGithubRepoSummary(): GithubRepoSummary =
         availablePlatforms = availablePlatforms,
         downloadCount = downloadCount,
         latestReleaseDate = latestReleaseDate,
+        dailyStars = dailyStars,
     )

@@ -80,6 +80,7 @@ fun DiscoveryRepoCard(
         onLongPress = longPress,
         feed = feed,
         rank = rank,
+        dailyStars = repo.dailyStars ?: 0,
         version = repo.latestReleaseTag,
         compact = compact,
         index = index,

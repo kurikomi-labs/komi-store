@@ -26,6 +26,7 @@ data class BackendRepoResponse(
     val latestReleaseTag: String? = null,
     val releaseRecency: Int? = null,
     val releaseRecencyText: String? = null,
+    val dailyStars: Int? = null,
     val trendingScore: Double? = null,
     val popularityScore: Double? = null,
     val hasInstallersAndroid: Boolean = false,

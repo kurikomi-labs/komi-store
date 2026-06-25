@@ -36,6 +36,7 @@ fun BackendRepoResponse.toSummary(): GithubRepoSummary =
         latestReleaseDate = latestReleaseDate?.takeIf { it.isNotBlank() }
             ?: releaseRecency?.takeIf { it >= 0 }?.let { releaseDateFromRecencyDays(it) },
         latestReleaseTag = latestReleaseTag,
+        dailyStars = dailyStars,
     )
 
 @OptIn(ExperimentalTime::class)

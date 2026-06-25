@@ -25,4 +25,5 @@ fun GithubRepoSummary.toUi(): GithubRepoSummaryUi =
         latestReleaseDate = latestReleaseDate,
         latestReleaseTag = latestReleaseTag,
         sourceHost = sourceHost,
+        dailyStars = dailyStars,
     )

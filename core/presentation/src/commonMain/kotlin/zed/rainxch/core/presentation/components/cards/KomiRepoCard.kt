@@ -86,7 +86,7 @@ fun KomiRepoCard(
     feed: KomiRepoCardFeed = KomiRepoCardFeed.Plain,
     rank: Int = 1,
     version: String? = null,
-    weeklyStars: Int = 0,
+    dailyStars: Int = 0,
     compact: Boolean = false,
     index: Int = 0,
     tilt: Boolean = false,
@@ -157,7 +157,7 @@ fun KomiRepoCard(
                 CardBadge(
                     feed = feed,
                     rank = rank,
-                    weeklyStars = weeklyStars,
+                    dailyStars = dailyStars,
                     version = version,
                     releasedAgoDays = releasedAgoDays,
                     colors = colors,
@@ -360,7 +360,7 @@ private fun CardIconTile(
 private fun CardBadge(
     feed: KomiRepoCardFeed,
     rank: Int,
-    weeklyStars: Int,
+    dailyStars: Int,
     version: String?,
     releasedAgoDays: Int,
     colors: PersonalityColors,
@@ -370,10 +370,9 @@ private fun CardBadge(
         is MangaPersonality ->
             when (feed) {
                 KomiRepoCardFeed.Popular -> RankStamp(rank = rank, colors = colors)
-                KomiRepoCardFeed.Trending -> BurstBadge(
-                    text = "+${fmtCompact(weeklyStars)}",
-                    colors = colors
-                )
+                KomiRepoCardFeed.Trending -> if (dailyStars > 0) {
+                    BurstBadge(text = "+${fmtCompact(dailyStars)}", colors = colors)
+                }
 
                 KomiRepoCardFeed.Release -> NewReleaseStamp(
                     version = version,
@@ -388,7 +387,7 @@ private fun CardBadge(
             ClassicBadge(
                 feed = feed,
                 rank = rank,
-                weeklyStars = weeklyStars,
+                dailyStars = dailyStars,
                 releasedAgoDays = releasedAgoDays,
                 colors = colors
             )
@@ -500,18 +499,19 @@ private fun NewReleaseStamp(
 private fun ClassicBadge(
     feed: KomiRepoCardFeed,
     rank: Int,
-    weeklyStars: Int,
+    dailyStars: Int,
     releasedAgoDays: Int,
     colors: PersonalityColors,
 ) {
     val text =
         when (feed) {
             KomiRepoCardFeed.Popular -> "No. $rank"
-            KomiRepoCardFeed.Trending -> "+${fmtCompact(weeklyStars)}"
+            KomiRepoCardFeed.Trending -> "+${fmtCompact(dailyStars)}"
             KomiRepoCardFeed.Release -> "New"
             KomiRepoCardFeed.Plain -> ""
         }
-    val show = feed != KomiRepoCardFeed.Release || releasedAgoDays <= 7
+    val show = (feed != KomiRepoCardFeed.Release || releasedAgoDays <= 7) &&
+        (feed != KomiRepoCardFeed.Trending || dailyStars > 0)
     if (text.isNotEmpty() && show) {
         Box(
             modifier =
@@ -594,7 +594,7 @@ private fun PreviewCards() {
             releasedAgoDays = 4,
             feed = KomiRepoCardFeed.Popular,
             rank = 1,
-            weeklyStars = 1820,
+            dailyStars = 1820,
             onOpen = {},
         )
         KomiRepoCard(
@@ -612,7 +612,7 @@ private fun PreviewCards() {
             downloads = 8330000,
             releasedAgoDays = 5,
             feed = KomiRepoCardFeed.Trending,
-            weeklyStars = 980,
+            dailyStars = 980,
             version = "1.17.0",
             onOpen = {},
         )
