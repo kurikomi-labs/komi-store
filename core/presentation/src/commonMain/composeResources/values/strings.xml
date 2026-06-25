@@ -447,6 +447,7 @@
     <string name="released_yesterday">Released yesterday</string>
     <string name="released_days_ago">Released %1$d day(s) ago</string>
     <string name="released_on_date">Released on %1$s</string>
+    <string name="details_last_push">Last push %1$s</string>
 
     <string name="bottom_nav_explore_title">Explore</string>
     <string name="bottom_nav_search_title">Search</string>

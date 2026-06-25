@@ -30,6 +30,7 @@ fun BackendRepoResponse.toSummary(): GithubRepoSummary =
         topicCodes = topicCodes,
         releasesUrl = releasesUrl ?: "https://api.github.com/repos/$fullName/releases{/id}",
         updatedAt = updatedAt ?: latestReleaseDate ?: "",
+        pushedAt = pushedAt,
         availablePlatforms = buildAvailablePlatforms(),
         downloadCount = downloadCount,
         latestReleaseDate = latestReleaseDate?.takeIf { it.isNotBlank() }

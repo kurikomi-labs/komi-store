@@ -90,6 +90,7 @@ class DetailsRepositoryImpl(
         topics = null,
         releasesUrl = "$htmlUrl/releases",
         updatedAt = updatedAt ?: "",
+        pushedAt = pushedAt,
         defaultBranch = defaultBranch ?: "main",
         sourceHost = sourceHost,
     )
@@ -128,6 +129,7 @@ class DetailsRepositoryImpl(
             topics = topics,
             releasesUrl = "https://api.github.com/repos/${owner.login}/$name/releases{/id}",
             updatedAt = updatedAt,
+            pushedAt = pushedAt,
             defaultBranch = defaultBranch,
         )
 

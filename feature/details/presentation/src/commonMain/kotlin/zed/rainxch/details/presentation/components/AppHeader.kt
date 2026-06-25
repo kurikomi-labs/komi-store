@@ -4,7 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -24,10 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.CallSplit
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Verified
-import androidx.compose.material.icons.outlined.AccountTree
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -59,12 +56,12 @@ import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.presentation.utils.formatCount
+import zed.rainxch.core.presentation.utils.formatReleasedAgo
 import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
-import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.details_last_push
 import zed.rainxch.githubstore.core.presentation.res.forked_repository
 import zed.rainxch.githubstore.core.presentation.res.installed
 import zed.rainxch.githubstore.core.presentation.res.no_description
@@ -96,7 +93,6 @@ fun AppHeader(
     repository: GithubRepoSummary,
     release: GithubRelease?,
     installedApp: InstalledApp?,
-    stats: RepoStats?,
     modifier: Modifier = Modifier,
     downloadStage: DownloadStage = DownloadStage.IDLE,
     downloadProgress: Int? = null,
@@ -123,14 +119,6 @@ fun AppHeader(
         animationSpec = tween(durationMillis = 1800, easing = LinearOutSlowInEasing),
         label = "details-hero-surface",
     )
-    val stripeBase =
-        if (isDark) animatedAccent.copy(alpha = 0.18f) else animatedAccent.copy(alpha = 0.12f)
-    val stripeLineThick =
-        if (isDark) animatedAccent.copy(alpha = 0.45f) else animatedAccent.copy(alpha = 0.55f)
-    val stripeLineThin =
-        if (isDark) animatedAccent.copy(alpha = 0.22f) else animatedAccent.copy(alpha = 0.30f)
-    val avatarBg =
-        if (isDark) animatedAccent.copy(alpha = 0.20f) else animatedAccent.copy(alpha = 0.14f)
     val borderColor = colors.outline
 
     val animatedProgress by animateFloatAsState(
@@ -159,7 +147,7 @@ fun AppHeader(
         modifier = modifier
             .fillMaxWidth()
             .clip(headerShape)
-            .background(animatedSurface)
+            .drawBehind { drawRect(animatedSurface) }
             .border(1.5.dp, borderColor, headerShape),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -169,6 +157,13 @@ fun AppHeader(
                     .height(76.dp)
                     .clipToBounds()
                     .drawBehind {
+                        val accent = animatedAccent
+                        val stripeBase =
+                            if (isDark) accent.copy(alpha = 0.18f) else accent.copy(alpha = 0.12f)
+                        val stripeLineThick =
+                            if (isDark) accent.copy(alpha = 0.45f) else accent.copy(alpha = 0.55f)
+                        val stripeLineThin =
+                            if (isDark) accent.copy(alpha = 0.22f) else accent.copy(alpha = 0.30f)
                         drawRect(color = stripeBase)
                         val thick = 9.dp.toPx()
                         val thin = 2.5.dp.toPx()
@@ -266,82 +261,26 @@ fun AppHeader(
                     )
                 }
             }
-            Spacer(Modifier.height(10.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                val statColor = colors.onSurface.copy(alpha = 0.88f)
+            val lastPushIso = repository.pushedAt?.takeIf { it.isNotBlank() } ?: repository.updatedAt
+            val lastPushLabel = formatReleasedAgo(lastPushIso)
+            if (lastPushLabel != null) {
+                Spacer(Modifier.height(10.dp))
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    val statColor = colors.onSurface.copy(alpha = 0.88f)
                     KomiIcon(
-                        imageVector = Icons.Outlined.Star,
+                        imageVector = Icons.Outlined.History,
                         contentDescription = null,
                         tint = statColor,
                         modifier = Modifier.size(15.dp),
                     )
                     KomiText(
-                        text = formatCount(stats?.stars ?: repository.stargazersCount),
-                        role = KomiTextRole.Label,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = statColor,
-                        uppercase = false,
-                    )
-                }
-                val forksValue = stats?.forks ?: repository.forksCount
-                if (forksValue > 0) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        KomiIcon(
-                            imageVector = Icons.Outlined.AccountTree,
-                            contentDescription = null,
-                            tint = statColor,
-                            modifier = Modifier.size(15.dp),
-                        )
-                        KomiText(
-                            text = formatCount(forksValue),
-                            role = KomiTextRole.Label,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = statColor,
-                            uppercase = false,
-                        )
-                    }
-                }
-                val downloadsValue = stats?.totalDownloads ?: repository.downloadCount
-                if (downloadsValue > 0) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        KomiIcon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = null,
-                            tint = statColor,
-                            modifier = Modifier.size(15.dp),
-                        )
-                        KomiText(
-                            text = formatCount(downloadsValue),
-                            role = KomiTextRole.Label,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = statColor,
-                            uppercase = false,
-                        )
-                    }
-                }
-                val licenseValue = stats?.license
-                if (!licenseValue.isNullOrBlank()) {
-                    KomiText(
-                        text = licenseValue,
+                        text = stringResource(Res.string.details_last_push, lastPushLabel),
                         role = KomiTextRole.Label,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -426,50 +365,71 @@ fun AppHeader(
             }
             Spacer(Modifier.height(20.dp))
         }
-        Box(
+        HeaderAvatar(
+            avatarUrl = avatarUrl,
+            cornerShape = RoundedCornerShape(shape.cornerSmall),
+            isDark = isDark,
+            downloadStage = downloadStage,
+            accent = { animatedAccent },
+            progress = { animatedProgress },
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .offset(x = 20.dp, y = 30.dp)
                 .size(100.dp),
+        )
+    }
+}
+
+@Composable
+private fun HeaderAvatar(
+    avatarUrl: String?,
+    cornerShape: RoundedCornerShape,
+    isDark: Boolean,
+    downloadStage: DownloadStage,
+    accent: () -> Color,
+    progress: () -> Float,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(cornerShape)
+                .drawBehind {
+                    val a = accent()
+                    drawRect(if (isDark) a.copy(alpha = 0.20f) else a.copy(alpha = 0.14f))
+                }
+                .border(2.5.dp, accent(), cornerShape),
             contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(shape.cornerSmall))
-                    .background(avatarBg)
-                    .border(2.5.dp, animatedAccent, RoundedCornerShape(shape.cornerSmall)),
-                contentAlignment = Alignment.Center,
-            ) {
-                GitHubStoreImage(
-                    imageModel = { avatarUrl },
-                    modifier = Modifier.size(92.dp).clip(RoundedCornerShape(shape.cornerSmall)),
+            GitHubStoreImage(
+                imageModel = { avatarUrl },
+                modifier = Modifier.size(92.dp).clip(cornerShape),
+            )
+        }
+
+        when (downloadStage) {
+            DownloadStage.DOWNLOADING -> {
+                KomiCircularProgress(
+                    progress = { 1f },
+                    modifier = Modifier.fillMaxSize(),
+                    color = accent().copy(alpha = 0.2f),
+                )
+                KomiCircularProgress(
+                    progress = progress,
+                    modifier = Modifier.fillMaxSize(),
+                    color = accent(),
                 )
             }
 
-            when (downloadStage) {
-                DownloadStage.DOWNLOADING -> {
-                    KomiCircularProgress(
-                        progress = { 1f },
-                        modifier = Modifier.fillMaxSize(),
-                        color = animatedAccent.copy(alpha = 0.2f),
-                    )
-                    KomiCircularProgress(
-                        progress = { animatedProgress },
-                        modifier = Modifier.fillMaxSize(),
-                        color = animatedAccent,
-                    )
-                }
-
-                DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
-                    KomiCircularProgress(
-                        modifier = Modifier.fillMaxSize(),
-                        color = animatedAccent,
-                    )
-                }
-
-                DownloadStage.IDLE -> { }
+            DownloadStage.VERIFYING, DownloadStage.INSTALLING -> {
+                KomiCircularProgress(
+                    modifier = Modifier.fillMaxSize(),
+                    color = accent(),
+                )
             }
+
+            DownloadStage.IDLE -> { }
         }
     }
 }

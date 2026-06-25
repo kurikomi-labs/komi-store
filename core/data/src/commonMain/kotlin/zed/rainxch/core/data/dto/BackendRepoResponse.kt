@@ -20,6 +20,7 @@ data class BackendRepoResponse(
     val topicCodes: List<String> = emptyList(),
     val releasesUrl: String? = null,
     val updatedAt: String? = null,
+    val pushedAt: String? = null,
     val createdAt: String? = null,
     val latestReleaseDate: String? = null,
     val latestReleaseTag: String? = null,
