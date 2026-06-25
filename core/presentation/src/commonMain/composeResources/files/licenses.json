@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25",
+  "generatedAt": "2026-06-25",
   "note": "Maintainer-curated. To regenerate, run ./gradlew :composeApp:printRuntimeDependencies and reconcile against this list.",
   "libraries": [
     {"name": "Kotlin", "license": "Apache-2.0", "url": "https://github.com/JetBrains/kotlin"},
@@ -23,6 +23,22 @@
     {"name": "WorkManager", "license": "Apache-2.0", "url": "https://developer.android.com/jetpack/androidx/releases/work"},
     {"name": "KSafe", "license": "Apache-2.0", "url": "https://github.com/Anifantakis/KSafe"},
     {"name": "Material Icons Extended", "license": "Apache-2.0", "url": "https://fonts.google.com/icons"},
-    {"name": "Geist (Vercel)", "license": "OFL-1.1", "url": "https://github.com/vercel/geist-font"}
+    {"name": "Geist (Vercel)", "license": "OFL-1.1", "url": "https://github.com/vercel/geist-font"},
+    {"name": "Anton", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Anton"},
+    {"name": "JetBrains Mono", "license": "OFL-1.1", "url": "https://github.com/JetBrains/JetBrainsMono"},
+    {"name": "Oswald", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Oswald"},
+    {"name": "Lalezar", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Lalezar"},
+    {"name": "Khand", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Khand"},
+    {"name": "Baloo Da 2", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Baloo+Da+2"},
+    {"name": "ZCOOL QingKe HuangYou", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/ZCOOL+QingKe+HuangYou"},
+    {"name": "Dela Gothic One", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Dela+Gothic+One"},
+    {"name": "Black Han Sans", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Black+Han+Sans"},
+    {"name": "Noto Sans", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans"},
+    {"name": "Noto Sans Arabic", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+Arabic"},
+    {"name": "Noto Sans Bengali", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+Bengali"},
+    {"name": "Noto Sans Devanagari", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+Devanagari"},
+    {"name": "Noto Sans SC", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+SC"},
+    {"name": "Noto Sans JP", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+JP"},
+    {"name": "Noto Sans KR", "license": "OFL-1.1", "url": "https://fonts.google.com/specimen/Noto+Sans+KR"}
   ]
 }

@@ -371,6 +371,7 @@
     <string name="remove_from_favourites">Remove from favourites</string>
     <string name="favourites">Favourites</string>
     <string name="recently_viewed">Recently Viewed</string>
+    <string name="recently_viewed_remove_cd">Remove from history</string>
     <string name="profile_recently_viewed_description">Repositories you have visited</string>
 
     <string name="added_just_now">added just now</string>
@@ -665,6 +666,9 @@
     <string name="starred_picker_rate_limited">GitHub rate limit reached. Resume to keep checking.</string>
     <string name="starred_picker_resume">Resume</string>
     <string name="starred_picker_star_dedup_tooltip">Removing a star on GitHub won't untrack the app.</string>
+    <string name="starred_picker_cd_ships_apk">ships APK</string>
+    <string name="starred_picker_cd_already_tracked">already tracked</string>
+    <string name="starred_picker_cd_latest">latest %1$s</string>
 
     <string name="import_stars_title">Import starred repos by username</string>
     <string name="import_stars_subtitle">Enter any GitHub username to browse their public starred repositories and add them to your favourites. No sign-in required.</string>
@@ -1050,6 +1054,13 @@
     <string name="apps_section_state_expanded">Expanded</string>
     <string name="apps_section_state_collapsed">Collapsed</string>
     <string name="apps_compact_more_actions">More actions for %1$s</string>
+    <string name="apps_menu_item_active">%1$s  ✓</string>
+    <string name="apps_version_update">%1$s → %2$s</string>
+    <string name="apps_version_dated">%1$s (%2$s)</string>
+    <string name="apps_latest_version_placeholder">—</string>
+    <string name="apps_variant_subtitle">%1$s  ·  %2$s</string>
+    <string name="apps_section_header_cd">%1$s, %2$d, %3$s</string>
+    <string name="apps_section_header_static_cd">%1$s, %2$d</string>
     <string name="apps_compact_status_filter_active">monorepo filter active</string>
     <string name="apps_compact_status_variant_pinned">variant pinned</string>
     <string name="apps_compact_status_pre_release_on">pre-release on</string>
@@ -1111,6 +1122,10 @@
     <string name="profile_section_updates">Updates</string>
     <string name="profile_section_account">Account</string>
     <string name="appearance_section_mode">Mode</string>
+    <string name="appearance_section_paper">Paper</string>
+    <string name="paper_day">Day</string>
+    <string name="paper_night">Night</string>
+    <string name="paper_nord">Nord</string>
     <string name="appearance_section_display">Display</string>
     <string name="auth_more_signin_options">More sign-in options</string>
     <string name="auth_hide_signin_options">Hide options</string>
