@@ -72,7 +72,18 @@ fun RecentlyViewedScreen(
 ) {
     KomiScaffold(
         topBar = {
-            RecentlyViewedTopbar(onAction)
+            KomiTopBar(
+                title = stringResource(Res.string.recently_viewed),
+                size = KomiTopBarSize.Compact,
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = { onAction(RecentlyViewedAction.OnNavigateBackClick) },
+                        variant = KomiButtonVariant.Tonal,
+                    )
+                },
+            )
         },
     ) { innerPadding ->
         Box(
@@ -82,10 +93,10 @@ fun RecentlyViewedScreen(
                     .padding(innerPadding),
         ) {
             val gridState = rememberLazyStaggeredGridState()
-            val isScrollbarEnabled = LocalScrollbarEnabled.current
+
             ScrollbarContainer(
                 gridState = gridState,
-                enabled = isScrollbarEnabled,
+                enabled = LocalScrollbarEnabled.current,
                 modifier = Modifier.fillMaxSize(),
             ) {
                 LazyVerticalStaggeredGrid(
@@ -127,20 +138,4 @@ fun RecentlyViewedScreen(
             }
         }
     }
-}
-
-@Composable
-private fun RecentlyViewedTopbar(onAction: (RecentlyViewedAction) -> Unit) {
-    KomiTopBar(
-        title = stringResource(Res.string.recently_viewed),
-        size = KomiTopBarSize.Compact,
-        leading = {
-            KomiIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.navigate_back),
-                onClick = { onAction(RecentlyViewedAction.OnNavigateBackClick) },
-                variant = KomiButtonVariant.Tonal,
-            )
-        },
-    )
 }

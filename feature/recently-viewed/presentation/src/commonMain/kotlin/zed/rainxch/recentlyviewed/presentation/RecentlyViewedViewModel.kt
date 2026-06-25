@@ -50,17 +50,11 @@ class RecentlyViewedViewModel(
 
     fun onAction(action: RecentlyViewedAction) {
         when (action) {
-            RecentlyViewedAction.OnNavigateBackClick -> {
-                // Handled in composable
-            }
+            RecentlyViewedAction.OnNavigateBackClick -> Unit
 
-            is RecentlyViewedAction.OnRepositoryClick -> {
-                // Handled in composable
-            }
+            is RecentlyViewedAction.OnRepositoryClick -> Unit
 
-            is RecentlyViewedAction.OnDeveloperProfileClick -> {
-                // Handled in composable
-            }
+            is RecentlyViewedAction.OnDeveloperProfileClick -> Unit
 
             is RecentlyViewedAction.OnRemoveFromHistory -> {
                 viewModelScope.launch {
