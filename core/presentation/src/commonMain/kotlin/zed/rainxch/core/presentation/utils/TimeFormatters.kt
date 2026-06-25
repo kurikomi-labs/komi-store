@@ -8,7 +8,6 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.time.Clock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.math.roundToInt
@@ -19,6 +18,22 @@ private fun parseIsoInstantLenient(isoInstant: String): Instant? {
     if (trimmed.isEmpty()) return null
     runCatching { return Instant.parse(trimmed) }
 
+    if (trimmed.length == 10 && trimmed[4] == '-' && trimmed[7] == '-') {
+        runCatching { return Instant.parse(trimmed + "T00:00:00Z") }
+    }
+
+    var s = trimmed
+    if (s.length > 10 && s[10] == ' ') {
+        s = s.substring(0, 10) + "T" + s.substring(11)
+    }
+    val n = s.length
+    if (s.contains('T') && n >= 3 &&
+        (s[n - 3] == '+' || s[n - 3] == '-') && s[n - 2].isDigit() && s[n - 1].isDigit()
+    ) {
+        s += ":00"
+    }
+    runCatching { return Instant.parse(s) }
+
     val normalized =
         runCatching {
             val tzStart = trimmed.indexOfAny(charArrayOf('Z', '+', '-'), startIndex = 11)
@@ -27,8 +42,8 @@ private fun parseIsoInstantLenient(isoInstant: String): Instant? {
             val tail = trimmed.substring(tzStart)
             val colonCount = head.count { it == ':' }
             when (colonCount) {
-                1 -> head + ":00" + tail
-                0 -> head + ":00:00" + tail
+                1 -> "$head:00$tail"
+                0 -> "$head:00:00$tail"
                 else -> null
             }
         }.getOrNull() ?: return null
@@ -40,24 +55,6 @@ private fun parseIsoInstantLenient(isoInstant: String): Instant? {
 fun daysSinceIso(isoInstant: String?): Int? {
     val instant = isoInstant?.let { parseIsoInstantLenient(it) } ?: return null
     return (Clock.System.now() - instant).inWholeDays.toInt()
-}
-
-@OptIn(ExperimentalTime::class)
-fun formatRelativeShort(isoInstant: String?): String {
-    val instant = isoInstant?.let { parseIsoInstantLenient(it) } ?: return ""
-    val diffMs = Clock.System.now().toEpochMilliseconds() - instant.toEpochMilliseconds()
-    if (diffMs <= 0L) return "now"
-    val minutes = diffMs / 60_000L
-    if (minutes < 1L) return "now"
-    if (minutes < 60L) return "${minutes}m"
-    val hours = minutes / 60L
-    if (hours < 24L) return "${hours}h"
-    val days = hours / 24L
-    if (days < 30L) return "${days}d"
-    val months = days / 30L
-    if (months < 12L) return "${months}mo"
-    val years = days / 365L
-    return "${years}y"
 }
 
 @OptIn(ExperimentalTime::class)
@@ -135,51 +132,6 @@ fun formatLastChecked(timestamp: Long): String {
         minutes < 1 -> stringResource(Res.string.last_checked_just_now)
         minutes < 60 -> stringResource(Res.string.last_checked_minutes_ago, minutes.toInt())
         else -> stringResource(Res.string.last_checked_hours_ago, hours.toInt())
-    }
-}
-
-@OptIn(ExperimentalTime::class)
-fun hasWeekNotPassed(isoInstant: String): Boolean {
-    val updated = parseIsoInstantLenient(isoInstant) ?: return false
-    val now = Clock.System.now()
-    val diff = now - updated
-
-    return diff < 7.days
-}
-
-@OptIn(ExperimentalTime::class)
-@Composable
-fun formatReleasedAt(isoInstant: String): String {
-    val updated =
-        parseIsoInstantLenient(isoInstant)
-            ?: return isoInstant.trim().substringBefore('T').ifBlank { "" }
-    val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
-    val diff: Duration = now - updated
-
-    val hoursDiff = diff.inWholeHours
-    val daysDiff = diff.inWholeDays
-
-    return when {
-        hoursDiff < 1 -> {
-            stringResource(Res.string.released_just_now)
-        }
-
-        hoursDiff < 24 -> {
-            stringResource(Res.string.released_hours_ago, hoursDiff)
-        }
-
-        daysDiff == 1L -> {
-            stringResource(Res.string.released_yesterday)
-        }
-
-        daysDiff < 7 -> {
-            stringResource(Res.string.released_days_ago, daysDiff)
-        }
-
-        else -> {
-            val date = updated.toLocalDateTime(TimeZone.currentSystemDefault()).date
-            stringResource(Res.string.released_on_date, date.toString())
-        }
     }
 }
 
