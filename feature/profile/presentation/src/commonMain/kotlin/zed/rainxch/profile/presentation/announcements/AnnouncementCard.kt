@@ -61,6 +61,8 @@ private const val BODY_COLLAPSED_LINES = 4
 fun AnnouncementCard(
     announcement: Announcement,
     isAcknowledged: Boolean,
+    isExpanded: Boolean,
+    onToggleExpand: () -> Unit,
     onCtaClick: () -> Unit,
     onDismissClick: () -> Unit,
     onAcknowledgeClick: () -> Unit,
@@ -125,7 +127,11 @@ fun AnnouncementCard(
                         uppercase = false,
                     )
 
-                    ExpandableBody(announcement.body)
+                    ExpandableBody(
+                        body = announcement.body,
+                        isExpanded = isExpanded,
+                        onExpand = onToggleExpand,
+                    )
 
                     ActionRow(
                         announcement = announcement,
@@ -201,9 +207,12 @@ private fun CategoryChip(category: AnnouncementCategory) {
 }
 
 @Composable
-private fun ExpandableBody(body: String) {
+private fun ExpandableBody(
+    body: String,
+    isExpanded: Boolean,
+    onExpand: () -> Unit,
+) {
     val colors = LocalPersonality.current.colors
-    var expanded by remember(body) { mutableStateOf(false) }
     var isOverflowing by remember(body) { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         KomiText(
@@ -211,16 +220,16 @@ private fun ExpandableBody(body: String) {
             role = KomiTextRole.Body,
             color = colors.onSurface,
             uppercase = false,
-            maxLines = if (expanded) Int.MAX_VALUE else BODY_COLLAPSED_LINES,
+            maxLines = if (isExpanded) Int.MAX_VALUE else BODY_COLLAPSED_LINES,
             onTextLayout = { layout ->
-                if (!expanded) {
+                if (!isExpanded) {
                     isOverflowing = layout.hasVisualOverflow
                 }
             },
         )
-        if (!expanded && isOverflowing) {
+        if (!isExpanded && isOverflowing) {
             KomiButton(
-                onClick = { expanded = true },
+                onClick = onExpand,
                 label = stringResource(Res.string.announcements_read_more),
                 variant = KomiButtonVariant.Text,
                 size = KomiButtonSize.Sm,

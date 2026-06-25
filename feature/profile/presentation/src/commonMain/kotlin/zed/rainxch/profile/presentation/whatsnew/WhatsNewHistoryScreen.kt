@@ -30,6 +30,7 @@ import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.navigate_back
 import zed.rainxch.githubstore.core.presentation.res.whats_new_history_empty
 import zed.rainxch.githubstore.core.presentation.res.whats_new_title
 
@@ -47,7 +48,7 @@ fun WhatsNewHistoryScreen(
                 leading = {
                     KomiIconButton(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "",
+                        contentDescription = stringResource(Res.string.navigate_back),
                         onClick = onNavigateBack,
                         variant = KomiButtonVariant.Tonal,
                     )

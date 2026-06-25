@@ -27,11 +27,8 @@ import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.downloads_cleared
 import zed.rainxch.githubstore.core.presentation.res.logout_success
 import zed.rainxch.githubstore.core.presentation.res.profile_title
-import zed.rainxch.githubstore.core.presentation.res.proxy_saved
-import zed.rainxch.githubstore.core.presentation.res.seen_history_cleared
 import zed.rainxch.profile.presentation.components.LogoutDialog
 import zed.rainxch.profile.presentation.components.profileSections
 
@@ -60,26 +57,6 @@ fun ProfileRoot(
 
             is ProfileEvent.OnLogoutError -> {
                 toastState.danger(event.message)
-            }
-
-            ProfileEvent.OnProxySaved -> {
-                toastState.show(getString(Res.string.proxy_saved))
-            }
-
-            is ProfileEvent.OnProxySaveError -> {
-                toastState.danger(event.message)
-            }
-
-            ProfileEvent.OnCacheCleared -> {
-                toastState.show(getString(Res.string.downloads_cleared))
-            }
-
-            is ProfileEvent.OnCacheClearError -> {
-                toastState.danger(event.message)
-            }
-
-            ProfileEvent.OnSeenHistoryCleared -> {
-                toastState.show(getString(Res.string.seen_history_cleared))
             }
         }
     }

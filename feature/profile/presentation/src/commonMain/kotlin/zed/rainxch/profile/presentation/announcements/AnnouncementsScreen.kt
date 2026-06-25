@@ -11,17 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
@@ -32,8 +26,6 @@ import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.domain.model.announcement.Announcement
-import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.announcements_empty
 import zed.rainxch.githubstore.core.presentation.res.announcements_open_mute_settings
@@ -42,28 +34,15 @@ import zed.rainxch.githubstore.core.presentation.res.announcements_title
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
 
 @Composable
-fun AnnouncementsRoot(
-    items: List<Announcement>,
-    acknowledgedIds: Set<String>,
-    mutedCategories: Set<AnnouncementCategory>,
-    refreshFailed: Boolean,
+fun AnnouncementsScreen(
+    state: AnnouncementsState,
+    onAction: (AnnouncementsAction) -> Unit,
     onNavigateBack: () -> Unit,
-    onRefresh: suspend () -> Unit,
-    onCtaClick: (Announcement) -> Unit,
-    onDismissClick: (Announcement) -> Unit,
-    onAcknowledgeClick: (Announcement) -> Unit,
-    onToggleMute: (AnnouncementCategory, Boolean) -> Unit,
-    onLeavingScreen: () -> Unit = {},
-    onEnteringScreen: () -> Unit = {},
 ) {
     val colors = LocalPersonality.current.colors
-    var showMuteSheet by remember { mutableStateOf(false) }
-    var isRefreshing by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
-    DisposableEffect(Unit) {
-        onEnteringScreen()
-        onDispose { onLeavingScreen() }
+    LaunchedEffect(Unit) {
+        onAction(AnnouncementsAction.OnEnterScreen)
     }
 
     KomiScaffold(
@@ -83,7 +62,7 @@ fun AnnouncementsRoot(
                     KomiIconButton(
                         icon = Icons.Filled.Tune,
                         contentDescription = stringResource(Res.string.announcements_open_mute_settings),
-                        onClick = { showMuteSheet = true },
+                        onClick = { onAction(AnnouncementsAction.OnOpenMuteSheet) },
                         variant = KomiButtonVariant.Tonal,
                     )
                 },
@@ -91,23 +70,14 @@ fun AnnouncementsRoot(
         },
     ) { innerPadding ->
         KomiPullToRefresh(
-            isRefreshing = isRefreshing,
-            onRefresh = {
-                coroutineScope.launch {
-                    isRefreshing = true
-                    try {
-                        onRefresh()
-                    } finally {
-                        isRefreshing = false
-                    }
-                }
-            },
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onAction(AnnouncementsAction.OnRefresh) },
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            if (items.isEmpty()) {
+            if (state.items.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
@@ -115,7 +85,7 @@ fun AnnouncementsRoot(
                     KomiText(
                         text =
                             stringResource(
-                                if (refreshFailed) {
+                                if (state.refreshFailed) {
                                     Res.string.announcements_refresh_failed
                                 } else {
                                     Res.string.announcements_empty
@@ -132,7 +102,7 @@ fun AnnouncementsRoot(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    if (refreshFailed) {
+                    if (state.refreshFailed) {
                         item {
                             KomiText(
                                 text = stringResource(Res.string.announcements_refresh_failed),
@@ -143,13 +113,20 @@ fun AnnouncementsRoot(
                             )
                         }
                     }
-                    items(items, key = { it.id }) { item ->
+
+                    items(state.items, key = { it.id }) { announcement ->
                         AnnouncementCard(
-                            announcement = item,
-                            isAcknowledged = item.id in acknowledgedIds,
-                            onCtaClick = { onCtaClick(item) },
-                            onDismissClick = { onDismissClick(item) },
-                            onAcknowledgeClick = { onAcknowledgeClick(item) },
+                            announcement = announcement,
+                            isAcknowledged = announcement.id in state.acknowledgedIds,
+                            isExpanded = announcement.id in state.expandedIds,
+                            onToggleExpand = {
+                                onAction(AnnouncementsAction.OnToggleExpand(announcement.id))
+                            },
+                            onCtaClick = { onAction(AnnouncementsAction.OnCtaClick(announcement)) },
+                            onDismissClick = { onAction(AnnouncementsAction.OnDismissClick(announcement)) },
+                            onAcknowledgeClick = {
+                                onAction(AnnouncementsAction.OnAcknowledgeClick(announcement))
+                            },
                         )
                     }
                 }
@@ -157,11 +134,13 @@ fun AnnouncementsRoot(
         }
     }
 
-    if (showMuteSheet) {
+    if (state.isMuteSheetVisible) {
         MuteSettingsBottomSheet(
-            mutedCategories = mutedCategories,
-            onToggle = onToggleMute,
-            onDismiss = { showMuteSheet = false },
+            mutedCategories = state.mutedCategories,
+            onToggle = { category, muted ->
+                onAction(AnnouncementsAction.OnToggleMute(category, muted))
+            },
+            onDismiss = { onAction(AnnouncementsAction.OnDismissMuteSheet) },
         )
     }
 }
