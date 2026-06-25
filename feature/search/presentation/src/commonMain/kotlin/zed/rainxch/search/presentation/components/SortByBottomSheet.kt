@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
@@ -59,12 +61,12 @@ fun SortByBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 SortByUi.entries.forEach { option ->
-                    val isSelected = option == selectedSortBy
                     KomiButton(
                         onClick = { onSortBySelected(option) },
-                        label = stringResource(option.label()) + if (isSelected) "  ✓" else "",
+                        label = stringResource(option.label()),
                         variant = KomiButtonVariant.Text,
                         size = KomiButtonSize.Sm,
+                        leadingIcon = if (option == selectedSortBy) Icons.Default.Check else null,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

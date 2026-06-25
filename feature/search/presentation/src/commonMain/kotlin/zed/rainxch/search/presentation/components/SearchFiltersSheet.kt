@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +55,6 @@ import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.label
 import zed.rainxch.core.presentation.utils.toLabel
-import zed.rainxch.search.presentation.mappers.toDomain
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -174,6 +174,7 @@ private fun FilterSection(
             fontSize = 13.sp,
             color = colors.onSurfaceVariant,
         )
+
         content()
     }
 }
@@ -222,6 +223,7 @@ private fun SelectableChip(
                     tint = content,
                 )
             }
+
             KomiText(
                 text = text,
                 role = KomiTextRole.Label,
@@ -235,7 +237,7 @@ private fun SelectableChip(
 
 @Composable
 private fun NavRow(
-    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector,
+    leadingIcon: ImageVector,
     value: String,
     onClick: () -> Unit,
 ) {
@@ -263,7 +265,9 @@ private fun NavRow(
                 tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
+
             Spacer(Modifier.width(12.dp))
+
             KomiText(
                 text = value,
                 role = KomiTextRole.Body,
@@ -272,6 +276,7 @@ private fun NavRow(
                 uppercase = false,
                 modifier = Modifier.weight(1f),
             )
+
             KomiIcon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,

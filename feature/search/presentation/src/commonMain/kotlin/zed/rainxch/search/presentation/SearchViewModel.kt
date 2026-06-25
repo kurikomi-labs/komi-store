@@ -22,7 +22,6 @@ import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.repository.BrowseFilterStore
-import zed.rainxch.search.presentation.mappers.toSearchPlatformUi
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
@@ -51,7 +50,9 @@ import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_retry_in
 import zed.rainxch.githubstore.core.presentation.res.search_failed
 import zed.rainxch.search.presentation.mappers.toDomain
-import zed.rainxch.search.presentation.model.SearchPlatformUi
+import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
+import zed.rainxch.search.presentation.model.SearchSourceUi
+import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.isEntirelyGithubUrls
 import zed.rainxch.search.presentation.utils.parseGithubUrls
 
@@ -115,7 +116,12 @@ class SearchViewModel(
                     hasLoadedInitialData = true
                 }
             }
-            .map { it.copy(visibleRepos = computeVisibleRepos(it)) }
+            .map {
+                it.copy(
+                    visibleRepos = computeVisibleRepos(it),
+                    activeFilterCount = computeActiveFilterCount(it),
+                )
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
@@ -132,6 +138,15 @@ class SearchViewModel(
                         (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
             }
             .toImmutableList()
+    }
+
+    private fun computeActiveFilterCount(state: SearchState): Int {
+        var count = 0
+        if (state.selectedSource != SearchSourceUi.GitHub) count++
+        if (state.selectedSearchPlatform != DiscoveryPlatform.All) count++
+        if (state.selectedLanguage != ProgrammingLanguageUi.All) count++
+        if (state.selectedSortBy != SortByUi.BestMatch) count++
+        return count
     }
 
     private fun observeBrowseFilter() {
@@ -170,24 +185,17 @@ class SearchViewModel(
     private fun observeCustomForgeHosts() {
         viewModelScope.launch {
             tweaksRepository.getCustomForgeHosts().collect { hosts ->
-                val base = listOf(
-                    zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
-                    zed.rainxch.search.presentation.model.SearchSourceUi.Codeberg,
-                )
+                val base = listOf(SearchSourceUi.GitHub, SearchSourceUi.Codeberg)
                 val extra = hosts
                     .filter { it.isNotBlank() && !it.equals("codeberg.org", ignoreCase = true) }
                     .sorted()
-                    .map { zed.rainxch.search.presentation.model.SearchSourceUi.CustomForge(it) }
-                val all =
-                    kotlinx.collections.immutable.persistentListOf<zed.rainxch.search.presentation.model.SearchSourceUi>()
-                        .addAll(base + extra)
+                    .map { SearchSourceUi.CustomForge(it) }
+                val all = (base + extra).toImmutableList()
                 _state.update { current ->
-                    val currentSel = current.selectedSource
-                    val stillValid = all.contains(currentSel)
+                    val stillValid = all.contains(current.selectedSource)
                     current.copy(
                         availableSources = all,
-                        selectedSource = if (stillValid) currentSel
-                        else zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
+                        selectedSource = if (stillValid) current.selectedSource else SearchSourceUi.GitHub,
                     )
                 }
             }
@@ -752,17 +760,11 @@ class SearchViewModel(
                 }
             }
 
-            is SearchAction.OnRepositoryClick -> {
-                // Navigation handled in composable
-            }
+            is SearchAction.OnRepositoryClick -> Unit
 
-            SearchAction.OnNavigateBackClick -> {
-                // Handled in composable
-            }
+            SearchAction.OnNavigateBackClick -> Unit
 
-            is SearchAction.OnRepositoryDeveloperClick -> {
-                // Handled in composable
-            }
+            is SearchAction.OnRepositoryDeveloperClick -> Unit
 
             is SearchAction.OnHistoryItemClick -> {
                 _state.update {

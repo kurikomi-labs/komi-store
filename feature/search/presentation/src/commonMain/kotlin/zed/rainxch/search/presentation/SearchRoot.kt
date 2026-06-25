@@ -115,6 +115,7 @@ import zed.rainxch.search.presentation.model.ParsedGithubLink
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
 import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
+import zed.rainxch.search.presentation.utils.label
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -348,7 +349,6 @@ fun SearchScreen(
                         .fillMaxHeight()
                         .padding(horizontal = 16.dp),
             ) {
-
                 AnimatedVisibility(
                     visible = state.isClipboardBannerVisible && state.clipboardLinks.isNotEmpty(),
                     enter = slideInVertically() + fadeIn(),
@@ -678,6 +678,7 @@ fun PlatformPicker(
                         tint = colors.primary,
                     )
                 }
+
                 KomiText(
                     text = platform.toLabel(),
                     role = KomiTextRole.Label,
@@ -718,6 +719,7 @@ private fun ClipboardBanner(
                     color = colors.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                 )
+
                 Box(
                     modifier = Modifier
                         .size(28.dp)
@@ -733,7 +735,9 @@ private fun ClipboardBanner(
                     )
                 }
             }
+
             Spacer(Modifier.height(4.dp))
+
             links.forEach { link ->
                 Row(
                     modifier = Modifier
@@ -750,6 +754,7 @@ private fun ClipboardBanner(
                         modifier = Modifier.size(16.dp),
                         tint = colors.primary,
                     )
+
                     KomiText(
                         text = "${link.owner}/${link.repo}",
                         role = KomiTextRole.Body,
@@ -758,6 +763,7 @@ private fun ClipboardBanner(
                         uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
+
                     KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = stringResource(Res.string.open_in_app),
@@ -789,6 +795,7 @@ private fun DetectedLinksSection(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 6.dp),
         )
+
         links.forEach { link ->
             KomiSurface(
                 modifier = Modifier
@@ -808,6 +815,7 @@ private fun DetectedLinksSection(
                         modifier = Modifier.size(18.dp),
                         tint = colors.primary,
                     )
+
                     KomiText(
                         text = "${link.owner}/${link.repo}",
                         role = KomiTextRole.Body,
@@ -816,6 +824,7 @@ private fun DetectedLinksSection(
                         uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
+
                     KomiText(
                         text = stringResource(Res.string.open_in_app),
                         role = KomiTextRole.Label,
@@ -835,7 +844,6 @@ private fun SearchTopbar(
     state: SearchState,
     focusRequester: FocusRequester,
 ) {
-    val activeFilterCount = activeFilterCount(state)
     Row(
         modifier =
             Modifier
@@ -881,19 +889,10 @@ private fun SearchTopbar(
         )
 
         FiltersPillButton(
-            activeCount = activeFilterCount,
+            activeCount = state.activeFilterCount,
             onClick = { onAction(SearchAction.OnToggleFiltersSheet) },
         )
     }
-}
-
-private fun activeFilterCount(state: SearchState): Int {
-    var count = 0
-    if (state.selectedSource != SearchSourceUi.GitHub) count++
-    if (state.selectedSearchPlatform != DiscoveryPlatform.All) count++
-    if (state.selectedLanguage != ProgrammingLanguageUi.All) count++
-    if (state.selectedSortBy != SortByUi.BestMatch) count++
-    return count
 }
 
 @Composable
@@ -925,6 +924,7 @@ private fun FiltersPillButton(
             modifier = Modifier.size(18.dp),
             tint = content,
         )
+
         if (activeCount > 0) {
             KomiText(
                 text = activeCount.toString(),
@@ -942,6 +942,8 @@ private fun ActiveFiltersStrip(
     state: SearchState,
     onAction: (SearchAction) -> Unit,
 ) {
+    val languageLabel = stringResource(state.selectedLanguage.label())
+    val sortByLabel = stringResource(state.selectedSortBy.label())
     val items = buildList {
         if (state.selectedSource != SearchSourceUi.GitHub) {
             add(
@@ -957,7 +959,7 @@ private fun ActiveFiltersStrip(
         if (state.selectedLanguage != ProgrammingLanguageUi.All) {
             add(
                 Triple(
-                    first = "${state.selectedLanguage}",
+                    first = languageLabel,
                     second = {
                         onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All))
                     },
@@ -968,7 +970,7 @@ private fun ActiveFiltersStrip(
         if (state.selectedSortBy != SortByUi.BestMatch) {
             add(
                 Triple(
-                    first = "${state.selectedSortBy}",
+                    first = sortByLabel,
                     second = {
                         onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch))
                     },
@@ -1022,6 +1024,7 @@ private fun ActiveFilterChip(
                 tint = colors.primary,
             )
         }
+
         KomiText(
             text = label,
             role = KomiTextRole.Label,
@@ -1030,6 +1033,7 @@ private fun ActiveFilterChip(
             color = colors.primary,
             uppercase = false,
         )
+
         KomiIcon(
             imageVector = Icons.Default.Close,
             contentDescription = stringResource(Res.string.search_clear_filter_cd),
