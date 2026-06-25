@@ -452,6 +452,22 @@ class AuthenticationViewModel(
         }
     }
 
+    private fun devicePrompt(
+        start: GithubDeviceStartUi,
+        remainingSeconds: Int,
+    ): AuthLoginState.DevicePrompt {
+        val total = start.expiresInSec.coerceAtLeast(1)
+        val minutes = remainingSeconds / 60
+        val seconds = remainingSeconds % 60
+        return AuthLoginState.DevicePrompt(
+            start = start,
+            remainingSeconds = remainingSeconds,
+            progressFraction = (remainingSeconds.toFloat() / total).coerceIn(0f, 1f),
+            formattedTimer = "%02d:%02d".format(minutes, seconds),
+            isUrgent = remainingSeconds in 1 until 60,
+        )
+    }
+
     private fun startCountdown(remainingSeconds: Int) {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
@@ -461,7 +477,7 @@ class AuthenticationViewModel(
                     val loginState = currentState.loginState
                     if (loginState is AuthLoginState.DevicePrompt) {
                         currentState.copy(
-                            loginState = loginState.copy(remainingSeconds = remaining),
+                            loginState = devicePrompt(loginState.start, remaining),
                         )
                     } else {
                         return@launch
@@ -529,10 +545,7 @@ class AuthenticationViewModel(
                 withContext(Dispatchers.Main.immediate) {
                     _state.update {
                         it.copy(
-                            loginState = AuthLoginState.DevicePrompt(
-                                start = startUi,
-                                remainingSeconds = start.expiresInSec,
-                            ),
+                            loginState = devicePrompt(startUi, start.expiresInSec),
                             copied = false,
                         )
                     }
@@ -751,7 +764,7 @@ class AuthenticationViewModel(
             )
 
         _state.update {
-            it.copy(loginState = AuthLoginState.DevicePrompt(startUi, remainingSec))
+            it.copy(loginState = devicePrompt(startUi, remainingSec))
         }
 
         startCountdown(remainingSec)
@@ -823,7 +836,7 @@ class AuthenticationViewModel(
                         (it.loginState as? AuthLoginState.DevicePrompt)?.remainingSeconds ?: 0
 
                     it.copy(
-                        loginState = AuthLoginState.DevicePrompt(start, currentRemaining),
+                        loginState = devicePrompt(start, currentRemaining),
                         copied = true,
                     )
                 }
@@ -836,7 +849,7 @@ class AuthenticationViewModel(
                         (it.loginState as? AuthLoginState.DevicePrompt)?.remainingSeconds ?: 0
 
                     it.copy(
-                        loginState = AuthLoginState.DevicePrompt(start, currentRemaining),
+                        loginState = devicePrompt(start, currentRemaining),
                         copied = false,
                     )
                 }

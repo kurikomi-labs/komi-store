@@ -3,6 +3,7 @@ package zed.rainxch.auth.presentation
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -37,11 +38,8 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,7 +72,6 @@ import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.core.presentation.components.surfaces.KomiSurface
-import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
@@ -143,6 +140,7 @@ fun AuthenticationScreen(
     onAction: (AuthenticationAction) -> Unit,
 ) {
     val shape = LocalPersonality.current.shape
+
     KomiScaffold(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
@@ -207,14 +205,21 @@ fun AuthenticationScreen(
                     label = "auth_state",
                 ) { authState ->
                     when (authState) {
-                        is AuthLoginState.LoggedOut -> StateLoggedOut(onAction = onAction)
+                        is AuthLoginState.LoggedOut -> StateLoggedOut(
+                            isAdvancedAuthVisible = state.isAdvancedAuthVisible,
+                            onAction = onAction,
+                        )
+
                         is AuthLoginState.DevicePrompt -> StateDevicePrompt(
                             state = state,
                             authState = authState,
                             onAction = onAction,
                         )
+
                         is AuthLoginState.Pending -> StatePending()
+
                         is AuthLoginState.LoggedIn -> StateLoggedIn()
+
                         is AuthLoginState.Error -> StateError(authState = authState, onAction = onAction)
                     }
                 }
@@ -233,9 +238,11 @@ fun AuthenticationScreen(
 }
 
 @Composable
-private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
+private fun StateLoggedOut(
+    isAdvancedAuthVisible: Boolean,
+    onAction: (AuthenticationAction) -> Unit,
+) {
     val colors = LocalPersonality.current.colors
-    var showMoreOptions by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -272,8 +279,16 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
         )
 
         KomiButton(
-            onClick = { showMoreOptions = !showMoreOptions },
-            label = if (showMoreOptions) {
+            onClick = {
+                onAction(
+                    if (isAdvancedAuthVisible) {
+                        AuthenticationAction.DismissAdvancedAuth
+                    } else {
+                        AuthenticationAction.OpenAdvancedAuth
+                    },
+                )
+            },
+            label = if (isAdvancedAuthVisible) {
                 stringResource(Res.string.auth_hide_signin_options)
             } else {
                 stringResource(Res.string.auth_more_signin_options)
@@ -283,15 +298,17 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
             trailingIcon = Icons.Default.ExpandMore,
         )
 
-        AnimatedVisibility(visible = showMoreOptions) {
+        AnimatedVisibility(visible = isAdvancedAuthVisible) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(Modifier.height(4.dp))
+
                 KomiButton(
                     onClick = { onAction(AuthenticationAction.OpenPatSheet) },
                     label = stringResource(Res.string.pat_use_token_instead),
                     variant = KomiButtonVariant.Text,
                     size = KomiButtonSize.Sm,
                 )
+
                 KomiButton(
                     onClick = { onAction(AuthenticationAction.StartLogin) },
                     label = stringResource(Res.string.auth_use_device_code_instead),
@@ -309,6 +326,7 @@ private fun StateLoggedOut(onAction: (AuthenticationAction) -> Unit) {
 private fun BenefitsCard() {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
+
     KomiSurface(
         modifier = Modifier.fillMaxWidth(),
         paper = KomiSurfacePaper.Surface,
@@ -332,6 +350,7 @@ private fun BenefitsCard() {
                     tint = colors.primary,
                 )
             }
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -343,6 +362,7 @@ private fun BenefitsCard() {
                     color = colors.onSurface,
                     uppercase = false,
                 )
+
                 KomiText(
                     text = stringResource(Res.string.more_requests_description),
                     role = KomiTextRole.Body,
@@ -363,6 +383,7 @@ private fun StateDevicePrompt(
 ) {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -383,7 +404,9 @@ private fun StateDevicePrompt(
                     color = colors.onSurfaceVariant,
                     uppercase = false,
                 )
+
                 Spacer(Modifier.height(14.dp))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -397,7 +420,9 @@ private fun StateDevicePrompt(
                         color = colors.onSurface,
                         uppercase = false,
                     )
+
                     Spacer(Modifier.width(12.dp))
+
                     Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -425,8 +450,10 @@ private fun StateDevicePrompt(
                         }
                     }
                 }
+
                 state.info?.let { info ->
                     Spacer(Modifier.height(10.dp))
+
                     KomiText(
                         text = info,
                         role = KomiTextRole.Body,
@@ -437,26 +464,26 @@ private fun StateDevicePrompt(
                         uppercase = false,
                     )
                 }
+
                 if (authState.remainingSeconds > 0) {
                     Spacer(Modifier.height(16.dp))
-                    val progress = authState.remainingSeconds.toFloat() /
-                        authState.start.expiresInSec.toFloat()
+
                     val animatedProgress by animateFloatAsState(
-                        targetValue = progress,
+                        targetValue = authState.progressFraction,
                         animationSpec = tween(900),
                         label = "countdown_progress",
                     )
-                    val isUrgent = authState.remainingSeconds < 60
                     val progressColor by animateColorAsState(
-                        targetValue = if (isUrgent) colors.error else colors.primary,
+                        targetValue = if (authState.isUrgent) colors.error else colors.primary,
                         animationSpec = tween(500),
                         label = "progress_color",
                     )
                     val timerColor by animateColorAsState(
-                        targetValue = if (isUrgent) colors.error else colors.onSurfaceVariant,
+                        targetValue = if (authState.isUrgent) colors.error else colors.onSurfaceVariant,
                         animationSpec = tween(500),
                         label = "timer_color",
                     )
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
@@ -468,14 +495,11 @@ private fun StateDevicePrompt(
                                 .clip(RoundedCornerShape(shape.cornerSmall)),
                             color = progressColor,
                         )
+
                         Spacer(Modifier.width(12.dp))
-                        val minutes = authState.remainingSeconds / 60
-                        val seconds = authState.remainingSeconds % 60
-                        val formatted = remember(minutes, seconds) {
-                            "%02d:%02d".format(minutes, seconds)
-                        }
+
                         KomiText(
-                            text = formatted,
+                            text = authState.formattedTimer,
                             role = KomiTextRole.Mono,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
@@ -517,6 +541,7 @@ private fun StateDevicePrompt(
 
         if (state.pollIntervalSec > 0) {
             Spacer(Modifier.height(8.dp))
+
             KomiText(
                 text = stringResource(Res.string.auth_rate_limited, state.pollIntervalSec),
                 role = KomiTextRole.Label,
@@ -533,13 +558,16 @@ private fun StateDevicePrompt(
 @Composable
 private fun StatePending() {
     val colors = LocalPersonality.current.colors
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         KomiCircularProgress(modifier = Modifier.size(56.dp))
+
         Spacer(Modifier.height(20.dp))
+
         KomiText(
             text = stringResource(Res.string.waiting_for_authorization),
             role = KomiTextRole.Title,
@@ -554,15 +582,16 @@ private fun StatePending() {
 private fun StateLoggedIn() {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        var visible by remember { mutableStateOf(false) }
-        LaunchedEffect(Unit) { visible = true }
+        val checkmarkVisibility = remember { MutableTransitionState(false).apply { targetState = true } }
+
         AnimatedVisibility(
-            visible = visible,
+            visibleState = checkmarkVisibility,
             enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn(),
         ) {
             Box(
@@ -580,7 +609,9 @@ private fun StateLoggedIn() {
                 )
             }
         }
+
         Spacer(Modifier.height(18.dp))
+
         KomiText(
             text = stringResource(Res.string.signed_in),
             role = KomiTextRole.Title,
@@ -588,7 +619,9 @@ private fun StateLoggedIn() {
             color = colors.onBackground,
             uppercase = false,
         )
+
         Spacer(Modifier.height(6.dp))
+
         KomiText(
             text = stringResource(Res.string.redirecting_message),
             role = KomiTextRole.Body,
@@ -604,11 +637,13 @@ private fun StateError(
     onAction: (AuthenticationAction) -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
+
         KomiSurface(
             modifier = Modifier.fillMaxWidth(),
             paper = KomiSurfacePaper.Surface,
@@ -626,7 +661,9 @@ private fun StateError(
                     modifier = Modifier.size(34.dp),
                     tint = colors.error,
                 )
+
                 Spacer(Modifier.height(12.dp))
+
                 KomiText(
                     text = stringResource(Res.string.auth_error_with_message, authState.message),
                     role = KomiTextRole.Title,
@@ -635,8 +672,10 @@ private fun StateError(
                     textAlign = TextAlign.Center,
                     uppercase = false,
                 )
+
                 authState.recoveryHint?.let { hint ->
                     Spacer(Modifier.height(6.dp))
+
                     KomiText(
                         text = hint,
                         role = KomiTextRole.Body,
@@ -648,18 +687,23 @@ private fun StateError(
                 }
             }
         }
+
         Spacer(Modifier.height(20.dp))
+
         PrimaryPillButton(
             text = stringResource(Res.string.try_again),
             onClick = { onAction(AuthenticationAction.StartLogin) },
         )
+
         Spacer(Modifier.height(6.dp))
+
         KomiButton(
             onClick = { onAction(AuthenticationAction.SkipLogin) },
             label = stringResource(Res.string.continue_as_guest),
             variant = KomiButtonVariant.Text,
             size = KomiButtonSize.Sm,
         )
+
         Spacer(Modifier.weight(2f))
     }
 }
@@ -686,25 +730,6 @@ private fun PrimaryPillButton(
 }
 
 @Composable
-private fun OutlinedPillButton(
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-) {
-    KomiButton(
-        onClick = onClick,
-        label = text,
-        enabled = enabled,
-        variant = KomiButtonVariant.Outline,
-        size = KomiButtonSize.Md,
-        fullWidth = true,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-    )
-}
-
-@Composable
 private fun PatSignInSheet(
     input: String,
     error: String?,
@@ -712,6 +737,7 @@ private fun PatSignInSheet(
     onAction: (AuthenticationAction) -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+
     KomiSheet(
         onDismiss = { if (!isSubmitting) onAction(AuthenticationAction.DismissPatSheet) },
         placement = KomiSheetPlacement.Bottom,
@@ -730,6 +756,7 @@ private fun PatSignInSheet(
                 color = colors.onSurface,
                 uppercase = false,
             )
+
             KomiText(
                 text = stringResource(Res.string.pat_sheet_description),
                 role = KomiTextRole.Body,
@@ -738,9 +765,15 @@ private fun PatSignInSheet(
                 uppercase = false,
             )
 
-            OutlinedPillButton(
-                text = stringResource(Res.string.pat_open_settings),
+            KomiButton(
                 onClick = { onAction(AuthenticationAction.OpenPatSettingsPage) },
+                label = stringResource(Res.string.pat_open_settings),
+                variant = KomiButtonVariant.Outline,
+                size = KomiButtonSize.Md,
+                fullWidth = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
             )
 
             KomiTextField(
@@ -818,13 +851,15 @@ private fun PreviewDevicePrompt() {
         AuthenticationScreen(
             state = AuthenticationState(
                 loginState = AuthLoginState.DevicePrompt(
-                    GithubDeviceStartUi(
+                    start = GithubDeviceStartUi(
                         deviceCode = "",
                         userCode = "2102-UHHUF",
                         verificationUri = "",
                         expiresInSec = 900,
                     ),
                     remainingSeconds = 847,
+                    progressFraction = 847f / 900f,
+                    formattedTimer = "14:07",
                 ),
                 copied = true,
             ),

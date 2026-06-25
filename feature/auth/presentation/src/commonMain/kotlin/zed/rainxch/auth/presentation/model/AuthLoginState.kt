@@ -6,6 +6,9 @@ sealed class AuthLoginState {
     data class DevicePrompt(
         val start: GithubDeviceStartUi,
         val remainingSeconds: Int = 0,
+        val progressFraction: Float = 0f,
+        val formattedTimer: String = "",
+        val isUrgent: Boolean = false,
     ) : AuthLoginState()
 
     data object Pending : AuthLoginState()
