@@ -2,6 +2,7 @@ package zed.rainxch.details.presentation.about
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -66,6 +67,7 @@ class DetailsAboutViewModel(
                         ),
                     )
                 }
+                rebuildDisplayed()
             }.onFailure { e ->
                 _state.update {
                     it.copy(
@@ -87,20 +89,40 @@ class DetailsAboutViewModel(
                 ),
             )
         }
+        rebuildDisplayed()
     }
 
     fun clearTranslation() {
         _state.update {
             it.copy(translation = TranslationState())
         }
+        rebuildDisplayed()
     }
 
     fun showLanguagePicker() {
-        _state.update { it.copy(isLanguagePickerVisible = true) }
+        _state.update {
+            it.copy(
+                isLanguagePickerVisible = true,
+                languagePickerQuery = "",
+                filteredLanguages = SupportedLanguages.all.toImmutableList(),
+            )
+        }
     }
 
     fun dismissLanguagePicker() {
         _state.update { it.copy(isLanguagePickerVisible = false) }
+    }
+
+    fun onLanguageQueryChange(query: String) {
+        val filtered = if (query.isBlank()) {
+            SupportedLanguages.all
+        } else {
+            SupportedLanguages.all.filter {
+                it.displayName.contains(query, ignoreCase = true) ||
+                    it.code.contains(query, ignoreCase = true)
+            }
+        }
+        _state.update { it.copy(languagePickerQuery = query, filteredLanguages = filtered.toImmutableList()) }
     }
 
     private fun load() {
@@ -128,9 +150,22 @@ class DetailsAboutViewModel(
                         readmeLanguage = readme?.second,
                     )
                 }
+                rebuildDisplayed()
             }.onFailure { e ->
                 _state.update { it.copy(isLoading = false, errorMessage = e.message ?: getString(Res.string.failed_to_load)) }
             }
+        }
+    }
+
+    private fun rebuildDisplayed() {
+        _state.update {
+            val translation = it.translation
+            val displayed = if (translation.isShowingTranslation && translation.translatedText != null) {
+                translation.translatedText
+            } else {
+                it.readmeMarkdown
+            }
+            it.copy(displayedMarkdown = displayed)
         }
     }
 }

@@ -30,16 +30,14 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.domain.model.SupportedLanguage
 import zed.rainxch.details.presentation.model.SupportedLanguages
@@ -48,31 +46,19 @@ import zed.rainxch.githubstore.core.presentation.res.*
 @Composable
 fun LanguagePicker(
     isVisible: Boolean,
+    query: String,
+    languages: ImmutableList<SupportedLanguage>,
     selectedLanguageCode: String?,
     deviceLanguageCode: String,
+    onQueryChange: (String) -> Unit,
     onLanguageSelected: (SupportedLanguage) -> Unit,
     onDismiss: () -> Unit,
 ) {
     if (!isVisible) return
 
-    var searchQuery by remember { mutableStateOf("") }
-
     val deviceLanguage = remember(deviceLanguageCode) {
         SupportedLanguages.all.find { it.code == deviceLanguageCode }
     }
-
-    val filteredLanguages =
-        remember(searchQuery) {
-            val all = SupportedLanguages.all
-            if (searchQuery.isBlank()) {
-                all
-            } else {
-                all.filter {
-                    it.displayName.contains(searchQuery, ignoreCase = true) ||
-                        it.code.contains(searchQuery, ignoreCase = true)
-                }
-            }
-        }
 
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
@@ -88,8 +74,8 @@ fun LanguagePicker(
             Spacer(Modifier.height(8.dp))
 
             KomiTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
+                value = query,
+                onValueChange = onQueryChange,
                 placeholder = stringResource(Res.string.search_language),
                 leadingIcon = Icons.Default.Search,
                 modifier =
@@ -98,7 +84,7 @@ fun LanguagePicker(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            if (searchQuery.isBlank() && deviceLanguage != null) {
+            if (query.isBlank() && deviceLanguage != null) {
                 Row(
                     modifier =
                         Modifier
@@ -153,7 +139,7 @@ fun LanguagePicker(
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(
-                    items = filteredLanguages,
+                    items = languages,
                     key = { it.code },
                 ) { language ->
                     LanguageListItem(

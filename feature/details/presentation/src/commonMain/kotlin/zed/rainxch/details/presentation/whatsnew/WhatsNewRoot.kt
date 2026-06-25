@@ -13,9 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -37,7 +36,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import androidx.compose.foundation.shape.RoundedCornerShape
-import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.text.KomiText
@@ -46,13 +45,13 @@ import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransforme
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.TranslationCard
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.cd_back
 import zed.rainxch.githubstore.core.presentation.res.details_whats_new_screen_title
-import zed.rainxch.githubstore.core.presentation.res.no_release_notes
 
 @Composable
 fun WhatsNewRoot(
@@ -66,6 +65,7 @@ fun WhatsNewRoot(
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     WhatsNewScreen(
         state = state,
         onBack = onNavigateBack,
@@ -73,6 +73,7 @@ fun WhatsNewRoot(
         onToggleTranslation = viewModel::toggleTranslation,
         onPickLanguage = viewModel::showLanguagePicker,
         onDismissLanguagePicker = viewModel::dismissLanguagePicker,
+        onLanguageQueryChange = viewModel::onLanguageQueryChange,
         onClearTranslation = viewModel::clearTranslation,
     )
 }
@@ -85,6 +86,7 @@ private fun WhatsNewScreen(
     onToggleTranslation: () -> Unit,
     onPickLanguage: () -> Unit,
     onDismissLanguagePicker: () -> Unit,
+    onLanguageQueryChange: (String) -> Unit,
     onClearTranslation: () -> Unit,
 ) {
     val isDark = isSystemInDarkTheme()
@@ -97,59 +99,44 @@ private fun WhatsNewScreen(
     }
     val personalityColors = LocalPersonality.current.colors
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(personalityColors.background)
-            .systemBarsPadding(),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            KomiIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.cd_back),
-                onClick = onBack,
-                variant = KomiButtonVariant.Text,
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                leading = {
+                    KomiIconButton(
+                        onClick = onBack,
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.cd_back),
+                    )
+                },
+                title = state.repoName,
             )
-            KomiText(
-                text = state.repoName,
-                role = KomiTextRole.Title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                color = personalityColors.onSurface,
-                modifier = Modifier.padding(start = 4.dp),
-                uppercase = false,
-            )
-        }
-        when {
-            state.isLoading -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) { KomiCircularProgress() }
+        },
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            when {
+                state.isLoading -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) { KomiCircularProgress() }
 
-            state.errorMessage != null -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                KomiText(
-                    text = state.errorMessage,
-                    role = KomiTextRole.Body,
-                    color = personalityColors.error,
-                )
-            }
+                state.errorMessage != null -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    KomiText(
+                        text = state.errorMessage,
+                        role = KomiTextRole.Body,
+                        color = personalityColors.error,
+                    )
+                }
 
-            else -> LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                item(key = "header") {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                else -> LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    item(key = "header") {
                         KomiText(
                             text = stringResource(Res.string.details_whats_new_screen_title),
                             role = KomiTextRole.Display,
@@ -159,70 +146,67 @@ private fun WhatsNewScreen(
                             uppercase = false,
                         )
                     }
-                }
 
-                item(key = "translation_card") {
-                    TranslationCard(
-                        state = state.translation,
-                        deviceLanguageCode = state.deviceLanguageCode,
-                        onPickLanguage = onPickLanguage,
-                        onTranslate = onTranslate,
-                        onToggle = onToggleTranslation,
-                        onCancel = onClearTranslation,
-                    )
-                }
+                    item(key = "translation_card") {
+                        TranslationCard(
+                            state = state.translation,
+                            deviceLanguageCode = state.deviceLanguageCode,
+                            onPickLanguage = onPickLanguage,
+                            onTranslate = onTranslate,
+                            onToggle = onToggleTranslation,
+                            onCancel = onClearTranslation,
+                        )
+                    }
 
-                itemsIndexed(items = state.releases, key = { _, item -> item.id }) { index, release ->
-                    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(rowShape)
-                                .border(
-                                    width = 1.dp,
-                                    color = personalityColors.outline,
-                                    shape = rowShape,
+                    items(items = state.releases, key = { it.id }) { release ->
+                        val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(rowShape)
+                                    .border(
+                                        width = 1.dp,
+                                        color = personalityColors.outline,
+                                        shape = rowShape,
+                                    )
+                                    .background(personalityColors.surface)
+                                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                KomiText(
+                                    text = release.tagName,
+                                    role = KomiTextRole.Title,
+                                    fontWeight = FontWeight.Bold,
+                                    color = personalityColors.primary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f),
+                                    uppercase = false,
                                 )
-                                .background(personalityColors.surface)
-                                .padding(horizontal = 14.dp, vertical = 10.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            KomiText(
-                                text = release.tagName,
-                                role = KomiTextRole.Title,
-                                fontWeight = FontWeight.Bold,
-                                color = personalityColors.primary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f),
-                                uppercase = false,
-                            )
-                            KomiText(
-                                text = release.publishedAt.take(10),
-                                role = KomiTextRole.Label,
-                                fontSize = 12.sp,
-                                color = personalityColors.onSurfaceVariant,
-                                maxLines = 1,
-                                uppercase = false,
+
+                                KomiText(
+                                    text = release.publishedDate,
+                                    role = KomiTextRole.Label,
+                                    fontSize = 12.sp,
+                                    color = personalityColors.onSurfaceVariant,
+                                    maxLines = 1,
+                                    uppercase = false,
+                                )
+                            }
+
+                            Spacer(Modifier.height(6.dp))
+
+                            Markdown(
+                                content = release.body,
+                                colors = colors,
+                                typography = typography,
+                                imageTransformer = imageTransformer,
+                                components = components,
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
-                        Spacer(Modifier.height(6.dp))
-                        val isLatest = index == 0
-                        val translated = state.translation.translatedText
-                            ?.takeIf { isLatest && state.translation.isShowingTranslation }
-                        val body = translated
-                            ?: release.description?.takeIf { it.isNotBlank() }
-                            ?: stringResource(Res.string.no_release_notes)
-                        Markdown(
-                            content = body,
-                            colors = colors,
-                            typography = typography,
-                            imageTransformer = imageTransformer,
-                            components = components,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
                     }
                 }
             }
@@ -231,8 +215,11 @@ private fun WhatsNewScreen(
 
     LanguagePicker(
         isVisible = state.isLanguagePickerVisible,
+        query = state.languagePickerQuery,
+        languages = state.filteredLanguages,
         selectedLanguageCode = state.translation.targetLanguageCode ?: state.deviceLanguageCode,
         deviceLanguageCode = state.deviceLanguageCode,
+        onQueryChange = onLanguageQueryChange,
         onLanguageSelected = { lang ->
             onDismissLanguagePicker()
             onTranslate(lang.code)
