@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +25,7 @@ import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
@@ -35,6 +39,7 @@ import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.cd_thumbs_up
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_hint
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_send
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_sign_in
@@ -161,6 +166,7 @@ private fun IssueDetailContent(
                     color = colors.onBackground,
                     uppercase = false,
                 )
+
                 KomiText(
                     text = "#${detail.number} · " +
                             stringResource(
@@ -195,6 +201,7 @@ private fun IssueDetailContent(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
+
                     ThumbChip(
                         count = detail.reactionThumbsUp,
                         enabled = !isReactingIssue,
@@ -207,6 +214,7 @@ private fun IssueDetailContent(
         if (detail.comments.isNotEmpty()) {
             item(key = "comments_header") {
                 KomiHorizontalDivider()
+
                 KomiText(
                     text = stringResource(Res.string.repo_pages_issue_comments_section),
                     role = KomiTextRole.Title,
@@ -216,6 +224,7 @@ private fun IssueDetailContent(
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }
+
             items(detail.comments, key = { it.id }) { comment ->
                 CommentCard(
                     comment = comment,
@@ -248,7 +257,9 @@ private fun CommentCard(
                 color = colors.onSurface,
                 uppercase = false,
             )
+
             RepoMarkdown(content = comment.bodyMarkdown, modifier = Modifier.fillMaxWidth())
+
             ThumbChip(count = comment.reactionThumbsUp, enabled = !isReacting, onClick = onReact)
         }
     }
@@ -270,13 +281,13 @@ private fun ThumbChip(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            KomiText(
-                text = "👍",
-                role = KomiTextRole.Label,
-                fontSize = 12.sp,
-                color = colors.onSurface,
-                uppercase = false,
+            KomiIcon(
+                imageVector = Icons.Filled.ThumbUp,
+                contentDescription = stringResource(Res.string.cd_thumbs_up),
+                tint = colors.onSurface,
+                modifier = Modifier.size(14.dp),
             )
+
             if (count > 0) {
                 KomiText(
                     text = count.toString(),

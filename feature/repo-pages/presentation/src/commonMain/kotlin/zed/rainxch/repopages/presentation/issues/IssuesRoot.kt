@@ -151,6 +151,7 @@ private fun IssuesScreen(
                         onAction(IssuesAction.OnFilterChange(IssueState.OPEN))
                     },
                 )
+
                 KomiChip(
                     label = stringResource(Res.string.repo_pages_issues_filter_closed),
                     kind = KomiChipKind.Filter,
@@ -220,6 +221,7 @@ private fun NewIssueSheet(
                 placeholder = stringResource(Res.string.repo_pages_new_issue_title_hint),
                 enabled = !state.isCreatingIssue,
             )
+
             KomiTextField(
                 value = state.newIssueBody,
                 onValueChange = onBodyChange,
@@ -229,6 +231,7 @@ private fun NewIssueSheet(
                 rows = 4,
                 enabled = !state.isCreatingIssue,
             )
+
             KomiButton(
                 onClick = onSubmit,
                 label = stringResource(Res.string.repo_pages_new_issue_submit),
@@ -275,6 +278,7 @@ private fun IssuesList(
                 }
             )
         }
+
         if (state.isLoadingMore) {
             item(key = "loading_more") {
                 Box(
@@ -317,6 +321,7 @@ private fun IssueRow(
                         shape = RoundedCornerShape(shape.cornerSmall),
                     ),
             )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -331,6 +336,7 @@ private fun IssueRow(
                     overflow = TextOverflow.Ellipsis,
                     uppercase = false,
                 )
+
                 KomiText(
                     text = "#${issue.issueId} · " +
                             stringResource(
@@ -344,6 +350,7 @@ private fun IssueRow(
                     overflow = TextOverflow.Ellipsis,
                     uppercase = false,
                 )
+
                 if (issue.labels.isNotEmpty()) {
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),

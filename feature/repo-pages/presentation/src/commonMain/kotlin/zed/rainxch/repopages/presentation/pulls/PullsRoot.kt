@@ -91,47 +91,48 @@ private fun PullsScreen(
                 .padding(innerPadding),
         ) {
             Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            KomiChip(
-                label = stringResource(Res.string.repo_pages_issues_filter_open),
-                kind = KomiChipKind.Filter,
-                selected = state.filter == IssueState.OPEN,
-                onClick = { onAction(PullsAction.OnFilterChange(IssueState.OPEN)) },
-            )
-            KomiChip(
-                label = stringResource(Res.string.repo_pages_issues_filter_closed),
-                kind = KomiChipKind.Filter,
-                selected = state.filter == IssueState.CLOSED,
-                onClick = { onAction(PullsAction.OnFilterChange(IssueState.CLOSED)) },
-            )
-        }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_open),
+                    kind = KomiChipKind.Filter,
+                    selected = state.filter == IssueState.OPEN,
+                    onClick = { onAction(PullsAction.OnFilterChange(IssueState.OPEN)) },
+                )
 
-        when {
-            state.isLoading -> RepoPagesLoading()
-
-            state.errorMessage != null -> RepoPagesError(
-                message = state.errorMessage,
-                onRetry = { onAction(PullsAction.OnRetry) },
-            )
-
-            state.pulls.isEmpty() -> {
-                val emptyText = if (state.filter == IssueState.OPEN) {
-                    stringResource(Res.string.repo_pages_pulls_empty_open)
-                } else {
-                    stringResource(Res.string.repo_pages_pulls_empty_closed)
-                }
-                RepoPagesEmpty(message = emptyText)
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_closed),
+                    kind = KomiChipKind.Filter,
+                    selected = state.filter == IssueState.CLOSED,
+                    onClick = { onAction(PullsAction.OnFilterChange(IssueState.CLOSED)) },
+                )
             }
 
-            else -> PullsList(
-                state = state,
-                onLoadMore = { onAction(PullsAction.OnLoadMore) },
-                onOpenPull = { onAction(PullsAction.OnOpenPull(it)) },
-            )
+            when {
+                state.isLoading -> RepoPagesLoading()
+
+                state.errorMessage != null -> RepoPagesError(
+                    message = state.errorMessage,
+                    onRetry = { onAction(PullsAction.OnRetry) },
+                )
+
+                state.pulls.isEmpty() -> {
+                    val emptyText = if (state.filter == IssueState.OPEN) {
+                        stringResource(Res.string.repo_pages_pulls_empty_open)
+                    } else {
+                        stringResource(Res.string.repo_pages_pulls_empty_closed)
+                    }
+                    RepoPagesEmpty(message = emptyText)
+                }
+
+                else -> PullsList(
+                    state = state,
+                    onLoadMore = { onAction(PullsAction.OnLoadMore) },
+                    onOpenPull = { onAction(PullsAction.OnOpenPull(it)) },
+                )
             }
         }
     }
@@ -164,6 +165,7 @@ private fun PullsList(
         items(state.pulls, key = { it.number }) { pull ->
             PullRow(pull = pull, onClick = { onOpenPull(pull.number) })
         }
+
         if (state.isLoadingMore) {
             item(key = "loading_more") {
                 Box(
@@ -205,6 +207,7 @@ private fun PullRow(
                     .size(10.dp)
                     .background(color = pullStateColor, shape = RoundedCornerShape(shape.cornerSmall)),
             )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -222,6 +225,7 @@ private fun PullRow(
                                 .padding(horizontal = 6.dp, vertical = 1.dp),
                         )
                     }
+
                     KomiText(
                         text = pull.title,
                         role = KomiTextRole.Title,
@@ -233,6 +237,7 @@ private fun PullRow(
                         uppercase = false,
                     )
                 }
+
                 KomiText(
                     text = "#${pull.number} · " +
                         stringResource(Res.string.repo_pages_issue_opened_by, pull.authorLogin),

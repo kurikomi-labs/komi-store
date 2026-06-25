@@ -107,6 +107,7 @@ private fun SecurityContent(
         item(key = "advisories_header") {
             SectionHeader(stringResource(Res.string.repo_pages_security_advisories_header))
         }
+
         if (overview.advisories.isEmpty()) {
             item(key = "advisories_empty") {
                 KomiText(
@@ -174,8 +175,10 @@ private fun AdvisoryCard(advisory: SecurityAdvisory) {
                 color = colors.onSurface,
                 uppercase = false,
             )
+
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SeverityBadge(advisory.severity)
+
                 val meta = buildString {
                     advisory.cveId?.let { append(it) }
                     advisory.publishedAt?.let {
@@ -193,6 +196,7 @@ private fun AdvisoryCard(advisory: SecurityAdvisory) {
                     )
                 }
             }
+
             advisory.description?.takeIf { it.isNotBlank() }?.let { description ->
                 RepoMarkdown(content = description, modifier = Modifier.fillMaxWidth())
             }

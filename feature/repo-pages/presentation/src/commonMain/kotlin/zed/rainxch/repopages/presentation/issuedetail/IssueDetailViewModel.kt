@@ -44,9 +44,7 @@ class IssueDetailViewModel(
 
     fun onAction(action: IssueDetailAction) {
         when (action) {
-            IssueDetailAction.OnBackClick -> {
-                // Handled in composable
-            }
+            IssueDetailAction.OnBackClick -> Unit
 
             is IssueDetailAction.OnCommentChange -> {
                 _state.update { it.copy(commentText = action.comment) }

@@ -43,51 +43,31 @@ class IssuesViewModel(
 
     fun onAction(action: IssuesAction) {
         when (action) {
-            IssuesAction.OnBackClick -> {
-                // Handled in composable
-            }
-            IssuesAction.OnDismissNewIssue -> {
-                dismissNewIssue()
-            }
-            is IssuesAction.OnFilterChange -> {
-                setFilter(action.state)
-            }
-            IssuesAction.OnLoadMore -> {
-                loadNextPage()
-            }
-            is IssuesAction.OnNewIssueBodyChange -> {
-                onNewIssueBodyChange(action.body)
-            }
-            is IssuesAction.OnNewIssueTitleChange -> {
-                onNewIssueTitleChange(action.title)
-            }
-            is IssuesAction.OnOpenIssue -> {
-
-            }
-            IssuesAction.OnOpenNewIssue -> {
-                openNewIssue()
-            }
-            IssuesAction.OnRetry -> {
-                load(_state.value.filter)
-            }
-            IssuesAction.OnSubmitNewIssue -> {
-                submitNewIssue()
-            }
+            IssuesAction.OnBackClick -> Unit
+            IssuesAction.OnDismissNewIssue -> dismissNewIssue()
+            is IssuesAction.OnFilterChange -> setFilter(action.state)
+            IssuesAction.OnLoadMore -> loadNextPage()
+            is IssuesAction.OnNewIssueBodyChange -> onNewIssueBodyChange(action.body)
+            is IssuesAction.OnNewIssueTitleChange -> onNewIssueTitleChange(action.title)
+            is IssuesAction.OnOpenIssue -> Unit
+            IssuesAction.OnOpenNewIssue -> openNewIssue()
+            IssuesAction.OnRetry -> load(_state.value.filter)
+            IssuesAction.OnSubmitNewIssue -> submitNewIssue()
         }
     }
 
-    fun setFilter(filter: IssueState) {
+    private fun setFilter(filter: IssueState) {
         if (_state.value.filter == filter && _state.value.errorMessage == null) return
         load(filter)
     }
 
-    fun loadNextPage() {
-        val s = _state.value
-        if (s.isLoading || s.isLoadingMore || s.endReached || s.errorMessage != null) return
-        loadPage(s.filter, s.page + 1, append = true, generation = requestGeneration)
+    private fun loadNextPage() {
+        val current = _state.value
+        if (current.isLoading || current.isLoadingMore || current.endReached || current.errorMessage != null) return
+        loadPage(current.filter, current.page + 1, append = true, generation = requestGeneration)
     }
 
-    fun openNewIssue() {
+    private fun openNewIssue() {
         viewModelScope.launch {
             if (!userSessionRepository.isCurrentlyUserLoggedIn()) {
                 _events.send(IssuesEvent.OnMessage(getString(Res.string.repo_pages_new_issue_sign_in)))
@@ -97,19 +77,19 @@ class IssuesViewModel(
         }
     }
 
-    fun dismissNewIssue() {
+    private fun dismissNewIssue() {
         _state.update { it.copy(showNewIssueSheet = false) }
     }
 
-    fun onNewIssueTitleChange(text: String) {
+    private fun onNewIssueTitleChange(text: String) {
         _state.update { it.copy(newIssueTitle = text) }
     }
 
-    fun onNewIssueBodyChange(text: String) {
+    private fun onNewIssueBodyChange(text: String) {
         _state.update { it.copy(newIssueBody = text) }
     }
 
-    fun submitNewIssue() {
+    private fun submitNewIssue() {
         val title = _state.value.newIssueTitle.trim()
         if (title.isEmpty() || _state.value.isCreatingIssue) return
         viewModelScope.launch {
