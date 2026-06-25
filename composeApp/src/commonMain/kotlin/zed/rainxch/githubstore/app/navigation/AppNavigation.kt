@@ -785,7 +785,7 @@ fun AppNavigation(
 
                             profileGraph(
                                 navController = navController,
-                                announcementsUnreadCount = announcementsUnreadCount,
+                                unreadAnnouncementsCount = announcementsViewModel.unreadCount,
                             )
 
                             composable<GithubStoreGraph.RecentlyViewedScreen> {

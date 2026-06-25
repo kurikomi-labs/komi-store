@@ -36,12 +36,6 @@ sealed interface GithubStoreGraph {
     data object ProfileGraph : GithubStoreGraph {
         @Serializable
         data object ProfileScreen : GithubStoreGraph
-
-        @Serializable
-        data object WhatsNewScreen : GithubStoreGraph
-
-        @Serializable
-        data object AnnouncementsScreen : GithubStoreGraph
     }
 
     @Serializable

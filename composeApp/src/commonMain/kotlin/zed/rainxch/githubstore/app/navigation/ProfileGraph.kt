@@ -1,19 +1,23 @@
 package zed.rainxch.githubstore.app.navigation
 
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import kotlinx.coroutines.flow.StateFlow
 import zed.rainxch.profile.presentation.ProfileRoot
 
 fun NavGraphBuilder.profileGraph(
     navController: NavHostController,
-    announcementsUnreadCount: Int,
+    unreadAnnouncementsCount: StateFlow<Int>,
 ) {
     navigation<GithubStoreGraph.ProfileGraph>(
         startDestination = GithubStoreGraph.ProfileGraph.ProfileScreen,
     ) {
         composable<GithubStoreGraph.ProfileGraph.ProfileScreen> {
+            val unreadCount by unreadAnnouncementsCount.collectAsStateWithLifecycle()
             ProfileRoot(
                 onNavigateToAuthentication = {
                     navController.navigate(GithubStoreGraph.AuthenticationScreen)
@@ -46,7 +50,7 @@ fun NavGraphBuilder.profileGraph(
                 onNavigateToAbout = {
                     navController.navigate(GithubStoreGraph.AboutScreen)
                 },
-                hasUnreadAnnouncements = announcementsUnreadCount > 0,
+                hasUnreadAnnouncements = unreadCount > 0,
             )
         }
     }
