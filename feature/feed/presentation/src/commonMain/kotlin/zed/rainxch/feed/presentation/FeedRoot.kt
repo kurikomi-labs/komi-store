@@ -84,7 +84,7 @@ fun FeedRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is FeedEvent.OnMessage -> toastState.show(event.message)
-            FeedEvent.OnScrollToTop -> coroutineScope.launch { listState.animateScrollToItem(0) }
+            FeedEvent.OnScrollToTop -> coroutineScope.launch { listState.scrollToItem(0) }
         }
     }
 

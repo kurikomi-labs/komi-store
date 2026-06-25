@@ -266,7 +266,6 @@ class FeedViewModel(
         val visible = feedRepos
             .filter { repo -> repo.id !in hiddenIds && (!isHideSeenEnabled || repo.id !in seenIds) }
             .filter { repo -> selectedCategory.matches(repo.topicCodes) }
-            .sortedByDescending { repo -> repo.latestReleaseDate ?: repo.updatedAt }
             .map { it.toCard() }
             .toImmutableList()
 
@@ -296,6 +295,7 @@ class FeedViewModel(
                 if (p != selectedPlatform) {
                     selectedPlatform = p
                     _state.update { it.copy(selectedPlatform = p) }
+                    _events.send(FeedEvent.OnScrollToTop)
                     reload(isRefresh = false)
                 }
             }
@@ -305,6 +305,7 @@ class FeedViewModel(
                 if (c != selectedCategory) {
                     selectedCategory = c
                     _state.update { it.copy(selectedCategory = c) }
+                    _events.send(FeedEvent.OnScrollToTop)
                     rebuild()
                 }
             }
