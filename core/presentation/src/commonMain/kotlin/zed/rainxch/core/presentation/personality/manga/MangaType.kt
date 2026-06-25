@@ -7,8 +7,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.personality.model.PersonalityType
 
-// Real families (Anton / Zen Kaku Gothic New / JetBrains Mono) are injected at theme time
-// by mangaTypeWithFonts() — @Composable, since CMP Res fonts require composition. These
+// Real families (Anton / Noto Sans per script / JetBrains Mono) are injected at theme time
+// by withMangaFonts() — @Composable, since CMP Res fonts require composition. These
 // defaults only show if a Personality is read without PersonalityTheme wrapping it.
 private val MangaDisplayFamily = FontFamily.Default
 private val MangaBodyFamily = FontFamily.Default

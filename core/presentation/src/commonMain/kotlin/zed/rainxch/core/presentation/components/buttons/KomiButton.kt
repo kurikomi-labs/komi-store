@@ -143,6 +143,7 @@ private fun MangaButton(
     val container = mangaButtonContainer(variant, colors)
     val contentColor = mangaButtonContent(variant, colors, ambientInk)
     val borderColor = if (container == Color.Transparent) contentColor else colors.outline
+    val stamped = !flat && container != Color.Transparent
     val sweep =
         emphasized && active &&
             (variant == KomiButtonVariant.Primary || variant == KomiButtonVariant.Destructive)
@@ -158,7 +159,7 @@ private fun MangaButton(
         animateFloatAsState(if (hovered && active) 1f else 0f, label = "komiButtonHover")
 
     val pressModifier =
-        if (flat) {
+        if (!stamped) {
             Modifier.offset { IntOffset(0, (1.dp.toPx() * pressProgress.value).roundToInt()) }
         } else {
             Modifier.inkPress(
@@ -374,9 +375,9 @@ private data class ButtonMetrics(
 
 private fun buttonMetrics(size: KomiButtonSize): ButtonMetrics =
     when (size) {
-        KomiButtonSize.Sm -> ButtonMetrics(34.dp, 14.dp, 13.sp, 15.dp, 7.dp, 3.dp, 2.5.dp)
-        KomiButtonSize.Md -> ButtonMetrics(44.dp, 20.dp, 16.sp, 18.dp, 9.dp, 4.dp, 2.5.dp)
-        KomiButtonSize.Lg -> ButtonMetrics(54.dp, 26.dp, 20.sp, 22.dp, 10.dp, 5.dp, 3.dp)
+        KomiButtonSize.Sm -> ButtonMetrics(34.dp, 14.dp, 12.sp, 15.dp, 7.dp, 3.dp, 2.5.dp)
+        KomiButtonSize.Md -> ButtonMetrics(44.dp, 20.dp, 13.5.sp, 18.dp, 9.dp, 4.dp, 2.5.dp)
+        KomiButtonSize.Lg -> ButtonMetrics(54.dp, 26.dp, 16.sp, 22.dp, 10.dp, 5.dp, 3.dp)
     }
 
 @Composable

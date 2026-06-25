@@ -9,13 +9,16 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.text.intl.Locale
+import zed.rainxch.core.presentation.locals.LocalAppLanguageTag
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.core.presentation.personality.ClassicPersonality
 import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.personality.Personality
-import zed.rainxch.core.presentation.personality.classic.classicTypeWithFonts
-import zed.rainxch.core.presentation.personality.manga.mangaTypeWithFonts
+import zed.rainxch.core.presentation.personality.classic.withClassicFonts
+import zed.rainxch.core.presentation.personality.fonts.komiScriptForLanguageTag
+import zed.rainxch.core.presentation.personality.manga.withMangaFonts
 import zed.rainxch.core.presentation.personality.model.PersonalityColors
 import zed.rainxch.core.presentation.status.statusColors
 
@@ -23,12 +26,15 @@ import zed.rainxch.core.presentation.status.statusColors
 @Composable
 fun PersonalityTheme(
     personality: Personality,
+    languageTag: String? = LocalAppLanguageTag.current,
     content: @Composable () -> Unit,
 ) {
+    val resolvedTag = languageTag ?: Locale.current.toLanguageTag()
+    val script = komiScriptForLanguageTag(resolvedTag)
     val resolved =
         when (personality) {
-            is MangaPersonality -> personality.copy(type = mangaTypeWithFonts(personality.type))
-            is ClassicPersonality -> personality.copy(type = classicTypeWithFonts(personality.type))
+            is MangaPersonality -> personality.copy(type = personality.type.withMangaFonts(script))
+            is ClassicPersonality -> personality.copy(type = personality.type.withClassicFonts(script))
         }
     val colorScheme = resolved.colors.toMaterialColorScheme()
     CompositionLocalProvider(

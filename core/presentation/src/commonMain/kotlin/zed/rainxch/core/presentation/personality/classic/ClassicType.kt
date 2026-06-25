@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import zed.rainxch.core.presentation.personality.model.PersonalityType
 
-// Family (Geist / Geist Mono) injected at theme time by classicTypeWithFonts().
+// Family (Geist / Geist Mono) injected at theme time by withClassicFonts().
 internal val ClassicType =
     PersonalityType(
         display =

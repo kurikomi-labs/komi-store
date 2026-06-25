@@ -1,6 +1,7 @@
 package zed.rainxch.core.presentation.personality
 
 import androidx.compose.runtime.Immutable
+import zed.rainxch.core.domain.model.appearance.AccentId
 import zed.rainxch.core.presentation.personality.classic.ClassicShadow
 import zed.rainxch.core.presentation.personality.classic.ClassicShape
 import zed.rainxch.core.presentation.personality.classic.ClassicType
@@ -21,9 +22,13 @@ data class ClassicPersonality(
     override val motion: PersonalityMotion,
 ) : Personality
 
-fun classicPersonality(dark: Boolean = false): ClassicPersonality =
+fun classicPersonality(
+    dark: Boolean = false,
+    amoled: Boolean = false,
+    accent: AccentId = AccentId.COBALT,
+): ClassicPersonality =
     ClassicPersonality(
-        colors = classicColors(dark),
+        colors = classicColors(dark, amoled, accent),
         type = ClassicType,
         shape = ClassicShape,
         shadow = ClassicShadow,

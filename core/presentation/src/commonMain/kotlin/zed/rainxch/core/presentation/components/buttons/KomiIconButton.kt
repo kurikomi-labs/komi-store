@@ -112,6 +112,7 @@ private fun MangaIconButton(
     val container = mangaButtonContainer(variant, colors)
     val contentColor = mangaButtonContent(variant, colors, ambientInk)
     val borderColor = if (container == Color.Transparent) contentColor else colors.outline
+    val stamped = !flat && container != Color.Transparent
     val tapTarget = maxOf(metrics.box, MinTouchTarget)
 
     val interaction = remember { MutableInteractionSource() }
@@ -124,7 +125,7 @@ private fun MangaIconButton(
         animateFloatAsState(if (hovered && enabled) 1f else 0f, label = "komiIconButtonHover")
 
     val pressModifier =
-        if (flat) {
+        if (!stamped) {
             Modifier.offset { IntOffset(0, (1.dp.toPx() * pressProgress.value).roundToInt()) }
         } else {
             Modifier.inkPress(
