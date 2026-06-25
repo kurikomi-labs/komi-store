@@ -14,16 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -32,72 +24,49 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.isAndroid
+import zed.rainxch.core.domain.isDesktop
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.repository.FeedCategory
 import zed.rainxch.core.presentation.components.bars.KomiTopBar
 import zed.rainxch.core.presentation.components.buttons.KomiButton
-import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
-import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
 import zed.rainxch.core.presentation.components.cards.KomiRepoCardFeed
-import zed.rainxch.core.presentation.components.chips.KomiChip
-import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
-import zed.rainxch.core.presentation.components.icon.KomiIcon
-import zed.rainxch.core.presentation.components.overlays.KomiSheet
-import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
 import zed.rainxch.core.presentation.components.overlays.KomiToastState
 import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
 import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
-import zed.rainxch.core.presentation.components.surfaces.KomiSurface
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
-import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.personality.MangaPersonality
-import zed.rainxch.core.presentation.personality.model.PersonalityColors
+import zed.rainxch.core.presentation.personality.usesDecor
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
-import zed.rainxch.core.domain.isDesktop
-import zed.rainxch.core.domain.model.repository.FeedCategory
+import zed.rainxch.feed.presentation.components.FeedCategoryStrip
+import zed.rainxch.feed.presentation.components.FeedPlatformBar
+import zed.rainxch.feed.presentation.components.FeedPlatformPicker
 import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.category_all
-import zed.rainxch.githubstore.core.presentation.res.feed_category_ai
-import zed.rainxch.githubstore.core.presentation.res.feed_category_media
-import zed.rainxch.githubstore.core.presentation.res.feed_category_networking
-import zed.rainxch.githubstore.core.presentation.res.feed_category_privacy
-import zed.rainxch.githubstore.core.presentation.res.feed_category_reading
-import zed.rainxch.githubstore.core.presentation.res.feed_category_social
-import zed.rainxch.githubstore.core.presentation.res.feed_category_tools
-import zed.rainxch.githubstore.core.presentation.res.feed_cd_profile
-import zed.rainxch.githubstore.core.presentation.res.feed_cd_search
 import zed.rainxch.githubstore.core.presentation.res.feed_empty_reset
 import zed.rainxch.githubstore.core.presentation.res.feed_empty_subtitle
 import zed.rainxch.githubstore.core.presentation.res.feed_empty_title
 import zed.rainxch.githubstore.core.presentation.res.feed_end_cap
 import zed.rainxch.githubstore.core.presentation.res.feed_failed_to_load
-import zed.rainxch.githubstore.core.presentation.res.feed_fresh_for
 import zed.rainxch.githubstore.core.presentation.res.feed_loading
 import zed.rainxch.githubstore.core.presentation.res.feed_masthead_subtitle
 import zed.rainxch.githubstore.core.presentation.res.feed_masthead_title
 import zed.rainxch.githubstore.core.presentation.res.feed_masthead_title_accent
 import zed.rainxch.githubstore.core.presentation.res.feed_offline
-import zed.rainxch.githubstore.core.presentation.res.feed_platform_all
-import zed.rainxch.githubstore.core.presentation.res.feed_platform_picker_title
-import zed.rainxch.githubstore.core.presentation.res.feed_platform_picker_title_jp
 import zed.rainxch.githubstore.core.presentation.res.home_retry
 
 @Composable
@@ -156,9 +125,6 @@ private fun FeedScreen(
         }
     }
 
-    val colors = LocalPersonality.current.colors
-    val isManga = LocalPersonality.current is MangaPersonality
-
     KomiScaffold(
         topBar = {
             KomiTopBar(
@@ -167,34 +133,32 @@ private fun FeedScreen(
                 subtitle = if (LocalPersonality.current.usesDecor) stringResource(Res.string.feed_masthead_subtitle) else null,
             )
         },
-        toastState = toastState
+        toastState = toastState,
     ) { innerPadding ->
         if (isAndroid()) {
             KomiPullToRefresh(
                 isRefreshing = state.isRefreshing,
                 onRefresh = { onAction(FeedAction.OnRefresh) },
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
             ) {
                 FeedContent(
                     listState = listState,
-                    onAction = onAction,
-                    colors = colors,
                     state = state,
-                    isManga = isManga
+                    onAction = onAction,
                 )
             }
         } else {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(innerPadding),
             ) {
                 FeedContent(
                     listState = listState,
-                    onAction = onAction,
-                    colors = colors,
                     state = state,
-                    isManga = isManga
+                    onAction = onAction,
                 )
             }
         }
@@ -212,14 +176,18 @@ private fun FeedScreen(
 @Composable
 private fun BoxScope.FeedContent(
     listState: LazyListState,
-    onAction: (FeedAction) -> Unit,
-    colors: PersonalityColors,
     state: FeedState,
-    isManga: Boolean
+    onAction: (FeedAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val isManga = LocalPersonality.current is MangaPersonality
+
     LazyColumn(
         state = listState,
-        modifier = Modifier.constrainedContentWidth().fillMaxSize().align(Alignment.TopCenter),
+        modifier = Modifier
+            .constrainedContentWidth()
+            .fillMaxSize()
+            .align(Alignment.TopCenter),
         contentPadding = PaddingValues(bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -314,55 +282,6 @@ private fun BoxScope.FeedContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun FeedPlatformBar(
-    platform: DiscoveryPlatform,
-    onOpenPicker: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        KomiText(
-            text = stringResource(Res.string.feed_fresh_for),
-            role = KomiTextRole.Title,
-        )
-
-        KomiButton(
-            onClick = onOpenPicker,
-            label = if (platform == DiscoveryPlatform.All) stringResource(Res.string.feed_platform_all) else platform.toLabel(),
-            variant = KomiButtonVariant.Primary,
-            size = KomiButtonSize.Sm,
-            leadingIcon = if (platform == DiscoveryPlatform.All) null else platform.toIcon(),
-            trailingIcon = Icons.Rounded.KeyboardArrowDown,
-        )
-    }
-}
-
-@Composable
-private fun FeedCategoryStrip(
-    categories: ImmutableList<FeedCategory>,
-    selected: FeedCategory,
-    onSelect: (FeedCategory) -> Unit,
-) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
-        contentPadding = PaddingValues(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        itemsIndexed(categories, key = { _, category -> category.name }) { index, category ->
-            KomiChip(
-                label = category.label(),
-                kind = KomiChipKind.Filter,
-                selected = category == selected,
-                index = index,
-                onClick = { onSelect(category) },
-            )
         }
     }
 }
@@ -475,8 +394,8 @@ private fun FeedEmpty(
             KomiText(
                 text = stringResource(
                     Res.string.feed_empty_subtitle,
-                    category.label(),
-                    platform.toLabel()
+                    category.toLabel(),
+                    platform.toLabel(),
                 ),
                 role = KomiTextRole.Body,
                 color = LocalPersonality.current.colors.onSurfaceVariant,
@@ -491,91 +410,3 @@ private fun FeedEmpty(
         }
     }
 }
-
-@Composable
-private fun FeedPlatformPicker(
-    selected: DiscoveryPlatform,
-    onSelect: (DiscoveryPlatform) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    KomiSheet(
-        onDismiss = onDismiss,
-        placement = KomiSheetPlacement.Bottom,
-        title = stringResource(Res.string.feed_platform_picker_title),
-        titleJp = stringResource(Res.string.feed_platform_picker_title_jp),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            DiscoveryPlatform.entries.forEach { platform ->
-                FeedPlatformRow(
-                    platform = platform,
-                    isSelected = platform == selected,
-                    onClick = { onSelect(platform) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FeedPlatformRow(
-    platform: DiscoveryPlatform,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    val content =
-        if (isSelected) LocalPersonality.current.colors.onPrimary else LocalPersonality.current.colors.onSurface
-
-    KomiSurface(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick,
-        contentPadding = PaddingValues(0.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(if (isSelected) LocalPersonality.current.colors.primary else Color.Transparent)
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            platform.toIcon()?.let { icon ->
-                KomiIcon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp),
-                    tint = content,
-                )
-            }
-
-            KomiText(
-                text = if (platform == DiscoveryPlatform.All) stringResource(Res.string.feed_platform_all) else platform.toLabel(),
-                role = KomiTextRole.Title,
-                color = content,
-                modifier = Modifier.weight(1f),
-            )
-
-            if (isSelected) {
-                KomiIcon(
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp),
-                    tint = content,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FeedCategory.label(): String = stringResource(
-    when (this) {
-        FeedCategory.All -> Res.string.category_all
-        FeedCategory.Ai -> Res.string.feed_category_ai
-        FeedCategory.Privacy -> Res.string.feed_category_privacy
-        FeedCategory.Networking -> Res.string.feed_category_networking
-        FeedCategory.Media -> Res.string.feed_category_media
-        FeedCategory.Social -> Res.string.feed_category_social
-        FeedCategory.Reading -> Res.string.feed_category_reading
-        FeedCategory.Tools -> Res.string.feed_category_tools
-    },
-)
