@@ -31,10 +31,6 @@ import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,9 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.domain.model.ImportFormat
 import zed.rainxch.apps.domain.model.ImportResult
+import zed.rainxch.apps.presentation.model.ImportSummaryBucket
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.import_summary_already_tracked
 import zed.rainxch.githubstore.core.presentation.res.import_summary_close
@@ -68,6 +66,8 @@ import zed.rainxch.githubstore.core.presentation.res.import_summary_unknown_form
 @Composable
 fun ImportSummarySheet(
     summary: ImportResult,
+    expandedBuckets: ImmutableSet<ImportSummaryBucket>,
+    onToggleBucket: (ImportSummaryBucket) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
@@ -128,6 +128,8 @@ fun ImportSummarySheet(
                 tint = colors.primary,
                 title = stringResource(Res.string.import_summary_imported, summary.imported),
                 items = summary.importedItems,
+                expanded = ImportSummaryBucket.IMPORTED in expandedBuckets,
+                onToggle = { onToggleBucket(ImportSummaryBucket.IMPORTED) },
             )
 
             if (summary.skipped > 0) {
@@ -136,6 +138,8 @@ fun ImportSummarySheet(
                     tint = colors.onSurfaceVariant,
                     title = stringResource(Res.string.import_summary_already_tracked, summary.skipped),
                     items = summary.skippedItems,
+                    expanded = ImportSummaryBucket.SKIPPED in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.SKIPPED) },
                 )
             }
 
@@ -146,6 +150,8 @@ fun ImportSummarySheet(
                     title = stringResource(Res.string.import_summary_non_github, summary.nonGitHubSkipped),
                     caption = stringResource(Res.string.import_summary_non_github_caption),
                     items = summary.nonGitHubItems,
+                    expanded = ImportSummaryBucket.NON_GITHUB in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.NON_GITHUB) },
                 )
             }
 
@@ -155,6 +161,8 @@ fun ImportSummarySheet(
                     tint = colors.error,
                     title = stringResource(Res.string.import_summary_failed, summary.failed),
                     items = summary.failedItems,
+                    expanded = ImportSummaryBucket.FAILED in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.FAILED) },
                 )
             }
 
@@ -243,10 +251,11 @@ private fun SummaryBucket(
     icon: ImageVector,
     tint: Color,
     title: String,
-    caption: String? = null,
     items: ImmutableList<String>,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    caption: String? = null,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val colors = LocalPersonality.current.colors
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -285,7 +294,7 @@ private fun SummaryBucket(
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .clickable { expanded = !expanded }
+                        .clickable { onToggle() }
                         .semantics { contentDescription = expandLabel },
                     contentAlignment = Alignment.Center,
                 ) {

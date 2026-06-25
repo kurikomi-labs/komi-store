@@ -50,6 +50,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.AppsAction
 import zed.rainxch.apps.presentation.AppsState
+import zed.rainxch.apps.presentation.model.AdvancedPreviewMessage
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.githubstore.core.presentation.res.*
 
@@ -237,7 +238,7 @@ private fun PreviewSection(
     isLoading: Boolean,
     matchedAssets: ImmutableList<GithubAssetUi>,
     matchedTag: String?,
-    message: String?,
+    message: AdvancedPreviewMessage?,
     onRefresh: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
@@ -294,7 +295,7 @@ private fun PreviewSection(
             }
         }
 
-        message == "no_match" -> {
+        message == AdvancedPreviewMessage.NoMatch -> {
             KomiText(
                 text = stringResource(Res.string.advanced_preview_no_match),
                 role = KomiTextRole.Body,
@@ -303,7 +304,7 @@ private fun PreviewSection(
             )
         }
 
-        message == "preview_failed" || message == "save_failed" -> {
+        message == AdvancedPreviewMessage.PreviewFailed || message == AdvancedPreviewMessage.SaveFailed -> {
             KomiText(
                 text = stringResource(Res.string.advanced_preview_failed),
                 role = KomiTextRole.Body,

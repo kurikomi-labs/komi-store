@@ -73,7 +73,7 @@ fun ImportProposalBanner(
                         pendingCount,
                         pendingCount,
                     ),
-                role = KomiTextRole.Title,
+                role = KomiTextRole.Stamp,
                 fontWeight = FontWeight.SemiBold,
                 color = colors.onPrimaryContainer,
                 uppercase = false,

@@ -50,6 +50,7 @@ import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_pre_rel
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_ready_to_install
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_status_updates_ignored
 import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
+import zed.rainxch.githubstore.core.presentation.res.apps_latest_version_placeholder
 import zed.rainxch.githubstore.core.presentation.res.apps_two_pane_detail_section_actions
 import zed.rainxch.githubstore.core.presentation.res.apps_two_pane_detail_section_settings
 import zed.rainxch.githubstore.core.presentation.res.apps_two_pane_detail_section_status
@@ -89,15 +90,46 @@ fun AppDetailPane(
     modifier: Modifier = Modifier,
 ) {
     if (appItem == null) {
-        EmptyDetailPane(modifier = modifier)
+        val emptyColors = LocalPersonality.current.colors
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(32.dp),
+            ) {
+                KomiIcon(
+                    imageVector = Icons.Outlined.Apps,
+                    contentDescription = null,
+                    tint = emptyColors.outline,
+                    modifier = Modifier.size(48.dp),
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                KomiText(
+                    text = stringResource(Res.string.apps_two_pane_empty_title),
+                    role = KomiTextRole.Title,
+                    color = emptyColors.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                KomiText(
+                    text = stringResource(Res.string.apps_two_pane_empty_subtitle),
+                    role = KomiTextRole.Body,
+                    color = emptyColors.outline,
+                    uppercase = false,
+                )
+            }
+        }
         return
     }
 
     val app = appItem.installedApp
-    val isBusy = app.isPendingInstall ||
-        appItem.updateState is UpdateState.Downloading ||
-        appItem.updateState is UpdateState.Installing ||
-        appItem.updateState is UpdateState.CheckingUpdate
 
     Column(
         modifier = modifier
@@ -121,7 +153,7 @@ fun AppDetailPane(
 
         PrimaryActionsRow(
             appItem = appItem,
-            isBusy = isBusy,
+            isBusy = appItem.isBusy,
             onOpenApp = onOpenApp,
             onUpdateApp = onUpdateApp,
             onCancelUpdate = onCancelUpdate,
@@ -147,7 +179,7 @@ fun AppDetailPane(
                 onClick = onUninstall,
                 label = stringResource(Res.string.uninstall),
                 variant = KomiButtonVariant.Destructive,
-                enabled = !isBusy,
+                enabled = !appItem.isBusy,
                 leadingIcon = Icons.Outlined.DeleteOutline,
             )
         }
@@ -257,7 +289,7 @@ private fun StatusBlock(appItem: AppItem) {
 
             StatusRow(
                 label = stringResource(Res.string.apps_two_pane_latest_label),
-                value = app.latestVersion ?: "—",
+                value = app.latestVersion ?: stringResource(Res.string.apps_latest_version_placeholder),
             )
 
             if (app.preferredAssetVariant != null) {
@@ -617,42 +649,3 @@ private fun SectionLabel(text: String) {
     )
 }
 
-@Composable
-private fun EmptyDetailPane(modifier: Modifier = Modifier) {
-    val colors = LocalPersonality.current.colors
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(32.dp),
-        ) {
-            KomiIcon(
-                imageVector = Icons.Outlined.Apps,
-                contentDescription = null,
-                tint = colors.outline,
-                modifier = Modifier.size(48.dp),
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            KomiText(
-                text = stringResource(Res.string.apps_two_pane_empty_title),
-                role = KomiTextRole.Title,
-                color = colors.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-                uppercase = false,
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            KomiText(
-                text = stringResource(Res.string.apps_two_pane_empty_subtitle),
-                role = KomiTextRole.Body,
-                color = colors.outline,
-                uppercase = false,
-            )
-        }
-    }
-}

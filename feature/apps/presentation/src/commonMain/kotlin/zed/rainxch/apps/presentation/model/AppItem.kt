@@ -5,4 +5,10 @@ data class AppItem(
     val updateState: UpdateState = UpdateState.Idle,
     val downloadProgress: Int? = null,
     val error: String? = null,
+    val isBusy: Boolean = false,
+    val hasFilter: Boolean = false,
+    val hasPin: Boolean = false,
+    val canSkipVersion: Boolean = false,
+    val versionLabel: String = "",
+    val idleVersionLabel: String = "",
 )

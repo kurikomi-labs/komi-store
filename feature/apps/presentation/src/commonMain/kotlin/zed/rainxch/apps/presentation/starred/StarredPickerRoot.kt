@@ -81,6 +81,8 @@ private fun StarredPickerScreen(
     state: StarredPickerState,
     onAction: (StarredPickerAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+
     KomiScaffold(
         topBar = {
             KomiTopBar(
@@ -99,225 +101,206 @@ private fun StarredPickerScreen(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (state.phase) {
-                StarredPickerState.Phase.LoadingStars -> CenteredProgress()
-                StarredPickerState.Phase.Empty -> EmptyState(state.isAuthenticated)
+                StarredPickerState.Phase.LoadingStars -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        KomiCircularProgress()
+                    }
+                }
+
+                StarredPickerState.Phase.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        KomiText(
+                            text = if (!state.isAuthenticated) {
+                                stringResource(Res.string.starred_picker_sign_in_required)
+                            } else {
+                                stringResource(Res.string.starred_picker_empty)
+                            },
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
+                        )
+                    }
+                }
+
                 StarredPickerState.Phase.ScanningReleases,
                 StarredPickerState.Phase.Ready,
-                -> ContentBody(state = state, onAction = onAction)
-            }
-        }
-    }
-}
+                -> {
+                    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+                        Spacer(Modifier.height(8.dp))
 
-@Composable
-private fun ContentBody(
-    state: StarredPickerState,
-    onAction: (StarredPickerAction) -> Unit,
-) {
-    val colors = LocalPersonality.current.colors
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-        Spacer(Modifier.height(8.dp))
+                        KomiText(
+                            text = stringResource(
+                                Res.string.starred_picker_header_counts,
+                                state.totalStarred,
+                                state.apkCount,
+                                state.trackedCount,
+                            ),
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
+                        )
 
-        KomiText(
-            text = stringResource(
-                Res.string.starred_picker_header_counts,
-                state.totalStarred,
-                state.apkCount,
-                state.trackedCount,
-            ),
-            role = KomiTextRole.Body,
-            color = colors.onSurfaceVariant,
-            uppercase = false,
-        )
+                        if (state.phase == StarredPickerState.Phase.ScanningReleases) {
+                            Spacer(Modifier.height(8.dp))
 
-        if (state.phase == StarredPickerState.Phase.ScanningReleases) {
-            Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.fillMaxWidth()) {
-                KomiLinearProgress(
-                    progress = {
-                        if (state.scanTotal > 0) state.scanProgress.toFloat() / state.scanTotal else 0f
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                KomiLinearProgress(
+                                    progress = {
+                                        if (state.scanTotal > 0) state.scanProgress.toFloat() / state.scanTotal else 0f
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
 
-                Spacer(Modifier.height(4.dp))
+                                Spacer(Modifier.height(4.dp))
 
-                KomiText(
-                    text = stringResource(
-                        Res.string.starred_picker_progress,
-                        state.scanProgress,
-                        state.scanTotal,
-                    ),
-                    role = KomiTextRole.Label,
-                    fontSize = 11.sp,
-                    color = colors.onSurfaceVariant,
-                    uppercase = false,
-                )
-            }
-        }
+                                KomiText(
+                                    text = stringResource(
+                                        Res.string.starred_picker_progress,
+                                        state.scanProgress,
+                                        state.scanTotal,
+                                    ),
+                                    role = KomiTextRole.Label,
+                                    fontSize = 11.sp,
+                                    color = colors.onSurfaceVariant,
+                                    uppercase = false,
+                                )
+                            }
+                        }
 
-        if (state.rateLimited) {
-            Spacer(Modifier.height(8.dp))
+                        if (state.rateLimited) {
+                            Spacer(Modifier.height(8.dp))
 
-            RateLimitedBanner(onResume = { onAction(StarredPickerAction.OnResume) })
-        }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                KomiText(
+                                    text = stringResource(Res.string.starred_picker_rate_limited),
+                                    role = KomiTextRole.Body,
+                                    fontSize = 13.sp,
+                                    color = colors.error,
+                                    modifier = Modifier.weight(1f),
+                                    uppercase = false,
+                                )
 
-        Spacer(Modifier.height(12.dp))
+                                KomiButton(
+                                    onClick = { onAction(StarredPickerAction.OnResume) },
+                                    label = stringResource(Res.string.starred_picker_resume),
+                                    variant = KomiButtonVariant.Primary,
+                                    size = KomiButtonSize.Sm,
+                                )
+                            }
+                        }
 
-        KomiTextField(
-            value = state.searchQuery,
-            onValueChange = { onAction(StarredPickerAction.OnSearchChange(it)) },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = stringResource(Res.string.starred_picker_search_hint),
-            leadingIcon = Icons.Filled.Search,
-        )
+                        Spacer(Modifier.height(12.dp))
 
-        Spacer(Modifier.height(8.dp))
+                        KomiTextField(
+                            value = state.searchQuery,
+                            onValueChange = { onAction(StarredPickerAction.OnSearchChange(it)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = stringResource(Res.string.starred_picker_search_hint),
+                            leadingIcon = Icons.Filled.Search,
+                        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            KomiChip(
-                label = stringResource(Res.string.starred_picker_sort_recent),
-                kind = KomiChipKind.Filter,
-                selected = state.sortRule == StarredPickerSortRule.RecentlyStarred,
-                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.RecentlyStarred)) },
-            )
+                        Spacer(Modifier.height(8.dp))
 
-            KomiChip(
-                label = stringResource(Res.string.starred_picker_sort_alphabetical),
-                kind = KomiChipKind.Filter,
-                selected = state.sortRule == StarredPickerSortRule.Alphabetical,
-                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.Alphabetical)) },
-            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            KomiChip(
+                                label = stringResource(Res.string.starred_picker_sort_recent),
+                                kind = KomiChipKind.Filter,
+                                selected = state.sortRule == StarredPickerSortRule.RecentlyStarred,
+                                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.RecentlyStarred)) },
+                            )
 
-            KomiChip(
-                label = stringResource(Res.string.starred_picker_sort_stars),
-                kind = KomiChipKind.Filter,
-                selected = state.sortRule == StarredPickerSortRule.MostStars,
-                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.MostStars)) },
-            )
-        }
+                            KomiChip(
+                                label = stringResource(Res.string.starred_picker_sort_alphabetical),
+                                kind = KomiChipKind.Filter,
+                                selected = state.sortRule == StarredPickerSortRule.Alphabetical,
+                                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.Alphabetical)) },
+                            )
 
-        Spacer(Modifier.height(8.dp))
+                            KomiChip(
+                                label = stringResource(Res.string.starred_picker_sort_stars),
+                                kind = KomiChipKind.Filter,
+                                selected = state.sortRule == StarredPickerSortRule.MostStars,
+                                onClick = { onAction(StarredPickerAction.OnSortRuleSelected(StarredPickerSortRule.MostStars)) },
+                            )
+                        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            KomiText(
-                text = stringResource(Res.string.starred_picker_filter_show_all),
-                role = KomiTextRole.Body,
-                fontSize = 13.sp,
-                color = colors.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-                uppercase = false,
-            )
+                        Spacer(Modifier.height(8.dp))
 
-            KomiSwitch(
-                checked = state.showWithoutApk,
-                onCheckedChange = { onAction(StarredPickerAction.OnToggleWithoutApk(it)) },
-            )
-        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            KomiText(
+                                text = stringResource(Res.string.starred_picker_filter_show_all),
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                color = colors.onSurfaceVariant,
+                                modifier = Modifier.weight(1f),
+                                uppercase = false,
+                            )
 
-        Spacer(Modifier.height(8.dp))
+                            KomiSwitch(
+                                checked = state.showWithoutApk,
+                                onCheckedChange = { onAction(StarredPickerAction.OnToggleWithoutApk(it)) },
+                            )
+                        }
 
-        KomiText(
-            text = stringResource(Res.string.starred_picker_star_dedup_tooltip),
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = colors.onSurfaceVariant,
-            uppercase = false,
-        )
+                        Spacer(Modifier.height(8.dp))
 
-        if (state.visibleCandidates.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                KomiText(
-                    text = stringResource(Res.string.starred_picker_no_match),
-                    role = KomiTextRole.Body,
-                    color = colors.onSurfaceVariant,
-                    uppercase = false,
-                )
-            }
-        } else {
-            Spacer(Modifier.height(8.dp))
+                        KomiText(
+                            text = stringResource(Res.string.starred_picker_star_dedup_tooltip),
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
+                        )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(items = state.visibleCandidates, key = { it.repoId }) { candidate ->
-                    StarredCandidateRow(
-                        candidate = candidate,
-                        onClick = { onAction(StarredPickerAction.OnCandidateClick(candidate)) },
-                    )
+                        if (state.visibleCandidates.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                KomiText(
+                                    text = stringResource(Res.string.starred_picker_no_match),
+                                    role = KomiTextRole.Body,
+                                    color = colors.onSurfaceVariant,
+                                    uppercase = false,
+                                )
+                            }
+                        } else {
+                            Spacer(Modifier.height(8.dp))
+
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                items(items = state.visibleCandidates, key = { it.repoId }) { candidate ->
+                                    StarredCandidateRow(
+                                        candidate = candidate,
+                                        onClick = { onAction(StarredPickerAction.OnCandidateClick(candidate)) },
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
-
-@Composable
-private fun RateLimitedBanner(onResume: () -> Unit) {
-    val colors = LocalPersonality.current.colors
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        KomiText(
-            text = stringResource(Res.string.starred_picker_rate_limited),
-            role = KomiTextRole.Body,
-            fontSize = 13.sp,
-            color = colors.error,
-            modifier = Modifier.weight(1f),
-            uppercase = false,
-        )
-
-        KomiButton(
-            onClick = onResume,
-            label = stringResource(Res.string.starred_picker_resume),
-            variant = KomiButtonVariant.Primary,
-            size = KomiButtonSize.Sm,
-        )
-    }
-}
-
-@Composable
-private fun EmptyState(isAuthenticated: Boolean) {
-    val colors = LocalPersonality.current.colors
-    Box(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        val message = if (!isAuthenticated) {
-            stringResource(Res.string.starred_picker_sign_in_required)
-        } else {
-            stringResource(Res.string.starred_picker_empty)
-        }
-        KomiText(
-            text = message,
-            role = KomiTextRole.Body,
-            color = colors.onSurfaceVariant,
-            uppercase = false,
-        )
-    }
-}
-
-@Composable
-private fun CenteredProgress() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        KomiCircularProgress()
-    }
-}
-

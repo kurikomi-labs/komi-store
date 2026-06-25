@@ -13,10 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,7 +56,6 @@ fun ExternalImportRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val toastState = rememberKomiToastState()
     val scope = rememberCoroutineScope()
-    var confettiTrigger by remember { mutableIntStateOf(0) }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -69,9 +66,7 @@ fun ExternalImportRoot(
                 scope.launch { toastState.danger(event.message) }
             }
 
-            ExternalImportEvent.PlayConfetti -> confettiTrigger++
             is ExternalImportEvent.ShowUndoSnackbar -> {
-
                 toastState.toasts.clear()
                 scope.launch {
                     val undoLabel = getString(Res.string.external_import_undo_action)
@@ -111,7 +106,7 @@ fun ExternalImportRoot(
                         )
                     },
                     actions = {
-                        if (state.phase == ImportPhase.AwaitingReview && state.cardsRemaining > 1) {
+                        if (state.phase == ImportPhase.AwaitingReview && state.cards.size > 1) {
                             KomiDropdown(
                                 entries = persistentListOf(
                                     KomiMenuItem(
@@ -230,8 +225,7 @@ fun ExternalImportRoot(
                     }
 
                     ImportPhase.Done -> {
-                        val tracked = state.autoImported + state.manuallyLinked
-                        if (state.cards.isEmpty() && tracked == 0) {
+                        if (state.cards.isEmpty() && state.trackedCount == 0) {
                             EmptyStateScreen(
                                 isPermissionDenied = state.isPermissionDenied,
                                 onRequestPermission = {
@@ -244,8 +238,7 @@ fun ExternalImportRoot(
                             )
                         } else {
                             CompletionToast(
-                                autoImported = state.autoImported,
-                                manuallyLinked = state.manuallyLinked,
+                                trackedCount = state.trackedCount,
                                 skipped = state.skipped,
                                 onExit = { viewModel.onAction(ExternalImportAction.OnExit) },
                             )
@@ -253,8 +246,8 @@ fun ExternalImportRoot(
                     }
                 }
 
-                if (state.phase == ImportPhase.Done && confettiTrigger > 0) {
-                    androidx.compose.runtime.key(confettiTrigger) {
+                if (state.phase == ImportPhase.Done && state.confettiPlayCount > 0) {
+                    key(state.confettiPlayCount) {
                         ConfettiOverlay(enabled = true)
                     }
                 }

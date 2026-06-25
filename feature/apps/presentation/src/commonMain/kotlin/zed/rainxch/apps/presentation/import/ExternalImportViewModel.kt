@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -22,18 +23,22 @@ import org.jetbrains.compose.resources.getString
 import zed.rainxch.apps.domain.repository.AppsRepository
 import zed.rainxch.apps.presentation.import.model.CandidateUi
 import zed.rainxch.apps.presentation.import.model.ImportPhase
+import zed.rainxch.apps.presentation.import.model.PendingUndo
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
 import zed.rainxch.apps.presentation.import.model.SuggestionSource
 import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.DeviceApp
+import zed.rainxch.core.domain.model.repository.RepositorySource
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
+import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.ExternalAppCandidate
 import zed.rainxch.core.domain.system.ExternalDecisionSnapshot
 import zed.rainxch.core.domain.system.InstallerKind
 import zed.rainxch.core.domain.system.RepoMatchResult
 import zed.rainxch.core.domain.system.RepoMatchSource
 import zed.rainxch.core.domain.system.RepoMatchSuggestion
+import zed.rainxch.core.domain.utils.RepositoryUrlParser
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_error_link_failed
 import zed.rainxch.githubstore.core.presentation.res.external_import_error_link_network
@@ -54,7 +59,7 @@ class ExternalImportViewModel(
     private val appsRepository: AppsRepository,
     private val installedAppsRepository: InstalledAppsRepository,
     private val logger: KomiStoreLogger,
-    private val tweaksRepository: zed.rainxch.core.domain.repository.TweaksRepository,
+    private val tweaksRepository: TweaksRepository,
 ) : ViewModel() {
     private var candidatesByPackage: Map<String, ExternalAppCandidate> = emptyMap()
 
@@ -76,7 +81,8 @@ class ExternalImportViewModel(
                     hasStarted = true
                     startScanIfIdle()
                 }
-            }.stateIn(
+            }.map { it.copy(trackedCount = it.autoImported + it.manuallyLinked) }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = ExternalImportState(),
@@ -97,13 +103,11 @@ class ExternalImportViewModel(
 
             is ExternalImportAction.OnPermissionGranted -> {
                 _state.update { it.copy(isPermissionDenied = false) }
-                emitPermissionOutcome(granted = true, sdkInt = action.sdkInt)
                 startScanIfIdle(force = true)
             }
 
             is ExternalImportAction.OnPermissionDenied -> {
                 _state.update { it.copy(isPermissionDenied = true) }
-                emitPermissionOutcome(granted = false, sdkInt = action.sdkInt)
                 startScanIfIdle(force = true)
             }
 
@@ -266,9 +270,9 @@ class ExternalImportViewModel(
                             showCompletionToast = true,
                             scanStartedAtMs = null,
                             isSkipAvailable = false,
+                            confettiPlayCount = it.confettiPlayCount + 1,
                         )
                     }
-                    _events.send(ExternalImportEvent.PlayConfetti)
                 } else {
                     _state.update {
                         it.copy(
@@ -377,12 +381,11 @@ class ExternalImportViewModel(
             val customHosts = runCatching {
                 tweaksRepository.getCustomForgeHosts().first()
             }.getOrElse { emptySet() }
-            val parsed = zed.rainxch.core.domain.utils.RepositoryUrlParser
-                .parse(query, customHosts)
+            val parsed = RepositoryUrlParser.parse(query, customHosts)
             if (parsed != null) {
                 val sourceHost = when (val src = parsed.source) {
-                    zed.rainxch.core.domain.model.repository.RepositorySource.GitHub -> null
-                    is zed.rainxch.core.domain.model.repository.RepositorySource.Forgejo -> src.host
+                    RepositorySource.GitHub -> null
+                    is RepositorySource.Forgejo -> src.host
                 }
                 _state.update {
                     if (it.activeSearchPackage != packageName) it
@@ -412,8 +415,6 @@ class ExternalImportViewModel(
                 }
             result.fold(
                 onSuccess = { suggestions ->
-                    if (suggestions.isEmpty()) {
-                    }
                     _state.update {
                         if (it.activeSearchPackage != packageName) it
                         else it.copy(
@@ -633,9 +634,9 @@ class ExternalImportViewModel(
                 it.copy(
                     phase = ImportPhase.Done,
                     showCompletionToast = true,
+                    confettiPlayCount = it.confettiPlayCount + 1,
                 )
             }
-            viewModelScope.launch { _events.send(ExternalImportEvent.PlayConfetti) }
         }
     }
 
@@ -700,35 +701,15 @@ class ExternalImportViewModel(
                     autoLinkedPackages = persistentListOf(),
                     autoLinkedLabels = persistentListOf(),
                     showCompletionToast = merged.isEmpty(),
+                    confettiPlayCount = if (merged.isEmpty()) {
+                        state.confettiPlayCount + 1
+                    } else {
+                        state.confettiPlayCount
+                    },
                 )
             }
-            if (_state.value.cards.isEmpty()) {
-                _events.send(ExternalImportEvent.PlayConfetti)
-            }
         }
     }
-
-    private fun emitPermissionOutcome(granted: Boolean, sdkInt: Int?) {
-
-    }
-
-    private fun bucketSdkInt(sdkInt: Int?): String =
-        when {
-            sdkInt == null -> "unknown"
-            sdkInt in 26..29 -> "26-29"
-            sdkInt in 30..32 -> "30-32"
-            sdkInt >= 33 -> "33+"
-            else -> "unknown"
-        }
-
-    private fun bucketCount(count: Int): String =
-        when {
-            count <= 0 -> "0"
-            count in 1..2 -> "1-2"
-            count in 3..9 -> "3-9"
-            count in 10..49 -> "10-49"
-            else -> "50+"
-        }
 
     private fun skipRemaining() {
         val current = _state.value
@@ -768,12 +749,15 @@ class ExternalImportViewModel(
                     phase = if (allSucceeded && keptCards.isEmpty()) ImportPhase.Done else state.phase,
                     skipped = state.skipped + successes.size,
                     showCompletionToast = allSucceeded && keptCards.isEmpty(),
+                    confettiPlayCount = if (allSucceeded) {
+                        state.confettiPlayCount + 1
+                    } else {
+                        state.confettiPlayCount
+                    },
                 )
             }
 
-            if (allSucceeded) {
-                _events.send(ExternalImportEvent.PlayConfetti)
-            } else {
+            if (!allSucceeded) {
                 _events.send(
                     ExternalImportEvent.ShowError(
                         getString(Res.string.external_import_error_link_failed),
@@ -909,13 +893,11 @@ class ExternalImportViewModel(
                 tallied.copy(
                     phase = ImportPhase.Done,
                     showCompletionToast = true,
+                    confettiPlayCount = tallied.confettiPlayCount + 1,
                 )
             } else {
                 tallied
             }
-        }
-        if (_state.value.cards.isEmpty()) {
-            _events.send(ExternalImportEvent.PlayConfetti)
         }
     }
 
@@ -956,18 +938,6 @@ class ExternalImportViewModel(
             -> getString(Res.string.external_import_installer_unknown)
         }
 
-    private data class PendingUndo(
-        val card: CandidateUi,
-        val snapshot: ExternalDecisionSnapshot?,
-        val hadInstalledAppRowBefore: Boolean,
-        val kind: Kind,
-    ) {
-        val packageName: String get() = card.packageName
-        val appLabel: String get() = card.appLabel
-
-        enum class Kind { Skip, Link }
-    }
-
     companion object {
         private const val AUTO_LINK_THRESHOLD = 0.85
         private const val PRESELECT_MIN = 0.5
@@ -976,26 +946,3 @@ class ExternalImportViewModel(
         private const val SKIP_REVEAL_DELAY_MS = 5_000L
     }
 }
-
-private fun parseGithubRepoUrl(input: String): Pair<String, String>? {
-    val trimmed = input.trim().removeSuffix("/")
-    if (trimmed.isEmpty()) return null
-
-    val withoutScheme = trimmed
-        .removePrefix("https://")
-        .removePrefix("http://")
-        .removePrefix("www.")
-    if (!withoutScheme.startsWith("github.com/", ignoreCase = true)) return null
-    val path = withoutScheme.substring("github.com/".length)
-    val parts = path.split('/').filter { it.isNotEmpty() }
-    if (parts.size < 2) return null
-    val owner = parts[0]
-    val repo = parts[1].substringBefore('?').substringBefore('#')
-    if (!isValidGithubSegment(owner) || !isValidGithubSegment(repo)) return null
-    return owner to repo
-}
-
-private fun isValidGithubSegment(s: String): Boolean =
-    s.isNotEmpty() &&
-        s.length <= 100 &&
-        s.all { it.isLetterOrDigit() || it == '-' || it == '_' || it == '.' }

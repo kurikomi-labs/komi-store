@@ -2,9 +2,6 @@
 
 package zed.rainxch.apps.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,140 +12,78 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Search
-import zed.rainxch.core.presentation.components.overlays.KomiToastState
-import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.components.AdvancedAppSettingsBottomSheet
+import zed.rainxch.apps.presentation.components.AppItemCard
 import zed.rainxch.apps.presentation.components.AppsSectionHeader
+import zed.rainxch.apps.presentation.components.AppsTopbar
 import zed.rainxch.apps.presentation.components.CompactAppRow
-import zed.rainxch.apps.presentation.components.InstalledAppIcon
+import zed.rainxch.apps.presentation.components.ImportSummarySheet
 import zed.rainxch.apps.presentation.components.KaoBanner
 import zed.rainxch.apps.presentation.components.LinkAppBottomSheet
+import zed.rainxch.apps.presentation.components.PendingDiscardSheet
+import zed.rainxch.apps.presentation.components.PendingUninstallSheet
 import zed.rainxch.apps.presentation.components.UpdatesBanner
 import zed.rainxch.apps.presentation.components.VariantPickerDialog
 import zed.rainxch.apps.presentation.import.components.ImportProposalBanner
-import zed.rainxch.apps.presentation.model.AppItem
-import zed.rainxch.apps.presentation.model.AppSortRule
-import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.presentation.components.surfaces.KomiSurface
-import zed.rainxch.core.presentation.components.GitHubStoreImage
+import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.core.presentation.components.ScrollbarContainer
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
-import zed.rainxch.core.presentation.components.bars.KomiTopBar
-import zed.rainxch.core.presentation.components.buttons.KomiIconButton
-import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.buttons.KomiFab
 import zed.rainxch.core.presentation.components.inputs.KomiTextField
 import zed.rainxch.core.presentation.components.overlays.KomiSheet
 import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.components.text.KomiText
 import zed.rainxch.core.presentation.components.text.KomiTextRole
-import zed.rainxch.core.presentation.components.overlays.KomiDropdown
-import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
-import zed.rainxch.core.presentation.components.icon.KomiIcon
-import zed.rainxch.core.presentation.components.inputs.KomiCheckbox
-import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
-import zed.rainxch.core.presentation.components.progress.KomiLinearProgress
-import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
 import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.core.presentation.utils.formatEpochDate
-import zed.rainxch.core.presentation.utils.formatIsoDate
 import zed.rainxch.core.presentation.utils.formatLastChecked
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.add_by_link
-import zed.rainxch.githubstore.core.presentation.res.add_from_starred_title
-import zed.rainxch.githubstore.core.presentation.res.advanced_settings_open
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_more_actions
-import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
 import zed.rainxch.githubstore.core.presentation.res.apps_section_pending_installs
 import zed.rainxch.githubstore.core.presentation.res.apps_section_up_to_date
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
-import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
 import zed.rainxch.githubstore.core.presentation.res.cancel
-import zed.rainxch.githubstore.core.presentation.res.check_for_updates
-import zed.rainxch.githubstore.core.presentation.res.checking
 import zed.rainxch.githubstore.core.presentation.res.checking_for_updates
 import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_title
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_title
 import zed.rainxch.githubstore.core.presentation.res.discard_pending_install
-import zed.rainxch.githubstore.core.presentation.res.downloading
-import zed.rainxch.githubstore.core.presentation.res.error_with_message
-import zed.rainxch.githubstore.core.presentation.res.export_apps
-import zed.rainxch.githubstore.core.presentation.res.export_apps_obtainium
-import zed.rainxch.githubstore.core.presentation.res.external_import_rescan_menu
-import zed.rainxch.githubstore.core.presentation.res.import_apps
-import zed.rainxch.githubstore.core.presentation.res.install
-import zed.rainxch.githubstore.core.presentation.res.installing
 import zed.rainxch.githubstore.core.presentation.res.last_checked
 import zed.rainxch.githubstore.core.presentation.res.no_apps_found
-import zed.rainxch.githubstore.core.presentation.res.open
-import zed.rainxch.githubstore.core.presentation.res.pending_install
-import zed.rainxch.githubstore.core.presentation.res.pre_release_badge
-import zed.rainxch.githubstore.core.presentation.res.ready_to_install
 import zed.rainxch.githubstore.core.presentation.res.search_your_apps
-import zed.rainxch.githubstore.core.presentation.res.sort_apps
-import zed.rainxch.githubstore.core.presentation.res.sort_name
-import zed.rainxch.githubstore.core.presentation.res.sort_recently_updated
-import zed.rainxch.githubstore.core.presentation.res.sort_updates_first
 import zed.rainxch.githubstore.core.presentation.res.uninstall
-import zed.rainxch.githubstore.core.presentation.res.update
-import zed.rainxch.githubstore.core.presentation.res.updated_successfully
-import zed.rainxch.githubstore.core.presentation.res.variant_label_inline
-import zed.rainxch.githubstore.core.presentation.res.variant_picker_open
-import zed.rainxch.githubstore.core.presentation.res.variant_stale_hint
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -218,7 +153,54 @@ fun AppsRoot(
         },
         toastState = toastState,
     )
+
+    if (state.showLinkSheet) {
+        LinkAppBottomSheet(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    if (state.advancedSettingsApp != null) {
+        AdvancedAppSettingsBottomSheet(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    if (state.variantPickerApp != null) {
+        VariantPickerDialog(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    state.importSummary?.let { summary ->
+        ImportSummarySheet(
+            summary = summary,
+            expandedBuckets = state.expandedImportBuckets,
+            onToggleBucket = { viewModel.onAction(AppsAction.OnToggleImportSummaryBucket(it)) },
+            onDismiss = {
+                viewModel.onAction(AppsAction.OnDismissImportSummary)
+            },
+        )
+    }
+
+    state.appPendingUninstall?.let { app ->
+        PendingUninstallSheet(
+            app = app,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    state.appPendingDiscard?.let { app ->
+        PendingDiscardSheet(
+            app = app,
+            onAction = viewModel::onAction
+        )
+    }
 }
+
 
 @Composable
 fun AppsScreen(
@@ -227,240 +209,24 @@ fun AppsScreen(
     toastState: KomiToastState,
 ) {
     val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
     KomiScaffold(
         topBar = {
-            KomiTopBar(
-                title = stringResource(Res.string.bottom_nav_apps_title),
-                actions = {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(shape.cornerSmall))
-                            .background(colors.surface)
-                            .border(
-                                width = 1.dp,
-                                color = colors.outline,
-                                shape = RoundedCornerShape(shape.cornerSmall),
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        KomiDropdown(
-                            entries = persistentListOf(
-                                KomiMenuItem(
-                                    id = AppSortRule.UpdatesFirst.name,
-                                    label = stringResource(Res.string.sort_updates_first),
-                                ),
-                                KomiMenuItem(
-                                    id = AppSortRule.RecentlyUpdated.name,
-                                    label = stringResource(Res.string.sort_recently_updated),
-                                ),
-                                KomiMenuItem(
-                                    id = AppSortRule.Name.name,
-                                    label = stringResource(Res.string.sort_name),
-                                ),
-                            ),
-                            onSelect = { item ->
-                                onAction(AppsAction.OnSortRuleSelected(AppSortRule.fromName(item.id)))
-                            },
-                            value = state.sortRule.name,
-                            trigger = { onClick ->
-                                Box(
-                                    modifier = Modifier
-                                        .clickable { onClick() }
-                                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    KomiIcon(
-                                        imageVector = Icons.AutoMirrored.Filled.Sort,
-                                        contentDescription = stringResource(Res.string.sort_apps),
-                                        tint = colors.onSurface,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
-                            },
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .size(1.dp, 20.dp)
-                                .background(colors.outline.copy(alpha = 0.5f)),
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .clickable { onAction(AppsAction.OnCheckAllForUpdates) }
-                                .padding(horizontal = 12.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            KomiIcon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(Res.string.check_for_updates),
-                                tint = colors.onSurface,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(1.dp, 20.dp)
-                                .background(colors.outline.copy(alpha = 0.5f)),
-                        )
-
-                        KomiDropdown(
-                            entries = persistentListOf(
-                                KomiMenuItem(
-                                    id = "export_apps",
-                                    label = stringResource(Res.string.export_apps),
-                                    icon = Icons.Outlined.FileUpload,
-                                ),
-                                KomiMenuItem(
-                                    id = "export_obtainium",
-                                    label = stringResource(Res.string.export_apps_obtainium),
-                                    icon = Icons.Outlined.FileUpload,
-                                ),
-                                KomiMenuItem(
-                                    id = "import_apps",
-                                    label = stringResource(Res.string.import_apps),
-                                    icon = Icons.Outlined.FileDownload,
-                                ),
-                                KomiMenuItem(
-                                    id = "rescan",
-                                    label = stringResource(Res.string.external_import_rescan_menu),
-                                    icon = Icons.Outlined.Search,
-                                ),
-                                KomiMenuItem(
-                                    id = "add_from_starred",
-                                    label = stringResource(Res.string.add_from_starred_title),
-                                    icon = Icons.Filled.Star,
-                                ),
-                            ),
-                            onSelect = { item ->
-                                when (item.id) {
-                                    "export_apps" -> onAction(AppsAction.OnExportApps)
-                                    "export_obtainium" -> onAction(AppsAction.OnExportObtainium)
-                                    "import_apps" -> onAction(AppsAction.OnImportApps)
-                                    "rescan" -> onAction(AppsAction.OnRescanForGithubApps)
-                                    "add_from_starred" -> onAction(AppsAction.OnAddFromStarredClick)
-                                }
-                            },
-                            trigger = { onClick ->
-                                Box(
-                                    modifier = Modifier
-                                        .clickable { onClick() }
-                                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    KomiIcon(
-                                        imageVector = Icons.Outlined.MoreVert,
-                                        contentDescription = null,
-                                        tint = colors.onSurface,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
-                            },
-                        )
-                    }
-                },
+            AppsTopbar(
+                onAction = onAction,
+                state = state
             )
         },
         floatingActionButton = {
-            KomiIconButton(
+            KomiFab(
+                icon = Icons.Default.Add,
+                contentDescription = stringResource(Res.string.add_by_link),
                 onClick = {
                     onAction(AppsAction.OnAddByLinkClick)
                 },
-                contentDescription = stringResource(Res.string.add_by_link),
-                icon = Icons.Default.Add,
-                variant = KomiButtonVariant.Primary
             )
         },
         toastState = toastState,
     ) { innerPadding ->
-        if (state.showLinkSheet) {
-            LinkAppBottomSheet(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        if (state.advancedSettingsApp != null) {
-            AdvancedAppSettingsBottomSheet(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        if (state.variantPickerApp != null) {
-            VariantPickerDialog(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        state.importSummary?.let { summary ->
-            zed.rainxch.apps.presentation.components.ImportSummarySheet(
-                summary = summary,
-                onDismiss = { onAction(AppsAction.OnDismissImportSummary) },
-            )
-        }
-
-        state.appPendingUninstall?.let { app ->
-            val confirmLabel = stringResource(Res.string.uninstall)
-            val cancelLabel = stringResource(Res.string.cancel)
-            KomiSheet(
-                onDismiss = { onAction(AppsAction.OnDismissUninstallDialog) },
-                placement = KomiSheetPlacement.Center,
-                title = stringResource(Res.string.confirm_uninstall_title),
-                footer = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        KomiButton(
-                            onClick = { onAction(AppsAction.OnDismissUninstallDialog) },
-                            label = cancelLabel,
-                            variant = KomiButtonVariant.Text,
-                        )
-                        KomiButton(
-                            onClick = { onAction(AppsAction.OnUninstallConfirmed(app)) },
-                            label = confirmLabel,
-                            variant = KomiButtonVariant.Destructive,
-                        )
-                    }
-                },
-            ) {
-                KomiText(
-                    text = stringResource(Res.string.confirm_uninstall_message, app.appName),
-                    role = KomiTextRole.Body,
-                )
-            }
-        }
-
-        state.appPendingDiscard?.let { app ->
-            val confirmLabel = stringResource(Res.string.discard_pending_install)
-            val cancelLabel = stringResource(Res.string.cancel)
-            KomiSheet(
-                onDismiss = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
-                placement = KomiSheetPlacement.Center,
-                title = stringResource(Res.string.confirm_discard_pending_title),
-                footer = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        KomiButton(
-                            onClick = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
-                            label = cancelLabel,
-                            variant = KomiButtonVariant.Text,
-                        )
-                        KomiButton(
-                            onClick = { onAction(AppsAction.OnConfirmDiscardPendingInstall(app)) },
-                            label = confirmLabel,
-                            variant = KomiButtonVariant.Destructive,
-                        )
-                    }
-                },
-            ) {
-                KomiText(
-                    text = stringResource(Res.string.confirm_discard_pending_message, app.appName),
-                    role = KomiTextRole.Body,
-                )
-            }
-        }
-
         KomiPullToRefresh(
             isRefreshing = state.isRefreshing,
             onRefresh = { onAction(AppsAction.OnRefresh) },
@@ -488,10 +254,9 @@ fun AppsScreen(
 
                     if (state.isCheckingForUpdates) {
                         Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
@@ -548,7 +313,7 @@ fun AppsScreen(
                             val listState = rememberLazyListState()
                             val isScrollbarEnabled = LocalScrollbarEnabled.current
 
-                            val onRowSelect: (zed.rainxch.apps.presentation.model.InstalledAppUi) -> Unit =
+                            val onRowSelect: (InstalledAppUi) -> Unit =
                                 { app ->
                                     onAction(
                                         AppsAction.OnNavigateToRepo(
@@ -949,562 +714,6 @@ fun AppsScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun AppItemCard(
-    appItem: AppItem,
-    onOpenClick: () -> Unit,
-    onUpdateClick: () -> Unit,
-    onCancelClick: () -> Unit,
-    onUninstallClick: () -> Unit,
-    onRepoClick: () -> Unit,
-    onTogglePreReleases: (Boolean) -> Unit,
-    onToggleUpdateCheck: (Boolean) -> Unit,
-    onAdvancedSettingsClick: () -> Unit,
-    onPickVariantClick: () -> Unit,
-    onInstallPendingClick: () -> Unit,
-    onDiscardPendingClick: () -> Unit,
-    onSkipVersionClick: () -> Unit,
-    onUnskipVersionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    val app = appItem.installedApp
-    val isBusy =
-        app.isPendingInstall ||
-                appItem.updateState is UpdateState.Downloading ||
-                appItem.updateState is UpdateState.Installing ||
-                appItem.updateState is UpdateState.CheckingUpdate
-
-    KomiSurface(
-        onClick = onRepoClick,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(shape.corner))
-                    .padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                InstalledAppIcon(
-                    packageName = app.packageName,
-                    appName = app.appName,
-                    modifier =
-                        Modifier
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(shape.corner)),
-                    apkFilePath = app.pendingInstallFilePath,
-                )
-
-                Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                    KomiText(
-                        text = app.appName,
-                        role = KomiTextRole.Title,
-                        color = colors.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        uppercase = false,
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        GitHubStoreImage(
-                            imageModel = { app.repoOwnerAvatarUrl },
-                            modifier =
-                                Modifier
-                                    .size(18.dp)
-                                    .clip(RoundedCornerShape(shape.cornerSmall)),
-                        )
-
-                        Spacer(Modifier.width(6.dp))
-
-                        KomiText(
-                            text = app.repoOwner,
-                            role = KomiTextRole.Body,
-                            fontSize = 13.sp,
-                            uppercase = false,
-                            color = colors.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false),
-                        )
-
-                        app.sourceHost?.let {
-                            Spacer(Modifier.width(6.dp))
-
-                            zed.rainxch.apps.presentation.components.SourceChip(host = it)
-                        }
-                    }
-
-                    when {
-
-                        app.pendingInstallFilePath != null -> {
-                            KomiText(
-                                text = stringResource(Res.string.ready_to_install),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                uppercase = false,
-                                color = colors.primary,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
-
-                        app.isPendingInstall -> {
-                            KomiText(
-                                text = stringResource(Res.string.pending_install),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                uppercase = false,
-                                color = colors.primary,
-                            )
-                        }
-
-                        app.preferredVariantStale -> {
-
-                            KomiText(
-                                text = stringResource(Res.string.variant_stale_hint),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                uppercase = false,
-                                color = colors.error,
-                                modifier =
-                                    Modifier.clickable(
-                                        enabled = !isBusy,
-                                        onClick = onPickVariantClick,
-                                    ),
-                            )
-                        }
-
-                        app.isUpdateAvailable -> {
-                            KomiText(
-                                text =
-                                    buildVersionLabel(
-                                        installedVersion = app.installedVersion,
-                                        latestVersion = app.latestVersion,
-                                        latestReleasePublishedAt = app.latestReleasePublishedAt,
-                                        lastUpdatedAt = app.lastUpdatedAt,
-                                    ),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                uppercase = false,
-                                color = colors.primary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-
-                            if (!app.preferredAssetVariant.isNullOrBlank()) {
-                                KomiText(
-                                    text =
-                                        stringResource(
-                                            Res.string.variant_label_inline,
-                                            app.preferredAssetVariant,
-                                        ),
-                                    role = KomiTextRole.Label,
-                                    fontSize = 11.sp,
-                                    uppercase = false,
-                                    color = colors.onSurfaceVariant,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
-
-                        else -> {
-                            KomiText(
-                                text =
-                                    buildVersionLabel(
-                                        installedVersion = app.installedVersion,
-                                        latestVersion = null,
-                                        latestReleasePublishedAt = null,
-                                        lastUpdatedAt = app.lastUpdatedAt,
-                                    ),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                uppercase = false,
-                                color = colors.onSurfaceVariant,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (app.repoDescription != null) {
-                Spacer(Modifier.height(8.dp))
-
-                KomiText(
-                    text = app.repoDescription,
-                    role = KomiTextRole.Body,
-                    uppercase = false,
-                    color = colors.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val preReleaseString = stringResource(Res.string.pre_release_badge)
-                KomiText(
-                    text = preReleaseString,
-                    role = KomiTextRole.Body,
-                    fontSize = 13.sp,
-                    color = colors.onSurfaceVariant,
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val advancedFilterDescription =
-                        stringResource(Res.string.advanced_settings_open)
-                    val hasFilter =
-                        !app.assetFilterRegex.isNullOrBlank() || app.fallbackToOlderReleases
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clickable(enabled = !isBusy, onClick = onAdvancedSettingsClick)
-                            .semantics {
-                                contentDescription = advancedFilterDescription
-                            },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        KomiIcon(
-                            imageVector = Icons.Default.FilterAlt,
-                            contentDescription = null,
-                            tint =
-                                if (hasFilter) {
-                                    colors.primary
-                                } else {
-                                    colors.onSurfaceVariant
-                                },
-                        )
-                    }
-
-                    val pickVariantDescription =
-                        stringResource(Res.string.variant_picker_open)
-                    val hasPin = !app.preferredAssetVariant.isNullOrBlank()
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clickable(enabled = !isBusy, onClick = onPickVariantClick)
-                            .semantics {
-                                contentDescription = pickVariantDescription
-                            },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        KomiIcon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = null,
-                            tint =
-                                when {
-                                    app.preferredVariantStale -> colors.error
-                                    hasPin -> colors.primary
-                                    else -> colors.onSurfaceVariant
-                                },
-                        )
-                    }
-
-                    KomiCheckbox(
-                        checked = app.includePreReleases,
-                        onCheckedChange = onTogglePreReleases,
-                        enabled = !isBusy,
-                        modifier =
-                            Modifier.semantics {
-                                contentDescription = preReleaseString
-                            },
-                    )
-
-                    val moreActionsLabel =
-                        stringResource(Res.string.apps_compact_more_actions, app.appName)
-                    val ignoreUpdatesBase = stringResource(Res.string.apps_ignore_updates)
-                    val unskipLabel = stringResource(Res.string.apps_skip_version_unskip)
-                    val skipLabel = stringResource(Res.string.apps_skip_version)
-                    val canSkipVersion = app.isUpdateAvailable &&
-                        !(app.latestVersion ?: app.latestVersionName).isNullOrBlank()
-                    val rowOverflowEntries = buildList {
-                        add(
-                            KomiMenuItem(
-                                id = "toggle_update_check",
-                                label = if (!app.updateCheckEnabled) "$ignoreUpdatesBase  ✓" else ignoreUpdatesBase,
-                            ),
-                        )
-                        if (app.skippedReleaseTag != null) {
-                            add(KomiMenuItem(id = "unskip_version", label = unskipLabel))
-                        } else if (canSkipVersion) {
-                            add(KomiMenuItem(id = "skip_version", label = skipLabel))
-                        }
-                    }.toImmutableList()
-
-                    KomiDropdown(
-                        entries = rowOverflowEntries,
-                        onSelect = { item ->
-                            when (item.id) {
-                                "toggle_update_check" -> onToggleUpdateCheck(!app.updateCheckEnabled)
-                                "unskip_version" -> onUnskipVersionClick()
-                                "skip_version" -> onSkipVersionClick()
-                            }
-                        },
-                        trigger = { onClick ->
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clickable(enabled = !isBusy, onClick = onClick)
-                                    .semantics {
-                                        contentDescription = moreActionsLabel
-                                    },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                KomiIcon(
-                                    imageVector = Icons.Outlined.MoreVert,
-                                    contentDescription = null,
-                                    tint = colors.onSurfaceVariant,
-                                )
-                            }
-                        },
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            when (val state = appItem.updateState) {
-                is UpdateState.Downloading -> {
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            KomiText(
-                                text = stringResource(Res.string.downloading),
-                                role = KomiTextRole.Body,
-                                fontSize = 13.sp,
-                                color = colors.onSurface,
-                            )
-
-                            if (appItem.downloadProgress != null) {
-                                KomiText(
-                                    text = "${appItem.downloadProgress}%",
-                                    role = KomiTextRole.Body,
-                                    fontSize = 13.sp,
-                                    uppercase = false,
-                                    color = colors.onSurface,
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.height(4.dp))
-
-                        KomiLinearProgress(
-                            progress = { (appItem.downloadProgress ?: 0) / 100f },
-                            modifier = Modifier.fillMaxWidth(),
-                            color = colors.primary,
-                        )
-                    }
-                }
-
-                is UpdateState.Installing -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        KomiCircularProgress(
-                            modifier = Modifier.size(16.dp),
-                        )
-
-                        KomiText(
-                            text = stringResource(Res.string.installing),
-                            role = KomiTextRole.Body,
-                            fontSize = 13.sp,
-                            color = colors.onSurface,
-                        )
-                    }
-                }
-
-                is UpdateState.CheckingUpdate -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        KomiCircularProgress(
-                            modifier = Modifier.size(16.dp),
-                        )
-
-                        KomiText(
-                            text = stringResource(Res.string.checking),
-                            role = KomiTextRole.Body,
-                            fontSize = 13.sp,
-                            color = colors.onSurface,
-                        )
-                    }
-                }
-
-                is UpdateState.Success -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        KomiIcon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = colors.primary,
-                            modifier = Modifier.size(16.dp),
-                        )
-
-                        KomiText(
-                            text = stringResource(Res.string.updated_successfully),
-                            role = KomiTextRole.Body,
-                            fontSize = 13.sp,
-                            color = colors.primary,
-                        )
-                    }
-                }
-
-                is UpdateState.Error -> {
-                    KomiText(
-                        text = stringResource(Res.string.error_with_message, state.message),
-                        role = KomiTextRole.Body,
-                        fontSize = 13.sp,
-                        uppercase = false,
-                        color = colors.error,
-                    )
-                }
-
-                UpdateState.Idle -> {}
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val uninstallDescription = stringResource(Res.string.uninstall)
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable(enabled = !isBusy, onClick = onUninstallClick),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    KomiIcon(
-                        imageVector = Icons.Outlined.DeleteOutline,
-                        contentDescription = uninstallDescription,
-                        tint = colors.error,
-                    )
-                }
-
-                when (appItem.updateState) {
-                    is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                        KomiButton(
-                            onClick = onCancelClick,
-                            label = stringResource(Res.string.cancel),
-                            variant = KomiButtonVariant.Destructive,
-                            leadingIcon = Icons.Default.Cancel,
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-
-                    else -> {
-                        if (app.pendingInstallFilePath != null) {
-
-                            KomiButton(
-                                onClick = onInstallPendingClick,
-                                label = stringResource(Res.string.install),
-                                variant = KomiButtonVariant.Primary,
-                                leadingIcon = Icons.Default.Update,
-                                enabled = !isBusy,
-                                modifier = Modifier.weight(1f),
-                            )
-
-                            val discardDescription =
-                                stringResource(Res.string.discard_pending_install)
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clickable(onClick = onDiscardPendingClick),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                KomiIcon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = discardDescription,
-                                    tint = colors.onSurfaceVariant,
-                                )
-                            }
-                        } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                            KomiButton(
-                                onClick = onUpdateClick,
-                                label = stringResource(Res.string.update),
-                                variant = KomiButtonVariant.Primary,
-                                leadingIcon = Icons.Default.Update,
-                                modifier = Modifier.weight(1f),
-                            )
-                        } else if (app.isPendingInstall) {
-
-                            KomiButton(
-                                onClick = onDiscardPendingClick,
-                                label = stringResource(Res.string.discard_pending_install),
-                                variant = KomiButtonVariant.Destructive,
-                                leadingIcon = Icons.Default.Cancel,
-                                modifier = Modifier.weight(1f),
-                            )
-                        } else {
-                            KomiButton(
-                                onClick = onOpenClick,
-                                label = stringResource(Res.string.open),
-                                variant = KomiButtonVariant.Primary,
-                                leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
-                                enabled = !isBusy,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun buildVersionLabel(
-    installedVersion: String,
-    latestVersion: String?,
-    latestReleasePublishedAt: String?,
-    lastUpdatedAt: Long,
-): String {
-    val displayDate =
-        if (latestVersion != null) {
-            formatIsoDate(latestReleasePublishedAt)
-        } else {
-            formatEpochDate(lastUpdatedAt)
-        }
-
-    return buildString {
-        append(installedVersion)
-        if (latestVersion != null) {
-            append(" → ")
-            append(latestVersion)
-        }
-        displayDate?.let {
-            append(" (")
-            append(it)
-            append(")")
         }
     }
 }

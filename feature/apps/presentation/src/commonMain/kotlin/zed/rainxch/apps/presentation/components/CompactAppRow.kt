@@ -40,7 +40,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +51,7 @@ import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.advanced_settings_open
 import zed.rainxch.githubstore.core.presentation.res.apps_compact_more_actions
 import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
+import zed.rainxch.githubstore.core.presentation.res.apps_menu_item_active
 import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
 import zed.rainxch.githubstore.core.presentation.res.install
 import zed.rainxch.githubstore.core.presentation.res.open
@@ -121,9 +121,8 @@ fun CompactAppRow(
             KomiText(
                 text = app.appName,
                 role = KomiTextRole.Title,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = colors.onSurface,
-                fontWeight = FontWeight.SemiBold,
                 uppercase = false,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -162,8 +161,7 @@ fun CompactAppRow(
             )
 
             Spacer(Modifier.width(4.dp))
-        } else if (app.isPendingInstall) {
-        } else if (!isBusy) {
+        } else if (!app.isPendingInstall && !isBusy) {
             val openLabel = stringResource(Res.string.open)
             Box(
                 modifier = Modifier
@@ -188,7 +186,6 @@ fun CompactAppRow(
             appName = app.appName,
             isBusy = isBusy,
             isPending = app.isPendingInstall,
-            isUpdateAvailable = app.isUpdateAvailable,
             isPreReleaseEnabled = app.includePreReleases,
             isUpdateCheckEnabled = app.updateCheckEnabled,
             hasSkippedReleaseTag = app.skippedReleaseTag != null,
@@ -208,7 +205,6 @@ private fun CompactRowOverflow(
     appName: String,
     isBusy: Boolean,
     isPending: Boolean,
-    isUpdateAvailable: Boolean,
     isPreReleaseEnabled: Boolean,
     isUpdateCheckEnabled: Boolean,
     hasSkippedReleaseTag: Boolean,
@@ -230,6 +226,8 @@ private fun CompactRowOverflow(
     val unskipLabel = stringResource(Res.string.apps_skip_version_unskip)
     val discardLabel = stringResource(Res.string.discard_pending_install)
     val uninstallLabel = stringResource(Res.string.uninstall)
+    val preReleaseActive = stringResource(Res.string.apps_menu_item_active, preReleaseBase)
+    val ignoreUpdatesActive = stringResource(Res.string.apps_menu_item_active, ignoreUpdatesBase)
 
     val entries = buildList {
         add(KomiMenuItem(id = "advanced_settings", label = advancedSettingsLabel))
@@ -237,13 +235,13 @@ private fun CompactRowOverflow(
         add(
             KomiMenuItem(
                 id = "toggle_pre_releases",
-                label = if (isPreReleaseEnabled) "$preReleaseBase  ✓" else preReleaseBase,
+                label = if (isPreReleaseEnabled) preReleaseActive else preReleaseBase,
             ),
         )
         add(
             KomiMenuItem(
                 id = "toggle_update_check",
-                label = if (!isUpdateCheckEnabled) "$ignoreUpdatesBase  ✓" else ignoreUpdatesBase,
+                label = if (!isUpdateCheckEnabled) ignoreUpdatesActive else ignoreUpdatesBase,
             ),
         )
         if (hasSkippedReleaseTag) {
@@ -303,6 +301,4 @@ private fun CompactRowOverflow(
             }
         },
     )
-
-    @Suppress("UNUSED_EXPRESSION") isUpdateAvailable
 }

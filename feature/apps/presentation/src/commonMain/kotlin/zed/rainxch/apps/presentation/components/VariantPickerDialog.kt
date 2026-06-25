@@ -1,6 +1,5 @@
 package zed.rainxch.apps.presentation.components
 
-import zed.rainxch.core.presentation.utils.formatFileSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +35,7 @@ import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.AppsAction
 import zed.rainxch.apps.presentation.AppsState
-import zed.rainxch.core.domain.utils.AssetVariant
+import zed.rainxch.apps.presentation.model.VariantPickerError
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
@@ -80,7 +80,47 @@ fun VariantPickerDialog(
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 if (app.preferredVariantStale) {
-                    StaleVariantBanner(currentVariant = state.variantPickerCurrentVariant)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                colors.error,
+                                RoundedCornerShape(LocalPersonality.current.shape.corner),
+                            )
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        KomiIcon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = colors.onError,
+                            modifier = Modifier.size(20.dp),
+                        )
+
+                        Spacer(Modifier.width(10.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            KomiText(
+                                text = stringResource(Res.string.variant_picker_stale_title),
+                                role = KomiTextRole.Body,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.onError,
+                            )
+
+                            if (state.variantPickerCurrentVariant != null) {
+                                KomiText(
+                                    text = stringResource(
+                                        Res.string.variant_picker_stale_was,
+                                        state.variantPickerCurrentVariant,
+                                    ),
+                                    role = KomiTextRole.Body,
+                                    fontSize = 13.sp,
+                                    uppercase = false,
+                                    color = colors.onError,
+                                )
+                            }
+                        }
+                    }
 
                     Spacer(Modifier.height(12.dp))
                 }
@@ -105,36 +145,16 @@ fun VariantPickerDialog(
                         }
                     }
 
-                    state.variantPickerError == "no_assets" -> {
+                    state.variantPickerError != null -> {
                         KomiText(
-                            text = stringResource(Res.string.variant_picker_no_assets),
-                            role = KomiTextRole.Body,
-                            color = colors.error,
-                            modifier = Modifier.padding(vertical = 8.dp),
-                        )
-                    }
-
-                    state.variantPickerError == "no_pinnable_variants" -> {
-                        KomiText(
-                            text = stringResource(Res.string.variant_picker_no_pinnable),
-                            role = KomiTextRole.Body,
-                            color = colors.error,
-                            modifier = Modifier.padding(vertical = 8.dp),
-                        )
-                    }
-
-                    state.variantPickerError == "load_failed" -> {
-                        KomiText(
-                            text = stringResource(Res.string.variant_picker_load_failed),
-                            role = KomiTextRole.Body,
-                            color = colors.error,
-                            modifier = Modifier.padding(vertical = 8.dp),
-                        )
-                    }
-
-                    state.variantPickerError == "save_failed" -> {
-                        KomiText(
-                            text = stringResource(Res.string.variant_picker_save_failed),
+                            text = stringResource(
+                                when (state.variantPickerError) {
+                                    VariantPickerError.NoAssets -> Res.string.variant_picker_no_assets
+                                    VariantPickerError.NoPinnableVariants -> Res.string.variant_picker_no_pinnable
+                                    VariantPickerError.LoadFailed -> Res.string.variant_picker_load_failed
+                                    VariantPickerError.SaveFailed -> Res.string.variant_picker_save_failed
+                                },
+                            ),
                             role = KomiTextRole.Body,
                             color = colors.error,
                             modifier = Modifier.padding(vertical = 8.dp),
@@ -142,13 +162,36 @@ fun VariantPickerDialog(
                     }
 
                     else -> {
-                        VariantOptionList(
-                            state = state,
-                            onPick = { variant ->
-                                onAction(AppsAction.OnVariantSelected(variant))
-                            },
-                            onResetAuto = { onAction(AppsAction.OnResetVariantToAuto) },
-                        )
+                        val current = state.variantPickerCurrentVariant
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 0.dp, max = 280.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
+                            item {
+                                VariantRow(
+                                    isSelected = current == null,
+                                    title = stringResource(Res.string.variant_picker_auto_title),
+                                    subtitle = stringResource(Res.string.variant_picker_auto_subtitle),
+                                    leadingIcon = Icons.Default.AutoAwesome,
+                                    onClick = { onAction(AppsAction.OnResetVariantToAuto) },
+                                )
+
+                                KomiHorizontalDivider(
+                                    color = colors.outlineVariant.copy(alpha = 0.4f),
+                                )
+                            }
+
+                            items(state.variantPickerOptions, key = { it.assetId }) { option ->
+                                VariantRow(
+                                    isSelected = option.variant.equals(current, ignoreCase = true),
+                                    title = option.variant,
+                                    subtitle = option.subtitle,
+                                    onClick = { onAction(AppsAction.OnVariantSelected(option.variant)) },
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -176,100 +219,12 @@ fun VariantPickerDialog(
 }
 
 @Composable
-private fun StaleVariantBanner(
-    currentVariant: String?,
-) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                colors.error,
-                RoundedCornerShape(shape.corner),
-            )
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        KomiIcon(
-            imageVector = Icons.Default.Warning,
-            contentDescription = null,
-            tint = colors.onError,
-            modifier = Modifier.size(20.dp),
-        )
-
-        Spacer(Modifier.width(10.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            KomiText(
-                text = stringResource(Res.string.variant_picker_stale_title),
-                role = KomiTextRole.Body,
-                fontWeight = FontWeight.SemiBold,
-                color = colors.onError,
-            )
-
-            if (currentVariant != null) {
-                KomiText(
-                    text = stringResource(Res.string.variant_picker_stale_was, currentVariant),
-                    role = KomiTextRole.Body,
-                    fontSize = 13.sp,
-                    uppercase = false,
-                    color = colors.onError,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun VariantOptionList(
-    state: AppsState,
-    onPick: (variant: String?) -> Unit,
-    onResetAuto: () -> Unit,
-) {
-    val current = state.variantPickerCurrentVariant
-    val colors = LocalPersonality.current.colors
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 0.dp, max = 280.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp),
-    ) {
-        item {
-            VariantRow(
-                isSelected = current == null,
-                title = stringResource(Res.string.variant_picker_auto_title),
-                subtitle = stringResource(Res.string.variant_picker_auto_subtitle),
-                leadingIcon = Icons.Default.AutoAwesome,
-                onClick = onResetAuto,
-            )
-
-            KomiHorizontalDivider(
-                color = colors.outlineVariant.copy(alpha = 0.4f),
-            )
-        }
-
-        items(state.variantPickerOptions, key = { it.id }) { asset ->
-            val variant = AssetVariant.extract(asset.name)
-            if (variant.isNullOrEmpty()) return@items
-            val isCurrent = variant.equals(current, ignoreCase = true)
-            VariantRow(
-                isSelected = isCurrent,
-                title = variant,
-                subtitle = asset.name + "  ·  " + formatFileSize(asset.size),
-                onClick = { onPick(variant) },
-            )
-        }
-    }
-}
-
-@Composable
 private fun VariantRow(
     isSelected: Boolean,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
-    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    leadingIcon: ImageVector? = null,
 ) {
     val colors = LocalPersonality.current.colors
     Row(
@@ -340,4 +295,3 @@ private fun VariantRow(
         }
     }
 }
-

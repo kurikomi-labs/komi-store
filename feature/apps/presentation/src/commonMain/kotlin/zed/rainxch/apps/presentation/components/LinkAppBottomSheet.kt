@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import zed.rainxch.core.presentation.components.buttons.KomiButton
 import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
 import zed.rainxch.core.presentation.components.buttons.KomiIconButton
@@ -224,6 +225,7 @@ private fun DeviceAppItem(
     onClick: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -245,7 +247,41 @@ private fun DeviceAppItem(
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                InstallerCategoryChip(app.installerCategory)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(
+                            when (app.installerCategory) {
+                                InstallerCategory.SIDE_STORE -> colors.primaryContainer
+                                InstallerCategory.SIDELOADED -> colors.primaryContainer
+                                InstallerCategory.VENDOR_STORE -> colors.primaryContainer
+                                InstallerCategory.PLAY_STORE -> colors.surfaceVariant
+                                InstallerCategory.SYSTEM_UPDATE -> colors.surfaceVariant
+                            },
+                        ),
+                ) {
+                    KomiText(
+                        text = when (app.installerCategory) {
+                            InstallerCategory.SIDE_STORE -> stringResource(Res.string.installer_category_side_store)
+                            InstallerCategory.SIDELOADED -> stringResource(Res.string.installer_category_sideloaded)
+                            InstallerCategory.VENDOR_STORE -> stringResource(Res.string.installer_category_vendor_store)
+                            InstallerCategory.PLAY_STORE -> stringResource(Res.string.installer_category_play_store)
+                            InstallerCategory.SYSTEM_UPDATE -> stringResource(Res.string.installer_category_system_update)
+                        },
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = when (app.installerCategory) {
+                            InstallerCategory.SIDE_STORE -> colors.onPrimaryContainer
+                            InstallerCategory.SIDELOADED -> colors.onPrimaryContainer
+                            InstallerCategory.VENDOR_STORE -> colors.onPrimaryContainer
+                            InstallerCategory.PLAY_STORE -> colors.onSurfaceVariant
+                            InstallerCategory.SYSTEM_UPDATE -> colors.onSurfaceVariant
+                        },
+                        maxLines = 1,
+                        uppercase = false,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
 
                 Spacer(Modifier.width(6.dp))
 
@@ -276,48 +312,6 @@ private fun DeviceAppItem(
                 modifier = Modifier.widthIn(max = 96.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun InstallerCategoryChip(category: InstallerCategory) {
-    val label = when (category) {
-        InstallerCategory.SIDE_STORE -> stringResource(Res.string.installer_category_side_store)
-        InstallerCategory.SIDELOADED -> stringResource(Res.string.installer_category_sideloaded)
-        InstallerCategory.VENDOR_STORE -> stringResource(Res.string.installer_category_vendor_store)
-        InstallerCategory.PLAY_STORE -> stringResource(Res.string.installer_category_play_store)
-        InstallerCategory.SYSTEM_UPDATE -> stringResource(Res.string.installer_category_system_update)
-    }
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    val container = when (category) {
-        InstallerCategory.SIDE_STORE -> colors.primaryContainer
-        InstallerCategory.SIDELOADED -> colors.primaryContainer
-        InstallerCategory.VENDOR_STORE -> colors.primaryContainer
-        InstallerCategory.PLAY_STORE -> colors.surfaceVariant
-        InstallerCategory.SYSTEM_UPDATE -> colors.surfaceVariant
-    }
-    val content = when (category) {
-        InstallerCategory.SIDE_STORE -> colors.onPrimaryContainer
-        InstallerCategory.SIDELOADED -> colors.onPrimaryContainer
-        InstallerCategory.VENDOR_STORE -> colors.onPrimaryContainer
-        InstallerCategory.PLAY_STORE -> colors.onSurfaceVariant
-        InstallerCategory.SYSTEM_UPDATE -> colors.onSurfaceVariant
-    }
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(shape.cornerSmall))
-            .background(container),
-    ) {
-        KomiText(
-            text = label,
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = content,
-            maxLines = 1,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-        )
     }
 }
 
@@ -470,7 +464,6 @@ private fun SmartMatchStep(
                 ) {
                     items(
                         items = suggestions,
-
                         key = { "${it.sourceHost ?: "github"}|${it.owner}/${it.repo}" },
                     ) { suggestion ->
                         SuggestionRow(
@@ -510,6 +503,7 @@ private fun SuggestionRow(
     onClick: () -> Unit,
 ) {
     val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -543,11 +537,55 @@ private fun SuggestionRow(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                HostBadge(suggestion.sourceHost)
+                val sourceHost = suggestion.sourceHost
+                val (hostLabel, hostBg, hostFg) = when {
+                    sourceHost == null ->
+                        Triple("GitHub", colors.surfaceVariant, colors.onSurfaceVariant)
+                    sourceHost.equals("codeberg.org", ignoreCase = true) ->
+                        Triple("Codeberg", colors.primaryContainer, colors.onPrimaryContainer)
+                    else ->
+                        Triple(sourceHost, colors.primaryContainer, colors.onPrimaryContainer)
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(hostBg),
+                ) {
+                    KomiText(
+                        text = hostLabel,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = hostFg,
+                        maxLines = 1,
+                        uppercase = false,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
 
                 Spacer(Modifier.width(6.dp))
 
-                MatchSourceChip(suggestion.source)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(colors.primaryContainer),
+                ) {
+                    KomiText(
+                        text = when (suggestion.source) {
+                            RepoMatchSource.MANIFEST -> stringResource(Res.string.match_source_manifest)
+                            RepoMatchSource.FINGERPRINT -> stringResource(Res.string.match_source_fingerprint)
+                            RepoMatchSource.SEARCH -> stringResource(Res.string.match_source_search)
+                            RepoMatchSource.MANUAL -> stringResource(Res.string.match_source_manual)
+                            RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
+                            RepoMatchSource.STARRED -> stringResource(Res.string.match_source_starred)
+                        },
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.onPrimaryContainer,
+                        maxLines = 1,
+                        uppercase = false,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
 
                 Spacer(Modifier.width(6.dp))
 
@@ -562,8 +600,17 @@ private fun SuggestionRow(
                 suggestion.stars?.let { stars ->
                     Spacer(Modifier.width(8.dp))
 
+                    KomiIcon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = colors.onSurfaceVariant,
+                        modifier = Modifier.size(12.dp),
+                    )
+
+                    Spacer(Modifier.width(2.dp))
+
                     KomiText(
-                        text = "★ $stars",
+                        text = "$stars",
                         role = KomiTextRole.Label,
                         fontSize = 11.sp,
                         color = colors.onSurfaceVariant,
@@ -575,76 +622,6 @@ private fun SuggestionRow(
     }
 }
 
-@Composable
-private fun HostBadge(sourceHost: String?) {
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    val (label, bg, fg) = when {
-        sourceHost == null ->
-            Triple(
-                "GitHub",
-                colors.surfaceVariant,
-                colors.onSurfaceVariant,
-            )
-        sourceHost.equals("codeberg.org", ignoreCase = true) ->
-            Triple(
-                "Codeberg",
-                colors.primaryContainer,
-                colors.onPrimaryContainer,
-            )
-        else ->
-            Triple(
-                sourceHost,
-                colors.primaryContainer,
-                colors.onPrimaryContainer,
-            )
-    }
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(shape.cornerSmall))
-            .background(bg),
-    ) {
-        KomiText(
-            text = label,
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = fg,
-            maxLines = 1,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-        )
-    }
-}
-
-@Composable
-private fun MatchSourceChip(source: RepoMatchSource) {
-    val label = when (source) {
-        RepoMatchSource.MANIFEST -> stringResource(Res.string.match_source_manifest)
-        RepoMatchSource.FINGERPRINT -> stringResource(Res.string.match_source_fingerprint)
-        RepoMatchSource.SEARCH -> stringResource(Res.string.match_source_search)
-        RepoMatchSource.MANUAL -> stringResource(Res.string.match_source_manual)
-
-        RepoMatchSource.FORGEJO_SEARCH -> stringResource(Res.string.match_source_search)
-        RepoMatchSource.STARRED -> stringResource(Res.string.match_source_starred)
-    }
-    val colors = LocalPersonality.current.colors
-    val shape = LocalPersonality.current.shape
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(shape.cornerSmall))
-            .background(colors.primaryContainer),
-    ) {
-        KomiText(
-            text = label,
-            role = KomiTextRole.Label,
-            fontSize = 11.sp,
-            color = colors.onPrimaryContainer,
-            maxLines = 1,
-            uppercase = false,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-        )
-    }
-}
 
 @Composable
 private fun EnterUrlStep(

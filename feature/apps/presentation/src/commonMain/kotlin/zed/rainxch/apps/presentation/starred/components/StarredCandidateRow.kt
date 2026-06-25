@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +41,9 @@ import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.starred_picker_already_tracked
 import zed.rainxch.githubstore.core.presentation.res.starred_picker_apk_badge
+import zed.rainxch.githubstore.core.presentation.res.starred_picker_cd_already_tracked
+import zed.rainxch.githubstore.core.presentation.res.starred_picker_cd_latest
+import zed.rainxch.githubstore.core.presentation.res.starred_picker_cd_ships_apk
 
 @Composable
 fun StarredCandidateRow(
@@ -47,13 +52,16 @@ fun StarredCandidateRow(
 ) {
     val colors = LocalPersonality.current.colors
     val shape = LocalPersonality.current.shape
+    val shipsApkLabel = stringResource(Res.string.starred_picker_cd_ships_apk)
+    val alreadyTrackedLabel = stringResource(Res.string.starred_picker_cd_already_tracked)
+    val latestLabel = candidate.latestReleaseTag?.let { stringResource(Res.string.starred_picker_cd_latest, it) }
     val a11yLabel = buildString {
         append(candidate.owner)
         append(" / ")
         append(candidate.name)
-        if (candidate.hasApkRelease) append(", ships APK")
-        if (candidate.isAlreadyTracked) append(", already tracked")
-        candidate.latestReleaseTag?.let { append(", latest ").append(it) }
+        if (candidate.hasApkRelease) append(", ").append(shipsApkLabel)
+        if (candidate.isAlreadyTracked) append(", ").append(alreadyTrackedLabel)
+        latestLabel?.let { append(", ").append(it) }
     }
 
     KomiSurface {

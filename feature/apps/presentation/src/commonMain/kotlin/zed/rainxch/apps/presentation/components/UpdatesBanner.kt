@@ -149,10 +149,55 @@ fun UpdatesBanner(
                 if (isUpdatingAll && updateAllProgress != null) {
                     Spacer(Modifier.height(14.dp))
 
-                    UpdateAllInlineProgress(
-                        progress = updateAllProgress,
-                        onCancel = onCancelUpdateAll,
-                    )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                KomiText(
+                                    text = stringResource(
+                                        Res.string.updating_x_of_y,
+                                        updateAllProgress.current,
+                                        updateAllProgress.total,
+                                    ),
+                                    role = KomiTextRole.Title,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    uppercase = false,
+                                    color = colors.onPrimaryContainer,
+                                )
+
+                                KomiText(
+                                    text = stringResource(
+                                        Res.string.currently_updating,
+                                        updateAllProgress.currentAppName,
+                                    ),
+                                    role = KomiTextRole.Body,
+                                    fontSize = 13.sp,
+                                    color = colors.onPrimaryContainer.copy(alpha = 0.78f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+
+                            KomiButton(
+                                onClick = onCancelUpdateAll,
+                                label = stringResource(Res.string.cancel),
+                                variant = KomiButtonVariant.Outline,
+                                size = KomiButtonSize.Sm,
+                                modifier = Modifier.height(38.dp),
+                            )
+                        }
+
+                        Spacer(Modifier.height(10.dp))
+
+                        KomiLinearProgress(
+                            progress = { updateAllProgress.current.toFloat() / updateAllProgress.total.coerceAtLeast(1) },
+                            modifier = Modifier.fillMaxWidth(),
+                            color = colors.onPrimaryContainer,
+                        )
+                    }
                 } else {
                     Spacer(Modifier.height(14.dp))
 
@@ -186,59 +231,3 @@ fun UpdatesBanner(
     }
 }
 
-@Composable
-private fun UpdateAllInlineProgress(
-    progress: UpdateAllProgress,
-    onCancel: () -> Unit,
-) {
-    val colors = LocalPersonality.current.colors
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                KomiText(
-                    text = stringResource(
-                        Res.string.updating_x_of_y,
-                        progress.current,
-                        progress.total,
-                    ),
-                    role = KomiTextRole.Title,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    uppercase = false,
-                    color = colors.onPrimaryContainer,
-                )
-
-                KomiText(
-                    text = stringResource(
-                        Res.string.currently_updating,
-                        progress.currentAppName,
-                    ),
-                    role = KomiTextRole.Body,
-                    fontSize = 13.sp,
-                    color = colors.onPrimaryContainer.copy(alpha = 0.78f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            KomiButton(
-                onClick = onCancel,
-                label = stringResource(Res.string.cancel),
-                variant = KomiButtonVariant.Outline,
-                size = KomiButtonSize.Sm,
-                modifier = Modifier.height(38.dp),
-            )
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        KomiLinearProgress(
-            progress = { progress.current.toFloat() / progress.total.coerceAtLeast(1) },
-            modifier = Modifier.fillMaxWidth(),
-            color = colors.onPrimaryContainer,
-        )
-    }
-}
