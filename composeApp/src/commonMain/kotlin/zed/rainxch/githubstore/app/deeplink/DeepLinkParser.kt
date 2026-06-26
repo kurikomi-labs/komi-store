@@ -53,7 +53,7 @@ object DeepLinkParser {
                 DeepLinkDestination.Apps
             }
 
-            uri.startsWith("githubstore://auth?") -> {
+            uri.startsWith("githubstore://auth?") || uri.startsWith("githubstore://auth/?") -> {
                 parseAuthCallback(uri)
             }
 
