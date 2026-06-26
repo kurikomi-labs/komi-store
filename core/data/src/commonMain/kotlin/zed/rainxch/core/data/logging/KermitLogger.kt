@@ -1,9 +1,9 @@
 package zed.rainxch.core.data.logging
 
 import co.touchlab.kermit.Logger
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 
-object KermitLogger : GitHubStoreLogger {
+object KermitLogger : KomiStoreLogger {
     override fun debug(message: String) {
         Logger.d(message)
     }
@@ -23,10 +23,10 @@ object KermitLogger : GitHubStoreLogger {
         Logger.e(message, throwable)
     }
 
-    override fun withTag(tag: String): GitHubStoreLogger = TaggedKermitLogger(Logger.withTag(tag))
+    override fun withTag(tag: String): KomiStoreLogger = TaggedKermitLogger(Logger.withTag(tag))
 }
 
-private class TaggedKermitLogger(private val delegate: Logger) : GitHubStoreLogger {
+private class TaggedKermitLogger(private val delegate: Logger) : KomiStoreLogger {
     override fun debug(message: String) {
         delegate.d(message)
     }
@@ -46,5 +46,5 @@ private class TaggedKermitLogger(private val delegate: Logger) : GitHubStoreLogg
         delegate.e(message, throwable)
     }
 
-    override fun withTag(tag: String): GitHubStoreLogger = TaggedKermitLogger(delegate.withTag(tag))
+    override fun withTag(tag: String): KomiStoreLogger = TaggedKermitLogger(delegate.withTag(tag))
 }

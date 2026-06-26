@@ -1,15 +1,31 @@
 package zed.rainxch.tweaks.presentation
 
+import zed.rainxch.core.domain.model.appearance.AccentId
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.appearance.FontTheme
+import zed.rainxch.core.domain.model.appearance.MangaPaperId
 import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.model.settings.TranslationProvider
+import zed.rainxch.tweaks.presentation.components.desktop.DesktopSection
 import zed.rainxch.tweaks.presentation.model.ProxyType
 
 sealed interface TweaksAction {
     data object OnNavigateBackClick : TweaksAction
+
+    data class OnPersonalitySelected(
+        val personality: AppPersonality,
+    ) : TweaksAction
+
+    data class OnAccentSelected(
+        val accent: AccentId,
+    ) : TweaksAction
+
+    data class OnMangaPaperSelected(
+        val paper: MangaPaperId,
+    ) : TweaksAction
 
     data class OnThemeColorSelected(
         val themeColor: AppTheme,
@@ -132,6 +148,28 @@ sealed interface TweaksAction {
 
     data object OnFeedbackDismiss : TweaksAction
 
+    data object OnLanguagePickerOpen : TweaksAction
+
+    data object OnLanguagePickerDismiss : TweaksAction
+
+    data class OnLanguageQueryChange(val query: String) : TweaksAction
+
+    data object OnTranslationProviderExpandToggle : TweaksAction
+
+    data object OnTranslationTargetPickerOpen : TweaksAction
+
+    data object OnTranslationTargetPickerDismiss : TweaksAction
+
+    data object OnConnectionPasteSheetOpen : TweaksAction
+
+    data object OnConnectionPasteSheetDismiss : TweaksAction
+
+    data object OnConnectionMasterExpandToggle : TweaksAction
+
+    data class OnProxyScopeExpandToggle(val scope: ProxyScope) : TweaksAction
+
+    data class OnDesktopSectionSelected(val section: DesktopSection) : TweaksAction
+
     data object OnMirrorPickerClick : TweaksAction
 
     data object OnSkippedUpdatesClick : TweaksAction
@@ -210,13 +248,6 @@ sealed interface TweaksAction {
     data object OnAddCustomForge : TweaksAction
     data class OnRemoveCustomForge(val host: String) : TweaksAction
 
-    data class OnDiscoveryPlatformToggled(
-        val platform: zed.rainxch.core.domain.model.repository.DiscoveryPlatform,
-    ) : TweaksAction
-
-    data object OnRestartNowClick : TweaksAction
-    data object OnRestartLaterClick : TweaksAction
-
     data class OnMasterProxyTypeSelected(val type: ProxyType) : TweaksAction
     data class OnMasterProxyHostChanged(val host: String) : TweaksAction
     data class OnMasterProxyPortChanged(val port: String) : TweaksAction
@@ -226,13 +257,8 @@ sealed interface TweaksAction {
     data object OnMasterProxySave : TweaksAction
     data object OnMasterProxyTest : TweaksAction
 
-    data class OnMasterProxyPasteUrl(
-        val type: ProxyType,
-        val host: String,
-        val port: Int,
-        val username: String?,
-        val password: String?,
-    ) : TweaksAction
+    data class OnProxyPasteUrlChanged(val value: String) : TweaksAction
+    data object OnProxyPasteUrlSubmit : TweaksAction
 
     data class OnScopeUseMainToggled(val scope: ProxyScope, val useMain: Boolean) : TweaksAction
 

@@ -12,7 +12,7 @@ Instead, use one of the following methods:
   Use the "Report a vulnerability" feature available in the repository’s **Security** tab.
 
 - **Email**  
-  Send a detailed report to: [rainxch.dev@gmail.com](mailto:rainxch.dev@gmail.com)
+  Send a detailed report to: [security@komistore.app](mailto:security@komistore.app)
 
 ---
 

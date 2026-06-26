@@ -13,33 +13,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.ExpressiveCard
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.OfficialBadge
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.starred.presentation.model.StarredRepositoryUi
@@ -53,7 +57,9 @@ fun StarredRepositoryItem(
     onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExpressiveCard(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         onClick = onItemClick,
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -69,7 +75,7 @@ fun StarredRepositoryItem(
                     imageModel = { repository.repoOwnerAvatarUrl },
                     modifier = Modifier
                         .size(36.dp)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(shape.cornerSmall))
                         .clickable(onClick = onDevProfileClick),
                 )
 
@@ -78,29 +84,38 @@ fun StarredRepositoryItem(
                         .weight(1f)
                         .clickable(onClick = onDevProfileClick),
                 ) {
-                    Text(
+                    KomiText(
                         text = repository.repoName,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        Text(
+                        KomiText(
                             text = repository.repoOwner,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
+                            uppercase = false,
                             modifier = Modifier.weight(1f, fill = false),
                         )
+
                         if (repository.isCurrentUserOwner) {
-                            OfficialBadge()
+                            KomiIcon(
+                                imageVector = Icons.Filled.Verified,
+                                contentDescription = stringResource(Res.string.self_owned_badge),
+                                modifier = Modifier.size(16.dp),
+                                tint = colors.primary,
+                            )
                         }
                     }
                 }
@@ -113,12 +128,14 @@ fun StarredRepositoryItem(
 
             repository.repoDescription?.let { description ->
                 Spacer(Modifier.height(10.dp))
-                Text(
+                KomiText(
                     text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
             }
 
@@ -133,34 +150,39 @@ fun StarredRepositoryItem(
                     icon = Icons.Default.Star,
                     label = formatCount(repository.stargazersCount),
                 )
+
                 StatChipNeutral(
                     icon = Icons.AutoMirrored.Filled.CallSplit,
                     label = formatCount(repository.forksCount),
                 )
+
                 if (repository.openIssuesCount > 0) {
                     StatChipNeutral(
                         icon = Icons.Outlined.Warning,
                         label = formatCount(repository.openIssuesCount),
                     )
                 }
+
                 repository.primaryLanguage?.let { language ->
                     StatChipNeutral(
                         icon = Icons.Default.Code,
                         label = language,
                     )
                 }
+
                 if (repository.isInstalled) {
                     TonalBadge(
                         text = stringResource(Res.string.installed),
-                        container = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.18f),
-                        content = MaterialTheme.colorScheme.tertiary,
+                        container = colors.primary.copy(alpha = 0.18f),
+                        content = colors.primary,
                     )
                 }
+
                 repository.latestRelease?.let { version ->
                     TonalBadge(
                         text = version,
-                        container = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
-                        content = MaterialTheme.colorScheme.primary,
+                        container = colors.primary.copy(alpha = 0.14f),
+                        content = colors.primary,
                     )
                 }
             }
@@ -169,41 +191,42 @@ fun StarredRepositoryItem(
 }
 
 @Composable
-private fun StatChipNeutral(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String) {
-    StatChip(
+private fun StatChipNeutral(icon: ImageVector, label: String) {
+    val colors = LocalPersonality.current.colors
+    KomiChip(
         label = label,
-        leading = {
-            Icon(
+        kind = KomiChipKind.Info,
+        size = KomiChipSize.Sm,
+        leadingContent = {
+            KomiIcon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(12.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
             )
         },
-        background = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = MaterialTheme.colorScheme.outline,
-        contentColor = MaterialTheme.colorScheme.onSurface,
     )
 }
 
 @Composable
 private fun TonalBadge(
     text: String,
-    container: androidx.compose.ui.graphics.Color,
-    content: androidx.compose.ui.graphics.Color,
+    container: Color,
+    content: Color,
 ) {
     Box(
         modifier = Modifier
-            .clip(Radii.chip)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
             .background(container)
             .padding(horizontal = 10.dp, vertical = 5.dp),
     ) {
-        Text(
+        KomiText(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = content,
+            uppercase = false,
         )
     }
 }
@@ -213,46 +236,47 @@ private fun FavoriteToggle(
     favorited: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val tint = if (favorited) {
-        MaterialTheme.colorScheme.error
+        colors.error
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        colors.onSurfaceVariant
     }
     val container = if (favorited) {
-        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.45f)
+        colors.error.copy(alpha = 0.45f)
     } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh
+        colors.surfaceContainerHigh
     }
     Box(
         modifier = Modifier
             .size(38.dp)
-            .clip(CircleShape)
-            .background(container),
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(container)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        IconButton(onClick = onClick, modifier = Modifier.size(38.dp)) {
-            Icon(
-                imageVector = if (favorited) {
-                    Icons.Filled.Favorite
-                } else {
-                    Icons.Outlined.FavoriteBorder
-                },
-                contentDescription = if (favorited) {
-                    stringResource(Res.string.remove_from_favourites)
-                } else {
-                    stringResource(Res.string.add_to_favourites)
-                },
-                tint = tint,
-                modifier = Modifier.size(18.dp),
-            )
-        }
+        KomiIcon(
+            imageVector = if (favorited) {
+                Icons.Filled.Favorite
+            } else {
+                Icons.Outlined.FavoriteBorder
+            },
+            contentDescription = if (favorited) {
+                stringResource(Res.string.remove_from_favourites)
+            } else {
+                stringResource(Res.string.add_to_favourites)
+            },
+            tint = tint,
+            modifier = Modifier.size(18.dp),
+        )
     }
 }
 
 @Preview
 @Composable
 private fun PreviewStarredRepoItem() {
-    GithubStoreTheme {
+    PersonalityPreview {
         StarredRepositoryItem(
             repository = StarredRepositoryUi(
                 repoId = 1,

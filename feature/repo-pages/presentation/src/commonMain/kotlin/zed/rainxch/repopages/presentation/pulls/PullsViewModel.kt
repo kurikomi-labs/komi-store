@@ -30,33 +30,23 @@ class PullsViewModel(
 
     fun onAction(action: PullsAction) {
         when (action) {
-            PullsAction.OnBackClick -> {
-                // Handled in composable
-            }
-            is PullsAction.OnOpenPull -> {
-                // Handled in composable
-            }
-            is PullsAction.OnFilterChange -> {
-                setFilter(action.state)
-            }
-            PullsAction.OnLoadMore -> {
-                loadNextPage()
-            }
-            PullsAction.OnRetry -> {
-                load(_state.value.filter)
-            }
+            PullsAction.OnBackClick -> Unit
+            is PullsAction.OnOpenPull -> Unit
+            is PullsAction.OnFilterChange -> setFilter(action.state)
+            PullsAction.OnLoadMore -> loadNextPage()
+            PullsAction.OnRetry -> load(_state.value.filter)
         }
     }
 
-    fun setFilter(filter: IssueState) {
+    private fun setFilter(filter: IssueState) {
         if (_state.value.filter == filter && _state.value.errorMessage == null) return
         load(filter)
     }
 
-    fun loadNextPage() {
-        val s = _state.value
-        if (s.isLoading || s.isLoadingMore || s.endReached || s.errorMessage != null) return
-        loadPage(s.filter, s.page + 1, append = true, generation = requestGeneration)
+    private fun loadNextPage() {
+        val current = _state.value
+        if (current.isLoading || current.isLoadingMore || current.endReached || current.errorMessage != null) return
+        loadPage(current.filter, current.page + 1, append = true, generation = requestGeneration)
     }
 
     private fun load(filter: IssueState) {

@@ -20,7 +20,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.network.ProxyManager
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.repository.ProxyRepository
@@ -32,7 +32,7 @@ import zed.rainxch.core.data.secure.safePut
 class ProxyRepositoryImpl(
     private val ksafe: KSafe,
     private val legacyDataStore: DataStore<Preferences>,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : ProxyRepository {
 
     private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

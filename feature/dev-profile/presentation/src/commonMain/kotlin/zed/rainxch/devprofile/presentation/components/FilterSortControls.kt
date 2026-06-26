@@ -13,30 +13,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.devprofile.domain.model.RepoFilterType
 import zed.rainxch.devprofile.domain.model.RepoSortType
 import zed.rainxch.devprofile.presentation.DeveloperProfileAction
@@ -64,20 +62,25 @@ fun FilterSortControls(
     totalCount: Int,
     onAction: (DeveloperProfileAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        GhsTextField(
+        KomiTextField(
             value = searchQuery,
             onValueChange = { onAction(DeveloperProfileAction.OnSearchQueryChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = stringResource(Res.string.search_repositories),
             leadingIcon = Icons.Default.Search,
-            trailingIcon = {
+            trailing = {
                 if (searchQuery.isNotBlank()) {
-                    IconButton(onClick = { onAction(DeveloperProfileAction.OnSearchQueryChange("")) }) {
-                        Icon(
+                    Box(
+                        modifier = Modifier
+                            .clickable { onAction(DeveloperProfileAction.OnSearchQueryChange("")) },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        KomiIcon(
                             imageVector = Icons.Default.Close,
                             contentDescription = stringResource(Res.string.clear_search),
                             modifier = Modifier.size(20.dp),
@@ -85,7 +88,6 @@ fun FilterSortControls(
                     }
                 }
             },
-            singleLine = true,
         )
 
         Row(
@@ -102,19 +104,25 @@ fun FilterSortControls(
             ) {
                 RepoFilterType.entries.forEach { filter ->
                     FilterPill(
-                        label = filter.displayName(),
+                        label = when (filter) {
+                            RepoFilterType.WITH_RELEASES -> stringResource(Res.string.filter_with_releases)
+                            RepoFilterType.WITH_INSTALLABLE -> stringResource(Res.string.filter_with_installable)
+                            RepoFilterType.INSTALLED -> stringResource(Res.string.filter_installed)
+                            RepoFilterType.FAVORITES -> stringResource(Res.string.filter_favorites)
+                        },
                         isSelected = currentFilter == filter,
                         onClick = { onAction(DeveloperProfileAction.OnFilterChange(filter)) },
                     )
                 }
             }
+
             SortButton(
                 currentSort = currentSort,
                 onSortChange = { onAction(DeveloperProfileAction.OnSortChange(it)) },
             )
         }
 
-        Text(
+        KomiText(
             text = if (repoCount == totalCount) {
                 "$repoCount ${stringResource(
                     if (repoCount == 1) Res.string.repository_singular else Res.string.repositories,
@@ -123,8 +131,10 @@ fun FilterSortControls(
                 stringResource(Res.string.showing_x_of_y_repositories, repoCount, totalCount)
             },
             maxLines = 1,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            fontSize = 13.sp,
+            color = colors.onSurfaceVariant,
+            uppercase = false,
         )
     }
 }
@@ -135,39 +145,41 @@ private fun FilterPill(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val container by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
+            colors.primary
         } else {
-            MaterialTheme.colorScheme.surfaceContainerHigh
+            colors.surfaceContainerHigh
         },
         animationSpec = tween(durationMillis = 180),
         label = "filter_container",
     )
     val content by animateColorAsState(
         targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.onPrimary
+            colors.onPrimary
         } else {
-            MaterialTheme.colorScheme.onSurface
+            colors.onSurface
         },
         animationSpec = tween(durationMillis = 180),
         label = "filter_content",
     )
     Box(
         modifier = Modifier
-            .clip(Radii.chip)
+            .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
             .background(container)
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = content,
             maxLines = 1,
+            uppercase = false,
         )
     }
 }
@@ -177,63 +189,40 @@ private fun SortButton(
     currentSort: RepoSortType,
     onSortChange: (RepoSortType) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(Radii.chip)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .clickable { expanded = true },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Sort,
-                contentDescription = stringResource(Res.string.sort),
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        GhsDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            RepoSortType.entries.forEach { sort ->
-                GhsDropdownMenuItem(
-                    text = sort.displayName(),
-                    onClick = {
-                        onSortChange(sort)
-                        expanded = false
-                    },
-                    trailingIcon = if (currentSort == sort) {
-                        {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    } else {
-                        null
+    val colors = LocalPersonality.current.colors
+    KomiDropdown(
+        entries = RepoSortType.entries
+            .map { sort ->
+                KomiMenuItem(
+                    id = sort.name,
+                    label = when (sort) {
+                        RepoSortType.UPDATED -> stringResource(Res.string.sort_recently_updated)
+                        RepoSortType.STARS -> stringResource(Res.string.sort_most_stars)
+                        RepoSortType.NAME -> stringResource(Res.string.sort_name)
                     },
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun RepoFilterType.displayName(): String = when (this) {
-    RepoFilterType.WITH_RELEASES -> stringResource(Res.string.filter_with_releases)
-    RepoFilterType.WITH_INSTALLABLE -> stringResource(Res.string.filter_with_installable)
-    RepoFilterType.INSTALLED -> stringResource(Res.string.filter_installed)
-    RepoFilterType.FAVORITES -> stringResource(Res.string.filter_favorites)
-}
-
-@Composable
-private fun RepoSortType.displayName(): String = when (this) {
-    RepoSortType.UPDATED -> stringResource(Res.string.sort_recently_updated)
-    RepoSortType.STARS -> stringResource(Res.string.sort_most_stars)
-    RepoSortType.NAME -> stringResource(Res.string.sort_name)
+            .toImmutableList(),
+        onSelect = { item ->
+            RepoSortType.entries.firstOrNull { it.name == item.id }?.let(onSortChange)
+        },
+        value = currentSort.name,
+        trigger = { onClick ->
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.cornerSmall))
+                    .background(colors.surfaceContainerHigh)
+                    .clickable { onClick() },
+                contentAlignment = Alignment.Center,
+            ) {
+                KomiIcon(
+                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                    contentDescription = stringResource(Res.string.sort),
+                    modifier = Modifier.size(18.dp),
+                    tint = colors.onSurface,
+                )
+            }
+        },
+    )
 }

@@ -16,7 +16,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.network.BackendApiClient
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.data.network.OFFLINE_MIRROR_BASE
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.home.data.data_source.CachedRepositoriesDataSource
 import zed.rainxch.home.data.dto.CachedGithubRepoSummary
@@ -33,7 +34,7 @@ import kotlin.time.Instant
 @OptIn(ExperimentalTime::class)
 class CachedRepositoriesDataSourceImpl(
     private val backendApiClient: BackendApiClient,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : CachedRepositoriesDataSource {
     private val json =
         Json {
@@ -419,7 +420,7 @@ class CachedRepositoriesDataSourceImpl(
     }
 
     private suspend fun fetchFallbackFile(path: String): CachedRepoResponse? {
-        val url = "https://raw.githubusercontent.com/OpenHub-Store/api/main/$path"
+        val url = "$OFFLINE_MIRROR_BASE/$path"
         val filePlatform = when {
             path.contains("/android") -> DiscoveryPlatform.Android
             path.contains("/windows") -> DiscoveryPlatform.Windows

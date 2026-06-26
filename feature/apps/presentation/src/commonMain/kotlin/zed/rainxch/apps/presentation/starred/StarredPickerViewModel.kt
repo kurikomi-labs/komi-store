@@ -118,7 +118,6 @@ class StarredPickerViewModel(
             }
 
             runCatching { starredRepository.syncStarredRepos(forceRefresh = false) }
-                .onFailure {   }
 
             val starred = starredRepository.getAllStarred().first()
             val tracked = installedAppsRepository.getAllInstalledApps().first()
@@ -214,10 +213,6 @@ class StarredPickerViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                println(
-                    "StarredPicker: latest-release scan failed for ${candidate.owner}/${candidate.name}: " +
-                        "${e.javaClass.simpleName}: ${e.message}",
-                )
                 _state.update { current ->
                     current.copy(scanProgress = ++processed)
                 }

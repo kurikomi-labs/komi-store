@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.system.DesktopOs
 import java.awt.AWTEvent
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -12,8 +13,7 @@ object A11yCrashGuard {
     private val warnedUncaught = AtomicBoolean(false)
 
     fun install() {
-        val osName = System.getProperty("os.name")?.lowercase().orEmpty()
-        if (!osName.contains("mac")) return
+        if (!DesktopOs.isMac) return
 
         disableComposeAccessibilityBridgeByDefault()
 
@@ -25,7 +25,7 @@ object A11yCrashGuard {
                 if (warnedUncaught.compareAndSet(false, true)) {
                     System.err.println(
                         "[A11yCrashGuard] Suppressed Compose a11y crash via uncaught-exception path " +
-                            "(known issue, see GitHub-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
+                            "(known issue, see Komi-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
                     )
                 }
                 return@setDefaultUncaughtExceptionHandler
@@ -44,7 +44,7 @@ object A11yCrashGuard {
         System.setProperty(COMPOSE_ACCESSIBILITY_ENABLE, "false")
         System.err.println(
             "[A11yCrashGuard] Disabled Compose accessibility bridge on macOS " +
-                "(known issue, see GitHub-Store#330 / #639 / #640).",
+                "(known issue, see Komi-Store#330 / #639 / #640).",
         )
     }
 
@@ -72,7 +72,7 @@ object A11yCrashGuard {
                     if (warnedEdt.compareAndSet(false, true)) {
                         System.err.println(
                             "[A11yCrashGuard] Suppressed Compose a11y crash on macOS " +
-                                "(known issue, see GitHub-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
+                                "(known issue, see Komi-Store#330 / #639 / #640 / #684). Further occurrences silenced.",
                         )
                     }
                     return

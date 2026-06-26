@@ -4,6 +4,7 @@ import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.DeviceAppUi
 import zed.rainxch.apps.presentation.model.GithubAssetUi
+import zed.rainxch.apps.presentation.model.ImportSummaryBucket
 
 sealed interface AppsAction {
     data object OnNavigateBackClick : AppsAction
@@ -111,6 +112,10 @@ sealed interface AppsAction {
     data object OnExportObtainium : AppsAction
     data object OnImportApps : AppsAction
     data object OnDismissImportSummary : AppsAction
+
+    data class OnToggleImportSummaryBucket(
+        val bucket: ImportSummaryBucket,
+    ) : AppsAction
 
     data object OnDismissKaoBanner : AppsAction
     data object OnKaoLearnMore : AppsAction

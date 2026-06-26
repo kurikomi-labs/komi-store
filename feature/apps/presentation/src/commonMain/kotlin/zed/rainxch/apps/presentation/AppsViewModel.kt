@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -24,15 +26,21 @@ import org.jetbrains.compose.resources.getString
 import zed.rainxch.apps.domain.repository.AppsRepository
 import zed.rainxch.apps.presentation.mappers.toDomain
 import zed.rainxch.apps.presentation.mappers.toUi
+import zed.rainxch.apps.presentation.mappers.computeIsBusy
+import zed.rainxch.apps.presentation.mappers.toAppItem
+import zed.rainxch.apps.presentation.model.AdvancedPreviewMessage
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.DeviceAppUi
 import zed.rainxch.apps.presentation.model.GithubAssetUi
+import zed.rainxch.apps.presentation.model.ImportSummaryBucket
 import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
 import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.apps.presentation.model.VariantOption
+import zed.rainxch.apps.presentation.model.VariantPickerError
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.installation.InstallerType
 import zed.rainxch.core.domain.model.error.RateLimitException
@@ -53,6 +61,7 @@ import zed.rainxch.core.domain.utils.AssetFilter
 import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.helpers.ShareManager
+import zed.rainxch.core.presentation.utils.formatFileSize
 import zed.rainxch.githubstore.core.presentation.res.*
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
@@ -63,7 +72,7 @@ class AppsViewModel(
     private val downloader: Downloader,
     private val installedAppsRepository: InstalledAppsRepository,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val shareManager: ShareManager,
     private val tweaksRepository: TweaksRepository,
     private val downloadOrchestrator: DownloadOrchestrator,
@@ -198,20 +207,22 @@ class AppsViewModel(
                     apps to AppSortRule.fromName(sortStored)
                 }.collect { (apps, sortRule) ->
                     val appItems =
-                        apps
-                            .map { it.toUi() }
-                            .map { app ->
+                        buildList {
+                            apps.forEach { domainApp ->
+                                val app = domainApp.toUi()
                                 val existing =
                                     _state.value.apps.find {
                                         it.installedApp.packageName == app.packageName
                                     }
-                                AppItem(
-                                    installedApp = app,
-                                    updateState = existing?.updateState ?: UpdateState.Idle,
-                                    downloadProgress = existing?.downloadProgress,
-                                    error = existing?.error,
+                                add(
+                                    app.toAppItem(
+                                        updateState = existing?.updateState ?: UpdateState.Idle,
+                                        downloadProgress = existing?.downloadProgress,
+                                        error = existing?.error,
+                                    ),
                                 )
-                            }.sortedWith(appComparator(sortRule))
+                            }
+                        }.sortedWith(appComparator(sortRule))
                             .toImmutableList()
 
                     _state.update {
@@ -626,7 +637,21 @@ class AppsViewModel(
             }
 
             AppsAction.OnDismissImportSummary -> {
-                _state.update { it.copy(importSummary = null) }
+                _state.update {
+                    it.copy(importSummary = null, expandedImportBuckets = persistentSetOf())
+                }
+            }
+
+            is AppsAction.OnToggleImportSummaryBucket -> {
+                _state.update {
+                    val next =
+                        if (action.bucket in it.expandedImportBuckets) {
+                            it.expandedImportBuckets - action.bucket
+                        } else {
+                            it.expandedImportBuckets + action.bucket
+                        }
+                    it.copy(expandedImportBuckets = next.toImmutableSet())
+                }
             }
 
             AppsAction.OnDismissKaoBanner -> {
@@ -862,7 +887,7 @@ class AppsViewModel(
                             advancedPreviewTag = preview.release?.tagName,
                             advancedPreviewMessage =
                                 if (preview.matchedAssets.isEmpty() && preview.regexError == null) {
-                                    "no_match"
+                                    AdvancedPreviewMessage.NoMatch
                                 } else {
                                     null
                                 },
@@ -879,7 +904,7 @@ class AppsViewModel(
                             advancedPreviewLoading = false,
                             advancedPreviewMatched = persistentListOf(),
                             advancedPreviewTag = null,
-                            advancedPreviewMessage = "preview_failed",
+                            advancedPreviewMessage = AdvancedPreviewMessage.PreviewFailed,
                         )
                     }
                 }
@@ -911,21 +936,33 @@ class AppsViewModel(
                         fallbackToOlderReleases = app.fallbackToOlderReleases,
                     )
 
-                val pinnableAssets =
-                    preview.matchedAssets.filter { asset ->
-                        AssetVariant.extract(asset.name)?.isNotEmpty() == true
+                val variantOptions =
+                    buildList {
+                        preview.matchedAssets.forEach { asset ->
+                            val variant = AssetVariant.extract(asset.name)
+                            if (!variant.isNullOrEmpty()) {
+                                add(
+                                    VariantOption(
+                                        assetId = asset.id,
+                                        variant = variant,
+                                        subtitle = getString(
+                                            Res.string.apps_variant_subtitle,
+                                            asset.name,
+                                            formatFileSize(asset.size),
+                                        ),
+                                    ),
+                                )
+                            }
+                        }
                     }
                 _state.update {
                     it.copy(
                         variantPickerLoading = false,
-                        variantPickerOptions =
-                            pinnableAssets
-                                .map { asset -> asset.toUi() }
-                                .toImmutableList(),
+                        variantPickerOptions = variantOptions.toImmutableList(),
                         variantPickerError =
                             when {
-                                preview.matchedAssets.isEmpty() -> "no_assets"
-                                pinnableAssets.isEmpty() -> "no_pinnable_variants"
+                                preview.matchedAssets.isEmpty() -> VariantPickerError.NoAssets
+                                variantOptions.isEmpty() -> VariantPickerError.NoPinnableVariants
                                 else -> null
                             },
                     )
@@ -937,7 +974,7 @@ class AppsViewModel(
                 _state.update {
                     it.copy(
                         variantPickerLoading = false,
-                        variantPickerError = "load_failed",
+                        variantPickerError = VariantPickerError.LoadFailed,
                     )
                 }
             }
@@ -958,7 +995,7 @@ class AppsViewModel(
                 throw e
             } catch (e: Exception) {
                 logger.error("Failed to save preferred variant for ${app.packageName}: ${e.message}")
-                _state.update { it.copy(variantPickerError = "save_failed") }
+                _state.update { it.copy(variantPickerError = VariantPickerError.SaveFailed) }
                 return@launch
             }
 
@@ -1026,7 +1063,7 @@ class AppsViewModel(
                 _state.update {
                     it.copy(
                         advancedSavingFilter = false,
-                        advancedPreviewMessage = "save_failed",
+                        advancedPreviewMessage = AdvancedPreviewMessage.SaveFailed,
                     )
                 }
             }
@@ -1454,6 +1491,7 @@ class AppsViewModel(
                                             null
                                         },
                                     error = if (state is UpdateState.Error) state.message else null,
+                                    isBusy = computeIsBusy(appItem.installedApp.isPendingInstall, state),
                                 )
                             } else {
                                 appItem

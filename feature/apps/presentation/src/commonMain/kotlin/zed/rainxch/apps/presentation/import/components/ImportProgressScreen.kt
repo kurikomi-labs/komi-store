@@ -9,11 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,8 @@ fun ImportProgressScreen(
             else -> stringResource(Res.string.external_import_progress_working)
         }
 
+    val colors = LocalPersonality.current.colors
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -57,29 +60,29 @@ fun ImportProgressScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.padding(24.dp),
         ) {
-            CircularProgressIndicator(
+            KomiCircularProgress(
                 modifier = Modifier.size(56.dp),
-                strokeWidth = 4.dp,
             )
 
-            Text(
+            KomiText(
                 text = headline,
-                style = MaterialTheme.typography.titleLarge,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
+                uppercase = false,
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )
 
-            Text(
+            KomiText(
                 text =
                     pluralStringResource(
                         Res.plurals.external_import_progress_subtitle_count,
                         totalCandidates,
                         totalCandidates,
                     ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
 
@@ -88,10 +91,10 @@ fun ImportProgressScreen(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onSkip,
                     label = stringResource(Res.string.external_import_progress_skip),
-                    variant = GhsButtonVariant.Text,
+                    variant = KomiButtonVariant.Text,
                 )
             }
         }

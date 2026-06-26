@@ -18,7 +18,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.network.GitHubClientProvider
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.repopages.data.dto.CreateCommentRequest
 import zed.rainxch.repopages.data.dto.CreateIssueRequest
@@ -38,7 +38,6 @@ import zed.rainxch.repopages.data.mappers.toSecurityAdvisory
 import zed.rainxch.repopages.domain.model.IssueComment
 import zed.rainxch.repopages.domain.model.IssueState
 import zed.rainxch.repopages.domain.model.IssuesPage
-import zed.rainxch.repopages.domain.model.RepoIssue
 import zed.rainxch.repopages.domain.model.RepoIssueDetail
 import zed.rainxch.repopages.domain.model.RepoPullRequest
 import zed.rainxch.repopages.domain.model.SecurityAdvisory
@@ -47,7 +46,7 @@ import zed.rainxch.repopages.domain.repository.RepoPagesRepository
 
 class RepoPagesRepositoryImpl(
     private val clientProvider: GitHubClientProvider,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) : RepoPagesRepository {
     private val httpClient: HttpClient get() = clientProvider.client
 

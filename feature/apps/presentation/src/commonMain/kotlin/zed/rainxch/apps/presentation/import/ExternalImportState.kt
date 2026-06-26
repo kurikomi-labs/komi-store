@@ -28,13 +28,9 @@ data class ExternalImportState(
     val invisiblePackageCountEstimate: Int = 0,
     val showCompletionToast: Boolean = false,
     val errorMessage: String? = null,
+    val confettiPlayCount: Int = 0,
+    val trackedCount: Int = 0,
 
     val scanStartedAtMs: Long? = null,
     val isSkipAvailable: Boolean = false,
-) {
-    val cardsRemaining: Int
-        get() = cards.size
-
-    val isWizardComplete: Boolean
-        get() = phase == ImportPhase.Done || (phase == ImportPhase.AwaitingReview && cards.isEmpty())
-}
+)

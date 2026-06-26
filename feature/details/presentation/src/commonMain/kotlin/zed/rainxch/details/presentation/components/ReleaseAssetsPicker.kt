@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,21 +23,9 @@ import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,42 +39,46 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.account.github.GithubUser
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.utils.AssetVariant
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.githubstore.core.presentation.res.Res
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
 @Composable
 fun ReleaseAssetsPicker(
     onAction: (DetailsAction) -> Unit,
-    assetsList: List<GithubAsset>,
+    assetsList: ImmutableList<GithubAsset>,
     modifier: Modifier = Modifier,
     selectedAsset: GithubAsset? = null,
     isPickerVisible: Boolean = false,
     pinnedVariant: String? = null,
     showAllPlatforms: Boolean = false,
-    crossPlatformAssets: List<GithubAsset> = emptyList(),
+    crossPlatformAssets: ImmutableList<GithubAsset> = persistentListOf(),
 ) {
+    val colors = LocalPersonality.current.colors
 
-    val isPickerEnabled by remember(assetsList, crossPlatformAssets) {
-        derivedStateOf {
-            assetsList.isNotEmpty() || crossPlatformAssets.isNotEmpty()
-        }
-    }
+    val isPickerEnabled = assetsList.isNotEmpty() || crossPlatformAssets.isNotEmpty()
 
     ReleaseAssetsItemsPicker(
         showPicker = isPickerVisible,
@@ -107,29 +98,29 @@ fun ReleaseAssetsPicker(
         },
     )
 
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.assets_title),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-            ),
-            color = MaterialTheme.colorScheme.tertiary,
+            role = KomiTextRole.Label,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            color = colors.primary,
             modifier = Modifier.padding(horizontal = 4.dp),
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
+                .clip(rowShape)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = Radii.row,
+                    color = colors.outline,
+                    shape = rowShape,
                 )
-                .background(MaterialTheme.colorScheme.surface)
+                .background(colors.surface)
                 .clickable(enabled = isPickerEnabled) {
                     onAction(DetailsAction.ToggleReleaseAssetsPicker)
                 }
@@ -138,31 +129,30 @@ fun ReleaseAssetsPicker(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            KomiText(
                 text = selectedAsset?.name ?: stringResource(Res.string.no_assets_selected),
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Stamp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
+                uppercase = false,
             )
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.UnfoldMore,
                 contentDescription = stringResource(Res.string.select_version),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ReleaseAssetsItemsPicker(
-    assetsList: List<GithubAsset>,
-    crossPlatformAssets: List<GithubAsset>,
+    assetsList: ImmutableList<GithubAsset>,
+    crossPlatformAssets: ImmutableList<GithubAsset>,
     showAllPlatforms: Boolean,
     selectedAsset: GithubAsset?,
     pinnedVariant: String?,
@@ -176,6 +166,7 @@ private fun ReleaseAssetsItemsPicker(
 ) {
     if (!showPicker) return
 
+    val colors = LocalPersonality.current.colors
     var showInfoDialog by rememberSaveable { mutableStateOf(false) }
 
     ReleaseAssetsAboutDialog(
@@ -183,27 +174,26 @@ private fun ReleaseAssetsItemsPicker(
         onDismiss = { showInfoDialog = false },
     )
 
-    GhsBottomSheet(onDismissRequest = onDismiss, modifier = modifier) {
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom, modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f).padding(vertical = 6.dp)) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.assets_title),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Squiggle()
-                }
-                IconButton(onClick = { showInfoDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Outlined.Info,
-                        contentDescription = stringResource(Res.string.icon_content_description_info),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        color = colors.onSurface,
+                        uppercase = false,
                     )
                 }
+                KomiIconButton(
+                    icon = Icons.Outlined.Info,
+                    contentDescription = stringResource(Res.string.icon_content_description_info),
+                    onClick = { showInfoDialog = true },
+                    variant = KomiButtonVariant.Text,
+                )
             }
 
             if (!pinnedVariant.isNullOrBlank()) {
@@ -214,17 +204,18 @@ private fun ReleaseAssetsItemsPicker(
                             .padding(horizontal = 16.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.variant_picker_pinned, pinnedVariant),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
-                    GhsButton(
+                    KomiButton(
                         onClick = onUnpin,
                         label = stringResource(Res.string.variant_picker_unpin),
-                        variant = GhsButtonVariant.Text,
-                        size = GhsButtonSize.Sm,
+                        variant = KomiButtonVariant.Text,
+                        size = KomiButtonSize.Sm,
                     )
                 }
             }
@@ -233,30 +224,30 @@ private fun ReleaseAssetsItemsPicker(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .clip(Radii.row)
+                    .clip(rowShape)
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline,
-                        shape = Radii.row,
+                        color = colors.outline,
+                        shape = rowShape,
                     )
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(colors.surface)
                     .clickable(onClick = { onToggleShowAllPlatforms(!showAllPlatforms) })
                     .padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.Devices,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = colors.onSurface,
                 )
                 Spacer(Modifier.size(12.dp))
-                Text(
+                KomiText(
                     text = stringResource(Res.string.show_all_platforms_label),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurface,
                     modifier = Modifier.weight(1f),
                 )
-                androidx.compose.material3.Switch(
+                KomiSwitch(
                     checked = showAllPlatforms,
                     onCheckedChange = onToggleShowAllPlatforms,
                 )
@@ -274,7 +265,7 @@ private fun ReleaseAssetsItemsPicker(
                 assetsList.map { it.id }.toSet()
             }
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 420.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -283,10 +274,10 @@ private fun ReleaseAssetsItemsPicker(
 
                     val sectionOrder =
                         listOf(
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Android to Res.string.platform_section_android,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Windows to Res.string.platform_section_windows,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Macos to Res.string.platform_section_macos,
-                            zed.rainxch.core.domain.model.repository.DiscoveryPlatform.Linux to Res.string.platform_section_linux,
+                            DiscoveryPlatform.Android to Res.string.platform_section_android,
+                            DiscoveryPlatform.Windows to Res.string.platform_section_windows,
+                            DiscoveryPlatform.Macos to Res.string.platform_section_macos,
+                            DiscoveryPlatform.Linux to Res.string.platform_section_linux,
                         ).sortedByDescending { (platform, _) ->
                             groups[platform]?.any { it.id in installableIds } == true
                         }
@@ -316,8 +307,7 @@ private fun ReleaseAssetsItemsPicker(
                 } else if (assetsList.isNotEmpty()) {
                     items(items = assetsList, key = { it.id }) { asset ->
                         val variantTag = AssetVariant.extract(asset.name)
-                        val isPinned =
-                            !pinnedVariant.isNullOrBlank() &&
+                        val isPinned = !pinnedVariant.isNullOrBlank() &&
                                 variantTag?.equals(pinnedVariant, ignoreCase = true) == true
                         ReleaseAssetItem(
                             asset = asset,
@@ -329,10 +319,10 @@ private fun ReleaseAssetsItemsPicker(
                     }
                 } else {
                     item {
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.no_assets_in_list),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
                         )
@@ -343,7 +333,6 @@ private fun ReleaseAssetsItemsPicker(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReleaseAssetsAboutDialog(
     showDialog: Boolean,
@@ -353,36 +342,34 @@ private fun ReleaseAssetsAboutDialog(
 ) {
     if (!showDialog) return
 
-    BasicAlertDialog(onDismissRequest = onDismiss, modifier = modifier, properties = properties) {
-        Box(
+    val colors = LocalPersonality.current.colors
+    val dialogShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
+    KomiDialog(onDismissRequest = onDismiss, modifier = modifier, properties = properties) {
+        Column(
             modifier = Modifier
-                .clip(WonkySquircleShape.Dialog)
-                .background(MaterialTheme.colorScheme.surface)
+                .clip(dialogShape)
+                .background(colors.surface)
                 .border(
                     width = 1.5.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = WonkySquircleShape.Dialog,
+                    color = colors.outline,
+                    shape = dialogShape,
                 )
                 .padding(24.dp),
         ) {
-            Column {
-                Text(
-                    text = stringResource(Res.string.multiple_assets_info_dialog_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(Modifier.size(6.dp))
-                Squiggle()
-                Spacer(Modifier.size(12.dp))
-                Text(
-                    text = stringResource(Res.string.multiple_assets_info_dialog_text),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            KomiText(
+                text = stringResource(Res.string.multiple_assets_info_dialog_title),
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = colors.onSurface,
+                uppercase = false,
+            )
+            Spacer(Modifier.size(12.dp))
+            KomiText(
+                text = stringResource(Res.string.multiple_assets_info_dialog_text),
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
+            )
         }
     }
 }
@@ -395,6 +382,8 @@ private fun ReleaseAssetItem(
     modifier: Modifier = Modifier,
     isPinned: Boolean = false,
 ) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     Row(
         modifier =
             modifier
@@ -407,49 +396,51 @@ private fun ReleaseAssetItem(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
+                KomiText(
                     text = asset.name,
-                    style = MaterialTheme.typography.titleSmall,
+                    role = KomiTextRole.Stamp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                     color =
                         if (isSelected) {
-                            MaterialTheme.colorScheme.primary
+                            colors.primary
                         } else {
-                            MaterialTheme.colorScheme.onSurface
+                            colors.onSurface
                         },
                     modifier = Modifier.weight(1f, fill = false),
+                    uppercase = false,
                 )
                 if (isPinned) {
                     Spacer(Modifier.width(6.dp))
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.variant_picker_pinned_badge),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        )
-                    }
+                    KomiText(
+                        text = stringResource(Res.string.variant_picker_pinned_badge),
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.onPrimaryContainer,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .background(colors.primaryContainer)
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                        uppercase = false,
+                    )
                 }
             }
-            Text(
+            KomiText(
                 text = formatFileSize(asset.size),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
         if (isSelected) {
             Spacer(Modifier.width(8.dp))
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -475,7 +466,6 @@ private fun ReleaseAssetsPickerItemPreview() {
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlatformSectionCard(
     platformLabel: String,
@@ -486,69 +476,69 @@ private fun PlatformSectionCard(
     pinnedVariant: String?,
     onAssetClick: (GithubAsset) -> Unit,
 ) {
-    OutlinedCard(
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor =
-                    if (isCurrentDevice) {
-                        MaterialTheme.colorScheme.surfaceContainerLow
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainerLowest
-                    },
-            ),
-        shape = RoundedCornerShape(20.dp),
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        elevation = KomiSurfaceElevation.Flat,
+        paper = if (isCurrentDevice) {
+            zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper.Surface
+        } else {
+            zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper.Background
+        },
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = platformLabel,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            SectionChip(
-                label =
-                    if (isCurrentDevice) {
-                        stringResource(Res.string.section_chip_your_device)
-                    } else {
-                        stringResource(Res.string.section_chip_for_transfer)
-                    },
-                isPrimary = isCurrentDevice,
-            )
-        }
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.padding(horizontal = 12.dp),
-        )
-
-        assets.forEachIndexed { index, asset ->
-            val isInstallableHere = asset.id in installableIds
-            val variantTag = AssetVariant.extract(asset.name)
-            val isPinned =
-                isInstallableHere &&
-                    !pinnedVariant.isNullOrBlank() &&
-                    variantTag?.equals(pinnedVariant, ignoreCase = true) == true
-            ReleaseAssetItem(
-                asset = asset,
-                isSelected = isInstallableHere && asset.id == selectedAsset?.id,
-                isPinned = isPinned,
-                onClick = { onAssetClick(asset) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            if (index < assets.lastIndex) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                    modifier = Modifier.padding(horizontal = 16.dp),
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                KomiText(
+                    text = platformLabel,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
+                    modifier = Modifier.weight(1f),
+                    uppercase = false,
                 )
+                SectionChip(
+                    label =
+                        if (isCurrentDevice) {
+                            stringResource(Res.string.section_chip_your_device)
+                        } else {
+                            stringResource(Res.string.section_chip_for_transfer)
+                        },
+                    isPrimary = isCurrentDevice,
+                )
+            }
+
+            KomiHorizontalDivider(
+                color = colors.outlineVariant,
+                modifier = Modifier.padding(horizontal = 12.dp),
+            )
+
+            assets.forEachIndexed { index, asset ->
+                val isInstallableHere = asset.id in installableIds
+                val variantTag = AssetVariant.extract(asset.name)
+                val isPinned =
+                    isInstallableHere &&
+                            !pinnedVariant.isNullOrBlank() &&
+                            variantTag?.equals(pinnedVariant, ignoreCase = true) == true
+                ReleaseAssetItem(
+                    asset = asset,
+                    isSelected = isInstallableHere && asset.id == selectedAsset?.id,
+                    isPinned = isPinned,
+                    onClick = { onAssetClick(asset) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (index < assets.lastIndex) {
+                    KomiHorizontalDivider(
+                        color = colors.outlineVariant.copy(alpha = 0.4f),
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                }
             }
         }
     }
@@ -559,28 +549,20 @@ private fun SectionChip(
     label: String,
     isPrimary: Boolean,
 ) {
-    val container =
-        if (isPrimary) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.tertiaryContainer
-        }
-    val content =
-        if (isPrimary) {
-            MaterialTheme.colorScheme.onPrimaryContainer
-        } else {
-            MaterialTheme.colorScheme.onTertiaryContainer
-        }
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = container,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.SemiBold,
-            color = content,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-        )
-    }
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val container = colors.primaryContainer
+    val content = colors.onPrimaryContainer
+    KomiText(
+        text = label,
+        role = KomiTextRole.Label,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = content,
+        modifier = Modifier
+            .clip(RoundedCornerShape(shape.cornerSmall))
+            .background(container)
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+        uppercase = false,
+    )
 }

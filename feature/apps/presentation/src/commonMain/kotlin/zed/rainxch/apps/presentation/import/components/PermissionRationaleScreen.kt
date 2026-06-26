@@ -9,11 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import androidx.compose.material3.Text
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ fun PermissionRationaleScreen(
     val sdkInt = rememberSdkInt()
     val requester = rememberPackageVisibilityRequester()
     val scope = rememberCoroutineScope()
+    val colors = LocalPersonality.current.colors
 
     Box(
         modifier = modifier.fillMaxSize().padding(24.dp),
@@ -49,36 +51,36 @@ fun PermissionRationaleScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Outlined.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(64.dp),
             )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_permission_title),
-                style = MaterialTheme.typography.headlineMedium,
+                role = KomiTextRole.Display,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
             )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_permission_body),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
                 textAlign = TextAlign.Start,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(ExternalImportAction.OnPermissionDenied(sdkInt)) },
                     label = stringResource(Res.string.external_import_permission_not_now),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = {
                         scope.launch {
                             onAction(ExternalImportAction.OnRequestPermission)
@@ -92,7 +94,7 @@ fun PermissionRationaleScreen(
                         }
                     },
                     label = stringResource(Res.string.external_import_permission_continue),
-                    variant = GhsButtonVariant.Primary,
+                    variant = KomiButtonVariant.Primary,
                 )
             }
         }

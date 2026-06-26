@@ -6,22 +6,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.error.RateLimitInfo
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.overlays.KomiDialog
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_close
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded
@@ -44,28 +46,30 @@ fun RateLimitDialog(
             rateLimitInfo.timeUntilReset().inWholeMinutes.toInt()
         }
 
-    AlertDialog(
+    val colors = LocalPersonality.current.colors
+    KomiDialog(
         onDismissRequest = onDismiss,
         icon = {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.Warning,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.error,
+                tint = colors.error,
             )
         },
         title = {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.rate_limit_exceeded),
-                style = MaterialTheme.typography.headlineSmall,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
+                uppercase = false,
             )
         },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
+                KomiText(
                     text =
                         if (isAuthenticated) {
                             stringResource(
@@ -78,55 +82,59 @@ fun RateLimitDialog(
                                 60,
                             )
                         },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline,
+                    role = KomiTextRole.Body,
+                    color = colors.outline,
+                    uppercase = false,
                 )
 
-                Text(
+                KomiText(
                     text =
                         stringResource(
                             Res.string.rate_limit_resets_in_minutes,
                             timeUntilReset,
                         ),
-                    style = MaterialTheme.typography.bodyMedium,
+                    role = KomiTextRole.Body,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.onSurface,
+                    uppercase = false,
                 )
 
                 if (!isAuthenticated) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.rate_limit_tip_sign_in),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.primary,
+                        uppercase = false,
                     )
                 }
             }
         },
         confirmButton = {
             if (!isAuthenticated) {
-                GhsButton(
+                KomiButton(
                     onClick = onSignIn,
                     label = stringResource(Res.string.rate_limit_sign_in),
-                    variant = GhsButtonVariant.Primary,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Primary,
+                    size = KomiButtonSize.Sm,
                 )
             } else {
-                GhsButton(
+                KomiButton(
                     onClick = onDismiss,
                     label = stringResource(Res.string.rate_limit_ok),
-                    variant = GhsButtonVariant.Primary,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Primary,
+                    size = KomiButtonSize.Sm,
                 )
             }
         },
         dismissButton = {
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.rate_limit_close),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
+                variant = KomiButtonVariant.Text,
+                size = KomiButtonSize.Sm,
             )
         },
     )
@@ -135,7 +143,7 @@ fun RateLimitDialog(
 @Preview
 @Composable
 fun RateLimitDialogPreview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         RateLimitDialog(
             rateLimitInfo =
                 RateLimitInfo(

@@ -1,11 +1,9 @@
 package zed.rainxch.recentlyviewed.presentation.components
 
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,16 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +23,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.chips.StatChip
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.buttons.KomiIconButtonSize
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.chips.KomiChipSize
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.recently_viewed_remove_cd
 import zed.rainxch.recentlyviewed.presentation.model.RecentlyViewedRepo
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RecentlyViewedItem(
     repo: RecentlyViewedRepo,
@@ -45,7 +50,9 @@ fun RecentlyViewedItem(
     onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExpressiveCard(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         modifier = modifier,
         onClick = onItemClick,
     ) {
@@ -55,7 +62,7 @@ fun RecentlyViewedItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(Radii.chip)
+                    .clip(RoundedCornerShape(shape.cornerSmall))
                     .clickable(onClick = onDevProfileClick)
                     .padding(vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -65,14 +72,15 @@ fun RecentlyViewedItem(
                     imageModel = { repo.repoOwnerAvatarUrl },
                     modifier = Modifier
                         .size(28.dp)
-                        .clip(CircleShape),
+                        .clip(RoundedCornerShape(shape.cornerSmall)),
                 )
-                Text(
+
+                KomiText(
                     text = repo.repoOwner,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    color = colors.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    uppercase = false,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -87,27 +95,37 @@ fun RecentlyViewedItem(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = repo.repoName,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
                     repo.repoDescription?.let {
                         Spacer(Modifier.height(4.dp))
-                        Text(
+
+                        KomiText(
                             text = it,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
+                            fontSize = 13.sp,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
-                RemoveToggle(onClick = onRemoveClick)
+
+                KomiIconButton(
+                    icon = Icons.Outlined.Close,
+                    contentDescription = stringResource(Res.string.recently_viewed_remove_cd),
+                    onClick = onRemoveClick,
+                    variant = KomiButtonVariant.Tonal,
+                    size = KomiIconButtonSize.Sm,
+                )
             }
 
             Spacer(Modifier.height(12.dp))
@@ -118,56 +136,35 @@ fun RecentlyViewedItem(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 repo.primaryLanguage?.let { language ->
-                    StatChip(
+                    KomiChip(
                         label = language,
-                        leading = {
-                            Icon(
+                        kind = KomiChipKind.Info,
+                        size = KomiChipSize.Sm,
+                        leadingContent = {
+                            KomiIcon(
                                 imageVector = Icons.Default.Code,
                                 contentDescription = null,
                                 modifier = Modifier.size(12.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = colors.onSurfaceVariant,
                             )
                         },
-                        background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        border = MaterialTheme.colorScheme.outline,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                StatChip(
+
+                KomiChip(
                     label = repo.viewedAtFormatted,
-                    leading = {
-                        Icon(
+                    kind = KomiChipKind.Info,
+                    size = KomiChipSize.Sm,
+                    leadingContent = {
+                        KomiIcon(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             modifier = Modifier.size(12.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = colors.onSurfaceVariant,
                         )
                     },
-                    background = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = MaterialTheme.colorScheme.outline,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun RemoveToggle(onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(38.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-        contentAlignment = Alignment.Center,
-    ) {
-        IconButton(onClick = onClick, modifier = Modifier.size(38.dp)) {
-            Icon(
-                imageVector = Icons.Outlined.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(18.dp),
-            )
         }
     }
 }

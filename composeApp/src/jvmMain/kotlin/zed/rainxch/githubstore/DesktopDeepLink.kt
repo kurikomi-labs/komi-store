@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.system.DesktopOs
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -126,9 +127,9 @@ object DesktopDeepLink {
         thread.start()
     }
 
-    private fun isWindows(): Boolean = System.getProperty("os.name")?.lowercase()?.contains("win") == true
+    private fun isWindows(): Boolean = DesktopOs.isWindows
 
-    private fun isLinux(): Boolean = System.getProperty("os.name")?.lowercase()?.contains("linux") == true
+    private fun isLinux(): Boolean = DesktopOs.isLinux
 
     private fun resolveExePath(): String? {
         System

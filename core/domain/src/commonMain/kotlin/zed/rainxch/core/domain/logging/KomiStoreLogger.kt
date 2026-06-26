@@ -1,0 +1,16 @@
+package zed.rainxch.core.domain.logging
+
+interface KomiStoreLogger {
+    fun debug(message: String)
+
+    fun info(message: String)
+
+    fun warn(message: String)
+
+    fun error(
+        message: String,
+        throwable: Throwable? = null,
+    )
+
+    fun withTag(tag: String): KomiStoreLogger = this
+}

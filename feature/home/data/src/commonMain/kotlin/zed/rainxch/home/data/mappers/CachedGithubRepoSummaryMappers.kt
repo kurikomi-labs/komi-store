@@ -24,7 +24,9 @@ fun CachedGithubRepoSummary.toGithubRepoSummary(): GithubRepoSummary =
         language = language,
         topics = topics,
         releasesUrl = releasesUrl,
-        updatedAt = latestReleaseDate ?: updatedAt,
+        updatedAt = updatedAt,
         availablePlatforms = availablePlatforms,
         downloadCount = downloadCount,
+        latestReleaseDate = latestReleaseDate,
+        dailyStars = dailyStars,
     )

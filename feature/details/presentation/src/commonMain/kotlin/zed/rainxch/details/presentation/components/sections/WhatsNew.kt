@@ -18,9 +18,6 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,10 +43,12 @@ import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.utils.applyThemeAwareImages
 import zed.rainxch.core.presentation.components.markdown.MarkdownImageTransformer
 import zed.rainxch.core.presentation.components.markdown.githubStoreMarkdownComponents
+import zed.rainxch.core.presentation.components.icon.KomiIcon
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownColors
 import zed.rainxch.core.presentation.components.markdown.rememberMarkdownTypography
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.*
 
 fun LazyListScope.whatsNew(
@@ -62,6 +61,7 @@ fun LazyListScope.whatsNew(
     onReadMore: (() -> Unit)? = null,
 ) {
     item {
+        val colors = LocalPersonality.current.colors
         Spacer(Modifier.height(20.dp))
 
         Column(
@@ -70,15 +70,14 @@ fun LazyListScope.whatsNew(
                 .padding(bottom = 6.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.whats_new),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = colors.onBackground,
+                uppercase = false,
             )
-            Squiggle()
         }
 
         Spacer(Modifier.height(10.dp))
@@ -87,29 +86,30 @@ fun LazyListScope.whatsNew(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    shape = Radii.row,
+                    color = colors.surface,
+                    shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
                 )
                 .padding(horizontal = 14.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            KomiText(
                 text = release.tagName,
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.primary,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.primary,
                 maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = release.publishedAt.take(10),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                color = colors.onSurfaceVariant,
                 maxLines = 1,
-                softWrap = false,
+                uppercase = false,
             )
         }
     }
@@ -167,7 +167,9 @@ private fun ExpandableMarkdownContent(
     val components = remember(isDark, imageTransformer) {
         githubStoreMarkdownComponents(imageTransformer, isDark)
     }
-    val cardColor = MaterialTheme.colorScheme.background
+    val personalityColors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val cardColor = personalityColors.background
 
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
     val effectiveHeight = measuredHeightPx ?: 0f
@@ -239,29 +241,29 @@ private fun ExpandableMarkdownContent(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.onSurface)
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(personalityColors.onSurface)
                     .clickable(onClick = onToggleExpanded)
                     .padding(horizontal = 22.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
+                KomiText(
                     text = if (isExpanded) {
                         stringResource(Res.string.show_less)
                     } else {
                         stringResource(Res.string.read_more)
                     },
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = MaterialTheme.colorScheme.surface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.Bold,
+                    color = personalityColors.surface,
+                    uppercase = false,
                 )
                 if (!isExpanded) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.surface,
+                        tint = personalityColors.surface,
                         modifier = Modifier.size(18.dp),
                     )
                 }

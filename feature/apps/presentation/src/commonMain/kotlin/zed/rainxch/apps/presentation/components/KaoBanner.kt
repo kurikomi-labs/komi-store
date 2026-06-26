@@ -1,6 +1,9 @@
 package zed.rainxch.apps.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,20 +15,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Shield
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.kao_banner_body
 import zed.rainxch.githubstore.core.presentation.res.kao_banner_cta
@@ -38,10 +42,12 @@ fun KaoBanner(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.tertiaryContainer,
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(shape.corner))
+            .background(colors.primaryContainer),
     ) {
         Column(
             modifier = Modifier.padding(start = 12.dp, top = 4.dp, end = 4.dp, bottom = 8.dp),
@@ -50,10 +56,10 @@ fun KaoBanner(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top,
             ) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.Shield,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    tint = colors.onPrimaryContainer,
                     modifier = Modifier.size(24.dp).padding(top = 10.dp),
                 )
 
@@ -63,25 +69,32 @@ fun KaoBanner(
                     modifier = Modifier.weight(1f).padding(top = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.kao_banner_title),
-                        style = MaterialTheme.typography.titleMedium,
+                        role = KomiTextRole.Stamp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        uppercase = false,
+                        color = colors.onPrimaryContainer,
                     )
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.kao_banner_body),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onPrimaryContainer,
                     )
                 }
 
-                IconButton(onClick = onDismiss) {
-                    Icon(
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable(onClick = onDismiss),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    KomiIcon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(Res.string.kao_banner_dismiss_cd),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = colors.onPrimaryContainer,
                     )
                 }
             }
@@ -90,11 +103,11 @@ fun KaoBanner(
                 modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
                 horizontalArrangement = Arrangement.End,
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = onLearnMore,
                     label = stringResource(Res.string.kao_banner_cta),
-                    variant = GhsButtonVariant.Text,
-                    size = GhsButtonSize.Sm,
+                    variant = KomiButtonVariant.Text,
+                    size = KomiButtonSize.Sm,
                 )
             }
         }

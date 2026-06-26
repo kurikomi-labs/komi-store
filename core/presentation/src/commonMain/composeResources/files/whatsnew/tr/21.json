@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-25",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Yeni Keşfet sekmesi — platformun için yüklenebilir uygulamaların keşif akışı. Her gün yenilenir, böylece her zaman yeni bir şeyler olur ve kaydırdıkça daha fazlasını yükler.",
+        "Yeni En Popüler sekmesi — mağazanın tamamında öne çıkanları, yeni çıkanları ve en popülerleri gör."
+      ]
+    }
+  ]
+}

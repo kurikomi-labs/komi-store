@@ -23,6 +23,6 @@ data class GithubRepoSummaryUi(
     val downloadCount: Long = 0,
     val latestReleaseDate: String? = null,
     val latestReleaseTag: String? = null,
-
     val sourceHost: String? = null,
+    val dailyStars: Int? = null,
 )

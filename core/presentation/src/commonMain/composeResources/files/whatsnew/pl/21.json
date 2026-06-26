@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-25",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nowa karta Odkrywaj — strumień odkryć instalowalnych aplikacji dla Twojej platformy. Odświeża się codziennie, więc zawsze jest coś nowego i dogrywa kolejne aplikacje podczas przewijania.",
+        "Nowa karta Rankingi — przeglądaj to, co na czasie, dopiero wydane i najpopularniejsze w całym sklepie."
+      ]
+    }
+  ]
+}

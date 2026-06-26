@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -29,11 +27,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.apps_section_collapse
 import zed.rainxch.githubstore.core.presentation.res.apps_section_count_suffix
 import zed.rainxch.githubstore.core.presentation.res.apps_section_expand
+import zed.rainxch.githubstore.core.presentation.res.apps_section_header_cd
+import zed.rainxch.githubstore.core.presentation.res.apps_section_header_static_cd
 import zed.rainxch.githubstore.core.presentation.res.apps_section_state_collapsed
 import zed.rainxch.githubstore.core.presentation.res.apps_section_state_expanded
 
@@ -46,17 +49,22 @@ fun AppsSectionHeader(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expandLabel = stringResource(Res.string.apps_section_expand)
-    val collapseLabel = stringResource(Res.string.apps_section_collapse)
     val expandedStateLabel = stringResource(Res.string.apps_section_state_expanded)
     val collapsedStateLabel = stringResource(Res.string.apps_section_state_collapsed)
+    val colors = LocalPersonality.current.colors
     val rotation by animateFloatAsState(
         targetValue = if (isExpanded) 0f else -90f,
         animationSpec = tween(durationMillis = 180),
         label = "section-chevron",
     )
 
-    val rowSemantic = if (isExpanded) collapseLabel else expandLabel
+    val rowSemantic = if (isExpanded) {
+        stringResource(Res.string.apps_section_collapse)
+    } else stringResource(Res.string.apps_section_expand)
+    val collapsibleContentDescription =
+        stringResource(Res.string.apps_section_header_cd, title, count, rowSemantic)
+    val staticContentDescription =
+        stringResource(Res.string.apps_section_header_static_cd, title, count)
 
     Column(
         modifier = modifier
@@ -70,13 +78,15 @@ fun AppsSectionHeader(
                         .semantics(mergeDescendants = true) {
                             role = Role.Button
                             heading()
-                            contentDescription = "$title, $count, $rowSemantic"
-                            stateDescription = if (isExpanded) expandedStateLabel else collapsedStateLabel
+                            contentDescription = collapsibleContentDescription
+                            stateDescription = if (isExpanded) {
+                                expandedStateLabel
+                            } else collapsedStateLabel
                         }
                 } else {
                     base.semantics(mergeDescendants = true) {
                         heading()
-                        contentDescription = "$title, $count"
+                        contentDescription = staticContentDescription
                     }
                 }
             },
@@ -87,37 +97,37 @@ fun AppsSectionHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
+            KomiText(
                 text = title,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
+                role = KomiTextRole.Stamp,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                uppercase = false,
+                color = colors.onBackground,
             )
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.apps_section_count_suffix, count),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 13.sp,
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                uppercase = false,
+                color = colors.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
             )
 
             if (collapsible) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.ExpandMore,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = colors.onSurfaceVariant,
                     modifier = Modifier
                         .size(22.dp)
-                        .rotate(rotation),
+                        .graphicsLayer {
+                            rotationZ = rotation
+                        },
                 )
             }
         }
-
-        Squiggle()
     }
 }

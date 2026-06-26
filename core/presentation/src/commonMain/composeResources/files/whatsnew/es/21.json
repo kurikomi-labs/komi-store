@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-25",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nueva pestaña Explorar — un feed de descubrimiento de apps instalables para tu plataforma. Se actualiza a diario para que siempre haya algo nuevo y carga más a medida que te desplazas.",
+        "Nueva pestaña Populares — descubre lo que es tendencia, lo recién lanzado y lo más popular, clasificado en toda la tienda."
+      ]
+    }
+  ]
+}

@@ -12,26 +12,21 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.components.ScrollbarContainer
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
@@ -70,17 +65,26 @@ fun RecentlyViewedRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RecentlyViewedScreen(
     state: RecentlyViewedState,
     onAction: (RecentlyViewedAction) -> Unit,
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
-            RecentlyViewedTopbar(onAction)
+            KomiTopBar(
+                title = stringResource(Res.string.recently_viewed),
+                size = KomiTopBarSize.Compact,
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = { onAction(RecentlyViewedAction.OnNavigateBackClick) },
+                        variant = KomiButtonVariant.Tonal,
+                    )
+                },
+            )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier =
@@ -89,10 +93,10 @@ fun RecentlyViewedScreen(
                     .padding(innerPadding),
         ) {
             val gridState = rememberLazyStaggeredGridState()
-            val isScrollbarEnabled = LocalScrollbarEnabled.current
+
             ScrollbarContainer(
                 gridState = gridState,
-                enabled = isScrollbarEnabled,
+                enabled = LocalScrollbarEnabled.current,
                 modifier = Modifier.fillMaxSize(),
             ) {
                 LazyVerticalStaggeredGrid(
@@ -128,39 +132,10 @@ fun RecentlyViewedScreen(
             }
 
             if (state.isLoading) {
-                CircularWavyProgressIndicator(
+                KomiCircularProgress(
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun RecentlyViewedTopbar(onAction: (RecentlyViewedAction) -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(Res.string.recently_viewed),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    onAction(RecentlyViewedAction.OnNavigateBackClick)
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.navigate_back),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        },
-    )
 }

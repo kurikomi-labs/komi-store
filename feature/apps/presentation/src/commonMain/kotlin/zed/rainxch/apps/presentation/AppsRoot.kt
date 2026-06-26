@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 
 package zed.rainxch.apps.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,62 +12,22 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -78,81 +35,55 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.components.AdvancedAppSettingsBottomSheet
+import zed.rainxch.apps.presentation.components.AppItemCard
 import zed.rainxch.apps.presentation.components.AppsSectionHeader
+import zed.rainxch.apps.presentation.components.AppsTopbar
 import zed.rainxch.apps.presentation.components.CompactAppRow
-import zed.rainxch.apps.presentation.components.InstalledAppIcon
+import zed.rainxch.apps.presentation.components.ImportSummarySheet
 import zed.rainxch.apps.presentation.components.KaoBanner
 import zed.rainxch.apps.presentation.components.LinkAppBottomSheet
+import zed.rainxch.apps.presentation.components.PendingDiscardSheet
+import zed.rainxch.apps.presentation.components.PendingUninstallSheet
 import zed.rainxch.apps.presentation.components.UpdatesBanner
 import zed.rainxch.apps.presentation.components.VariantPickerDialog
 import zed.rainxch.apps.presentation.import.components.ImportProposalBanner
-import zed.rainxch.apps.presentation.model.AppItem
-import zed.rainxch.apps.presentation.model.AppSortRule
-import zed.rainxch.apps.presentation.model.UpdateState
-import zed.rainxch.core.presentation.components.ExpressiveCard
-import zed.rainxch.core.presentation.components.GitHubStoreImage
+import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.chrome.GhsHomeTopBar
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsConfirmDialog
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenu
-import zed.rainxch.core.presentation.components.overlays.GhsDropdownMenuItem
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiFab
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.core.presentation.utils.formatEpochDate
-import zed.rainxch.core.presentation.utils.formatIsoDate
 import zed.rainxch.core.presentation.utils.formatLastChecked
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.add_by_link
-import zed.rainxch.githubstore.core.presentation.res.add_from_starred_title
-import zed.rainxch.githubstore.core.presentation.res.advanced_settings_open
-import zed.rainxch.githubstore.core.presentation.res.apps_compact_more_actions
-import zed.rainxch.githubstore.core.presentation.res.apps_ignore_updates
 import zed.rainxch.githubstore.core.presentation.res.apps_section_pending_installs
 import zed.rainxch.githubstore.core.presentation.res.apps_section_up_to_date
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version
-import zed.rainxch.githubstore.core.presentation.res.apps_skip_version_unskip
-import zed.rainxch.githubstore.core.presentation.res.bottom_nav_apps_title
 import zed.rainxch.githubstore.core.presentation.res.cancel
-import zed.rainxch.githubstore.core.presentation.res.check_for_updates
-import zed.rainxch.githubstore.core.presentation.res.checking
 import zed.rainxch.githubstore.core.presentation.res.checking_for_updates
 import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_discard_pending_title
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_message
 import zed.rainxch.githubstore.core.presentation.res.confirm_uninstall_title
 import zed.rainxch.githubstore.core.presentation.res.discard_pending_install
-import zed.rainxch.githubstore.core.presentation.res.downloading
-import zed.rainxch.githubstore.core.presentation.res.error_with_message
-import zed.rainxch.githubstore.core.presentation.res.export_apps
-import zed.rainxch.githubstore.core.presentation.res.export_apps_obtainium
-import zed.rainxch.githubstore.core.presentation.res.external_import_rescan_menu
-import zed.rainxch.githubstore.core.presentation.res.import_apps
-import zed.rainxch.githubstore.core.presentation.res.install
-import zed.rainxch.githubstore.core.presentation.res.installing
 import zed.rainxch.githubstore.core.presentation.res.last_checked
 import zed.rainxch.githubstore.core.presentation.res.no_apps_found
-import zed.rainxch.githubstore.core.presentation.res.open
-import zed.rainxch.githubstore.core.presentation.res.pending_install
-import zed.rainxch.githubstore.core.presentation.res.pre_release_badge
-import zed.rainxch.githubstore.core.presentation.res.ready_to_install
 import zed.rainxch.githubstore.core.presentation.res.search_your_apps
-import zed.rainxch.githubstore.core.presentation.res.sort_apps
-import zed.rainxch.githubstore.core.presentation.res.sort_name
-import zed.rainxch.githubstore.core.presentation.res.sort_recently_updated
-import zed.rainxch.githubstore.core.presentation.res.sort_updates_first
 import zed.rainxch.githubstore.core.presentation.res.uninstall
-import zed.rainxch.githubstore.core.presentation.res.update
-import zed.rainxch.githubstore.core.presentation.res.updated_successfully
-import zed.rainxch.githubstore.core.presentation.res.variant_label_inline
-import zed.rainxch.githubstore.core.presentation.res.variant_picker_open
-import zed.rainxch.githubstore.core.presentation.res.variant_stale_hint
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -164,7 +95,7 @@ fun AppsRoot(
     viewModel: AppsViewModel = koinViewModel(),
     state: AppsState,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
     val coroutineScope = rememberCoroutineScope()
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -187,13 +118,13 @@ fun AppsRoot(
 
             is AppsEvent.ShowError -> {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar(event.message)
+                    toastState.danger(event.message)
                 }
             }
 
             is AppsEvent.ShowSuccess -> {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar(event.message)
+                    toastState.success(event.message)
                 }
             }
 
@@ -220,265 +151,83 @@ fun AppsRoot(
                 }
             }
         },
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
     )
+
+    if (state.showLinkSheet) {
+        LinkAppBottomSheet(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    if (state.advancedSettingsApp != null) {
+        AdvancedAppSettingsBottomSheet(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    if (state.variantPickerApp != null) {
+        VariantPickerDialog(
+            state = state,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    state.importSummary?.let { summary ->
+        ImportSummarySheet(
+            summary = summary,
+            expandedBuckets = state.expandedImportBuckets,
+            onToggleBucket = { viewModel.onAction(AppsAction.OnToggleImportSummaryBucket(it)) },
+            onDismiss = {
+                viewModel.onAction(AppsAction.OnDismissImportSummary)
+            },
+        )
+    }
+
+    state.appPendingUninstall?.let { app ->
+        PendingUninstallSheet(
+            app = app,
+            onAction = viewModel::onAction,
+        )
+    }
+
+    state.appPendingDiscard?.let { app ->
+        PendingDiscardSheet(
+            app = app,
+            onAction = viewModel::onAction
+        )
+    }
 }
+
 
 @Composable
 fun AppsScreen(
     state: AppsState,
     onAction: (AppsAction) -> Unit,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
 ) {
-    val bottomNavHeight = LocalBottomNavigationHeight.current
-    var showOverflowMenu by remember { mutableStateOf(false) }
-    var showSortMenu by remember { mutableStateOf(false) }
-
-    Scaffold(
+    val colors = LocalPersonality.current.colors
+    KomiScaffold(
         topBar = {
-            GhsHomeTopBar(
-                title = stringResource(Res.string.bottom_nav_apps_title),
-                actions = {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = RoundedCornerShape(50),
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box {
-                            Box(
-                                modifier = Modifier
-                                    .clickable { showSortMenu = true }
-                                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                                    contentDescription = stringResource(Res.string.sort_apps),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-
-                            GhsDropdownMenu(
-                                expanded = showSortMenu,
-                                onDismissRequest = { showSortMenu = false },
-                            ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_updates_first),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.UpdatesFirst))
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_recently_updated),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.RecentlyUpdated))
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.sort_name),
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(AppsAction.OnSortRuleSelected(AppSortRule.Name))
-                                    },
-                                )
-                            }
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(1.dp, 20.dp)
-                                .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .clickable { onAction(AppsAction.OnCheckAllForUpdates) }
-                                .padding(horizontal = 12.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(Res.string.check_for_updates),
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(1.dp, 20.dp)
-                                .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
-                        )
-
-                        Box {
-                            Box(
-                                modifier = Modifier
-                                    .clickable { showOverflowMenu = true }
-                                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.MoreVert,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-
-                            GhsDropdownMenu(
-                                expanded = showOverflowMenu,
-                                onDismissRequest = { showOverflowMenu = false },
-                            ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.export_apps),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnExportApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileUpload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.export_apps_obtainium),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnExportObtainium)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileUpload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.import_apps),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnImportApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.FileDownload, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.external_import_rescan_menu),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnRescanForGithubApps)
-                                    },
-                                    leadingIcon = {
-                                        Icon(Icons.Outlined.Search, contentDescription = null)
-                                    },
-                                )
-
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.add_from_starred_title),
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        onAction(AppsAction.OnAddFromStarredClick)
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.Star,
-                                            contentDescription = null,
-                                        )
-                                    },
-                                )
-                            }
-                        }
-                    }
-                },
+            AppsTopbar(
+                onAction = onAction,
+                state = state
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { onAction(AppsAction.OnAddByLinkClick) },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                    )
+            KomiFab(
+                icon = Icons.Default.Add,
+                contentDescription = stringResource(Res.string.add_by_link),
+                onClick = {
+                    onAction(AppsAction.OnAddByLinkClick)
                 },
-                text = { Text(stringResource(Res.string.add_by_link)) },
-                modifier =
-                    Modifier
-                        .navigationBarsPadding()
-                        .padding(bottom = bottomNavHeight),
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.padding(bottomNavHeight + 16.dp),
-            )
-        },
+        toastState = toastState,
     ) { innerPadding ->
-        if (state.showLinkSheet) {
-            LinkAppBottomSheet(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        if (state.advancedSettingsApp != null) {
-            AdvancedAppSettingsBottomSheet(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        if (state.variantPickerApp != null) {
-            VariantPickerDialog(
-                state = state,
-                onAction = onAction,
-            )
-        }
-
-        state.importSummary?.let { summary ->
-            zed.rainxch.apps.presentation.components.ImportSummarySheet(
-                summary = summary,
-                onDismiss = { onAction(AppsAction.OnDismissImportSummary) },
-            )
-        }
-
-        state.appPendingUninstall?.let { app ->
-            GhsConfirmDialog(
-                title = stringResource(Res.string.confirm_uninstall_title),
-                body = stringResource(Res.string.confirm_uninstall_message, app.appName),
-                confirmLabel = stringResource(Res.string.uninstall),
-                onConfirm = { onAction(AppsAction.OnUninstallConfirmed(app)) },
-                onDismiss = { onAction(AppsAction.OnDismissUninstallDialog) },
-                cancelLabel = stringResource(Res.string.cancel),
-                destructive = true,
-            )
-        }
-
-        state.appPendingDiscard?.let { app ->
-            GhsConfirmDialog(
-                title = stringResource(Res.string.confirm_discard_pending_title),
-                body = stringResource(Res.string.confirm_discard_pending_message, app.appName),
-                confirmLabel = stringResource(Res.string.discard_pending_install),
-                onConfirm = { onAction(AppsAction.OnConfirmDiscardPendingInstall(app)) },
-                onDismiss = { onAction(AppsAction.OnDismissDiscardPendingDialog) },
-                cancelLabel = stringResource(Res.string.cancel),
-                destructive = true,
-            )
-        }
-
-        PullToRefreshBox(
+        KomiPullToRefresh(
             isRefreshing = state.isRefreshing,
             onRefresh = { onAction(AppsAction.OnRefresh) },
             modifier = Modifier
@@ -492,7 +241,7 @@ fun AppsScreen(
                 Column(
                     modifier = Modifier.constrainedContentWidth().fillMaxHeight(),
                 ) {
-                    GhsTextField(
+                    KomiTextField(
                         value = state.searchQuery,
                         onValueChange = { onAction(AppsAction.OnSearchChange(it)) },
                         leadingIcon = Icons.Default.Search,
@@ -505,33 +254,34 @@ fun AppsScreen(
 
                     if (state.isCheckingForUpdates) {
                         Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            CircularProgressIndicator(
+                            KomiCircularProgress(
                                 modifier = Modifier.size(14.dp),
-                                strokeWidth = 2.dp,
                             )
 
-                            Text(
+                            KomiText(
                                 text = stringResource(Res.string.checking_for_updates),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                role = KomiTextRole.Body,
+                                fontSize = 13.sp,
+                                color = colors.onSurfaceVariant,
                             )
                         }
                     } else if (state.lastCheckedTimestamp != null) {
-                        Text(
+                        KomiText(
                             text =
                                 stringResource(
                                     Res.string.last_checked,
                                     formatLastChecked(state.lastCheckedTimestamp),
                                 ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            uppercase = false,
+                            color = colors.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                         )
                     }
@@ -542,7 +292,7 @@ fun AppsScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                CircularProgressIndicator()
+                                KomiCircularProgress()
                             }
                         }
 
@@ -551,10 +301,10 @@ fun AppsScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                Text(
+                                KomiText(
                                     text = stringResource(Res.string.no_apps_found),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onBackground,
+                                    role = KomiTextRole.Title,
+                                    color = colors.onBackground,
                                 )
                             }
                         }
@@ -563,7 +313,7 @@ fun AppsScreen(
                             val listState = rememberLazyListState()
                             val isScrollbarEnabled = LocalScrollbarEnabled.current
 
-                            val onRowSelect: (zed.rainxch.apps.presentation.model.InstalledAppUi) -> Unit =
+                            val onRowSelect: (InstalledAppUi) -> Unit =
                                 { app ->
                                     onAction(
                                         AppsAction.OnNavigateToRepo(
@@ -956,7 +706,7 @@ fun AppsScreen(
                                     }
 
                                     item {
-                                        Spacer(Modifier.height(bottomNavHeight + 32.dp))
+                                        Spacer(Modifier.height(32.dp))
                                     }
                                 }
                             }
@@ -968,535 +718,14 @@ fun AppsScreen(
     }
 }
 
-@Composable
-fun AppItemCard(
-    appItem: AppItem,
-    onOpenClick: () -> Unit,
-    onUpdateClick: () -> Unit,
-    onCancelClick: () -> Unit,
-    onUninstallClick: () -> Unit,
-    onRepoClick: () -> Unit,
-    onTogglePreReleases: (Boolean) -> Unit,
-    onToggleUpdateCheck: (Boolean) -> Unit,
-    onAdvancedSettingsClick: () -> Unit,
-    onPickVariantClick: () -> Unit,
-    onInstallPendingClick: () -> Unit,
-    onDiscardPendingClick: () -> Unit,
-    onSkipVersionClick: () -> Unit,
-    onUnskipVersionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val app = appItem.installedApp
-    val isBusy =
-        app.isPendingInstall ||
-                appItem.updateState is UpdateState.Downloading ||
-                appItem.updateState is UpdateState.Installing ||
-                appItem.updateState is UpdateState.CheckingUpdate
-
-    ExpressiveCard(
-        onClick = onRepoClick,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(32.dp))
-                    .padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                InstalledAppIcon(
-                    packageName = app.packageName,
-                    appName = app.appName,
-                    modifier =
-                        Modifier
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(18.dp)),
-                    apkFilePath = app.pendingInstallFilePath,
-                )
-
-                Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                    Text(
-                        text = app.appName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        GitHubStoreImage(
-                            imageModel = { app.repoOwnerAvatarUrl },
-                            modifier =
-                                Modifier
-                                    .size(18.dp)
-                                    .clip(CircleShape),
-                        )
-
-                        Spacer(Modifier.width(6.dp))
-
-                        Text(
-                            text = app.repoOwner,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false),
-                        )
-
-                        app.sourceHost?.let {
-                            Spacer(Modifier.width(6.dp))
-
-                            zed.rainxch.apps.presentation.components.SourceChip(host = it)
-                        }
-                    }
-
-                    when {
-
-                        app.pendingInstallFilePath != null -> {
-                            Text(
-                                text = stringResource(Res.string.ready_to_install),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
-
-                        app.isPendingInstall -> {
-                            Text(
-                                text = stringResource(Res.string.pending_install),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.tertiary,
-                            )
-                        }
-
-                        app.preferredVariantStale -> {
-
-                            Text(
-                                text = stringResource(Res.string.variant_stale_hint),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier =
-                                    Modifier.clickable(
-                                        enabled = !isBusy,
-                                        onClick = onPickVariantClick,
-                                    ),
-                            )
-                        }
-
-                        app.isUpdateAvailable -> {
-                            Text(
-                                text =
-                                    buildVersionLabel(
-                                        installedVersion = app.installedVersion,
-                                        latestVersion = app.latestVersion,
-                                        latestReleasePublishedAt = app.latestReleasePublishedAt,
-                                        lastUpdatedAt = app.lastUpdatedAt,
-                                    ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-
-                            if (!app.preferredAssetVariant.isNullOrBlank()) {
-                                Text(
-                                    text =
-                                        stringResource(
-                                            Res.string.variant_label_inline,
-                                            app.preferredAssetVariant,
-                                        ),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
-
-                        else -> {
-                            Text(
-                                text =
-                                    buildVersionLabel(
-                                        installedVersion = app.installedVersion,
-                                        latestVersion = null,
-                                        latestReleasePublishedAt = null,
-                                        lastUpdatedAt = app.lastUpdatedAt,
-                                    ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (app.repoDescription != null) {
-                Spacer(Modifier.height(8.dp))
-
-                Text(
-                    text = app.repoDescription,
-                    style = MaterialTheme.typography.bodyMediumEmphasized,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val preReleaseString = stringResource(Res.string.pre_release_badge)
-                Text(
-                    text = preReleaseString,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val advancedFilterDescription =
-                        stringResource(Res.string.advanced_settings_open)
-                    val hasFilter =
-                        !app.assetFilterRegex.isNullOrBlank() || app.fallbackToOlderReleases
-                    IconButton(
-                        onClick = onAdvancedSettingsClick,
-                        enabled = !isBusy,
-                        modifier = Modifier.semantics {
-                            contentDescription = advancedFilterDescription
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterAlt,
-                            contentDescription = null,
-                            tint =
-                                if (hasFilter) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                        )
-                    }
-
-                    val pickVariantDescription =
-                        stringResource(Res.string.variant_picker_open)
-                    val hasPin = !app.preferredAssetVariant.isNullOrBlank()
-                    IconButton(
-                        onClick = onPickVariantClick,
-                        enabled = !isBusy,
-                        modifier = Modifier.semantics {
-                            contentDescription = pickVariantDescription
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = null,
-                            tint =
-                                when {
-                                    app.preferredVariantStale -> MaterialTheme.colorScheme.error
-                                    hasPin -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                        )
-                    }
-
-                    Checkbox(
-                        checked = app.includePreReleases,
-                        onCheckedChange = onTogglePreReleases,
-                        enabled = !isBusy,
-                        modifier =
-                            Modifier.semantics {
-                                contentDescription = preReleaseString
-                            },
-                    )
-
-                    var showRowOverflow by remember { mutableStateOf(false) }
-                    val moreActionsLabel =
-                        stringResource(Res.string.apps_compact_more_actions, app.appName)
-                    Box {
-                        IconButton(
-                            onClick = { showRowOverflow = true },
-                            enabled = !isBusy,
-                            modifier = Modifier.semantics {
-                                contentDescription = moreActionsLabel
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.MoreVert,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        GhsDropdownMenu(
-                            expanded = showRowOverflow,
-                            onDismissRequest = { showRowOverflow = false },
-                        ) {
-                            run {
-                                val baseLabel = stringResource(Res.string.apps_ignore_updates)
-                                GhsDropdownMenuItem(
-                                    text = if (!app.updateCheckEnabled) "$baseLabel  ✓" else baseLabel,
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onToggleUpdateCheck(!app.updateCheckEnabled)
-                                    },
-                                )
-                            }
-
-                            if (app.skippedReleaseTag != null) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.apps_skip_version_unskip),
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onUnskipVersionClick()
-                                    },
-                                )
-                            } else if (app.isUpdateAvailable && !(app.latestVersion
-                                    ?: app.latestVersionName).isNullOrBlank()
-                            ) {
-                                GhsDropdownMenuItem(
-                                    text = stringResource(Res.string.apps_skip_version),
-                                    onClick = {
-                                        showRowOverflow = false
-                                        onSkipVersionClick()
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            when (val state = appItem.updateState) {
-                is UpdateState.Downloading -> {
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.downloading),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-
-                            if (appItem.downloadProgress != null) {
-                                Text(
-                                    text = "${appItem.downloadProgress}%",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.height(4.dp))
-
-                        LinearWavyProgressIndicator(
-                            progress = { (appItem.downloadProgress ?: 0) / 100f },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-
-                is UpdateState.Installing -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                        )
-
-                        Text(
-                            text = stringResource(Res.string.installing),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-
-                is UpdateState.CheckingUpdate -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                        )
-
-                        Text(
-                            text = stringResource(Res.string.checking),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-
-                is UpdateState.Success -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp),
-                        )
-
-                        Text(
-                            text = stringResource(Res.string.updated_successfully),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
-
-                is UpdateState.Error -> {
-                    Text(
-                        text = stringResource(Res.string.error_with_message, state.message),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                UpdateState.Idle -> {}
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = onUninstallClick,
-                    enabled = !isBusy,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.DeleteOutline,
-                        contentDescription = stringResource(Res.string.uninstall),
-                        tint = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                when (appItem.updateState) {
-                    is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
-                        GhsButton(
-                            onClick = onCancelClick,
-                            label = stringResource(Res.string.cancel),
-                            variant = GhsButtonVariant.Destructive,
-                            leadingIcon = Icons.Default.Cancel,
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-
-                    else -> {
-                        if (app.pendingInstallFilePath != null) {
-
-                            GhsButton(
-                                onClick = onInstallPendingClick,
-                                label = stringResource(Res.string.install),
-                                variant = GhsButtonVariant.Primary,
-                                leadingIcon = Icons.Default.Update,
-                                enabled = !isBusy,
-                                modifier = Modifier.weight(1f),
-                            )
-
-                            IconButton(onClick = onDiscardPendingClick) {
-                                Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = stringResource(Res.string.discard_pending_install),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        } else if (app.isUpdateAvailable && !app.isPendingInstall) {
-                            GhsButton(
-                                onClick = onUpdateClick,
-                                label = stringResource(Res.string.update),
-                                variant = GhsButtonVariant.Primary,
-                                leadingIcon = Icons.Default.Update,
-                                modifier = Modifier.weight(1f),
-                            )
-                        } else if (app.isPendingInstall) {
-
-                            GhsButton(
-                                onClick = onDiscardPendingClick,
-                                label = stringResource(Res.string.discard_pending_install),
-                                variant = GhsButtonVariant.Destructive,
-                                leadingIcon = Icons.Default.Cancel,
-                                modifier = Modifier.weight(1f),
-                            )
-                        } else {
-                            GhsButton(
-                                onClick = onOpenClick,
-                                label = stringResource(Res.string.open),
-                                variant = GhsButtonVariant.Primary,
-                                leadingIcon = Icons.AutoMirrored.Filled.OpenInNew,
-                                enabled = !isBusy,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun buildVersionLabel(
-    installedVersion: String,
-    latestVersion: String?,
-    latestReleasePublishedAt: String?,
-    lastUpdatedAt: Long,
-): String {
-    val displayDate =
-        if (latestVersion != null) {
-            formatIsoDate(latestReleasePublishedAt)
-        } else {
-            formatEpochDate(lastUpdatedAt)
-        }
-
-    return buildString {
-        append(installedVersion)
-        if (latestVersion != null) {
-            append(" → ")
-            append(latestVersion)
-        }
-        displayDate?.let {
-            append(" (")
-            append(it)
-            append(")")
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         AppsScreen(
             state = AppsState(),
             onAction = {},
-            snackbarHostState = SnackbarHostState(),
+            toastState = rememberKomiToastState(),
         )
     }
 }

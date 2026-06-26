@@ -18,10 +18,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.isDesktop
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.repository.BrowseFilterStore
 import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.installation.hasActualUpdate
 import zed.rainxch.core.domain.model.installation.isReallyInstalled
 import zed.rainxch.core.domain.repository.FavouritesRepository
@@ -47,7 +50,9 @@ import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded
 import zed.rainxch.githubstore.core.presentation.res.rate_limit_exceeded_retry_in
 import zed.rainxch.githubstore.core.presentation.res.search_failed
 import zed.rainxch.search.presentation.mappers.toDomain
-import zed.rainxch.search.presentation.model.SearchPlatformUi
+import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
+import zed.rainxch.search.presentation.model.SearchSourceUi
+import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.isEntirelyGithubUrls
 import zed.rainxch.search.presentation.utils.parseGithubUrls
 
@@ -57,7 +62,7 @@ class SearchViewModel(
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val shareManager: ShareManager,
     private val platform: Platform,
     private val clipboardHelper: ClipboardHelper,
@@ -66,7 +71,8 @@ class SearchViewModel(
     private val searchHistoryRepository: SearchHistoryRepository,
     private val userSessionRepository: UserSessionRepository,
     private val hiddenReposRepository: HiddenReposRepository,
-    private val initialPlatform: SearchPlatformUi? = null,
+    private val browseFilterStore: BrowseFilterStore,
+    private val initialPlatform: DiscoveryPlatform? = null,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private var currentSearchJob: Job? = null
@@ -105,11 +111,17 @@ class SearchViewModel(
                     observeClipboardSetting()
                     observeSearchHistory()
                     checkClipboardForLinks()
+                    if (isDesktop()) observeBrowseFilter()
 
                     hasLoadedInitialData = true
                 }
             }
-            .map { it.copy(visibleRepos = computeVisibleRepos(it)) }
+            .map {
+                it.copy(
+                    visibleRepos = computeVisibleRepos(it),
+                    activeFilterCount = computeActiveFilterCount(it),
+                )
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
@@ -126,6 +138,23 @@ class SearchViewModel(
                         (!needsHideSeenFilter || repo.repository.id !in state.seenRepoIds)
             }
             .toImmutableList()
+    }
+
+    private fun computeActiveFilterCount(state: SearchState): Int {
+        var count = 0
+        if (state.selectedSource != SearchSourceUi.GitHub) count++
+        if (state.selectedSearchPlatform != DiscoveryPlatform.All) count++
+        if (state.selectedLanguage != ProgrammingLanguageUi.All) count++
+        if (state.selectedSortBy != SortByUi.BestMatch) count++
+        return count
+    }
+
+    private fun observeBrowseFilter() {
+        viewModelScope.launch {
+            browseFilterStore.platform.collect { p ->
+                onAction(SearchAction.OnPlatformTypeSelected(p))
+            }
+        }
     }
 
     private fun observeSeenRepos() {
@@ -156,24 +185,17 @@ class SearchViewModel(
     private fun observeCustomForgeHosts() {
         viewModelScope.launch {
             tweaksRepository.getCustomForgeHosts().collect { hosts ->
-                val base = listOf(
-                    zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
-                    zed.rainxch.search.presentation.model.SearchSourceUi.Codeberg,
-                )
+                val base = listOf(SearchSourceUi.GitHub, SearchSourceUi.Codeberg)
                 val extra = hosts
                     .filter { it.isNotBlank() && !it.equals("codeberg.org", ignoreCase = true) }
                     .sorted()
-                    .map { zed.rainxch.search.presentation.model.SearchSourceUi.CustomForge(it) }
-                val all =
-                    kotlinx.collections.immutable.persistentListOf<zed.rainxch.search.presentation.model.SearchSourceUi>()
-                        .addAll(base + extra)
+                    .map { SearchSourceUi.CustomForge(it) }
+                val all = (base + extra).toImmutableList()
                 _state.update { current ->
-                    val currentSel = current.selectedSource
-                    val stillValid = all.contains(currentSel)
+                    val stillValid = all.contains(current.selectedSource)
                     current.copy(
                         availableSources = all,
-                        selectedSource = if (stillValid) currentSel
-                        else zed.rainxch.search.presentation.model.SearchSourceUi.GitHub,
+                        selectedSource = if (stillValid) current.selectedSource else SearchSourceUi.GitHub,
                     )
                 }
             }
@@ -417,7 +439,7 @@ class SearchViewModel(
                 searchRepository
                     .searchRepositories(
                         query = _state.value.query,
-                        platform = _state.value.selectedSearchPlatform.toDomain(),
+                        platform = _state.value.selectedSearchPlatform,
                         language = _state.value.selectedLanguage.toDomain(),
                         sortBy = _state.value.selectedSortBy.toDomain(),
                         sortOrder = _state.value.selectedSortOrder.toDomain(),
@@ -738,17 +760,11 @@ class SearchViewModel(
                 }
             }
 
-            is SearchAction.OnRepositoryClick -> {
-                // Navigation handled in composable
-            }
+            is SearchAction.OnRepositoryClick -> Unit
 
-            SearchAction.OnNavigateBackClick -> {
-                // Handled in composable
-            }
+            SearchAction.OnNavigateBackClick -> Unit
 
-            is SearchAction.OnRepositoryDeveloperClick -> {
-                // Handled in composable
-            }
+            is SearchAction.OnRepositoryDeveloperClick -> Unit
 
             is SearchAction.OnHistoryItemClick -> {
                 _state.update {
@@ -883,7 +899,7 @@ class SearchViewModel(
             try {
                 val exploreResult = searchRepository.exploreFromGithub(
                     query = query,
-                    platform = platformUi.toDomain(),
+                    platform = platformUi,
                     page = explorePage,
                 )
                 val existingCount = _state.value.repositories.size

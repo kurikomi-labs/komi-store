@@ -9,21 +9,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.open_in_browser
 import zed.rainxch.githubstore.core.presentation.res.report_issue
@@ -31,35 +31,37 @@ import zed.rainxch.githubstore.core.presentation.res.report_issue
 fun LazyListScope.reportIssue(repoUrl: String) {
     item {
         val uriHandler = LocalUriHandler.current
+        val colors = LocalPersonality.current.colors
+        val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
-                .background(MaterialTheme.colorScheme.surface)
+                .clip(rowShape)
+                .border(width = 1.dp, color = colors.outline, shape = rowShape)
+                .background(colors.surface)
                 .clickable { uriHandler.openUri("${repoUrl.trimEnd('/')}/issues") }
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.BugReport,
                 contentDescription = stringResource(Res.string.report_issue),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(24.dp),
             )
-            Text(
+            KomiText(
                 text = stringResource(Res.string.report_issue),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
                 modifier = Modifier.weight(1f),
+                uppercase = false,
             )
-            Icon(
+            KomiIcon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(Res.string.open_in_browser),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
             )
         }

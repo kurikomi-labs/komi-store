@@ -3,54 +3,38 @@ package zed.rainxch.tweaks.presentation.hidden
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import androidx.compose.material3.TopAppBar
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GitHubStoreImage
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
-import org.jetbrains.compose.resources.pluralStringResource
-import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_count
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_empty_description
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_empty_title
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_title
@@ -60,190 +44,112 @@ import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhide_
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_all_snackbar
 import zed.rainxch.githubstore.core.presentation.res.hidden_repositories_unhidden_snackbar
 import zed.rainxch.githubstore.core.presentation.res.navigate_back
+import zed.rainxch.tweaks.presentation.components.shell.SettingsGroup
+import zed.rainxch.tweaks.presentation.components.shell.SettingsRow
+import zed.rainxch.tweaks.presentation.components.shell.TweaksDecorSlot
+import zed.rainxch.tweaks.presentation.components.shell.tweaksKicker
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HiddenRepositoriesRoot(
     onNavigateBack: () -> Unit,
     viewModel: HiddenRepositoriesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is HiddenRepositoriesEvent.Unhidden ->
-                scope.launch {
-                    snackbarState.showSnackbar(
-                        getString(Res.string.hidden_repositories_unhidden_snackbar, event.repoFullName),
-                    )
-                }
+                toastState.info(getString(Res.string.hidden_repositories_unhidden_snackbar, event.repoFullName))
+
             HiddenRepositoriesEvent.UnhiddenAll ->
-                scope.launch {
-                    snackbarState.showSnackbar(
-                        getString(Res.string.hidden_repositories_unhidden_all_snackbar),
-                    )
-                }
+                toastState.info(getString(Res.string.hidden_repositories_unhidden_all_snackbar))
+
             is HiddenRepositoriesEvent.Failure ->
-                scope.launch {
-                    snackbarState.showSnackbar(
-                        getString(Res.string.hidden_repositories_unhide_failure),
-                    )
-                }
+                toastState.danger(getString(Res.string.hidden_repositories_unhide_failure))
         }
     }
 
-    Scaffold(
+    KomiScaffold(
+        toastState = toastState,
+        grid = true,
+        screentone = true,
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = stringResource(Res.string.hidden_repositories_title),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        if (state.items.isNotEmpty()) {
-                            Text(
-                                text = pluralStringResource(
-                                    Res.plurals.hidden_repositories_count,
-                                    state.items.size,
-                                    state.items.size,
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.navigate_back),
-                        )
-                    }
-                },
-                actions = {
-                    if (state.items.isNotEmpty()) {
-                        GhsButton(
-                            onClick = {
-                                viewModel.onAction(HiddenRepositoriesAction.OnUnhideAll)
-                            },
-                            label = stringResource(Res.string.hidden_repositories_unhide_all),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
-                        )
-                    }
-                },
+            KomiTopBar(
+                title = stringResource(Res.string.hidden_repositories_title),
+                titleAccent = tweaksKicker(TweaksDecorSlot.Hidden),
+                leading = {
+                    KomiIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.navigate_back),
+                        onClick = onNavigateBack
+                    )
+                }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarState) },
     ) { padding ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-        ) {
+        val colors = LocalPersonality.current.colors
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
-                state.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
+                state.isLoading -> KomiCircularProgress(modifier = Modifier.align(Alignment.Center))
 
-                state.items.isEmpty() -> {
+                state.items.isEmpty() ->
+                    Column(
+                        modifier = Modifier.align(Alignment.Center).padding(horizontal = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        KomiText(
+                            text = stringResource(Res.string.hidden_repositories_empty_title),
+                            role = KomiTextRole.Title,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.onSurface,
+                        )
+                        Spacer(Modifier.size(8.dp))
+                        KomiText(
+                            text = stringResource(Res.string.hidden_repositories_empty_description),
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
+                        )
+                    }
+
+                else ->
                     Column(
                         modifier =
                             Modifier
-                                .align(Alignment.Center)
-                                .padding(horizontal = 32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = 16.dp)
+                                .padding(top = 12.dp, bottom = 28.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text(
-                            text = stringResource(Res.string.hidden_repositories_empty_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Spacer(Modifier.size(8.dp))
-                        Text(
-                            text = stringResource(Res.string.hidden_repositories_empty_description),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(state.items, key = { it.repoId }) { item ->
-                            HiddenRepoRow(
-                                item = item,
-                                onUnhide = {
-                                    viewModel.onAction(HiddenRepositoriesAction.OnUnhide(item.repoId))
-                                },
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                            KomiButton(
+                                onClick = { viewModel.onAction(HiddenRepositoriesAction.OnUnhideAll) },
+                                label = stringResource(Res.string.hidden_repositories_unhide_all),
+                                variant = KomiButtonVariant.Destructive,
+                                size = KomiButtonSize.Sm,
                             )
                         }
+                        SettingsGroup {
+                            state.items.forEachIndexed { index, item ->
+                                SettingsRow(
+                                    title = item.repoName,
+                                    subtitle = item.repoOwner,
+                                    last = index == state.items.lastIndex,
+                                    trailing = {
+                                        KomiButton(
+                                            onClick = { viewModel.onAction(HiddenRepositoriesAction.OnUnhide(item.repoId)) },
+                                            label = stringResource(Res.string.hidden_repositories_unhide_action),
+                                            variant = KomiButtonVariant.Outline,
+                                            size = KomiButtonSize.Sm,
+                                        )
+                                    },
+                                )
+                            }
+                        }
                     }
-                }
             }
-        }
-    }
-}
-
-@Composable
-private fun HiddenRepoRow(
-    item: HiddenRepoUi,
-    onUnhide: () -> Unit,
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = Radii.row,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            GitHubStoreImage(
-                imageModel = { item.repoOwnerAvatarUrl },
-                modifier =
-                    Modifier
-                        .size(36.dp)
-                        .clip(CircleShape),
-            )
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.repoName,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = item.repoOwner,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            GhsButton(
-                onClick = onUnhide,
-                label = stringResource(Res.string.hidden_repositories_unhide_action),
-                variant = GhsButtonVariant.Text,
-                size = GhsButtonSize.Sm,
-            )
         }
     }
 }

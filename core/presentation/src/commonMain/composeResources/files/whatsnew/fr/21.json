@@ -1,0 +1,15 @@
+{
+  "versionCode": 21,
+  "versionName": "1.9.2",
+  "releaseDate": "2026-06-25",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Nouvel onglet Explorer — un fil de découverte d'applis installables pour votre plateforme. Il se rafraîchit chaque jour pour qu'il y ait toujours du nouveau et charge plus de contenu au fil du défilement.",
+        "Nouvel onglet Classements — découvrez les tendances, les nouveautés et les plus populaires, classés sur toute la boutique."
+      ]
+    }
+  ]
+}

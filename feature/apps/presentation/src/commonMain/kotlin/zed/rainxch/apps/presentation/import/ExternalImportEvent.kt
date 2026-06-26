@@ -7,8 +7,6 @@ sealed interface ExternalImportEvent {
 
     data object NavigateBack : ExternalImportEvent
 
-    data object PlayConfetti : ExternalImportEvent
-
     data class ShowUndoSnackbar(val message: String) : ExternalImportEvent
 
     data object NavigateBackAndOpenManualLink : ExternalImportEvent

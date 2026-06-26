@@ -18,10 +18,13 @@ data class GithubRepoSummary(
     val topics: List<String>?,
     val releasesUrl: String,
     val updatedAt: String,
+    val pushedAt: String? = null,
     val isFork: Boolean = false,
     val availablePlatforms: List<DiscoveryPlatform> = emptyList(),
     val downloadCount: Long = 0,
     val latestReleaseDate: String? = null,
     val latestReleaseTag: String? = null,
     val sourceHost: String? = null,
+    val dailyStars: Int? = null,
+    val topicCodes: List<String> = emptyList(),
 )

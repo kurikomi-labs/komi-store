@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface GithubStoreGraph {
     @Serializable
-    data object HomeScreen : GithubStoreGraph
+    data object ExploreScreen : GithubStoreGraph
+
+    @Serializable
+    data object ChartsScreen : GithubStoreGraph
 
     @Serializable
     data class SearchScreen(
@@ -30,37 +33,13 @@ sealed interface GithubStoreGraph {
     ) : GithubStoreGraph
 
     @Serializable
-    data object ProfileScreen : GithubStoreGraph
+    data object ProfileGraph : GithubStoreGraph {
+        @Serializable
+        data object ProfileScreen : GithubStoreGraph
+    }
 
     @Serializable
     data object TweaksScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksAppearanceScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksLanguageScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksConnectionScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksSourcesScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksTranslationScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksInstallScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksUpdatesScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksStorageScreen : GithubStoreGraph
-
-    @Serializable
-    data object TweaksPrivacyScreen : GithubStoreGraph
 
     @Serializable
     data object AboutScreen : GithubStoreGraph
@@ -79,9 +58,6 @@ sealed interface GithubStoreGraph {
 
     @Serializable
     data object AppsScreen : GithubStoreGraph
-
-    @Serializable
-    data object OnboardingScreen : GithubStoreGraph
 
     @Serializable
     data object ExternalImportScreen : GithubStoreGraph

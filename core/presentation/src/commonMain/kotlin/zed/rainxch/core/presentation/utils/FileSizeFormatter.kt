@@ -1,6 +1,9 @@
 package zed.rainxch.core.presentation.utils
 
-fun formatFileSize(bytes: Long, decimals: Int = 1): String {
+fun formatFileSize(
+    bytes: Long,
+    decimals: Int = 1,
+): String {
     if (bytes < 1_024L) return "$bytes B"
 
     val units = listOf("KB", "MB", "GB", "TB", "PB")

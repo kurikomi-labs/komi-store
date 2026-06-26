@@ -2,7 +2,6 @@ package zed.rainxch.apps.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -20,21 +18,19 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,13 +39,15 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.domain.model.ImportFormat
 import zed.rainxch.apps.domain.model.ImportResult
+import zed.rainxch.apps.presentation.model.ImportSummaryBucket
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.import_summary_already_tracked
 import zed.rainxch.githubstore.core.presentation.res.import_summary_close
@@ -65,26 +63,25 @@ import zed.rainxch.githubstore.core.presentation.res.import_summary_title
 import zed.rainxch.githubstore.core.presentation.res.import_summary_unknown_caption
 import zed.rainxch.githubstore.core.presentation.res.import_summary_unknown_format
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportSummarySheet(
     summary: ImportResult,
+    expandedBuckets: ImmutableSet<ImportSummaryBucket>,
+    onToggleBucket: (ImportSummaryBucket) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
+    val colors = LocalPersonality.current.colors
     if (summary.sourceFormat == ImportFormat.UNKNOWN) {
         UnknownFormatSheet(
             preview = summary.unknownFormatPreview,
-            sheetState = sheetState,
             onDismiss = onDismiss,
         )
         return
     }
 
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -96,11 +93,12 @@ fun ImportSummarySheet(
                 ImportFormat.OBTAINIUM -> stringResource(Res.string.import_summary_format_obtainium)
                 else -> stringResource(Res.string.import_summary_format_native)
             }
-            Text(
+            KomiText(
                 text = stringResource(Res.string.import_summary_title, formatLabel),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                color = colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
+                uppercase = false,
             )
 
             val importedPart = stringResource(Res.string.import_summary_imported, summary.imported)
@@ -113,10 +111,10 @@ fun ImportSummarySheet(
             val failedPart = stringResource(Res.string.import_summary_failed, summary.failed)
             val announcement = listOfNotNull(importedPart, skippedPart, nonGitHubPart, failedPart)
                 .joinToString(", ")
-            Text(
+            KomiText(
                 text = "",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Body,
+                color = colors.onSurface,
                 modifier = Modifier
                     .height(0.dp)
                     .semantics {
@@ -127,43 +125,51 @@ fun ImportSummarySheet(
 
             SummaryBucket(
                 icon = Icons.Outlined.CheckCircle,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 title = stringResource(Res.string.import_summary_imported, summary.imported),
                 items = summary.importedItems,
+                expanded = ImportSummaryBucket.IMPORTED in expandedBuckets,
+                onToggle = { onToggleBucket(ImportSummaryBucket.IMPORTED) },
             )
 
             if (summary.skipped > 0) {
                 SummaryBucket(
                     icon = Icons.Outlined.RemoveCircleOutline,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = colors.onSurfaceVariant,
                     title = stringResource(Res.string.import_summary_already_tracked, summary.skipped),
                     items = summary.skippedItems,
+                    expanded = ImportSummaryBucket.SKIPPED in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.SKIPPED) },
                 )
             }
 
             if (summary.nonGitHubSkipped > 0) {
                 SummaryBucket(
                     icon = Icons.Outlined.WarningAmber,
-                    tint = MaterialTheme.colorScheme.tertiary,
+                    tint = colors.primary,
                     title = stringResource(Res.string.import_summary_non_github, summary.nonGitHubSkipped),
                     caption = stringResource(Res.string.import_summary_non_github_caption),
                     items = summary.nonGitHubItems,
+                    expanded = ImportSummaryBucket.NON_GITHUB in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.NON_GITHUB) },
                 )
             }
 
             if (summary.failed > 0) {
                 SummaryBucket(
                     icon = Icons.Outlined.ErrorOutline,
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = colors.error,
                     title = stringResource(Res.string.import_summary_failed, summary.failed),
                     items = summary.failedItems,
+                    expanded = ImportSummaryBucket.FAILED in expandedBuckets,
+                    onToggle = { onToggleBucket(ImportSummaryBucket.FAILED) },
                 )
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.import_summary_close),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
@@ -173,16 +179,15 @@ fun ImportSummarySheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UnknownFormatSheet(
     preview: String?,
-    sheetState: androidx.compose.material3.SheetState,
     onDismiss: () -> Unit,
 ) {
-    GhsBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
+    val colors = LocalPersonality.current.colors
+    KomiSheet(
+        onDismiss = onDismiss,
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
@@ -191,35 +196,37 @@ private fun UnknownFormatSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Outlined.WarningAmber,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary,
+                    tint = colors.primary,
                 )
 
                 Spacer(Modifier.width(8.dp))
 
-                Text(
+                KomiText(
                     text = stringResource(Res.string.import_summary_unknown_format),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontSize = 16.sp,
+                    color = colors.onSurface,
                     fontWeight = FontWeight.SemiBold,
+                    uppercase = false,
                 )
             }
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.import_summary_unknown_caption),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
             )
 
             if (!preview.isNullOrBlank()) {
                 SelectionContainer {
-                    Text(
+                    KomiText(
                         text = preview,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Mono,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(max = 200.dp),
@@ -227,10 +234,10 @@ private fun UnknownFormatSheet(
                 }
             }
 
-            GhsButton(
+            KomiButton(
                 onClick = onDismiss,
                 label = stringResource(Res.string.import_summary_close),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -244,33 +251,38 @@ private fun SummaryBucket(
     icon: ImageVector,
     tint: Color,
     title: String,
-    caption: String? = null,
     items: ImmutableList<String>,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    caption: String? = null,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    val colors = LocalPersonality.current.colors
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Icon(imageVector = icon, contentDescription = null, tint = tint)
+            KomiIcon(imageVector = icon, contentDescription = null, tint = tint)
 
             Spacer(Modifier.width(8.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontSize = 14.sp,
+                    color = colors.onSurface,
                     fontWeight = FontWeight.Medium,
+                    uppercase = false,
                 )
 
                 if (!caption.isNullOrBlank()) {
-                    Text(
+                    KomiText(
                         text = caption,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                     )
                 }
             }
@@ -279,17 +291,23 @@ private fun SummaryBucket(
                 val expandLabel = stringResource(
                     if (expanded) Res.string.import_summary_collapse else Res.string.import_summary_expand,
                 )
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable { onToggle() }
+                        .semantics { contentDescription = expandLabel },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    KomiIcon(
                         imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                        contentDescription = expandLabel,
+                        contentDescription = null,
                     )
                 }
             }
         }
 
         if (expanded && items.isNotEmpty()) {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            KomiHorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
             LazyColumn(
                 modifier = Modifier
@@ -299,10 +317,12 @@ private fun SummaryBucket(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 items(items.size) { idx ->
-                    Text(
+                    KomiText(
                         text = items[idx],
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        uppercase = false,
+                        color = colors.onSurfaceVariant,
                     )
                 }
             }

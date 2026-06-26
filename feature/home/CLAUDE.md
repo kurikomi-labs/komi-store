@@ -27,7 +27,7 @@ interface HomeRepository {
 
 ## Navigation
 
-`GithubStoreGraph.HomeScreen`.
+`GithubStoreGraph.ChartsScreen` (bottom-nav label "Top Charts"). The `ExploreScreen` route renders the feed feature, not this one.
 
 ## VM injects
 

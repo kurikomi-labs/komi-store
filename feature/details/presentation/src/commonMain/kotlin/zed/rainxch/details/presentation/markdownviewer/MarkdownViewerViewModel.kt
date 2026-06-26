@@ -2,10 +2,17 @@ package zed.rainxch.details.presentation.markdownviewer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
+import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.details.domain.repository.TranslationRepository
@@ -14,6 +21,8 @@ import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.failed_to_load
 import zed.rainxch.githubstore.core.presentation.res.translation_failed
+
+private const val RENDER_ENTER_DELAY_MS = 350L
 
 class MarkdownViewerViewModel(
     private val url: String,
@@ -24,10 +33,13 @@ class MarkdownViewerViewModel(
     private val _state = MutableStateFlow(
         MarkdownViewerState(
             url = url,
+            filename = url.substringAfterLast("/", "Document").substringBefore("?"),
             deviceLanguageCode = translationRepository.getDeviceLanguageCode(),
         ),
     )
     val state = _state.asStateFlow()
+
+    private var renderJob: Job? = null
 
     init {
         load()
@@ -66,6 +78,7 @@ class MarkdownViewerViewModel(
                         ),
                     )
                 }
+                recompose()
             }.onFailure { e ->
                 _state.update {
                     it.copy(
@@ -87,20 +100,40 @@ class MarkdownViewerViewModel(
                 ),
             )
         }
+        recompose()
     }
 
     fun clearTranslation() {
         _state.update {
             it.copy(translation = TranslationState())
         }
+        recompose()
     }
 
     fun showLanguagePicker() {
-        _state.update { it.copy(isLanguagePickerVisible = true) }
+        _state.update {
+            it.copy(
+                isLanguagePickerVisible = true,
+                languagePickerQuery = "",
+                filteredLanguages = SupportedLanguages.all.toImmutableList(),
+            )
+        }
     }
 
     fun dismissLanguagePicker() {
         _state.update { it.copy(isLanguagePickerVisible = false) }
+    }
+
+    fun onLanguageQueryChange(query: String) {
+        val filtered = if (query.isBlank()) {
+            SupportedLanguages.all
+        } else {
+            SupportedLanguages.all.filter {
+                it.displayName.contains(query, ignoreCase = true) ||
+                    it.code.contains(query, ignoreCase = true)
+            }
+        }
+        _state.update { it.copy(languagePickerQuery = query, filteredLanguages = filtered.toImmutableList()) }
     }
 
     private fun load() {
@@ -116,6 +149,7 @@ class MarkdownViewerViewModel(
                             markdown = rawMarkdown,
                         )
                     }
+                    recompose()
                 } else {
                     _state.update { it.copy(isLoading = false, errorMessage = getString(Res.string.failed_to_load)) }
                 }
@@ -123,5 +157,37 @@ class MarkdownViewerViewModel(
                 _state.update { it.copy(isLoading = false, errorMessage = e.message ?: getString(Res.string.failed_to_load)) }
             }
         }
+    }
+
+    private fun recompose() {
+        renderJob?.cancel()
+        renderJob = viewModelScope.launch {
+            val translation = _state.value.translation
+            val displayed = if (translation.isShowingTranslation && translation.translatedText != null) {
+                translation.translatedText
+            } else {
+                _state.value.markdown
+            }
+            val chunks = if (displayed.isEmpty()) {
+                emptyList()
+            } else {
+                withContext(Dispatchers.Default) { chunkMarkdown(displayed) }
+            }
+            _state.update {
+                it.copy(markdownChunks = chunks.toImmutableList(), isReadyToRender = false)
+            }
+            if (displayed.isNotEmpty()) {
+                delay(RENDER_ENTER_DELAY_MS)
+                _state.update { it.copy(isReadyToRender = true) }
+            }
+        }
+    }
+
+    private fun chunkMarkdown(markdown: String): List<String> {
+        val flavour = GFMFlavourDescriptor()
+        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
+        return parsedTree.children
+            .map { node -> markdown.substring(node.startOffset, node.endOffset) }
+            .filter { it.isNotBlank() }
     }
 }

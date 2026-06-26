@@ -1,29 +1,31 @@
 package zed.rainxch.apps.presentation.import.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
@@ -59,7 +61,28 @@ fun WizardList(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item(key = "progress-header") {
-            ProgressChip(remaining = cards.size)
+            val colors = LocalPersonality.current.colors
+            val shape = LocalPersonality.current.shape
+            Box(
+                modifier = Modifier
+                    .semantics { liveRegion = LiveRegionMode.Polite }
+                    .clip(RoundedCornerShape(shape.corner))
+                    .background(colors.surfaceVariant),
+            ) {
+                KomiText(
+                    text = pluralStringResource(
+                        Res.plurals.external_import_list_remaining,
+                        cards.size,
+                        cards.size,
+                    ),
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
         }
 
         items(
@@ -85,35 +108,13 @@ fun WizardList(
         }
 
         item(key = "add-manually-footer") {
-            AddManuallyFooter(onClick = onAddManually)
+            KomiButton(
+                onClick = onAddManually,
+                label = stringResource(Res.string.external_import_list_add_manually),
+                variant = KomiButtonVariant.Text,
+                trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-    }
-}
-
-@Composable
-private fun AddManuallyFooter(onClick: () -> Unit) {
-    GhsButton(
-        onClick = onClick,
-        label = stringResource(Res.string.external_import_list_add_manually),
-        variant = GhsButtonVariant.Text,
-        trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-private fun ProgressChip(remaining: Int) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-    ) {
-        Text(
-            text = pluralStringResource(Res.plurals.external_import_list_remaining, remaining, remaining),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-        )
     }
 }

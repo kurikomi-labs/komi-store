@@ -1,46 +1,37 @@
 package zed.rainxch.details.presentation.components
 
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import zed.rainxch.core.presentation.theme.shapes.WonkySquircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,24 +51,29 @@ fun InspectApkButton(
     onCoachmarkDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val buttonShape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     val pulse by rememberPulse(active = showCoachmark)
     val tilt by rememberTilt(active = showCoachmark)
 
     Box(modifier = modifier) {
-        IconButton(
-            onClick = onClick,
+        Box(
             modifier = Modifier
                 .size(52.dp)
-                .scale(pulse)
-                .graphicsLayer { rotationZ = tilt },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            ),
+                .graphicsLayer {
+                    scaleX = pulse
+                    scaleY = pulse
+                    rotationZ = tilt
+                }
+                .clip(buttonShape)
+                .background(colors.surfaceContainerHigh)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.Search,
                 contentDescription = stringResource(Res.string.apk_inspect_button_label),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(22.dp),
             )
         }
@@ -116,6 +112,7 @@ private fun rememberTilt(active: Boolean) =
 
 @Composable
 private fun Coachmark(onDismiss: () -> Unit) {
+    val colors = LocalPersonality.current.colors
     Popup(
         alignment = Alignment.TopEnd,
 
@@ -128,11 +125,11 @@ private fun Coachmark(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
     ) {
         Column(horizontalAlignment = Alignment.End) {
-            Surface(
-                shape = WonkySquircleShape.Toast,
-                color = MaterialTheme.colorScheme.primary,
-                shadowElevation = 6.dp,
-                modifier = Modifier.width(260.dp),
+            Box(
+                modifier = Modifier
+                    .width(260.dp)
+                    .clip(RoundedCornerShape(LocalPersonality.current.shape.corner))
+                    .background(colors.primary),
             ) {
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
@@ -142,36 +139,36 @@ private fun Coachmark(onDismiss: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Search,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = colors.onPrimary,
                             modifier = Modifier.size(16.dp),
                         )
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.apk_inspect_coachmark_title),
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp,
-                            ),
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            role = KomiTextRole.Title,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            color = colors.onPrimary,
+                            uppercase = false,
                         )
                     }
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.apk_inspect_coachmark_body),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onPrimary.copy(alpha = 0.9f),
                     )
                     Row(
                         modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        GhsButton(
+                        KomiButton(
                             onClick = onDismiss,
                             label = stringResource(Res.string.apk_inspect_coachmark_dismiss),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
-                            contentColorOverride = MaterialTheme.colorScheme.onPrimary,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     }
                 }
@@ -181,7 +178,7 @@ private fun Coachmark(onDismiss: () -> Unit) {
                 modifier = Modifier
                     .padding(end = 24.dp)
                     .size(width = 16.dp, height = 8.dp)
-                    .arrowDown(MaterialTheme.colorScheme.primary),
+                    .arrowDown(colors.primary),
             )
         }
     }

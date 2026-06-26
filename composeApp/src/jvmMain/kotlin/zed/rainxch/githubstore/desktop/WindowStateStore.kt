@@ -9,6 +9,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import zed.rainxch.core.domain.system.DesktopOs
 import java.awt.GraphicsEnvironment
 import java.awt.Rectangle
 import java.awt.Toolkit
@@ -40,16 +41,15 @@ object WindowStateStore {
 
     private val configFile: File by lazy {
         val home = File(System.getProperty("user.home"))
-        val osName = System.getProperty("os.name").orEmpty().lowercase()
         val dir =
             when {
-                "mac" in osName -> {
-                    File(home, "Library/Application Support/GitHub-Store")
+                DesktopOs.isMac -> {
+                    File(home, "Library/Application Support/Komi-Store")
                 }
 
-                "win" in osName -> {
+                DesktopOs.isWindows -> {
                     val appData = System.getenv("APPDATA")?.let(::File) ?: File(home, "AppData/Roaming")
-                    File(appData, "GitHub-Store")
+                    File(appData, "Komi-Store")
                 }
 
                 else -> {
@@ -59,7 +59,7 @@ object WindowStateStore {
                             ?.takeIf { it.isNotBlank() }
                             ?.let(::File)
                             ?: File(home, ".config")
-                    File(xdg, "GitHub-Store")
+                    File(xdg, "Komi-Store")
                 }
             }
         File(dir, FILE_NAME)

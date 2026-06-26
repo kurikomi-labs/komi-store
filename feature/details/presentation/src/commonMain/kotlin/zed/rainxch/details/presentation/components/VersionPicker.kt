@@ -20,15 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.UnfoldMore
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,13 +28,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
 import zed.rainxch.core.domain.model.account.github.preReleaseLabel
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.theme.tokens.Radii
-import zed.rainxch.core.presentation.vocabulary.Squiggle
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.latest_badge
@@ -52,42 +49,40 @@ import zed.rainxch.githubstore.core.presentation.res.pre_release_badge
 import zed.rainxch.githubstore.core.presentation.res.select_version
 import zed.rainxch.githubstore.core.presentation.res.versions_title
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VersionPicker(
     selectedRelease: GithubRelease?,
-    filteredReleases: List<GithubRelease>,
+    filteredReleases: ImmutableList<GithubRelease>,
     isPickerVisible: Boolean,
     onAction: (DetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isPickerEnabled by remember(filteredReleases) {
-        derivedStateOf { filteredReleases.isNotEmpty() }
-    }
+    val colors = LocalPersonality.current.colors
+    val isPickerEnabled = filteredReleases.isNotEmpty()
 
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.versions_title),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-            ),
-            color = MaterialTheme.colorScheme.tertiary,
+            role = KomiTextRole.Label,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            color = colors.primary,
             modifier = Modifier.padding(horizontal = 4.dp),
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(Radii.row)
+                .clip(rowShape)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = Radii.row,
+                    color = colors.outline,
+                    shape = rowShape,
                 )
-                .background(MaterialTheme.colorScheme.surface)
+                .background(colors.surface)
                 .clickable(enabled = isPickerEnabled) {
                     onAction(DetailsAction.ToggleVersionPicker)
                 }
@@ -97,63 +92,64 @@ fun VersionPicker(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                KomiText(
                     text = selectedRelease?.tagName
                         ?: stringResource(Res.string.no_version_selected),
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Stamp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     overflow = TextOverflow.Clip,
                     maxLines = 1,
+                    uppercase = false,
                 )
                 selectedRelease?.name?.let { name ->
                     if (name != selectedRelease.tagName) {
-                        Text(
+                        KomiText(
                             text = name,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            color = colors.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
             }
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.UnfoldMore,
                 contentDescription = stringResource(Res.string.select_version),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
         }
     }
 
     if (isPickerVisible) {
-        GhsBottomSheet(onDismissRequest = { onAction(DetailsAction.ToggleVersionPicker) }) {
-            Text(
+        KomiSheet(
+            onDismiss = { onAction(DetailsAction.ToggleVersionPicker) },
+            placement = KomiSheetPlacement.Bottom,
+        ) {
+            KomiText(
                 text = stringResource(Res.string.versions_title),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 20.sp,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = colors.onSurface,
                 modifier = Modifier.padding(vertical = 6.dp),
+                uppercase = false,
             )
-            Squiggle()
             Spacer(Modifier.size(8.dp))
             if (filteredReleases.isEmpty()) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.not_available),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                     modifier = Modifier.padding(vertical = 16.dp),
                 )
             } else {
-                val latestReleaseId by remember(filteredReleases) {
-                    derivedStateOf { filteredReleases.firstOrNull()?.id }
-                }
+                val latestReleaseId = filteredReleases.firstOrNull()?.id
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 420.dp),
                     contentPadding = PaddingValues(vertical = 8.dp),
                 ) {
                     items(items = filteredReleases, key = { it.id }) { release ->
@@ -163,8 +159,8 @@ fun VersionPicker(
                             isLatest = release.id == latestReleaseId,
                             onClick = { onAction(DetailsAction.SelectRelease(release)) },
                         )
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        KomiHorizontalDivider(
+                            color = colors.outlineVariant.copy(alpha = 0.5f),
                             thickness = 0.5.dp,
                         )
                     }
@@ -192,54 +188,51 @@ private fun VersionListItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val colors = LocalPersonality.current.colors
+        val shape = LocalPersonality.current.shape
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
+                KomiText(
                     text = release.tagName,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                    ),
-                    color = if (isSelected) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Stamp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                    color = if (isSelected) colors.primary else colors.onSurface,
+                    uppercase = false,
                 )
                 if (isLatest) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.latest_badge),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp,
-                            letterSpacing = 0.6.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Label,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = colors.primary,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
+                            .clip(RoundedCornerShape(shape.cornerSmall))
                             .border(
                                 width = 1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(50),
+                                color = colors.primary,
+                                shape = RoundedCornerShape(shape.cornerSmall),
                             )
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }
                 if (release.isEffectivelyPreRelease()) {
                     val specificLabel = release.preReleaseLabel()
-                    Text(
+                    KomiText(
                         text = specificLabel ?: stringResource(Res.string.pre_release_badge),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp,
-                            letterSpacing = 0.6.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.tertiary,
+                        role = KomiTextRole.Label,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = colors.primary,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
+                            .clip(RoundedCornerShape(shape.cornerSmall))
                             .border(
                                 width = 1.dp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                shape = RoundedCornerShape(50),
+                                color = colors.primary,
+                                shape = RoundedCornerShape(shape.cornerSmall),
                             )
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     )
@@ -247,29 +240,31 @@ private fun VersionListItem(
             }
             release.name?.let { name ->
                 if (name != release.tagName) {
-                    Text(
+                    KomiText(
                         text = name,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
-            Text(
+            KomiText(
                 text = release.publishedAt.take(10),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
         }
         if (isSelected) {
             Spacer(Modifier.width(8.dp))
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(20.dp),
             )
         }

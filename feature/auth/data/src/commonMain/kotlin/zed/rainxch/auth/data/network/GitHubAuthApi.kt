@@ -315,7 +315,6 @@ object GitHubAuthApi {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                println("⚠️ Attempt ${attempt + 1} failed: ${e.message}")
                 if (attempt == maxAttempts - 2) throw e
             }
             delay(currentDelay)

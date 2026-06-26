@@ -1,350 +1,394 @@
 package zed.rainxch.home.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.section.SectionHeader
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
-import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
+import zed.rainxch.core.domain.isAndroid
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
+import zed.rainxch.core.presentation.components.cards.KomiRepoCardFeed
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.usesDecor
+import zed.rainxch.core.presentation.personality.ClassicPersonality
+import zed.rainxch.core.presentation.personality.MangaPersonality
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.feed_empty_title
+import zed.rainxch.githubstore.core.presentation.res.feed_end_cap
 import zed.rainxch.githubstore.core.presentation.res.home_finding_repositories
+import zed.rainxch.githubstore.core.presentation.res.home_platform_filter
 import zed.rainxch.githubstore.core.presentation.res.home_retry
-import zed.rainxch.githubstore.core.presentation.res.home_section_from_your_stars
-import zed.rainxch.githubstore.core.presentation.res.home_section_hot_releases
-import zed.rainxch.githubstore.core.presentation.res.home_section_most_popular
-import zed.rainxch.githubstore.core.presentation.res.home_section_trending_now
-import zed.rainxch.home.domain.model.HomeCategory
-import zed.rainxch.home.presentation.components.HomeTopBar
-import zed.rainxch.core.presentation.components.RepoRankChip
-import zed.rainxch.core.presentation.components.RepositoryCard
-import zed.rainxch.home.presentation.components.HotCardItem
-import zed.rainxch.home.presentation.components.LeadCard
+import zed.rainxch.home.presentation.components.HomeChartTabs
+import zed.rainxch.core.domain.isDesktop
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.githubstore.core.presentation.res.home_masthead_subtitle
+import zed.rainxch.githubstore.core.presentation.res.home_masthead_title
+import zed.rainxch.home.presentation.components.HomePlatformPicker
 import zed.rainxch.home.presentation.components.RepositoryActionsSheet
-import zed.rainxch.home.presentation.components.SeeAllHotTile
-import zed.rainxch.home.presentation.components.SeeMoreRow
+import zed.rainxch.home.presentation.model.ChartTab
 import zed.rainxch.home.presentation.model.toDiscoveryUi
 
 @Composable
 fun HomeRoot(
-    onNavigateToSettings: () -> Unit,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToApps: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
-    onNavigateToDeveloperProfile: (username: String) -> Unit,
-    onNavigateToCategoryList: (HomeCategory) -> Unit,
-    onNavigateToStarredRepos: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHost = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            HomeEvent.OnScrollToListTop -> coroutineScope.launch { listState.animateScrollToItem(0) }
-            is HomeEvent.OnMessage -> coroutineScope.launch { snackbarHost.showSnackbar(event.message) }
+            HomeEvent.OnScrollToListTop -> coroutineScope.launch {
+                listState.animateScrollToItem(0)
+            }
+
+            is HomeEvent.OnMessage -> toastState.show(event.message)
         }
     }
 
     HomeScreen(
         state = state,
-        snackbarHost = snackbarHost,
+        toastState = toastState,
+        listState = listState,
         onAction = { action ->
             when (action) {
-                HomeAction.OnSearchClick -> onNavigateToSearch()
-                HomeAction.OnSettingsClick -> onNavigateToSettings()
-                HomeAction.OnAppsClick -> onNavigateToApps()
-                HomeAction.OnSeeAllHot -> onNavigateToCategoryList(HomeCategory.HOT_RELEASE)
-                HomeAction.OnSeeAllTrending -> onNavigateToCategoryList(HomeCategory.TRENDING)
-                HomeAction.OnSeeAllPopular -> onNavigateToCategoryList(HomeCategory.MOST_POPULAR)
-                HomeAction.OnSeeAllStarred -> onNavigateToStarredRepos()
                 is HomeAction.OnRepoClick -> onNavigateToDetails(action.repo.id)
-                is HomeAction.OnDeveloperClick -> onNavigateToDeveloperProfile(action.username)
                 else -> viewModel.onAction(action)
             }
         },
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
     state: HomeState,
-    snackbarHost: SnackbarHostState,
+    toastState: KomiToastState,
+    listState: LazyListState,
     onAction: (HomeAction) -> Unit,
 ) {
-    val bottomNavHeight = LocalBottomNavigationHeight.current
-    val listState = rememberLazyListState()
     val uriHandler = LocalUriHandler.current
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHost,
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
+    val reachedEnd by remember {
+        derivedStateOf {
+            val info = listState.layoutInfo
+            val lastIndex = info.visibleItemsInfo.lastOrNull()?.index ?: -1
+            lastIndex >= info.totalItemsCount - 4
+        }
+    }
+
+    LaunchedEffect(reachedEnd, state.hasMore, state.isLoadingMore, state.isLoading) {
+        if (reachedEnd && state.hasMore && !state.isLoadingMore && !state.isLoading) {
+            onAction(HomeAction.OnLoadMore)
+        }
+    }
+
+    KomiScaffold(
+        topBar = {
+            KomiTopBar(
+                title = stringResource(Res.string.home_masthead_title),
+                titleAccent = stringResource(Res.string.home_masthead_subtitle),
+                actions = {
+                    if (!isDesktop()) {
+                        KomiIconButton(
+                            icon = Icons.Rounded.Tune,
+                            contentDescription = stringResource(Res.string.home_platform_filter),
+                            onClick = { onAction(HomeAction.OnPlatformPopupOpen) },
+                            variant = KomiButtonVariant.Primary,
+                        )
+                    }
+                }
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
+        toastState = toastState
     ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.TopCenter,
         ) {
-        Box(modifier = Modifier.constrainedContentWidth().fillMaxSize()) {
-            val sectionsAreEmpty = state.lead == null && state.hot.isEmpty() &&
-                state.trending.isEmpty() && state.popular.isEmpty() && state.starred.isEmpty()
-            val isAnyLoading = state.isHotLoading || state.isTrendingLoading ||
-                state.isPopularLoading || state.isStarredLoading
-
-            when {
-                isAnyLoading && sectionsAreEmpty -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = stringResource(Res.string.home_finding_repositories),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-
-                state.errorMessage != null && sectionsAreEmpty -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text(
-                            text = state.errorMessage,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-
-                        GhsButton(
-                            onClick = { onAction(HomeAction.OnRetry) },
-                            label = stringResource(Res.string.home_retry),
-                            variant = GhsButtonVariant.Outline,
-                        )
-                    }
-                }
-
-                else -> ScrollbarContainer(
-                    listState = listState,
-                    enabled = LocalScrollbarEnabled.current,
+            if (isAndroid()) {
+                KomiPullToRefresh(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onAction(HomeAction.OnRefresh) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 12.dp,
-                            end = 12.dp,
-                            top = 0.dp,
-                            bottom = bottomNavHeight + 32.dp,
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        item(key = "top_bar") { HomeTopBar() }
-
-                        state.lead?.let { lead ->
-                            item(key = "lead_${lead.id}") {
-                                LeadCard(
-                                    card = lead,
-                                    onClick = { onAction(HomeAction.OnRepoClick(lead.rawRepository)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(lead.id)) },
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                )
-                            }
-                        }
-
-                        if (state.hot.isNotEmpty()) {
-                            item(key = "hot_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_hot_releases),
-                                    subCount = state.hot.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllHot) },
-                                )
-                            }
-
-                            item(key = "hot_row") {
-                                LazyRow(
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                    contentPadding = PaddingValues(horizontal = 4.dp),
-                                ) {
-                                    items(items = state.hot, key = { "hot_${it.id}" }) { card ->
-                                        HotCardItem(
-                                            card = card,
-                                            onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
-                                            onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
-                                            modifier = Modifier.animateItem(),
-                                        )
-                                    }
-
-                                    item(key = "hot_see_all") {
-                                        SeeAllHotTile(
-                                            onClick = { onAction(HomeAction.OnSeeAllHot) },
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        if (state.trending.isNotEmpty()) {
-                            item(key = "trending_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_trending_now),
-                                    subCount = state.trending.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllTrending) },
-                                )
-                            }
-
-                            items(
-                                items = state.trending,
-                                key = { card -> "trending_${card.id}" },
-                            ) { card ->
-                                RepositoryCard(
-                                    discoveryRepositoryUi = card.toDiscoveryUi(),
-                                    onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
-                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
-                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
-                                    modifier = Modifier.animateItem(),
-                                )
-                            }
-
-                            item(key = "trending_see_more") {
-                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllTrending) })
-                            }
-                        }
-
-                        if (state.popular.isNotEmpty()) {
-                            item(key = "popular_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_most_popular),
-                                    subCount = state.popular.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllPopular) },
-                                )
-                            }
-
-                            itemsIndexed(
-                                items = state.popular,
-                                key = { _, card -> "popular_${card.id}" },
-                            ) { index, card ->
-                                RepositoryCard(
-                                    discoveryRepositoryUi = card.toDiscoveryUi(),
-                                    onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
-                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
-                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
-                                    trailingBadge = { RepoRankChip(rank = index + 1) },
-                                    modifier = Modifier.animateItem(),
-                                )
-                            }
-
-                            item(key = "popular_see_more") {
-                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllPopular) })
-                            }
-                        }
-
-                        if (state.isUserSignedIn && state.starred.isNotEmpty()) {
-                            item(key = "starred_header") {
-                                SectionHeader(
-                                    title = stringResource(Res.string.home_section_from_your_stars),
-                                    subCount = state.starred.size.toString(),
-                                    onSeeAll = { onAction(HomeAction.OnSeeAllStarred) },
-                                )
-                            }
-
-                            items(items = state.starred, key = { "starred_${it.id}" }) { card ->
-                                RepositoryCard(
-                                    discoveryRepositoryUi = card.toDiscoveryUi(),
-                                    onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
-                                    onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
-                                    onDeveloperClick = { onAction(HomeAction.OnDeveloperClick(it)) },
-                                    onLongClick = { onAction(HomeAction.OnRepoLongClick(card.id)) },
-                                    modifier = Modifier.animateItem(),
-                                )
-                            }
-
-                            item(key = "starred_see_more") {
-                                SeeMoreRow(onClick = { onAction(HomeAction.OnSeeAllStarred) })
-                            }
-                        }
-                    }
+                    HomeChartFeed(
+                        state = state,
+                        listState = listState,
+                        onAction = onAction
+                    )
                 }
-            }
-
-            state.actionSheetCard?.let { card ->
-                RepositoryActionsSheet(
-                    repository = card.rawRepository,
-                    isSeen = card.isSeen,
-                    onDismiss = { onAction(HomeAction.OnActionSheetDismiss) },
-                    onShare = {
-                        onAction(HomeAction.OnActionSheetDismiss)
-                        onAction(HomeAction.OnShareClick(card.rawRepository))
-                    },
-                    onOpenOnGithub = {
-                        onAction(HomeAction.OnActionSheetDismiss)
-                        uriHandler.openUri(card.rawRepository.htmlUrl)
-                    },
-                    onToggleSeen = {
-                        onAction(HomeAction.OnActionSheetDismiss)
-                        if (card.isSeen) {
-                            onAction(HomeAction.OnMarkAsUnseen(card.id))
-                        } else {
-                            onAction(HomeAction.OnMarkAsSeen(card.rawRepository))
-                        }
-                    },
-                    onHide = {
-                        onAction(HomeAction.OnActionSheetDismiss)
-                        onAction(HomeAction.OnHideRepository(card.rawRepository))
-                    },
-                )
+            } else {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    HomeChartFeed(
+                        state = state,
+                        listState = listState,
+                        onAction = onAction
+                    )
+                }
             }
         }
+
+        if (state.isPlatformPopupVisible) {
+            HomePlatformPicker(
+                platforms = state.platformOptions,
+                selected = state.selectedPlatform,
+                onSelect = { onAction(HomeAction.OnPlatformSelected(it)) },
+                onDismiss = { onAction(HomeAction.OnPlatformPopupDismiss) },
+            )
+        }
+
+        state.actionSheetCard?.let { card ->
+            RepositoryActionsSheet(
+                repository = card.rawRepository,
+                isSeen = card.isSeen,
+                onDismiss = { onAction(HomeAction.OnActionSheetDismiss) },
+                onShare = {
+                    onAction(HomeAction.OnActionSheetDismiss)
+                    onAction(HomeAction.OnShareClick(card.rawRepository))
+                },
+                onOpenOnGithub = {
+                    onAction(HomeAction.OnActionSheetDismiss)
+                    uriHandler.openUri(card.rawRepository.htmlUrl)
+                },
+                onToggleSeen = {
+                    onAction(HomeAction.OnActionSheetDismiss)
+                    if (card.isSeen) {
+                        onAction(HomeAction.OnMarkAsUnseen(card.id))
+                    } else {
+                        onAction(HomeAction.OnMarkAsSeen(card.rawRepository))
+                    }
+                },
+                onHide = {
+                    onAction(HomeAction.OnActionSheetDismiss)
+                    onAction(HomeAction.OnHideRepository(card.rawRepository))
+                },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun BoxScope.HomeChartFeed(
+    state: HomeState,
+    listState: LazyListState,
+    onAction: (HomeAction) -> Unit,
+) {
+    val colors = LocalPersonality.current.colors
+
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.constrainedContentWidth().fillMaxSize().align(Alignment.TopCenter),
+        contentPadding = PaddingValues(bottom = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        stickyHeader(key = "home_chart_tabs", contentType = "tabs") {
+            Column(modifier = Modifier.fillMaxWidth().background(colors.background)) {
+                HomeChartTabs(
+                    selected = state.selectedChart,
+                    onSelect = { onAction(HomeAction.OnChartSelected(it)) },
+                )
+
+                when (LocalPersonality.current) {
+                    is MangaPersonality -> KomiHorizontalDivider(thickness = 3.dp, color = colors.outline)
+                    is ClassicPersonality -> Unit
+                }
+            }
+        }
+
+        when {
+            state.isLoading && state.repos.isEmpty() -> {
+                item(key = "home_loading") { HomeLoading() }
+            }
+
+            state.errorMessage != null && state.repos.isEmpty() -> {
+                item(key = "home_error") {
+                    HomeError(
+                        message = state.errorMessage,
+                        onRetry = { onAction(HomeAction.OnRetry) },
+                    )
+                }
+            }
+
+            state.repos.isEmpty() -> {
+                item(key = "home_empty") { HomeEmpty() }
+            }
+
+            else -> {
+                itemsIndexed(
+                    items = state.repos,
+                    key = { _, card -> "chart_${card.id}" },
+                ) { index, card ->
+                    DiscoveryRepoCard(
+                        discoveryRepositoryUi = card.toDiscoveryUi(),
+                        onClick = { onAction(HomeAction.OnRepoClick(card.rawRepository)) },
+                        onShareClick = { onAction(HomeAction.OnShareClick(card.rawRepository)) },
+                        onLongPress = { onAction(HomeAction.OnRepoLongClick(card.id)) },
+                        rank = if (state.selectedChart == ChartTab.Popular) index + 1 else 1,
+                        feed = state.selectedChart.toFeed(),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .animateItem(),
+                    )
+                }
+
+                if (state.isLoadingMore) {
+                    item(key = "home_loading_more") {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            KomiCircularProgress(modifier = Modifier.size(28.dp))
+                        }
+                    }
+                } else if (!state.hasMore) {
+                    item(key = "home_end_cap") { HomeEndCap() }
+                }
+            }
+        }
+    }
+}
+
+private fun ChartTab.toFeed(): KomiRepoCardFeed =
+    when (this) {
+        ChartTab.Trending -> KomiRepoCardFeed.Trending
+        ChartTab.Releases -> KomiRepoCardFeed.Release
+        ChartTab.Popular -> KomiRepoCardFeed.Popular
+    }
+
+@Composable
+private fun HomeEndCap() {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        KomiHorizontalDivider(
+            modifier = Modifier.weight(1f),
+            thickness = 2.dp,
+            color = LocalPersonality.current.colors.outline.copy(alpha = 0.4f),
+        )
+        if (LocalPersonality.current.usesDecor) {
+            KomiText(
+                text = stringResource(Res.string.feed_end_cap),
+                role = KomiTextRole.Label,
+                color = LocalPersonality.current.colors.onSurfaceVariant,
+            )
+        }
+        KomiHorizontalDivider(
+            modifier = Modifier.weight(1f),
+            thickness = 2.dp,
+            color = LocalPersonality.current.colors.outline.copy(alpha = 0.4f),
+        )
+    }
+}
+
+@Composable
+private fun HomeEmpty() {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 96.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        KomiText(
+            text = stringResource(Res.string.feed_empty_title),
+            role = KomiTextRole.Title,
+            color = LocalPersonality.current.colors.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun HomeLoading() {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 96.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            KomiCircularProgress()
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            KomiText(
+                text = stringResource(Res.string.home_finding_repositories),
+                role = KomiTextRole.Title,
+                color = LocalPersonality.current.colors.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeError(
+    message: String,
+    onRetry: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 96.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            KomiText(
+                text = message,
+                role = KomiTextRole.Body,
+                color = LocalPersonality.current.colors.onSurface,
+                uppercase = false,
+            )
+
+            KomiButton(
+                onClick = onRetry,
+                label = stringResource(Res.string.home_retry),
+                variant = KomiButtonVariant.Outline,
+            )
         }
     }
 }

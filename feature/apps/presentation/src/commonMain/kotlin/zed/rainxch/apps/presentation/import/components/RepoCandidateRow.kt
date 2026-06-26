@@ -1,7 +1,9 @@
 package zed.rainxch.apps.presentation.import.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,22 +15,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
+import androidx.compose.ui.unit.sp
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.import.model.RepoSuggestionUi
-import zed.rainxch.apps.presentation.import.model.SuggestionSource
+import zed.rainxch.apps.presentation.import.model.SuggestionChipTone
 import zed.rainxch.core.presentation.utils.formatCompactCount
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.external_import_card_owner_byline
@@ -41,18 +44,16 @@ fun RepoCandidateRow(
     onPick: (RepoSuggestionUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val percent = (suggestion.confidence * 100).roundToInt().coerceIn(0, 100)
-    val (chipBg, chipFg) =
-        when {
-            suggestion.source == SuggestionSource.MANUAL ->
-                MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
-            suggestion.confidence >= 0.85 ->
-                MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
-            suggestion.confidence >= 0.5 ->
-                MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-            else ->
-                MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
-        }
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val chipBg = when (suggestion.chipTone) {
+        SuggestionChipTone.Primary -> colors.primaryContainer
+        SuggestionChipTone.Muted -> colors.surfaceVariant
+    }
+    val chipFg = when (suggestion.chipTone) {
+        SuggestionChipTone.Primary -> colors.onPrimaryContainer
+        SuggestionChipTone.Muted -> colors.onSurfaceVariant
+    }
 
     Row(
         modifier =
@@ -64,39 +65,72 @@ fun RepoCandidateRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
+            KomiText(
                 text = suggestion.repo,
-                style = MaterialTheme.typography.titleMedium,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                uppercase = false,
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(
                         Res.string.external_import_card_owner_byline,
                         suggestion.owner,
                     ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
 
-                SuggestionHostChip(suggestion.sourceHost)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .background(
+                            if (suggestion.sourceHost == null) {
+                                colors.surfaceVariant
+                            } else {
+                                colors.primaryContainer
+                            },
+                        ),
+                ) {
+                    KomiText(
+                        text = when {
+                            suggestion.sourceHost == null -> "GitHub"
+                            suggestion.sourceHost.equals("codeberg.org", ignoreCase = true) ->
+                                "Codeberg"
+                            else -> suggestion.sourceHost
+                        },
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = if (suggestion.sourceHost == null) {
+                            colors.onSurfaceVariant
+                        } else {
+                            colors.onPrimaryContainer
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
             }
 
             if (!suggestion.description.isNullOrBlank()) {
-                Text(
+                KomiText(
                     text = suggestion.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -104,19 +138,21 @@ fun RepoCandidateRow(
 
             if (suggestion.stars != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(12.dp),
                     )
 
                     Spacer(Modifier.width(4.dp))
 
-                    Text(
+                    KomiText(
                         text = formatCompactCount(suggestion.stars),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
@@ -125,58 +161,27 @@ fun RepoCandidateRow(
         Spacer(Modifier.width(12.dp))
 
         val confidenceLabel =
-            stringResource(Res.string.external_import_match_confidence_a11y, percent)
-        Surface(
-            color = chipBg,
-            shape = RoundedCornerShape(12.dp),
+            stringResource(Res.string.external_import_match_confidence_a11y, suggestion.confidencePercent)
+        Box(
             modifier =
-                Modifier.semantics {
-                    contentDescription = confidenceLabel
-                },
+                Modifier
+                    .semantics {
+                        contentDescription = confidenceLabel
+                    }
+                    .clip(RoundedCornerShape(shape.corner))
+                    .background(chipBg),
         ) {
-            Text(
-                text = stringResource(Res.string.external_import_match_confidence_chip, percent) + "%",
-                style = MaterialTheme.typography.labelMedium,
+            KomiText(
+                text = stringResource(
+                    Res.string.external_import_match_confidence_chip,
+                    suggestion.confidencePercent,
+                ),
+                role = KomiTextRole.Label,
+                fontSize = 12.sp,
                 color = chipFg,
+                uppercase = false,
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun SuggestionHostChip(sourceHost: String?) {
-    val (label, bg, fg) = when {
-        sourceHost == null ->
-            Triple(
-                "GitHub",
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        sourceHost.equals("codeberg.org", ignoreCase = true) ->
-            Triple(
-                "Codeberg",
-                MaterialTheme.colorScheme.tertiaryContainer,
-                MaterialTheme.colorScheme.onTertiaryContainer,
-            )
-        else ->
-            Triple(
-                sourceHost,
-                MaterialTheme.colorScheme.secondaryContainer,
-                MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-    }
-    Surface(
-        color = bg,
-        shape = RoundedCornerShape(6.dp),
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = fg,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-        )
     }
 }

@@ -8,35 +8,30 @@ import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.githubstore.core.presentation.res.*
 
 @Composable
-fun DiscoveryPlatform.toIcons(): List<ImageVector> =
+fun DiscoveryPlatform.toIcon(): ImageVector? =
     when (this) {
         DiscoveryPlatform.All -> {
-            listOf(
-                vectorResource(Res.drawable.ic_platform_android),
-                vectorResource(Res.drawable.ic_platform_linux),
-                vectorResource(Res.drawable.ic_platform_macos),
-                vectorResource(Res.drawable.ic_platform_windows),
-            )
+            null
         }
 
         DiscoveryPlatform.Android -> {
-            listOf(vectorResource(Res.drawable.ic_platform_android))
+            vectorResource(Res.drawable.ic_platform_android)
         }
 
         DiscoveryPlatform.Macos -> {
-            listOf(vectorResource(Res.drawable.ic_platform_macos))
+            vectorResource(Res.drawable.ic_platform_macos)
         }
 
         DiscoveryPlatform.Windows -> {
-            listOf(vectorResource(Res.drawable.ic_platform_windows))
+            vectorResource(Res.drawable.ic_platform_windows)
         }
 
         DiscoveryPlatform.Linux -> {
-            listOf(vectorResource(Res.drawable.ic_platform_linux))
+            vectorResource(Res.drawable.ic_platform_linux)
         }
 
         DiscoveryPlatform.Ios -> {
-            listOf(vectorResource(Res.drawable.ic_platform_macos))
+            vectorResource(Res.drawable.ic_platform_ios)
         }
     }
 

@@ -9,7 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.chips.FilterChip
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
 import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -29,7 +30,7 @@ fun VersionTypePicker(
         modifier = modifier.fillMaxWidth(),
     ) {
         items(ReleaseCategory.entries) { category ->
-            FilterChip(
+            KomiChip(
                 label = stringResource(
                     when (category) {
                         ReleaseCategory.STABLE -> Res.string.category_stable
@@ -37,7 +38,8 @@ fun VersionTypePicker(
                         ReleaseCategory.ALL -> Res.string.category_all
                     },
                 ),
-                active = category == selectedCategory,
+                kind = KomiChipKind.Filter,
+                selected = category == selectedCategory,
                 onClick = { onAction(DetailsAction.SelectReleaseCategory(category)) },
             )
         }

@@ -17,5 +17,6 @@ data class ForgejoRepoNetworkModel(
     @SerialName("language") val language: String? = null,
     @SerialName("archived") val archived: Boolean = false,
     @SerialName("updated_at") val updatedAt: String? = null,
+    @SerialName("pushed_at") val pushedAt: String? = null,
     @SerialName("open_issues_count") val openIssuesCount: Int = 0,
 )

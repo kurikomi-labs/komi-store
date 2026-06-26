@@ -24,7 +24,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.apk.ApkPackageInfo
 import zed.rainxch.core.domain.model.repository.FavoriteRepo
 import zed.rainxch.core.domain.model.account.github.GithubAsset
@@ -108,7 +108,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 class DetailsViewModel(
     private val repositoryId: Long,
@@ -127,7 +126,7 @@ class DetailsViewModel(
     private val packageMonitor: PackageMonitor,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val translationRepository: TranslationRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val isComingFromUpdate: Boolean,
     private val tweaksRepository: TweaksRepository,
     private val seenReposRepository: SeenReposRepository,

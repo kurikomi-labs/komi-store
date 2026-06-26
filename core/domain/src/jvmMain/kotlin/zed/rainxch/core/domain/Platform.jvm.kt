@@ -2,11 +2,12 @@ package zed.rainxch.core.domain
 
 import java.util.Locale
 import zed.rainxch.core.domain.model.system.Platform
+import zed.rainxch.core.domain.system.DesktopOs
 
 actual fun getPlatform(): Platform =
     when {
-        System.getProperty("os.name").lowercase().contains("win") -> Platform.WINDOWS
-        System.getProperty("os.name").lowercase().contains("mac") -> Platform.MACOS
+        DesktopOs.isWindows -> Platform.WINDOWS
+        DesktopOs.isMac -> Platform.MACOS
         else -> Platform.LINUX
     }
 

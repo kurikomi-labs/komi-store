@@ -23,71 +23,76 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import androidx.compose.material3.rememberModalBottomSheetState
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiSwitch
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.AppsAction
 import zed.rainxch.apps.presentation.AppsState
+import zed.rainxch.apps.presentation.model.AdvancedPreviewMessage
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.githubstore.core.presentation.res.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedAppSettingsBottomSheet(
     state: AppsState,
     onAction: (AppsAction) -> Unit,
 ) {
     val app = state.advancedSettingsApp ?: return
+    val colors = LocalPersonality.current.colors
 
-    GhsBottomSheet(
-        onDismissRequest = { onAction(AppsAction.OnDismissAdvancedSettings) },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    KomiSheet(
+        onDismiss = { onAction(AppsAction.OnDismissAdvancedSettings) },
+        placement = KomiSheetPlacement.Bottom,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
+                KomiIcon(
                     imageVector = Icons.Default.FilterAlt,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = colors.primary,
                 )
 
                 Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.advanced_settings_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.Bold,
                     )
 
-                    Text(
+                    KomiText(
                         text = "${app.repoOwner}/${app.repoName}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        uppercase = false,
+                        color = colors.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -96,10 +101,10 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(4.dp))
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.advanced_settings_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
             )
 
             Spacer(Modifier.height(20.dp))
@@ -109,26 +114,25 @@ fun AdvancedAppSettingsBottomSheet(
                     stringResource(Res.string.asset_filter_invalid)
                 else -> stringResource(Res.string.asset_filter_help)
             }
-            GhsTextField(
+            KomiTextField(
                 value = state.advancedFilterDraft,
                 onValueChange = { onAction(AppsAction.OnAdvancedFilterChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(Res.string.asset_filter_label),
                 placeholder = stringResource(Res.string.asset_filter_placeholder),
                 leadingIcon = Icons.Default.FilterAlt,
-                trailingIcon = {
+                trailing = {
                     if (state.advancedFilterDraft.isNotEmpty()) {
-                        GhsButton(
+                        KomiButton(
                             onClick = { onAction(AppsAction.OnAdvancedClearFilter) },
                             label = stringResource(Res.string.clear),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
                         )
                     }
                 },
-                singleLine = true,
-                isError = state.advancedFilterError != null,
-                supportingText = advancedSupporting,
+                helper = if (state.advancedFilterError == null) advancedSupporting else null,
+                error = if (state.advancedFilterError != null) advancedSupporting else null,
                 enabled = !state.advancedSavingFilter,
             )
 
@@ -141,21 +145,22 @@ fun AdvancedAppSettingsBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.fallback_older_releases_title),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.Medium,
                     )
 
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.fallback_older_releases_description),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                     )
                 }
 
-                Switch(
+                KomiSwitch(
                     checked = state.advancedFallbackDraft,
                     onCheckedChange = { onAction(AppsAction.OnAdvancedFallbackToggled(it)) },
                     enabled = !state.advancedSavingFilter,
@@ -164,16 +169,17 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(16.dp))
 
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+            KomiHorizontalDivider(
+                color = colors.outlineVariant.copy(alpha = 0.4f),
             )
 
             Spacer(Modifier.height(16.dp))
 
-            Text(
+            KomiText(
                 text = stringResource(Res.string.advanced_filter_variant_relation),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
             )
 
             Spacer(Modifier.height(8.dp))
@@ -186,8 +192,8 @@ fun AdvancedAppSettingsBottomSheet(
 
             Spacer(Modifier.height(16.dp))
 
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+            KomiHorizontalDivider(
+                color = colors.outlineVariant.copy(alpha = 0.4f),
             )
 
             Spacer(Modifier.height(16.dp))
@@ -206,18 +212,18 @@ fun AdvancedAppSettingsBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AppsAction.OnDismissAdvancedSettings) },
                     label = stringResource(Res.string.cancel),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     enabled = !state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
                 )
 
-                GhsButton(
+                KomiButton(
                     onClick = { onAction(AppsAction.OnAdvancedSaveFilter) },
                     label = stringResource(Res.string.advanced_save),
-                    variant = GhsButtonVariant.Tonal,
+                    variant = KomiButtonVariant.Tonal,
                     enabled = !state.advancedSavingFilter && state.advancedFilterError == null,
                     loading = state.advancedSavingFilter,
                     modifier = Modifier.weight(1f),
@@ -232,33 +238,43 @@ private fun PreviewSection(
     isLoading: Boolean,
     matchedAssets: ImmutableList<GithubAssetUi>,
     matchedTag: String?,
-    message: String?,
+    message: AdvancedPreviewMessage?,
     onRefresh: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.Info,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = colors.onSurfaceVariant,
             modifier = Modifier.size(18.dp),
         )
 
         Spacer(Modifier.width(8.dp))
 
-        Text(
+        KomiText(
             text = stringResource(Res.string.advanced_preview_title),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontSize = 14.sp,
+            color = colors.onSurface,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(1f),
         )
 
-        IconButton(onClick = onRefresh, enabled = !isLoading) {
-            Icon(
+        val refreshLabel = stringResource(Res.string.advanced_preview_refresh)
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clickable(enabled = !isLoading, onClick = onRefresh)
+                .semantics { contentDescription = refreshLabel },
+            contentAlignment = Alignment.Center,
+        ) {
+            KomiIcon(
                 imageVector = Icons.Default.Refresh,
-                contentDescription = stringResource(Res.string.advanced_preview_refresh),
+                contentDescription = null,
+                tint = if (isLoading) colors.onSurfaceVariant.copy(alpha = 0.38f) else colors.onSurfaceVariant,
             )
         }
     }
@@ -273,43 +289,42 @@ private fun PreviewSection(
                     .height(80.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                CircularProgressIndicator(
+                KomiCircularProgress(
                     modifier = Modifier.size(28.dp),
-                    strokeWidth = 2.dp,
                 )
             }
         }
 
-        message == "no_match" -> {
-            Text(
+        message == AdvancedPreviewMessage.NoMatch -> {
+            KomiText(
                 text = stringResource(Res.string.advanced_preview_no_match),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
+                role = KomiTextRole.Body,
+                color = colors.error,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
         }
 
-        message == "preview_failed" || message == "save_failed" -> {
-            Text(
+        message == AdvancedPreviewMessage.PreviewFailed || message == AdvancedPreviewMessage.SaveFailed -> {
+            KomiText(
                 text = stringResource(Res.string.advanced_preview_failed),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
+                role = KomiTextRole.Body,
+                color = colors.error,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
         }
 
         matchedAssets.isEmpty() -> {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.advanced_preview_pending),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                color = colors.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
         }
 
         else -> {
             if (matchedTag != null) {
-                Text(
+                KomiText(
                     text =
                         pluralStringResource(
                             Res.plurals.advanced_preview_release,
@@ -317,8 +332,10 @@ private fun PreviewSection(
                             matchedTag,
                             matchedAssets.size,
                         ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    uppercase = false,
+                    color = colors.primary,
                     fontWeight = FontWeight.Medium,
                 )
 
@@ -337,28 +354,32 @@ private fun PreviewSection(
                             .padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = colors.primary,
                             modifier = Modifier.size(18.dp),
                         )
 
                         Spacer(Modifier.width(10.dp))
 
-                        Text(
+                        KomiText(
                             text = asset.name,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            role = KomiTextRole.Body,
+                            fontSize = 13.sp,
+                            uppercase = false,
+                            color = colors.onSurface,
                             modifier = Modifier.weight(1f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
 
-                        Text(
+                        KomiText(
                             text = formatFileSize(asset.size),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            uppercase = false,
+                            color = colors.onSurfaceVariant,
                         )
                     }
                 }
@@ -373,6 +394,7 @@ private fun VariantRow(
     isStale: Boolean,
     onClick: () -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -380,14 +402,14 @@ private fun VariantRow(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = if (isStale) Icons.Default.Warning else Icons.Default.Tune,
             contentDescription = null,
             tint =
                 if (isStale) {
-                    MaterialTheme.colorScheme.error
+                    colors.error
                 } else {
-                    MaterialTheme.colorScheme.primary
+                    colors.primary
                 },
             modifier = Modifier.size(20.dp),
         )
@@ -395,14 +417,15 @@ private fun VariantRow(
         Spacer(Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.variant_picker_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Body,
+                color = colors.onSurface,
                 fontWeight = FontWeight.Medium,
+                uppercase = false,
             )
 
-            Text(
+            KomiText(
                 text =
                     when {
                         isStale ->
@@ -412,20 +435,22 @@ private fun VariantRow(
                         else ->
                             stringResource(Res.string.variant_picker_pinned, pinnedVariant)
                     },
-                style = MaterialTheme.typography.bodySmall,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                uppercase = false,
                 color =
                     if (isStale) {
-                        MaterialTheme.colorScheme.error
+                        colors.error
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        colors.onSurfaceVariant
                     },
             )
         }
 
-        Icon(
+        KomiIcon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = colors.onSurfaceVariant,
             modifier = Modifier.size(20.dp),
         )
     }

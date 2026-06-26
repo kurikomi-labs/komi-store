@@ -6,23 +6,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_body
 import zed.rainxch.githubstore.core.presentation.res.tweaks_connection_paste_url_cta
@@ -86,21 +82,18 @@ fun parseProxyUrl(raw: String): PastedProxy? {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasteProxyUrlSheet(
+    input: String,
+    isError: Boolean,
+    onInputChange: (String) -> Unit,
+    onSubmit: () -> Unit,
     onDismiss: () -> Unit,
-    onParsed: (PastedProxy) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var input by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
-    val parseErrorMessage = stringResource(Res.string.tweaks_connection_paste_url_error)
+    val colors = LocalPersonality.current.colors
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    KomiSheet(
+        onDismiss = onDismiss,
     ) {
         Column(
             modifier = Modifier
@@ -108,44 +101,39 @@ fun PasteProxyUrlSheet(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.tweaks_connection_paste_url_title),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
             )
-            Text(
+
+            KomiText(
                 text = stringResource(Res.string.tweaks_connection_paste_url_body),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                role = KomiTextRole.Body,
+                fontSize = 13.sp,
+                color = colors.onSurfaceVariant,
+                uppercase = false,
             )
-            GhsTextField(
+
+            KomiTextField(
                 value = input,
-                onValueChange = {
-                    input = it
-                    error = null
-                },
+                onValueChange = onInputChange,
                 label = stringResource(Res.string.tweaks_connection_paste_url_placeholder),
-                isError = error != null,
-                supportingText = error,
+                error = if (isError) stringResource(Res.string.tweaks_connection_paste_url_error) else null,
                 modifier = Modifier.fillMaxWidth(),
             )
+
             Spacer(Modifier.height(4.dp))
-            GhsButton(
-                onClick = {
-                    val parsed = parseProxyUrl(input)
-                    if (parsed == null) {
-                        error = parseErrorMessage
-                    } else {
-                        onParsed(parsed)
-                    }
-                },
+
+            KomiButton(
+                onClick = onSubmit,
                 label = stringResource(Res.string.tweaks_connection_paste_url_cta),
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = input.isNotBlank(),
             )
+
             Spacer(Modifier.height(8.dp))
         }
     }

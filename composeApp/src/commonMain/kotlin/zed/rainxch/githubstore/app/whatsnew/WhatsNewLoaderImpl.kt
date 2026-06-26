@@ -5,22 +5,21 @@ import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.dto.WhatsNewEntryDto
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.data.services.LocalizationManager
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
 import zed.rainxch.core.domain.repository.WhatsNewLoader
 import zed.rainxch.githubstore.core.presentation.res.Res
 
 class WhatsNewLoaderImpl(
-    private val knownVersionCodes: List<Int>,
     private val localizationManager: LocalizationManager,
-    logger: GitHubStoreLogger,
+    logger: KomiStoreLogger,
 ) : WhatsNewLoader {
     private val tagged = logger.withTag("WhatsNewLoader")
 
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun loadAll(languageTag: String?): List<WhatsNewEntry> =
-        knownVersionCodes
+        KnownWhatsNewVersionCodes.ALL
             .mapNotNull { vc -> loadOrNull(vc, languageTag) }
             .sortedByDescending { it.versionCode }
 

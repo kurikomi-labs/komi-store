@@ -1,7 +1,6 @@
-@file:OptIn(ExperimentalTime::class)
-
 package zed.rainxch.starred.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,61 +15,51 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.foundation.layout.Row
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonSize
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
+import zed.rainxch.core.presentation.components.bars.KomiTopBar
+import zed.rainxch.core.presentation.components.bars.KomiTopBarSize
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiIconButton
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiDropdown
+import zed.rainxch.core.presentation.components.overlays.KomiMenuItem
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.refresh.KomiPullToRefresh
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.starred.presentation.components.StarredRepositoryItem
 import zed.rainxch.starred.presentation.model.StarredSortRule
-import zed.rainxch.starred.presentation.utils.formatRelativeTime
-import kotlin.time.ExperimentalTime
 
 @Composable
 fun StarredReposRoot(
@@ -82,7 +71,7 @@ fun StarredReposRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    StarredScreen(
+    StarredReposScreen(
         state = state,
         onAction = { action ->
             when (action) {
@@ -96,25 +85,21 @@ fun StarredReposRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun StarredScreen(
+fun StarredReposScreen(
     state: StarredReposState,
     onAction: (StarredReposAction) -> Unit,
 ) {
-    val pullRefreshState = rememberPullToRefreshState()
-
-    Scaffold(
+    KomiScaffold(
         topBar = {
             StarredTopBar(
-                lastSyncTime = state.lastSyncTime,
+                subtitle = state.lastSyncSubtitle,
                 isSyncing = state.isSyncing,
                 sortRule = state.sortRule,
                 hasRepos = state.starredRepositories.isNotEmpty(),
                 onAction = onAction,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier =
@@ -137,7 +122,7 @@ fun StarredScreen(
                 }
 
                 state.isLoading -> {
-                    CircularWavyProgressIndicator(
+                    KomiCircularProgress(
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
@@ -169,29 +154,11 @@ fun StarredScreen(
                             )
                         }
 
-                        val filteredRepositories =
-                            remember(state.starredRepositories, state.searchQuery) {
-                                val q = state.searchQuery.trim().lowercase()
-                                if (q.isBlank()) {
-                                    state.starredRepositories
-                                } else {
-                                    state.starredRepositories
-                                        .filter { repo ->
-                                            repo.repoName.lowercase().contains(q) ||
-                                                repo.repoOwner.lowercase().contains(q) ||
-                                                (repo.repoDescription?.lowercase()?.contains(q) == true) ||
-                                                (repo.primaryLanguage?.lowercase()?.contains(q) == true)
-                                        }
-                                        .toImmutableList()
-                                }
-                            }
-
-                        PullToRefreshBox(
+                        KomiPullToRefresh(
                             isRefreshing = state.isSyncing,
                             onRefresh = {
                                 onAction(StarredReposAction.OnRefresh)
                             },
-                            state = pullRefreshState,
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             val gridState = rememberLazyStaggeredGridState()
@@ -206,11 +173,15 @@ fun StarredScreen(
                                     columns = StaggeredGridCells.Adaptive(350.dp),
                                     verticalItemSpacing = 12.dp,
                                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
-                                    modifier = Modifier.fillMaxSize().arrowKeyScroll(gridState, autoFocus = true),
+                                    contentPadding = PaddingValues(
+                                        horizontal = 8.dp,
+                                        vertical = 12.dp
+                                    ),
+                                    modifier = Modifier.fillMaxSize()
+                                        .arrowKeyScroll(gridState, autoFocus = true),
                                 ) {
                                     items(
-                                        items = filteredRepositories,
+                                        items = state.filteredRepositories,
                                         key = { it.repoId },
                                     ) { repo ->
                                         StarredRepositoryItem(
@@ -222,7 +193,11 @@ fun StarredScreen(
                                                 onAction(StarredReposAction.OnRepositoryClick(repo))
                                             },
                                             onDevProfileClick = {
-                                                onAction(StarredReposAction.OnDeveloperProfileClick(repo.repoOwner))
+                                                onAction(
+                                                    StarredReposAction.OnDeveloperProfileClick(
+                                                        repo.repoOwner
+                                                    )
+                                                )
                                             },
                                             modifier = Modifier.animateItem(),
                                         )
@@ -235,153 +210,129 @@ fun StarredScreen(
             }
 
             state.errorMessage?.let { message ->
-                Snackbar(
+                val colors = LocalPersonality.current.colors
+                KomiSurface(
                     modifier =
                         Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(16.dp),
-                    action = {
-                        GhsButton(
-                            onClick = {
-                                onAction(StarredReposAction.OnRetrySync)
-                            },
-                            label = stringResource(Res.string.retry),
-                            variant = GhsButtonVariant.Text,
-                            size = GhsButtonSize.Sm,
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                    elevation = KomiSurfaceElevation.Raised,
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 8.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
+                    ),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        KomiText(
+                            text = message,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurface,
+                            uppercase = false,
+                            modifier = Modifier.weight(1f),
                         )
-                    },
-                    dismissAction = {
-                        IconButton(
-                            onClick = {
-                                onAction(StarredReposAction.OnDismissError)
-                            },
+                        KomiButton(
+                            onClick = { onAction(StarredReposAction.OnRetrySync) },
+                            label = stringResource(Res.string.retry),
+                            variant = KomiButtonVariant.Text,
+                            size = KomiButtonSize.Sm,
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clickable { onAction(StarredReposAction.OnDismissError) },
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Icon(
+                            KomiIcon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = stringResource(Res.string.dismiss),
+                                tint = colors.onSurfaceVariant,
                             )
                         }
-                    },
-                ) {
-                    Text(
-                        text = message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun StarredTopBar(
-    lastSyncTime: Long?,
+    subtitle: String?,
     isSyncing: Boolean,
     sortRule: StarredSortRule,
     hasRepos: Boolean,
     onAction: (StarredReposAction) -> Unit,
 ) {
-    var showSortMenu by remember { mutableStateOf(false) }
+    val sortEntries = StarredSortRule.entries
+        .map { rule ->
+            KomiMenuItem(
+                id = rule.name,
+                label = stringResource(
+                    when (rule) {
+                        StarredSortRule.RecentlyStarred -> Res.string.starred_picker_sort_recent
+                        StarredSortRule.NameAsc -> Res.string.starred_picker_sort_alphabetical
+                        StarredSortRule.StarsDesc -> Res.string.starred_picker_sort_stars
+                    }
+                ),
+            )
+        }
+        .toPersistentList()
 
-    Column {
-        TopAppBar(
-            title = {
-                Column {
-                    Text(
-                        text = stringResource(Res.string.starred_repositories),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
+    KomiTopBar(
+        title = stringResource(Res.string.starred_repositories),
+        subtitle = subtitle,
+        size = KomiTopBarSize.Compact,
+        leading = {
+            KomiIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.navigate_back),
+                onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
+                variant = KomiButtonVariant.Tonal,
+            )
+        },
+        actions = {
+            if (isSyncing) {
+                KomiCircularProgress(
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .padding(end = 12.dp),
+                )
+            }
 
-                    if (lastSyncTime != null && !isSyncing) {
-                        Text(
-                            text =
-                                "${stringResource(Res.string.last_synced)}:" +
-                                    " ${formatRelativeTime(lastSyncTime)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            if (hasRepos) {
+                KomiDropdown(
+                    entries = sortEntries,
+                    value = sortRule.name,
+                    onSelect = { item ->
+                        onAction(StarredReposAction.OnSortRuleSelected(StarredSortRule.valueOf(item.id)))
+                    },
+                    trigger = { onClick ->
+                        KomiIconButton(
+                            icon = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = stringResource(Res.string.sort_label),
+                            onClick = onClick,
+                            variant = KomiButtonVariant.Tonal,
                         )
-                    }
-                }
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = { onAction(StarredReposAction.OnNavigateBackClick) },
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.navigate_back),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            },
-            actions = {
-                if (isSyncing) {
-                    CircularProgressIndicator(
-                        modifier =
-                            Modifier
-                                .size(24.dp)
-                                .padding(end = 12.dp),
-                        strokeWidth = 2.dp,
-                    )
-                }
-
-                if (hasRepos) {
-                    Box {
-                        IconButton(onClick = { showSortMenu = true }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Sort,
-                                contentDescription = stringResource(Res.string.sort_label),
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = showSortMenu,
-                            onDismissRequest = { showSortMenu = false },
-                        ) {
-                            StarredSortRule.entries.forEach { rule ->
-                                val selected = rule == sortRule
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(rule.labelRes())) },
-                                    leadingIcon = {
-                                        if (selected) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = stringResource(Res.string.sort_selected),
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        showSortMenu = false
-                                        onAction(StarredReposAction.OnSortRuleSelected(rule))
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-        )
-    }
+                    },
+                )
+            }
+        },
+    )
 }
 
-private fun StarredSortRule.labelRes() =
-    when (this) {
-        StarredSortRule.RecentlyStarred -> Res.string.starred_picker_sort_recent
-        StarredSortRule.NameAsc -> Res.string.starred_picker_sort_alphabetical
-        StarredSortRule.StarsDesc -> Res.string.starred_picker_sort_stars
-    }
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StarredSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
 ) {
-    GhsTextField(
+    KomiTextField(
         value = query,
         onValueChange = onQueryChange,
         modifier =
@@ -390,17 +341,15 @@ private fun StarredSearchBar(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         placeholder = stringResource(Res.string.search_repositories_hint),
         leadingIcon = Icons.Filled.Search,
-        trailingIcon = {
+        trailing = {
             if (query.isNotEmpty()) {
-                IconButton(onClick = { onQueryChange("") }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(Res.string.clear_search),
-                    )
-                }
+                KomiIcon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(Res.string.clear_search),
+                    modifier = Modifier.clickable { onQueryChange("") },
+                )
             }
         },
-        singleLine = true,
     )
 }
 
@@ -413,43 +362,46 @@ private fun EmptyStateContent(
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
+        KomiIcon(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            tint = colors.onSurfaceVariant.copy(alpha = 0.6f),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
+        KomiText(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            color = colors.onSurface,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
+        KomiText(
             text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Body,
+            color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            uppercase = false,
         )
 
         if (actionText != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            GhsButton(
+            KomiButton(
                 onClick = onActionClick,
                 label = actionText,
-                variant = GhsButtonVariant.Primary,
+                variant = KomiButtonVariant.Primary,
             )
         }
     }
@@ -458,8 +410,8 @@ private fun EmptyStateContent(
 @Preview
 @Composable
 private fun PreviewStarred() {
-    GithubStoreTheme {
-        StarredScreen(
+    PersonalityPreview {
+        StarredReposScreen(
             state =
                 StarredReposState(
                     starredRepositories = persistentListOf(),

@@ -11,11 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -31,10 +30,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -45,23 +41,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.TravelExplore
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -74,42 +53,71 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.presentation.components.GithubStoreButton
-import zed.rainxch.core.presentation.components.RepositoryCard
+import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
+import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.presentation.components.ScrollbarContainer
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.buttons.KomiFab
+import zed.rainxch.core.presentation.components.cards.DiscoveryRepoCard
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
 import zed.rainxch.core.presentation.utils.constrainedContentWidth
-import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.core.presentation.utils.toIcon
+import zed.rainxch.core.presentation.utils.toLabel
+import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.clipboard_link_detected
+import zed.rainxch.githubstore.core.presentation.res.detected_links
+import zed.rainxch.githubstore.core.presentation.res.dismiss
+import zed.rainxch.githubstore.core.presentation.res.fetch_more_from_github
+import zed.rainxch.githubstore.core.presentation.res.fetching_from_github
+import zed.rainxch.githubstore.core.presentation.res.no_more_github_results
+import zed.rainxch.githubstore.core.presentation.res.no_repositories_found
+import zed.rainxch.githubstore.core.presentation.res.open_github_link
+import zed.rainxch.githubstore.core.presentation.res.open_in_app
+import zed.rainxch.githubstore.core.presentation.res.results_found
+import zed.rainxch.githubstore.core.presentation.res.retry
+import zed.rainxch.githubstore.core.presentation.res.search_clear_filter_cd
+import zed.rainxch.githubstore.core.presentation.res.search_filters_button
+import zed.rainxch.githubstore.core.presentation.res.search_repositories_hint
+import zed.rainxch.githubstore.core.presentation.res.search_results_hidden_by_seen_filter
+import zed.rainxch.githubstore.core.presentation.res.searching_for_unseen_repos
+import zed.rainxch.githubstore.core.presentation.res.show_all_results
 import zed.rainxch.search.presentation.components.LanguageFilterBottomSheet
+import zed.rainxch.search.presentation.components.SearchFiltersSheet
 import zed.rainxch.search.presentation.components.SearchHistorySection
 import zed.rainxch.search.presentation.components.SortByBottomSheet
 import zed.rainxch.search.presentation.model.ParsedGithubLink
 import zed.rainxch.search.presentation.model.ProgrammingLanguageUi
-import zed.rainxch.search.presentation.model.SearchPlatformUi
 import zed.rainxch.search.presentation.model.SearchSourceUi
 import zed.rainxch.search.presentation.model.SortByUi
 import zed.rainxch.search.presentation.utils.label
+import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRoot(
     onNavigateBack: () -> Unit,
@@ -120,13 +128,13 @@ fun SearchRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val snackbarHost = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SearchEvent.OnMessage -> {
                 scope.launch {
-                    snackbarHost.showSnackbar(event.message)
+                    toastState.show(event.message)
                 }
             }
 
@@ -138,7 +146,7 @@ fun SearchRoot(
 
     SearchScreen(
         state = state,
-        snackbarHost = snackbarHost,
+        toastState = toastState,
         onAction = { action ->
             when (action) {
                 is SearchAction.OnRepositoryClick -> {
@@ -161,7 +169,7 @@ fun SearchRoot(
     )
 
     if (state.isFiltersSheetVisible) {
-        zed.rainxch.search.presentation.components.SearchFiltersSheet(
+        SearchFiltersSheet(
             selectedSource = state.selectedSource,
             availableSources = state.availableSources,
             selectedPlatform = state.selectedSearchPlatform,
@@ -179,7 +187,7 @@ fun SearchRoot(
             },
             onReset = {
                 viewModel.onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All))
-                viewModel.onAction(SearchAction.OnPlatformTypeSelected(SearchPlatformUi.All))
+                viewModel.onAction(SearchAction.OnPlatformTypeSelected(DiscoveryPlatform.All))
                 viewModel.onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch))
             },
             onDismiss = {
@@ -217,16 +225,15 @@ fun SearchRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
     state: SearchState,
-    snackbarHost: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (SearchAction) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyStaggeredGridState()
-    val bottomNavHeight = LocalBottomNavigationHeight.current
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -299,7 +306,7 @@ fun SearchScreen(
                         lastVisible.offset.y + lastVisible.size.height < layoutInfo.viewportEndOffset
 
             if (hasEmptySpace) {
-                delay(100)
+                delay(100.milliseconds)
                 currentOnAction(SearchAction.LoadMore)
             }
         }
@@ -311,7 +318,7 @@ fun SearchScreen(
         }
     }
 
-    Scaffold(
+    KomiScaffold(
         topBar = {
             SearchTopbar(
                 onAction = onAction,
@@ -319,300 +326,157 @@ fun SearchScreen(
                 focusRequester = focusRequester,
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHost,
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-            )
-        },
+        toastState = toastState,
         floatingActionButton = {
-            FloatingActionButton(
+            KomiFab(
                 onClick = {
                     onAction(SearchAction.OnFabClick)
                 },
-                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp),
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Link,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                    )
-
-                    Text(
-                        text = stringResource(Res.string.open_github_link),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+                icon = Icons.Default.Link,
+                contentDescription = stringResource(Res.string.open_github_link),
+                label = stringResource(Res.string.open_github_link),
+            )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.TopCenter,
         ) {
-        Column(
-            modifier =
-                Modifier
-                    .constrainedContentWidth()
-                    .fillMaxHeight()
-                    .padding(horizontal = 16.dp),
-        ) {
-
-            AnimatedVisibility(
-                visible = state.isClipboardBannerVisible && state.clipboardLinks.isNotEmpty(),
-                enter = slideInVertically() + fadeIn(),
-                exit = slideOutVertically() + fadeOut(),
+            Column(
+                modifier =
+                    Modifier
+                        .constrainedContentWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
             ) {
-                ClipboardBanner(
-                    links = state.clipboardLinks,
-                    onOpenLink = { link ->
-                        onAction(SearchAction.OpenGithubLink(link.owner, link.repo))
-                    },
-                    onDismiss = {
-                        onAction(SearchAction.DismissClipboardBanner)
-                    },
+                AnimatedVisibility(
+                    visible = state.isClipboardBannerVisible && state.clipboardLinks.isNotEmpty(),
+                    enter = slideInVertically() + fadeIn(),
+                    exit = slideOutVertically() + fadeOut(),
+                ) {
+                    ClipboardBanner(
+                        links = state.clipboardLinks,
+                        onOpenLink = { link ->
+                            onAction(SearchAction.OpenGithubLink(link.owner, link.repo))
+                        },
+                        onDismiss = {
+                            onAction(SearchAction.DismissClipboardBanner)
+                        },
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = state.detectedLinks.isNotEmpty(),
+                    enter = slideInVertically() + fadeIn(),
+                    exit = slideOutVertically() + fadeOut(),
+                ) {
+                    DetectedLinksSection(
+                        links = state.detectedLinks,
+                        onOpenLink = { link ->
+                            onAction(SearchAction.OpenGithubLink(link.owner, link.repo))
+                        },
+                    )
+                }
+
+                PlatformPicker(
+                    state = state,
+                    onAction = onAction
                 )
-            }
 
-            AnimatedVisibility(
-                visible = state.detectedLinks.isNotEmpty(),
-                enter = slideInVertically() + fadeIn(),
-                exit = slideOutVertically() + fadeOut(),
-            ) {
-                DetectedLinksSection(
-                    links = state.detectedLinks,
-                    onOpenLink = { link ->
-                        onAction(SearchAction.OpenGithubLink(link.owner, link.repo))
-                    },
+                ActiveFiltersStrip(
+                    state = state,
+                    onAction = onAction
                 )
-            }
 
-            ActiveFiltersStrip(state = state, onAction = onAction)
+                Spacer(Modifier.height(6.dp))
 
-            Spacer(Modifier.height(6.dp))
-
-            if (state.totalCount != null) {
-                Text(
-                    text =
-                        stringResource(
+                if (state.totalCount != null) {
+                    KomiText(
+                        text = stringResource(
                             Res.string.results_found,
                             state.totalCount,
                         ),
-                    style = MaterialTheme.typography.labelLarge.copy(
+                        role = KomiTextRole.Label,
                         fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier =
-                        Modifier
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 6.dp),
-                )
-            }
-
-            if (state.query.isBlank() &&
-                state.repositories.isEmpty() &&
-                state.recentSearches.isNotEmpty() &&
-                !state.isLoading
-            ) {
-                SearchHistorySection(
-                    recentSearches = state.recentSearches,
-                    onHistoryItemClick = { query ->
-                        onAction(SearchAction.OnHistoryItemClick(query))
-                    },
-                    onRemoveItem = { query ->
-                        onAction(SearchAction.OnRemoveHistoryItem(query))
-                    },
-                    onClearAll = {
-                        onAction(SearchAction.OnClearAllHistory)
-                    },
-                )
-            }
-
-            Box(Modifier.fillMaxSize()) {
-                if (state.isLoading && state.repositories.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize().imePadding(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularWavyProgressIndicator()
-                    }
+                    )
                 }
 
-                if (state.errorMessage != null && state.repositories.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = state.errorMessage,
-                            )
-
-                            Spacer(Modifier.height(8.dp))
-
-                            GithubStoreButton(
-                                text = stringResource(Res.string.retry),
-                                onClick = {
-                                    onAction(SearchAction.Retry)
-                                },
-                            )
-                        }
-                    }
-                }
-
-                if (!state.isLoading &&
-                    !state.isLoadingMore &&
-                    state.errorMessage == null &&
+                if (state.query.isBlank() &&
                     state.repositories.isEmpty() &&
-                    state.query.isNotBlank() &&
-                    !state.hasMorePages
+                    state.recentSearches.isNotEmpty() &&
+                    !state.isLoading
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = stringResource(Res.string.no_repositories_found))
-
-                            if (state.passthroughAttempted != true) {
-                                Spacer(Modifier.height(8.dp))
-                                ExploreFromGithubButton(
-                                    status = state.exploreStatus,
-                                    onExplore = { onAction(SearchAction.ExploreFromGithub) },
-                                )
-                            }
-                        }
-                    }
+                    SearchHistorySection(
+                        recentSearches = state.recentSearches,
+                        onHistoryItemClick = { query ->
+                            onAction(SearchAction.OnHistoryItemClick(query))
+                        },
+                        onRemoveItem = { query ->
+                            onAction(SearchAction.OnRemoveHistoryItem(query))
+                        },
+                        onClearAll = {
+                            onAction(SearchAction.OnClearAllHistory)
+                        },
+                    )
                 }
 
-                if (state.repositories.isNotEmpty() &&
-                    state.visibleRepos.isEmpty() &&
-                    state.isHideSeenEnabled &&
-                    state.hasMorePages
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
-
-                            Spacer(Modifier.height(8.dp))
-
-                            Text(
-                                text = stringResource(Res.string.searching_for_unseen_repos),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.outline,
-                            )
-                        }
-                    }
-                }
-
-                if (state.repositories.isNotEmpty() &&
-                    state.visibleRepos.isEmpty() &&
-                    state.isHideSeenEnabled &&
-                    !state.hasMorePages
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = stringResource(Res.string.search_results_hidden_by_seen_filter),
-                            )
-
-                            Spacer(Modifier.height(8.dp))
-
-                            GithubStoreButton(
-                                text = stringResource(Res.string.show_all_results),
-                                onClick = {
-                                    onAction(SearchAction.OnDisableHideSeenForResults)
-                                },
-                            )
-                        }
-                    }
-                }
-
-                if (state.visibleRepos.isNotEmpty()) {
-                    val isScrollbarEnabled = LocalScrollbarEnabled.current
-                    ScrollbarContainer(
-                        gridState = listState,
-                        enabled = isScrollbarEnabled,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        LazyVerticalStaggeredGrid(
-                            state = listState,
-                            columns = StaggeredGridCells.Adaptive(350.dp),
-                            verticalItemSpacing = 12.dp,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-
-                            contentPadding =
-                                PaddingValues(
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                    top = 12.dp,
-                                    bottom = bottomNavHeight + 88.dp,
-                                ),
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .arrowKeyScroll(listState, autoFocus = false),
+                Box(Modifier.fillMaxSize()) {
+                    if (state.isLoading && state.repositories.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize().imePadding(),
+                            contentAlignment = Alignment.Center,
                         ) {
-                            items(
-                                items = state.visibleRepos,
-                                key = { it.repository.id },
-                            ) { discoveryRepository ->
-                                RepositoryCard(
-                                    discoveryRepositoryUi = discoveryRepository,
+                            KomiCircularProgress()
+                        }
+                    }
+
+                    if (state.errorMessage != null && state.repositories.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                KomiText(
+                                    text = state.errorMessage,
+                                    uppercase = false,
+                                )
+
+                                Spacer(Modifier.height(8.dp))
+
+                                KomiButton(
+                                    label = stringResource(Res.string.retry),
                                     onClick = {
-                                        onAction(SearchAction.OnRepositoryClick(discoveryRepository.repository))
+                                        onAction(SearchAction.Retry)
                                     },
-                                    onDeveloperClick = { username ->
-                                        onAction(SearchAction.OnRepositoryDeveloperClick(username))
-                                    },
-                                    onShareClick = {
-                                        onAction(SearchAction.OnShareClick(discoveryRepository.repository))
-                                    },
-                                    onHideClick = {
-                                        onAction(SearchAction.OnHideRepository(discoveryRepository.repository))
-                                    },
-                                    onToggleSeen = {
-                                        if (discoveryRepository.isSeen) {
-                                            onAction(SearchAction.OnMarkAsUnseen(discoveryRepository.repository.id))
-                                        } else {
-                                            onAction(SearchAction.OnMarkAsSeen(discoveryRepository.repository))
-                                        }
-                                    },
-                                    modifier = Modifier.animateItem(),
                                 )
                             }
+                        }
+                    }
 
-                            item {
-                                if (state.isLoadingMore) {
-                                    Box(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(24.dp),
-                                        )
-                                    }
-                                }
-                            }
+                    if (!state.isLoading &&
+                        !state.isLoadingMore &&
+                        state.errorMessage == null &&
+                        state.repositories.isEmpty() &&
+                        state.query.isNotBlank() &&
+                        !state.hasMorePages
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                KomiText(
+                                    text = stringResource(Res.string.no_repositories_found),
+                                    uppercase = false,
+                                )
 
-                            if (!state.isLoading && !state.isLoadingMore && state.query.isNotBlank()) {
-                                item {
+                                if (state.passthroughAttempted != true) {
+                                    Spacer(Modifier.height(8.dp))
                                     ExploreFromGithubButton(
                                         status = state.exploreStatus,
                                         onExplore = { onAction(SearchAction.ExploreFromGithub) },
@@ -621,9 +485,209 @@ fun SearchScreen(
                             }
                         }
                     }
+
+                    if (state.repositories.isNotEmpty() &&
+                        state.visibleRepos.isEmpty() &&
+                        state.isHideSeenEnabled &&
+                        state.hasMorePages
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                KomiCircularProgress()
+
+                                Spacer(Modifier.height(8.dp))
+
+                                KomiText(
+                                    text = stringResource(Res.string.searching_for_unseen_repos),
+                                    role = KomiTextRole.Body,
+                                    color = colors.outline,
+                                    uppercase = false,
+                                )
+                            }
+                        }
+                    }
+
+                    if (state.repositories.isNotEmpty() &&
+                        state.visibleRepos.isEmpty() &&
+                        state.isHideSeenEnabled &&
+                        !state.hasMorePages
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                KomiText(
+                                    text = stringResource(Res.string.search_results_hidden_by_seen_filter),
+                                    uppercase = false,
+                                )
+
+                                Spacer(Modifier.height(8.dp))
+
+                                KomiButton(
+                                    label = stringResource(Res.string.show_all_results),
+                                    onClick = {
+                                        onAction(SearchAction.OnDisableHideSeenForResults)
+                                    },
+                                )
+                            }
+                        }
+                    }
+
+                    if (state.visibleRepos.isNotEmpty()) {
+                        val isScrollbarEnabled = LocalScrollbarEnabled.current
+                        ScrollbarContainer(
+                            gridState = listState,
+                            enabled = isScrollbarEnabled,
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            LazyVerticalStaggeredGrid(
+                                state = listState,
+                                columns = StaggeredGridCells.Adaptive(350.dp),
+                                verticalItemSpacing = 12.dp,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+
+                                contentPadding =
+                                    PaddingValues(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        top = 12.dp,
+                                        bottom = 12.dp,
+                                    ),
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .arrowKeyScroll(listState, autoFocus = false),
+                            ) {
+                                items(
+                                    items = state.visibleRepos,
+                                    key = { it.repository.id },
+                                ) { discoveryRepository ->
+                                    DiscoveryRepoCard(
+                                        discoveryRepositoryUi = discoveryRepository,
+                                        onClick = {
+                                            onAction(
+                                                SearchAction.OnRepositoryClick(
+                                                    discoveryRepository.repository
+                                                )
+                                            )
+                                        },
+                                        onShareClick = {
+                                            onAction(SearchAction.OnShareClick(discoveryRepository.repository))
+                                        },
+                                        onHideClick = {
+                                            onAction(
+                                                SearchAction.OnHideRepository(
+                                                    discoveryRepository.repository
+                                                )
+                                            )
+                                        },
+                                        onToggleSeen = {
+                                            if (discoveryRepository.isSeen) {
+                                                onAction(
+                                                    SearchAction.OnMarkAsUnseen(
+                                                        discoveryRepository.repository.id
+                                                    )
+                                                )
+                                            } else {
+                                                onAction(
+                                                    SearchAction.OnMarkAsSeen(
+                                                        discoveryRepository.repository
+                                                    )
+                                                )
+                                            }
+                                        },
+                                        modifier = Modifier.animateItem(),
+                                    )
+                                }
+
+                                item {
+                                    if (state.isLoadingMore) {
+                                        Box(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            KomiCircularProgress(
+                                                modifier = Modifier.size(24.dp),
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if (!state.isLoading && !state.isLoadingMore && state.query.isNotBlank()) {
+                                    item {
+                                        ExploreFromGithubButton(
+                                            status = state.exploreStatus,
+                                            onExplore = { onAction(SearchAction.ExploreFromGithub) },
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PlatformPicker(
+    state: SearchState,
+    onAction: (SearchAction) -> Unit
+) {
+    val colors = LocalPersonality.current.colors
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items(DiscoveryPlatform.entries) { platform ->
+            Row(
+                modifier = Modifier
+                    .clip(shape)
+                    .background(
+                        if (state.selectedSearchPlatform == platform) {
+                            colors.primary.copy(alpha = 0.12f)
+                        } else colors.surface,
+                        shape = shape
+                    )
+                    .border(1.dp, colors.primary.copy(alpha = 0.4f), shape)
+                    .clickable(onClick = {
+                        onAction(SearchAction.OnPlatformTypeSelected(platform))
+                    })
+                    .padding(start = 12.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                val icon = platform.toIcon()
+                if (icon != null) {
+                    KomiIcon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = colors.primary,
+                    )
+                }
+
+                KomiText(
+                    text = platform.toLabel(),
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.primary,
+                    uppercase = false,
+                )
+            }
         }
     }
 }
@@ -634,70 +698,77 @@ private fun ClipboardBanner(
     onOpenLink: (ParsedGithubLink) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    androidx.compose.material3.Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
-        shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-        ),
+        contentPadding = PaddingValues(12.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.clipboard_link_detected),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    color = colors.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                 )
-                IconButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.size(28.dp).clip(CircleShape),
+
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(shape.cornerSmall))
+                        .clickable(onClick = onDismiss),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(Res.string.dismiss),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colors.onSurfaceVariant,
                     )
                 }
             }
+
             Spacer(Modifier.height(4.dp))
+
             links.forEach { link ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(shape.cornerSmall))
                         .clickable { onOpenLink(link) }
                         .padding(vertical = 8.dp, horizontal = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
-                    Text(
+
+                    KomiText(
                         text = "${link.owner}/${link.repo}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
-                    Icon(
+
+                    KomiIcon(
                         imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = stringResource(Res.string.open_in_app),
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
                 }
             }
@@ -710,55 +781,55 @@ private fun DetectedLinksSection(
     links: ImmutableList<ParsedGithubLink>,
     onOpenLink: (ParsedGithubLink) -> Unit,
 ) {
+    val colors = LocalPersonality.current.colors
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.detected_links),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            color = colors.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 6.dp),
         )
+
         links.forEach { link ->
-            androidx.compose.material3.Surface(
+            KomiSurface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 3.dp),
                 onClick = { onOpenLink(link) },
-                shape = zed.rainxch.core.presentation.theme.tokens.Radii.row,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                border = androidx.compose.foundation.BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                ),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Link,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                     )
-                    Text(
+
+                    KomiText(
                         text = "${link.owner}/${link.repo}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Body,
+                        color = colors.onSurface,
                         fontWeight = FontWeight.SemiBold,
+                        uppercase = false,
                         modifier = Modifier.weight(1f),
                     )
-                    Text(
+
+                    KomiText(
                         text = stringResource(Res.string.open_in_app),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        role = KomiTextRole.Label,
+                        fontSize = 12.sp,
+                        color = colors.primary,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
@@ -773,7 +844,6 @@ private fun SearchTopbar(
     state: SearchState,
     focusRequester: FocusRequester,
 ) {
-    val activeFilterCount = activeFilterCount(state)
     Row(
         modifier =
             Modifier
@@ -783,92 +853,46 @@ private fun SearchTopbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        TextField(
+        val colors = LocalPersonality.current.colors
+        val shape = LocalPersonality.current.shape
+        KomiTextField(
             value = state.query,
             onValueChange = { value ->
                 onAction(SearchAction.OnSearchChange(value))
             },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            trailingIcon = if (state.query.isNotEmpty()) {
-                {
-                    IconButton(
-                        onClick = { onAction(SearchAction.OnClearClick) },
+            placeholder = stringResource(Res.string.search_repositories_hint),
+            leadingIcon = Icons.Default.Search,
+            trailing = {
+                if (state.query.isNotEmpty()) {
+                    Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .clip(CircleShape),
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .clickable { onAction(SearchAction.OnClearClick) },
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.dismiss),
                             modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = colors.onSurfaceVariant,
                         )
                     }
                 }
-            } else null,
-            placeholder = {
-                Text(
-                    text = stringResource(Res.string.search_repositories_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    softWrap = false,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
             },
-            textStyle =
-                MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search,
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onSearch = { onAction(SearchAction.OnSearchImeClick) },
-                    onDone = { onAction(SearchAction.OnSearchImeClick) },
-                    onGo = { onAction(SearchAction.OnSearchImeClick) },
-                    onNext = { onAction(SearchAction.OnSearchImeClick) },
-                    onSend = { onAction(SearchAction.OnSearchImeClick) },
-                ),
-            singleLine = true,
-            colors =
-                TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
-            shape = RoundedCornerShape(50),
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .focusRequester(focusRequester),
+            keyboardType = KeyboardType.Text,
+            onCommit = { onAction(SearchAction.OnSearchImeClick) },
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester),
+            multiline = false
         )
 
         FiltersPillButton(
-            activeCount = activeFilterCount,
+            activeCount = state.activeFilterCount,
             onClick = { onAction(SearchAction.OnToggleFiltersSheet) },
         )
     }
-}
-
-private fun activeFilterCount(state: SearchState): Int {
-    var count = 0
-    if (state.selectedSource != SearchSourceUi.GitHub) count++
-    if (state.selectedSearchPlatform != SearchPlatformUi.All) count++
-    if (state.selectedLanguage != ProgrammingLanguageUi.All) count++
-    if (state.selectedSortBy != SortByUi.BestMatch) count++
-    return count
 }
 
 @Composable
@@ -876,13 +900,14 @@ private fun FiltersPillButton(
     activeCount: Int,
     onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(50)
+    val colors = LocalPersonality.current.colors
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     val container =
-        if (activeCount > 0) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.surfaceContainerLow
+        if (activeCount > 0) colors.primary
+        else colors.surface
     val content =
-        if (activeCount > 0) MaterialTheme.colorScheme.onPrimary
-        else MaterialTheme.colorScheme.onSurface
+        if (activeCount > 0) colors.onPrimary
+        else colors.onSurface
     Row(
         modifier = Modifier
             .height(48.dp)
@@ -893,19 +918,20 @@ private fun FiltersPillButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Icon(
+        KomiIcon(
             imageVector = Icons.Default.FilterList,
             contentDescription = stringResource(Res.string.search_filters_button),
             modifier = Modifier.size(18.dp),
             tint = content,
         )
+
         if (activeCount > 0) {
-            Text(
+            KomiText(
                 text = activeCount.toString(),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                role = KomiTextRole.Label,
+                fontWeight = FontWeight.SemiBold,
                 color = content,
+                uppercase = false,
             )
         }
     }
@@ -916,34 +942,39 @@ private fun ActiveFiltersStrip(
     state: SearchState,
     onAction: (SearchAction) -> Unit,
 ) {
-    val items = buildList<Triple<String, () -> Unit, androidx.compose.ui.graphics.vector.ImageVector?>> {
+    val languageLabel = stringResource(state.selectedLanguage.label())
+    val sortByLabel = stringResource(state.selectedSortBy.label())
+    val items = buildList {
         if (state.selectedSource != SearchSourceUi.GitHub) {
-            add(Triple(state.selectedSource.label, { onAction(SearchAction.OnSourceSelected(SearchSourceUi.GitHub)) }, null))
-        }
-        if (state.selectedSearchPlatform != SearchPlatformUi.All) {
             add(
                 Triple(
-                    state.selectedSearchPlatform.name.lowercase().replaceFirstChar { it.uppercase() },
-                    { onAction(SearchAction.OnPlatformTypeSelected(SearchPlatformUi.All)) },
-                    null,
-                ),
+                    first = state.selectedSource.label,
+                    second = {
+                        onAction(SearchAction.OnSourceSelected(SearchSourceUi.GitHub))
+                    },
+                    third = null
+                )
             )
         }
         if (state.selectedLanguage != ProgrammingLanguageUi.All) {
             add(
                 Triple(
-                    "${state.selectedLanguage}",
-                    { onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All)) },
-                    Icons.Outlined.KeyboardArrowDown,
+                    first = languageLabel,
+                    second = {
+                        onAction(SearchAction.OnLanguageSelected(ProgrammingLanguageUi.All))
+                    },
+                    third = Icons.Outlined.KeyboardArrowDown,
                 ),
             )
         }
         if (state.selectedSortBy != SortByUi.BestMatch) {
             add(
                 Triple(
-                    "${state.selectedSortBy}",
-                    { onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch)) },
-                    Icons.AutoMirrored.Filled.Sort,
+                    first = sortByLabel,
+                    second = {
+                        onAction(SearchAction.OnSortBySelected(SortByUi.BestMatch))
+                    },
+                    third = Icons.AutoMirrored.Filled.Sort,
                 ),
             )
         }
@@ -958,7 +989,11 @@ private fun ActiveFiltersStrip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         items.forEach { (label, onRemove, leading) ->
-            ActiveFilterChip(label = label, leadingIcon = leading, onRemove = onRemove)
+            ActiveFilterChip(
+                label = label,
+                leadingIcon = leading,
+                onRemove = onRemove
+            )
         }
     }
 }
@@ -966,38 +1001,44 @@ private fun ActiveFiltersStrip(
 @Composable
 private fun ActiveFilterChip(
     label: String,
-    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector?,
+    leadingIcon: ImageVector?,
     onRemove: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(50)
+    val colors = LocalPersonality.current.colors
+    val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
     Row(
         modifier = Modifier
             .clip(shape)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), shape)
-            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), shape)
+            .background(colors.primary.copy(alpha = 0.12f), shape)
+            .border(1.dp, colors.primary.copy(alpha = 0.4f), shape)
             .clickable(onClick = onRemove)
             .padding(start = 12.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         if (leadingIcon != null) {
-            Icon(
+            KomiIcon(
                 imageVector = leadingIcon,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
             )
         }
-        Text(
+
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.primary,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.primary,
+            uppercase = false,
         )
-        Icon(
+
+        KomiIcon(
             imageVector = Icons.Default.Close,
             contentDescription = stringResource(Res.string.search_clear_filter_cd),
             modifier = Modifier.size(14.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            tint = colors.primary,
         )
     }
 }
@@ -1015,29 +1056,30 @@ private fun ExploreFromGithubButton(
     ) {
         when (status) {
             SearchState.ExploreStatus.IDLE -> {
-                GhsButton(
+                KomiButton(
                     onClick = onExplore,
                     label = stringResource(Res.string.fetch_more_from_github),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     leadingIcon = Icons.Outlined.TravelExplore,
                 )
             }
 
             SearchState.ExploreStatus.LOADING -> {
-                GhsButton(
+                KomiButton(
                     onClick = {},
                     label = stringResource(Res.string.fetching_from_github),
-                    variant = GhsButtonVariant.Outline,
+                    variant = KomiButtonVariant.Outline,
                     enabled = false,
                     loading = true,
                 )
             }
 
             SearchState.ExploreStatus.EXHAUSTED -> {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.no_more_github_results),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline,
+                    role = KomiTextRole.Body,
+                    color = LocalPersonality.current.colors.outline,
+                    uppercase = false,
                 )
             }
         }
@@ -1047,11 +1089,11 @@ private fun ExploreFromGithubButton(
 @Preview
 @Composable
 private fun Preview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         SearchScreen(
             state = SearchState(),
-            snackbarHost = SnackbarHostState(),
-            onAction = {},
+            toastState = rememberKomiToastState(),
+            onAction = { }
         )
     }
 }

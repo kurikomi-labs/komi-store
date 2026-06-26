@@ -2,13 +2,14 @@ package zed.rainxch.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import zed.rainxch.core.domain.model.announcement.AnnouncementCategory
+import zed.rainxch.core.domain.model.appearance.AccentId
+import zed.rainxch.core.domain.model.appearance.AppPersonality
 import zed.rainxch.core.domain.model.appearance.AppTheme
 import zed.rainxch.core.domain.model.appearance.ContentWidth
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import zed.rainxch.core.domain.model.appearance.FontTheme
 import zed.rainxch.core.domain.model.installation.InstallerType
-import zed.rainxch.core.domain.model.system.RestartReason
-import zed.rainxch.core.domain.model.appearance.ThemeMode
+import zed.rainxch.core.domain.model.appearance.MangaPaperId
 import zed.rainxch.core.domain.model.settings.TranslationProvider
 
 interface TweaksRepository {
@@ -24,17 +25,21 @@ interface TweaksRepository {
 
     suspend fun setAmoledTheme(enabled: Boolean)
 
-    fun getThemeMode(): Flow<ThemeMode>
+    fun getMangaPaper(): Flow<MangaPaperId>
 
-    suspend fun setThemeMode(mode: ThemeMode)
-
-    fun getOnboardingComplete(): Flow<Boolean>
-
-    suspend fun setOnboardingComplete(complete: Boolean)
+    suspend fun setMangaPaper(paper: MangaPaperId)
 
     fun getFontTheme(): Flow<FontTheme>
 
     suspend fun setFontTheme(fontTheme: FontTheme)
+
+    fun getPersonality(): Flow<AppPersonality>
+
+    suspend fun setPersonality(personality: AppPersonality)
+
+    fun getAccentId(): Flow<AccentId>
+
+    suspend fun setAccentId(accentId: AccentId)
 
     fun getAutoDetectClipboardLinks(): Flow<Boolean>
 
@@ -193,10 +198,4 @@ interface TweaksRepository {
     suspend fun addCustomForgeHost(host: String)
 
     suspend fun removeCustomForgeHost(host: String)
-
-    fun getNeedsRestartReasons(): Flow<Set<RestartReason>>
-
-    suspend fun addRestartReason(reason: RestartReason)
-
-    suspend fun clearRestartReasons()
 }

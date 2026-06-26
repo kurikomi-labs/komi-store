@@ -141,7 +141,7 @@
     <string name="proxy_test_error_unknown">فشل اختبار الاتصال</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">تم تسجيل الخروج بنجاح، جارٍ إعادة التوجيه...</string>
+    <string name="logout_success">تم تسجيل الخروج بنجاح</string>
 
     <!-- Dialog -->
     <string name="warning">تحذير!</string>
@@ -333,6 +333,7 @@
     <string name="time_years_ago">منذ %1$d سنة</string>
     <string name="time_months_ago">منذ %1$d شهر</string>
     <string name="time_days_ago">منذ %1$d يوم</string>
+    <string name="time_weeks_ago">منذ %1$d أسبوع</string>
     <string name="time_hours_ago">منذ %1$d ساعة</string>
     <string name="time_minutes_ago">منذ %1$d دقيقة</string>
 
@@ -346,7 +347,7 @@
     <string name="released_days_ago">صدر منذ %1$d يوم</string>
     <string name="released_on_date">صدر في %1$s</string>
 
-    <string name="bottom_nav_home_title">الرئيسية</string>
+    <string name="bottom_nav_explore_title">استكشاف</string>
     <string name="bottom_nav_search_title">البحث</string>
     <string name="bottom_nav_apps_title">المكتبة</string>
     <string name="bottom_nav_profile_title">الملف الشخصي</string>
@@ -1433,4 +1434,56 @@
     <string name="repo_pages_pulls_empty_closed">لا توجد طلبات سحب مغلقة.</string>
     <string name="repo_pages_pr_state_merged">مُدمَج</string>
     <string name="repo_pages_pr_draft">مسودة</string>
+
+    <string name="feed_end_cap">続く · TO BE CONTINUED</string>
+    <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
+    <string name="feed_platform_picker_title_jp">対応</string>
+    <string name="home_chart_popular_jp">人気</string>
+    <string name="home_chart_releases_jp">新着</string>
+    <string name="home_chart_trending_jp">急上昇</string>
+    <string name="sidebar_browse_jp">航行</string>
+    <string name="sidebar_categories_jp">部門</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
+    <string name="sidebar_nav_search_jp">検索</string>
+    <string name="sidebar_nav_you_jp">あなた</string>
+    <string name="sidebar_platform_jp">対応</string>
+    <string name="feed_masthead_title">Komi Store</string>
+    <string name="feed_masthead_title_accent">Store</string>
+    <string name="platform_section_ios">iOS</string>
+    <string name="paper_nord">Nord</string>
+    <string name="appearance_section_paper">الورق</string>
+    <string name="bottom_nav_top_charts_title">الأكثر رواجًا</string>
+    <string name="cd_more_actions">المزيد من الإجراءات</string>
+    <string name="feed_category_ai">الذكاء الاصطناعي</string>
+    <string name="feed_category_media">الوسائط</string>
+    <string name="feed_category_networking">الشبكات</string>
+    <string name="feed_category_privacy">الخصوصية</string>
+    <string name="feed_category_reading">القراءة</string>
+    <string name="feed_category_social">التواصل الاجتماعي</string>
+    <string name="feed_category_tools">الأدوات</string>
+    <string name="feed_cd_profile">الملف الشخصي</string>
+    <string name="feed_cd_search">البحث</string>
+    <string name="feed_empty_reset">إعادة تعيين الفلاتر</string>
+    <string name="feed_empty_subtitle">لا توجد تطبيقات %1$s لـ %2$s بعد.</string>
+    <string name="feed_empty_title">لا يوجد شيء هنا بعد</string>
+    <string name="feed_failed_to_load">تعذّر تحميل الموجز</string>
+    <string name="feed_browsing">تصفح</string>
+    <string name="feed_loading">جارٍ تحميل الأحدث…</string>
+    <string name="feed_offline">غير متصل — يتم عرض موجز محفوظ</string>
+    <string name="feed_platform_all">جميع المنصات</string>
+    <string name="feed_platform_picker_title">اختر نظام التشغيل</string>
+    <string name="home_chart_popular">رائج</string>
+    <string name="home_chart_releases">الإصدارات</string>
+    <string name="home_chart_trending">الأكثر تداولاً</string>
+    <string name="home_masthead_title">الأكثر رواجًا</string>
+    <string name="home_platform_filter">تصفية المنصات</string>
+    <string name="paper_day">نهار</string>
+    <string name="paper_night">ليل</string>
+    <string name="repo_card_details">التفاصيل</string>
+    <string name="sidebar_browse">تصفح</string>
+    <string name="sidebar_categories">الفئات</string>
+    <string name="sidebar_platform">المنصة</string>
+    <string name="tweaks_privacy_usage_data_section">بيانات الاستخدام</string>
 </resources>

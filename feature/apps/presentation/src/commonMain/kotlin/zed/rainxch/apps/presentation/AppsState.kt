@@ -1,16 +1,22 @@
 package zed.rainxch.apps.presentation
 
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import zed.rainxch.apps.domain.model.ImportResult
+import zed.rainxch.apps.presentation.model.AdvancedPreviewMessage
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.AppSortRule
 import zed.rainxch.apps.presentation.model.DeviceAppUi
+import zed.rainxch.apps.presentation.model.ImportSummaryBucket
 import zed.rainxch.apps.presentation.model.GithubAssetUi
 import zed.rainxch.apps.presentation.model.GithubRepoInfoUi
 import zed.rainxch.apps.presentation.model.InstalledAppUi
 import zed.rainxch.apps.presentation.model.LinkStep
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
+import zed.rainxch.apps.presentation.model.VariantOption
+import zed.rainxch.apps.presentation.model.VariantPickerError
 import zed.rainxch.core.domain.system.RepoMatchSuggestion
 
 data class AppsState(
@@ -59,20 +65,21 @@ data class AppsState(
     val advancedPreviewLoading: Boolean = false,
     val advancedPreviewMatched: ImmutableList<GithubAssetUi> = persistentListOf(),
     val advancedPreviewTag: String? = null,
-    val advancedPreviewMessage: String? = null,
+    val advancedPreviewMessage: AdvancedPreviewMessage? = null,
     val advancedSavingFilter: Boolean = false,
 
     val variantPickerApp: InstalledAppUi? = null,
     val variantPickerLoading: Boolean = false,
-    val variantPickerOptions: ImmutableList<GithubAssetUi> = persistentListOf(),
+    val variantPickerOptions: ImmutableList<VariantOption> = persistentListOf(),
     val variantPickerCurrentVariant: String? = null,
-    val variantPickerError: String? = null,
+    val variantPickerError: VariantPickerError? = null,
 
     val variantPickerResumeUpdateAfterPick: Boolean = false,
 
     val isExporting: Boolean = false,
     val isImporting: Boolean = false,
     val importSummary: ImportResult? = null,
+    val expandedImportBuckets: ImmutableSet<ImportSummaryBucket> = persistentSetOf(),
 
     val appPendingUninstall: InstalledAppUi? = null,
 

@@ -13,14 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -31,9 +24,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.LocalStatusColors
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_closed
@@ -75,14 +77,13 @@ private fun PullsScreen(
     state: PullsUiState,
     onAction: (PullsAction) -> Unit,
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             RepoPagesTopBar(
                 title = stringResource(Res.string.repo_pages_pulls_title),
                 onBack = { onAction(PullsAction.OnBackClick) },
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -90,45 +91,48 @@ private fun PullsScreen(
                 .padding(innerPadding),
         ) {
             Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            FilterChip(
-                selected = state.filter == IssueState.OPEN,
-                onClick = { onAction(PullsAction.OnFilterChange(IssueState.OPEN)) },
-                label = { Text(stringResource(Res.string.repo_pages_issues_filter_open)) },
-            )
-            FilterChip(
-                selected = state.filter == IssueState.CLOSED,
-                onClick = { onAction(PullsAction.OnFilterChange(IssueState.CLOSED)) },
-                label = { Text(stringResource(Res.string.repo_pages_issues_filter_closed)) },
-            )
-        }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_open),
+                    kind = KomiChipKind.Filter,
+                    selected = state.filter == IssueState.OPEN,
+                    onClick = { onAction(PullsAction.OnFilterChange(IssueState.OPEN)) },
+                )
 
-        when {
-            state.isLoading -> RepoPagesLoading()
-
-            state.errorMessage != null -> RepoPagesError(
-                message = state.errorMessage,
-                onRetry = { onAction(PullsAction.OnRetry) },
-            )
-
-            state.pulls.isEmpty() -> {
-                val emptyText = if (state.filter == IssueState.OPEN) {
-                    stringResource(Res.string.repo_pages_pulls_empty_open)
-                } else {
-                    stringResource(Res.string.repo_pages_pulls_empty_closed)
-                }
-                RepoPagesEmpty(message = emptyText)
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_closed),
+                    kind = KomiChipKind.Filter,
+                    selected = state.filter == IssueState.CLOSED,
+                    onClick = { onAction(PullsAction.OnFilterChange(IssueState.CLOSED)) },
+                )
             }
 
-            else -> PullsList(
-                state = state,
-                onLoadMore = { onAction(PullsAction.OnLoadMore) },
-                onOpenPull = { onAction(PullsAction.OnOpenPull(it)) },
-            )
+            when {
+                state.isLoading -> RepoPagesLoading()
+
+                state.errorMessage != null -> RepoPagesError(
+                    message = state.errorMessage,
+                    onRetry = { onAction(PullsAction.OnRetry) },
+                )
+
+                state.pulls.isEmpty() -> {
+                    val emptyText = if (state.filter == IssueState.OPEN) {
+                        stringResource(Res.string.repo_pages_pulls_empty_open)
+                    } else {
+                        stringResource(Res.string.repo_pages_pulls_empty_closed)
+                    }
+                    RepoPagesEmpty(message = emptyText)
+                }
+
+                else -> PullsList(
+                    state = state,
+                    onLoadMore = { onAction(PullsAction.OnLoadMore) },
+                    onOpenPull = { onAction(PullsAction.OnOpenPull(it)) },
+                )
             }
         }
     }
@@ -161,13 +165,14 @@ private fun PullsList(
         items(state.pulls, key = { it.number }) { pull ->
             PullRow(pull = pull, onClick = { onOpenPull(pull.number) })
         }
+
         if (state.isLoadingMore) {
             item(key = "loading_more") {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    KomiCircularProgress(modifier = Modifier.size(24.dp))
                 }
             }
         }
@@ -179,10 +184,10 @@ private fun PullRow(
     pull: RepoPullRequest,
     onClick: () -> Unit,
 ) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         onClick = onClick,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -200,38 +205,48 @@ private fun PullRow(
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .size(10.dp)
-                    .background(color = pullStateColor, shape = CircleShape),
+                    .background(color = pullStateColor, shape = RoundedCornerShape(shape.cornerSmall)),
             )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     if (pull.isDraft) {
-                        Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                            Text(
-                                text = stringResource(Res.string.repo_pages_pr_draft),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp),
-                            )
-                        }
+                        KomiText(
+                            text = stringResource(Res.string.repo_pages_pr_draft),
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.onSurfaceVariant,
+                            uppercase = false,
+                            modifier = Modifier
+                                .background(colors.surfaceContainerHigh, RoundedCornerShape(shape.cornerSmall))
+                                .padding(horizontal = 6.dp, vertical = 1.dp),
+                        )
                     }
-                    Text(
+
+                    KomiText(
                         text = pull.title,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        role = KomiTextRole.Title,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                     )
                 }
-                Text(
+
+                KomiText(
                     text = "#${pull.number} · " +
                         stringResource(Res.string.repo_pages_issue_opened_by, pull.authorLogin),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
             }
         }

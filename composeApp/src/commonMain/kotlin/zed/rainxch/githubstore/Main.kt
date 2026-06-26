@@ -4,36 +4,28 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import kotlinx.coroutines.delay
+import coil3.svg.SvgDecoder
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.auth.presentation.AuthDeepLinkBus
-import zed.rainxch.auth.presentation.AuthDeepLinkEvent
-import zed.rainxch.core.presentation.components.announcements.CriticalAnnouncementModal
-import zed.rainxch.core.presentation.components.whatsnew.WhatsNewSheet
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.presentation.utils.ApplyAndroidSystemBars
-import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.app.announcements.AnnouncementsViewModel
+import zed.rainxch.core.domain.model.appearance.AppPersonality
+import zed.rainxch.core.presentation.personality.classicPersonality
+import zed.rainxch.core.presentation.personality.mangaPersonality
+import zed.rainxch.core.presentation.personality.toMangaAccent
+import zed.rainxch.core.presentation.personality.toMangaPaper
+import zed.rainxch.core.presentation.personality.utils.PersonalityTheme
 import zed.rainxch.githubstore.app.components.RateLimitDialog
 import zed.rainxch.githubstore.app.components.SessionExpiredDialog
-import zed.rainxch.githubstore.app.deeplink.DeepLinkDestination
-import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
-import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
-import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
 import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.navigation.getCurrentScreen
-import zed.rainxch.githubstore.app.whatsnew.WhatsNewViewModel
-import zed.rainxch.tweaks.presentation.TweaksDeepLinkBus
-import kotlin.time.Duration.Companion.milliseconds
+import zed.rainxch.githubstore.app.whatsnew.WhatsNewSheet
+import zed.rainxch.githubstore.utils.HandleDesktopToolbarDeeplinks
+import zed.rainxch.githubstore.utils.HandleKeyboardEvents
+import zed.rainxch.profile.presentation.whatsnew.WhatsNewViewModel
 
 @Composable
 fun App(
@@ -41,251 +33,110 @@ fun App(
     onDeepLinkConsumed: () -> Unit = {},
     onResolvedDarkTheme: (Boolean) -> Unit = {},
 ) {
+    val mainViewModel: MainViewModel = koinViewModel()
+    val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
+
+    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
+
+    val navController = rememberNavController()
+
     setSingletonImageLoaderFactory { context ->
         ImageLoader
             .Builder(context)
-            .components { add(coil3.svg.SvgDecoder.Factory()) }
+            .components { add(SvgDecoder.Factory()) }
             .build()
     }
 
-    val viewModel: MainViewModel = koinViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val navController = rememberNavController()
     val currentScreen = navController.currentBackStackEntryAsState().value.getCurrentScreen()
 
-    LaunchedEffect(state.onboardingComplete) {
-        if (state.onboardingComplete == false &&
-            currentScreen !is GithubStoreGraph.OnboardingScreen
-        ) {
-            navController.navigate(GithubStoreGraph.OnboardingScreen) {
-                popUpTo(0) { inclusive = true }
-            }
+    HandleKeyboardEvents(navController)
+
+    HandleDesktopToolbarDeeplinks(
+        deepLinkUri = deepLinkUri,
+        onDeepLinkConsumed = onDeepLinkConsumed,
+        navController = navController,
+    )
+
+    val onAuthScreen = currentScreen is GithubStoreGraph.AuthenticationScreen
+    LaunchedEffect(onAuthScreen, mainState.showRateLimitDialog) {
+        if (onAuthScreen && mainState.showRateLimitDialog) {
+            mainViewModel.onAction(MainAction.DismissRateLimitDialog)
         }
     }
 
-    LaunchedEffect(deepLinkUri) {
-        deepLinkUri?.let { uri ->
-            when (val destination = DeepLinkParser.parse(uri)) {
-                is DeepLinkDestination.Repository -> {
-                    navController.navigate(
-                        GithubStoreGraph.DetailsScreen(
-                            owner = destination.owner,
-                            repo = destination.repo,
-                        ),
-                    )
-                }
-
-                DeepLinkDestination.Home -> {
-                    if (currentScreen !is GithubStoreGraph.HomeScreen) {
-                        navController.navigate(GithubStoreGraph.HomeScreen) {
-                            popUpTo(GithubStoreGraph.HomeScreen) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Apps -> {
-                    navController.navigate(GithubStoreGraph.AppsScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                is DeepLinkDestination.AuthHandoff -> {
-                    AuthDeepLinkBus.publish(
-                        AuthDeepLinkEvent.Handoff(destination.handoffId, destination.state),
-                    )
-                    if (currentScreen !is GithubStoreGraph.AuthenticationScreen) {
-                        navController.navigate(GithubStoreGraph.AuthenticationScreen) {
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                is DeepLinkDestination.AuthError -> {
-                    AuthDeepLinkBus.publish(
-                        AuthDeepLinkEvent.Error(destination.reason, destination.state),
-                    )
-                    if (currentScreen !is GithubStoreGraph.AuthenticationScreen) {
-                        navController.navigate(GithubStoreGraph.AuthenticationScreen) {
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Tweaks -> {
-                    navController.navigate(GithubStoreGraph.TweaksScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.Feedback -> {
-                    navController.navigate(GithubStoreGraph.TweaksScreen) {
-                        launchSingleTop = true
-                    }
-                    TweaksDeepLinkBus.requestOpenFeedback()
-                }
-
-                DeepLinkDestination.About -> {
-                    navController.navigate(GithubStoreGraph.AboutScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.TweaksLicenses -> {
-                    navController.navigate(GithubStoreGraph.LicensesScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.Search -> {
-                    if (currentScreen !is GithubStoreGraph.SearchScreen) {
-                        navController.navigate(GithubStoreGraph.SearchScreen()) {
-                            popUpTo(GithubStoreGraph.HomeScreen) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Favourites -> {
-                    navController.navigate(GithubStoreGraph.FavouritesScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                DeepLinkDestination.RecentlyViewed -> {
-                    navController.navigate(GithubStoreGraph.RecentlyViewedScreen) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                DeepLinkDestination.None -> {
-                }
-            }
-            onDeepLinkConsumed()
-        }
-    }
-
-    ObserveAsEvents(KeyboardNavigation.events) { event ->
-        when (event) {
-            KeyboardNavigationEvent.OnCtrlFClick -> {
-                if (currentScreen !is GithubStoreGraph.SearchScreen) {
-                    navController.navigate(GithubStoreGraph.SearchScreen()) {
-                        popUpTo(GithubStoreGraph.HomeScreen) {
-                            saveState = true
-                        }
-
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            }
-        }
-    }
-
-    val resolvedDarkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
+    val resolvedDarkTheme = mainState.isDarkTheme ?: isSystemInDarkTheme()
     LaunchedEffect(resolvedDarkTheme) { onResolvedDarkTheme(resolvedDarkTheme) }
 
-    GithubStoreTheme(
-        fontTheme = state.currentFontTheme,
-        appTheme = state.currentColorTheme,
-        isAmoledTheme = state.isAmoledTheme,
-        isDarkTheme = resolvedDarkTheme,
-    ) {
-        ApplyAndroidSystemBars(resolvedDarkTheme)
+    val personality =
+        when (mainState.personality) {
+            AppPersonality.MANGA -> {
+                mangaPersonality(
+                    paper = mainState.mangaPaper.toMangaPaper(),
+                    accent = mainState.accent.toMangaAccent(),
+                )
+            }
 
-        val onAuthScreen = currentScreen is GithubStoreGraph.AuthenticationScreen
-        LaunchedEffect(onAuthScreen, state.showRateLimitDialog) {
-            if (onAuthScreen && state.showRateLimitDialog) {
-                viewModel.onAction(MainAction.DismissRateLimitDialog)
+            AppPersonality.CLASSIC -> {
+                classicPersonality(
+                    dark = resolvedDarkTheme,
+                    amoled = mainState.isAmoledTheme,
+                    accent = mainState.accent,
+                )
             }
         }
-        if (state.showRateLimitDialog && state.rateLimitInfo != null && !onAuthScreen) {
-            RateLimitDialog(
-                rateLimitInfo = state.rateLimitInfo!!,
-                isAuthenticated = state.isLoggedIn,
-                onDismiss = {
-                    viewModel.onAction(MainAction.DismissRateLimitDialog)
-                },
-                onSignIn = {
-                    viewModel.onAction(MainAction.DismissRateLimitDialog)
 
-                    navController.navigate(GithubStoreGraph.AuthenticationScreen)
-                },
-            )
-        }
-
-        if (state.showSessionExpiredDialog) {
-            SessionExpiredDialog(
-                onDismiss = {
-                    viewModel.onAction(MainAction.DismissSessionExpiredDialog)
-                },
-                onSignIn = {
-                    viewModel.onAction(MainAction.DismissSessionExpiredDialog)
-                    navController.navigate(GithubStoreGraph.AuthenticationScreen)
-                },
-            )
-        }
-
+    PersonalityTheme(personality, languageTag = mainState.appLanguageTag) {
         AppNavigation(
             navController = navController,
+            isScrollbarEnabled = mainState.isScrollbarEnabled,
+            contentWidth = mainState.contentWidth,
         )
 
-        val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
-        val pendingEntry by whatsNewViewModel.pendingEntry.collectAsStateWithLifecycle()
-        val hasHistory by whatsNewViewModel.hasHistory.collectAsStateWithLifecycle()
-        val onHomeScreen = currentScreen is GithubStoreGraph.HomeScreen
-        val authSettled = !state.showSessionExpiredDialog && !onAuthScreen
-        val rateLimitCleared = !state.showRateLimitDialog
-        val canShowWhatsNew = onHomeScreen && authSettled && rateLimitCleared
+        if (mainState.showRateLimitDialog && mainState.rateLimitInfo != null && !onAuthScreen) {
+            RateLimitDialog(
+                rateLimitInfo = mainState.rateLimitInfo!!,
+                isAuthenticated = mainState.isLoggedIn,
+                onDismiss = {
+                    mainViewModel.onAction(MainAction.DismissRateLimitDialog)
+                },
+                onSignIn = {
+                    mainViewModel.onAction(MainAction.DismissRateLimitDialog)
 
-        var debouncedReady by remember { mutableStateOf(false) }
-        LaunchedEffect(canShowWhatsNew) {
-            if (canShowWhatsNew) {
-                delay(600.milliseconds)
-                debouncedReady = true
-            } else {
-                debouncedReady = false
-            }
-        }
-
-        val entryToShow = pendingEntry
-        if (entryToShow != null && canShowWhatsNew && debouncedReady) {
-            WhatsNewSheet(
-                entry = entryToShow,
-                showHistoryAction = hasHistory,
-                onDismiss = { whatsNewViewModel.markSeen() },
-                onViewHistory = {
-                    whatsNewViewModel.markSeen()
-                    navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
+                    navController.navigate(GithubStoreGraph.AuthenticationScreen)
                 },
             )
         }
 
-        val announcementsViewModel: AnnouncementsViewModel = koinViewModel()
-        val pendingCritical by announcementsViewModel.pendingCriticalAcknowledgment.collectAsStateWithLifecycle()
-        val criticalToShow = pendingCritical
-        if (criticalToShow != null && canShowWhatsNew && debouncedReady && entryToShow == null) {
-            CriticalAnnouncementModal(
-                announcement = criticalToShow,
-                onAcknowledge = { announcementsViewModel.acknowledge(criticalToShow) },
-                onOpenDetails = { announcementsViewModel.openCta(criticalToShow) },
+        if (mainState.showSessionExpiredDialog) {
+            SessionExpiredDialog(
+                onDismiss = {
+                    mainViewModel.onAction(MainAction.DismissSessionExpiredDialog)
+                },
+                onSignIn = {
+                    mainViewModel.onAction(MainAction.DismissSessionExpiredDialog)
+                    navController.navigate(GithubStoreGraph.AuthenticationScreen)
+                },
             )
+        }
+
+        val pendingEntry by whatsNewViewModel.pendingEntry.collectAsStateWithLifecycle()
+
+        pendingEntry?.let { entryToShow ->
+            val onHomeScreen = currentScreen is GithubStoreGraph.ExploreScreen
+
+            if (onHomeScreen && !mainState.showRateLimitDialog) {
+                val hasHistory by whatsNewViewModel.hasHistory.collectAsStateWithLifecycle()
+
+                WhatsNewSheet(
+                    entry = entryToShow,
+                    showHistoryAction = hasHistory,
+                    onDismiss = { whatsNewViewModel.markSeen() },
+                    onViewHistory = {
+                        whatsNewViewModel.markSeen()
+                        navController.navigate(GithubStoreGraph.WhatsNewHistoryScreen)
+                    },
+                )
+            }
         }
     }
 }

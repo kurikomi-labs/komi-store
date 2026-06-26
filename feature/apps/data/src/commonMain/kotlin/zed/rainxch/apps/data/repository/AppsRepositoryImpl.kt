@@ -27,7 +27,7 @@ import zed.rainxch.core.data.network.BackendApiClient
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.network.shouldFallbackToGithubOrRethrow
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.DeviceApp
 import zed.rainxch.core.domain.utils.VersionMath
 import zed.rainxch.core.domain.model.transfer.ExportedApp
@@ -47,7 +47,7 @@ import kotlin.time.Clock
 class AppsRepositoryImpl(
     private val appLauncher: AppLauncher,
     private val appsRepository: InstalledAppsRepository,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
     private val clientProvider: GitHubClientProvider,
     private val backendApiClient: BackendApiClient,
     private val packageMonitor: PackageMonitor,

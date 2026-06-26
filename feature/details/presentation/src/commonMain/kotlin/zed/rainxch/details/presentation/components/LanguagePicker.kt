@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,120 +21,109 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Smartphone
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.components.overlays.GhsBottomSheet
-import zed.rainxch.core.presentation.vocabulary.Squiggle
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.overlays.KomiSheetPlacement
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.domain.model.SupportedLanguage
 import zed.rainxch.details.presentation.model.SupportedLanguages
 import zed.rainxch.githubstore.core.presentation.res.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePicker(
     isVisible: Boolean,
+    query: String,
+    languages: ImmutableList<SupportedLanguage>,
     selectedLanguageCode: String?,
     deviceLanguageCode: String,
+    onQueryChange: (String) -> Unit,
     onLanguageSelected: (SupportedLanguage) -> Unit,
     onDismiss: () -> Unit,
 ) {
     if (!isVisible) return
 
-    var searchQuery by remember { mutableStateOf("") }
-
     val deviceLanguage = remember(deviceLanguageCode) {
         SupportedLanguages.all.find { it.code == deviceLanguageCode }
     }
 
-    val filteredLanguages =
-        remember(searchQuery) {
-            val all = SupportedLanguages.all
-            if (searchQuery.isBlank()) {
-                all
-            } else {
-                all.filter {
-                    it.displayName.contains(searchQuery, ignoreCase = true) ||
-                        it.code.contains(searchQuery, ignoreCase = true)
-                }
-            }
-        }
-
-    GhsBottomSheet(onDismissRequest = onDismiss) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSheet(onDismiss = onDismiss, placement = KomiSheetPlacement.Bottom) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.translate_to),
-                style = MaterialTheme.typography.titleLarge,
+                role = KomiTextRole.Title,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(vertical = 6.dp),
+                uppercase = false,
             )
-            Squiggle()
             Spacer(Modifier.height(8.dp))
 
-            GhsTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
+            KomiTextField(
+                value = query,
+                onValueChange = onQueryChange,
                 placeholder = stringResource(Res.string.search_language),
                 leadingIcon = Icons.Default.Search,
-                singleLine = true,
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            if (searchQuery.isBlank() && deviceLanguage != null) {
+            if (query.isBlank() && deviceLanguage != null) {
                 Row(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                            .clip(RoundedCornerShape(shape.corner))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f))
                             .clickable { onLanguageSelected(deviceLanguage) }
                             .padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
+                    KomiIcon(
                         imageVector = Icons.Default.Smartphone,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colors.primary,
                         modifier = Modifier.size(18.dp),
                     )
                     Spacer(Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(
+                        KomiText(
                             text = deviceLanguage.displayName,
-                            style = MaterialTheme.typography.titleSmall,
+                            role = KomiTextRole.Title,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = colors.primary,
+                            uppercase = false,
                         )
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.select_language),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.primary.copy(alpha = 0.7f),
+                            uppercase = false,
                         )
                     }
                     if (deviceLanguage.code == selectedLanguageCode) {
-                        Icon(
+                        KomiIcon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = colors.primary,
                             modifier = Modifier.size(20.dp),
                         )
                     }
@@ -142,14 +132,14 @@ fun LanguagePicker(
                 Spacer(Modifier.height(4.dp))
             }
 
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            KomiHorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 420.dp),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(
-                    items = filteredLanguages,
+                    items = languages,
                     key = { it.code },
                 ) { language ->
                     LanguageListItem(
@@ -178,31 +168,35 @@ private fun LanguageListItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val colors = LocalPersonality.current.colors
         Column(modifier = Modifier.weight(1f)) {
-            Text(
+            KomiText(
                 text = language.displayName,
-                style = MaterialTheme.typography.titleSmall,
+                role = KomiTextRole.Title,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                 color =
                     if (isSelected) {
-                        MaterialTheme.colorScheme.primary
+                        colors.primary
                     } else {
-                        MaterialTheme.colorScheme.onSurface
+                        colors.onSurface
                     },
+                uppercase = false,
             )
-            Text(
+            KomiText(
                 text = language.code,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.outline,
+                role = KomiTextRole.Label,
+                fontSize = 11.sp,
+                color = colors.outline,
+                uppercase = false,
             )
         }
 
         if (isSelected) {
             Spacer(Modifier.width(8.dp))
-            Icon(
+            KomiIcon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = colors.primary,
                 modifier = Modifier.size(20.dp),
             )
         }

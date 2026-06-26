@@ -11,28 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -43,25 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.theme.LocalStatusColors
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiFab
+import zed.rainxch.core.presentation.components.chips.KomiChip
+import zed.rainxch.core.presentation.components.chips.KomiChipKind
+import zed.rainxch.core.presentation.components.overlays.KomiSheet
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.locals.LocalStatusColors
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issue_opened_by
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_empty_closed
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_empty_open
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_closed
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_filter_open
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_issues_title
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_body_hint
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_submit
-import zed.rainxch.githubstore.core.presentation.res.repo_pages_new_issue_title_hint
-import zed.rainxch.repopages.domain.model.IssueLabel
+import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.repopages.domain.model.IssueState
 import zed.rainxch.repopages.domain.model.RepoIssue
 import zed.rainxch.repopages.presentation.components.LabelChip
@@ -69,7 +54,6 @@ import zed.rainxch.repopages.presentation.components.RepoPagesEmpty
 import zed.rainxch.repopages.presentation.components.RepoPagesError
 import zed.rainxch.repopages.presentation.components.RepoPagesLoading
 import zed.rainxch.repopages.presentation.components.RepoPagesTopBar
-import zed.rainxch.repopages.presentation.utils.parseLabelColor
 
 @Composable
 fun IssuesRoot(
@@ -78,12 +62,12 @@ fun IssuesRoot(
     viewModel: IssuesViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is IssuesEvent.OnMessage -> {
-                snackbarHostState.showSnackbar(event.message)
+                toastState.show(event.message)
             }
         }
     }
@@ -108,7 +92,7 @@ fun IssuesRoot(
 
     IssuesScreen(
         state = state,
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
         onAction = { action ->
             when (action) {
                 IssuesAction.OnBackClick -> onNavigateBack()
@@ -120,13 +104,12 @@ fun IssuesRoot(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun IssuesScreen(
     state: IssuesUiState,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (IssuesAction) -> Unit
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             RepoPagesTopBar(
                 title = stringResource(Res.string.repo_pages_issues_title),
@@ -135,32 +118,19 @@ private fun IssuesScreen(
                 },
             )
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-            )
-        },
+        toastState = toastState,
         floatingActionButton = {
             if (!state.isLoading && state.errorMessage == null) {
-                ExtendedFloatingActionButton(
+                KomiFab(
                     onClick = {
                         onAction(IssuesAction.OnOpenNewIssue)
                     },
-                    text = {
-                        Text(
-                            text = stringResource(Res.string.repo_pages_new_issue)
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null
-                        )
-                    },
+                    icon = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.repo_pages_new_issue),
+                    label = stringResource(Res.string.repo_pages_new_issue),
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -173,19 +143,22 @@ private fun IssuesScreen(
                     .padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                FilterChip(
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_open),
+                    kind = KomiChipKind.Filter,
                     selected = state.filter == IssueState.OPEN,
                     onClick = {
                         onAction(IssuesAction.OnFilterChange(IssueState.OPEN))
                     },
-                    label = { Text(stringResource(Res.string.repo_pages_issues_filter_open)) },
                 )
-                FilterChip(
+
+                KomiChip(
+                    label = stringResource(Res.string.repo_pages_issues_filter_closed),
+                    kind = KomiChipKind.Filter,
                     selected = state.filter == IssueState.CLOSED,
                     onClick = {
                         onAction(IssuesAction.OnFilterChange(IssueState.CLOSED))
                     },
-                    label = { Text(stringResource(Res.string.repo_pages_issues_filter_closed)) },
                 )
             }
 
@@ -222,7 +195,6 @@ private fun IssuesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewIssueSheet(
     state: IssuesUiState,
@@ -231,8 +203,10 @@ private fun NewIssueSheet(
     onBodyChange: (String) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    KomiSheet(
+        onDismiss = onDismiss,
+        title = stringResource(Res.string.repo_pages_new_issue),
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -240,28 +214,25 @@ private fun NewIssueSheet(
                 .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.repo_pages_new_issue),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            OutlinedTextField(
+            KomiTextField(
                 value = state.newIssueTitle,
                 onValueChange = onTitleChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(stringResource(Res.string.repo_pages_new_issue_title_hint)) },
-                singleLine = true,
+                placeholder = stringResource(Res.string.repo_pages_new_issue_title_hint),
                 enabled = !state.isCreatingIssue,
             )
-            OutlinedTextField(
+
+            KomiTextField(
                 value = state.newIssueBody,
                 onValueChange = onBodyChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(stringResource(Res.string.repo_pages_new_issue_body_hint)) },
-                minLines = 4,
+                placeholder = stringResource(Res.string.repo_pages_new_issue_body_hint),
+                multiline = true,
+                rows = 4,
                 enabled = !state.isCreatingIssue,
             )
-            GhsButton(
+
+            KomiButton(
                 onClick = onSubmit,
                 label = stringResource(Res.string.repo_pages_new_issue_submit),
                 enabled = !state.isCreatingIssue && state.newIssueTitle.isNotBlank(),
@@ -307,13 +278,14 @@ private fun IssuesList(
                 }
             )
         }
+
         if (state.isLoadingMore) {
             item(key = "loading_more") {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    KomiCircularProgress(modifier = Modifier.size(24.dp))
                 }
             }
         }
@@ -325,10 +297,10 @@ private fun IssueRow(
     issue: RepoIssue,
     onClick: () -> Unit,
 ) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    KomiSurface(
         onClick = onClick,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -346,31 +318,39 @@ private fun IssueRow(
                         } else {
                             statusColors.issueClosed
                         },
-                        shape = CircleShape,
+                        shape = RoundedCornerShape(shape.cornerSmall),
                     ),
             )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Text(
+                KomiText(
                     text = issue.title,
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
-                Text(
+
+                KomiText(
                     text = "#${issue.issueId} · " +
                             stringResource(
                                 Res.string.repo_pages_issue_opened_by,
                                 issue.authorLogin
                             ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
+
                 if (issue.labels.isNotEmpty()) {
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -385,4 +365,3 @@ private fun IssueRow(
         }
     }
 }
-

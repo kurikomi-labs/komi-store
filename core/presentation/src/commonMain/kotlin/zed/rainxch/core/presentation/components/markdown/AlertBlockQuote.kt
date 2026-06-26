@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Info
@@ -33,7 +34,9 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.core.presentation.res.*
 
-enum class GithubAlertKind(val token: String) {
+enum class GithubAlertKind(
+    val token: String,
+) {
     NOTE("NOTE"),
     TIP("TIP"),
     IMPORTANT("IMPORTANT"),
@@ -42,14 +45,14 @@ enum class GithubAlertKind(val token: String) {
     ;
 
     companion object {
-
         private val PATTERN = Regex("""^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)]\s*$""")
 
         fun parse(blockquoteText: String): Match? {
-            val stripped = blockquoteText
-                .lineSequence()
-                .map { line -> line.trimStart().removePrefix(">").trimStart() }
-                .toList()
+            val stripped =
+                blockquoteText
+                    .lineSequence()
+                    .map { line -> line.trimStart().removePrefix(">").trimStart() }
+                    .toList()
             if (stripped.isEmpty()) return null
             val first = stripped.first()
             val match = PATTERN.matchEntire(first) ?: return null
@@ -59,7 +62,10 @@ enum class GithubAlertKind(val token: String) {
         }
     }
 
-    data class Match(val kind: GithubAlertKind, val body: String)
+    data class Match(
+        val kind: GithubAlertKind,
+        val body: String,
+    )
 }
 
 @Composable
@@ -83,7 +89,7 @@ fun AlertBlockQuote(
     Surface(
         color = palette.container,
         contentColor = palette.content,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(LocalPersonality.current.shape.corner),
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
     ) {
         Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
@@ -119,59 +125,78 @@ fun AlertBlockQuote(
     }
 }
 
-private fun ASTNode.text(content: String): String =
-    content.substring(startOffset, endOffset)
+private fun ASTNode.text(content: String): String = content.substring(startOffset, endOffset)
 
-private data class AlertPalette(val container: Color, val content: Color, val accent: Color)
+private data class AlertPalette(
+    val container: Color,
+    val content: Color,
+    val accent: Color,
+)
 
 @Composable
 private fun paletteFor(kind: GithubAlertKind): AlertPalette {
     val scheme = MaterialTheme.colorScheme
     return when (kind) {
-        GithubAlertKind.NOTE -> AlertPalette(
-            container = scheme.secondaryContainer,
-            content = scheme.onSecondaryContainer,
-            accent = scheme.secondary,
-        )
-        GithubAlertKind.TIP -> AlertPalette(
-            container = scheme.tertiaryContainer,
-            content = scheme.onTertiaryContainer,
-            accent = scheme.tertiary,
-        )
-        GithubAlertKind.IMPORTANT -> AlertPalette(
-            container = scheme.primaryContainer,
-            content = scheme.onPrimaryContainer,
-            accent = scheme.primary,
-        )
-        GithubAlertKind.WARNING -> AlertPalette(
-            container = scheme.tertiaryContainer,
-            content = scheme.onTertiaryContainer,
-            accent = scheme.tertiary,
-        )
-        GithubAlertKind.CAUTION -> AlertPalette(
-            container = scheme.errorContainer,
-            content = scheme.onErrorContainer,
-            accent = scheme.error,
-        )
+        GithubAlertKind.NOTE -> {
+            AlertPalette(
+                container = scheme.secondaryContainer,
+                content = scheme.onSecondaryContainer,
+                accent = scheme.secondary,
+            )
+        }
+
+        GithubAlertKind.TIP -> {
+            AlertPalette(
+                container = scheme.tertiaryContainer,
+                content = scheme.onTertiaryContainer,
+                accent = scheme.tertiary,
+            )
+        }
+
+        GithubAlertKind.IMPORTANT -> {
+            AlertPalette(
+                container = scheme.primaryContainer,
+                content = scheme.onPrimaryContainer,
+                accent = scheme.primary,
+            )
+        }
+
+        GithubAlertKind.WARNING -> {
+            AlertPalette(
+                container = scheme.tertiaryContainer,
+                content = scheme.onTertiaryContainer,
+                accent = scheme.tertiary,
+            )
+        }
+
+        GithubAlertKind.CAUTION -> {
+            AlertPalette(
+                container = scheme.errorContainer,
+                content = scheme.onErrorContainer,
+                accent = scheme.error,
+            )
+        }
     }
 }
 
-private fun iconFor(kind: GithubAlertKind): ImageVector = when (kind) {
-    GithubAlertKind.NOTE -> Icons.Outlined.Info
-    GithubAlertKind.TIP -> Icons.Outlined.Lightbulb
-    GithubAlertKind.IMPORTANT -> Icons.Outlined.Campaign
-    GithubAlertKind.WARNING -> Icons.Outlined.Warning
-    GithubAlertKind.CAUTION -> Icons.Outlined.Report
-}
+private fun iconFor(kind: GithubAlertKind): ImageVector =
+    when (kind) {
+        GithubAlertKind.NOTE -> Icons.Outlined.Info
+        GithubAlertKind.TIP -> Icons.Outlined.Lightbulb
+        GithubAlertKind.IMPORTANT -> Icons.Outlined.Campaign
+        GithubAlertKind.WARNING -> Icons.Outlined.Warning
+        GithubAlertKind.CAUTION -> Icons.Outlined.Report
+    }
 
 @Composable
-private fun labelFor(kind: GithubAlertKind): String = when (kind) {
-    GithubAlertKind.NOTE -> stringResource(Res.string.markdown_alert_note)
-    GithubAlertKind.TIP -> stringResource(Res.string.markdown_alert_tip)
-    GithubAlertKind.IMPORTANT -> stringResource(Res.string.markdown_alert_important)
-    GithubAlertKind.WARNING -> stringResource(Res.string.markdown_alert_warning)
-    GithubAlertKind.CAUTION -> stringResource(Res.string.markdown_alert_caution)
-}
+private fun labelFor(kind: GithubAlertKind): String =
+    when (kind) {
+        GithubAlertKind.NOTE -> stringResource(Res.string.markdown_alert_note)
+        GithubAlertKind.TIP -> stringResource(Res.string.markdown_alert_tip)
+        GithubAlertKind.IMPORTANT -> stringResource(Res.string.markdown_alert_important)
+        GithubAlertKind.WARNING -> stringResource(Res.string.markdown_alert_warning)
+        GithubAlertKind.CAUTION -> stringResource(Res.string.markdown_alert_caution)
+    }
 
 @Composable
 fun defaultBlockQuoteFallback(model: MarkdownComponentModel) {

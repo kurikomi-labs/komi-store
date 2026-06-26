@@ -9,10 +9,16 @@ object BottomNavigationUtils {
     fun items(): List<BottomNavigationItem> =
         listOf(
             BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_home_title,
-                iconOutlined = Icons.Outlined.Home,
-                iconFilled = Icons.Filled.Home,
-                screen = GithubStoreGraph.HomeScreen,
+                titleRes = Res.string.bottom_nav_explore_title,
+                iconOutlined = Icons.Outlined.Explore,
+                iconFilled = Icons.Filled.Explore,
+                screen = GithubStoreGraph.ExploreScreen,
+            ),
+            BottomNavigationItem(
+                titleRes = Res.string.bottom_nav_top_charts_title,
+                iconOutlined = Icons.Outlined.Leaderboard,
+                iconFilled = Icons.Filled.Leaderboard,
+                screen = GithubStoreGraph.ChartsScreen,
             ),
             BottomNavigationItem(
                 titleRes = Res.string.bottom_nav_search_title,
@@ -30,7 +36,7 @@ object BottomNavigationUtils {
                 titleRes = Res.string.bottom_nav_profile_title,
                 iconOutlined = Icons.Outlined.Person2,
                 iconFilled = Icons.Filled.Person2,
-                screen = GithubStoreGraph.ProfileScreen,
+                screen = GithubStoreGraph.ProfileGraph.ProfileScreen,
             ),
         )
 

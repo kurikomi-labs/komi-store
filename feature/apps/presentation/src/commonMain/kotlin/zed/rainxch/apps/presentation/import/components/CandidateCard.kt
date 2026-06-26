@@ -1,14 +1,15 @@
 package zed.rainxch.apps.presentation.import.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,22 +18,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.buttons.GhsButtonVariant
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.buttons.KomiButtonVariant
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.apps.presentation.components.InstalledAppIcon
@@ -68,37 +71,114 @@ fun CandidateCard(
     onSearchSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expandLabel = stringResource(Res.string.external_import_card_expand_label)
-    val collapseLabel = stringResource(Res.string.external_import_card_collapse_label)
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val reducedMotion = LocalReducedMotion.current
+    val clickActionLabel = if (expanded) {
+        stringResource(Res.string.external_import_card_collapse_label)
+    } else {
+        stringResource(Res.string.external_import_card_expand_label)
+    }
 
-    Surface(
-        shape = Radii.row,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(Radii.row)
-                .clickable(
-                    onClickLabel = if (expanded) collapseLabel else expandLabel,
-                    role = Role.Button,
-                ) { onToggleExpanded() },
+    KomiSurface(
+        onClick = onToggleExpanded,
+        contentPadding = PaddingValues(20.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                role = Role.Button
+                onClick(label = clickActionLabel, action = null)
+            },
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            CandidateHeader(candidate = candidate)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                InstalledAppIcon(
+                    packageName = candidate.packageName,
+                    appName = candidate.appLabel,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(shape.corner)),
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    KomiText(
+                        text = candidate.appLabel,
+                        role = KomiTextRole.Title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                    )
+
+                    KomiText(
+                        text = candidate.packageName,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(shape.cornerSmall))
+                            .background(colors.primaryContainer),
+                    ) {
+                        KomiText(
+                            text = stringResource(
+                                Res.string.external_import_card_installer_chip,
+                                candidate.installerLabel,
+                            ),
+                            role = KomiTextRole.Label,
+                            fontSize = 11.sp,
+                            color = colors.onPrimaryContainer,
+                            uppercase = false,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        )
+                    }
+                }
+            }
 
             PreselectedRow(suggestion = candidate.preselectedSuggestion)
 
             if (!expanded) {
-                CollapsedActions(
-                    canLink = candidate.preselectedSuggestion != null,
-                    onLink = onLink,
-                    onExpand = onToggleExpanded,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (candidate.preselectedSuggestion != null) {
+                        KomiButton(
+                            onClick = onLink,
+                            label = stringResource(Res.string.external_import_card_action_link),
+                            variant = KomiButtonVariant.Primary,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+
+                    KomiButton(
+                        onClick = onToggleExpanded,
+                        label = stringResource(Res.string.external_import_card_action_more),
+                        variant = KomiButtonVariant.Text,
+                        trailingIcon = Icons.Default.KeyboardArrowDown,
+                        modifier = if (candidate.preselectedSuggestion != null) {
+                            Modifier
+                        } else {
+                            Modifier.weight(1f)
+                        },
+                    )
+                }
             }
 
             AnimatedVisibility(
@@ -135,17 +215,17 @@ fun CandidateCard(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        GhsButton(
+                        KomiButton(
                             onClick = onSkip,
                             label = stringResource(Res.string.external_import_card_action_skip),
-                            variant = GhsButtonVariant.Outline,
+                            variant = KomiButtonVariant.Outline,
                             modifier = Modifier.weight(1f),
                         )
 
-                        GhsButton(
+                        KomiButton(
                             onClick = onToggleExpanded,
                             label = stringResource(Res.string.external_import_card_action_less),
-                            variant = GhsButtonVariant.Text,
+                            variant = KomiButtonVariant.Text,
                             trailingIcon = Icons.Default.KeyboardArrowUp,
                         )
                     }
@@ -156,163 +236,87 @@ fun CandidateCard(
 }
 
 @Composable
-private fun CollapsedActions(
-    canLink: Boolean,
-    onLink: () -> Unit,
-    onExpand: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (canLink) {
-            GhsButton(
-                onClick = onLink,
-                label = stringResource(Res.string.external_import_card_action_link),
-                variant = GhsButtonVariant.Primary,
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        GhsButton(
-            onClick = onExpand,
-            label = stringResource(Res.string.external_import_card_action_more),
-            variant = GhsButtonVariant.Text,
-            trailingIcon = Icons.Default.KeyboardArrowDown,
-            modifier = if (canLink) Modifier else Modifier.weight(1f),
-        )
-    }
-}
-
-@Composable
-private fun CandidateHeader(candidate: CandidateUi) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        InstalledAppIcon(
-            packageName = candidate.packageName,
-            appName = candidate.appLabel,
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp)),
-        )
-
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = candidate.appLabel,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Text(
-                text = candidate.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            InstallerChip(installerLabel = candidate.installerLabel)
-        }
-    }
-}
-
-@Composable
-private fun InstallerChip(installerLabel: String) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.external_import_card_installer_chip, installerLabel),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-        )
-    }
-}
-
-@Composable
 private fun PreselectedRow(suggestion: RepoSuggestionUi?) {
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
     val containerColor =
         if (suggestion != null) {
-            MaterialTheme.colorScheme.primaryContainer
+            colors.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surfaceVariant
+            colors.surfaceVariant
         }
     val contentColor =
         if (suggestion != null) {
-            MaterialTheme.colorScheme.onPrimaryContainer
+            colors.onPrimaryContainer
         } else {
-            MaterialTheme.colorScheme.onSurfaceVariant
+            colors.onSurfaceVariant
         }
-    Surface(
-        color = containerColor,
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(shape.corner))
+            .background(containerColor),
     ) {
         if (suggestion == null) {
-            Text(
+            KomiText(
                 text = stringResource(Res.string.external_import_card_preselect_unknown),
-                style = MaterialTheme.typography.bodyMedium,
+                role = KomiTextRole.Body,
                 color = contentColor,
+                uppercase = false,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
             )
         } else {
-            val percent = (suggestion.confidence * 100).roundToInt().coerceIn(0, 100)
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.external_import_card_preselect_known_prefix),
-                    style = MaterialTheme.typography.labelSmall,
+                    role = KomiTextRole.Label,
+                    fontSize = 11.sp,
                     color = contentColor,
                 )
 
-                Text(
+                KomiText(
                     text = suggestion.repo,
-                    style = MaterialTheme.typography.titleMedium,
+                    role = KomiTextRole.Title,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    uppercase = false,
                 )
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    KomiText(
                         text = stringResource(
                             Res.string.external_import_card_owner_byline,
                             suggestion.owner,
                         ),
-                        style = MaterialTheme.typography.bodySmall,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
                         color = contentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        uppercase = false,
                         modifier = Modifier.weight(1f, fill = false),
                     )
 
-                    Text(
+                    KomiText(
                         text = stringResource(
                             Res.string.external_import_match_confidence_chip,
-                            percent,
-                        ) + "%",
-                        style = MaterialTheme.typography.labelSmall,
+                            suggestion.confidencePercent,
+                        ),
+                        role = KomiTextRole.Label,
+                        fontSize = 11.sp,
                         color = contentColor,
+                        uppercase = false,
                     )
                 }
             }
         }
     }
 }
-

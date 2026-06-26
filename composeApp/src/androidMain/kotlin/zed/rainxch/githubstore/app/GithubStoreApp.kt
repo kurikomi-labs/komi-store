@@ -3,7 +3,7 @@ package zed.rainxch.githubstore.app
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
+import androidx.core.content.ContextCompat
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,15 +11,19 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import zed.rainxch.core.data.local.db.dao.ExternalLinkDao
+import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.data.services.DownloadNotificationObserver
 import zed.rainxch.core.data.services.PackageEventReceiver
 import zed.rainxch.core.data.services.UpdateScheduler
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstallSource
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.repository.ExternalImportRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
+import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.system.SystemInstallSerializer
@@ -28,6 +32,8 @@ import zed.rainxch.githubstore.app.di.initKoin
 class GithubStoreApp : Application() {
     private var packageEventReceiver: PackageEventReceiver? = null
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val proxyRepository: ProxyRepository by inject()
+    private val logger: KomiStoreLogger by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -37,22 +43,45 @@ class GithubStoreApp : Application() {
         }
 
         appScope.launch {
-            runCatching { createNotificationChannels() }
-                .onFailure { Logger.w(it) { "Notification-channel creation failed" } }
+            runCatching {
+                createNotificationChannels()
+            }.onFailure {
+                logger.warn("$it - Notification-channel creation failed")
+            }
         }
+
         appScope.launch {
-            runCatching { registerPackageEventReceiver() }
-                .onFailure { Logger.w(it) { "Dynamic PackageEventReceiver registration failed" } }
+            runCatching {
+                registerPackageEventReceiver()
+            }.onFailure {
+                logger.warn("$it - Dynamic PackageEventReceiver registration failed")
+            }
         }
+
         appScope.launch {
-            runCatching { startDownloadNotificationObserver() }
-                .onFailure { Logger.w(it) { "Download notification observer start failed" } }
+            runCatching {
+                startDownloadNotificationObserver()
+            }.onFailure {
+                logger.warn("$it - Download notification observer start failed")
+            }
         }
 
         scheduleBackgroundUpdateChecks()
         registerSelfAsInstalledApp()
         scheduleInitialExternalScan()
         scheduleSigningSeedSync()
+        bootstrapProxy()
+    }
+
+    private fun bootstrapProxy() {
+        runCatching {
+            ProxyManager.bootstrap(
+                repository = proxyRepository,
+                appScope = appScope,
+            )
+        }.onFailure {
+            logger.warn("$it - Proxy bootstrap failed")
+        }
     }
 
     private fun scheduleInitialExternalScan() {
@@ -60,7 +89,7 @@ class GithubStoreApp : Application() {
             runCatching {
                 get<ExternalImportRepository>().scheduleInitialScanIfNeeded()
             }.onFailure {
-                Logger.w(it) { "Initial external scan scheduling failed" }
+                logger.warn("$it - Initial external scan scheduling failed")
             }
         }
     }
@@ -70,7 +99,7 @@ class GithubStoreApp : Application() {
             runCatching {
                 get<ExternalImportRepository>().syncSigningFingerprintSeed()
             }.onFailure {
-                Logger.w(it) { "Signing seed sync failed" }
+                logger.warn("$it - Signing seed sync failed")
             }
         }
     }
@@ -127,11 +156,12 @@ class GithubStoreApp : Application() {
             )
         val filter = PackageEventReceiver.createIntentFilter()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(receiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            this,
+            receiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
 
         packageEventReceiver = receiver
     }
@@ -176,7 +206,7 @@ class GithubStoreApp : Application() {
                 val packageMonitor = get<PackageMonitor>()
                 val systemInfo = packageMonitor.getInstalledPackageInfo(selfPackageName)
                 if (systemInfo == null) {
-                    Logger.w { "GithubStoreApp: Skip self-registration, package info missing for $selfPackageName" }
+                    logger.warn("GithubStoreApp: Skip self-registration, package info missing for $selfPackageName")
                     return@launch
                 }
 
@@ -284,11 +314,11 @@ class GithubStoreApp : Application() {
         private const val SELF_SHA256_FINGERPRINT =
             @Suppress("ktlint:standard:max-line-length")
             "B7:F2:8E:19:8E:48:C1:93:B0:38:C6:5D:92:DD:F7:BC:07:7B:0D:B5:9E:BC:9B:25:0A:6D:AC:48:C1:18:03:CA"
-        private const val SELF_REPO_OWNER = "OpenHub-Store"
-        private const val SELF_REPO_NAME = "GitHub-Store"
+        private const val SELF_REPO_OWNER = "kurikomi-labs"
+        private const val SELF_REPO_NAME = "komi-store"
         private const val SELF_AVATAR_URL =
             @Suppress("ktlint:standard:max-line-length")
-            "https://raw.githubusercontent.com/OpenHub-Store/GitHub-Store/refs/heads/main/media-resources/app_icon.png"
+            "https://raw.githubusercontent.com/kurikomi-labs/komi-store/refs/heads/main/media-resources/app_icon.png"
         const val UPDATES_CHANNEL_ID = "app_updates"
         const val UPDATE_SERVICE_CHANNEL_ID = "update_service"
         const val DOWNLOADS_CHANNEL_ID = "app_downloads"

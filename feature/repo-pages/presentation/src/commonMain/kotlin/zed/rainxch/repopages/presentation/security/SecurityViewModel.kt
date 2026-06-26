@@ -25,12 +25,8 @@ class SecurityViewModel(
 
     fun onAction(action: SecurityAction) {
         when (action) {
-            SecurityAction.OnBackClick -> {
-                // Handled in composable
-            }
-            SecurityAction.OnRetry -> {
-                load()
-            }
+            SecurityAction.OnBackClick -> Unit
+            SecurityAction.OnRetry -> load()
         }
     }
 

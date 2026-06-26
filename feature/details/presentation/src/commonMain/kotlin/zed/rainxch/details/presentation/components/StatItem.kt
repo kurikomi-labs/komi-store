@@ -4,16 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.core.presentation.utils.formatCount
 
 @Composable
@@ -31,31 +31,31 @@ fun StatItem(
     stat: Long,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier
-            .clip(Radii.row)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
-            .background(MaterialTheme.colorScheme.surface)
+            .clip(rowShape)
+            .border(width = 1.dp, color = colors.outline, shape = rowShape)
+            .background(colors.surface)
             .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurfaceVariant,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = formatCount(stat),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Black,
-                fontSize = 22.sp,
-                letterSpacing = (-0.3).sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Black,
+            color = colors.onSurface,
+            uppercase = false,
         )
     }
 }
@@ -66,33 +66,32 @@ fun TextStatItem(
     value: String,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
+    val rowShape = RoundedCornerShape(LocalPersonality.current.shape.corner)
     Column(
         modifier = modifier
-            .clip(Radii.row)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = Radii.row)
-            .background(MaterialTheme.colorScheme.surface)
+            .clip(rowShape)
+            .border(width = 1.dp, color = colors.outline, shape = rowShape)
+            .background(colors.surface)
             .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
-        Text(
+        KomiText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.onSurfaceVariant,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
         )
-        Text(
+        KomiText(
             text = value,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Black,
-                fontSize = 18.sp,
-                letterSpacing = (-0.3).sp,
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
+            role = KomiTextRole.Title,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Black,
+            color = colors.onSurface,
             maxLines = 1,
-            softWrap = false,
+            uppercase = false,
         )
     }
 }

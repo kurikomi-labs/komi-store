@@ -122,7 +122,7 @@
     <string name="logout">Çıkış Yap</string>
 
     <!-- Snackbar -->
-    <string name="logout_success">Başarılı şekilde çıkış yapıldı, yönlendiriliyor...</string>
+    <string name="logout_success">Başarılı şekilde çıkış yapıldı</string>
 
     <!-- Dialog -->
     <string name="warning">Uyarı!</string>
@@ -301,6 +301,7 @@
     <string name="time_years_ago">%1$d y önce</string>
     <string name="time_months_ago">%1$d ay önce</string>
     <string name="time_days_ago">%1$d g önce</string>
+    <string name="time_weeks_ago">%1$d hafta önce</string>
     <string name="time_hours_ago">%1$d s önce</string>
     <string name="time_minutes_ago">%1$d d önce</string>
 
@@ -314,7 +315,7 @@
     <string name="released_days_ago">%1$d gün önce yayınlandı</string>
     <string name="released_on_date">%1$s tarihinde yayınlandı</string>
 
-    <string name="bottom_nav_home_title">Ana Sayfa</string>
+    <string name="bottom_nav_explore_title">Keşfet</string>
     <string name="bottom_nav_search_title">Ara</string>
     <string name="bottom_nav_apps_title">Kütüphane</string>
     <string name="bottom_nav_profile_title">Profil</string>
@@ -1405,4 +1406,56 @@
     <string name="repo_pages_pulls_empty_closed">Kapalı pull request yok.</string>
     <string name="repo_pages_pr_state_merged">Birleştirildi</string>
     <string name="repo_pages_pr_draft">Taslak</string>
+
+    <string name="feed_end_cap">続く · TO BE CONTINUED</string>
+    <string name="feed_masthead_subtitle">発見 · DISCOVER APPS</string>
+    <string name="home_masthead_subtitle">ランキング · CHARTS &amp; PICKS</string>
+    <string name="feed_platform_picker_title_jp">対応</string>
+    <string name="home_chart_popular_jp">人気</string>
+    <string name="home_chart_releases_jp">新着</string>
+    <string name="home_chart_trending_jp">急上昇</string>
+    <string name="sidebar_browse_jp">航行</string>
+    <string name="sidebar_categories_jp">部門</string>
+    <string name="sidebar_nav_charts_jp">ランキング</string>
+    <string name="sidebar_nav_explore_jp">発見</string>
+    <string name="sidebar_nav_search_jp">検索</string>
+    <string name="sidebar_nav_you_jp">あなた</string>
+    <string name="sidebar_platform_jp">対応</string>
+    <string name="feed_masthead_title">Komi Store</string>
+    <string name="feed_masthead_title_accent">Store</string>
+    <string name="platform_section_ios">iOS</string>
+    <string name="paper_nord">Nord</string>
+    <string name="appearance_section_paper">Kağıt</string>
+    <string name="bottom_nav_top_charts_title">En Popüler</string>
+    <string name="cd_more_actions">Diğer işlemler</string>
+    <string name="feed_category_ai">Yapay Zeka</string>
+    <string name="feed_category_media">Medya</string>
+    <string name="feed_category_networking">Ağ</string>
+    <string name="feed_category_privacy">Gizlilik</string>
+    <string name="feed_category_reading">Okuma</string>
+    <string name="feed_category_social">Sosyal</string>
+    <string name="feed_category_tools">Araçlar</string>
+    <string name="feed_cd_profile">Profil</string>
+    <string name="feed_cd_search">Ara</string>
+    <string name="feed_empty_reset">Filtreleri sıfırla</string>
+    <string name="feed_empty_subtitle">Henüz %2$s için %1$s uygulama yok.</string>
+    <string name="feed_empty_title">Burada henüz bir şey yok</string>
+    <string name="feed_failed_to_load">Akış yüklenemedi</string>
+    <string name="feed_browsing">Göz at</string>
+    <string name="feed_loading">En yenisi yükleniyor…</string>
+    <string name="feed_offline">Çevrimdışı — kayıtlı bir akış gösteriliyor</string>
+    <string name="feed_platform_all">Tüm Platformlar</string>
+    <string name="feed_platform_picker_title">İşletim sisteminizi seçin</string>
+    <string name="home_chart_popular">Popüler</string>
+    <string name="home_chart_releases">Sürümler</string>
+    <string name="home_chart_trending">Trend</string>
+    <string name="home_masthead_title">En Popüler</string>
+    <string name="home_platform_filter">Platformları filtrele</string>
+    <string name="paper_day">Gündüz</string>
+    <string name="paper_night">Gece</string>
+    <string name="repo_card_details">Ayrıntılar</string>
+    <string name="sidebar_browse">Gözat</string>
+    <string name="sidebar_categories">Kategoriler</string>
+    <string name="sidebar_platform">Platform</string>
+    <string name="tweaks_privacy_usage_data_section">Kullanım verileri</string>
 </resources>

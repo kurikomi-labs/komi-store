@@ -2,10 +2,10 @@ package zed.rainxch.repopages.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import zed.rainxch.core.presentation.components.progress.KomiCircularProgress
 
 @Composable
 fun RepoPagesLoading(modifier: Modifier = Modifier) {
@@ -13,6 +13,6 @@ fun RepoPagesLoading(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator()
+        KomiCircularProgress()
     }
 }

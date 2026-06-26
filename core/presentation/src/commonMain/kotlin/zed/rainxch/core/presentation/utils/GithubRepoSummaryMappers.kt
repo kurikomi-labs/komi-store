@@ -4,8 +4,8 @@ import kotlinx.collections.immutable.toImmutableList
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.presentation.model.GithubRepoSummaryUi
 
-fun GithubRepoSummary.toUi(): GithubRepoSummaryUi {
-    return GithubRepoSummaryUi(
+fun GithubRepoSummary.toUi(): GithubRepoSummaryUi =
+    GithubRepoSummaryUi(
         id = id,
         name = name,
         fullName = fullName,
@@ -25,5 +25,5 @@ fun GithubRepoSummary.toUi(): GithubRepoSummaryUi {
         latestReleaseDate = latestReleaseDate,
         latestReleaseTag = latestReleaseTag,
         sourceHost = sourceHost,
+        dailyStars = dailyStars,
     )
-}

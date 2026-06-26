@@ -17,4 +17,5 @@ data class RepoByIdNetwork(
     @SerialName("language") val language: String? = null,
     @SerialName("topics") val topics: List<String>? = null,
     @SerialName("updated_at") val updatedAt: String,
+    @SerialName("pushed_at") val pushedAt: String? = null,
 )

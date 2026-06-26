@@ -7,3 +7,9 @@ expect fun getPlatform(): Platform
 expect fun getOsVersion(): String
 
 expect fun getSystemLocaleTag(): String
+
+fun isAndroid(): Boolean = getPlatform() == Platform.ANDROID
+
+fun isDesktop(): Boolean = getPlatform().isDesktop
+
+fun isMobile(): Boolean = getPlatform().isMobile

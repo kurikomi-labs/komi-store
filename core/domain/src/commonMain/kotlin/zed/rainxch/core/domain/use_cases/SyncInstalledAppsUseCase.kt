@@ -4,7 +4,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.installation.SystemPackageInfo
 import zed.rainxch.core.domain.model.system.Platform
@@ -15,7 +15,7 @@ class SyncInstalledAppsUseCase(
     private val packageMonitor: PackageMonitor,
     private val installedAppsRepository: InstalledAppsRepository,
     private val platform: Platform,
-    private val logger: GitHubStoreLogger,
+    private val logger: KomiStoreLogger,
 ) {
     companion object {
         private const val PENDING_TIMEOUT_MS = 24 * 60 * 60 * 1000L

@@ -6,6 +6,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
+import zed.rainxch.core.domain.system.DesktopOs
 
 internal data class OsTrustChain(
     val socketFactory: SSLSocketFactory,
@@ -32,10 +33,9 @@ internal fun buildOsTrustChainOrNull(): OsTrustChain? {
 private fun defaultTrustManagerOrNull(): X509TrustManager? = trustManagerFromKeyStore(null)
 
 private fun osTrustManagerOrNull(): X509TrustManager? {
-    val osName = System.getProperty("os.name").orEmpty().lowercase()
     val keyStore = when {
-        osName.contains("windows") -> loadKeyStore("Windows-ROOT")
-        osName.contains("mac") || osName.contains("darwin") -> loadKeyStore("KeychainStore")
+        DesktopOs.isWindows -> loadKeyStore("Windows-ROOT")
+        DesktopOs.isMac -> loadKeyStore("KeychainStore")
         else -> null
     } ?: return null
     return trustManagerFromKeyStore(keyStore)

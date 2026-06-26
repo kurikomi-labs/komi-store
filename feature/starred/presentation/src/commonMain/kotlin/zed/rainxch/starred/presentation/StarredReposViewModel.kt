@@ -4,6 +4,7 @@ package zed.rainxch.starred.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -39,6 +41,8 @@ class StarredReposViewModel(
     private val _state = MutableStateFlow(StarredReposState())
     val state =
         _state
+            .map { it.copy(filteredRepositories = filterStarred(it.starredRepositories, it.searchQuery)) }
+            .flowOn(Dispatchers.Default)
             .onStart {
                 if (!hasLoadedInitialData) {
                     checkAuthAndLoad()
@@ -49,6 +53,36 @@ class StarredReposViewModel(
                 started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = StarredReposState(),
             )
+
+    private fun filterStarred(
+        repositories: ImmutableList<StarredRepositoryUi>,
+        query: String,
+    ): ImmutableList<StarredRepositoryUi> {
+        val normalized = query.trim().lowercase()
+        if (normalized.isBlank()) return repositories
+
+        return repositories
+            .filter { repository ->
+                repository.repoName.lowercase().contains(normalized) ||
+                    repository.repoOwner.lowercase().contains(normalized) ||
+                    repository.repoDescription?.lowercase()?.contains(normalized) == true ||
+                    repository.primaryLanguage?.lowercase()?.contains(normalized) == true
+            }.toImmutableList()
+    }
+
+    private suspend fun lastSyncSubtitle(lastSyncTime: Long?): String? {
+        if (lastSyncTime == null) return null
+
+        val diff = Clock.System.now().toEpochMilliseconds() - lastSyncTime
+        val relative = when {
+            diff < 60_000 -> getString(Res.string.just_now)
+            diff < 3_600_000 -> getString(Res.string.minutes_ago, diff / 60_000)
+            diff < 86_400_000 -> getString(Res.string.hours_ago, diff / 3_600_000)
+            else -> getString(Res.string.days_ago, diff / 86_400_000)
+        }
+
+        return "${getString(Res.string.last_synced)}: $relative"
+    }
 
     private fun checkAuthAndLoad() {
         viewModelScope.launch {
@@ -119,31 +153,36 @@ class StarredReposViewModel(
                 syncStarredRepos()
             } else {
                 val lastSync = starredRepository.getLastSyncTime()
-                _state.update { it.copy(lastSyncTime = lastSync) }
+                val subtitle = lastSyncSubtitle(lastSync)
+                _state.update { it.copy(lastSyncTime = lastSync, lastSyncSubtitle = subtitle) }
             }
         }
     }
 
     private fun syncStarredRepos(forceRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isSyncing = true, errorMessage = null) }
+            _state.update { it.copy(isSyncing = true, errorMessage = null, lastSyncSubtitle = null) }
 
             val result = starredRepository.syncStarredRepos(forceRefresh)
 
             result
                 .onSuccess {
                     val lastSync = starredRepository.getLastSyncTime()
+                    val subtitle = lastSyncSubtitle(lastSync)
                     _state.update {
                         it.copy(
                             isSyncing = false,
                             lastSyncTime = lastSync,
+                            lastSyncSubtitle = subtitle,
                         )
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
+                    val subtitle = lastSyncSubtitle(_state.value.lastSyncTime)
                     _state.update {
                         it.copy(
                             isSyncing = false,
+                            lastSyncSubtitle = subtitle,
                             errorMessage = error.message ?: getString(Res.string.sync_starred_failed),
                         )
                     }
@@ -153,24 +192,15 @@ class StarredReposViewModel(
 
     fun onAction(action: StarredReposAction) {
         when (action) {
-            StarredReposAction.OnNavigateBackClick -> {
-                // Handled in composable
-            }
+            StarredReposAction.OnNavigateBackClick -> Unit
 
-            is StarredReposAction.OnRepositoryClick -> {
-                // Handled in composable
-            }
+            is StarredReposAction.OnRepositoryClick -> Unit
 
-            is StarredReposAction.OnDeveloperProfileClick -> {
-                // Handled in composable
-            }
+            is StarredReposAction.OnDeveloperProfileClick -> Unit
 
-            is StarredReposAction.OnSignInClick -> {
-                // Handled in composable
-            }
+            StarredReposAction.OnSignInClick -> Unit
 
             StarredReposAction.OnRefresh -> {
-
                 _state.update { it.copy(searchQuery = "") }
                 syncStarredRepos(forceRefresh = true)
             }

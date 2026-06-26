@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.system.DesktopOs
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -33,7 +34,7 @@ object CrashReporter {
         if (teed != null) {
             println("=== Komi Store session ${Instant.now()} ===")
             println(
-                "OS=${System.getProperty("os.name")} ${System.getProperty("os.version")} " +
+                "OS=${DesktopOs.rawName} ${DesktopOs.version} " +
                     "(${System.getProperty("os.arch")})",
             )
             println(
@@ -53,7 +54,7 @@ object CrashReporter {
             writer.println("Time: ${Instant.now()}")
             writer.println("Thread: ${thread.name}")
             writer.println(
-                "OS: ${System.getProperty("os.name")} ${System.getProperty("os.version")} " +
+                "OS: ${DesktopOs.rawName} ${DesktopOs.version} " +
                     "(${System.getProperty("os.arch")})",
             )
             writer.println(
@@ -73,22 +74,21 @@ object CrashReporter {
 
     private fun resolveLogDir(): File {
         val home = File(System.getProperty("user.home"))
-        val osName = System.getProperty("os.name").orEmpty().lowercase()
         return when {
-            "mac" in osName -> {
-                File(home, "Library/Logs/GitHub-Store")
+            DesktopOs.isMac -> {
+                File(home, "Library/Logs/Komi-Store")
             }
 
-            "win" in osName -> {
+            DesktopOs.isWindows -> {
                 val localAppData = System.getenv("LOCALAPPDATA")?.let(::File) ?: home
-                File(localAppData, "GitHub-Store/logs")
+                File(localAppData, "Komi-Store/logs")
             }
 
             else -> {
                 val stateHome =
                     System.getenv("XDG_STATE_HOME")?.let(::File)
                         ?: File(home, ".local/state")
-                File(stateHome, "GitHub-Store/logs")
+                File(stateHome, "Komi-Store/logs")
             }
         }
     }

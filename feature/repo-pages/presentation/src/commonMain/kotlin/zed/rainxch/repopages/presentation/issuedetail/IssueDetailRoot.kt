@@ -6,33 +6,40 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.PersistentSet
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.components.buttons.GhsButton
-import zed.rainxch.core.presentation.components.inputs.GhsTextField
-import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.components.buttons.KomiButton
+import zed.rainxch.core.presentation.components.dividers.KomiHorizontalDivider
+import zed.rainxch.core.presentation.components.icon.KomiIcon
+import zed.rainxch.core.presentation.components.inputs.KomiTextField
+import zed.rainxch.core.presentation.components.overlays.KomiToastState
+import zed.rainxch.core.presentation.components.overlays.rememberKomiToastState
+import zed.rainxch.core.presentation.components.scaffold.KomiScaffold
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfaceElevation
+import zed.rainxch.core.presentation.components.surfaces.KomiSurfacePaper
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
+import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.githubstore.core.presentation.res.Res
+import zed.rainxch.githubstore.core.presentation.res.cd_thumbs_up
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_hint
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_send
 import zed.rainxch.githubstore.core.presentation.res.repo_pages_comment_sign_in
@@ -54,12 +61,12 @@ fun IssueDetailRoot(
     viewModel: IssueDetailViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberKomiToastState()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is IssueDetailEvent.OnMessage -> {
-                snackbarHostState.showSnackbar(event.message)
+                toastState.show(event.message)
             }
         }
     }
@@ -72,17 +79,17 @@ fun IssueDetailRoot(
                 else -> viewModel.onAction(action)
             }
         },
-        snackbarHostState = snackbarHostState,
+        toastState = toastState,
     )
 }
 
 @Composable
 private fun IssueDetailScreen(
     state: IssueDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    toastState: KomiToastState,
     onAction: (IssueDetailAction) -> Unit
 ) {
-    Scaffold(
+    KomiScaffold(
         topBar = {
             RepoPagesTopBar(
                 title = "#${state.issueNumber}",
@@ -91,7 +98,7 @@ private fun IssueDetailScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        toastState = toastState,
         bottomBar = {
             if (state.detail != null) {
                 CommentComposer(
@@ -107,7 +114,6 @@ private fun IssueDetailScreen(
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val content = Modifier
             .fillMaxWidth()
@@ -145,6 +151,7 @@ private fun IssueDetailContent(
     onReactComment: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = LocalPersonality.current.colors
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
@@ -152,27 +159,30 @@ private fun IssueDetailContent(
     ) {
         item(key = "header") {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
+                KomiText(
                     text = detail.title,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onBackground,
+                    uppercase = false,
                 )
-                Text(
+
+                KomiText(
                     text = "#${detail.number} · " +
                             stringResource(
                                 Res.string.repo_pages_issue_opened_by,
                                 detail.authorLogin
                             ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    fontSize = 13.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
 
         item(key = "body") {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            KomiSurface(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(
@@ -180,10 +190,10 @@ private fun IssueDetailContent(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     if (detail.bodyMarkdown.isBlank()) {
-                        Text(
+                        KomiText(
                             text = stringResource(Res.string.repo_pages_issue_no_body),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            role = KomiTextRole.Body,
+                            color = colors.onSurfaceVariant,
                         )
                     } else {
                         RepoMarkdown(
@@ -191,6 +201,7 @@ private fun IssueDetailContent(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
+
                     ThumbChip(
                         count = detail.reactionThumbsUp,
                         enabled = !isReactingIssue,
@@ -202,14 +213,18 @@ private fun IssueDetailContent(
 
         if (detail.comments.isNotEmpty()) {
             item(key = "comments_header") {
-                HorizontalDivider()
-                Text(
+                KomiHorizontalDivider()
+
+                KomiText(
                     text = stringResource(Res.string.repo_pages_issue_comments_section),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onBackground,
+                    uppercase = false,
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }
+
             items(detail.comments, key = { it.id }) { comment ->
                 CommentCard(
                     comment = comment,
@@ -227,21 +242,24 @@ private fun CommentCard(
     isReacting: Boolean,
     onReact: () -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Text(
+            KomiText(
                 text = comment.authorLogin,
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.onSurface,
+                role = KomiTextRole.Label,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
+                uppercase = false,
             )
+
             RepoMarkdown(content = comment.bodyMarkdown, modifier = Modifier.fillMaxWidth())
+
             ThumbChip(count = comment.reactionThumbsUp, enabled = !isReacting, onClick = onReact)
         }
     }
@@ -253,27 +271,30 @@ private fun ThumbChip(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        elevation = KomiSurfaceElevation.Raised,
+        onClick = if (enabled) onClick else null,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = "👍",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+            KomiIcon(
+                imageVector = Icons.Filled.ThumbUp,
+                contentDescription = stringResource(Res.string.cd_thumbs_up),
+                tint = colors.onSurface,
+                modifier = Modifier.size(14.dp),
             )
+
             if (count > 0) {
-                Text(
+                KomiText(
                     text = count.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Label,
+                    fontSize = 12.sp,
+                    color = colors.onSurfaceVariant,
+                    uppercase = false,
                 )
             }
         }
@@ -288,9 +309,11 @@ private fun CommentComposer(
     onTextChange: (String) -> Unit,
     onSend: () -> Unit,
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 2.dp,
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
+        modifier = Modifier.fillMaxWidth(),
+        paper = KomiSurfacePaper.Background,
+        elevation = KomiSurfaceElevation.Raised,
     ) {
         Column(
             modifier = Modifier
@@ -299,10 +322,10 @@ private fun CommentComposer(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
             if (!isLoggedIn) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.repo_pages_comment_sign_in),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    role = KomiTextRole.Body,
+                    color = colors.onSurfaceVariant,
                     modifier = Modifier.padding(8.dp),
                 )
             } else {
@@ -310,16 +333,17 @@ private fun CommentComposer(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    GhsTextField(
+                    KomiTextField(
                         value = text,
                         onValueChange = onTextChange,
                         modifier = Modifier.weight(1f),
                         placeholder = stringResource(Res.string.repo_pages_comment_hint),
-                        maxLines = 4,
+                        multiline = true,
+                        rows = 4,
                         enabled = !isPosting,
                     )
 
-                    GhsButton(
+                    KomiButton(
                         onClick = onSend,
                         label = stringResource(Res.string.repo_pages_comment_send),
                         enabled = !isPosting && text.isNotBlank(),
@@ -334,7 +358,7 @@ private fun CommentComposer(
 @Preview
 @Composable
 private fun IssueDetailScreenPreview() {
-    GithubStoreTheme {
+    PersonalityPreview {
         IssueDetailScreen(
             state = IssueDetailUiState(
                 issueNumber = 123,
@@ -372,7 +396,7 @@ private fun IssueDetailScreenPreview() {
                 ),
                 isLoggedIn = true
             ),
-            snackbarHostState = remember { SnackbarHostState() },
+            toastState = rememberKomiToastState(),
             onAction = {}
         )
     }

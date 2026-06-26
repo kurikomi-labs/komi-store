@@ -1,6 +1,5 @@
 package zed.rainxch.devprofile.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -16,9 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,8 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.core.presentation.theme.tokens.Radii
+import zed.rainxch.core.presentation.components.surfaces.KomiSurface
+import zed.rainxch.core.presentation.components.text.KomiText
+import zed.rainxch.core.presentation.components.text.KomiTextRole
+import zed.rainxch.core.presentation.locals.LocalPersonality
 import zed.rainxch.devprofile.domain.model.ContributionCalendar
 import zed.rainxch.devprofile.domain.model.ContributionDay
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -51,11 +51,9 @@ fun ContributionCalendarCard(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
+    val colors = LocalPersonality.current.colors
+    KomiSurface(
         modifier = modifier.fillMaxWidth(),
-        shape = Radii.row,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -63,37 +61,41 @@ fun ContributionCalendarCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
+                KomiText(
                     text = stringResource(Res.string.dev_profile_contribution_activity),
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    role = KomiTextRole.Title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurface,
                 )
+
                 contributions?.let {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.dev_profile_contributions_this_year, it.totalLastYear),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontFamily = FontFamily.Monospace,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Mono,
+                        fontSize = 11.sp,
+                        color = colors.onSurfaceVariant,
+                        uppercase = false,
                     )
                 }
             }
+
             Spacer(Modifier.height(12.dp))
+
             when {
                 isLoading && contributions == null -> {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.loading),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                     )
                 }
                 contributions == null -> {
-                    Text(
+                    KomiText(
                         text = stringResource(Res.string.dev_profile_contributions_load_failed),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        role = KomiTextRole.Body,
+                        fontSize = 13.sp,
+                        color = colors.onSurfaceVariant,
                     )
                 }
                 else -> CalendarGrid(days = contributions.days)
@@ -105,9 +107,10 @@ fun ContributionCalendarCard(
 @Composable
 private fun CalendarGrid(days: List<ContributionDay>) {
     if (days.isEmpty()) return
-    val cs = MaterialTheme.colorScheme
-    val baseTint = remember(cs.surfaceContainerHigh) { cs.surfaceContainerHigh }
-    val primary = cs.primary
+    val colors = LocalPersonality.current.colors
+    val shape = LocalPersonality.current.shape
+    val baseTint = remember(colors.surfaceContainerHigh) { colors.surfaceContainerHigh }
+    val primary = colors.primary
     val palette = remember(primary, baseTint) {
         listOf(
             baseTint,
@@ -157,28 +160,34 @@ private fun CalendarGrid(days: List<ContributionDay>) {
             }
         }
     }
+
     Spacer(Modifier.height(8.dp))
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
+        KomiText(
             text = stringResource(Res.string.dev_profile_contributions_less),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
         )
-        palette.forEach { c ->
+
+        palette.forEach { cell ->
             Box(
                 modifier = Modifier
                     .size(CELL_SIZE)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(c),
+                    .clip(RoundedCornerShape(shape.cornerSmall))
+                    .background(cell),
             )
         }
-        Text(
+
+        KomiText(
             text = stringResource(Res.string.dev_profile_contributions_more),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            role = KomiTextRole.Label,
+            fontSize = 11.sp,
+            color = colors.onSurfaceVariant,
         )
     }
 }
