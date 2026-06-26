@@ -22,50 +22,58 @@ object DesktopDeepLink {
     }
 
     private fun registerWindows() {
-        val exePath = resolveExePath() ?: return
+        val exePath =
+            resolveExePath() ?: run {
+                println("DeepLink: skipped Windows scheme registration (exe path unresolved)")
+                return
+            }
 
-        val commandKey = "HKCU\\SOFTWARE\\Classes\\$SCHEME\\shell\\open\\command"
-        val existing = runCommand("reg", "query", commandKey, "/ve")
-        if (existing != null && existing.contains(exePath, ignoreCase = true)) return
+        if (windowsRegistrationIsValid(exePath)) return
 
-        runCommand(
-            "reg",
-            "add",
-            "HKCU\\SOFTWARE\\Classes\\$SCHEME",
-            "/ve",
-            "/d",
-            "URL:Komi Store Protocol",
-            "/f",
-        )
-        runCommand(
-            "reg",
-            "add",
-            "HKCU\\SOFTWARE\\Classes\\$SCHEME",
-            "/v",
-            "URL Protocol",
-            "/d",
-            "",
-            "/f",
-        )
-        runCommand(
-            "reg",
-            "add",
-            "HKCU\\SOFTWARE\\Classes\\$SCHEME\\DefaultIcon",
-            "/ve",
-            "/d",
-            "\"$exePath\",1",
-            "/f",
-        )
-        runCommand(
-            "reg",
-            "add",
-            commandKey,
-            "/ve",
-            "/d",
-            "\"$exePath\" \"%1\"",
-            "/f",
-        )
+        val iconValue = "\"$exePath\",1"
+        val commandValue = "\"$exePath\" \"%1\""
+
+        val regContent =
+            buildString {
+                append("Windows Registry Editor Version 5.00\r\n\r\n")
+                append("[HKEY_CURRENT_USER\\SOFTWARE\\Classes\\$SCHEME]\r\n")
+                append("@=\"URL:Komi Store Protocol\"\r\n")
+                append("\"URL Protocol\"=\"\"\r\n\r\n")
+                append("[HKEY_CURRENT_USER\\SOFTWARE\\Classes\\$SCHEME\\DefaultIcon]\r\n")
+                append("@=\"${regEscape(iconValue)}\"\r\n\r\n")
+                append("[HKEY_CURRENT_USER\\SOFTWARE\\Classes\\$SCHEME\\shell\\open\\command]\r\n")
+                append("@=\"${regEscape(commandValue)}\"\r\n")
+            }
+
+        val regFile =
+            try {
+                File.createTempFile("komi-scheme", ".reg")
+            } catch (e: Exception) {
+                println("DeepLink: Windows scheme registration failed (temp file): ${e.message}")
+                return
+            }
+
+        try {
+            regFile.writeBytes(("\uFEFF$regContent").toByteArray(Charsets.UTF_16LE))
+            val result = runCommand("reg", "import", regFile.absolutePath)
+            if (result == null) {
+                println("DeepLink: Windows scheme registration failed (reg import returned no output)")
+            }
+        } catch (e: Exception) {
+            println("DeepLink: Windows scheme registration failed: ${e.message}")
+        } finally {
+            runCatching { regFile.delete() }
+        }
     }
+
+    private fun windowsRegistrationIsValid(exePath: String): Boolean {
+        val protocol = runCommand("reg", "query", "HKCU\\SOFTWARE\\Classes\\$SCHEME", "/v", "URL Protocol")
+        if (protocol == null || !protocol.contains("URL Protocol")) return false
+        val command = runCommand("reg", "query", "HKCU\\SOFTWARE\\Classes\\$SCHEME\\shell\\open\\command", "/ve")
+        return command != null && command.contains(exePath, ignoreCase = true)
+    }
+
+    private fun regEscape(value: String): String = value.replace("\\", "\\\\").replace("\"", "\\\"")
 
     private fun registerLinux() {
         val appsDir = File(System.getProperty("user.home"), ".local/share/applications")
@@ -142,7 +150,11 @@ object DesktopDeepLink {
                 .info()
                 .command()
                 .orElse(null)
-                ?.takeIf { it.isNotBlank() }
+                ?.takeIf {
+                    it.isNotBlank() &&
+                        !it.endsWith("java.exe", ignoreCase = true) &&
+                        !it.endsWith("javaw.exe", ignoreCase = true)
+                }
         } catch (_: Exception) {
             null
         }

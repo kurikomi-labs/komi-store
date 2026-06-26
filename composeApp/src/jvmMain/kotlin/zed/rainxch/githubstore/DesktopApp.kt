@@ -76,6 +76,12 @@ fun main(args: Array<String>) {
 
     selectLinuxRenderBackendIfRequested()
 
+    val deepLinkArg = args.firstOrNull()
+
+    if (deepLinkArg != null && DesktopDeepLink.tryForwardToRunningInstance(deepLinkArg)) {
+        exitProcess(0)
+    }
+
     Security.setProperty("networkaddress.cache.ttl", "30")
     Security.setProperty("networkaddress.cache.negative.ttl", "5")
 
@@ -97,12 +103,6 @@ fun main(args: Array<String>) {
     }
 
     bootstrapProxy()
-
-    val deepLinkArg = args.firstOrNull()
-
-    if (deepLinkArg != null && DesktopDeepLink.tryForwardToRunningInstance(deepLinkArg)) {
-        exitProcess(0)
-    }
 
     DesktopDeepLink.registerUriSchemeIfNeeded()
 
