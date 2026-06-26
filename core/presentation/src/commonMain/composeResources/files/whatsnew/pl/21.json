@@ -10,6 +10,12 @@
         "Nowa karta Odkrywaj — strumień odkryć instalowalnych aplikacji dla Twojej platformy. Odświeża się codziennie, więc zawsze jest coś nowego i dogrywa kolejne aplikacje podczas przewijania.",
         "Nowa karta Rankingi — przeglądaj to, co na czasie, dopiero wydane i najpopularniejsze w całym sklepie."
       ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Pobierane aplikacje automatycznie wybierają wersję pasującą do procesora Twojego urządzenia (np. aarch64) zamiast większego, uniwersalnego pliku APK."
+      ]
     }
   ]
 }
