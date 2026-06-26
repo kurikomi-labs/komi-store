@@ -2,10 +2,20 @@ package zed.rainxch.core.domain.utils
 
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 
+private val alpineApkSignature =
+    Regex("(^|[^a-z0-9])(linux|amd64|386)([^a-z0-9]|$)")
+
+fun isAndroidApk(assetName: String): Boolean {
+    val lower = assetName.lowercase()
+    if (!lower.endsWith(".apk")) return false
+    return !alpineApkSignature.containsMatchIn(lower)
+}
+
 fun assetPlatformOf(assetName: String): DiscoveryPlatform? {
     val lower = assetName.lowercase()
     return when {
-        lower.endsWith(".apk") -> DiscoveryPlatform.Android
+        lower.endsWith(".apk") ->
+            if (isAndroidApk(assetName)) DiscoveryPlatform.Android else DiscoveryPlatform.Linux
         lower.endsWith(".ipa") -> DiscoveryPlatform.Ios
         lower.endsWith(".exe") || lower.endsWith(".msi") -> DiscoveryPlatform.Windows
         lower.endsWith(".dmg") || lower.endsWith(".pkg") -> DiscoveryPlatform.Macos
