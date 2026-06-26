@@ -50,11 +50,13 @@ class AndroidInstaller(
     override fun choosePrimaryAsset(assets: List<GithubAsset>): GithubAsset? {
         if (assets.isEmpty()) return null
         val systemArch = detectSystemArchitecture()
+        val androidApks = assets.filter { asset -> isAndroidApk(asset.name) }
+        if (androidApks.isEmpty()) return null
         val compatibleAssets =
-            assets.filter { asset ->
+            androidApks.filter { asset ->
                 isArchitectureCompatible(asset.name.lowercase(), systemArch)
             }
-        val assetsToConsider = compatibleAssets.ifEmpty { assets }
+        val assetsToConsider = compatibleAssets.ifEmpty { androidApks }
         return AssetSelector.choose(
             assets = assetsToConsider,
             deviceArch = systemArch,

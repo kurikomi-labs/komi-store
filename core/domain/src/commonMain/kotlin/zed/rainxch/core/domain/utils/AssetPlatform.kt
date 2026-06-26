@@ -3,7 +3,13 @@ package zed.rainxch.core.domain.utils
 import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 
 private val alpineApkSignature =
-    Regex("(^|[^a-z0-9])(linux|amd64|386)([^a-z0-9]|$)")
+    Regex(
+        "(^|[^a-z0-9])(" +
+            "linux|amd64|386|" +
+            "armhf|armel|armv7l|armv6l|arm32|" +
+            "riscv64|riscv|s390x|ppc64le|ppc64|powerpc|mips64|mips|loong64|loongarch|sparc64|sparc" +
+            ")([^a-z0-9]|$)",
+    )
 
 fun isAndroidApk(assetName: String): Boolean {
     val lower = assetName.lowercase()

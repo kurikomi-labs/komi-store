@@ -20,10 +20,22 @@ class AssetPlatformTest {
     @Test
     fun genuine_android_apks_are_android() {
         assertTrue(isAndroidApk("app-arm64-v8a-release.apk"))
+        assertTrue(isAndroidApk("app-armeabi-v7a-release.apk"))
         assertTrue(isAndroidApk("v2rayNG_2.2.5_universal.apk"))
         assertTrue(isAndroidApk("v2rayNG_2.2.5_x86_64.apk"))
+        assertTrue(isAndroidApk("v2rayNG_2.2.5_x86.apk"))
         assertTrue(isAndroidApk("Magisk-v30.7.apk"))
         assertTrue(isAndroidApk("app-release.apk"))
+    }
+
+    @Test
+    fun linux_only_arch_apks_are_not_android() {
+        assertFalse(isAndroidApk("tool_armhf.apk"))
+        assertFalse(isAndroidApk("tool_armv7l.apk"))
+        assertFalse(isAndroidApk("tool_arm32.apk"))
+        assertFalse(isAndroidApk("tool_riscv64.apk"))
+        assertFalse(isAndroidApk("tool_s390x.apk"))
+        assertFalse(isAndroidApk("tool_ppc64le.apk"))
     }
 
     @Test
