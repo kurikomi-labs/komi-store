@@ -379,7 +379,7 @@ jobs:
           [Desktop Entry]
           Type=Application
           Name=Komi Store
-          Exec=Komi-Store
+          Exec=komi-store
           Icon=github-store
           Categories=Development;
           Comment=Cross-platform app store for GitHub releases
@@ -539,7 +539,7 @@ jobs:
           set -euo pipefail
 
           VERSION=$(grep 'projectVersionName' gradle/libs.versions.toml | head -1 | sed 's/.*= *"\(.*\)"/\1/')
-          PKG_NAME="github-store"
+          PKG_NAME="komi-store"
           PKG_DIR="pkg-root"
 
           # Find the app directory produced by packageAppImage
@@ -564,37 +564,37 @@ jobs:
           fi
 
           # Build the package tree
-          mkdir -p "$PKG_DIR/opt/github-store"
-          cp -a "$APP_ROOT"/. "$PKG_DIR/opt/github-store/"
+          mkdir -p "$PKG_DIR/opt/komi-store"
+          cp -a "$APP_ROOT"/. "$PKG_DIR/opt/komi-store/"
 
           # Install the JVM-direct launcher that bypasses the jpackage native
           # launcher (crashes in glibc setenv() on glibc >= 2.42, see GH#563).
-          cp packaging/linux/github-store-launcher.sh "$PKG_DIR/opt/github-store/bin/github-store-launcher.sh"
-          chmod +x "$PKG_DIR/opt/github-store/bin/github-store-launcher.sh"
+          cp packaging/linux/github-store-launcher.sh "$PKG_DIR/opt/komi-store/bin/github-store-launcher.sh"
+          chmod +x "$PKG_DIR/opt/komi-store/bin/github-store-launcher.sh"
 
           # Launcher symlink
           mkdir -p "$PKG_DIR/usr/bin"
-          ln -s "/opt/github-store/bin/github-store-launcher.sh" "$PKG_DIR/usr/bin/github-store"
+          ln -s "/opt/komi-store/bin/github-store-launcher.sh" "$PKG_DIR/usr/bin/komi-store"
 
           # Desktop entry
           mkdir -p "$PKG_DIR/usr/share/applications"
-          cat > "$PKG_DIR/usr/share/applications/github-store.desktop" << 'EOF'
+          cat > "$PKG_DIR/usr/share/applications/komi-store.desktop" << 'EOF'
           [Desktop Entry]
           Type=Application
           Name=Komi Store
-          Exec=/opt/github-store/bin/github-store-launcher.sh
-          Icon=github-store
+          Exec=komi-store
+          Icon=komi-store
           Categories=Development;
           Comment=Cross-platform app store for GitHub releases
-          StartupWMClass=github-store
+          StartupWMClass=komi-store
           EOF
-          sed -i 's/^          //' "$PKG_DIR/usr/share/applications/github-store.desktop"
+          sed -i 's/^          //' "$PKG_DIR/usr/share/applications/komi-store.desktop"
 
           # Icon
-          if [ -f "$PKG_DIR/opt/github-store/lib/Komi-Store.png" ]; then
+          if [ -f "$PKG_DIR/opt/komi-store/lib/Komi-Store.png" ]; then
             mkdir -p "$PKG_DIR/usr/share/icons/hicolor/256x256/apps"
-            cp "$PKG_DIR/opt/github-store/lib/Komi-Store.png" \
-               "$PKG_DIR/usr/share/icons/hicolor/256x256/apps/github-store.png"
+            cp "$PKG_DIR/opt/komi-store/lib/Komi-Store.png" \
+               "$PKG_DIR/usr/share/icons/hicolor/256x256/apps/komi-store.png"
           fi
 
           # .PKGINFO (pacman metadata — must be a flat file at archive root)
@@ -609,6 +609,8 @@ jobs:
           arch = x86_64
           license = GPL-3.0
           size = ${INSTALLED_SIZE}
+          replaces = github-store
+          conflicts = github-store
           depend = java-runtime>=21
           depend = hicolor-icon-theme
           EOF
