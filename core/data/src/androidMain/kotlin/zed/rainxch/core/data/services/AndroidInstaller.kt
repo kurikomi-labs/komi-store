@@ -10,6 +10,8 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import zed.rainxch.core.domain.utils.AssetArchitectureMatcher
+import zed.rainxch.core.domain.utils.AssetSelector
+import zed.rainxch.core.domain.utils.isAndroidApk
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.system.SystemArchitecture
 import zed.rainxch.core.domain.system.InstallOutcome
@@ -35,10 +37,9 @@ class AndroidInstaller(
     }
 
     override fun isAssetInstallable(assetName: String): Boolean {
-        val name = assetName.lowercase()
-        if (!name.endsWith(".apk")) return false
+        if (!isAndroidApk(assetName)) return false
         val systemArch = detectSystemArchitecture()
-        return isArchitectureCompatible(name, systemArch)
+        return isArchitectureCompatible(assetName.lowercase(), systemArch)
     }
 
     private fun isArchitectureCompatible(
@@ -49,69 +50,18 @@ class AndroidInstaller(
     override fun choosePrimaryAsset(assets: List<GithubAsset>): GithubAsset? {
         if (assets.isEmpty()) return null
         val systemArch = detectSystemArchitecture()
+        val androidApks = assets.filter { asset -> isAndroidApk(asset.name) }
+        if (androidApks.isEmpty()) return null
         val compatibleAssets =
-            assets.filter { asset ->
+            androidApks.filter { asset ->
                 isArchitectureCompatible(asset.name.lowercase(), systemArch)
             }
-        val assetsToConsider = compatibleAssets.ifEmpty { assets }
-        return assetsToConsider.maxByOrNull { asset ->
-            val name = asset.name.lowercase()
-            val archBoost =
-                when (systemArch) {
-                    SystemArchitecture.X86_64 -> {
-                        if (AssetArchitectureMatcher.isExactMatch(
-                                name,
-                                SystemArchitecture.X86_64,
-                            )
-                        ) {
-                            10000
-                        } else {
-                            0
-                        }
-                    }
-
-                    SystemArchitecture.AARCH64 -> {
-                        if (AssetArchitectureMatcher.isExactMatch(
-                                name,
-                                SystemArchitecture.AARCH64,
-                            )
-                        ) {
-                            10000
-                        } else {
-                            0
-                        }
-                    }
-
-                    SystemArchitecture.X86 -> {
-                        if (AssetArchitectureMatcher.isExactMatch(
-                                name,
-                                SystemArchitecture.X86,
-                            )
-                        ) {
-                            10000
-                        } else {
-                            0
-                        }
-                    }
-
-                    SystemArchitecture.ARM -> {
-                        if (AssetArchitectureMatcher.isExactMatch(
-                                name,
-                                SystemArchitecture.ARM,
-                            )
-                        ) {
-                            10000
-                        } else {
-                            0
-                        }
-                    }
-
-                    SystemArchitecture.UNKNOWN -> {
-                        0
-                    }
-                }
-            archBoost + asset.size
-        }
+        val assetsToConsider = compatibleAssets.ifEmpty { androidApks }
+        return AssetSelector.choose(
+            assets = assetsToConsider,
+            deviceArch = systemArch,
+            extensionPriority = listOf(".apk"),
+        )
     }
 
     override suspend fun isSupported(extOrMime: String): Boolean {

@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import zed.rainxch.core.data.model.LinuxPackageType
 import zed.rainxch.core.data.model.LinuxTerminal
 import zed.rainxch.core.domain.utils.AssetArchitectureMatcher
+import zed.rainxch.core.domain.utils.AssetSelector
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.system.Platform
 import zed.rainxch.core.domain.model.system.SystemArchitecture
@@ -144,28 +145,11 @@ class DesktopInstaller(
 
         val assetsToConsider = compatibleAssets.ifEmpty { assets }
 
-        return assetsToConsider.maxByOrNull { asset ->
-            val name = asset.name.lowercase()
-
-            val extensionIdx = priority.indexOfFirst { name.endsWith(it) }
-            val extensionScore =
-                if (extensionIdx == -1) {
-                    -100000
-                } else {
-                    (priority.size - extensionIdx) * 10000
-                }
-
-            val archScore =
-                if (isExactArchitectureMatch(name, systemArchitecture)) {
-                    1000
-                } else {
-                    0
-                }
-
-            val sizeScore = (asset.size / 1000000).coerceAtMost(100)
-
-            extensionScore + archScore + sizeScore
-        }
+        return AssetSelector.choose(
+            assets = assetsToConsider,
+            deviceArch = systemArchitecture,
+            extensionPriority = priority,
+        )
     }
 
     private fun determineSystemArchitecture(): SystemArchitecture {
@@ -398,11 +382,6 @@ class DesktopInstaller(
 
         return AssetArchitectureMatcher.isCompatible(name, systemArch)
     }
-
-    private fun isExactArchitectureMatch(
-        assetName: String,
-        systemArch: SystemArchitecture,
-    ): Boolean = AssetArchitectureMatcher.isExactMatch(assetName, systemArch)
 
     override suspend fun isSupported(extOrMime: String): Boolean {
         val ext = extOrMime.lowercase().removePrefix(".")

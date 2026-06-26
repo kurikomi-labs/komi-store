@@ -10,6 +10,12 @@
         "Nueva pestaña Explorar — un feed de descubrimiento de apps instalables para tu plataforma. Se actualiza a diario para que siempre haya algo nuevo y carga más a medida que te desplazas.",
         "Nueva pestaña Populares — descubre lo que es tendencia, lo recién lanzado y lo más popular, clasificado en toda la tienda."
       ]
+    },
+    {
+      "type": "FIXED",
+      "bullets": [
+        "Las descargas de apps ahora eligen automáticamente la versión que coincide con la CPU de tu dispositivo (como aarch64) en lugar de recurrir a un APK universal más grande."
+      ]
     }
   ]
 }
