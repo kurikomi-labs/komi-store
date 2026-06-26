@@ -1,12 +1,12 @@
-cask "github-store" do
+cask "komi-store" do
   arch arm: "arm64", intel: "x64"
 
-  version "1.8.2"
-  sha256 arm:   "ad0c532873c0400736b7ea706a33604f7ef93b2479a4a6f32673a789b18ccd8e",
-         intel: "faf002283c301db2a97f7a32193778f678d42ed71551a623711cd170d6fde16a"
+  version "1.9.2"
+  sha256 arm:   "df371a7c4c821125810dacaab04a7fb0bcd40162bc996b798caf21c586fd0f0f",
+         intel: "2d95aa11a273528978cb2dad427e592d0705bb8e67c099a91a3216677abc4315"
 
-  url "https://github.com/kurikomi-labs/komi-store/releases/download/v#{version}/GitHub-Store-#{version}-#{arch}.dmg"
-  name "GitHub Store"
+  url "https://github.com/kurikomi-labs/komi-store/releases/download/v#{version}/Komi-Store-#{version}-#{arch}.dmg"
+  name "Komi Store"
   desc "Cross-platform app store for GitHub releases"
   homepage "https://github.com/kurikomi-labs/komi-store"
 
@@ -18,26 +18,26 @@ cask "github-store" do
   auto_updates false
   depends_on macos: :big_sur
 
-  app "GitHub-Store.app"
+  app "Komi-Store.app"
 
   uninstall quit: "zed.rainxch.githubstore"
 
   zap trash: [
-    "~/Library/Application Support/GitHub-Store",
-    "~/Library/Caches/GitHub-Store",
-    "~/Library/Logs/GitHub-Store",
+    "~/Library/Application Support/Komi-Store",
+    "~/Library/Caches/Komi-Store",
+    "~/Library/Logs/Komi-Store",
     "~/Library/Preferences/zed.rainxch.githubstore.plist",
     "~/Library/Saved Application State/zed.rainxch.githubstore.savedState",
   ]
 
   caveats <<~EOS
-    GitHub Store is not yet signed with an Apple Developer ID.
+    Komi Store is not yet signed with an Apple Developer ID.
     macOS Gatekeeper will block it from launching with a "damaged" or
     "cannot be opened" error.
 
     To allow the app to launch, run:
 
-      xattr -dr com.apple.quarantine "#{appdir}/GitHub-Store.app"
+      xattr -dr com.apple.quarantine "#{appdir}/Komi-Store.app"
 
     This step is required after each install or upgrade until the app is
     signed and notarized.
