@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "App downloads now auto-pick the build that matches your device's CPU (like aarch64) instead of defaulting to a larger universal APK."
+        "App downloads now auto-pick the build that matches your device's CPU (like aarch64) instead of defaulting to a larger universal APK.",
+        "Fixed GitHub sign-in on Windows — the desktop app now reliably opens and finishes login after you authorize in your browser."
       ]
     }
   ]

@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Las descargas de apps ahora eligen automáticamente la versión que coincide con la CPU de tu dispositivo (como aarch64) en lugar de recurrir a un APK universal más grande."
+        "Las descargas de apps ahora eligen automáticamente la versión que coincide con la CPU de tu dispositivo (como aarch64) en lugar de recurrir a un APK universal más grande.",
+        "Se corrigió el inicio de sesión con GitHub en Windows: la aplicación de escritorio ahora se abre y completa el inicio de sesión de forma fiable después de autorizar en el navegador."
       ]
     }
   ]

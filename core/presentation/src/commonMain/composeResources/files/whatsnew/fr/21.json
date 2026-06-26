@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Les téléchargements d'applis choisissent désormais automatiquement la version correspondant au processeur de votre appareil (comme aarch64) au lieu de se rabattre sur un APK universel plus volumineux."
+        "Les téléchargements d'applis choisissent désormais automatiquement la version correspondant au processeur de votre appareil (comme aarch64) au lieu de se rabattre sur un APK universel plus volumineux.",
+        "Correction de la connexion GitHub sous Windows : l'application de bureau s'ouvre désormais et termine la connexion de manière fiable après l'autorisation dans le navigateur."
       ]
     }
   ]

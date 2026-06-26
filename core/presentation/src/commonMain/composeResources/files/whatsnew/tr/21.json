@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Uygulama indirmeleri artık daha büyük evrensel APK yerine cihazınızın işlemcisine (örneğin aarch64) uygun sürümü otomatik olarak seçiyor."
+        "Uygulama indirmeleri artık daha büyük evrensel APK yerine cihazınızın işlemcisine (örneğin aarch64) uygun sürümü otomatik olarak seçiyor.",
+        "Windows'ta GitHub ile oturum açma sorunu giderildi — masaüstü uygulaması artık tarayıcıda yetkilendirdikten sonra güvenilir şekilde açılıp girişi tamamlıyor."
       ]
     }
   ]

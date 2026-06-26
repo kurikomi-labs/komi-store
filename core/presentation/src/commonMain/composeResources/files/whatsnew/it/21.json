@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "I download delle app ora scelgono automaticamente la versione adatta alla CPU del tuo dispositivo (come aarch64) invece di ripiegare su un APK universale più grande."
+        "I download delle app ora scelgono automaticamente la versione adatta alla CPU del tuo dispositivo (come aarch64) invece di ripiegare su un APK universale più grande.",
+        "Risolto l'accesso con GitHub su Windows: l'app desktop ora si apre e completa l'accesso in modo affidabile dopo l'autorizzazione nel browser."
       ]
     }
   ]

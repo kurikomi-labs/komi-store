@@ -14,7 +14,8 @@
     {
       "type": "FIXED",
       "bullets": [
-        "Pobierane aplikacje automatycznie wybierają wersję pasującą do procesora Twojego urządzenia (np. aarch64) zamiast większego, uniwersalnego pliku APK."
+        "Pobierane aplikacje automatycznie wybierają wersję pasującą do procesora Twojego urządzenia (np. aarch64) zamiast większego, uniwersalnego pliku APK.",
+        "Naprawiono logowanie przez GitHub w systemie Windows — aplikacja desktopowa teraz niezawodnie otwiera się i kończy logowanie po autoryzacji w przeglądarce."
       ]
     }
   ]
