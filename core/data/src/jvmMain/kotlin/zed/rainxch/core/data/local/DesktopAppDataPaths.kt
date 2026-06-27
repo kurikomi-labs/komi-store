@@ -29,6 +29,26 @@ object DesktopAppDataPaths {
         return dir
     }
 
+    // KSafe's JVM default baseDir is ~/.eu_anifantakis_ksafe, which is not reliably
+    // persistent inside the Flatpak sandbox (writes land off the per-app tree and are
+    // silently swallowed). Pin it to the same persistent dir Room uses. One-time,
+    // best-effort copy of any legacy store so existing desktop users keep their settings.
+    @Synchronized
+    fun ksafeBaseDir(): File {
+        val target = appDataDir()
+        runCatching {
+            val marker = File(target, ".ksafe_migrated")
+            if (!marker.exists()) {
+                val legacy = File(System.getProperty("user.home"), ".eu_anifantakis_ksafe")
+                if (legacy.isDirectory) {
+                    legacy.copyRecursively(target, overwrite = false)
+                }
+                marker.createNewFile()
+            }
+        }
+        return target
+    }
+
     fun migrateFromTmpIfNeeded(filename: String): Boolean {
         val newFile = File(appDataDir(), filename)
         if (newFile.exists()) return false

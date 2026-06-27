@@ -96,15 +96,24 @@ actual val corePlatformModule = module {
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("tokens")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_tokens")
+        eu.anifantakis.lib.ksafe.KSafe(
+            fileName = "ghs_tokens",
+            baseDir = zed.rainxch.core.data.local.DesktopAppDataPaths.ksafeBaseDir(),
+        )
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("prefs")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_prefs")
+        eu.anifantakis.lib.ksafe.KSafe(
+            fileName = "ghs_prefs",
+            baseDir = zed.rainxch.core.data.local.DesktopAppDataPaths.ksafeBaseDir(),
+        )
     }
 
     single<eu.anifantakis.lib.ksafe.KSafe>(qualifier = org.koin.core.qualifier.named("announcements_cache")) {
-        eu.anifantakis.lib.ksafe.KSafe(fileName = "ghs_announcements")
+        eu.anifantakis.lib.ksafe.KSafe(
+            fileName = "ghs_announcements",
+            baseDir = zed.rainxch.core.data.local.DesktopAppDataPaths.ksafeBaseDir(),
+        )
     }
 
     single<BrowserHelper> {
