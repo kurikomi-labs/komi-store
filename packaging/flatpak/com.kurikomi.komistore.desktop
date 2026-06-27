@@ -9,5 +9,5 @@ Terminal=false
 StartupNotify=true
 Categories=Development;PackageManager;
 Keywords=GitHub;Codeberg;Forgejo;Apps;Releases;APK;Store;
-StartupWMClass=zed.rainxch.githubstore.DesktopAppKt
+StartupWMClass=zed-rainxch-githubstore-DesktopAppKt
 MimeType=x-scheme-handler/githubstore;
