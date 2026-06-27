@@ -14,13 +14,3 @@ jobs:
           identifier: zed.rainxch.githubstore
           installers-regex: '\.msi$'
           token: ${{ secrets.WINGET_TOKEN }}
-
-  publish-exe:
-    name: Publish EXE to WinGet
-    runs-on: ubuntu-latest
-    steps:
-      - uses: vedantmgoyal9/winget-releaser@main
-        with:
-          identifier: zed.rainxch.githubstore
-          installers-regex: '\.exe$'
-          token: ${{ secrets.WINGET_TOKEN }}
