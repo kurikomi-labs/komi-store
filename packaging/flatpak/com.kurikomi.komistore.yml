@@ -1,10 +1,10 @@
-app-id: zed.rainxch.githubstore
+app-id: com.kurikomi.komistore
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.openjdk21
-command: githubstore
+command: komistore
 
 finish-args:
   # Network access for GitHub API calls and downloading releases
@@ -40,7 +40,9 @@ modules:
         only-arches:
           - aarch64
 
-  # Module 2: Build and install GitHub Store
+  # Module 2: Build and install Komi Store
+  # (internal module name kept as `githubstore` — the /run/build/githubstore/
+  #  offline-repo paths below depend on it; renaming would break the offline build)
   - name: githubstore
     buildsystem: simple
     build-options:
@@ -110,25 +112,26 @@ modules:
           -Dorg.gradle.parallel=false
       # Install the JAR
       - install -Dm644 "$(find composeApp/build/compose/jars/ -name '*.jar' -type f | head -1)"
-          /app/lib/githubstore.jar
+          /app/lib/komistore.jar
       # Install launcher script
-      - install -Dm755 packaging/flatpak/githubstore.sh /app/bin/githubstore
+      - install -Dm755 packaging/flatpak/komistore.sh /app/bin/komistore
       # Install desktop entry
-      - install -Dm644 packaging/flatpak/zed.rainxch.githubstore.desktop
-          /app/share/applications/zed.rainxch.githubstore.desktop
+      - install -Dm644 packaging/flatpak/com.kurikomi.komistore.desktop
+          /app/share/applications/com.kurikomi.komistore.desktop
       # Install AppStream metainfo
-      - install -Dm644 packaging/flatpak/zed.rainxch.githubstore.metainfo.xml
-          /app/share/metainfo/zed.rainxch.githubstore.metainfo.xml
+      - install -Dm644 packaging/flatpak/com.kurikomi.komistore.metainfo.xml
+          /app/share/metainfo/com.kurikomi.komistore.metainfo.xml
       # Install icon (512x512)
       - install -Dm644 composeApp/src/jvmMain/resources/logo/app_icon.png
-          /app/share/icons/hicolor/512x512/apps/zed.rainxch.githubstore.png
+          /app/share/icons/hicolor/512x512/apps/com.kurikomi.komistore.png
     sources:
-      # NOTE: For Flathub submission, switch this to:
-      #   type: git
-      #   url: https://github.com/kurikomi-labs/komi-store.git
-      #   tag: <release-tag>
-      - type: dir
-        path: ../../
+      # Flathub requires a pinned git source — no local dirs, no floating refs.
+      # Set `commit` to the exact SHA that tag v1.9.2 points to before submitting
+      # (flatpak-builder-lint rejects a git source without a commit).
+      - type: git
+        url: https://github.com/kurikomi-labs/komi-store.git
+        tag: v1.9.2
+        commit: REPLACE_WITH_V1_9_2_COMMIT_SHA
       # Gradle distribution (referenced by gradle-wrapper.properties after sed patch)
       - type: file
         url: https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
