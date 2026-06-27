@@ -128,10 +128,11 @@ modules:
       # Flathub requires a pinned git source — no local dirs, no floating refs.
       # Set `commit` to the exact SHA that tag v1.9.2 points to before submitting
       # (flatpak-builder-lint rejects a git source without a commit).
+      # Pinned commit (Flathub requires a fixed ref — no branches). Add a
+      # `tag:` line above `commit:` once a release tag includes these files.
       - type: git
         url: https://github.com/kurikomi-labs/komi-store.git
-        tag: v1.9.2
-        commit: REPLACE_WITH_V1_9_2_COMMIT_SHA
+        commit: f46e709c596e6579964e1b9ea5fcdc91f7497ec3
       # Gradle distribution (referenced by gradle-wrapper.properties after sed patch)
       - type: file
         url: https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
