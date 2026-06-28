@@ -1,0 +1,14 @@
+{
+  "versionCode": 22,
+  "versionName": "1.9.3",
+  "releaseDate": "2026-06-28",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "Traditional Chinese (繁體中文) is now available — switch to it anytime under Tweaks → Language."
+      ]
+    }
+  ]
+}

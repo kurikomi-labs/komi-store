@@ -16,6 +16,7 @@ object AppLanguages {
             AppLanguage("ru", "Русский"),
             AppLanguage("tr", "Türkçe"),
             AppLanguage("zh-CN", "简体中文"),
+            AppLanguage("zh-TW", "繁體中文"),
         )
 
     fun findByTag(tag: String?): AppLanguage? =

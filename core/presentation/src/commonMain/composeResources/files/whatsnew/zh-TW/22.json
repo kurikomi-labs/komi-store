@@ -1,0 +1,14 @@
+{
+  "versionCode": 22,
+  "versionName": "1.9.3",
+  "releaseDate": "2026-06-28",
+  "showAsSheet": true,
+  "sections": [
+    {
+      "type": "NEW",
+      "bullets": [
+        "現已支援繁體中文 — 隨時可在「設定 → 語言」中切換。"
+      ]
+    }
+  ]
+}

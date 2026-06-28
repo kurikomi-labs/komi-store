@@ -22,7 +22,7 @@ composeApp/            # entry points, navigation, DI wiring (commonMain / andro
 core/
   domain/              # interfaces, models, use cases (no framework deps)
   data/                # repos, Ktor, Room, Koin, platform impls
-  presentation/        # Material 3 theme + reusable components + 13-locale strings
+  presentation/        # Material 3 theme + reusable components + 14-locale strings
 feature/
   apps auth details dev-profile favourites homeP profile recently-viewed search starred tweaks
 build-logic/convention/  # convention plugins
