@@ -11,7 +11,7 @@
         "Homebrew 安裝 macOS：`brew install --cask github-store`。",
         "GitHub 登入改用標準網頁流程 — 無需 8 位程式碼。",
         "偏好和憑據透過 KSafe 以 AES-256-GCM 加密（Android 使用硬體 Keystore）。首次啟動時遷移。",
-        "新增 fastly.jsdelivr.net 映象，用於受限的 GitHub。",
+        "新增 fastly.jsdelivr.net 鏡像，用於受限的 GitHub。",
         "加入 Keep Android Open 聯盟 — 橫幅說明。"
       ]
     },

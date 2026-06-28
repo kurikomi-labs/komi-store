@@ -773,7 +773,7 @@
     <string name="custom_forges_empty">尚無自定義程式碼託管平臺。</string>
     <string name="done">完成</string>
 
-    <string name="mirror_picker_title">下載映象</string>
+    <string name="mirror_picker_title">下載鏡像</string>
     <string name="mirror_picker_description">用於下載釋出資源。GitHub API 呼叫始終直接進行。大多數使用者應保持"直連 GitHub"設定。</string>
     <string name="mirror_section_official">官方</string>
     <string name="mirror_section_community">社群</string>
@@ -781,19 +781,19 @@
     <string name="mirror_status_degraded">%1$dms</string>
     <string name="mirror_status_down">(不可用)</string>
     <string name="mirror_status_unknown">?</string>
-    <string name="mirror_custom_label">自定義映象…</string>
-    <string name="mirror_custom_dialog_title">自定義映象</string>
+    <string name="mirror_custom_label">自定義鏡像…</string>
+    <string name="mirror_custom_dialog_title">自定義鏡像</string>
     <string name="mirror_custom_dialog_hint">https://your-mirror.example/{url}</string>
     <string name="mirror_custom_validation_https">模板必須以 https:// 開頭</string>
     <string name="mirror_custom_validation_template">模板必須恰好包含一次 {url}</string>
     <string name="mirror_custom_save">儲存</string>
     <string name="mirror_test_button">測試所選</string>
     <string name="mirror_test_success">已在 %1$dms 內到達</string>
-    <string name="mirror_test_http_error">映象返回 %1$d</string>
+    <string name="mirror_test_http_error">鏡像返回 %1$d</string>
     <string name="mirror_test_timeout">5s 後超時</string>
     <string name="mirror_test_dns_fail">無法解析主機</string>
     <string name="mirror_test_other">失敗：%1$s</string>
-    <string name="mirror_deploy_your_own_hint">所有映象都不能用？可以用五分鐘來自行託管一個，點按檢視文件。</string>
+    <string name="mirror_deploy_your_own_hint">所有鏡像都不能用？可以用五分鐘來自行託管一個，點按檢視文件。</string>
     <string name="mirror_removed_toast">%1$s 已不再可用，已切換到直連 GitHub。</string>
 
     <!-- ───── 1.8.1 backlog ───── -->
@@ -1145,7 +1145,7 @@
     <string name="translation_deepl_saved">DeepL 金鑰已儲存</string>
     <string name="translation_libre_api_key">API 金鑰（可選）</string>
     <string name="translation_libre_base_url">例項 URL</string>
-    <string name="translation_libre_help">透過公共 Disroot 映象開箱即用 — 留空欄位即可使用。為獲得更高隱私性，可貼上自建 URL。僅當例項要求時才需要 API 金鑰。</string>
+    <string name="translation_libre_help">透過公共 Disroot 鏡像開箱即用 — 留空欄位即可使用。為獲得更高隱私性，可貼上自建 URL。僅當例項要求時才需要 API 金鑰。</string>
     <string name="translation_libre_save">儲存設定</string>
     <string name="translation_libre_saved">LibreTranslate 設定已儲存</string>
     <string name="translation_microsoft_get_free_key">獲取免費 Azure 金鑰 →</string>
@@ -1228,8 +1228,8 @@
     <string name="tweaks_search_placeholder">搜尋設定</string>
     <string name="tweaks_sources_add_a_host">新增 Forgejo 或 Gitea 主機</string>
     <string name="tweaks_sources_added_hosts_section">已新增的主機</string>
-    <string name="tweaks_sources_github_mirror_title">GitHub 映象</string>
-    <string name="tweaks_sources_intro_body">應用預設搜尋 GitHub。可透過區域映象路由，或新增自定義的 Forgejo / Gitea 主機。</string>
+    <string name="tweaks_sources_github_mirror_title">GitHub 鏡像</string>
+    <string name="tweaks_sources_intro_body">應用預設搜尋 GitHub。可透過區域鏡像路由，或新增自定義的 Forgejo / Gitea 主機。</string>
     <string name="tweaks_sources_intro_title">應用從哪裡查詢倉庫</string>
     <string name="tweaks_sources_mirror_default">預設 (github.com)</string>
     <string name="tweaks_storage_downloaded_apks_body">我們會保留安裝包，以便更新可以快速繼續。</string>
