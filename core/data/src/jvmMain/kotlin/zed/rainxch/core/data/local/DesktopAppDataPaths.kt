@@ -46,10 +46,6 @@ object DesktopAppDataPaths {
                 marker.createNewFile()
             }
         }
-        println(
-            "[KSAFE-DIAG] baseDir=${target.absolutePath} exists=${target.exists()} " +
-                "writable=${target.canWrite()} contents=${target.list()?.sorted()}",
-        )
         return target
     }
 
